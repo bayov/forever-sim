@@ -289,6 +289,23 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraInternalCooldown": {
+                                  "auraId": {
+                                    "spellId": 10610
+                                  }
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "0s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
@@ -342,12 +359,29 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraInternalCooldown": {
+                                  "auraId": {
+                                    "spellId": 10610
+                                  }
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "0s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
                     }
                   },
-                  "notes": "Rip whenever it is down."
+                  "notes": "Rip whenever it is down. Main hand abilities wait while Windfury Totem's 100 ms cooldown runs, so they can roll it."
                 },
                 {
                   "action": {
@@ -383,7 +417,7 @@
                                     "op": "OpGe",
                                     "rhs": {
                                       "const": {
-                                        "val": "45"
+                                        "val": "65"
                                       }
                                     }
                                   }
@@ -426,12 +460,29 @@
                                 }
                               ]
                             }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraInternalCooldown": {
+                                  "auraId": {
+                                    "spellId": 10610
+                                  }
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "0s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
                     }
                   },
-                  "notes": "Ferocious Bite at 5 combo points while Rip has time left, once the Energy reaches 45 (the extra Energy adds damage, and Predatory Discipline keeps it)."
+                  "notes": "Ferocious Bite at 5 combo points while Rip has time left, once the Energy reaches 65 (the extra Energy adds damage, and Predatory Discipline keeps it)."
                 },
                 {
                   "action": {
@@ -524,6 +575,23 @@
                                 }
                               ]
                             }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraInternalCooldown": {
+                                  "auraId": {
+                                    "spellId": 10610
+                                  }
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "0s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
@@ -582,6 +650,23 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraInternalCooldown": {
+                                  "auraId": {
+                                    "spellId": 10610
+                                  }
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "0s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
@@ -597,20 +682,43 @@
                       }
                     },
                     "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "currentComboPoints": {}
-                        },
-                        "op": "OpLt",
-                        "rhs": {
-                          "const": {
-                            "val": "5"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "currentComboPoints": {}
+                              },
+                              "op": "OpLt",
+                              "rhs": {
+                                "const": {
+                                  "val": "5"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraInternalCooldown": {
+                                  "auraId": {
+                                    "spellId": 10610
+                                  }
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "0s"
+                                }
+                              }
+                            }
                           }
-                        }
+                        ]
                       }
                     }
                   },
-                  "notes": "The builder."
+                  "notes": "The builder. Main hand abilities wait while Windfury Totem's 100 ms cooldown runs, so they can roll it."
                 }
               ]
             },

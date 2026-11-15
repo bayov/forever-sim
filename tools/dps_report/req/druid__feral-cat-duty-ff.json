@@ -433,7 +433,7 @@
                                     "op": "OpGe",
                                     "rhs": {
                                       "const": {
-                                        "val": "45"
+                                        "val": "65"
                                       }
                                     }
                                   }
@@ -481,7 +481,7 @@
                       }
                     }
                   },
-                  "notes": "Ferocious Bite at 5 combo points while Rip has time left, once the Energy reaches 45 (the extra Energy adds damage, and Predatory Discipline keeps it)."
+                  "notes": "Ferocious Bite at 5 combo points while Rip has time left, once the Energy reaches 65 (the extra Energy adds damage, and Predatory Discipline keeps it)."
                 },
                 {
                   "action": {

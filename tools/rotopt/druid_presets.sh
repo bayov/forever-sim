@@ -74,10 +74,18 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMa
 # Round 70753 phase 5 (2026-11-04, hit trade): talents 050022-53200032023012125001-055 (Nature's Reach 2
 # for Natural Shapeshifter 2) on the set's hit-4 step, same knobs: +26.0 / +25.9 / +22.0 at 120 / 180 /
 # 300 sec (orchestration/round_70753/hit_trade/druid.md).
-gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
+# Windfury re-tune (2026-11-15; every landed main hand melee hit rolls the totem, 100 ms internal
+# cooldown): the knob search (120, 180 and 300 sec together, 4,000 iterations) moved biteEnergy 45 -> 65,
+# +1.9 / +2.2 / +3.7 at 120 / 180 / 300 sec (seed 1000003 +2.0 / +2.3 / +3.7, 20,000 iterations), and
+# wfGate=2 (Shred, Rake, Rip, Bite and Ravage wait while the totem's 100 ms cooldown runs) adds +1.1 / +0.6
+# / +0.8 on top (seed 1000003 +0.9 / +0.8 / +0.8). wfGate=1 (0.1 sec after every swing) added +0.7 / +0.7
+# / +0.5 (+0.5 / +0.4 / +0.1), wfGate=3 (0.1 sec clear on both sides) less than 1.
+gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=65,cdStack=1,tigersFury=0,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1,wfGate=2"
 # The cat's Faerie Fire duty: the caster Faerie Fire from Cat Form (Forever has no Faerie Fire
 # (Feral); it's free in Cat Form, 1.5 sec global cooldown, no cooldown), first after the cooldowns and
 # again once it has under 7 sec left. That was the old 6 sec cooldown's second try; with no cooldown
 # 2, 3, 5 and 7 sec all keep it up 99.9% of the fight and are within 1 DPS (2026-10-29, 20000
 # iterations, 180 sec), so 7 stayed. After Rip, or at 3 sec, was within the noise.
-gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
+# Windfury re-tune (2026-11-15): biteEnergy 45 -> 65, +1.6 / +1.7 / +2.5 (seed 1000003 +1.4 / +1.6 /
+# +2.5); wfGate=2 on top is noise here (-0.5 / -0.1 / +0.1, seed 1000003 +0.1 / +0.6 / +0.6), so not taken.
+gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=65,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
