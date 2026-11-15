@@ -415,7 +415,7 @@ wording instead.
   - https://wago.tools/hotfixes (product wowf, push 114091)
 - [ ] 2026-11-14 — Rule on PR #130's Windfury Totem reading: seal procs (Righteousness, Fury, Command) don't roll the totem, every other main hand melee hit does (Blizzard Nov 13: "activated by all melee abilities") [source: blizzard]
   - PR #130 adds `SpellFlagNoWindfuryTotem` on the seal procs. A post-Nov-14 Ret log with the totem up settles it: any Windfury attack right after a seal proc with no swing or ability in between.
-  - PR #130 drops `sim/core/windfury_totem_procs_forever.go`; `tools/sources/wf_totem_procs.py` (its generator) is now dead and can go.
+  - PR #130 drops `sim/core/windfury_totem_procs_forever.go`; its generator `tools/sources/wf_totem_procs.py` was removed on update-1115 (2026-11-15).
 - [ ] 2026-11-14 — Take the Nov 13 item hotfixes once Wowhead Forever or the client shows them (Blizzard hotfixes Nov 13; Wowhead tooltips still had the old values on Nov 14, so PR #130 left them out) [source: blizzard]
   - Darkspear Signet 272068-272071 mp5 9/7/6/4 -> 4/3/3/2; Militant's Band 271913-271916 +1 mp5; Bad Hat 260212 loses +23 Shadow damage; Souvenir Sea Shell 274749 Sta 13 -> 10; Channeler's Ring 272406 +8 Spirit -> +9 spell power; Everstaring Abomination Eye 284097 Spirit "corrected" (no value given); Blessed Band of Light 272407 loses its hit.
   - Blessed Band of Light and Bad Hat can't go through forever_seen_in_game.json: the merge skips zero values, so it can't clear a stat. Regenerate through itemsparse.py from the next build, or teach the merge to clear.
