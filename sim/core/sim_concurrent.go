@@ -573,6 +573,17 @@ func runSimConcurrent(request *proto.RaidSimRequest, progress chan *proto.Progre
 		}
 	}()
 
+	// A player's own database (items the sim's database doesn't have) goes in once, here. Each
+	// split would add it again while it builds its player, and the other splits read the item
+	// table without a lock. Once the items are in, those adds only read.
+	for _, party := range request.GetRaid().GetParties() {
+		for _, player := range party.GetPlayers() {
+			if player.GetDatabase() != nil {
+				addToDatabase(player.GetDatabase())
+			}
+		}
+	}
+
 	splitRes := SplitSimRequestForConcurrency(request, TernaryInt32(request.SimOptions.IsTest, 3, int32(runtime.NumCPU())))
 
 	if splitRes.ErrorResult != "" {

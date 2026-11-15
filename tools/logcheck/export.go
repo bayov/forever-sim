@@ -646,7 +646,9 @@ func dbEnchants() []dbEnchant {
 // swings unarmed with too little armor, and every Melee row of the window is wrong.
 //
 // We add them once at startup, because the audit replays windows in parallel and the sim reads
-// the item table without a lock.
+// the item table without a lock. We also keep them in leftoverItems, since a sim outside
+// logcheck doesn't have them: writePlayer puts the ones the character wears in the player's own
+// database.
 func addLeftoverItems() error {
 	data, err := os.ReadFile(filepath.Join(repoRoot, "assets/database/leftover_db.bin"))
 	if err != nil {
@@ -660,7 +662,7 @@ func addLeftoverItems() error {
 		if _, ok := core.ItemsByID[item.Id]; ok {
 			continue
 		}
-		core.ItemsByID[item.Id] = core.ItemFromProto(&proto.SimItem{
+		simItem := &proto.SimItem{
 			Id:                  item.Id,
 			ClassAllowlist:      item.ClassAllowlist,
 			Name:                item.Name,
@@ -680,10 +682,15 @@ func addLeftoverItems() error {
 			WeaponSkills:        item.WeaponSkills,
 			HitRating:           item.HitRating,
 			CritRating:          item.CritRating,
-		})
+		}
+		core.ItemsByID[item.Id] = core.ItemFromProto(simItem)
+		leftoverItems[item.Id] = simItem
 	}
 	return nil
 }
+
+// leftoverItems are the items addLeftoverItems added, by ID.
+var leftoverItems = map[int32]*proto.SimItem{}
 
 // setTalents builds the talent string from the export's talent names.
 //

@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/wowsims/classic/sim/core/proto"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -58,6 +59,7 @@ func writePlayer(archive, exportPath, char string, fullSkill bool, out string) e
 	if !fullSkill {
 		setSkillGaps(c.player, ex)
 	}
+	addLeftoverGear(c.player)
 	player, err := protojson.Marshal(c.player)
 	if err != nil {
 		return err
@@ -80,4 +82,24 @@ func writePlayer(archive, exportPath, char string, fullSkill bool, out string) e
 		return err
 	}
 	return os.WriteFile(out, append(doc, '\n'), 0644)
+}
+
+// addLeftoverGear puts the leftover items the player wears in its own database.
+//
+// The sim's database leaves out white and grey gear, which logcheck adds for itself
+// (addLeftoverItems). A tool that sims this player on its own wouldn't know them, and the sim
+// fails with "No item with id". That was the Argent Dawn Commission, a white trinket, in a
+// /update-stat-weights run. The sim adds a player's database to its own when it builds the
+// player.
+func addLeftoverGear(player *proto.Player) {
+	for _, spec := range player.Equipment.GetItems() {
+		item, ok := leftoverItems[spec.GetId()]
+		if !ok {
+			continue
+		}
+		if player.Database == nil {
+			player.Database = &proto.SimDatabase{}
+		}
+		player.Database.Items = append(player.Database.Items, item)
+	}
 }
