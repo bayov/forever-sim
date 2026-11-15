@@ -2996,6 +2996,10 @@ export function startReport(dash, events) {
   // A one-value row: the only value considered, which the presets use, so there is nothing to compare or pick. Its
   // short line is the answer, so the row is only the question and More details on the left, and the answer on the right.
   const asmRef = (a) => arr(a.settings).length === 1;
+  // "Probably a bug" (a.bug): what the game does now looks like a bug that a fix may take away. Shown next to the label
+  // in the row, its tooltip and More details.
+  const ASM_BUG = 'What the game does now looks like a bug, so a fix may change it.';
+  const asmBug = (a) => (a.bug ? el('small', { class: 'fv-asm-bug', title: ASM_BUG, text: 'Probably a bug' }) : null);
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
@@ -3041,6 +3045,7 @@ export function startReport(dash, events) {
   // Each setting explains itself on its column head, see asmSetTip.
   const asmTip = (a) => [
     a.short && a.description && a.description !== a.short ? tipText(a.description) : null,
+    a.bug ? tipNote(ASM_BUG) : null,
     a.source ? tipNote(`Source: ${a.source}`) : null,
     a.status === 'pending' ? tipNote('Not simulated yet') : a.status === 'inert' ? tipNote('No longer applies') : null,
   ];
@@ -3060,6 +3065,7 @@ export function startReport(dash, events) {
   // Everything about an assumption the row leaves out, behind "More details": the full description, each setting's
   // value and reason (a one-value row's one setting only repeats its answer, so it has none), and the source.
   const asmMore = (a) => el('details', { class: 'fv-asm-more' }, el('summary', { text: 'More details' }),
+    a.bug ? el('p', { class: 'fv-asm-bugline' }, asmBug(a), ` ${ASM_BUG}`) : null,
     a.description && a.description !== (a.short || a.description) ? el('p', { text: a.description }) : null,
     asmRef(a) ? null : el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
       ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale || ''}`))),
@@ -3080,9 +3086,9 @@ export function startReport(dash, events) {
         const [sz, szText] = ref ? ['ref', ''] : asmSize(imp);
         const picked = cur !== a.defaultSetting;
         const hd = el('div', { class: 'fv-asm-hd' },
-          el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Changes a preset's DPS by up to ${f1(imp)}% at 180s`, text: szText }) : null),
+          el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), asmBug(a), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Changes a preset's DPS by up to ${f1(imp)}% at 180s`, text: szText }) : null),
           ref ? null : el('p', { class: 'fv-asm-short', text: a.short || a.description }));
-        asmHover(hd, a.label, () => asmTip(a));
+        asmHover(hd, a.bug ? el('div', { class: 'fv-tip-title' }, el('b', { text: a.label }), asmBug(a)) : a.label, () => asmTip(a));
         d.append(el('div', { class: 'fv-asm-row' + (ref ? ' one' : ''), 'data-key': a.key, 'data-size': sz },
           el('div', { class: 'fv-asm-txt' }, hd, asmMore(a)),
           // A one-value row's answer is its short line, in the right column where the other rows show their table.

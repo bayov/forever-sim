@@ -29,12 +29,18 @@ hastedGCD; physical abilities keep theirs, as there).
 the sim's scales are 1.0 and the report rows are gone).
 2026-11-12: rebased onto the Windfury Totem change (CreateExtraAttackAuraCommon takes rollsOn); context only.
 
+2026-11-15 (user rulings, both probable game bugs): warr_exec_wf2 is new (1: Execute's cast makes an attack of
+its own before the damage, which rolls Windfury Totem when it lands, as wowsims/forever's logs show; the
+sim rolls once by default; Character.AssumeWindfuryPreAttack, the totem's roll kept on the character), and
+orc_bf_weapon is new (0: Blood Fury gives its attack and spell power without the 10% weapon damage).
+sim/warrior/dps_warrior/assume_test.go tests both; core.AssumeForTest reloads the knobs.
+
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
-index 000000000..8edf2869b
+index 000000000..dc4feda4b
 --- /dev/null
 +++ b/sim/core/assumptions.go
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,102 @@
 +package core
 +
 +import (
@@ -99,8 +105,46 @@ index 000000000..8edf2869b
 +	}
 +	return critMultiplier
 +}
++
++// AssumeForTest reloads the knobs from env, as if DASH_ASSUME were set to it. Tests only.
++func AssumeForTest(env string) {
++	assumeOnce = sync.Once{}
++	os.Setenv("DASH_ASSUME", env)
++	assumeOnce.Do(loadAssume)
++}
++
++// AssumeWindfuryPreAttack is the dashboard assumption warr_exec_wf2 = 1: the cast makes an
++// attack of its own before its damage, and that attack rolls Windfury Totem when it lands, so a
++// landed cast rolls it twice. wowsims/forever's logs show it for Execute (0e8c4a769: 31.6% of
++// landed Executes and 18.9% of dodged ones rolled the totem); the user takes it for a game bug,
++// so the sim rolls once by default. The attack deals nothing, procs nothing else and counts no
++// hit; it rolls its own miss, dodge and parry on a stream of its own.
++func (character *Character) AssumeWindfuryPreAttack(sim *Simulation, spell *Spell, target *Unit, key string) {
++	if v, ok := AssumeOk(key); !ok || v == 0 || character.dashWindfuryRoll == nil {
++		return
++	}
++	attackTable := spell.Unit.AttackTables[target.UnitIndex][spell.CastType]
++	result := &SpellResult{Target: target, Outcome: OutcomeEmpty}
++	roll := sim.RandomFloat("Windfury Pre-Attack")
++	chance := 0.0
++	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance, false) &&
++		!result.applyAttackTableDodge(spell, attackTable, roll, &chance, false) &&
++		!(spell.Unit.PseudoStats.InFrontOfTarget && result.applyAttackTableParry(spell, attackTable, roll, &chance, false)) {
++		result.applyAttackTableHit(spell, false)
++	}
++	if result.Landed() {
++		character.dashWindfuryRoll(sim, spell)
++	}
++}
++
++// AssumeBloodFuryWeapon is the dashboard assumption orc_bf_weapon: 0 leaves out Blood Fury's 10%
++// weapon damage, keeping the attack and spell power the tooltip gives. The logs show the weapon
++// part; the user takes it for a game bug.
++func AssumeBloodFuryWeapon() bool {
++	return Assume("orc_bf_weapon", 1) != 0
++}
 diff --git a/sim/core/buffs.go b/sim/core/buffs.go
-index 32735cc59..3c0b376f7 100644
+index 545d104f2..c768532d8 100644
 --- a/sim/core/buffs.go
 +++ b/sim/core/buffs.go
 @@ -1851,6 +1851,9 @@ func TrueshotAura(unit *Unit) *Aura {
@@ -113,18 +157,66 @@ index 32735cc59..3c0b376f7 100644
  	}
  
  	aura := MakePermanent(unit.RegisterAura(Aura{
-@@ -2103,6 +2106,11 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
+@@ -2088,6 +2091,32 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
+ 
+ 	apBuffAura.Icd = &icd
+ 
++	// roll is the proc's chance, once the hit counts.
++	roll := func(sim *Simulation, spell *Spell) {
++		if blocked != nil && blocked() {
++			return
++		}
++
++		if icd.IsReady(sim) && sim.RandomFloat(auraLabel) < 0.2 {
++			icd.Use(sim)
++			apBuffAura.Activate(sim)
++			// aura is up _before_ the triggering swing lands, so if triggered by an auto attack, the aura fades right after the extra attack lands.
++			if spell.ProcMask == ProcMaskMeleeMHAuto || spell.ProcMask == ProcMaskMeleeOHAuto {
++				apBuffAura.SetStacks(sim, 1)
++			} else {
++				apBuffAura.SetStacks(sim, 2)
++			}
++
++			character.AutoAttacks.ExtraMHAttackProc(sim, 1, buffActionID, spell)
++		}
++	}
++	// dashboard assumption warr_exec_wf2 (AssumeWindfuryPreAttack): an attack that rolls the proc and nothing else
++	character.dashWindfuryRoll = func(sim *Simulation, spell *Spell) {
++		if rollsOn(spell) && !spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
++			roll(sim, spell)
++		}
++	}
++
+ 	return character.GetOrRegisterAura(Aura{
+ 		Label:    auraLabel,
+ 		ActionID: actionID,
+@@ -2103,22 +2132,12 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
  			if !result.Landed() || !rollsOn(spell) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
  				return
  			}
+-			if blocked != nil && blocked() {
+-				return
+-			}
+-
+-			if icd.IsReady(sim) && sim.RandomFloat(auraLabel) < 0.2 {
+-				icd.Use(sim)
+-				apBuffAura.Activate(sim)
+-				// aura is up _before_ the triggering swing lands, so if triggered by an auto attack, the aura fades right after the extra attack lands.
+-				if spell.ProcMask == ProcMaskMeleeMHAuto || spell.ProcMask == ProcMaskMeleeOHAuto {
+-					apBuffAura.SetStacks(sim, 1)
+-				} else {
+-					apBuffAura.SetStacks(sim, 2)
 +			if key, ok := AssumeNoWindfury[spell.ActionID.SpellID]; ok {
 +				if v, set := AssumeOk(key); set && v == 0 {
 +					return // dashboard assumption
-+				}
-+			}
- 			if blocked != nil && blocked() {
- 				return
+ 				}
+-
+-				aura.Unit.AutoAttacks.ExtraMHAttackProc(sim, 1, buffActionID, spell)
  			}
++			roll(sim, spell)
+ 		},
+ 	})
+ }
 diff --git a/sim/core/cast.go b/sim/core/cast.go
 index b0516909d..86f09d721 100644
 --- a/sim/core/cast.go
@@ -141,6 +233,21 @@ index b0516909d..86f09d721 100644
  		}
  
  		if config.CD.Timer != nil {
+diff --git a/sim/core/character.go b/sim/core/character.go
+index aa714b8ad..160767652 100644
+--- a/sim/core/character.go
++++ b/sim/core/character.go
+@@ -70,6 +70,10 @@ type Character struct {
+ 	// Consumables this Character will be using.
+ 	Consumes *proto.Consumes
+ 
++	// The Windfury Totem proc's roll (CreateExtraAttackAuraCommon), for the dashboard assumption
++	// warr_exec_wf2 (AssumeWindfuryPreAttack). nil without the totem.
++	dashWindfuryRoll func(sim *Simulation, spell *Spell)
++
+ 	// ISB External configuration
+ 	IsbConfig IsbConfig
+ 	// Stormstrike External Configuration
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
 index e22f7e4b6..d7a12ae04 100644
 --- a/sim/core/debuffs.go
@@ -168,6 +275,28 @@ index e22f7e4b6..d7a12ae04 100644
  }
  
  // bonus is the ranged attack power every attacker gains against the target.
+diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
+index 08118d4f6..912122ab9 100644
+--- a/sim/core/racials_forever.go
++++ b/sim/core/racials_forever.go
+@@ -279,6 +279,7 @@ func (character *Character) registerForeverBloodFury() {
+ 	weapons := func() [3]*Weapon {
+ 		return [3]*Weapon{character.AutoAttacks.MH(), character.AutoAttacks.OH(), character.AutoAttacks.Ranged()}
+ 	}
++	weaponPart := AssumeBloodFuryWeapon() // dashboard assumption orc_bf_weapon = 0: no weapon damage
+ 	aura := character.RegisterAura(Aura{
+ 		Label:    "Blood Fury",
+ 		ActionID: actionID,
+@@ -288,6 +289,9 @@ func (character *Character) registerForeverBloodFury() {
+ 				character.EnableDynamicStatDep(sim, dep)
+ 			}
+ 			for i, weapon := range weapons() {
++				if !weaponPart {
++					break
++				}
+ 				bonusWeaponDamage[i] = weapon.AverageDamage() * 0.1
+ 				weapon.BaseDamageMin += bonusWeaponDamage[i]
+ 				weapon.BaseDamageMax += bonusWeaponDamage[i]
 diff --git a/sim/core/rage.go b/sim/core/rage.go
 index b7692ab98..79131313f 100644
 --- a/sim/core/rage.go
@@ -377,7 +506,7 @@ index 000000000..2088f47dc
 +	}
 +}
 diff --git a/sim/paladin/consecration.go b/sim/paladin/consecration.go
-index a6ad6f82f..1d4571ebe 100644
+index 7ccae987d..c1409d168 100644
 --- a/sim/paladin/consecration.go
 +++ b/sim/paladin/consecration.go
 @@ -82,6 +82,10 @@ func (paladin *Paladin) registerConsecration() {
@@ -406,7 +535,7 @@ index a9e99b97e..77742dd56 100644
  		paladin.RegisterSpell(core.SpellConfig{
  			ActionID:    core.ActionID{SpellID: rank.spellID},
 diff --git a/sim/paladin/soc.go b/sim/paladin/soc.go
-index d76f94d6f..8e38b2cac 100644
+index d2d97892c..d3922c62e 100644
 --- a/sim/paladin/soc.go
 +++ b/sim/paladin/soc.go
 @@ -60,7 +60,8 @@ func (paladin *Paladin) registerSealOfCommand() {
@@ -503,6 +632,142 @@ index 87211cd1c..1c25959e2 100644
  			spell.DamageMultiplier *= multiplier
  			result := spell.CalcDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
  			spell.DamageMultiplier /= multiplier
+diff --git a/sim/warrior/dps_warrior/assume_test.go b/sim/warrior/dps_warrior/assume_test.go
+new file mode 100644
+index 000000000..50354ab1a
+--- /dev/null
++++ b/sim/warrior/dps_warrior/assume_test.go
+@@ -0,0 +1,116 @@
++package dpswarrior
++
++import (
++	"math"
++	"testing"
++	"time"
++
++	"github.com/wowsims/classic/sim/core"
++	"github.com/wowsims/classic/sim/core/proto"
++	"github.com/wowsims/classic/sim/core/simsignals"
++	"github.com/wowsims/classic/sim/core/stats"
++)
++
++// assumeWarrior is a level 60 Orc Fury warrior under Forever with Windfury Totem, built after
++// DASH_ASSUME is set to env (the dashboard's assumption knobs, sim/core/assumptions.go).
++func assumeWarrior(t *testing.T, env string) (*core.Simulation, *DpsWarrior) {
++	t.Helper()
++	core.AssumeForTest(env)
++	t.Cleanup(func() { core.AssumeForTest("") })
++	items := make([]*proto.ItemSpec, 17)
++	for i := range items {
++		items[i] = &proto.ItemSpec{}
++	}
++	items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: 991014}
++	items[proto.ItemSlot_ItemSlotOffHand] = &proto.ItemSpec{Id: 991015}
++	player := &proto.Player{
++		Race:          proto.Race_RaceOrc,
++		Class:         proto.Class_ClassWarrior,
++		Level:         60,
++		Equipment:     &proto.EquipmentSpec{Items: items},
++		TalentsString: P1Talents,
++		Rotation:      &proto.APLRotation{},
++		Spec:          &proto.Player_Warrior{Warrior: &proto.Warrior{Options: &proto.Warrior_Options{}}},
++	}
++	sim := core.NewSim(&proto.RaidSimRequest{
++		Raid: core.SinglePlayerRaidProto(player, &proto.PartyBuffs{},
++			&proto.RaidBuffs{TotemWeaponBuff: proto.TotemWeaponBuff_TotemWeaponBuffWindfury}, &proto.Debuffs{}),
++		Encounter:  &proto.Encounter{Duration: 600, Targets: []*proto.Target{core.NewDefaultTarget()}},
++		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
++	}, simsignals.CreateSignals())
++	sim.Reset()
++	return sim, sim.Raid.Parties[0].Players[0].(*DpsWarrior)
++}
++
++// TestAssumeExecuteWindfuryTwice: with warr_exec_wf2=1 an Execute's own attack rolls Windfury
++// Totem before its damage, so a landed Execute can roll it twice (about 36% a cast, less the
++// misses and dodges); with the knob off it rolls once (about 20% of the casts that land).
++func TestAssumeExecuteWindfuryTwice(t *testing.T) {
++	const n = 4000
++	rate := func(env string) float64 {
++		sim, dw := assumeWarrior(t, env)
++		war := dw.GetWarrior()
++		buff := war.GetAura("Windfury Attack")
++		if buff == nil || war.Execute == nil {
++			t.Fatal("no Windfury Totem or Execute on the warrior")
++		}
++		procs := 0
++		for range n {
++			sim.CurrentTime += 2 * time.Second
++			buff.Deactivate(sim)
++			war.Execute.ApplyEffects(sim, war.CurrentTarget, war.Execute.Spell)
++			if buff.IsActive() {
++				procs++
++			}
++		}
++		return float64(procs) / n
++	}
++	once, twice := rate(""), rate("warr_exec_wf2=1")
++	t.Logf("Windfury Totem procs a cast: %.3f with one roll, %.3f with two", once, twice)
++	if once < 0.13 || once > 0.21 {
++		t.Errorf("Execute procced Windfury Totem on %.3f of casts with one roll, want just under 0.2 (the casts that land)", once)
++	}
++	if twice < 0.27 || twice > 0.37 {
++		t.Errorf("Execute procced Windfury Totem on %.3f of casts with two rolls, want about 0.33", twice)
++	}
++	if off := rate("warr_exec_wf2=0"); math.Abs(off-once) > 1e-9 {
++		t.Errorf("warr_exec_wf2=0 gives %.3f, want the default's %.3f", off, once)
++	}
++}
++
++// TestAssumeBloodFuryAPOnly: with orc_bf_weapon=0 Blood Fury gives its 10% attack power and no
++// weapon damage; by default it adds 10% of each weapon's average damage too.
++func TestAssumeBloodFuryAPOnly(t *testing.T) {
++	for _, c := range []struct {
++		env    string
++		weapon bool
++	}{{"", true}, {"orc_bf_weapon=0", false}} {
++		sim, dw := assumeWarrior(t, c.env)
++		war := dw.GetWarrior()
++		bf := war.GetAura("Blood Fury")
++		if bf == nil {
++			t.Fatal("no Blood Fury on the Orc")
++		}
++		mh, oh := war.AutoAttacks.MH(), war.AutoAttacks.OH()
++		ap, mhMin, ohMax, mhAvg := war.GetStat(stats.AttackPower), mh.BaseDamageMin, oh.BaseDamageMax, mh.AverageDamage()
++		bf.Activate(sim)
++		if got := war.GetStat(stats.AttackPower); math.Abs(got-1.1*ap) > 0.01 {
++			t.Errorf("%q: attack power %.2f under Blood Fury, want %.2f", c.env, got, 1.1*ap)
++		}
++		wantMin := mhMin
++		if c.weapon {
++			wantMin += 0.1 * mhAvg
++		}
++		if math.Abs(mh.BaseDamageMin-wantMin) > 1e-9 {
++			t.Errorf("%q: main hand minimum %.2f under Blood Fury, want %.2f", c.env, mh.BaseDamageMin, wantMin)
++		}
++		if !c.weapon && oh.BaseDamageMax != ohMax {
++			t.Errorf("%q: off-hand maximum %.2f under Blood Fury, want %.2f", c.env, oh.BaseDamageMax, ohMax)
++		}
++		bf.Deactivate(sim)
++		if mh.BaseDamageMin != mhMin || war.GetStat(stats.AttackPower) != ap {
++			t.Errorf("%q: Blood Fury's expiry left the main hand at %.2f and attack power at %.2f, want %.2f and %.2f",
++				c.env, mh.BaseDamageMin, war.GetStat(stats.AttackPower), mhMin, ap)
++		}
++	}
++}
+diff --git a/sim/warrior/execute.go b/sim/warrior/execute.go
+index b0f6c55b5..dab1503ff 100644
+--- a/sim/warrior/execute.go
++++ b/sim/warrior/execute.go
+@@ -49,6 +49,9 @@ func (warrior *Warrior) registerExecuteSpell() {
+ 
+ 			baseDamage := flatDamage + convertedRageDamage*(extraRage)
+ 
++			// dashboard assumption warr_exec_wf2 = 1: the cast's own attack rolls Windfury Totem first
++			warrior.AssumeWindfuryPreAttack(sim, spell, target, "warr_exec_wf2")
++
+ 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+ 
+ 			if !result.Landed() {
 diff --git a/sim/warrior/rend.go b/sim/warrior/rend.go
 index 908df2ecd..d4a7ed2de 100644
 --- a/sim/warrior/rend.go

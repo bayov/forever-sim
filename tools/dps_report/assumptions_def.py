@@ -11,6 +11,8 @@ Each assumption is written for a player who hasn't read our notes:
   knob reads, edit names a request edit run_assumptions.py applies. The page tags each setting Low / Expected / High
   from its id.
 - warn (optional): {build: note}, a warning icon with that note on the build's non-default cells.
+- bug (optional): True when the user takes what the game does for a bug Blizzard may fix (the page tags the row
+  "Probably a bug"). Its settings say which one is the game as logged and which one the fix.
 HEAL, at the end, is the Healing page's list: one-value rows only, the same rules, builds naming the Healing presets.
 status 'pending' = listed but not simulated yet; 'inert' = no longer applies.
 """
@@ -132,6 +134,14 @@ A = [
       src='Client 70425 (periodic crit on bleeds). wowsims/forever (the physical crit multiplier).',
       builds=['druid__feral-cat', 'warrior__arms', 'warrior__arms_dragonkin', 'rogue__subtlety'],
       settings=[S('expected', '200% (melee)', 'a bleed tick crit deals 200%', 'Bleeds roll melee crit.')],
+      default='expected', expected='expected'),
+ dict(key='orc_bf_weapon', cls='All', group='racials', label="Does Blood Fury raise weapon damage?",
+      short="Yes, by 10%, as logs show. Its tooltip gives only attack and spell power.",
+      desc="In logs and on the character sheet, Blood Fury also adds 10% of each weapon's average damage to its hits, about as much again as its attack power. The tooltip doesn't mention it, so it looks like a bug that a fix would take away. Orc warriors, Enhancement shamans and hunters use it; warlocks swing no weapon.",
+      src="Our Forever logs and character sheet (Oct 11-12): the weapon ranges went up 10%, and hits came out 1.105 times bigger where 10% attack power alone gives 1.056. Blood Fury's tooltip.",
+      builds=WARR + ENH + ['hunter__beast-mastery', 'hunter__marksmanship', 'hunter__survival'], bug=True,
+      settings=[S('low', 'AP only, as the tooltip says', '10% attack and spell power, no weapon damage', 'If Blizzard fixes it to match the tooltip.', {'orc_bf_weapon': 0}),
+                S('expected', 'AP and weapon damage, as logs show', "10% attack and spell power, and 10% of the weapon's average damage on each hit", 'What the game does now.')],
       default='expected', expected='expected'),
  dict(key='priest_sf_tick_crit', cls='Priest', group='shadow', label="Do DoT ticks get Shadowform's 200% crits?",
       short="Yes. Shadowform covers Shadow Word: Pain, Mind Flay and Devouring Plague ticks.",
@@ -304,6 +314,14 @@ A = [
       src="Blizzard's warrior notes. Forever client 70338. wowsims/forever (rank 2 logs at levels 13 and 14: 7 + 0.02 × attack power a tick).",
       builds=['warrior__arms', 'warrior__arms_dragonkin'],
       settings=[S('expected', 'Small (2% a tick)', '2% of attack power a tick', 'Measured on rank 2.')],
+      default='expected', expected='expected'),
+ dict(key='warr_exec_wf2', cls='Warrior', group='execute', label='How often does Execute roll Windfury Totem?',
+      short="Once, like any other hit. Logs show twice, likely a game bug.",
+      desc="In logs, Execute makes a separate attack before its damage, and each attack that lands can proc Windfury Totem: it procced on 32% of landed Executes and 19% of dodged ones, where one roll gives 20%. The presets roll once, taking the extra roll for a bug Blizzard may fix.",
+      src="Another sim's Forever logs (Nov 2026): 31.6% of landed Executes and 18.9% of dodged ones procced the totem.",
+      builds=WARR, bug=True,
+      settings=[S('expected', 'Once', 'a landed Execute rolls the totem once', 'Like every other melee hit.'),
+                S('high', 'Twice, as logs show', 'the attack before the damage rolls the totem too', 'What the logs show; probably a bug.', {'warr_exec_wf2': 1})],
       default='expected', expected='expected'),
  dict(key='evisc_ap', cls='Rogue', group='eviscerate', label="How much attack power does Eviscerate add?",
       short="4% of attack power for each combo point.",

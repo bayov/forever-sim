@@ -47,6 +47,7 @@ def asm_rows(As, names=None, sens=None):
                       'settings': [{k: s[k] for k in ('id', 'label', 'value', 'rationale')} for s in a['settings']],
                       'defaultSetting': a['default'], 'expectedSetting': a['expected'], 'status': a.get('status', 'live'),
                       **({'warn': {b: w for b, w in a['warn'].items() if b in names or not names}} if a.get('warn') else {}),
+                      **({'bug': True} if a.get('bug') else {}),  # the page's "Probably a bug" tag
                       'sens': sorted((sens or {}).get(a['key'], []), key=lambda x: (x['setting'], x['build']))})
     arows.sort(key=lambda r: (CLASS_ORDER.index(r['class']), r['order']))
     return arows

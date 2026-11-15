@@ -3506,6 +3506,26 @@ div.tt-embed:not(.fv-tt) {
 	}
 }
 
+// "Probably a bug" (asmBug): the size chip's shape, in the bad colour, next to an assumption's label in its row, its
+// tooltip's title and More details.
+.fv-asm-bug {
+	flex: none;
+	display: inline-block;
+	font-size: 0.7rem;
+	font-weight: 400;
+	line-height: 1.5;
+	padding: 0 0.4rem;
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--color-bad) 45%, transparent);
+	color: var(--color-bad);
+	white-space: nowrap;
+	cursor: help;
+}
+
+.fv-asm-more .fv-asm-bugline {
+	color: var(--color-fg-muted);
+}
+
 // A one-value row: the question and More details on the left, the answer on the right. On a phone, the answer goes
 // between the question and More details.
 .fv-asm-row.one {
