@@ -11,6 +11,10 @@ out = sys.argv[1]
 O = json.load(open(f'{out}/req_ours.json')); T = json.load(open(f'{out}/req_theirs.json'))
 klass = O['raid']['parties'][0]['players'][0]['class']
 CLASS_KEY = klass.removeprefix('Class').lower()
+_bonus = {k: v for k, v in enumerate(T['raid']['parties'][0]['players'][0].get('bonusStats', {}).get('stats', [])) if v}
+if _bonus:  # ALIGN's (align.py) or a synthetic set bonus: they come in with the gear layer and aren't the gear's
+    print(f'warning: theirs has bonusStats {_bonus} (their stat index: value), counted from the gear layer on; '
+          'rerun convert.py without ALIGN to see the sheets before alignment', file=sys.stderr)
 
 def strip(r, ours, level):
     r = copy.deepcopy(r); p = r['raid']['parties'][0]['players'][0]

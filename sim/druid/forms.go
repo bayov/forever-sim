@@ -100,11 +100,13 @@ const catSwingSpeed = 1.0
 const catDamageVariance = 0.4
 
 // Predatory Strikes gives 50% of the level a point as attack power and Sharpened Claws 3%
-// crit a point in the feral forms (1.60.1.70338, wago.tools rank curves).
+// crit a point in the feral forms (1.60.1.70338, wago.tools rank curves). Sharpened Claws (16942)
+// is aura 290, A_MOD_CRIT_PCT, so the crit is melee and spell crit both.
 func (druid *Druid) GetFormShiftStats() stats.Stats {
 	s := stats.Stats{
 		stats.AttackPower: float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(druid.Level),
 		stats.MeleeCrit:   float64(druid.Talents.SharpenedClaws) * 3 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   float64(druid.Talents.SharpenedClaws) * 3 * core.SpellCritRatingPerCritChance,
 	}
 	/*
 		if weapon := druid.GetMHWeapon(); weapon != nil {

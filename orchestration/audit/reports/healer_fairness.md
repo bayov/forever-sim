@@ -1,16 +1,16 @@
-# Healer fairness pass 13 (2026-11-13, master 3a86d4a6b)
+# Healer fairness pass 14 (2026-11-15, master 70ea588bb)
 
 Result: quiet. No new finding. Still open: -20261104-4 (low; the boss files' `raidHealing` holds healer counts by
-class but no HPS by class, checked on all 7 files). Due because master changed `sim/shaman/flametongue_weapon.go`
-(rank 6 Flametongue Weapon cut by 5.5, from the Nov 12-13 logs). The same range (cad23ae1a..3a86d4a6b) also changed
-Frightskull Shaft (3.9 PPM, Forever disease), Windfury Weapon attacks proccing Windfury Totem (`sim/core/buffs.go`)
-and the Shadow/Frost Oil spell IDs (`sim/core/consumes.go`). All are melee or weapon-proc rules; no healer preset
-melees, and both shaman presets imbue Wizard Oil, not Flametongue.
+class but no HPS by class). Due because master changed `sim/druid/ferocious_bite.go` (an avoided Bite refunds 80% of
+its 35 Energy under Forever, 0cc2c3c8b) and `sim/druid/forms.go` (Sharpened Claws adds spell crit as well as melee
+crit). Both are feral-only: `GetFormShiftStats` is applied only on entering Cat (forms.go:144) or Bear (bear.go:98),
+and neither Restoration druid preset shifts or bites.
 
-Check: healbench built from 3a86d4a6b (`-tags with_db`, build_cli worktree), all 9 requests in their own role on
-the 7 boss files, seed 101, 1,000 iterations (`tools/audit/healer_fairness/screen.sh`): all 63 carry cells identical
-to `ref/healer_fairness/bench_71562a8.tsv`. `tools/healbench/req/` and `ui/healing_*` unchanged in the range, so
-sections 1 and 3 below still hold. The tables below are pass 11's, re-confirmed.
+Check: healbench built from 70ea588bb (`-tags with_db`, build_cli worktree), all 9 requests in their own role on
+the 7 boss files, seed 101, 1,000 iterations (`tools/audit/healer_rotations/baseline.sh`): all 63 rows identical
+to `ref/healer_fairness/bench_71562a8.tsv`. `tools/healbench/`, `tools/encounters/`, `ui/healing_*`, the healer
+class UIs and `proto/` unchanged in d630df2cb..70ea588bb, so sections 1 and 3 below still hold. The tables below
+are pass 11's, re-confirmed.
 
 ## 1. Same terms (the 9 requests)
 

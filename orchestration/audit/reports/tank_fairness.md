@@ -1,18 +1,20 @@
-# tank_fairness pass 14: 2026-11-13, master 3a86d4a6b
+# tank_fairness pass 15: 2026-11-15, master 70ea588bb
 
-Due: 1 watched file changed since cad23ae1a: `sim/shaman/flametongue_weapon.go` (4c4790e3e, Flametongue Weapon rank 6
-cut of 5.5 per hit from the Nov 12-13 logs). No tank request, encounter or tankbench file changed. Quiet: no new finding.
+Due: 2 watched files changed since d630df2cb: `sim/druid/ferocious_bite.go` (a missed, dodged or parried Bite refunds
+80% of its 35 Energy under Forever) and `sim/druid/forms.go` (Sharpened Claws gives spell crit as well as melee crit in
+the feral forms). No tank request, encounter or tankbench file changed. Quiet: no new finding.
 
 ## Method
 
-All three Warden presets (`tools/tankbench/req/shaman_warden_*.json`) imbue Rockbiter Weapon and none swaps imbues;
-`FlametongueWeaponCut` is read only by Flametongue itself (`flametongueRank` also feeds `imbue_swap.go`, which the
-Warden presets don't use). To confirm, `tools/audit/tank_fairness/bench.sh` on the three Warden presets × six scoring
-bosses, 3,000 iterations, seed 1, tankbench built at 3a86d4a6b with `--tags=with_db`: byte-identical to the
-`ref/tank_fairness/summary.tsv` baseline rows. The warrior, paladin and bear presets have no shaman code path and were
-not re-run. Baseline unchanged.
+Only the bear presets have a druid code path. `tools/audit/tank_fairness/bench.sh` on the three bear presets x six
+scoring bosses, 3,000 iterations, seed 1, tankbench built at 70ea588bb with `--tags=with_db`. The bear APL casts no
+Ferocious Bite, so the bite change is a no-op for it; the Sharpened Claws spell crit is worth +5.5 / +5.8 / +1.0 on the
+six-boss mean at Max threat / Balanced / Max survival (2794.0 / 1870.3 / 230.8 against 2788.5 / 1864.5 / 229.8;
+TPS +1.5, DTPS unchanged; within the ± 4.7 / 7.8 / 17.8 errors except Max threat, which is a fair gain from Forever's
+own aura). Order and distinctness unchanged: the bear stays third at every weight. Warrior, paladin and Warden were not
+re-run (no druid code path). Baseline `ref/tank_fairness/summary.tsv`: bear rows replaced with this run.
 
-## Pass 13's findings (unchanged, carried below)
+## Pass 13's tables (carried; bear rows updated to pass 15, seed 1)
 
 `orchestration/standards.md`. They are the Nov 11 paladin hotfixes (33b13e310: Judgement rolls as a ranged attack,
 Unsealed Wrath stores no echo from Windfury Totem swings, seal changes) and a1a1a81bb (no extra attack rolls Windfury
@@ -34,9 +36,9 @@ alike.
 
 | weight | order | scores seed 1 | seed 2 | pass 12 (seed 1) |
 |---|---|---|---|---|
-| Max threat | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2789 / 2557 | 4220 / 3238 / 2769 / 2550 | 4223 / 3263 / 2789 / 2557 |
-| Balanced | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1865 / 1219 | 3419 / 2801 / 1850 / 1211 | 3428 / 2832 / 1865 / 1219 |
-| Max survival | **Paladin = Warrior**, Bear, Warden | 1776 / 1776 / 230 / -2312 | 1786 / 1774 / 199 / -2317 | 1803 / 1776 / 230 / -2312 |
+| Max threat | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2794 / 2557 | 4220 / 3238 / 2769 / 2550 | 4223 / 3263 / 2789 / 2557 |
+| Balanced | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1870 / 1219 | 3419 / 2801 / 1850 / 1211 | 3428 / 2832 / 1865 / 1219 |
+| Max survival | **Paladin = Warrior**, Bear, Warden | 1776 / 1776 / 231 / -2312 | 1786 / 1774 / 199 / -2317 | 1803 / 1776 / 230 / -2312 |
 
 Only the paladin moved: -17.5 / -27.3 / -27.6 (seed 1), -21 / -26 / -30 (seed 2). Warrior, bear and Warden are
 unchanged to the point (none of their presets has an extra-attack source that rolled Windfury Totem in a scored way).
@@ -57,7 +59,7 @@ paladin second at Max threat and Balanced and level first at Max survival.
 |---|---|---|---|
 | warrior MT / Bal / MS | **4223** / 4081 / 3382 | 3298 / **3428** / 2980 | 524 / 1470 / **1776** |
 | paladin MT / Bal / MS | **3246** / 3214 / 3092 | 2788 / **2804** / 2763 | 1416 / 1576 / **1776** |
-| bear MT / Bal / MS | **2788** / 2718 / 2207 | 1633 / **1864** / 1712 | -1833 / -695 / **230** |
+| bear MT / Bal / MS (pass 13) | **2788** / 2718 / 2207 | 1633 / **1864** / 1712 | -1833 / -695 / **230** |
 | Warden MT / Bal / MS | **2556** / 2434 / 2347 | 990 / **1219** / 1182 | -3707 / -2426 / **-2312** |
 
 Each preset wins its own weight, and the three builds are distinct for every spec. The paladin's Max threat leads its

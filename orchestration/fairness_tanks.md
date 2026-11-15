@@ -1,7 +1,8 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-13, pass 13, master 97da1cca5, after the
+preset weight, its reasons, and the open questions. Last pass: 2026-11-15, pass 15, master 70ea588bb (bear +5 from
+Sharpened Claws' spell crit, order unchanged); last full run pass 13, master 97da1cca5, after the
 Nov 11 hotfixes for the paladin (Judgement rolls as a ranged attack, Unsealed Wrath stores no echo from Windfury Totem
 swings; 33b13e310) and the Windfury rule that no extra attack rolls Windfury (a1a1a81bb). The report has the details
 (orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
@@ -10,9 +11,9 @@ swings; 33b13e310) and the Windfury rule that no extra attack rolls Windfury (a1
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2789 / 2557 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1865 / 1219 |
-| Max survival (w 3) | Paladin = Warrior (tie), Bear, Warden | 1776 / 1776 / 230 / -2312 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2794 / 2557 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1870 / 1219 |
+| Max survival (w 3) | Paladin = Warrior (tie), Bear, Warden | 1776 / 1776 / 231 / -2312 |
 
 The hotfixes cost the paladin 17 / 27 / 28 (seed 1); the other three tanks are unchanged to the point. Max survival is
 now a tie within the error (seed 1: paladin 1775.8 ± 13.6, warrior 1775.5 ± 12.8; seed 2: 1785.7 against 1773.8). The

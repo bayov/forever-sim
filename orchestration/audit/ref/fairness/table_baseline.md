@@ -3,7 +3,7 @@
 | 1 | Lone Wolf (hunter) | Night Elf | 1291.8 | Windshaper 1286.7 / Night Elf | Night Elf (1291.8) | 1313.7 | -21.9 | 1291.8 (+0.0%) |
 | 2 | Marksmanship | Night Elf | 1235.0 | Orc 1234.7 / Night Elf | Orc (1234.7) | 1254.3 | -19.6 | 1235.0 (+0.0%) |
 | 3 | Beast Mastery | Orc | 1182.0 | Orc / Night Elf 1176.2 | Orc (1182.0) | 1195.6 | -13.6 | 1182.0 (+0.0%) |
-| 4 | Feral | Night Elf | 1153.8 | Windshaper 1136.2 / Night Elf | Night Elf (1153.8) | 1139.0 | +14.8 | 1153.8 (+0.0%) |
+| 4 | Feral | Night Elf | 1156.5 | Windshaper 1138.9 / Night Elf | Night Elf (1156.5) | 1139.0 | +17.5 | 1153.8 (+0.2%) |
 | 5 | Affliction | Undead | 1071.1 | Undead / Human 1067.5 | Undead (1071.1) | 1034.1 | +37.0 | 1071.1 (+0.0%) |
 | 6 | Frostfire | Human | 1065.7 | Undead 1058.3 / Human | Human (1065.7) | 1064.3 | +1.4 | 1065.7 (+0.0%) |
 | 7 | Destruction | Orc | 1063.2 | Orc / Human 1060.8 | Orc (1063.2) | 1063.4 | -0.2 | 1063.2 (+0.0%) |

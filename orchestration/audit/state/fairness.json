@@ -1,11 +1,12 @@
 {
  "last": {
-  "master": "d630df2cb0d485ea2d7646bc58f3aff87569a89c"
+  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
  },
- "last_pass_at": "2026-11-14T00:54:44Z",
- "pass": 41,
+ "last_pass_at": "2026-11-15T13:12:00Z",
+ "pass": 42,
  "result": "quiet",
- "baseline": "1bf5feb4b789ec35244822fbe172bd7c67673d89",
+ "baseline": "70ea588bb1166ce4fc989379bf73601af7408091",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T06:44:36Z"
+ "checked_at": "2026-11-15T13:12:56Z",
+ "baseline_note": "druid rows re-swept at 70ea588; all other rows from the 1bf5feb full sweep (their code and report hashes unchanged)"
 }
