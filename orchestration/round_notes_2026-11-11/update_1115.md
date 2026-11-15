@@ -133,12 +133,19 @@ Not checked: BM and MM hunters. They weren't in scope, since their shots don't u
 - **Execute twice:** Fury 1092.8 → 1106.1, Fury 2H 1103.0 → 1125.6, Arms 1069.3 → 1092.1, Arms vs Dragonkin 1126.6 → 1146.4. That is +13.4 to +22.9.
 - **Blood Fury as attack power only:** −5.3 to −6.5 for the warriors, −3.6/−3.7 for Enhancement, −1.8 to −3.5 for the hunters.
 
-## Needs a user ruling
+## Needs a user ruling (all four answered 2026-11-15, see Rulings below)
 
 1. **Fury 2H (1103.0) now beats the default dual-wield Fury (1092.8) at 180 s.** The 2026-11-12 "switch to best" ruling would make it the Warrior default, as 7462c17 did. It hasn't been switched; it's flagged in the wiki.
 2. **Narrow picks:** Arms Battle Shout duty's gate (+0.2 to +1.3), and the Feral cat gate's own share (+0.6 to +1.1).
 3. **The Enhancement Stormstrike hold** depends on Windfury Weapon's 1.5 s cooldown being separate from the totem's (assumption `wf_weapon_totem_icd`).
 4. **Ret twist builds:** `primarySeal` says Command where the main seal is Righteousness. This predates the round.
+
+## Rulings (user, 2026-11-15)
+
+1. **Two-hand Fury is the Warrior class default** ("switch to best": 1103.0 against dual wield Fury's 1092.8 at 180 s, deploy `53d112b1`). Done like 7462c17c8: both metas' `isDefault`, the UI's default gear, talents and rotation, the build order and the wiki. Only the flag moves; no re-sim, and the race sweep needs no run, since the report's race rows are per build (fury_2h has its own).
+2. **Windfury Weapon and Windfury Totem have separate cooldowns** (weapon 1.5 s, totem 100 ms). Assumption `wf_weapon_totem_icd` stays as set and no longer says unknown; standards 17 states it. The Enhancement Stormstrike hold (Stormstrike waits for Windfury Weapon's 1.5 s cooldown) depends on it and stands.
+3. **Keep both narrow picks:** the Arms Battle Shout duty's swing gate (+0.2 to +1.3) and the Feral cat gate during the totem's cooldown (+0.6 to +1.1).
+4. **Ret twist builds' `primarySeal` label: left as is, user OK 2026-11-15.** The rotation casts its seals directly, so the label has no effect.
 
 ## Also
 
