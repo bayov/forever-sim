@@ -590,8 +590,25 @@
                   }
                 },
                 {
-                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Stormstrike once Windfury Weapon's 1.5 sec cooldown is back, so its main hand strike can proc the weapon. The lines below go meanwhile. Without the talent, or without Windfury Weapon, ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "auraInternalCooldown": {
+                            "auraId": {
+                              "spellId": 16362
+                            }
+                          }
+                        },
+                        "op": "OpEq",
+                        "rhs": {
+                          "const": {
+                            "val": "0s"
+                          }
+                        }
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 17364

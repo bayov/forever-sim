@@ -95,7 +95,14 @@ gen() {
 # seeds). On Level 60 Windfury Weapon + Windfury Totem + Magma Totem leads Flametongue Weapon by 130 to 134, Rockbiter
 # by 130 to 133, Searing Totem by 18 to 30 and Flametongue Totem in Windfury Totem's place by 133 to 147 at 120 / 180 /
 # 300 sec (Flametongue Weapon is 119 to 133 behind on the other three builds).
-gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=0,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=16,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1" -level 60
+# Re-search after Windfury Totem's Forever rule (every landed main hand hit rolls it, Stormstrike's strike too, 100 ms
+# cooldown): Stormstrike waits for Windfury Weapon's 1.5 sec cooldown and lets the lines below it go meanwhile
+# (stormstrikeWfHold=1.5, stormstrikeWfIdle=0). At 120 / 180 / 300 sec on seeds 1 / 1000003, 20000 iterations: Level 60
+# +1.8 / +1.7 / +1.6 and +1.7 / +2.1 / +1.6, Imp GW +1.4 / +1.6 / +1.6 and +1.5 / +2.1 / +1.9. Idling through the hold
+# instead is +0.5 to +1.7. Keeping Stormstrike off the totem's 100 ms after a swing or a proc (stormstrikeTotemGate 1 to
+# 4) is -0.3 to +1.3, never a win at all six past 1 DPS: the sim seldom puts a Stormstrike there (5 of 146 in a 20 min
+# fight). No other knob moves.
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=0,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=16,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1,stormstrikeWfHold=1.5,stormstrikeWfIdle=0" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
@@ -112,7 +119,10 @@ gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=
 # Re-search after the Nov 13 log audit (Windfury Weapon's attacks roll Windfury Totem, Flametongue Weapon rank 6 cut):
 # Flame Shock goes ahead of Stormstrike again (flameShockFirst=2): +3.0 / +1.4 / +1.2 and +2.0 / +1.4 / +0.4 at 120 / 180 /
 # 300 sec on seeds 1 / 1000003, 20000 iterations.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5" -level 60
+# Windfury Totem's Forever rule re-search: the same Stormstrike hold for Windfury Weapon (stormstrikeWfHold=1.5,
+# stormstrikeWfIdle=0), +1.2 / +0.9 / +1.2 and +2.2 / +2.1 / +2.4 on Water Shield at 120 / 180 / 300 sec on seeds 1 /
+# 1000003, 20000 iterations.
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,stormstrikeWfHold=1.5,stormstrikeWfIdle=0" -level 60
 # On 2026-10-12, on the searched Water Shield build (050031-053030031005112151-052030001), Fire
 # Nova ahead of the shocks is +2.7 here too, and holding Earth Shock while Flame Shock has 1 sec
 # or less left (so the shock cooldown is back when the DoT runs out) +1.0: 762.3 as the mean of
@@ -134,7 +144,9 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNova
 # Round 70753 re-search after the November 10 hotfixes: Flame Shock ahead of Stormstrike (flameShockFirst=2), the bolt
 # after Earth Shock (earthShockBeforeBolt=1) and no Earth Shock hold for the DoT's end (earthShockFlameShockLeft=0):
 # +2.8 / +1.9 / +2.0 and +2.7 / +2.4 / +2.0 at 120 / 180 / 300 sec on seeds 1 / 1000003, 20000 iterations.
-gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=0,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
+# Windfury Totem's Forever rule re-search: the same Stormstrike hold for Windfury Weapon, +1.6 / +1.3 / +1.3 and +1.8 /
+# +1.6 / +1.5.
+gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=0,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1,stormstrikeWfHold=1.5,stormstrikeWfIdle=0" -level 60
 
 # The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
 # Searing Totem, Flame Shock when its DoT is down, Lightning Bolt, a lower rank once the mana would not

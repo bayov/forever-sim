@@ -43,7 +43,7 @@
     "Magma Totem when it is down, with at least 2s left",
     "Rage of the Farseer with the on-use trinket, Blood Fury with them, then the other cooldowns",
     "Flame Shock when its DoT is down",
-    "Stormstrike on cooldown",
+    "Stormstrike once Windfury Weapon's 1.5s cooldown is back, so its main-hand strike can proc the weapon (and Windfury Totem); the lines below go meanwhile",
     "Earth Shock otherwise",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova above 20% mana (after the shocks)",
@@ -80,5 +80,5 @@
     "The relic is Burning Totem, on its own gear set. Totem of the Storm is 0.1 to 1.5 DPS behind here.",
     "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 119 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 130."
   ],
-  "notes": "mksettings -spec enh -gear level60_phase1_synthetic_burning_totem -apl mana_tide -talents 03-055030031005112051-053051001001 -race Orc -duration 180 -level 60 (standards 23: every shaman drops its own party totems; the raid's only totems are a second shaman's Grace of Air and Flametongue Totem, standards 25, the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md"
+  "notes": "mksettings -spec enh -gear level60_phase1_synthetic_burning_totem -apl mana_tide -talents 03-055030031005112051-053051001001 -race Orc -duration 180 -level 60 (standards 23: every shaman drops its own party totems; the raid's only totems are a second shaman's Grace of Air and Flametongue Totem, standards 25, the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (mana_tide stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.6 / +1.3 / +1.3 and +1.8 / +1.6 / +1.5 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved"
 }
