@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	goproto "google.golang.org/protobuf/proto"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -158,7 +160,17 @@ func warriorWfGate(k Knobs, items []*proto.APLListItem, extra ...*proto.ActionID
 		}
 		for _, id := range gated {
 			if cs.GetSpellId().GetSpellId() == id.GetSpellId() {
-				item.Action.Condition = and(item.Action.Condition, gate)
+				if a, ok := item.Action.Condition.GetValue().(*proto.APLValue_And); ok {
+					// A new And: conditions can be shared between lines.
+					item.Action.Condition = and(append(append([]value{}, a.And.Vals...), gate)...)
+				} else {
+					item.Action.Condition = and(item.Action.Condition, gate)
+				}
+				note := "Not in the 0.1 sec after a main hand swing (Windfury Totem's 100 ms cooldown)."
+				if k["wfGate"] == 2 {
+					note = "Not within 0.1 sec of a main hand swing (Windfury Totem's 100 ms cooldown)."
+				}
+				item.Notes = strings.TrimSpace(item.Notes + " " + note)
 				break
 			}
 		}

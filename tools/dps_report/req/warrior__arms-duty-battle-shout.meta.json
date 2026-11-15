@@ -48,6 +48,7 @@
     "Mortal Strike on cooldown",
     "Overpower at 5+ Rage after a dodge or Bloodthrill",
     "Keep Rend up outside execute. Then Execute",
+    "Mortal Strike, Overpower, Rend, Execute and Hamstring wait out the 0.1s after a main hand swing, so a Windfury Totem proc from the swing (100 ms cooldown) doesn't take their roll",
     "Reckless Swings under 20 Rage, only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 90+ Rage and Hamstring filler at 10+, both outside execute"
   ],
@@ -74,7 +75,7 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 30303213032215201-05050005012-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27) (follows its base build, warrior__arms). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
+  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 30303213032215201-05050005012-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27) (follows its base build, warrior__arms). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++0.2 / +1.3 / +0.2 and +0.3 / +1.2 / +0.7 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__arms"
 }
