@@ -104,12 +104,11 @@ func (druid *Druid) registerFerociousBiteSpell() {
 }
 
 func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core.SpellConfig {
-	// A Bite that misses, is dodged or parried spends its 35 Energy and keeps the extra Energy and the
-	// combo points, as wowsims/forever has it since c91498c01 ("in game, a missed... Ferocious Bite costs
-	// its base energy and keeps its extra energy"). That reverses their earlier c742250b22, on a beta
-	// report in their PR #149 that "a failed Bite leaves zero energy", which the report no longer assumes.
-	// The rows carry ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000, 22568 to 31018), as Rip's do, but the
-	// game gives no refund of the 35 for it on Bite.
+	// A Bite that misses, is dodged or parried gives back 80% of its 35 Energy and keeps the extra
+	// Energy and the combo points under Forever. The rows carry ATTR_EX_1_DISCOUNT_POWER_ON_MISS
+	// (0x8000000, 22568 to 31018), as the rogue finishers' do, and wowsims/forever's 0384d8f98c
+	// measured it on a 1.60.1.70862 log: five avoided Bites cost 6.1 to 6.7 Energy. That replaces
+	// their c91498c01, which spent the 35 and kept the rest.
 	//
 	// Predatory Discipline (1328613, a Feral row 4 talent since the launch realms' 2026-10-30
 	// hotfix): "Your Ferocious Bite ability no longer converts extra Energy into damage, but still
@@ -134,7 +133,8 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 		Flags:       SpellFlagOmen | core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost: 35,
+			Cost:   35,
+			Refund: core.TernaryFloat64(druid.Env.IsForever(), 0.8, 0),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -170,6 +170,8 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			}
 			if result.Landed() {
 				druid.SpendComboPoints(sim, spell)
+			} else {
+				spell.IssueRefund(sim)
 			}
 		},
 	}
