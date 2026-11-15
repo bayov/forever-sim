@@ -629,7 +629,8 @@ func (druid *Druid) newWildGrowthConfig(r healRank, rank int) core.SpellConfig {
 	}
 }
 
-// Wild Growth's ranks share one cooldown.
+// Wild Growth's ranks share one cooldown (client SpellCategory 1237, 6 sec; wago push 114075 and
+// Blizzard's hotfixes of 2026-11-13).
 func (druid *Druid) wildGrowthTimer() *core.Timer {
 	if druid.wildGrowthCD == nil {
 		druid.wildGrowthCD = druid.NewTimer()

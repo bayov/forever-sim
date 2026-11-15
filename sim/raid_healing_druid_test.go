@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -435,6 +436,25 @@ func TestDruidWildGrowth(t *testing.T) {
 			if r := (ticks[0].afterMods / ticks[0].base) / (ticks[6].afterMods / ticks[6].base); !druidNear(r, 1.06/0.94, 0.003) {
 				t.Errorf("the first tick heals %.3f times the last, want %.3f", r, 1.06/0.94)
 			}
+		}
+	}
+}
+
+// Wild Growth's three ranks share one 6 sec cooldown (client SpellCategory 1237; Blizzard's
+// hotfixes of 2026-11-13, wago push 114075). The rotation casts rank 3 and else rank 2 (once rank 3
+// costs more mana than is left), so with a shared cooldown no two casts of either rank come closer
+// than the 3 sec cast and the 6 sec cooldown; with one cooldown a rank, rank 2 follows each rank 3.
+func TestDruidWildGrowthRanksShareCooldown(t *testing.T) {
+	const wgRank2 = 1238214
+	l := runDruidLog(t, druidRaid(t, map[string]int{"wildGrowth": 1}, 3, castAt(wgTop, "Tank", ""), castAt(wgRank2, "Tank", "")))
+	casts := append(append([]castEvent{}, l.casts[wgTop]...), l.casts[wgRank2]...)
+	if len(l.casts[wgTop]) < 2 {
+		t.Fatalf("%d casts of Wild Growth rank 3, want several", len(l.casts[wgTop]))
+	}
+	sort.Slice(casts, func(i, j int) bool { return casts[i].at < casts[j].at })
+	for i := 1; i < len(casts); i++ {
+		if gap := casts[i].at - casts[i-1].at; gap < casts[i-1].castTime+6-0.001 {
+			t.Errorf("Wild Growth cast at %.2f, %.2f sec after the last one, want at least the cast and 6 sec", casts[i].at, gap)
 		}
 	}
 }
