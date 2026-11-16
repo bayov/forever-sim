@@ -439,3 +439,10 @@ wording instead.
   - Probably stale after the Nov 13–15 Windfury Totem, Flametongue and item commits; PR #130 also changes those files. Diff each moved *.results block against those commits, then `make update-tests`.
   - `sim/web` also fails at setup in cloud sessions because `binary_dist` isn't built.
   - 2026-11-15: gone on update_1115 (on master 25ce81de7): the full suite (`./sim/...` without sim/web) passes every shaman package; only the report hashes needed rewriting, done at publish.
+- [ ] 2026-11-16 — Finish the items revealed Nov 15–16 that PR #132 couldn't take, and the Krol'dok Resolve hotfix (foreverchanges.pro, build 70938; wago push 114115) [source: foreverchanges]
+  - 22345 Totem of Tides (was Totem of Rebirth): "Reduces the Mana cost of Riptide by 5%". PR #132 takes the name only; needs code in `sim/shaman/healing.go`. https://foreverchanges.pro/item/22345
+  - 282700 Shadow Scalper: chance on hit, shadow bolt volley for 33 to each nearby enemy, not modelled; PR #132 adds the weapon's plain stats. https://foreverchanges.pro/item/282700
+  - 286641 Cannibal's Cleaver "+1 Axes Skill" entered as one-hand Axes (does nothing on a two-hander). If Forever means both, switch it to two-hand Axes. https://foreverchanges.pro/item/286641
+  - foreverchanges vs Wowhead Forever one-point gaps, PR #132 uses foreverchanges: 22336 Draconian Aegis block 39 vs 40, 22315 Hammer of Revitalization healing 130 vs 131. Recheck with itemsparse.py on the next build.
+  - Krol'dok Resolve 1324298 (Krol'dok Battlegear set bonus, heal on block): server hotfix SpellAuraOptions 248630 ProcCategoryRecovery 0 → 1000 (1 s ICD), ProcChance 100, ProcTypeMask 680, logged Nov 16 17:54 UTC. The sim has no Krol'dok code; model it with the ICD if the tank sims use the set. https://wago.tools/hotfixes (product wowf, push 114115)
+  - hidden_items.json still marks 22343, 22345, 18673, 22336, 22315, 22331, 22342, 22398 "classic"; rerun dbcache.py then hidden.py after PR #132 merges.
