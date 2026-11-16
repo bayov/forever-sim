@@ -570,16 +570,14 @@
         "loss": 0,
         "bis": true,
         "enchant": 1219587,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · 75 Reals, unverified · no Real source"
+        "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 272414,
         "name": "Howler's Furs",
         "dps": 999.48,
         "loss": 3.12,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · 75 Reals, unverified · no Real source"
+        "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 21187,
@@ -603,8 +601,7 @@
         "name": "Stalwart Cloak",
         "dps": 993.23,
         "loss": 9.37,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · ? Reals · no Real source"
+        "note": "Pix Xizzix"
       },
       {
         "id": 18496,
@@ -1307,8 +1304,7 @@
         "name": "Windseeker's Belt",
         "dps": 997.53,
         "loss": 5.07,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · ? Reals · no Real source"
+        "note": "Pix Xizzix"
       },
       {
         "id": 14614,
@@ -1337,8 +1333,7 @@
         "name": "Stormseeker's Girdle",
         "dps": 996.66,
         "loss": 5.95,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · ? Reals · no Real source"
+        "note": "Pix Xizzix"
       },
       {
         "id": 20150,
@@ -2054,8 +2049,7 @@
         "dps": 1002.61,
         "loss": 0,
         "bis": true,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · 125 Reals, unverified · use not simmed"
+        "note": "Pix Xizzix · 125 Reals · use not simmed"
       },
       {
         "id": 19289,
@@ -2140,8 +2134,7 @@
         "name": "Weakness Analyzer",
         "dps": 995.32,
         "loss": 7.29,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · ? Reals · unique with ACA"
+        "note": "Pix Xizzix · unique with ACA"
       },
       {
         "id": 280074,
@@ -2407,8 +2400,7 @@
         "dps": 1002.61,
         "loss": 0,
         "bis": true,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · 50 Reals, unverified · no Real source"
+        "note": "Pix Xizzix · 50 Reals"
       },
       {
         "id": 22395,
@@ -2422,8 +2414,7 @@
         "name": "Burning Totem",
         "dps": 1000.4,
         "loss": 2.21,
-        "avail": "doubtful",
-        "note": "Pix Xizzix · ? Reals · no Real source"
+        "note": "Pix Xizzix"
       }
     ]
   },
