@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
+  "master": "f30078da1e116caec42912ab43ee82b929e91919"
  },
- "last_pass_at": "2026-11-15T18:45:51Z",
- "pass": 66,
+ "last_pass_at": "2026-11-16T00:49:01Z",
+ "pass": 67,
  "result": "quiet",
- "note": "Pass 66: forever_items.go changed only ids 282027 and 286590, in no level60 gear set; standards.md change was item 17 (Windfury Totem), not a gear rule; no synthetic item, set, trinket or enchant changed.",
+ "note": "Pass 67: forever_enchants.json changed only its meta (build 70938+hf, fetch time); standards.md change was item 17 (Windfury Weapon/Totem cooldowns), not a gear rule; no synthetic item, set, trinket or enchant changed.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T19:42:01Z"
+ "checked_at": "2026-11-16T00:58:31Z"
 }

@@ -1,26 +1,27 @@
-# Healer fairness pass 15 (2026-11-15, master 25ce81de7)
+# Healer fairness pass 16 (2026-11-16, master f30078da1)
 
-Result: findings. New: -20261115-1 (high; Wild Growth's doubled tick lowers the raid druid's carry 1.414 -> 1.392,
-from third to last in the raid role). Still open: -20261104-4 (low).
+Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth),
+-20261104-4 (low).
 
-Due because master changed 9 watched files since 70ea588bb. What reaches a healer:
-- `sim/druid/healing.go`: Wild Growth tick coefficient 0.033 -> 0.066 (client 1.60.1.70938). The raid druid preset
-  casts Wild Growth; the tank preset doesn't.
-- `sim/paladin/talents.go`, `judgement.go`, `soc.go`, `sor.go`, `seal_of_fury.go`, `consecration.go`: Two-Handed Weapon
-  Specialization's Holy part and Judgement of Command's defense type. Damage only; the Holy paladin presets heal.
-- `sim/shaman/windfury_weapon.go`, standards 17: Windfury Totem and Weapon melee rules. No healer melees.
+Due because master changed 1 watched file since cfc7f9382: `orchestration/standards.md`. What changed in
+cfc7f9382..f30078da1 that could reach a healer:
+- standards 17: Windfury Weapon and Windfury Totem keep separate cooldowns (user ruling 2026-11-15). Melee only.
+- `assets/database/db.bin` / `db.json` item refresh (client 70938, AtlasLoot, Wowhead). Healer rows use the
+  synthetic set (standards 35); no effect measured.
+- `sim/core/sim_concurrent.go`: a player's own item database added once before the splits. No behaviour change
+  for the healbench requests.
+- `ui/core/forever/racials.meta.json`: build stamp only.
+- `tools/healbench/`, `tools/encounters/`, `ui/healing_*`, `proto/`, class sim code for the healers: unchanged.
 
 ## 1. Same terms
 
-`tools/healbench/req/`, `tools/encounters/`, `ui/healing_*` and `proto/` unchanged in 70ea588bb..25ce81de7, so pass
-11's check holds: everything but the healer row is identical in all 9 requests; level 60, the same consumable
-tier, Blessing of Kings and Improved Wisdom, 200 ms reaction, each class's best race. No unexplained difference.
+Requests unchanged, so pass 11's check holds: everything but the healer row is identical in all 9 requests.
 
 ## 2. The numbers (healbench -carry, 1,000 iterations, seed 101, each file at its own length)
 
-Healbench built from 25ce81de7 (`--tags=with_db`); rows in `ref/healer_fairness/bench_25ce81d.tsv` (summary.tsv
-format, `tools/audit/healer_rotations/baseline.sh`). 56 of 63 cells identical to `bench_71562a8.tsv`; only the raid
-druid's 7 moved.
+Healbench built from f30078da1 (`--tags=with_db`, tree from `tools/audit/build_cli.sh`), run with
+`tools/audit/healer_rotations/baseline.sh <healbench> <out> 1000 -seed 101`. The output is byte-identical to
+`ref/healer_fairness/bench_25ce81d.tsv` (all 63 cells), so no new ref file. Table (unchanged from pass 15):
 
 | Request | Onyxia | Brood | Chrom | Golem | Magma | Rag | Vael | Mean | Rank |
 |---|---|---|---|---|---|---|---|---|---|
@@ -34,28 +35,8 @@ druid's 7 moved.
 | shaman_restoration_raid | .946 | .885 | 1.115 | 2.674 | 1.887 | 1.236 | 1.138 | 1.412 | 3 |
 | druid_restoration_raid | .944 | .911 | 1.107 | 2.634 | 1.839 | 1.264 | 1.048 | 1.392 | 4 (was 3, 1.414) |
 
-Spread: tank 1.152-1.278 (unchanged), raid 1.392-1.461 (4.7%, was 3.5%). Nothing past the 15% line.
-
-### The raid druid and Wild Growth (-20261115-1)
-
-Paired against a 0.033 build of the same master (scratch worktree, only the constant changed), carry:
-
-| File | seed | 0.033 | 0.066 |
-|---|---|---|---|
-| Vaelastrasz | 101 / 202 / 303 | 1.152 / 1.158 / 1.145 | 1.048 / 1.039 / 1.031 |
-| Onyxia | 101 / 202 / 303 | .991 / .985 / .984 | .944 / .947 / .987 |
-
-A heal worth twice as much costing carry means the preset doesn't use it well. Its Wild Growth line waits until the
-most hurt misses `spellExpectedHealing(Wild Growth)`, which doubled. Gate screen (seed 101, 1,000 it):
-
-| Wild Growth gate | Onyx | Brood | Chrom | Golem | Magma | Rag | Vael | Mean |
-|---|---|---|---|---|---|---|---|---|
-| 1.0x (preset) | .944 | .911 | 1.107 | 2.634 | 1.839 | 1.264 | 1.048 | 1.392 |
-| 0.5x (old threshold) | .972 | .921 | 1.132 | 2.458 | 1.793 | 1.271 | 1.210 | 1.394 |
-| 0.25x | .930 | .910 | 1.103 | 2.344 | 1.671 | 1.256 | 1.174 | 1.341 |
-
-More Wild Growth wins Vaelastrasz (raid-wide fire) and loses Golemagg and Magmadar, so it needs a proper rotation
-re-tune (healer_rotations / rotopt), not one constant. Sent as a worker fix.
+Spread: tank 1.152-1.278, raid 1.392-1.461 (4.7%). Nothing past the 15% line. The raid druid's fall to last
+is -20261115-1, still open (no change to `sim/druid` or its preset on master).
 
 ## 3. What a role rewards
 

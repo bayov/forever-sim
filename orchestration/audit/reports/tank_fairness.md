@@ -1,22 +1,25 @@
-# tank_fairness pass 16: 2026-11-15, master 25ce81de7
+# tank_fairness pass 17: 2026-11-16, master f30078da1
 
-Due: 16 watched files changed since 70ea588bb: PR #130 (Nov 13 hotfixes: Windfury Totem rolls on every landed main
-hand melee hit, standards 17; Judgement of Command melee again; paladin seal and talent changes), the warrior's Balanced
-and Max survival re-tune (f2a5dfe25: Revenge before Shield Slam, an 8 s refresh window, a 40 rage gate), rotopt's
-Windfury gate knobs, and a Wild Growth cooldown fix in `sim/druid/healing.go`. Quiet: no new finding.
+Due: 1 watched file changed since cfc7f9382: `orchestration/standards.md` 17 now says Windfury Weapon (1.5 sec, spell
+439431) and Windfury Totem keep separate cooldowns (user ruling 2026-11-15). No tank uses Windfury Weapon (the Warden's
+three presets imbue Rockbiter), and the totem rule is unchanged, so it applies to every tank alike. Quiet: no new finding.
 
 ## Method
 
-`tools/audit/tank_fairness/bench.sh` on the 12 presets x six scoring bosses, 3,000 iterations, seed 1, tankbench built
-at 25ce81de7 with `--tags=with_db`. Attribution: tankbench built at b02b98c72 (before PR #130) and d4325b775 (its
-merge), the bear's three presets, the Warden's Max threat and Balanced and the paladin's Balanced, same HEAD requests.
-New baseline `ref/tank_fairness/summary.tsv` (seed 1, 3,000, all 12 presets).
+Other changes on master since cfc7f9382 that could reach a tank: the item database and its inputs (70938 client data,
+Nov 13 hotfixes, AtlasLoot, in-game sightings), `racials.meta.json` (metadata only) and `sim/core/sim_concurrent.go`
+(a player's own database added once; no tank request carries one). No change to `tools/tankbench`, `tools/encounters`,
+the tank requests or the tank UIs. Re-ran `tools/audit/tank_fairness/bench.sh` on the 12 presets x six scoring
+bosses, 3,000 iterations, seed 1, tankbench built at f30078da1 with `--tags=with_db`: all 84 rows (score, TPS, DTPS,
+healing needed) identical to `ref/tank_fairness/summary.tsv` within 0.5. Baseline kept.
 
 ## Same terms
 
-Only the two warrior requests changed, and only in their APL (priority order and two thresholds); level, set,
-consumables, buffs, race, professions and reaction time are byte-identical to pass 13. The open unequal terms stand
-(paladin potion -20261105-1, Warden races -20261105-2). The standards change (17) applies to every tank alike.
+Requests byte-identical to pass 16. The open unequal terms stand: the paladin still has Major Mana Potion and no
+potion action (-20261105-1), the Warden still plays Night Elf / Night Elf / Undead (-20261105-2), and the legacy
+`warrior_protection.json` is still present (-20261104-5).
+
+The ranking and rewards below are pass 16's, unchanged on this master.
 
 ## Ranking (six-boss mean, own weight, seed 1)
 

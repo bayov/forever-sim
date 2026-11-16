@@ -1,8 +1,8 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass and full run: 2026-11-15, pass 16, master
-25ce81de7, after the Nov 13 hotfixes (PR #130: Windfury Totem rolls on every landed main hand melee hit, standards 17;
+preset weight, its reasons, and the open questions. Last pass: 2026-11-16, pass 17, master f30078da1 (re-run identical
+to pass 16). Last full change: pass 16, master 25ce81de7, after the Nov 13 hotfixes (PR #130: Windfury Totem rolls on every landed main hand melee hit, standards 17;
 Judgement of Command melee again) and the warrior's Balanced and Max survival re-tune (f2a5dfe25). The report has the details
 (orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
 

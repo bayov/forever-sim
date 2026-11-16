@@ -1,18 +1,17 @@
-# Consumables pass 87 (master cfc7f9382)
+# Consumables pass 88
 
-No new findings.
+Master f30078da1 (last audited cfc7f9382). Client 1.60.1.70938, no newer build.
 
-## Moved since 70ea588bb
-- ui/{enhancement_shaman,feral_druid,retribution_paladin,warrior}/presets.ts: comments, APL tooltips only (rotation re-tunes for Windfury Totem and Judgement of Command). Consumes, raid buffs, debuffs, gear untouched.
-- sim/core/buffs.go: Windfury Totem now rolls on every landed main hand melee hit (not a consumable value; totem AP +95/+179/+246 kept per ruling 2026-11-15).
-- sim/common/item_effects.go: Silithid Queen's Husk (286590) +29 AP vs Humanoids, Rune of the Dawn 46 and Seal of the Dawn 78 (Forever values, cited from client 70938 in the code comments). None is in a preset, level60 gear set or mksettings (git grep).
-- tools/dps_report/assumptions_def.py: new Blood Fury weapon and Execute Windfury rows, paladin Holy rows; no buff/oil assumption changed.
-- orchestration/standards.md item 17 text only.
+## Findings
+None new.
 
 ## Verified
-- scan.sh on master: banned, Revelation, non-synthetic trinkets, double crit elixir sections all empty. Raid air/weapon totems match the standing check (melee: GoA + WF; hunter: GoA + WF per scan; enhancement: GoA only, own totems).
-- Scan count "minor-armor exclusive effects" prints 3 (ref 2), but debuffs.go is unchanged since the last pass, so it is a scan-pattern artifact, not a change.
-- wago latest build 70938, already audited. Class branches are stale copies, not audited.
+- forever_enchants.json: meta build and fetch date only.
+- standards.md 17: Windfury Weapon and Totem separate cooldowns ruling (no consumable effect).
+- assumptions_def.py: wf_weapon_totem_icd text only.
+- ui/warrior/presets.ts: default gear, APL and talents switched to two-hand Fury; consumes unchanged.
+- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty; totem counts as expected.
+- minor-armor exclusive-effect count is 3 (ref says 2); debuffs.go did not change since the last pass, so not new.
 
 ## Open items
-The two older low findings stay open (Inferior Stamina naming, feral mksettings Sapper).
+consumables-20261110-1 and consumables-20261105-1 (both low) stay open.

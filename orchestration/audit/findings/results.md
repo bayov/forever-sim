@@ -30,6 +30,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-14, master 1bf5feb4b: 760d4c1e5 re-simmed Enhancement; builds.json and the four Enhancement metas now match the shared run (builds.json 68 of 68 within 1.5). Metas off by more than 0.5: 41 of 68 (was 43), all in the known families (warrior up to -119, Affliction +37, hunters -10 to -26, feral +14, rogues, Ret Shock crusader -63). Drift: only the known feral sapper line.
 - update 2026-11-15, master 70ea588bb: builds.json matches the shared run on 68 of 68 within 1.5 (8c75031e2 Feral re-sim). Metas off by more than 0.5: 41 of 68, same families; feral-cat metas +16.8 behind (1139.0 vs 1155.8) after the Ferocious Bite refund (0cc2c3c8b). Drift: only the known feral sapper line.
 - update 2026-11-15, master cfc7f9382: 2694dc2ed re-simmed 30 builds and builds.json matches the shared run on 68 of 68 within 1.5. Metas off by more than 0.5: 28 of 68 (was 41): Affliction +31.9 to +36.7, hunters -9 to -22 (lone-wolf, marksmanship, BM), rogue combat/seal-fate -10 to -20, mage fire -4.9. Drift: only the known feral sapper line.
+- update 2026-11-16, master f30078da1: builds.json matches the shared run on 68 of 68 within 1.5; metas off by more than 0.5: 28 of 68, same families. Only isDefault flipped on warrior fury / fury_2h metas (two-hand default ruling), no DPS change.
 
 ### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
 - severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)

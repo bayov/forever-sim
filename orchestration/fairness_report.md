@@ -8,6 +8,8 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 
 5000 iterations, seed 1, preset rotation and gear at every race, on the 25ce81d requests and the loop's 25ce81d CLI. "Before" is the 70ea588 table. "Report's published" is the req meta's published.dps; builds.json matches the loop's 5k run of master within 1.5 on all 68 builds.
 
+Still current at f30078d (pass 44, 2026-11-16): the item database pulls and Nov 13 hotfixes change no item or enchant any DPS request uses, the `sim_concurrent.go` change only loads a player's own database once, and the warrior default moved to two-hand Fury (metas and presets only, user ruling 2026-11-15). The loop's 20k run of f30078d matches this table at the report race on all 43 base builds within 2.1 (5k-vs-20k noise). No re-sweep; no new finding.
+
 | # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (70ea588) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Lone Wolf (hunter) | Night Elf | 1291.8 | Windshaper 1286.7 / Night Elf | Night Elf (1291.8) | 1313.7 | -21.9 | 1291.8 (+0.0%) |

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
+  "master": "f30078da1e116caec42912ab43ee82b929e91919"
  },
- "last_pass_at": "2026-11-15T19:25:00Z",
- "pass": 43,
+ "last_pass_at": "2026-11-16T00:52:33Z",
+ "pass": 44,
  "result": "quiet",
  "baseline": "25ce81de775586c04de4b7d6408f4f32272e5c24",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T19:42:01Z",
+ "checked_at": "2026-11-16T00:58:31Z",
  "baseline_note": "full re-sweep of every base request at every race at 25ce81d (5k, seed 1)"
 }

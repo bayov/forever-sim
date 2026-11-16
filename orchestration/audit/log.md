@@ -416,3 +416,12 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-15 19:42 | tank_fairness | pass 16 | master 25ce81de7 | quiet | order unchanged; bear +12% at max threat
 2026-11-15 19:42 | healer_rotations | pass 14 | master 25ce81de7 | 1 new findings | resto druid Wild Growth threshold needs re-tune
 2026-11-15 19:42 | healer_fairness | pass 15 | master 25ce81de7 | 1 new findings | raid druid carry fell to last after Wild Growth doubled
+2026-11-16 00:58 | results | pass 92 | master f30078da1 | quiet | no DPS-moving changes; builds.json matches shared run 68/68
+2026-11-16 00:58 | gear | pass 67 | master f30078da1 | quiet | enchants meta only; standards 17 not a gear rule
+2026-11-16 00:58 | consumables | pass 88 | master f30078da1 | quiet | moved files non-consumable; scan clean
+2026-11-16 00:58 | mechanics | pass 85 | master f30078da1 | quiet | sim_concurrent.go plumbing only; no new build
+2026-11-16 00:58 | fairness | pass 44 | master f30078da1 | quiet | shared run matches baseline within 2.1 DPS
+2026-11-16 00:58 | healer_gear | pass 10 | master f30078da1 | quiet | only standards 17 changed
+2026-11-16 00:58 | healer_fairness | pass 16 | master f30078da1 | quiet | healbench byte-identical to baseline
+2026-11-16 00:58 | tank_gear | pass 11 | master f30078da1 | quiet | only standards 17 changed
+2026-11-16 00:58 | tank_fairness | pass 17 | master f30078da1 | quiet | tankbench 84 rows match baseline
