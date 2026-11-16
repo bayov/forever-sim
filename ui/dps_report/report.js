@@ -1580,29 +1580,27 @@ export function startReport(dash, events) {
   // stats (the gray body) and what each of its racials adds, which shows how strong each racial is.
   //
   // The Specs page shows the same card for its preset (fixed), with only the faction and the boss type racials switch.
-  // Where every DPS race bar starts, as a share of its preset's best entry: the lowest point any bar reaches (a race's
-  // base stats, a racial's piece, the error line) on any preset without the boss type racials (user ruling 2026-11-16:
-  // no margin, and with them on, a piece below the start is cut off at the left edge). One start for every filter and
-  // preset, so the same gap looks the same size on every class and spec.
-  let rfCache = {};
-  const raceFloor = () => {
+  // A start most views share, as a share of the preset's best entry. Each preset on its own wants its bars to start a
+  // bit below its lowest point (base stats, a racial's piece, the error line), less a margin, like drawRaceRank. This
+  // is the start three presets in four fit within (user ruling 2026-11-16), so most filters line up on it and the same
+  // gap looks the same size; a view that needs to go lower still does.
+  let rcCache = {};
+  const raceCommonLo = () => {
     const rv = rowsOf('race_variants'), rb = rowsOf('race_breakdown') || [];
-    if (rfCache.rv === rv && rfCache.rb === rb) return rfCache.lo;
+    if (rcCache.rv === rv && rcCache.rb === rb) return rcCache.lo;
     const bd = d3.group(rb, (q) => q.build + '|' + q.race);
-    let low = 100;
-    {
-      for (const [build, rs] of d3.groups(raceRows('') || [], (r) => r.build)) {
-        const best = rs[0].dps;
-        for (const r of rs) {
-          let at = 0;
-          const pts = [r.dps - (r.se || 0)];
-          for (const sg of segsOf(r, bd.get(build + '|' + r.race) || []).segs) { if (at > 0) pts.push(at); at += +sg.r.dps; if (at > 0) pts.push(at); }
-          low = Math.min(low, ...pts.map((v) => (100 * v) / best));
-        }
+    const los = d3.groups(raceRows('') || [], (r) => r.build).map(([build, rs]) => {
+      const best = rs[0].dps, pts = [], his = [];
+      for (const r of rs) {
+        let at = 0;
+        pts.push(r.dps - (r.se || 0)); his.push(r.dps + (r.se || 0));
+        for (const sg of segsOf(r, bd.get(build + '|' + r.race) || []).segs) { if (at > 0) pts.push(at); at += +sg.r.dps; if (at > 0) pts.push(at); }
       }
-    }
-    const lo = Math.max(0, low);
-    rfCache = { rv, rb, lo };
+      const hi = d3.max(his), lo0 = d3.min(pts);
+      return (100 * Math.max(0, lo0 - 0.35 * Math.max(hi - lo0, 4))) / best;
+    }).sort(d3.ascending);
+    const lo = los.length ? d3.quantileSorted(los, 0.25) : 0;
+    rcCache = { rv, rb, lo };
     return lo;
   };
   const drawRaceRank = (fixed) => {
@@ -1648,8 +1646,10 @@ export function startReport(dash, events) {
     }).sort((p, q) => q.value - p.value);
     for (const r of rows) { let at = 0; for (const sg of r.segs) { sg.from = at; at += sg.v; sg.to = at; } }
     const ends = rows.flatMap((r) => r.segs.flatMap((sg) => [sg.from || sg.to, sg.to]).filter((v) => v > 0).concat(one ? [r.dps - r.se, r.dps + r.se] : [r.value]));
-    // The bars start at the same share of the best entry on every preset and filter (raceFloor), and end at the best.
-    const best = one ? d3.max(rows, (r) => r.dps) : 100, lo = (raceFloor() * best) / 100, hi = Math.max(best, d3.max(ends));
+    const hi = d3.max(ends), lo0 = Math.min(d3.min(ends), d3.min(rows, (r) => r.segs[0].to));
+    // The view's own start, or the one most views share (raceCommonLo) when that's lower, rounded to a tenth.
+    const own = Math.max(0, lo0 - 0.35 * Math.max(hi - lo0, one ? 4 : 0.5)), common = (raceCommonLo() * (one ? rows[0].dps : 100)) / 100;
+    const lo = own < common ? own : Math.floor(common * 10) / 10;
     const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo);
     const fv = (v) => (one ? f1(v) : `${f2(v)}%`), fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
@@ -3834,33 +3834,6 @@ export function startReport(dash, events) {
   // switch, bar pieces, captions, legend and tooltips), with the preset's own score as the value: a tank's at its
   // setup, a healer's for its role. Each bar is the race's base stats and what each of its racials adds
   // (race_breakdown), the score's error the thin line, and the gap between two races uses their paired error (raceSe).
-  // Where every Tanking or Healing race bar starts, the same on every preset of the mode, like the DPS card's
-  // raceFloor: the lowest point any bar reaches (base stats, a racial's piece, the error line) on any preset, less a
-  // margin. A healer's is a share of the preset's best race; a tank's score can go below 0, so a tank's is the most
-  // points below the preset's best race.
-  let rrfCache = {};
-  const roleRaceFloor = (R, D, tank) => {
-    const races = rowsOf(D.raceRows), parts = D.raceParts ? rowsOf(D.raceParts) : [];
-    if (rrfCache.races === races && rrfCache.parts === parts) return rrfCache.lo;
-    const bd = d3.group(parts, (q) => q.build + '|' + q.race);
-    let low = 1, gap = 0;
-    for (const b of rowsOf(D.builds) || []) {
-      const pick = R.ownPick(b);
-      const rs = races.filter((r) => r.build === b.id).map((r) => ({ r, v: mval(r, 'score', pick), se: mse(r, 'score', pick) })).filter((q) => q.v != null);
-      if (!rs.length) continue;
-      const best = d3.max(rs, (q) => q.v);
-      for (const { r, v, se } of rs) {
-        const mine = bd.get(b.id + '|' + r.race) || [];
-        const base = mine.find((q) => q.part === 'base');
-        const pts = [v - (se || 0)];
-        if (base) { let at = +base.v; pts.push(at); for (const q of mine.filter((q) => q.part !== 'base' && q.active)) { at += +q.v; pts.push(at); } }
-        for (const t of pts) { gap = Math.max(gap, best - t); if (best > 0) low = Math.min(low, t / best); }
-      }
-    }
-    const lo = tank ? Math.max(gap, 4) * 1.35 : Math.max(0, low - 0.35 * (1 - low));
-    rrfCache = { races, parts, lo };
-    return lo;
-  };
   const drawRoleSpecRaces = (b) => {
     const R = curRole(), D = curDs(), host = $('#rs-races'), axis = $('#rr-axis'), card = host.closest('.fv-card');
     $('#rs-races-card').hidden = !D.raceRows;
@@ -3901,10 +3874,8 @@ export function startReport(dash, events) {
       r.tie = p && isTie(r.v, raceSe(r, p), p.v, 0) ? tieText(p.race, r.v, raceSe(r, p), p.v, 0, unitName) : null;
     }
     const ends = rows.flatMap((r) => r.segs.flatMap((sg) => [sg.from || sg.to, sg.to]).concat(r.se != null ? [r.v - r.se, r.v + r.se] : [r.v]));
-    // The bars start at the same point on every preset of the mode (roleRaceFloor): as far below the best race in
-    // points for a tank, at the same share of the best race for a healer.
-    const floor = roleRaceFloor(R, D, tank), hi = Math.max(best, d3.max(ends));
-    const lo = tank ? best - floor : best * floor;
+    const hi = d3.max(ends), lo0 = d3.min(ends), span = Math.max(hi - lo0, tank ? 4 : 0.02);
+    const lo = lo0 >= 0 ? Math.max(0, lo0 - 0.35 * span) : lo0 - 0.35 * span;
     const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo || 1);
     const kinds = new Set();
     const icon = (part) => [...bd.values()].flat().find((q) => q.part === part)?.icon;
