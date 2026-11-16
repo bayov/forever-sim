@@ -613,7 +613,8 @@
         "id": 284866,
         "name": "Windserpent Scaled Cloak",
         "dps": 987.45,
-        "loss": 15.16
+        "loss": 15.16,
+        "note": "On AH ~5.1g"
       },
       {
         "id": 10258,
@@ -795,7 +796,8 @@
         "id": 252483,
         "name": "Dawn Armor",
         "dps": 994.28,
-        "loss": 8.33
+        "loss": 8.33,
+        "note": "On AH ~350g · or Leatherworking craft"
       },
       {
         "id": 18530,
@@ -960,7 +962,8 @@
         "name": "Time-Forgotten Bindings",
         "dps": 994.81,
         "loss": 7.8,
-        "unsourced": true
+        "unsourced": true,
+        "note": "On AH ~14g"
       },
       {
         "id": 19582,
@@ -1141,7 +1144,8 @@
         "name": "Stonerender Gauntlets",
         "dps": 1000.07,
         "loss": 2.53,
-        "unsourced": true
+        "unsourced": true,
+        "note": "On AH ~140g"
       },
       {
         "id": 18368,
@@ -1465,7 +1469,8 @@
         "name": "Mossflayer Warlord's Girdle",
         "dps": 992.8,
         "loss": 9.81,
-        "unsourced": true
+        "unsourced": true,
+        "note": "On AH ~9.8g"
       },
       {
         "id": 275741,
@@ -2260,7 +2265,8 @@
         "name": "Brain Hacker",
         "dps": 984.56,
         "loss": 18.04,
-        "unsourced": true
+        "unsourced": true,
+        "note": "On AH ~215g"
       },
       {
         "id": 250617,

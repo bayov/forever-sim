@@ -1,4 +1,5 @@
 {
+  "1263": {"name": "Brain Hacker", "note": "On AH ~215g"},
   "1443": {"name": "Jeweled Amulet of Cainwyn", "note": "On AH ~125g"},
   "3475": {"avail": "doubtful", "name": "Cloak of Flames", "note": "No known source"},
   "10234": {"avail": "grind", "name": "Engraved Boots of the Gorilla", "note": "Random world drop · other suffixes on AH ~3.5g"},
@@ -26,6 +27,7 @@
   "12784": {"name": "Arcanite Reaper", "note": "Blacksmithing 300 · plans on AH ~20g · Master Forge on AH ~15g"},
   "13001": {"name": "Maiden's Circle", "note": "On AH ~80g"},
   "13090": {"avail": "doubtful", "name": "Breastplate of the Chosen", "note": "No known source"},
+  "13135": {"name": "Lordly Armguards", "note": "On AH ~7.3g"},
   "13950": {"avail": "doubtful", "name": "Detention Strap", "note": "Darkmaster Gandling · Scholomance"},
   "14465": {"name": "Elunarian Belt", "note": "On AH ~3.3g"},
   "14543": {"avail": "doubtful", "name": "Darkshade Gloves", "note": "Jandice Barov · Scholomance"},
@@ -35,6 +37,7 @@
   "15067": {"name": "Ironfeather Shoulders", "note": "On AH ~13g · or Leatherworking 245 · pattern on AH ~0.4g"},
   "15141": {"avail": "doubtful", "name": "Onyxia Scale Breastplate", "note": "BoE · LW craft · Forever source unknown · Classic recipe takes a Scale of Onyxia (raid)"},
   "15267": {"avail": "grind", "name": "Brutehammer of Magic", "note": "Random world drop"},
+  "17007": {"name": "Stonerender Gauntlets", "note": "On AH ~140g"},
   "18320": {"avail": "doubtful", "name": "Demondash Spaulders", "note": "Revealed in game Nov 9 · source unknown"},
   "18398": {"avail": "out", "name": "Tidal Loop", "note": "Quest: A Hero's Reward · needs Molten Core"},
   "18399": {"avail": "out", "name": "Ocean's Breeze", "note": "Quest: A Hero's Reward · needs Molten Core"},
@@ -218,6 +221,7 @@
   "227862": {"avail": "out", "name": "Incandescent Mooncloth Boots", "include": true, "note": "Needs Tailoring to wear · Meilosh · Mooncloth Boots + Mooncloth + 25 Winterfall Spirit Beads"},
   "228190": {"avail": "out", "name": "Knowledge of the Timbermaw", "include": true, "note": "Needs Tailoring to wear · Meilosh · Wisdom of the Timbermaw + Mooncloth + 20 Winterfall Spirit Beads"},
   "250617": {"avail": "doubtful", "name": "Stormcarver", "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g) · Master Forge blueprint not seen dropping yet"},
+  "252483": {"name": "Dawn Armor", "note": "On AH ~350g · or Leatherworking craft"},
   "252484": {"name": "Timbermaw Tunic", "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g"},
   "252486": {"name": "Ironfeather Leggings", "note": "On AH ~121g · or Leatherworking 300 · pattern on AH ~16g"},
   "252539": {"avail": "grind", "name": "Prowler's Leather Bracers", "note": "Leatherworking craft"},
@@ -307,6 +311,10 @@
   "281281": {"avail": "doubtful", "name": "Frost's Whisper Pendant", "note": "Quest: Halt the Hail"},
   "281586": {"avail": "doubtful", "name": "Elderwild Construction Hammer", "note": "Quest: Head Scratcher"},
   "284102": {"avail": "doubtful", "name": "Signet of the Soulless Rider", "note": "No known source"},
+  "284158": {"name": "Mossflayer Warlord's Girdle", "note": "On AH ~9.8g"},
+  "284866": {"name": "Windserpent Scaled Cloak", "note": "On AH ~5.1g"},
   "287018": {"name": "Compound Gloves", "note": "On AH ~26g"},
-  "287035": {"name": "Demon Worshipper's Necklace", "note": "On AH ~20g"}
+  "287020": {"name": "Defias Enforcer's Chest", "note": "On AH ~43g"},
+  "287035": {"name": "Demon Worshipper's Necklace", "note": "On AH ~20g"},
+  "287041": {"name": "Time-Forgotten Bindings", "note": "On AH ~14g"}
 }
