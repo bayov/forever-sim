@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "f30078da1e116caec42912ab43ee82b929e91919"
+  "master": "3f7337adc88f85a791d5d4c568158dc8186a4d96"
  },
  "last_pass_at": "2026-11-16T01:00:00Z",
  "pass": 16,
@@ -8,5 +8,5 @@
  "baseline": "9ba00c2dc",
  "note": "Pass 16 on f30078da1: standards 17 (Windfury Weapon/Totem separate cooldowns), db.bin refresh, sim_concurrent player-DB add reach no healer; full bench re-run (seed 101, 1,000 it) byte-identical to ref/healer_fairness/bench_25ce81d.tsv. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-16T00:58:31Z"
+ "checked_at": "2026-11-16T06:49:57Z"
 }

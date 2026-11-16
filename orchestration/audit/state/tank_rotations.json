@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "f30078da1e116caec42912ab43ee82b929e91919"
+  "master": "3f7337adc88f85a791d5d4c568158dc8186a4d96"
  },
  "last_pass_at": "2026-11-15T19:05:00Z",
  "pass": 15,
  "result": "quiet",
  "baseline": "ref/tank_bench/summary.tsv",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-16T00:58:31Z"
+ "checked_at": "2026-11-16T06:49:57Z"
 }
