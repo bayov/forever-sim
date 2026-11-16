@@ -1581,16 +1581,17 @@ export function startReport(dash, events) {
   //
   // The Specs page shows the same card for its preset (fixed), with only the faction and the boss type racials switch.
   // Where every DPS race bar starts, as a share of its preset's best entry: the lowest point any bar reaches (a race's
-  // base stats, a racial's piece, the error line) on any preset, with or without the boss type racials, less a margin.
-  // One start for every filter and preset, so the same gap looks the same size on every class and spec.
+  // base stats, a racial's piece, the error line) on any preset without the boss type racials (user ruling 2026-11-16:
+  // no margin, and with them on, a piece below the start is cut off at the left edge). One start for every filter and
+  // preset, so the same gap looks the same size on every class and spec.
   let rfCache = {};
   const raceFloor = () => {
     const rv = rowsOf('race_variants'), rb = rowsOf('race_breakdown') || [];
     if (rfCache.rv === rv && rfCache.rb === rb) return rfCache.lo;
     const bd = d3.group(rb, (q) => q.build + '|' + q.race);
     let low = 100;
-    for (const mode of RS_OPTS.map(([k]) => k).concat([''])) {
-      for (const [build, rs] of d3.groups(raceRows(mode) || [], (r) => r.build)) {
+    {
+      for (const [build, rs] of d3.groups(raceRows('') || [], (r) => r.build)) {
         const best = rs[0].dps;
         for (const r of rs) {
           let at = 0;
@@ -1600,7 +1601,7 @@ export function startReport(dash, events) {
         }
       }
     }
-    const lo = Math.max(0, low - 0.35 * (100 - low));
+    const lo = Math.max(0, low);
     rfCache = { rv, rb, lo };
     return lo;
   };
