@@ -11,7 +11,7 @@
   ],
   "dps": 1002.61,
   "made": "2026-11-16",
-  "sim": "e635633b29c3",
+  "sim": "2c9970bc76b0+",
   "slots": {
     "head": [
       {
@@ -1300,6 +1300,14 @@
         "note": "Tailoring 295 · pattern on AH ~131g · Loom on AH ~10g"
       },
       {
+        "id": 227805,
+        "name": "Ferocity of the Timbermaw",
+        "dps": 999.87,
+        "loss": 2.74,
+        "avail": "grind",
+        "note": "Meilosh · Might of the Timbermaw (LW) + Cured Rugged Hide + 20 Winterfall Spirit Beads"
+      },
+      {
         "id": 272410,
         "name": "Windseeker's Belt",
         "dps": 997.53,
@@ -1466,14 +1474,6 @@
         "loss": 9.82,
         "avail": "doubtful",
         "note": "Quest: Work Well Done"
-      },
-      {
-        "id": 14465,
-        "name": "Elunarian Belt",
-        "dps": 992.66,
-        "loss": 9.94,
-        "unsourced": true,
-        "note": "On AH ~3.3g"
       }
     ],
     "legs": [
@@ -2268,7 +2268,7 @@
         "dps": 984.05,
         "loss": 18.56,
         "avail": "doubtful",
-        "note": "Blacksmithing · Master Forge · station blueprint not seen dropping yet"
+        "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g) · Master Forge blueprint not seen dropping yet"
       },
       {
         "id": 15267,
