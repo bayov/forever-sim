@@ -1,6 +1,6 @@
 {
-"meta": {"build": "1.60.1.70938", "fetched": "2026-11-15T23:22Z", "source": "client beta 1.60.1.70938 Item and ItemSparse tables, and our client cache of 2026-11-15T21:36Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
-"counts": {"hidden": 7379, "hiddenGear": 2209, "inSimWithClassicStats": 1474, "inSimPartly": 93, "inSimFromWowhead": 11, "foreverNotInSim": 629, "revealedNotInSim": 16, "revealedGear": 5203},
+"meta": {"build": "1.60.1.70938", "fetched": "2026-11-16T04:07Z", "source": "client beta 1.60.1.70938 Item and ItemSparse tables, and our client cache of 2026-11-15T21:36Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
+"counts": {"hidden": 7371, "hiddenGear": 2201, "inSimWithClassicStats": 1466, "inSimPartly": 93, "inSimFromWowhead": 11, "foreverNotInSim": 629, "revealedNotInSim": 16, "revealedGear": 5211},
 "items": {
 "913": {"name": "Huge Ogre Sword", "simStats": "classic", "slot": "two-hand", "sources": [], "state": "hidden"},
 "1216": {"name": "Frost Bracers", "simStats": "classic", "slot": "wrist", "sources": [], "state": "hidden"},
@@ -594,8 +594,6 @@
 "22326": {"name": "Amalgam's Band", "simStats": "classic", "slot": "finger", "sources": ["AtlasLoot: Kormok"], "state": "hidden"},
 "22331": {"name": "Band of the Steadfast Hero", "simStats": "classic", "slot": "finger", "sources": ["AtlasLoot: Kormok"], "state": "hidden"},
 "22336": {"name": "Draconian Aegis of the Legion", "simStats": "classic", "slot": "shield", "sources": ["AtlasLoot: Lord Valthalak"], "state": "hidden"},
-"22337": {"name": "Shroud of Domination", "simStats": "classic", "slot": "back", "sources": ["AtlasLoot: Lord Valthalak"], "state": "hidden"},
-"22340": {"name": "Pendant of Celerity", "simStats": "classic", "slot": "neck", "sources": ["AtlasLoot: Lord Valthalak"], "state": "hidden"},
 "22342": {"name": "Leggings of Torment", "simStats": "classic", "slot": "legs", "sources": ["AtlasLoot: Lord Valthalak"], "state": "hidden"},
 "22343": {"name": "Handguards of Savagery", "simStats": "classic", "slot": "hands", "sources": ["AtlasLoot: Lord Valthalak"], "state": "hidden"},
 "22345": {"name": "Totem of Rebirth", "simStats": "classic", "slot": "relic", "sources": ["AtlasLoot: Isalien"], "state": "hidden"},
@@ -853,12 +851,6 @@
 "226947": {"name": "Virtuous Crown", "simStats": "classic", "slot": "head", "sources": ["Wowhead"], "state": "hidden"},
 "226957": {"name": "Virtuous Cowl", "simStats": "classic", "slot": "head", "sources": ["Wowhead"], "state": "hidden"},
 "226960": {"name": "Virtuous Gown", "simStats": "classic", "slot": "chest", "sources": ["Wowhead"], "state": "hidden"},
-"226973": {"name": "Soulforge Breastplate", "simStats": "classic", "slot": "chest", "sources": ["Wowhead"], "state": "hidden"},
-"226976": {"name": "Soulforge Greathelm", "simStats": "classic", "slot": "head", "sources": ["Wowhead"], "state": "hidden"},
-"226981": {"name": "Soulforge Crown", "simStats": "classic", "slot": "head", "sources": ["Wowhead"], "state": "hidden"},
-"226984": {"name": "Soulforge Embrace", "simStats": "classic", "slot": "chest", "sources": ["Wowhead"], "state": "hidden"},
-"226989": {"name": "Soulforge Faceguard", "simStats": "classic", "slot": "head", "sources": ["Wowhead"], "state": "hidden"},
-"226992": {"name": "Soulforge Chestguards", "simStats": "classic", "slot": "chest", "sources": ["Wowhead"], "state": "hidden"},
 "227002": {"name": "Coif of The Five Thunders", "simStats": "classic", "slot": "head", "sources": ["Wowhead"], "state": "hidden"},
 "227003": {"name": "Pauldrons of The Five Thunders", "simStats": "classic", "slot": "shoulder", "sources": ["Wowhead"], "state": "hidden"},
 "227004": {"name": "Vest of The Five Thunders", "simStats": "classic", "slot": "chest", "sources": ["Wowhead"], "state": "hidden"},
@@ -7431,5 +7423,13 @@
 {"id": 226887, "name": "Beastmaster's Cap", "slot": "head", "inventoryType": 1, "ilvl": null, "quality": null, "push": null, "date": "2026-11-15 18:18"},
 {"id": 226909, "name": "Deathmist Mask", "slot": "head", "inventoryType": 1, "ilvl": null, "quality": null, "push": null, "date": "2026-11-15 18:18"},
 {"id": 18674, "name": "Hardened Stone Band", "slot": "finger", "inventoryType": 11, "ilvl": null, "quality": null, "push": null, "date": "2026-11-15 18:38"},
-{"id": 22314, "name": "Huntsman's Harpoon", "slot": "two-hand", "inventoryType": 17, "ilvl": null, "quality": null, "push": null, "date": "2026-11-15 23:09"}
+{"id": 22314, "name": "Huntsman's Harpoon", "slot": "two-hand", "inventoryType": 17, "ilvl": null, "quality": null, "push": null, "date": "2026-11-15 23:09"},
+{"id": 22340, "name": "Pendant of Celerity", "slot": "neck", "inventoryType": 2, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 01:55"},
+{"id": 226973, "name": "Soulforge Breastplate", "slot": "chest", "inventoryType": 5, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 02:00"},
+{"id": 226976, "name": "Soulforge Greathelm", "slot": "head", "inventoryType": 1, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 02:00"},
+{"id": 226981, "name": "Soulforge Crown", "slot": "head", "inventoryType": 1, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 02:00"},
+{"id": 226984, "name": "Soulforge Embrace", "slot": "chest", "inventoryType": 5, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 02:00"},
+{"id": 226989, "name": "Soulforge Faceguard", "slot": "head", "inventoryType": 1, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 02:00"},
+{"id": 226992, "name": "Soulforge Chestguards", "slot": "chest", "inventoryType": 5, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 02:00"},
+{"id": 22337, "name": "Shroud of Domination", "slot": "back", "inventoryType": 16, "ilvl": null, "quality": null, "push": null, "date": "2026-11-16 05:32"}
 ]}
