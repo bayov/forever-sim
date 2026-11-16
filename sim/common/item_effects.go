@@ -179,16 +179,18 @@ const (
 	JomGabbar                  = 23570
 
 	// Forever
-	FrozenHeartOfTheMountain = 249469
-	MoltenHeartOfTheMountain = 249470
-	GoldenBanana             = 270226
-	GraverobbersShovel       = 273817
-	EverlookPathcarver       = 274759
-	EverlookDeliveryBot      = 274760
-	BoltsChargedEyeball      = 280032
-	DullSawblade             = 285292
-	SilithidQueensHusk       = 286590
-	BladewhispersNamesake    = 287072
+	DraconianAegisOfTheLegion = 22336
+	FrozenHeartOfTheMountain  = 249469
+	MoltenHeartOfTheMountain  = 249470
+	GoldenBanana              = 270226
+	GraverobbersShovel        = 273817
+	EverlookPathcarver        = 274759
+	EverlookDeliveryBot       = 274760
+	BoltsChargedEyeball       = 280032
+	DullSawblade              = 285292
+	SilithidQueensHusk        = 286590
+	CannibalsCleaver          = 286641
+	BladewhispersNamesake     = 287072
 )
 
 func init() {
@@ -954,6 +956,17 @@ func init() {
 	// Equip: +29 Attack Power Vs Humanoids. A Forever plate chest, revealed 2026-11-12 to 13 (client
 	// 1.60.1.70938 tooltip); its +24 Attack Power and +14 crit rating are on the item.
 	core.NewMobTypeAttackPowerEffect(SilithidQueensHusk, []proto.MobType{proto.MobType_MobTypeHumanoid}, 29)
+
+	// https://foreverchanges.pro/item/286641
+	// Equip: +25 Attack Power Vs Humanoids. A Forever two-handed axe, revealed 2026-11-16 (client
+	// 1.60.1.70938 tooltip, Wowhead's Forever tooltip agrees); its +17 Attack Power is on the item.
+	core.NewMobTypeAttackPowerEffect(CannibalsCleaver, []proto.MobType{proto.MobType_MobTypeHumanoid}, 25)
+
+	// https://foreverchanges.pro/item/22336
+	// Equip: +9 Spell Damage Vs Dragonkin. Forever's Draconian Aegis of the Legion, revealed
+	// 2026-11-16 (client 1.60.1.70938 tooltip, Wowhead's Forever tooltip agrees). Classic's has no
+	// such effect, and its +18 Spell Power is on the item (assets/db_inputs/forever_seen_in_game.json).
+	core.NewMobTypeSpellPowerEffectForever(DraconianAegisOfTheLegion, []proto.MobType{proto.MobType_MobTypeDragonkin}, 0, 9)
 
 	// https://www.wowhead.com/classic/item=19353/drake-talon-cleaver
 	// Chance on hit: Delivers a fatal wound for 240 damage.

@@ -965,4 +965,43 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl:       61, RequiredLevel: 56, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 		BindOnPickup: true,
 	},
+	// Revealed by November 16 (https://foreverchanges.pro/hidden-items), with the stats from the
+	// item pages (client 1.60.1.70938, confirmed in game). Wowhead's Forever tooltips (dataEnv 16)
+	// agree. No source is known yet. Reforged Atal'ai Spear's crit is typed as rating (14 is 1%, as
+	// wowhead shows it). Cannibal's Cleaver's +1 Axes is typed as the tooltip names it, the
+	// one-handed Axes skill like Edgemaster's Handguards, and its +25 Attack Power against
+	// Humanoids is its item effect in sim/common/item_effects.go. Shadow Scalper's chance on hit
+	// shadow bolt volley (33 damage to each enemy near) isn't in the sim, the axe is listed with
+	// its plain stats.
+	{
+		Id: 284270, Name: "Ancient Giant's Gaze", Icon: "inv_helmet_10",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats: stats.Stats{stats.Armor: 477, stats.BonusArmor: 108, stats.Strength: 21, stats.Stamina: 16}.ToFloatArray(),
+		Ilvl:  56, RequiredLevel: 51, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
+	{
+		Id: 286645, Name: "Reforged Atal'ai Spear", Icon: "inv_spear_08",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypePolearm, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Strength: 19, stats.Stamina: 14}.ToFloatArray(),
+		CritRating:      14,
+		WeaponDamageMin: 132, WeaponDamageMax: 198, WeaponSpeed: 3.8,
+		Ilvl: 50, RequiredLevel: 45, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
+	{
+		Id: 286641, Name: "Cannibal's Cleaver", Icon: "inv_axe_04",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Stamina: 19, stats.AttackPower: 17, stats.RangedAttackPower: 17}.ToFloatArray(),
+		WeaponSkills:    foreverWeaponSkillSlice(map[proto.WeaponSkill]float64{proto.WeaponSkill_WeaponSkillAxes: 1}),
+		WeaponDamageMin: 125, WeaponDamageMax: 188, WeaponSpeed: 3.6,
+		Ilvl: 50, RequiredLevel: 45, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
+	{
+		Id: 282700, Name: "Shadow Scalper", Icon: "inv_axe_01",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
+		WeaponDamageMin: 43, WeaponDamageMax: 82, WeaponSpeed: 2.6,
+		Ilvl: 42, RequiredLevel: 37, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
 }
