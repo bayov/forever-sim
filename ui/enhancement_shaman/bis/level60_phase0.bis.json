@@ -601,7 +601,7 @@
         "name": "Stalwart Cloak",
         "dps": 993.23,
         "loss": 9.37,
-        "note": "Pix Xizzix"
+        "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 18496,
@@ -1316,7 +1316,7 @@
         "name": "Windseeker's Belt",
         "dps": 997.53,
         "loss": 5.07,
-        "note": "Pix Xizzix"
+        "note": "Pix Xizzix · 100 Reals"
       },
       {
         "id": 14614,
@@ -1345,7 +1345,7 @@
         "name": "Stormseeker's Girdle",
         "dps": 996.66,
         "loss": 5.95,
-        "note": "Pix Xizzix"
+        "note": "Pix Xizzix · 100 Reals"
       },
       {
         "id": 20150,
@@ -1880,7 +1880,8 @@
         "id": 272406,
         "name": "Channeler's Ring",
         "dps": 1001.2,
-        "loss": 1.4
+        "loss": 1.4,
+        "note": "Pix Xizzix · 75 Reals · owned"
       },
       {
         "id": 275981,
@@ -1919,7 +1920,8 @@
         "id": 272408,
         "name": "Cutthroat's Signet",
         "dps": 995.73,
-        "loss": 6.87
+        "loss": 6.87,
+        "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 17713,
@@ -2139,7 +2141,7 @@
         "name": "Weakness Analyzer",
         "dps": 995.32,
         "loss": 7.29,
-        "note": "Pix Xizzix · unique with ACA"
+        "note": "Pix Xizzix · 125 Reals · unique with ACA"
       },
       {
         "id": 280074,
@@ -2420,7 +2422,7 @@
         "name": "Burning Totem",
         "dps": 1000.4,
         "loss": 2.21,
-        "note": "Pix Xizzix"
+        "note": "Pix Xizzix · 50 Reals"
       }
     ]
   },
