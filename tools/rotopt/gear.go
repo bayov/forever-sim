@@ -287,7 +287,9 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		}
 		// The client carries Season of Discovery's items, with sources, but Forever does
 		// not use them (the item level 98 Scarlet Enclave sets came up in a level 60 search).
-		if isSodItem(item.Id) {
+		// An included one is in Forever after all (Meilosh trades the Timbermaw upgrades,
+		// Ferocity of the Timbermaw and the rest, seen on Wowhead's Forever vendor page).
+		if isSodItem(item.Id) && !included {
 			continue
 		}
 		// The synthetic Phase 1 items are not in the game. They join only when we ask for them.
