@@ -5695,6 +5695,42 @@
     {
      "commit": "a0f414a",
      "why": "code comments and tooltip wording for the rotation lines above"
+    },
+    {
+     "commit": "7429dc2",
+     "why": "the sim now adds a request's own items before the concurrent splits; the full re-sim of the builds that flagged it came out identical (fixed seeds), so no number moves"
+    },
+    {
+     "commit": "c952be0",
+     "why": "a test golden only"
+    },
+    {
+     "commit": "3f7337a",
+     "why": "item database entries seen or revealed in game; no item a report build wears changes (the re-sim came out identical)"
+    },
+    {
+     "commit": "d1cde9a",
+     "why": "item database and hidden list refresh; no item a report build wears changes (the re-sim came out identical)"
+    },
+    {
+     "commit": "4b3d8b7",
+     "why": "item database hotfix rows; no item a report build wears changes (the re-sim came out identical)"
+    },
+    {
+     "commit": "e635633",
+     "why": "one item added to the database as doubtful, not worn by any report build"
+    },
+    {
+     "commit": "f30078d",
+     "why": "a pre-raid Enhancement gear list for the sim UI; no report preset changes"
+    },
+    {
+     "commit": "04e8671",
+     "why": "the optimizer's auction house availability lists; no report preset changes"
+    },
+    {
+     "commit": "6afbfd2",
+     "why": "wording of the report's own text and tooltips; no number changes"
     }
    ],
    "source": {
