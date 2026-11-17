@@ -1916,6 +1916,11 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=9449/manual-crowd-pummeler
+	//
+	// Forever's tooltip (Wowhead, 2026-11-17) has a 3 min cooldown on the haste and 3 charges.
+	// Classic 1.12 had no cooldown, so we used to give the haste again every 30 sec, which made it
+	// last the whole fight. The charges never come back, so the item is spent after three uses.
+	// We don't count them: a fight of 3 min or less uses one.
 
 	core.NewItemEffect(ManualCrowdPummeler, func(agent core.Agent) {
 		character := agent.GetCharacter()
@@ -1940,7 +1945,7 @@ func init() {
 			Cast: core.CastConfig{
 				CD: core.Cooldown{
 					Timer:    character.NewTimer(),
-					Duration: time.Second * 30,
+					Duration: time.Minute * 3,
 				},
 			},
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
