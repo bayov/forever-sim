@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "63f49874ec019a79aec764bb09b81a49424412b1"
+  "master": "1a85df1d754f480e22380db2a2301bd594af5303"
  },
  "last_pass_at": "2026-11-15T19:30:55Z",
  "pass": 14,
@@ -8,5 +8,5 @@
  "note": "Pass 14 on 25ce81de7. Wild Growth 0.033->0.066 moved the 7 druid_restoration_raid rows (mean -0.022 carry; gate doubled); filed -20261115-1 (gate x0.75 +0.018). Paladin/shaman changes damage-only, rows identical. -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-17T06:44:41Z"
+ "checked_at": "2026-11-17T12:45:03Z"
 }
