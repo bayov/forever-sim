@@ -254,6 +254,38 @@ func TestForeverWarriorRefundsPaidRage(t *testing.T) {
 	}
 }
 
+// TestForeverWarriorAvoidedExecuteKeepsRage checks that under Forever an avoided Execute keeps the
+// rage above its base cost and refunds 80% of the base cost, while a landed one spends it all
+// (36 avoided Executes in 1.60.1.70862 logs, wowsims/forever 7025f28b98).
+func TestForeverWarriorAvoidedExecuteKeepsRage(t *testing.T) {
+	sim, war := newForeverWarrior(t, "000000000000002-50000000002")
+	execute := war.Execute.Spell
+	target := war.CurrentTarget
+	metrics := &execute.SpellMetrics[target.UnitIndex]
+	avoided, landed := 0, 0
+	for i := 0; i < 400; i++ {
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		war.AddRage(sim, 40, war.RageRefundMetrics)
+		execute.CurCast.Cost = 10
+		before := *metrics
+		execute.ApplyEffects(sim, target, execute)
+		if metrics.Hits+metrics.Crits+metrics.Blocks > before.Hits+before.Crits+before.Blocks {
+			landed++
+			if got := war.CurrentRage(); got > 1e-9 {
+				t.Fatalf("a landed Execute left %.3f Rage, want 0", got)
+			}
+			continue
+		}
+		avoided++
+		if got := war.CurrentRage(); math.Abs(got-48) > 1e-9 {
+			t.Fatalf("an avoided Execute on 40 extra Rage left %.3f Rage, want 48 (40 kept + 8 refunded)", got)
+		}
+	}
+	if avoided == 0 || landed == 0 {
+		t.Fatalf("got %d avoided and %d landed Executes, want some of each", avoided, landed)
+	}
+}
+
 // TestForeverWarriorDeepWoundsAndFlurry checks two client 70338 values: Deep Wounds' damage spell
 // (412613) cannot crit, so its ticks never do, and the Flurry buff (12966) lasts 15 sec.
 func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
