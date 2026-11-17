@@ -149,8 +149,7 @@ set (6875e3b1e). They marked the whole report stale. No number moved:
 ## Rulings (user, 2026-11-17)
 
 1. The Beast Mastery weave pick (`weaveRaptor=0`) stays.
-2. Shieldsworn: explained to the user (Holy Strike with the shield; the Nov 16 post names only Windfury Totem). No
-   change asked for.
+2. Shieldsworn: the user asked what it is. Explained; their answer on the reading is still open.
 3. Darkmoon Card: Heroism stays at PPM 2 for now.
 4. Fix the stacking of the given `PartyBuffs.dark_inspiration` with a real Shadow priest's party aura.
 5. Remove the dead `AssumeWindfuryPreAttack` knob (`warr_exec_wf2`) from patch 0004.
