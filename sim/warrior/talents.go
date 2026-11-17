@@ -406,15 +406,21 @@ func (warrior *Warrior) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *cor
 		Timer:    warrior.NewTimer(),
 		Duration: time.Millisecond * 500,
 	}
+	forever := warrior.Env.IsForever()
 	return core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
 		Label: fmt.Sprintf("Flurry Consume Trigger - %d", flurryAura.ActionID.SpellID),
 		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// Remove a stack: a white swing, or a Heroic Strike or Cleave in the swing's place, landed
-			// or not, two within 0.5 sec spending one (report assumption flurry_batch). Server hotfix
-			// push 114097 (2026-11-17) sets the buff's ProcTypeMask (SpellAuraOptions 126501) from 4
-			// to 20, melee auto attacks and melee abilities; of the abilities only Heroic Strike and
-			// Cleave use a charge in wowsims/forever's EV-0138 log (build 70938), as the sim already
-			// had them, so Bloodthirst, Whirlwind and the rest still use none.
+			// Remove a stack: a white swing, landed or not, two within 0.5 sec spending one (report
+			// assumption flurry_batch). Server hotfix push 114097 (2026-11-17) sets the buff's
+			// ProcTypeMask (SpellAuraOptions 126501) from 4 to 20, melee auto attacks and melee
+			// abilities, but no ability uses a charge: Bloodthirst, Whirlwind and the rest none in
+			// wowsims/forever's EV-0138 log (build 70938), and under Forever Heroic Strike and Cleave
+			// no longer either since Blizzard's November 16 hotfix ("Fixed an issue where Flurry
+			// stacks were consumed by Cleave or Heroic Strike", t/2403040 post 11). Outside Forever
+			// a Heroic Strike or Cleave in the swing's place still spends one.
+			if forever && spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				return
+			}
 			if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && icd.IsReady(sim) {
 				icd.Use(sim)
 				flurryAura.RemoveStack(sim)

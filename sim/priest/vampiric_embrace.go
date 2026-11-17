@@ -15,12 +15,18 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 	manaCost := 40.0
 	// Forever: 30 sec (Classic 1 min) on a 30 sec cooldown (client 1.60.1.70425; 1 min in
 	// 70338), and Improved Vampiric Embrace is gone, so it heals the party for 20% of the
-	// Shadow damage.
+	// Shadow damage. Since the November 16 hotfixes (with the weekly maintenance, t/2403040 post
+	// 11) it heals the party for 10% and the casting priest for 100% more, so 20%.
 	duration := time.Second * 30
 
 	partyPlayers := priest.Env.Raid.GetPlayerParty(&priest.Unit).Players
 	healthMetrics := priest.NewHealthMetrics(actionID)
 	healthReturnedMultuplier := 0.2
+	casterMultiplier := 1.0
+	if priest.Env.IsForever() {
+		healthReturnedMultuplier = 0.1
+		casterMultiplier = 2
+	}
 
 	priest.VampiricEmbraceAuras = priest.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return target.GetOrRegisterAura(core.Aura{
@@ -31,7 +37,12 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 				if result.Landed() && spell.SpellSchool.Matches(core.SpellSchoolShadow) {
 					healthGained := result.Damage * healthReturnedMultuplier
 					for _, player := range partyPlayers {
-						player.GetCharacter().GainHealth(sim, healthGained, healthMetrics)
+						character := player.GetCharacter()
+						if character == priest.GetCharacter() {
+							character.GainHealth(sim, healthGained*casterMultiplier, healthMetrics)
+							continue
+						}
+						character.GainHealth(sim, healthGained, healthMetrics)
 					}
 				}
 			},

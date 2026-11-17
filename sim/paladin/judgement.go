@@ -90,6 +90,8 @@ func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
 //
 // Judgement of Righteousness and of Fury take it. Judgement of Command doesn't: the client has it
 // Melee in SpellCategories, and a log after the hotfix backs that (soc.go; user ruling 2026-11-15).
+// Client 1.60.1.70959 agrees: it moves every rank of Judgement of Righteousness, Fury, Justice and
+// Light from DefenseType 2 (melee) to 3 (ranged) in SpellCategories, and leaves Command's melee.
 func (paladin *Paladin) rangedJudgement(config *core.SpellConfig) {
 	if !paladin.Env.IsForever() {
 		return
