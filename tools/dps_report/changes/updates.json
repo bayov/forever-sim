@@ -5954,6 +5954,10 @@
     {
      "commit": "6d48b6e",
      "why": "newly revealed items in the database; no report preset wears them"
+    },
+    {
+     "commit": "2c6bd10",
+     "why": "the metas' published numbers and summaries, the Changes lines and the wiki; no request changes"
     }
    ],
    "source": {
