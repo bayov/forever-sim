@@ -11,6 +11,7 @@ const (
 	// Keep these ordered by ID
 	NaturalAlignmentCrystal  = 19344
 	WushoolaysCharmOfSpirits = 19956
+	TotemOfTides             = 22345
 	TotemOfRage              = 22395
 	TotemOfTheStorm          = 23199
 	TotemOfThunder           = 228176
@@ -181,6 +182,19 @@ func init() {
 		shaman := agent.(ShamanAgent).GetShaman()
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.SpellCode == SpellCode_ShamanHealingWave && spell.Cost != nil {
+				spell.Cost.Factor *= 0.95
+			}
+		})
+	})
+
+	// Totem of Tides (22345, Classic's Totem of Rebirth, a Scholomance drop): Forever's is
+	// "Reduces the Mana cost of Riptide by 5%." (client 1.60.1.70938 tooltip on foreverchanges.pro,
+	// revealed 2026-11-16; https://foreverchanges.pro/item/22345). A 5% cost factor like Tidal
+	// Totem's on every Riptide rank.
+	core.NewItemEffect(TotemOfTides, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanRiptide && spell.Cost != nil {
 				spell.Cost.Factor *= 0.95
 			}
 		})

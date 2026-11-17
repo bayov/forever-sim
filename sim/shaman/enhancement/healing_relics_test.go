@@ -57,3 +57,31 @@ func TestOrcShamanHealingRelics(t *testing.T) {
 		}
 	}
 }
+
+// TestOrcShamanTotemOfTides: Forever's Totem of Tides (22345) takes 5% off every Riptide rank's
+// cost and nothing else's (client 1.60.1.70938 tooltip, foreverchanges.pro 2026-11-16).
+func TestOrcShamanTotemOfTides(t *testing.T) {
+	relicSim := func(relic int32) *EnhancementShaman {
+		player := newOrcShaman(60, restoRiptidePurif, &proto.EnhancementShaman_Options{})
+		if relic != 0 {
+			player = withRelic(player, relic)
+		}
+		_, enh := newShamanSim(player, &proto.Debuffs{}, 10)
+		return enh
+	}
+	plain, tides := relicSim(0), relicSim(shaman.TotemOfTides)
+	for rank := 1; rank <= 3; rank++ {
+		base := plain.RiptideRanks[rank].Cost.GetCurrentCost()
+		if got, want := tides.RiptideRanks[rank].Cost.GetCurrentCost(), base*0.95; math.Abs(got-want) > 0.01 {
+			t.Errorf("Totem of Tides: Riptide rank %d costs %.2f, want %.2f", rank, got, want)
+		}
+	}
+	for name, spells := range map[string][2]*core.Spell{
+		"Healing Wave 10": {plain.HealingWave[10], tides.HealingWave[10]},
+		"Chain Heal 3":    {plain.ChainHeal[3], tides.ChainHeal[3]},
+	} {
+		if a, b := spells[0].Cost.GetCurrentCost(), spells[1].Cost.GetCurrentCost(); math.Abs(a-b) > 0.01 {
+			t.Errorf("Totem of Tides: %s costs %.2f, want %.2f", name, b, a)
+		}
+	}
+}
