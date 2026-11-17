@@ -1086,49 +1086,22 @@
                       "and": {
                         "vals": [
                           {
-                            "and": {
-                              "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpLe",
-                                    "rhs": {
-                                      "moveTime": {
-                                        "rangeFromTarget": {
-                                          "const": {
-                                            "val": "4.99"
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "spellTimeToReady": {
-                                        "spellId": {
-                                          "spellId": 14266
-                                        }
-                                      }
-                                    },
-                                    "op": "OpLe",
-                                    "rhs": {
-                                      "moveTime": {
-                                        "rangeFromTarget": {
-                                          "const": {
-                                            "val": "4.99"
-                                          }
-                                        }
-                                      }
+                            "cmp": {
+                              "lhs": {
+                                "autoTimeToNext": {
+                                  "autoType": "MainHand"
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "moveTime": {
+                                  "rangeFromTarget": {
+                                    "const": {
+                                      "val": "4.99"
                                     }
                                   }
                                 }
-                              ]
+                              }
                             }
                           },
                           {
@@ -1407,49 +1380,22 @@
                       "and": {
                         "vals": [
                           {
-                            "and": {
-                              "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpLe",
-                                    "rhs": {
-                                      "moveTime": {
-                                        "rangeFromTarget": {
-                                          "const": {
-                                            "val": "4.99"
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "spellTimeToReady": {
-                                        "spellId": {
-                                          "spellId": 14266
-                                        }
-                                      }
-                                    },
-                                    "op": "OpLe",
-                                    "rhs": {
-                                      "moveTime": {
-                                        "rangeFromTarget": {
-                                          "const": {
-                                            "val": "4.99"
-                                          }
-                                        }
-                                      }
+                            "cmp": {
+                              "lhs": {
+                                "autoTimeToNext": {
+                                  "autoType": "MainHand"
+                                }
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "moveTime": {
+                                  "rangeFromTarget": {
+                                    "const": {
+                                      "val": "4.99"
                                     }
                                   }
                                 }
-                              ]
+                              }
                             }
                           },
                           {
@@ -1685,49 +1631,22 @@
                           {
                             "not": {
                               "val": {
-                                "and": {
-                                  "vals": [
-                                    {
-                                      "cmp": {
-                                        "lhs": {
-                                          "autoTimeToNext": {
-                                            "autoType": "MainHand"
-                                          }
-                                        },
-                                        "op": "OpLe",
-                                        "rhs": {
-                                          "moveTime": {
-                                            "rangeFromTarget": {
-                                              "const": {
-                                                "val": "4.99"
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    {
-                                      "cmp": {
-                                        "lhs": {
-                                          "spellTimeToReady": {
-                                            "spellId": {
-                                              "spellId": 14266
-                                            }
-                                          }
-                                        },
-                                        "op": "OpLe",
-                                        "rhs": {
-                                          "moveTime": {
-                                            "rangeFromTarget": {
-                                              "const": {
-                                                "val": "4.99"
-                                              }
-                                            }
-                                          }
+                                "cmp": {
+                                  "lhs": {
+                                    "autoTimeToNext": {
+                                      "autoType": "MainHand"
+                                    }
+                                  },
+                                  "op": "OpLe",
+                                  "rhs": {
+                                    "moveTime": {
+                                      "rangeFromTarget": {
+                                        "const": {
+                                          "val": "4.99"
                                         }
                                       }
                                     }
-                                  ]
+                                  }
                                 }
                               }
                             }

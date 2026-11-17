@@ -126,6 +126,10 @@ export const DefaultGear = GearLevel60Ranged;
 // Marksmanship casts Serpent Sting first again (+1.3 / +10.0 / +12.8 and Lone Wolf +1.8 / +10.0 /
 // +9.8 at 120 / 180 / 300 sec, 20000 iterations, seed 1). Beast Mastery weaves only when Arcane Shot
 // and the Aimed Shot cooldown stay down until it is back at range, with no slack (+1.3 / +1.6 / +2.0).
+// Update 2026-11-17 (the pet's white swings no longer take the hunter's crit, Predator's Edge twice on
+// Raptor Strike): Beast Mastery walks in for every main hand swing the weave fits, with Raptor Strike
+// queued when it is ready (+0.2 / +0.4 / +2.3 at 120 / 180 / 300 sec, 20000 iterations, seed 1; seed
+// 1000003 +0.8 / +1.0 / +2.2).
 // The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
 // swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
@@ -137,7 +141,8 @@ export const DefaultGear = GearLevel60Ranged;
 // 2026-10-15) and again before its 2 min run out, never held back for the hunter's own damage. Against
 // the raid's mark it costs 0.5 to 2.5 DPS at 180 sec.
 const markTooltip = " Keeps up its own Hunter's Mark, cast 1.5 sec before the pull and again before it drops.";
-const weaveTooltip = ' Melee weaves from 12 yd: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
+const weaveTooltip =
+	' Melee weaves from 12 yd: walks in for every main hand swing, with Raptor Strike queued when ready, when the next Auto Shot waits 1.2 sec or less.';
 const manaWeaveTooltip =
 	' Melee weaves from 12 yd while the mana covers 25 a second of the fight left: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {

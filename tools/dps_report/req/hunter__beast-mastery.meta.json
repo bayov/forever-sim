@@ -44,7 +44,7 @@
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
     "Serpent Sting when it's down, last, at any mana",
-    "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown",
+    "Melee weave between Auto Shots. Walk in for every main-hand swing, with Raptor Strike queued when it's ready, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown",
     "The cat (1.0s) bites and claws on cooldown. Auto Shot the whole fight"
   ],
   "consumes": [

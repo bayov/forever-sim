@@ -97,7 +97,18 @@ mmWeave="$weave,weaveManaPerSec=25"
 #   1197.3 / 1195.6 / 1176.3, the knob +1.3 / +1.6 / +2.0 over the talents alone (+0.7 / +1.5 / +2.2).
 mm70753="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=0,serpentMana=0,aimedMana=0,holdRapid=1,holdElune=1,sniperManaPerSec=10"
 lw70753="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,aimedMana=0,holdRapid=1,holdElune=1,sniperManaPerSec=10"
-gen hunter_ranged bm "$bm,$weave,weaveShotSlack=0"
+# Update 2026-11-17 (the pet's white swings no longer take the hunter's crit, Predator's Edge counts
+# twice on Raptor Strike, a queued Raptor Strike keeps the off-hand miss penalty). Knob searches at 120,
+# 180 and 300 sec combined, 3000 iterations, the report's requests, frozen as in round 70753; confirmed
+# at 20000 iterations on seeds 1 and 1000003 (120 / 180 / 300 sec):
+# - Beast Mastery walks in for every main hand swing the weave fits, with Raptor Strike queued when it
+#   is ready (weaveRaptor=0, was only for a swing Raptor Strike is ready for): 1120.6 / 1115.2 /
+#   1097.3, +0.2 / +0.4 / +2.3 (seed 1000003 +0.8 / +1.0 / +2.2); the wolf +1.0 / +1.0 / +2.3 (+1.1 /
+#   +1.0 / +2.3), the tallstrider +1.0 / +0.9 / +2.1 (+0.9 / +1.0 / +2.1). A search from there moves
+#   nothing else.
+# - Marksmanship (weaveRaptor=0 -0.9 / -0.1 / +0.0, rapidPrepull=0 and weaveManaPerSec=30 within 0.4) and
+#   Survival (trapFirst=0 -1.0 to -2.1, wingClipHold=0 -0.3 to -1.2) keep their rotations.
+gen hunter_ranged bm "$bm,$weave,weaveShotSlack=0,weaveRaptor=0"
 gen hunter_ranged mm "$mm70753,$mmWeave"
 gen hunter_ranged lw "$lw70753,$mmWeave"
 # The Beast Mastery rotation at range, which the hunter Go tests run. The UI dropped the turret
