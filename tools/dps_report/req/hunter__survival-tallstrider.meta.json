@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 1001.8,
-    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 982.5,
+    "source": "the DPS report's main run of this request after the hunter fixes of 2026-11-17 (pet white swings without the hunter's crit, Predator's Edge twice on Raptor Strike, a queued Raptor Strike's off-hand miss penalty, traps on spell hit) (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1001.8,
-    "stderr": 0.3,
+    "dps": 982.5,
+    "stderr": 0.31,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Melee Survival with a Tallstrider, built around Expose Prey into Mongoose Bite. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [

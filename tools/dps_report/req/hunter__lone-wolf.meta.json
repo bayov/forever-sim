@@ -25,7 +25,7 @@
     "ok": true,
     "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03 (round 70753); not yet the DPS report's main run"
   },
-  "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It's behind Marksmanship with a cat, even though Forever pets get no player buffs.",
+  "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It's ahead of Marksmanship with a cat: Forever pets get no player buffs.",
   "keyTalents": [
     "Lone Wolf",
     "Deadly Aspects",

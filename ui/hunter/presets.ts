@@ -129,7 +129,8 @@ export const DefaultGear = GearLevel60Ranged;
 // Update 2026-11-17 (the pet's white swings no longer take the hunter's crit, Predator's Edge twice on
 // Raptor Strike): Beast Mastery walks in for every main hand swing the weave fits, with Raptor Strike
 // queued when it is ready (+0.2 / +0.4 / +2.3 at 120 / 180 / 300 sec, 20000 iterations, seed 1; seed
-// 1000003 +0.8 / +1.0 / +2.2).
+// 1000003 +0.8 / +1.0 / +2.2). The DPS report's 180 sec numbers after this update: Beast Mastery Orc
+// 1115.4 (Tallstrider 1057.1, Wolf 1065.6), Marksmanship 1201.3, Survival 1012.1.
 // The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
 // swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 1099.3,
-    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1109.1,
+    "source": "the DPS report's main run of this request after hotfix push 114097 (Unbridled Wrath on melee abilities except Whirlwind, one Reckless Swings charge a Cleave) and an avoided Execute keeping its extra Rage (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1099.3,
+    "dps": 1109.1,
     "stderr": 0.53,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [

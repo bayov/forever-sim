@@ -5461,6 +5461,193 @@
      "commits": [
       "9ec6904"
      ]
+    },
+    {
+     "title": "Hunter pets' auto attacks no longer use the hunter's crit",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "A pet's white swings crit only at the pet's own chance; Bite, Claw and its other abilities keep the hunter's crit. With the hunter fixes below, Beast Mastery falls 67 to 75, Marksmanship 30 to 33 and Survival 19 to 23.",
+     "commits": [
+      "b075ae6"
+     ]
+    },
+    {
+     "title": "Hunter melee and traps: Predator's Edge counts twice on Raptor Strike, a queued Raptor Strike keeps the off-hand miss penalty, traps roll spell hit",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "Raptor Strike crits for x2.69 with Predator's Edge 5/5 (was x2.30); Mongoose Bite and Strider Kick take it once. Queuing Raptor Strike no longer lifts the dual-wield hit penalty. Immolation and Explosive Trap use the hunter's spell hit, so they miss less.",
+     "commits": [
+      "4a8541e",
+      "eada676",
+      "29481dd"
+     ]
+    },
+    {
+     "title": "Beast Mastery weaves a melee swing whenever it fits, not only when Raptor Strike is ready",
+     "kind": "rotation",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf"
+     ],
+     "note": "It walks in for every main hand swing the weave fits, with Raptor Strike queued when ready: about 0.4 at 180 sec and 2 at 300 sec.",
+     "commits": [
+      "0848130"
+     ]
+    },
+    {
+     "title": "Death Mark always hits, its cap scales with melee crit, and its payout can't crit",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__subtlety"
+     ],
+     "note": "Subtlety rises about 5.",
+     "commits": [
+      "cf95c3e"
+     ]
+    },
+    {
+     "title": "Warrior: Unbridled Wrath procs from melee abilities except Whirlwind, Cleave spends one Reckless Swings charge, and an avoided Execute keeps its extra Rage",
+     "kind": "game",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Unbridled Wrath now procs from Bloodthirst, Mortal Strike, Execute and the other damaging abilities as well as white hits, but not Whirlwind. A Cleave uses one Reckless Swings charge however many targets it hits. An Execute that misses or is dodged or parried keeps its extra Rage. Warriors rise 8 to 10.",
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 114097)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=114097"
+     },
+     "commits": [
+      "ad1d7f4",
+      "3e1214a",
+      "2ebdc14"
+     ]
+    },
+    {
+     "title": "Seal of Command never rolls Windfury Totem, and Execute rolls it once",
+     "kind": "method",
+     "classes": [
+      "Paladin",
+      "Warrior",
+      "Shaman",
+      "Hunter"
+     ],
+     "note": "Blizzard fixed Execute's second Windfury Totem roll, so the report's alternate for it is gone; the Seal of Command alternate is gone too. The report already counted both this way.",
+     "moves": false,
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 16, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/11"
+     },
+     "commits": [
+      "2b0d664",
+      "d5529a5"
+     ]
+    },
+    {
+     "title": "A Shieldsworn Holy Strike no longer rolls Windfury Totem",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "note": "It strikes with the shield. No damage preset takes Shieldsworn.",
+     "moves": false,
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 16, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/11"
+     },
+     "commits": [
+      "4e81669"
+     ]
+    },
+    {
+     "title": "Healing: Vampiric Embrace heals 10% of the priest's own Shadow damage (the priest 20%)",
+     "kind": "game",
+     "classes": [
+      "Priest"
+     ],
+     "note": "Only the casting priest's Shadow damage counts now.",
+     "moves": false,
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 16, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/11"
+     },
+     "commits": [
+      "4e81669"
+     ]
+    },
+    {
+     "title": "Darkmoon Card: Blue Dragon procs on 3% of casts and Heroism heals 158 to 238",
+     "kind": "game",
+     "moves": false,
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 114044)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=114044"
+     },
+     "commits": [
+      "3ec610c"
+     ]
+    },
+    {
+     "title": "Item data: Bad Hat, Forever stats for rings and trinkets, Totem of Tides and Idol of Rejuvenation",
+     "kind": "game",
+     "note": "Bad Hat loses its +23 Shadow damage. Darkspear Signet, Militant's Band, Souvenir Sea Shell, Everstaring Abomination Eye and Onyxia Blood Talisman get their Forever stats; Darkmoon Card: Heroism and Maelstrom are item level 65. Totem of Tides takes 5% off Riptide's mana cost; Idol of Rejuvenation makes Regrowth's direct heal 5% bigger on a target with your Rejuvenation. No damage preset wears them.",
+     "moves": false,
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 114063)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=114063"
+     },
+     "commits": [
+      "52596be",
+      "fa03a86",
+      "16b197c",
+      "6a3cadb",
+      "192cb2e",
+      "2dbcd19"
+     ]
     }
    ],
    "internal": [
@@ -5731,6 +5918,42 @@
     {
      "commit": "6afbfd2",
      "why": "wording of the report's own text and tooltips; no number changes"
+    },
+    {
+     "commit": "5533c07",
+     "why": "goldens and report hashes for the Beast Mastery weave; the rotation's line covers it"
+    },
+    {
+     "commit": "d5e59ef",
+     "why": "goldens and report hashes for this update's fixes; their lines cover them"
+    },
+    {
+     "commit": "1d72d68",
+     "why": "Phase 0 gear tags only; no report preset changes"
+    },
+    {
+     "commit": "07ba90d",
+     "why": "Phase 0 gear tags only; no report preset changes"
+    },
+    {
+     "commit": "a4ceab9",
+     "why": "Phase 0 gear list for the sim UI; no report preset changes"
+    },
+    {
+     "commit": "e352786",
+     "why": "the optimizer's gear search; no report preset changes"
+    },
+    {
+     "commit": "8c0576b",
+     "why": "the optimizer's availability lists; no report preset changes"
+    },
+    {
+     "commit": "7075d70",
+     "why": "the report's split-count patch rebased; no number changes"
+    },
+    {
+     "commit": "6d48b6e",
+     "why": "newly revealed items in the database; no report preset wears them"
     }
    ],
    "source": {

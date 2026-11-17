@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm",
   "published": {
-    "dps": 1150.5,
-    "source": "verify.py on this request (round 70753: the 2026-11-03 server hotfix's hunter values and the re-optimized rotation), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1065.6,
+    "source": "the DPS report's main run of this request after the hunter fixes of 2026-11-17 (pet white swings without the hunter's crit, Predator's Edge twice on Raptor Strike, a queued Raptor Strike's off-hand miss penalty, traps on spell hit) and Beast Mastery weaving every main hand swing (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1150.5,
-    "stderr": 0.24,
+    "dps": 1065.6,
+    "stderr": 0.23,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03 (round 70753); not yet the DPS report's main run"
+    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Beast Mastery with a wolf, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
   "keyTalents": [
