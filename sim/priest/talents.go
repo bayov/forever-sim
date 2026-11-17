@@ -216,7 +216,8 @@ func (priest *Priest) ImprovedMindFlayTickMultiplier(tick int32) float64 {
 // Dark Inspiration (new in 70425, client 1326159): Mind Blast and a fully channeled Mind
 // Flay give the priest and the party 3% Spirit a rank for 10 sec (1326168, aura 80, the
 // caster's party: implicit target 20). Its given form for a party without the priest is
-// PartyBuffs.dark_inspiration (core.DarkInspirationUptime).
+// PartyBuffs.dark_inspiration (core.DarkInspirationUptime), which AddPartyBuffs drops for the
+// priest's own party.
 func (priest *Priest) registerDarkInspiration() {
 	if priest.Talents.DarkInspiration == 0 {
 		return

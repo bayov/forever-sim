@@ -107,7 +107,13 @@ func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.PowerWordFortitude = max(raidBuffs.PowerWordFortitude, proto.TristateEffect_TristateEffectRegular)
 }
 
-func (priest *Priest) AddPartyBuffs(_ *proto.PartyBuffs) {
+// A priest with Dark Inspiration gives the party the real aura (registerDarkInspiration), so its
+// given form, PartyBuffs.dark_inspiration, would count the Spirit twice. It is dropped for that
+// party.
+func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+	if priest.Talents.DarkInspiration > 0 {
+		partyBuffs.DarkInspiration = false
+	}
 }
 
 func (priest *Priest) Initialize() {
