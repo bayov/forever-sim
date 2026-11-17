@@ -332,3 +332,25 @@ func TestMultiShotCast(t *testing.T) {
 		t.Errorf("Multi-Shot resets the Auto Shot timer, want it kept")
 	}
 }
+
+// TestPredatorsEdgeRaptorStrike checks that Predator's Edge 5/5 reaches Raptor Strike's crit damage
+// twice, compounded, for 2.69 times (wowsims/forever's raptor_strike.go, EV-0134: 2.690 over 497
+// crits at 5/5), and Mongoose Bite's once, for 2.30.
+func TestPredatorsEdgeRaptorStrike(t *testing.T) {
+	_, hunter := newHunterSim(t, SurvivalTalents, &proto.Debuffs{})
+	if hunter.Talents.PredatorsEdge != 5 {
+		t.Fatalf("Predator's Edge %d/5 in the Survival talents, want 5/5", hunter.Talents.PredatorsEdge)
+	}
+	table := hunter.AttackTables[hunter.CurrentTarget.UnitIndex][proto.CastType_CastTypeMainHand]
+	for _, c := range []struct {
+		spell *core.Spell
+		want  float64
+	}{
+		{hunter.RaptorStrikeHit, 2.69},
+		{hunter.MongooseBite, 2.30},
+	} {
+		if got := c.spell.CritMultiplier(table); math.Abs(got-c.want) > 1e-9 {
+			t.Errorf("%v crits for %.4f times, want %.2f", c.spell.ActionID, got, c.want)
+		}
+	}
+}

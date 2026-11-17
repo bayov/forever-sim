@@ -136,7 +136,10 @@ func (hunter *Hunter) applySurvivalTalents() {
 	// Savage Strikes: 2% crit a rank (Classic 10% on Raptor Strike and Mongoose Bite) on the melee
 	// abilities in its mask: Raptor Strike, Mongoose Bite, Wing Clip, Strider Kick, Lacerate and the
 	// Lacerating Strikes bleed. Predator's Edge: 6% crit damage a rank on the same ones, and 10% off
-	// hand damage a rank.
+	// hand damage a rank. Raptor Strike takes Predator's Edge twice, compounded: (1 + 6% a rank)² of
+	// the crit bonus, 2.69 times at 5/5, 2.39 at 3/5 (wowsims/forever's raptor_strike.go, EV-0134: 2.690
+	// over 497 crits at 5/5, 2.392 and 2.531 at 3/5 and 4/5). Mongoose Bite and Strider Kick take it
+	// once, 2.30 at 5/5.
 	if hunter.Talents.SavageStrikes > 0 || hunter.Talents.PredatorsEdge > 0 {
 		bonusCrit := 2 * float64(hunter.Talents.SavageStrikes) * core.CritRatingPerCritChance
 		critDamage := 0.06 * float64(hunter.Talents.PredatorsEdge)
@@ -144,6 +147,9 @@ func (hunter *Hunter) applySurvivalTalents() {
 			if hunter.isMeleeAbility(spell) {
 				spell.BonusCritRating += bonusCrit
 				spell.CritDamageBonus += critDamage
+				if spell.SpellCode == SpellCode_HunterRaptorStrikeHit {
+					spell.CritDamageBonus += critDamage * (1 + critDamage)
+				}
 			}
 		})
 	}
