@@ -1,17 +1,15 @@
-# Healer fairness pass 16 (2026-11-16, master f30078da1)
+# Healer fairness pass 17 (2026-11-17, master 5f20dfdf4)
 
 Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth),
 -20261104-4 (low).
 
-Due because master changed 1 watched file since cfc7f9382: `orchestration/standards.md`. What changed in
-cfc7f9382..f30078da1 that could reach a healer:
-- standards 17: Windfury Weapon and Windfury Totem keep separate cooldowns (user ruling 2026-11-15). Melee only.
-- `assets/database/db.bin` / `db.json` item refresh (client 70938, AtlasLoot, Wowhead). Healer rows use the
-  synthetic set (standards 35); no effect measured.
-- `sim/core/sim_concurrent.go`: a player's own item database added once before the splits. No behaviour change
-  for the healbench requests.
-- `ui/core/forever/racials.meta.json`: build stamp only.
-- `tools/healbench/`, `tools/encounters/`, `ui/healing_*`, `proto/`, class sim code for the healers: unchanged.
+Due because master changed 1 watched file since 1a85df1d7: `sim/shaman/item_sets_pve.go`. What changed in
+1a85df1d7..5f20dfdf4 that could reach a healer:
+- 6875e3b1e: Forever's Five Thunders set (1679, items 227001-227024) with its 2/3/4/6 piece bonuses. No healer
+  request or healer UI preset wears any of those items (healer rows use the synthetic set, standards 35), so it
+  can't reach a healer.
+- Warrior, hunter and rogue mechanics, the Manual Crowd Pummeler cooldown, rotopt gear search, Enhancement BiS: no healer.
+- `tools/healbench/`, `tools/encounters/`, `sim/core`, `proto/`, `ui/healing_sim`, druid/priest/paladin sim code: unchanged.
 
 ## 1. Same terms
 
@@ -19,9 +17,9 @@ Requests unchanged, so pass 11's check holds: everything but the healer row is i
 
 ## 2. The numbers (healbench -carry, 1,000 iterations, seed 101, each file at its own length)
 
-Healbench built from f30078da1 (`--tags=with_db`, tree from `tools/audit/build_cli.sh`), run with
-`tools/audit/healer_rotations/baseline.sh <healbench> <out> 1000 -seed 101`. The output is byte-identical to
-`ref/healer_fairness/bench_25ce81d.tsv` (all 63 cells), so no new ref file. Table (unchanged from pass 15):
+Healbench built from 5f20dfdf4 (`go build -tags with_db ./tools/healbench`; without the tag the item DB is empty
+and the synthetic items panic), each of the 63 (request, role, boss) cells of `ref/healer_fairness/bench_25ce81d.tsv`
+re-run: carry and EHPS identical in all 63, so no new ref file. Table (unchanged from pass 15):
 
 | Request | Onyxia | Brood | Chrom | Golem | Magma | Rag | Vael | Mean | Rank |
 |---|---|---|---|---|---|---|---|---|---|

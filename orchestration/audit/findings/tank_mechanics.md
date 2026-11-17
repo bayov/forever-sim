@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_mechanics-20261117-1: Unbridled Wrath after push 114097 skips Sunder Armor (no damage), with no evidence for that limit
+- severity: low (+0.3 to +0.4% objective at stake, measured)
+- affects: Protection warrior (all three Level 60 presets take Unbridled Wrath 5/5)
+- found: 2026-11-17, master 5f20dfdf4c
+- evidence: ad1d7f469 `procsOnAbility` (sim/warrior/talents.go, applyUnbridledWrath) requires `result.Damage > 0`. Push 114097's mask 20 adds DONE_SPELL_MELEE_DMG_CLASS, which in the proc system fires on a landed melee-class spell whether or not it deals damage (tier 3: Classic Sunder Armor procs on-hit effects such as Thunderfury; the sim's own Forever Windfury Totem list includes Sunder). The only evidence cited, wowsims/forever EV-0138, is a Fury log (Heroic Strike, Cleave, Whirlwind) and says nothing about Sunder. Sunder is the prot warrior's most-cast ability (47-58 a fight). Patch `$AUDIT_WORK/tank_mechanics/uw_sunder.patch` (drop `&& result.Damage > 0`), tankbench 3000 iters -labeled: Max threat objective 3854 ± 8 -> 3866 ± 7, TPS 2049 -> 2053; Balanced 3140 ± 9 -> 3153 ± 8. Fairly sure of the reading, not sure of the server's behaviour.
+- proposed fix: rule which value to use. Either (a) let non-damaging landed melee specials (Sunder Armor) proc it (drop `result.Damage > 0`), or (b) keep it and label it an assumption until a prot warrior log shows 12964 energizes after Sunders. The DPS specs' Sunder casts (if any) move the same way.
+- needs: user ruling
+
 ### tank_mechanics-20261108-1: No test pins a Warden shock's threat under the Stormstrike mark, now computed by hand
 - severity: low (the code is right today; untested, not wrong)
 - affects: Warden shaman (Earth Shock, Flame Shock, Frost Shock, Lightning Bolt, Chain Lightning under Stormstrike)

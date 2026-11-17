@@ -1,17 +1,18 @@
-# Consumables pass 88
+# Consumables pass 89 (master 5f20dfdf4, client 70959)
 
-Master f30078da1 (last audited cfc7f9382). Client 1.60.1.70938, no newer build.
+No new findings. Open items: the two low nits already in findings (consumables-20261110-1, consumables-20261105-1), unchanged.
 
-## Findings
-None new.
+## Moved files
+| File | Change | Verdict |
+|---|---|---|
+| sim/common/item_effects.go | Manual Crowd Pummeler haste CD 30 s -> 3 min (Forever tooltip, 3 charges uncounted) | Item is in no preset or level60 gear set (rotopt excludes it); no effect |
+| tools/dps_report/assumptions_def.py | Paladin SoC Windfury, Unsealed Wrath, Warrior UW and Reckless Swings wording | Rage and proc-rule text, not a buff/consumable value |
 
-## Verified
-- forever_enchants.json: meta build and fetch date only.
-- standards.md 17: Windfury Weapon and Totem separate cooldowns ruling (no consumable effect).
-- assumptions_def.py: wf_weapon_totem_icd text only.
-- ui/warrior/presets.ts: default gear, APL and talents switched to two-hand Fury; consumes unchanged.
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty; totem counts as expected.
-- minor-armor exclusive-effect count is 3 (ref says 2); debuffs.go did not change since the last pass, so not new.
+## Client 70938 -> 70959 (builddiff.py)
+- Consumable spell changes: 1, Maelstrom Weapon (408498) effect 1 value 50 -> 2. A shaman class aura, not a consumable; no preset consumes touched. Class auditors' area.
+- Forever enchants: 58 checked, 0 changed.
 
-## Open items
-consumables-20261110-1 and consumables-20261105-1 (both low) stay open.
+## scan.sh on master
+Banned, Revelation, trinket and crit-elixir sections empty. Totem counts as the ruling. Minor-armor exclusive count is 3 (expect 2): the third is the Dust Cloud pet aura (debuffs.go:1167, client 70532), 505 armor, same slot; benign, scan expectation is stale.
+
+Class branches listed "ahead" carry stale copies (gotcha 1); not audited.

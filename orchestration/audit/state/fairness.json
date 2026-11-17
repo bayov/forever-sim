@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "1a85df1d754f480e22380db2a2301bd594af5303"
+  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
  },
- "last_pass_at": "2026-11-16T00:52:33Z",
- "pass": 44,
+ "last_pass_at": "2026-11-17T19:33:08Z",
+ "pass": 45,
  "result": "quiet",
- "baseline": "25ce81de775586c04de4b7d6408f4f32272e5c24",
+ "baseline": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77",
  "client_build": "1.60.1.70938",
  "checked_at": "2026-11-17T12:45:03Z",
- "baseline_note": "full re-sweep of every base request at every race at 25ce81d (5k, seed 1)"
+ "baseline_note": "25ce81d full re-sweep (5k, seed 1) with the 14 hunter/warrior/Subtlety base builds re-swept at every race at 5f20dfdf4"
 }

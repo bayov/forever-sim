@@ -2,6 +2,19 @@
 
 ## Open
 
+### healer_mechanics-20261117-16: Vampiric Embrace heals the party for 20% of Shadow damage; the Nov 16 hotfix makes it 10%, 20% on the caster
+- severity: low (party healing only; no DPS effect, and no healer preset or healbench fight has a Shadow priest in the party)
+- affects: Shadow priest (party healing; any healing fight that adds one)
+- found: 2026-11-17, master 5f20dfdf4
+- evidence: Blizzard's "WoW: Forever Hotfixes - November 16, 2026" (us.forums.blizzard.com/en/wow/t/2403040, post 1, edited
+  2026-11-17T02:18Z; tier 1): "[With scheduled weekly maintenance] Vampiric Embrace healing is now based on 10% of the Shadow
+  damage done by the casting Priest (was 20%). The casting Priest receives 100% increased healing from this effect." Server
+  side: client 1.60.1.70959 changes no Vampiric Embrace row. The sim (`sim/priest/vampiric_embrace.go:23,30-35`) gives every
+  party member, the priest included, `result.Damage * 0.2`. Sure of the rule; the maintenance is this week.
+- proposed fix: under Forever, heal party members other than the caster for 10% and the caster for 20% (0.1 x 2); update the
+  comment at :16-18. Not measured (healing only).
+- needs: worker fix
+
 ### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
 - severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
 - affects: Restoration shaman (all presets and leveling)
