@@ -2203,8 +2203,17 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string, actio
 		buff := character.GetAura(buffLabel)
 		buff.Duration = time.Second
 		// The proc's internal cooldown is 100 ms under Forever, the raid aura 10612's in the
-		// client store wowsims/forever reads (2026-10-30). The Era sim's 1.5 sec stays for
-		// Classic. To verify in game (notes.md, All classes).
+		// client store wowsims/forever reads (2026-10-30), and the raid auras' ProcCategoryRecovery
+		// in client 1.60.1.70959 (SpellAuraOptions 121576 / 124212 / 124158 for 8515 / 10609 /
+		// 10612, 100 ms, 20%). Blizzard's November 16 hotfix ("Windfury Totem attacks ... had no
+		// internal cooldown", fixed; t/2403040 post 11) gives no number. The Era sim's 1.5 sec
+		// stays for Classic.
+		//
+		// Client 70959 also reshapes the buff spells (8516 / 10608 / 10610): no duration, no
+		// charges, no extra-attack effect, and effect 0 is a weapon damage strike on the enemy;
+		// the attack power moved to the raid auras' second effect. The sim keeps its white extra
+		// swing with the bonus attack power and this 1 sec window (user rulings 2026-11-15, "keep
+		// the AP" and "keep the sim as it is" until a log shows how the attack strikes).
 		buff.Icd.Duration = time.Millisecond * 100
 	}
 	return aura

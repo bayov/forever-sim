@@ -3174,9 +3174,15 @@ func init() {
 	// https://www.wowhead.com/classic/item=19288/darkmoon-card-blue-dragon
 	// Equip: 2% chance on successful spellcast to allow 100% of your Mana regeneration to continue while casting for 15 sec.
 	// Forever: Aura of the Blue Dragon (23684) raises Spirit by 150 for 15 sec instead (wowsims/forever's
-	// client store: A_MOD_STAT misc 4, 150), still at 2%.
+	// client store: A_MOD_STAT misc 4, 150). It triggers on 3% of spellcasts since the server hotfix to
+	// the November 16 build (foreverchanges.pro patch notes; client 1.60.1.70959 still has ProcChance 2
+	// on 23688, SpellAuraOptions 132982).
 	core.NewItemEffect(DarkmoonCardBlueDragon, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		procChance := 0.02
+		if character.Env.IsForever() {
+			procChance = 0.03
+		}
 
 		actionID := core.ActionID{SpellID: 23688}
 
@@ -3195,7 +3201,7 @@ func init() {
 			Name:       "Aura of the Blue Dragon Trigger",
 			Callback:   core.CallbackOnCastComplete,
 			ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
-			ProcChance: .02,
+			ProcChance: procChance,
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				procAura.Activate(sim)
 			},
@@ -3204,11 +3210,17 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=19287/darkmoon-card-heroism
 	// Equip: Sometimes heals bearer of 120 to 180 damage when damaging an enemy in melee.
+	// Forever: the heal (23682, 150 with variance 0.4, so 120 to 180) is 198 since the server hotfix to
+	// the November 16 build (foreverchanges.pro patch notes), so 158 to 238 with the same variance.
 	core.NewItemEffect(DarkmoonCardHeroism, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
 		actionID := core.ActionID{SpellID: 23689}
 		healthMetrics := character.NewHealthMetrics(actionID)
+		healLow, healHigh := 120.0, 180.0
+		if character.Env.IsForever() {
+			healLow, healHigh = 198*0.8, 198*1.2
+		}
 
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
@@ -3216,7 +3228,7 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagNoOnCastComplete,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				character.GainHealth(sim, sim.Roll(120, 180), healthMetrics)
+				character.GainHealth(sim, sim.Roll(healLow, healHigh), healthMetrics)
 			},
 		})
 
@@ -3235,6 +3247,8 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=19289/darkmoon-card-maelstrom
 	// Equip: Chance to strike your melee target with lightning for 200 to 300 Nature damage.
+	// Forever's server hotfix to the November 16 build doubles it against Aquatic enemies
+	// (foreverchanges.pro patch notes); the sim has no Aquatic mob type, so nothing changes here.
 	core.NewItemEffect(DarkmoonCardMaelstrom, func(agent core.Agent) {
 		character := agent.GetCharacter()
 

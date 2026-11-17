@@ -20,9 +20,9 @@ import (
 // SpellCooldowns 55241 (tier 1).
 //
 // Blizzard's class tuning of 2026-11-10 (hotfix article and Kaivax's "Class Tuning Incoming -
-// November 10") takes it back to 100% weapon damage and an 8 sec cooldown. No server row carries
-// that yet (SpellEffect 1368308 still 150, SpellCooldowns 55241 still 6000 ms at push 113380;
-// client 1.60.1.70888 unchanged), so these are notes-only values (standards 37).
+// November 10") takes it back to 100% weapon damage and an 8 sec cooldown. Client 1.60.1.70959
+// carries both (SpellEffect 1368308 150 -> 100, SpellCooldowns 55241 6000 -> 8000 ms); before it
+// no server row did (push 113380, client 70938), and they were notes-only values (standards 37).
 const StormstrikeForeverBonus = 1.2
 
 // StormstrikeWeaponDamagePercent is the share of normalized weapon damage the strike deals.
