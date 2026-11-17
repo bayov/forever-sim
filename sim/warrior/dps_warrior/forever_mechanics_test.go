@@ -710,3 +710,79 @@ func TestForeverWarriorCleaveSplitsFlatThreat(t *testing.T) {
 		t.Fatalf("Cleave landed on both targets %d times and on one %d times", both, one)
 	}
 }
+
+// abilityRage is the Rage that n landed hits of the spell, each dealing the damage, give from an
+// empty bar on average.
+func abilityRage(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell, damage float64, n int) float64 {
+	total := 0.0
+	for i := 0; i < n; i++ {
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		result := spell.NewResult(war.CurrentTarget)
+		result.Outcome = core.OutcomeHit
+		result.Damage = damage
+		result.PreOutcomeDamage = damage
+		spell.DealDamage(sim, result)
+		total += war.CurrentRage()
+	}
+	return total / float64(n)
+}
+
+// TestForeverUnbridledWrathOnAbilities checks server hotfix push 114097 (SpellAuraOptions 124699,
+// ProcTypeMask 4 to 20): under Forever a landed damaging melee ability procs Unbridled Wrath's 1 Rage
+// at its 12% a rank, as a white hit does, but Whirlwind doesn't (wowsims/forever's EV-0138 log: 2 of
+// 425 Whirlwind hits) and an ability that deals no damage doesn't.
+func TestForeverUnbridledWrathOnAbilities(t *testing.T) {
+	sim, war := newForeverWarriorArmed(t, P1Talents, 991014, 991015)
+	if war.Talents.UnbridledWrath == 0 || war.Bloodthirst == nil {
+		t.Fatalf("the talents give Unbridled Wrath %d/5 and Bloodthirst %v, want both", war.Talents.UnbridledWrath, war.Bloodthirst != nil)
+	}
+	chance := 0.12 * float64(war.Talents.UnbridledWrath)
+	whirlwindOH := war.GetSpell(core.ActionID{SpellID: 1680}.WithTag(2))
+	for _, c := range []struct {
+		name   string
+		spell  *core.Spell
+		damage float64
+		want   float64
+	}{
+		{"Bloodthirst", war.Bloodthirst.Spell, 500, chance},
+		{"a Bloodthirst that deals nothing", war.Bloodthirst.Spell, 0, 0},
+		{"Whirlwind", war.Whirlwind.Spell, 500, 0},
+		{"Whirlwind's off-hand strike", whirlwindOH, 500, 0},
+	} {
+		if got := abilityRage(sim, war, c.spell, c.damage, 4000); math.Abs(got-c.want) > 0.03 {
+			t.Errorf("%s gives %.3f Rage a hit from Unbridled Wrath, want %.2f", c.name, got, c.want)
+		}
+	}
+}
+
+// TestForeverRecklessSwingsCleaveOnce checks that a Cleave uses one Reckless Swings charge for its
+// 5 Rage however many targets it hits (wowsims/forever's EV-0138 log, after push 114097's mask 20),
+// and the next Cleave another.
+func TestForeverRecklessSwingsCleaveOnce(t *testing.T) {
+	sim, war := newForeverWarriorTargets(t, "-0000000001", 991014, 991015, 2) // Reckless Swings alone
+	if war.RecklessSwingsAura == nil {
+		t.Fatal("the talents give no Reckless Swings")
+	}
+	cleave := war.Cleave.Spell
+	for i, wantStacks := range []int32{3, 2} {
+		for sim.CurrentTime < time.Duration(i+1)*time.Second && !sim.Step() {
+		}
+		if i == 0 {
+			war.RecklessSwingsAura.Activate(sim)
+		}
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		for _, target := range sim.Encounter.ActiveTargetUnits {
+			result := cleave.NewResult(target)
+			result.Outcome = core.OutcomeHit
+			result.Damage = 500
+			result.PreOutcomeDamage = 500
+			cleave.DealDamage(sim, result)
+		}
+		if got := war.RecklessSwingsAura.GetStacks(); got != wantStacks {
+			t.Errorf("Cleave %d on 2 targets left %d charges, want %d", i+1, got, wantStacks)
+		}
+		if got := war.CurrentRage(); math.Abs(got-5) > 1e-9 {
+			t.Errorf("Cleave %d on 2 targets gave %.1f Rage, want 5", i+1, got)
+		}
+	}
+}

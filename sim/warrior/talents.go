@@ -214,7 +214,9 @@ func (warrior *Warrior) applyBloodthrill() {
 
 // 12% a point for 1 Rage on white hits, whatever the weapon. The 1 October build took away the
 // 2 Rage two-handers got (client 70338: curve 12 to 60, spell 12964 gives 1 Rage, proc type
-// melee auto attack).
+// melee auto attack). Server hotfix push 114097 (2026-11-17) sets its ProcTypeMask (SpellAuraOptions
+// 124699) from 4 to 20, melee auto attacks and melee abilities, so under Forever a landed damaging
+// melee ability procs it too.
 func (warrior *Warrior) applyUnbridledWrath() {
 	if warrior.Talents.UnbridledWrath == 0 {
 		return
@@ -225,6 +227,17 @@ func (warrior *Warrior) applyUnbridledWrath() {
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
 	forever := warrior.Env.IsForever()
+
+	// Push 114097's melee abilities: the ones that deal damage (Bloodthirst, Mortal Strike, Execute,
+	// Heroic Strike and Cleave, whose white mask bit already counted, and the rest), but not
+	// Whirlwind. The row gives Whirlwind no exception and no client flag sets it apart (its
+	// attributes match Bloodthirst's); the exception is from wowsims/forever's EV-0138 log (build
+	// 70938, 2026-11-16): Unbridled Wrath came on 70% of Heroic Strikes and 67% of Cleaves but on 2
+	// of 425 Whirlwind hits (0.5%).
+	procsOnAbility := func(spell *core.Spell, result *core.SpellResult) bool {
+		return spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) && result.Damage > 0 &&
+			spell.ActionID.SpellID != 1680 // Whirlwind, both strikes
+	}
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Unbridled Wrath",
@@ -237,13 +250,10 @@ func (warrior *Warrior) applyUnbridledWrath() {
 				return
 			}
 
-			// Under Forever only auto attacks (12322's ProcTypeMask 4, DONE_MELEE_AUTO_ATTACK, as
-			// wowsims/forever reads it): a Heroic Strike or Cleave takes the swing's place but is a
-			// melee special, so it doesn't proc it.
-			if forever && spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && !(forever && procsOnAbility(spell, result)) {
 				return
 			}
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && sim.RandomFloat("Unbrided Wrath") < procChance {
+			if sim.RandomFloat("Unbrided Wrath") < procChance {
 				warrior.AddRage(sim, rageGain, rageMetrics)
 			}
 		},
@@ -399,7 +409,12 @@ func (warrior *Warrior) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *cor
 	return core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
 		Label: fmt.Sprintf("Flurry Consume Trigger - %d", flurryAura.ActionID.SpellID),
 		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// Remove a stack.
+			// Remove a stack: a white swing, or a Heroic Strike or Cleave in the swing's place, landed
+			// or not, two within 0.5 sec spending one (report assumption flurry_batch). Server hotfix
+			// push 114097 (2026-11-17) sets the buff's ProcTypeMask (SpellAuraOptions 126501) from 4
+			// to 20, melee auto attacks and melee abilities; of the abilities only Heroic Strike and
+			// Cleave use a charge in wowsims/forever's EV-0138 log (build 70938), as the sim already
+			// had them, so Bloodthirst, Whirlwind and the rest still use none.
 			if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && icd.IsReady(sim) {
 				icd.Use(sim)
 				flurryAura.RemoveStack(sim)

@@ -20,6 +20,12 @@ import (
 //     damage taken for a tank's survival score (healing needed), not TMI or DTPS (PayHealthCost).
 //     Base health is Bloodrage's, to verify the same way (see bloodrage.go).
 //
+// Server hotfix push 114097 (2026-11-17) sets the buff's ProcTypeMask from 4 to 20, melee auto
+// attacks and melee abilities (SpellAuraOptions 249144). Of the abilities only Heroic Strike and Cleave,
+// which take the swing's place, use a charge, once a cast however many targets a Cleave hits: in
+// wowsims/forever's EV-0138 log (build 70938) Whirlwind and Bloodthirst use none. Under the old mask
+// the sim already let Heroic Strike and Cleave use one, a charge for each target Cleave hit.
+//
 // Still an assumption (report assumption warr_rs_landed, one value, user ruling 2026-11-04): only landed
 // swings use a charge (the hit mask is server side, not in the data).
 func (warrior *Warrior) registerRecklessSwingsCD() {
@@ -31,6 +37,7 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 1329554})
 	healthCost := 0.25 * warrior.GetBaseStats()[stats.Health]
 
+	cleaveSpentAt := time.Duration(-1)
 	warrior.RecklessSwingsAura = warrior.RegisterAura(core.Aura{
 		Label:     "Reckless Swings",
 		ActionID:  actionID,
@@ -38,10 +45,18 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 		MaxStacks: 4,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.SetStacks(sim, 4)
+			cleaveSpentAt = -1
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
+			}
+			// A Cleave's hits all land at its cast.
+			if warrior.Cleave != nil && spell == warrior.Cleave.Spell {
+				if cleaveSpentAt == sim.CurrentTime {
+					return
+				}
+				cleaveSpentAt = sim.CurrentTime
 			}
 			warrior.AddRage(sim, 5, rageMetrics)
 			aura.RemoveStack(sim)
