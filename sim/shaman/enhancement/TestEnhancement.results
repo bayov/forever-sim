@@ -538,6 +538,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 1482.18833
+  tps: 1121.76743
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheTenStorms"
  value: {
   dps: 1392.175
@@ -1245,6 +1252,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 1521.15383
+  tps: 1149.53976
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheTenStorms"
  value: {
   dps: 1427.6255
@@ -1616,6 +1630,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 1543.21617
+  tps: 1162.48642
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheTenStorms"
  value: {
   dps: 1463.124
@@ -1984,6 +2005,13 @@ dps_results: {
  value: {
   dps: 1489.19283
   tps: 1126.12036
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 1575.252
+  tps: 1189.17595
  }
 }
 dps_results: {
