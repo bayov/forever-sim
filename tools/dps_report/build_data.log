@@ -3,7 +3,7 @@ races: 247 rows, 76 KB
 lengths: 340 rows, 28 KB
 abilities: 694 rows, 193 KB
 auras: 1214 rows, 175 KB
-hist: 2786 rows, 148 KB
+hist: 2768 rows, 147 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 120 KB
 setup: 1836 rows, 457 KB
@@ -16,15 +16,15 @@ race_notes: 47 rows, 11 KB
 weights: 266 rows, 53 KB
 mana: 5044 rows, 391 KB
 mana_summary: 52 rows, 16 KB
-assumptions: 60 rows, 68 KB
+assumptions: 60 rows, 67 KB
 WARNING assumptions: 7 texts name the project's process, e.g. "Blizzard's post says a shaman can benefit from both at once, with a chance to activate both, but not whether one proc blocks the other. The sim rolls "
-assumption_dps: 381 rows, 64 KB
+assumption_dps: 353 rows, 58 KB
 rotation: 655 rows, 211 KB
 race_rotation: 293 rows, 109 KB
 WARNING race_rotation: 5 changed lines with no why in race_text.json, e.g. priest__smite Gnome priority:s10934
 WARNING rotation: 13 rotation_text.json notes entries no line uses, e.g. Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.
 WARNING rotation: 6 conditions read like code, with no wording in rotation_text.json, e.g. 10+ Rage and boss over 20% health and time to the next main-hand swing at most main-hand swing time minus 0.1s
-WARNING rotation: 13 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
+WARNING rotation: 16 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
 WARNING rotation: 8 rotation_text.json why entries no line uses, e.g. {'builds': ['paladin__level_60'], 'key': 's20293', 'when': 'or 3 when the mana', 'why': "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo. When short on mana, waiting for 3 is worth it."}
 rotation conditions shown in compact form: []
 tooltips: 1095 rows, 445 KB
@@ -38,8 +38,8 @@ names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark
 treeart: 27 rows, 1063 KB
 missing icons: []
 timeline_warrior: 12 rows, 45 KB
-timeline_rogue: 18 rows, 48 KB
-timeline_hunter: 12 rows, 36 KB
+timeline_rogue: 18 rows, 49 KB
+timeline_hunter: 12 rows, 38 KB
 timeline_paladin: 12 rows, 40 KB
 timeline_shaman: 18 rows, 59 KB
 timeline_druid: 9 rows, 26 KB

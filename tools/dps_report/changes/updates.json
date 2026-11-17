@@ -5620,6 +5620,20 @@
      ]
     },
     {
+     "title": "Tanking: the Protection Paladin and Warrior scores after the Shieldsworn and Unbridled Wrath hotfixes",
+     "kind": "game",
+     "classes": [
+      "Paladin",
+      "Warrior"
+     ],
+     "note": "With Holy Strike out of Windfury Totem's reach, the Protection Paladin drops at every goal: Balanced 2,837 to 2,809, Max survival 1,834 to 1,780, Max threat 3,273 to 3,249. With Unbridled Wrath now proccing from abilities as well as white hits, the Protection Warrior rises at Balanced, 3,443 to 3,470, and at Max survival, 1,795 to 1,848; Max threat stays near 4,230. The Warrior is back to 1st at Max survival. The Bear and the Warden are unchanged, and so is every healer.",
+     "moves": false,
+     "commits": [
+      "4e81669",
+      "ad1d7f4"
+     ]
+    },
+    {
      "title": "Darkmoon Card: Blue Dragon procs on 3% of casts and Heroism heals 158 to 238",
      "kind": "game",
      "moves": false,
