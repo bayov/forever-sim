@@ -10,6 +10,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 	convertedRageDamage := 15.0
 	spellID := int32(20662)
 
+	forever := warrior.Env.IsForever()
 	var rageMetrics *core.ResourceMetrics
 	warrior.Execute = warrior.RegisterSpell(BattleStance|BerserkerStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorExecute,
@@ -40,20 +41,24 @@ func (warrior *Warrior) registerExecuteSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			extraRage := spell.Unit.CurrentRage()
-			warrior.SpendRage(sim, extraRage, rageMetrics)
-			// We must count this rage event if the spell itself cost 0,
-			// otherwise we could end up with 0 events even though rage was spent.
-			if spell.Cost.GetCurrentCost() > 0 {
-				rageMetrics.Events--
-			}
-
 			baseDamage := flatDamage + convertedRageDamage*(extraRage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
-
+			// Under Forever the extra rage goes only when the Execute lands: a miss, dodge or parry
+			// keeps it and refunds 80% of the base cost (36 avoided Executes in 1.60.1.70862 logs,
+			// wowsims/forever 7025f28b98).
+			if result.Landed() || !forever {
+				warrior.SpendRage(sim, extraRage, rageMetrics)
+				// We must count this rage event if the spell itself cost 0,
+				// otherwise we could end up with 0 events even though rage was spent.
+				if spell.Cost.GetCurrentCost() > 0 {
+					rageMetrics.Events--
+				}
+			}
 			if !result.Landed() {
 				spell.IssueRefund(sim)
 			}
+			spell.DealDamage(sim, result)
 		},
 	})
 	rageMetrics = warrior.Execute.Cost.SpellCostFunctions.(*core.RageCost).ResourceMetrics

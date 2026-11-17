@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -330,5 +331,93 @@ func TestMultiShotCast(t *testing.T) {
 	}
 	if !hunter.MultiShot.Flags.Matches(core.SpellFlagKeepsSwingTimer) {
 		t.Errorf("Multi-Shot resets the Auto Shot timer, want it kept")
+	}
+}
+
+// TestPredatorsEdgeRaptorStrike checks that Predator's Edge 5/5 reaches Raptor Strike's crit damage
+// twice, compounded, for 2.69 times (wowsims/forever's raptor_strike.go, EV-0134: 2.690 over 497
+// crits at 5/5), and Mongoose Bite's once, for 2.30.
+func TestPredatorsEdgeRaptorStrike(t *testing.T) {
+	_, hunter := newHunterSim(t, SurvivalTalents, &proto.Debuffs{})
+	if hunter.Talents.PredatorsEdge != 5 {
+		t.Fatalf("Predator's Edge %d/5 in the Survival talents, want 5/5", hunter.Talents.PredatorsEdge)
+	}
+	table := hunter.AttackTables[hunter.CurrentTarget.UnitIndex][proto.CastType_CastTypeMainHand]
+	for _, c := range []struct {
+		spell *core.Spell
+		want  float64
+	}{
+		{hunter.RaptorStrikeHit, 2.69},
+		{hunter.MongooseBite, 2.30},
+	} {
+		if got := c.spell.CritMultiplier(table); math.Abs(got-c.want) > 1e-9 {
+			t.Errorf("%v crits for %.4f times, want %.2f", c.spell.ActionID, got, c.want)
+		}
+	}
+}
+
+// TestQueuedRaptorStrikeKeepsDualWieldPenalty checks that under Forever a queued Raptor Strike leaves
+// the off hand's dual-wield miss penalty on, as Heroic Strike does since "Queueing Heroic Strike will
+// no longer increase off-hand hit chance"; Classic's queue still lifts it.
+func TestQueuedRaptorStrikeKeepsDualWieldPenalty(t *testing.T) {
+	for ruleset, want := range map[proto.Ruleset]bool{proto.Ruleset_RulesetForever: false, proto.Ruleset_RulesetClassic: true} {
+		sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, ruleset)
+		queued := hunter.GetAura("Raptor Strike Queued")
+		if queued == nil {
+			t.Fatalf("%v: no Raptor Strike queue aura", ruleset)
+		}
+		queued.Activate(sim)
+		if got := hunter.PseudoStats.DisableDWMissPenalty; got != want {
+			t.Errorf("%v: a queued Raptor Strike lifts the dual-wield miss penalty: %v, want %v", ruleset, got, want)
+		}
+		queued.Deactivate(sim)
+		if hunter.PseudoStats.DisableDWMissPenalty {
+			t.Errorf("%v: the penalty stays lifted after the queue ends", ruleset)
+		}
+	}
+}
+
+// TestForeverTrapsRollWithSpellHit checks that under Forever Immolation and Explosive Trap roll with
+// the hunter's spell hit (wowsims/forever's traps.go), where Classic's traps ignored it: against a
+// level 63 boss, 17% of them miss without hit and 1% with 20%.
+func TestForeverTrapsRollWithSpellHit(t *testing.T) {
+	const casts = 3000
+	// Immolation Trap counts no hits or misses, so a miss is a cast that leaves no burn.
+	immolationMisses := func(sim *core.Simulation, hunter *Hunter) float64 {
+		spell, target := hunter.ImmolationTrap, hunter.CurrentTarget
+		dot := spell.Dot(target)
+		misses := 0
+		for i := 0; i < casts; i++ {
+			spell.ApplyEffects(sim, target, spell)
+			for sim.NextEventTime() <= sim.CurrentTime && !sim.Step() {
+			}
+			if dot.IsActive() {
+				dot.Deactivate(sim)
+			} else {
+				misses++
+			}
+		}
+		return float64(misses) / casts
+	}
+	explosiveMisses := func(sim *core.Simulation, hunter *Hunter) float64 {
+		spell, target := hunter.ExplosiveTrap, hunter.CurrentTarget
+		for i := 0; i < casts; i++ {
+			spell.ApplyEffects(sim, target, spell)
+		}
+		for sim.CurrentTime < time.Second && !sim.Step() {
+		}
+		return float64(spell.SpellMetrics[target.UnitIndex].Misses) / casts
+	}
+	for name, misses := range map[string]func(*core.Simulation, *Hunter) float64{
+		"Immolation Trap": immolationMisses,
+		"Explosive Trap":  explosiveMisses,
+	} {
+		for _, c := range []struct{ hit, low, high float64 }{{0, 0.14, 0.20}, {20, 0, 0.025}} {
+			sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetForever)
+			hunter.AddStatDynamic(sim, stats.SpellHit, c.hit*core.SpellHitRatingPerHitChance)
+			if got := misses(sim, hunter); got < c.low || got > c.high {
+				t.Errorf("%s misses %.1f%% with %v%% spell hit, want %.1f%% to %.1f%%", name, got*100, c.hit, c.low*100, c.high*100)
+			}
+		}
 	}
 }

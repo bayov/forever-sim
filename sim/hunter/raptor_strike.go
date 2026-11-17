@@ -105,7 +105,10 @@ func (hunter *Hunter) makeQueueSpellsAndAura() *core.Spell {
 			if hunter.curQueueAura != nil {
 				hunter.curQueueAura.Deactivate(sim)
 			}
-			hunter.PseudoStats.DisableDWMissPenalty = true
+			// Under Forever a queued Raptor Strike leaves the off hand's dual-wield miss penalty on,
+			// as Heroic Strike does ("Queueing Heroic Strike will no longer increase off-hand hit
+			// chance", warrior/heroic_strike_cleave.go).
+			hunter.PseudoStats.DisableDWMissPenalty = !hunter.Env.IsForever()
 			hunter.curQueueAura = aura
 			hunter.curQueuedAutoSpell = hunter.RaptorStrike
 		},

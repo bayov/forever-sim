@@ -675,3 +675,30 @@ func TestForeverPetAutocastPassesAnAbilityShortOfFocus(t *testing.T) {
 		t.Errorf("at 40 focus the wolf cast Bite %d and Furious Howl %d times, want Bite once", bite.SpellMetrics[0].Casts, howl.SpellMetrics[0].Casts)
 	}
 }
+
+// Under Forever the pet's white swing crits at the pet's own crit, none of the hunter's it inherits,
+// while its abilities take all of the hunter's (wowsims/forever 7e0e0c2e46, EV-0134), through
+// changes to the hunter's crit in the fight.
+func TestForeverPetWhiteSwingTakesNoInheritedCrit(t *testing.T) {
+	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Wolf, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+	pet := hunter.pet
+	target := sim.GetTargetUnit(0)
+	attackTable := pet.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
+	white := pet.AutoAttacks.MHAuto()
+	bite := foreverPetSpell(hunter, 17261)
+	if bite == nil {
+		t.Fatal("the Wolf has no Bite")
+	}
+	for _, bonus := range []float64{0, 20, 5} {
+		hunter.AddStatDynamic(sim, stats.MeleeCrit, bonus*core.CritRatingPerCritChance)
+		white.ApplyEffects(sim, target, white)
+		inherited := hunter.GetStat(stats.MeleeCrit) / (core.CritRatingPerCritChance * 100)
+		own := (pet.GetStat(stats.MeleeCrit) - hunter.GetStat(stats.MeleeCrit)) / (core.CritRatingPerCritChance * 100)
+		if got, want := white.PhysicalCritChance(attackTable), own-attackTable.MeleeCritSuppression; math.Abs(got-want) > 1e-9 {
+			t.Errorf("hunter crit %.2f: white swing crit %.4f, want the pet's own %.4f", inherited, got, want)
+		}
+		if got, want := bite.PhysicalCritChance(attackTable), own+inherited-attackTable.MeleeCritSuppression; math.Abs(got-want) > 1e-9 {
+			t.Errorf("hunter crit %.2f: Bite crit %.4f, want %.4f with the hunter's", inherited, got, want)
+		}
+	}
+}

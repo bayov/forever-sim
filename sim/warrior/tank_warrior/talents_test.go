@@ -26,9 +26,10 @@ func landedSince(before, after core.SpellMetrics) bool {
 }
 
 // TestForeverTankUnbridledWrath checks Unbridled Wrath (Fury, 12322 / energize 12964): 12% a point for
-// 1 Rage on a landed white swing (client 70338 curve 12 to 60), and nothing on Heroic Strike or
-// Cleave, which take a swing's place but are melee specials (12322's ProcTypeMask 4, auto attacks
-// only; tank_mechanics-20261104-6).
+// 1 Rage on a landed white swing (client 70338 curve 12 to 60), and since hotfix push 114097
+// (SpellAuraOptions 124699, ProcTypeMask 4 to 20, melee abilities too) on a landed Heroic Strike or
+// Cleave at the same rate (wowsims/forever's EV-0138 log: 70% and 67%). Before the push they gave
+// none (tank_mechanics-20261104-6).
 func TestForeverTankUnbridledWrath(t *testing.T) {
 	uwID := &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 12964}}
 
@@ -61,14 +62,18 @@ func TestForeverTankUnbridledWrath(t *testing.T) {
 		}
 	}
 
-	// Heroic Strike and Cleave: a landed one gives the same Rage (none) with and without the talent.
-	for _, talents := range []string{"-0005", ""} {
+	// Heroic Strike and Cleave: a landed one gives 1 Rage 60% of the time at 5/5, none without the talent.
+	for _, c := range []struct {
+		talents string
+		want    float64
+	}{{"-0005", 0.6}, {"", 0}} {
+		talents := c.talents
 		sim, war := newTank(t, talents, bulwark)
 		war.CurrentTarget.AutoAttacks.CancelAutoSwing(sim)
 		target := war.CurrentTarget
 		for _, spell := range []*core.Spell{war.HeroicStrike.Spell, war.Cleave.Spell} {
 			metrics := &spell.SpellMetrics[target.UnitIndex]
-			hits := 0
+			hits, procs := 0, 0
 			for i := 0; i < 400; i++ {
 				war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
 				war.AddRage(sim, 50, war.RageRefundMetrics)
@@ -78,12 +83,20 @@ func TestForeverTankUnbridledWrath(t *testing.T) {
 					continue
 				}
 				hits++
-				if got := war.CurrentRage(); got != 50 {
-					t.Fatalf("a landed %v with talents %q left %.1f Rage of 50: Unbridled Wrath procs on it", spell.ActionID, talents, got)
+				switch got := war.CurrentRage(); got {
+				case 50:
+				case 51:
+					procs++
+				default:
+					t.Fatalf("a landed %v with talents %q left %.1f Rage of 50, want 50 or 51", spell.ActionID, talents, got)
 				}
 			}
 			if hits < 200 {
 				t.Errorf("%v landed %d times of 400", spell.ActionID, hits)
+			}
+			p := float64(procs) / float64(hits)
+			if se := math.Sqrt(0.6 * 0.4 / float64(hits)); math.Abs(p-c.want) > 4*se {
+				t.Errorf("Unbridled Wrath with talents %q procs on %.3f of %d landed %v, want %.2f", talents, p, hits, spell.ActionID, c.want)
 			}
 		}
 	}

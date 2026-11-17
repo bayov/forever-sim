@@ -87,9 +87,16 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 			}
 
 			spell.WaitTravelTime(sim, func(s *core.Simulation) {
-				// Traps gain no benefit from hit bonuses except for the Trap Mastery talent, since this is a unique interaction this is my workaround
-				spellHit := spell.Unit.GetStat(stats.SpellHit) + target.PseudoStats.BonusSpellHitRatingTaken
-				spell.Unit.AddStatDynamic(sim, stats.SpellHit, spellHit*-1)
+				// Classic's traps gain no benefit from hit bonuses except for the Trap Mastery talent,
+				// since this is a unique interaction this is my workaround. Forever's roll with the
+				// hunter's spell hit, Survival Tactics' trap hit on top (wowsims/forever's traps.go).
+				spellHit := 0.0
+				if !hunter.Env.IsForever() {
+					spellHit = spell.Unit.GetStat(stats.SpellHit) + target.PseudoStats.BonusSpellHitRatingTaken
+				}
+				if spellHit != 0 {
+					spell.Unit.AddStatDynamic(sim, stats.SpellHit, -spellHit)
+				}
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					baseDamage := sim.Roll(minDamage, maxDamage)
 					if sim.IsForever() {
@@ -98,7 +105,9 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 					baseDamage *= sim.Encounter.AOECapMultiplier()
 					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 				}
-				spell.Unit.AddStatDynamic(sim, stats.SpellHit, spellHit)
+				if spellHit != 0 {
+					spell.Unit.AddStatDynamic(sim, stats.SpellHit, spellHit)
+				}
 				spell.AOEDot().ApplyOrReset(sim)
 			})
 		},

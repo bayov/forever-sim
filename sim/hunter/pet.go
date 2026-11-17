@@ -216,6 +216,20 @@ func (hp *HunterPet) foreverSwingSpeed() float64 {
 func (hp *HunterPet) applyForeverRules() {
 	hp.AutoAttacks.MH().SwingSpeed = hp.foreverSwingSpeed()
 
+	// The white swing takes none of the crit the pet inherits from the hunter, only its own; the
+	// pet's abilities take all of it (wowsims/forever 7e0e0c2e46, EV-0134: white swings crit 0.6% over
+	// 154,361 landed at Ferocity 0, abilities 0.94). Each swing takes the current inherited crit back
+	// off, by its change since the last swing.
+	whiteSwing := hp.AutoAttacks.MHConfig()
+	applyWhiteSwing := whiteSwing.ApplyEffects
+	inheritedCritTakenOff := 0.0
+	whiteSwing.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		inheritedCrit := hp.InheritedStats()[stats.MeleeCrit]
+		spell.BonusCritRating += inheritedCritTakenOff - inheritedCrit
+		inheritedCritTakenOff = inheritedCrit
+		applyWhiteSwing(sim, target, spell)
+	}
+
 	// The pet swings at its owner's melee and attack speed on top of its own: in wowsims/forever's
 	// Nov 8 combat log (d729b13992) a pet swings every 1.965 sec over its owner's 2% Wind Blessed,
 	// 1.40 sec with the owner's Rapid Fire up (+40% melee haste) and 1.08 sec with its own Frenzy as
