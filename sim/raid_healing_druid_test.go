@@ -653,3 +653,32 @@ func TestDruidInnervateOnSelf(t *testing.T) {
 		t.Errorf("%.0f mana regenerated in Innervate's 20 sec", gained)
 	}
 }
+
+// TestDruidIdolOfRejuvenation: Forever's Idol of Rejuvenation (22398) makes Regrowth's direct heal 5%
+// bigger on a target with our Rejuvenation, and changes nothing else (client 70938 tooltip).
+func TestDruidIdolOfRejuvenation(t *testing.T) {
+	both := []string{castAt(rjTop, "Tank", hotOff(rjTop, "Tank")), castAt(rgTop, "Tank", hotOff(rgTop, "Tank"))}
+	run := func(idol bool, lines []string) druidLog {
+		rsr := druidRaid(t, nil, 0, lines...)
+		if idol {
+			rsr.Raid.Parties[0].Players[1].Equipment.Items[proto.ItemSlot_ItemSlotRanged] = &proto.ItemSpec{Id: druid.IdolOfRejuvenation}
+		}
+		return runDruidLog(t, rsr)
+	}
+	plain, idol := run(false, both), run(true, both)
+	if r := idol.multiplier(t, idol.directs(rgTop)) / plain.multiplier(t, plain.directs(rgTop)); !druidNear(r, 1.05, 0.001) {
+		t.Errorf("Regrowth on a Rejuvenated target heals %.4f times as much with the idol, want 1.05", r)
+	}
+	if r := idol.multiplier(t, idol.ticks(rgTop)) / plain.multiplier(t, plain.ticks(rgTop)); !druidNear(r, 1, 0.001) {
+		t.Errorf("Regrowth's ticks heal %.4f times as much with the idol, want 1", r)
+	}
+	if r := idol.multiplier(t, idol.ticks(rjTop)) / plain.multiplier(t, plain.ticks(rjTop)); !druidNear(r, 1, 0.001) {
+		t.Errorf("Rejuvenation heals %.4f times as much with the idol, want 1", r)
+	}
+	// Without Rejuvenation on the target, nothing.
+	alone := []string{castAt(rgTop, "Tank", hotOff(rgTop, "Tank"))}
+	plainAlone, idolAlone := run(false, alone), run(true, alone)
+	if r := idolAlone.multiplier(t, idolAlone.directs(rgTop)) / plainAlone.multiplier(t, plainAlone.directs(rgTop)); !druidNear(r, 1, 0.001) {
+		t.Errorf("Regrowth alone heals %.4f times as much with the idol, want 1", r)
+	}
+}

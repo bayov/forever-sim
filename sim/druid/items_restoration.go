@@ -11,10 +11,19 @@ import (
 // (1306488, aura 107 on Swiftmend's cooldown).
 const IdolOfSwiftness = 279250
 
+// IdolOfRejuvenation (22398): Forever's is "Increases the initial healing of Regrowth by 5% when cast
+// on a target affected by your Rejuvenation", and no longer Unique (client 1.60.1.70938 tooltip,
+// https://foreverchanges.pro/item/22398, revealed 2026-11-15). Classic's +50 Rejuvenation healing is
+// gone.
+const IdolOfRejuvenation = 22398
+
 func init() {
 	core.NewItemEffect(IdolOfSwiftness, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		druid.swiftmendCooldownCut += 3 * time.Second
+	})
+	core.NewItemEffect(IdolOfRejuvenation, func(agent core.Agent) {
+		agent.(DruidAgent).GetDruid().regrowthOnRejuvBonus += 0.05
 	})
 }
 

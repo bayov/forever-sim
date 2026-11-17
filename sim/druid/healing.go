@@ -51,6 +51,9 @@ type DruidHealing struct {
 	wildGrowthCD *core.Timer
 	// What items take off Swiftmend's cooldown (items_restoration.go).
 	swiftmendCooldownCut time.Duration
+	// regrowthOnRejuvBonus: Regrowth's direct heal is this much bigger on a target with our
+	// Rejuvenation (Forever's Idol of Rejuvenation, 5%).
+	regrowthOnRejuvBonus float64
 }
 
 type healRank struct {
@@ -300,6 +303,18 @@ func expectedHot(spell *core.Spell, target *core.Unit, ticks int32, tick, period
 // applyHot puts this rank's HoT on target, and takes our other ranks of the same heal off it: one
 // druid's Rejuvenation (or Regrowth) replaces its last. Another druid's stays (development notes,
 // build 70425: high ranks no longer block other druids' Rejuvenation).
+// hasHot is whether any of these ranks' HoTs of ours is on the target.
+func hasHot(ranks []*DruidSpell, target *core.Unit) bool {
+	for _, r := range ranks {
+		if r != nil {
+			if hot := r.Hot(target); hot != nil && hot.IsActive() {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func applyHot(ranks []*DruidSpell, spell *core.Spell, target *core.Unit, sim *core.Simulation) {
 	for _, other := range ranks {
 		if other != nil && other.Spell != spell {
@@ -414,7 +429,15 @@ func (druid *Druid) newRegrowthConfig(r healRank, rank int) core.SpellConfig {
 			if target.IsDead() {
 				return
 			}
+			bonus := 0.0
+			if druid.regrowthOnRejuvBonus > 0 && hasHot(druid.Rejuvenation, target) {
+				bonus = druid.regrowthOnRejuvBonus
+				spell.DamageMultiplier *= 1 + bonus
+			}
 			spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
+			if bonus > 0 {
+				spell.DamageMultiplier /= 1 + bonus
+			}
 			applyHot(druid.Regrowth, spell, target, sim)
 		},
 		// The direct heal: what lands when the cast ends, as HealComm counted it.
