@@ -208,8 +208,9 @@ func TestForeverFlawlessExecutionAndAggression(t *testing.T) {
 }
 
 // Death Mark (client 1325758 at 60): 12% of the rogue's damage to the target a combo point is
-// stored for 6 sec, Rupture and Garrote twice, then dealt up to 156 + 245 a point + 4% attack power
-// a point. Coup de Grace 3/3 raises the rate and the damage by 20%.
+// stored for 6 sec, Rupture and Garrote twice, then dealt up to (156 + 245 a point + 4% attack power
+// a point) x (1 + the sheet's melee crit), the current tooltip. Coup de Grace 3/3 raises the rate and
+// the damage by 20%.
 func TestForeverDeathMark(t *testing.T) {
 	// Death Mark and Coup de Grace 3/3, nothing else.
 	sim, rogue := newForeverRogueSim(t, "-3-000000000000000001", 18805, 18805, 1)
@@ -223,7 +224,6 @@ func TestForeverDeathMark(t *testing.T) {
 	rogue.AutoAttacks.CancelAutoSwing(sim) // only the Garrote below is stored
 	rogue.AddStatDynamic(sim, stats.MeleeHit, 20*core.MeleeHitRatingPerHitChance)
 	detonation := rogue.GetSpell(core.ActionID{SpellID: 1325758, Tag: 1})
-	detonation.BonusCritRating -= 1000 * core.CritRatingPerCritChance
 	for _, points := range []int32{1, 5} {
 		for !rogue.DeathMarkAuras.Get(target).IsActive() {
 			rogue.AddComboPoints(sim, points-rogue.ComboPoints(), target, rogue.DeathMark.ComboPointMetrics())
@@ -233,7 +233,7 @@ func TestForeverDeathMark(t *testing.T) {
 			rogue.DeathMark.Cast(sim, target)
 		}
 		ap := rogue.DeathMark.MeleeAttackPower(target)
-		damageCap := 156 + 245*float64(points) + 0.04*float64(points)*ap
+		damageCap := (156 + 245*float64(points) + 0.04*float64(points)*ap) * (1 + rogue.GetStat(stats.MeleeCrit)/core.CritRatingPerCritChance/100)
 		// 1000 damage of Garrote is 2 x 12% x points x 1.2 stored.
 		rogue.Garrote.CalcAndDealPeriodicDamage(sim, target, 1000, rogue.Garrote.OutcomeAlwaysHitNoHitCounter)
 		dealt := rogue.Garrote.SpellMetrics[target.UnitIndex].TotalDamage
@@ -247,6 +247,45 @@ func TestForeverDeathMark(t *testing.T) {
 		if math.Abs(got-want) > 1 { // damage is whole numbers
 			t.Errorf("a %d point Death Mark dealt %.2f, want %.2f (stored from %.1f, cap %.1f)", points, got, want, dealt, damageCap)
 		}
+	}
+}
+
+// Death Mark is Always Hit (client 1325758 Attributes[3] 0x40000): against a target that dodges
+// everything it still lands, spends the combo points and pays out. With the store over the cap the
+// payout is the tooltip's cap, (156 + 245 x 5 + 0.04 x 5 x attack power) x (1 + melee crit / 100),
+// x 1.2 for Coup de Grace 3/3, and never crits (wowsims/forever's death_mark.go).
+func TestForeverDeathMarkAlwaysHitsAndPaysTheCap(t *testing.T) {
+	sim, rogue := newForeverRogueSim(t, "-3-000000000000000001", 18805, 18805, 1)
+	target := rogue.CurrentTarget
+	for sim.CurrentTime <= 0 {
+		sim.Step()
+	}
+	rogue.AutoAttacks.CancelAutoSwing(sim)
+	rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BaseDodgeChance = 1
+	rogue.AddStatDynamic(sim, stats.MeleeCrit, 50*core.CritRatingPerCritChance)
+	detonation := rogue.GetSpell(core.ActionID{SpellID: 1325758, Tag: 1})
+	for i := 0; i < 20; i++ {
+		rogue.AddComboPoints(sim, 5-rogue.ComboPoints(), target, rogue.DeathMark.ComboPointMetrics())
+		rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
+		rogue.SetGCDTimer(sim, sim.CurrentTime)
+		rogue.DeathMark.CD.Reset()
+		if !rogue.DeathMark.Cast(sim, target) || !rogue.DeathMarkAuras.Get(target).IsActive() || rogue.ComboPoints() != 0 {
+			t.Fatalf("cast %d: Death Mark didn't land against a target that dodges everything", i)
+		}
+		ap := rogue.DeathMark.MeleeAttackPower(target)
+		crit := rogue.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance
+		want := (156 + 245*5 + 0.04*5*ap) * (1 + crit/100) * 1.2
+		rogue.Garrote.CalcAndDealPeriodicDamage(sim, target, 100000, rogue.Garrote.OutcomeAlwaysHitNoHitCounter)
+		before := detonation.SpellMetrics[target.UnitIndex].TotalDamage
+		for rogue.DeathMarkAuras.Get(target).IsActive() {
+			sim.Step()
+		}
+		if got := detonation.SpellMetrics[target.UnitIndex].TotalDamage - before; math.Abs(got-want) > 1 {
+			t.Fatalf("cast %d: Death Mark paid %.2f, want the cap %.2f", i, got, want)
+		}
+	}
+	if crits := detonation.SpellMetrics[target.UnitIndex].Crits; crits != 0 {
+		t.Errorf("Death Mark's payout crit %d times at 50%% more crit, want never", crits)
 	}
 }
 

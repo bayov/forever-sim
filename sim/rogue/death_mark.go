@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // Death Mark, the 31-point Subtlety talent of Blizzard's November 2 development notes: "Finishing move
@@ -16,16 +17,19 @@ import (
 // 60; client 1.60.1.70753): 25 Energy and the combo points, a 10 sec cooldown, a 1 sec GCD, a melee
 // defense, physical. Its aura is a 6 sec periodic damage effect (aura 3, period 6000) plus a dummy
 // that procs on any damage the target takes (ProcTypeMask 0x800AAAA8). SpellDescriptionVariables
-// 1021: $ratio 12 (12% stored a combo point) and $maxAP 0.04; rank 4's cap is 156 + 245 a combo
-// point + 4% of attack power a combo point, rank 1's 63 + 102 a point, "before critical strike".
+// 1021: $ratio 12 (12% stored a combo point) and $maxAP 0.04. Every rank is Always Hit (Attributes[3]
+// 0x40000, as Shank), so the mark never misses, is dodged or parried. Rank 4's tooltip (Wowhead's
+// Forever tooltip, tools/dps_report/forever_tt_cache/forever/spell/1325758.json) gives the cap as
+// (156 + 245 a combo point + 4% of attack power a combo point) x (1 + $mcrit / 100), $mcrit the
+// melee crit the character sheet shows; rank 1's base is 63 + 102 a point.
 //
 // Modelled: the rogue's damage to the marked target (direct, periodic, auto attacks and poisons,
 // Rupture and Garrote twice) is stored at 12% a combo point; after 6 sec the store, up to the cap
-// (attack power read at the cast), is dealt as one physical hit that can crit and that no armor or
-// modifier touches again, since the stored damage already went through them. Coup de Grace raises
-// the storage rate and the damage by 7/13/20%. Assumed (notes.md, Rogue): the cap applies before
-// the crit roll, ranks 2 and 3 use rank 1's cap (their tooltips give none), and the mark's own hit
-// isn't stored.
+// (attack power and crit read at the cast), is dealt as one physical hit that cannot crit (the
+// crit is in the cap; wowsims/forever's death_mark.go) and that no armor or modifier touches again,
+// since the stored damage already went through them. Coup de Grace raises the storage rate and the
+// damage by 7/13/20%. Assumed (notes.md, Rogue): ranks 2 and 3 use rank 1's cap (their tooltips give
+// none), and the mark's own hit isn't stored.
 func (rogue *Rogue) registerDeathMark() {
 	if !rogue.Talents.DeathMark || rogue.Level < 40 {
 		return
@@ -54,7 +58,7 @@ func (rogue *Rogue) registerDeathMark() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			damage := min(stored, damageCap) * coupDeGrace
-			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMeleeSpecialCritOnly)
+			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeAlwaysHit)
 		},
 	})
 
@@ -133,18 +137,15 @@ func (rogue *Rogue) registerDeathMark() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHitNoHitCounter)
-			if result.Landed() {
-				points := float64(rogue.ComboPoints())
-				aura := rogue.DeathMarkAuras.Get(target) // the 10 sec cooldown outlasts the 6 sec mark
-				storeRate = storedPerPoint * points * coupDeGrace
-				damageCap = capBase + capPerPoint*points + capAPPerPoint*points*spell.MeleeAttackPower(target)
-				stored = 0
-				aura.Activate(sim)
-				rogue.SpendComboPoints(sim, spell)
-			} else {
-				spell.IssueRefund(sim)
-			}
+			result := spell.CalcOutcome(sim, target, spell.OutcomeAlwaysHitNoHitCounter)
+			points := float64(rogue.ComboPoints())
+			aura := rogue.DeathMarkAuras.Get(target) // the 10 sec cooldown outlasts the 6 sec mark
+			storeRate = storedPerPoint * points * coupDeGrace
+			sheetCrit := rogue.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance
+			damageCap = (capBase + capPerPoint*points + capAPPerPoint*points*spell.MeleeAttackPower(target)) * (1 + sheetCrit/100)
+			stored = 0
+			aura.Activate(sim)
+			rogue.SpendComboPoints(sim, spell)
 			spell.DealOutcome(sim, result)
 		},
 	})
