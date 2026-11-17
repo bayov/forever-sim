@@ -611,6 +611,9 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				fmt.Printf("round %d: %s = %s (%+.1f), now %s\n", round, gearSlotNames[slot], bestOption.name, bestGain, bestScore)
 			}
 		}
+		if s.searchSets(pool, best, names, unsourced, &bestScore, knobs, round) {
+			improved = true
+		}
 		if s.enchantSearch && s.searchEnchants(best, &bestScore, knobs, s.enchantExclude, round) {
 			improved = true
 		}
