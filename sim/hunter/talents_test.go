@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -372,6 +373,51 @@ func TestQueuedRaptorStrikeKeepsDualWieldPenalty(t *testing.T) {
 		queued.Deactivate(sim)
 		if hunter.PseudoStats.DisableDWMissPenalty {
 			t.Errorf("%v: the penalty stays lifted after the queue ends", ruleset)
+		}
+	}
+}
+
+// TestForeverTrapsRollWithSpellHit checks that under Forever Immolation and Explosive Trap roll with
+// the hunter's spell hit (wowsims/forever's traps.go), where Classic's traps ignored it: against a
+// level 63 boss, 17% of them miss without hit and 1% with 20%.
+func TestForeverTrapsRollWithSpellHit(t *testing.T) {
+	const casts = 3000
+	// Immolation Trap counts no hits or misses, so a miss is a cast that leaves no burn.
+	immolationMisses := func(sim *core.Simulation, hunter *Hunter) float64 {
+		spell, target := hunter.ImmolationTrap, hunter.CurrentTarget
+		dot := spell.Dot(target)
+		misses := 0
+		for i := 0; i < casts; i++ {
+			spell.ApplyEffects(sim, target, spell)
+			for sim.NextEventTime() <= sim.CurrentTime && !sim.Step() {
+			}
+			if dot.IsActive() {
+				dot.Deactivate(sim)
+			} else {
+				misses++
+			}
+		}
+		return float64(misses) / casts
+	}
+	explosiveMisses := func(sim *core.Simulation, hunter *Hunter) float64 {
+		spell, target := hunter.ExplosiveTrap, hunter.CurrentTarget
+		for i := 0; i < casts; i++ {
+			spell.ApplyEffects(sim, target, spell)
+		}
+		for sim.CurrentTime < time.Second && !sim.Step() {
+		}
+		return float64(spell.SpellMetrics[target.UnitIndex].Misses) / casts
+	}
+	for name, misses := range map[string]func(*core.Simulation, *Hunter) float64{
+		"Immolation Trap": immolationMisses,
+		"Explosive Trap":  explosiveMisses,
+	} {
+		for _, c := range []struct{ hit, low, high float64 }{{0, 0.14, 0.20}, {20, 0, 0.025}} {
+			sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetForever)
+			hunter.AddStatDynamic(sim, stats.SpellHit, c.hit*core.SpellHitRatingPerHitChance)
+			if got := misses(sim, hunter); got < c.low || got > c.high {
+				t.Errorf("%s misses %.1f%% with %v%% spell hit, want %.1f%% to %.1f%%", name, got*100, c.hit, c.low*100, c.high*100)
+			}
 		}
 	}
 }
