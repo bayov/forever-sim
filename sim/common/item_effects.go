@@ -3182,7 +3182,9 @@ func init() {
 	// https://www.wowhead.com/classic/item=19288/darkmoon-card-blue-dragon
 	// Equip: 2% chance on successful spellcast to allow 100% of your Mana regeneration to continue while casting for 15 sec.
 	// Forever: Aura of the Blue Dragon (23684) raises Spirit by 150 for 15 sec instead (wowsims/forever's
-	// client store: A_MOD_STAT misc 4, 150), still at 2%.
+	// client store: A_MOD_STAT misc 4, 150). Wago hotfix push 114044 (2026-11-16) raised the trigger's
+	// (23688) ProcChance from 2 to 3. The same push set the buff's own ProcChance (23684) from 100 to 2,
+	// but the buff has no proc flags, so that number only feeds its tooltip.
 	core.NewItemEffect(DarkmoonCardBlueDragon, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -3203,7 +3205,7 @@ func init() {
 			Name:       "Aura of the Blue Dragon Trigger",
 			Callback:   core.CallbackOnCastComplete,
 			ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
-			ProcChance: .02,
+			ProcChance: core.TernaryFloat64(character.Env.IsForever(), .03, .02),
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				procAura.Activate(sim)
 			},
@@ -3212,8 +3214,16 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=19287/darkmoon-card-heroism
 	// Equip: Sometimes heals bearer of 120 to 180 damage when damaging an enemy in melee.
+	// Forever: wago hotfix push 114044 (2026-11-16) raised the heal's (23682) EffectBasePointsF from 150
+	// to 198 and kept its Variance of 0.4, which rolls base * (1 +- 0.2): 150 gave the old 120 to 180,
+	// and 198 gives 158.4 to 237.6, so 158 to 238. The push also says it procs twice as often in
+	// Strongholds and Cities, which our raid and dungeon fights aren't, so the rate stays as it is.
 	core.NewItemEffect(DarkmoonCardHeroism, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		healMin, healMax := 120.0, 180.0
+		if character.Env.IsForever() {
+			healMin, healMax = 158, 238
+		}
 
 		actionID := core.ActionID{SpellID: 23689}
 		healthMetrics := character.NewHealthMetrics(actionID)
@@ -3224,7 +3234,7 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagNoOnCastComplete,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				character.GainHealth(sim, sim.Roll(120, 180), healthMetrics)
+				character.GainHealth(sim, sim.Roll(healMin, healMax), healthMetrics)
 			},
 		})
 
@@ -3243,6 +3253,9 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=19289/darkmoon-card-maelstrom
 	// Equip: Chance to strike your melee target with lightning for 200 to 300 Nature damage.
+	// Forever: wago hotfix push 114044 (2026-11-16) added a second effect to 23686 (dummy aura, 2) that
+	// doubles the damage to Aquatic enemies. No boss we sim is Aquatic, so it's left out. The same push
+	// dropped the damage spell's (23687) own ProcChance row, which never set the trigger's rate.
 	core.NewItemEffect(DarkmoonCardMaelstrom, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
