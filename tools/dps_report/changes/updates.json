@@ -4930,7 +4930,7 @@
       "Shaman"
      ],
      "moves": false,
-     "note": "Each tank preset takes the best Phase 1 enchant for each slot at its own goal: Greater Agility boots for the Warrior and Warden, Strength wrists for the Warrior, an Agility cloak for the Warden, and for the Paladin Agility, Holy Power gloves, spell power wrists and a spell power or Agility neck. The Protection Paladin is now 1st at Max survival (1811 against the Warrior's 1776), and gains about 95 at Max threat and 85 at Balanced. No damage preset changes.",
+     "note": "Each tank preset takes the best Phase 1 enchant for each slot at its own goal: Greater Agility boots for the Warrior and Warden, Strength wrists for the Warrior, an Agility cloak for the Warden, and for the Paladin Agility, Holy Power gloves, spell power wrists and a spell power or Agility neck. The Protection Paladin gains about 95 at Max threat and 85 at Balanced, and moved to 1st at Max survival (1811 against the Warrior's 1776) until the Shieldsworn and Unbridled Wrath hotfixes put the Warrior back on top. No damage preset changes.",
      "commits": [
       "a6a8305",
       "814decc"
@@ -5073,7 +5073,7 @@
       "rogue__combat-swords",
       "rogue__subtlety"
      ],
-     "note": "Windfury's own swings, Hand of Justice, Sword Specialization, Thrash Blade and Reckoning no longer get a Windfury Totem roll of their own, as our combat logs show. Combat Swords loses about 2.6 at 3 minutes; on the Tanking tab the Protection Paladin's scores drop (Balanced 2,838 to 2,809 for the Balanced build).",
+     "note": "Windfury's own swings, Hand of Justice, Sword Specialization, Thrash Blade and Reckoning no longer get a Windfury Totem roll of their own, as our combat logs show. Combat Swords loses about 2.6 at 3 minutes; on the Tanking tab the Protection Paladin's scores drop (Balanced 2,838 to 2,809 for the Balanced build), back to 2,837 once Windfury Totem rolled on every main hand hit, Holy Strike included.",
      "commits": [
       "a1a1a81"
      ]
@@ -5662,6 +5662,16 @@
       "192cb2e",
       "2dbcd19"
      ]
+    },
+    {
+     "title": "Item fixes: Manual Crowd Pummeler's haste has a 3 min cooldown, and the Five Thunders set gets its 3, 4 and 6 piece bonuses",
+     "kind": "gear",
+     "note": "Manual Crowd Pummeler's haste comes once every 3 min, as its tooltip says, instead of every 30 sec. The Five Thunders pieces count toward one set with its 3, 4 and 6 piece bonuses. No preset wears either, on any tab.",
+     "moves": false,
+     "commits": [
+      "6ea6e47",
+      "6875e3b"
+     ]
     }
    ],
    "internal": [
@@ -5972,6 +5982,42 @@
     {
      "commit": "2c6bd10",
      "why": "the metas' published numbers and summaries, the Changes lines and the wiki; no request changes"
+    },
+    {
+     "commit": "f232c1a",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "7101690",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "02dda81",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "dd8d89d",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "0d1b7e0",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "226e8d8",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "1eb33c9",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "dcc81fd",
+     "why": "the Phase 0 best-in-slot lists and their gear search; no report preset changes"
+    },
+    {
+     "commit": "39b94e3",
+     "why": "the gear search tries whole item sets; the sim helper it adds changes no result"
     }
    ],
    "source": {
