@@ -1,8 +1,8 @@
 # update_1117: PRs #127, #131 and #132, the Nov 13-17 hotfixes, re-sim and publish
 
-Landed on master at ab7915473 (dev branch `update-1117`, same commit). DPS Report deployed:
-https://forever-dps.pages.dev, deploy id `f0c58c5b` (44 files, each checked live). The follow-up after master's
-Manual Crowd Pummeler and Five Thunders commits is under "After the merge" below.
+Landed on master at 8c60000cf (dev branch `update-1117`, same commit). DPS Report deployed:
+https://forever-dps.pages.dev. The round's publish was deploy `f0c58c5b` at ab7915473. The final deploy, `822fe46f`, came
+after the post-merge check below (44 files, each checked live). stale.mjs ends at 0 of 68 builds and 0 of 2 modes stale.
 
 ## Changes and their sources
 
@@ -114,8 +114,15 @@ Both were re-simmed whole.
 ## After the merge
 
 Merging master after the publish brought in other sessions' Manual Crowd Pummeler cooldown (6ea6e47b4) and Five Thunders
-set (6875e3b1e). They marked the whole report stale. A probe and re-sim of what they move follows; its results are added
-below when it lands.
+set (6875e3b1e). They marked the whole report stale. No number moved:
+- The probe cleared all 68 builds.
+- Four audit builds were re-simmed in full and came out unchanged: Balance Wrath and its -duty-ff, Arcane, and the Fury
+  sunder duty.
+- No DPS, tank or heal request wears item 9449 or a Five Thunders piece, so Tanking and Healing were recorded current
+  without a re-sim.
+- Two Changes-tab lines got corrected history: the old Max survival line now says the Warrior is back on top, and the
+  Windfury line notes Paladin Balanced's return to 2,837 before Shieldsworn.
+- Commits 2a6ee54ea and 8c60000cf; deploy `822fe46f`.
 
 ## Rulings needed
 
