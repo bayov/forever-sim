@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "0b99829bfa31c1dbfb095cafb6bd80e2acc25bc3"
+  "master": "6f2e9c6938ce679be3a1ecf690e0fef91ca2cdb8"
  },
  "last_pass_at": "2026-11-16T00:49:24Z",
  "pass": 85,
  "result": "quiet",
  "note": "Pass 85: cfc7f9382..f30078da1. Only 7429dc278 (sim_concurrent.go adds a request player database once before splits; plumbing, no mechanic). No build past 70938 (probe 300); dev-notes and hotfix threads unchanged; no TASKS/ledger updates.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-16T18:49:24Z",
+ "checked_at": "2026-11-17T00:44:34Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
