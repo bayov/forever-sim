@@ -335,6 +335,11 @@ func (pet *Pet) UpdateStatInheritance(newStatInheritance PetStatInheritance) {
 	pet.statInheritance = newStatInheritance
 }
 
+// InheritedStats is what the pet takes from its owner right now.
+func (pet *Pet) InheritedStats() stats.Stats {
+	return pet.inheritedStats
+}
+
 func (pet *Pet) GetStatInheritance() PetStatInheritance {
 	return pet.statInheritance
 }
