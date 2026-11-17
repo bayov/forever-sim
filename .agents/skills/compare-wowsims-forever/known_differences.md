@@ -1,13 +1,25 @@
 # Known differences
 
 A rerun should find these, so it can tell what is new. Keep the list current. Rows as of ours
-8c75031e2, theirs 016f21f4cc (2026-11-15, aligned). The gaps per class below are the last full
+d5e59ef48, theirs 540ad8fca3 (2026-11-17, aligned). The gaps per class below are the last full
 run, on the report's requests at ours dcc5483e, theirs bef9531580 (2026-11-12, 20,000
 iterations, aligned), before our Venom fix (Venom's +20% proc chance now reaches Instant Poison,
 as its class mask says: it moves ours about +19 on Mutilate, +16 Seal Fate Daggers, +14 Seal Fate
 Swords).
 
-Gaps (theirs - ours) and how far the rows explain them:
+Gaps after the 2026-11-17 traces, with every row below flipped (theirs - ours, what no row explains):
+
+- **Warrior:** Arms -10.1; Fury -10.5 (Heroic Strike rage, the rotation re-check timing, Reckless
+  Swings not flipped).
+- **Hunter:** Survival -14.3 (Immolation Trap timing +3.5, physical hits about 1% bigger in ours
+  about 5, Serpent Sting +1.1). The pet's white crit (their 7e0e0c2e46) was a gap too; ours matches
+  since 2026-11-17 (Settled).
+- **Paladin:** Retribution +0.5, Holy Shock Ret +0.8, Sub Holy +4.1 (Judgement choices).
+- **Druid:** Feral -3.8.
+- **Rogue:** Combat Daggers -3.4, Combat Swords +1.2, Mutilate -3.2, Seal Fate Daggers -3.0, Seal
+  Fate Swords -3.3, Subtlety -5.1 (-10.7 with the 2026-11-17 Death Mark fixes; opener timing).
+
+Raw gaps of the last full run (theirs - ours) and how far the rows explained them then:
 
 - **Hunter:** ranged builds -2.5 to +5.8, within the error once the pet rows cancel. Survival +65
   (and its pet variants): Windfury Totem's mask is 70 of it, then ours sits about 25 above theirs
@@ -54,6 +66,7 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 | Mutilate and the totem | Rolls once | Rolls twice | Ours (user ruling 2026-11-15, TASKS.md): Blizzard's Nov 13 note says Mutilate's off-hand strike can't roll the totem, and no log shows two rolls. Only a log showing two would change it. Mutilate 8.4 for theirs |
 | Seal of Command, Judgement of Command and the totem | Judgement rolls it, the seal proc never | Roll it (their counts before the hotfix were 0/117 and 0/105) | Judgement of Command matched since the Nov 13 rule landed (2026-11-15, it rolls); the Seal of Command proc still never rolls on ours (`SpellFlagNoWindfuryTotem`), theirs rolls it. Open |
 | Holy Strike and the totem | Rolls it (since 2026-11-15) | Rolls it (their EV-0008 after the hotfix: 58 of 277) | Matched |
+| Windfury Totem's +246 attack power | A buff with 2 charges, so the next swing or ability after the extra attack takes it too (`sim/core/buffs.go:2112-2117`) | On the extra strike only (`sim/core/buffs/drivers.go:253-320`) | Open, needs a log; kept with the user's 2026-11-15 totem ruling. For ours: paladins 3.4 to 3.9, rogues 1.0 to 2.1, Survival 2.9, Feral 2.4 |
 | Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | Choice. `--no-raid-damage`. Rage: Arms 17.5, Fury 18.6, Fury 2H 19.5. Casters in their tables |
 | Off-GCD items (Thistle Tea, Cold Blood, Bloodrage) | Fire when the rotation says | Only at the next GCD check; Thistle Tea at energy <= 0 never fires | Choice. Thistle Tea for ours: Seal Fate Daggers 18.8 (theirs' autocast fires it 0.6 times even without the line), Feral 20.8 (2026-11-15); Combat Swords 14.8, Subtlety 10.3, Combat Daggers 6.7, Mutilate 5.8, Seal Fate Swords 4.8 (2026-11-12). Cold Blood's 1.0 a fight to 0.35 was the converter (fixed 2026-11-15, now 1.0 both) |
 
@@ -64,10 +77,11 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 | Improved Tracking vs the generic boss | Counts the typeless boss as tracked (standards 19) | Only types a Track spell names | Choice. `--their-mob-type MobTypeGiant` aligns it. Survival 41 |
 | Cobra Reflexes | Hits shrink with the speed (`hunter_pet_speed`) | Same speed normalization since 8223020463 | Ruling. No preset trains it; not remeasured |
 | Hunter's buffs on the pet | Passed live | Not | Not remeasured. Their pet keeps inherited AP and health from the summon (8223020463) |
-| Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling. Survival 9.1 for ours |
+| Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling. Survival 4.8 for ours (2026-11-17) |
 | AQ book ranks | Off under Forever | Top ranks only | `ours_aq_cli` aligns it. Worth 30 to 36 to ranged hunters |
-| Quick Strikes on an avoided swing | Every main-hand white swing rolls it, misses and dodges too (`sim/hunter/aspects.go:~150`; 19.5 procs from 195 swings) | Landed swings only: their decode takes a landed hit for any mask that names no outcome (`sim/core/proc_types.go`, `ProcTrigger` in `sim/hunter/aspects.go:85-125`) | Open. The client rows (1.60.1.70938) are silent: Aspect of the Beast's SpellAuraOptions has ProcTypeMask_0 4 (deal melee swing) and nothing else, and the client data has no hit mask (that is server side). Survival, small |
-| Unexplained (2026-11-15, Survival after the flips) | Immolation Trap ticks 32.8 a fight; off-hand misses 17.4% | 29.1 ticks; off-hand misses 19.0% | Not traced: +7.6 for ours on the trap; the off hand is about 8 weapon skill on the dagger, cause not found; Wing Clip small |
+| Quick Strikes on an avoided swing | Every main-hand white swing rolls it, misses and dodges too (`sim/hunter/aspects.go:~150`; 19.5 procs from 195 swings) | Landed swings only: their decode takes a landed hit for any mask that names no outcome (`sim/core/proc_types.go`, `ProcTrigger` in `sim/hunter/aspects.go:85-125`) | Open. The client rows (1.60.1.70938) are silent: Aspect of the Beast's SpellAuraOptions has ProcTypeMask_0 4 (deal melee swing) and nothing else, and the client data has no hit mask (that is server side). Survival 15.3 for ours (2026-11-17, `sim/hunter/aspects.go:~160`) |
+| Hunter's Mark on trap ticks | Immolation Trap's tick reads ranged attack power with the target's Hunter's Mark (`sim/hunter/immolation_trap.go`) | Counts it differently (not traced in their code) | Open (notes.md:313: the traps' attack power share is server side). Survival 1.2 |
+| Unexplained (2026-11-17, Survival after every flip) | Immolation Trap timing; physical hits about 1% bigger | | -14.3 for ours: the trap's timing +3.5 for theirs, the physical hits about 5 for ours, Serpent Sting +1.1 for theirs; not traced further |
 
 Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 
@@ -76,18 +90,19 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
 | Shank and Dual Wield Specialization | Off-hand multiplier, so DWS reaches it (`sim/rogue/shank.go:58`) | A modifier scoped to the off hand doesn't reach a spell with no hand in its mask | Open (notes.md Rogue, assumed). For ours: Combat Swords 7.7, Seal Fate 4.5 |
-| Unexplained (2026-11-15), Seal Fate Swords about -11, Seal Fate Daggers about -8 | Shank's DWS (row above), white swings about 2 | Deadly Poison application misses, about 1.7 | Small rows, nothing larger found. Seal Fate itself agrees (Settled) |
+| Poised after the prepull | The rogue starts the prepull at full Energy with Poised, so the opener gets it (`sim/rogue/poised.go:45`) | Not up at the pull | Choice (the fight's start). For ours: Combat Daggers 5.2, Combat Swords 2.5 |
+| Mutilate's strike order | Main hand first, then the off hand (`sim/rogue/mutilate.go:79-82`) | Off hand first | Open, not flipped. About 1.1 |
+| Unexplained (2026-11-17, after every flip) | | | Combat Daggers -3.4, Combat Swords +1.2, Mutilate -3.2, Seal Fate Daggers -3.0, Seal Fate Swords -3.3; Subtlety -5.1 (opener timing; -10.7 with the Death Mark fixes) |
 
 ## Warrior
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Flurry charges | Two white swings within 500 ms spend one | Every white swing, and a missed Heroic Strike or Cleave | Assumption `flurry_batch`. Fury 10.4, Fury 2H 5.4. Their shaman Flurry (b30e3fb1d5, two logs) keeps 0.5 s for Windfury Weapon strikes |
-| Anger Management | 1 rage every 3 s (tooltip) | 1.5 every 5 s (aura amount) | Open: a log of its rage ticks. Under 2.1 |
-| Unbridled Wrath on Heroic Strike | Procs (client proc flag 4) | White swings only | Assumption `warr_uw_queued`. Within 1 |
+| Flurry charges | Two white swings within 500 ms spend one | Every white swing, and a missed Heroic Strike or Cleave | Assumption `flurry_batch`. Fury 10.4, Fury 2H 5.4. Their shaman Flurry (b30e3fb1d5, two logs) keeps 0.5 s for Windfury Weapon strikes. Push 114097 (2026-11-17) gave Flurry (SpellAuraOptions 126501) proc type 20, melee abilities too; both sims spend it on Heroic Strike and Cleave only of the abilities (their EV-0138). Windfury Totem's attack spends a charge in ours (a white swing, the 2026-11-15 totem ruling), none in theirs (20093d47de) |
+| Anger Management | 1 rage every 3 s (tooltip) | 1.5 every 5 s (aura amount) | Open: a log of its rage ticks. Arms 0.8 (2026-11-17) |
 | Rotation re-checks, Heroic Strike during a cast | Re-checks at once on Rage gain; queued Heroic Strike goes off on a swing during Slam's cast | Re-checks 200 ms after Rage gain or swing; drops it during a cast (`hardcastRuns`); holds major cooldowns during a sequence step | Choice. Moves casts, nets 0 |
 | Explosives' hit | 1% miss at most (Era comment, `sim/core/consumes.go`) | Normal spell hit table | Open: client row 13241. Sapper +0.3 |
-| Unexplained (2026-11-15): Arms with Windfury Totem | More Overpower (16.8 a fight to 14.7) and Heroic Strike | Fewer | About 26 for ours. Likely a dodged totem attack opening Overpower in ours, or the rotation re-check timing |
+| Unexplained (2026-11-17, after every flip) | | | Arms -10.1; Fury -10.5 (Heroic Strike rage, the rotation re-check timing, Reckless Swings not flipped) |
 | Touch of the Grave's roll | On any ability cast (a guess, `racials_forever.go`) | On a landed damaging hit | Open. Undead Arms 0.4, Undead Retribution 1.1 |
 
 ## Shaman
@@ -160,11 +175,12 @@ Shoot and the miss floor are in the Mage table.
 | Rip and Rake ticks' attack power share | Under `nov2BleedScale`: Rip 0.0125 a combo point a tick, Rake 0.06875 | Measured on their logs: Rip 0.0114, Rake 0.065 | Ruling (`nov2BleedScale`), though their logs argue against the x1.25 on the attack power part. For ours: Rip 8.9, Rake tick 5.6. User ruling 2026-11-15: hold the x1.25 until a level 60 log |
 | Eclipse charges | Granted when Wrath lands; a Starfire begun before keeps them (`sim/druid/talents.go:278-315`, notes.md:276, proc flag is a magic damage hit) | Granted at Wrath's cast; every Starfire spends one (`talents_balance.go:~165`, 7c70ac16e3) | Open: a log with a Wrath in flight. Balance 3.2 for theirs (Wrath 26.0 casts to 24.2) |
 | Raid damage taken | Pushes back Starfire and Wrath | None | Choice. Balance 4.9, Balance Wrath 4.1; Feral, Retribution 0 |
-| Shadowmeld into Ravage | Night Elf Shadowmeld in combat opens Ravage | Ravage and Pounce need Prowl (no source) | Open, notes.md To Verify (with the rogue's Ambush). Feral 11.1 |
+| Shadowmeld into Ravage | Night Elf Shadowmeld in combat opens Ravage | Ravage and Pounce need Prowl (no source) | Open, notes.md To Verify (with the rogue's Ambush). Feral 11.1; Shadowmeld into Ambush, Subtlety 5.5 |
 | Wrath rank 8 | Base x1.085 (`druid_wrath8_tuning`) | Client's | Ruling. Balance Wrath 6.9, Balance 1.8 |
 | Innervate | Autocast at low mana | Only a rotation line | Choice. Balance 3.2 for ours |
 | Judgement of the Crusader on weapon strikes | 161 Holy taken through the coefficient (Holy Strike via weapon percent 0.429 x 50%, Seal of Righteousness inside its base) | Full coefficient, added before the done multipliers (unit tests only) | Open, notes.md To Verify. For theirs (2026-11-15): paladins 10.1 to 10.9, Smite 5.3 |
 | Dragonbreath Chili from Seal of Righteousness | Any landed melee hit rolls it | Seal hits are procs; 15852 lacks Can Proc From Procs | Open, notes.md To Verify. For ours: Retribution and Sub Holy 7.2, Holy Shock Ret 0.8 |
+| Omen of Clarity on Windfury Totem's attack | Procs (a white swing, the 2026-11-15 totem ruling) | None, though their EV-0136 counts it | Open, kept with the totem ruling. Feral 3.8 for ours |
 | Hammer of Wrath's 0.4 s cast | A swing due during the cast waits | The cast resets the swing | Engine. About 2 for ours on Holy Shock Ret |
 
 Sheets before alignment (`layers.py`, explained 2026-11-15): theirs' +21 AP at the gear layer was
@@ -172,6 +188,16 @@ alignment's own `bonusStats` (layers.py keeps them from the gear layer on, and n
 they're there); the 136 AP for ours after buffs is Battle Shout on their pull (align.py adds it)
 and the Greater Blessing of Might rank row; the paladin's 6 crit at talents is Conviction, gated
 on a weapon in theirs (no DPS).
+
+## Their bugs
+
+Theirs differs from its own evidence or data here; ours follows the evidence. Not reported (their
+checkout is read-only to us).
+
+| Difference | Ours | Theirs | DPS |
+|---|---|---|---|
+| Unbridled Wrath on Whirlwind | Never: every other landed damaging melee ability procs it since push 114097 (`applyUnbridledWrath`, `sim/warrior/talents.go`) | Procs (`talents_fury.go:62-80`), against their own EV-0138 log (2 of 425 Whirlwind hits) | Fury 2.4 for theirs |
+| Lacerate | Registered and cast by Survival | Never registered (`spell_data_auto_gen.go:363`) | Survival 23.8 for ours |
 
 ## Settled: both sims agree
 
@@ -201,6 +227,25 @@ A gap on one of these is a regression.
 - Sharpened Claws: 3% a point to melee and spell crit in the feral forms (aura 290). Ours since
   2026-11-15 (about 0 DPS).
 - Seal Fate: 500 ms ICD in both.
+- An avoided Execute keeps its extra Rage and refunds 80% of the base cost; the extra Rage goes only
+  when it lands. Ours since 2026-11-17 (their 7025f28b98, 1.60.1.70862 logs).
+- Unbridled Wrath procs on landed damaging melee abilities as well as white swings (push 114097,
+  SpellAuraOptions 124699, proc type 4 to 20), Whirlwind excepted in ours (Their bugs). Ours since
+  2026-11-17 (their a566a4179e, EV-0138).
+- Reckless Swings: of the abilities only Heroic Strike and Cleave spend a charge, once a cast however
+  many targets Cleave hits (push 114097, 249144). Ours since 2026-11-17 (their EV-0138; the push's CooldownSetLinkedSpell rows 23196 and 23197 only put Reckless Swings in the warrior's
+  Cooldown Manager, UI with nothing to sim).
+- The hunter pet's white swing takes none of the hunter's crit; its abilities take it. Ours since
+  2026-11-17 (their 7e0e0c2e46, EV-0134).
+- Predator's Edge counts twice, compounded, on Raptor Strike (x2.69 at 5/5), once on Mongoose Bite
+  and Strider Kick (x2.30). Ours since 2026-11-17 (their 258ef0d164, EV-0134: 2.690 over 497 crits).
+- A queued Raptor Strike keeps the dual-wield off-hand miss penalty. Ours since 2026-11-17 (their
+  engine has no queued-swing exception for it; EV-0134's off-hand misses).
+- Immolation and Explosive Trap roll with the hunter's spell hit, Survival Tactics on top. Ours since
+  2026-11-17 (their `sim/hunter/traps.go`).
+- Death Mark always hits (Attributes_3 0x40000); its cap is (156 + 245 a combo point + 0.04 AP a
+  combo point) x (1 + sheet melee crit/100) x Coup de Grace, and the payout never crits. Ours since
+  2026-11-17 (their e370277695, f64fef4df4).
 - Rake's direct hit: 6.5% AP at every rank, read at the hit. Ours since 2026-11-12, outside the Nov 2 scale (their 0384d8f98c, 70862 log).
 - Dragonfire and Caustic Smog Potions: neither hit nor ticks crit.
 - Venom's +20% proc chance on Instant, Deadly and Wound Poison (ours since 2026-11-12).
