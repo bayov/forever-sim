@@ -35,12 +35,16 @@ sim rolls once by default; Character.AssumeWindfuryPreAttack, the totem's roll k
 orc_bf_weapon is new (0: Blood Fury gives its attack and spell power without the 10% weapon damage).
 sim/warrior/dps_warrior/assume_test.go tests both; core.AssumeForTest reloads the knobs.
 
+2026-11-17: pal_soc_wf is dropped (AssumeNoWindfury, its check in CreateExtraAttackAuraCommon and
+sim/paladin/assume_init.go): the seal's hits carry SpellFlagNoWindfuryTotem, so the knob did nothing, and the
+assumption is one value, No. warr_exec_wf2's call moves above CalcDamage, now that Execute keeps its extra
+Rage when it's avoided.
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
-index 000000000..dc4feda4b
+index 000000000..b578577a5
 --- /dev/null
 +++ b/sim/core/assumptions.go
-@@ -0,0 +1,102 @@
+@@ -0,0 +1,98 @@
 +package core
 +
 +import (
@@ -92,10 +96,6 @@ index 000000000..dc4feda4b
 +	return def
 +}
 +
-+// AssumeNoWindfury maps spell IDs to the knob that, when set to 0, keeps them from procing
-+// Windfury Totem. Classes fill it from package init only, so it is never written during a sim.
-+var AssumeNoWindfury = map[int32]string{}
-+
 +// tickCritMultiplier is a periodic tick's crit multiplier. DASH_ASSUME bleed_tick_crit scales a
 +// physical tick crit's bonus: 0.5 makes a 200% bleed crit deal 150%.
 +func (dot *Dot) tickCritMultiplier(attackTable *AttackTable) float64 {
@@ -144,7 +144,7 @@ index 000000000..dc4feda4b
 +	return Assume("orc_bf_weapon", 1) != 0
 +}
 diff --git a/sim/core/buffs.go b/sim/core/buffs.go
-index 545d104f2..c768532d8 100644
+index 545d104f2..6aadaf735 100644
 --- a/sim/core/buffs.go
 +++ b/sim/core/buffs.go
 @@ -1851,6 +1851,9 @@ func TrueshotAura(unit *Unit) *Aura {
@@ -190,7 +190,7 @@ index 545d104f2..c768532d8 100644
  	return character.GetOrRegisterAura(Aura{
  		Label:    auraLabel,
  		ActionID: actionID,
-@@ -2103,22 +2132,12 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
+@@ -2103,22 +2132,7 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
  			if !result.Landed() || !rollsOn(spell) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
  				return
  			}
@@ -206,13 +206,10 @@ index 545d104f2..c768532d8 100644
 -					apBuffAura.SetStacks(sim, 1)
 -				} else {
 -					apBuffAura.SetStacks(sim, 2)
-+			if key, ok := AssumeNoWindfury[spell.ActionID.SpellID]; ok {
-+				if v, set := AssumeOk(key); set && v == 0 {
-+					return // dashboard assumption
- 				}
+-				}
 -
 -				aura.Unit.AutoAttacks.ExtraMHAttackProc(sim, 1, buffActionID, spell)
- 			}
+-			}
 +			roll(sim, spell)
  		},
  	})
@@ -408,7 +405,7 @@ index 0349324e7..a21d05d81 100644
  		}
  		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot
 diff --git a/sim/hunter/immolation_trap.go b/sim/hunter/immolation_trap.go
-index 87f00c5b6..753098f0e 100644
+index 7da92b527..1571ba7ea 100644
 --- a/sim/hunter/immolation_trap.go
 +++ b/sim/hunter/immolation_trap.go
 @@ -66,7 +66,7 @@ func (hunter *Hunter) getImmolationTrapConfig(rank int, timer *core.Timer) core.
@@ -421,10 +418,10 @@ index 87f00c5b6..753098f0e 100644
  				dot.Snapshot(target, tickDamage, isRollover)
  			},
 diff --git a/sim/hunter/pet.go b/sim/hunter/pet.go
-index dcdff9271..a0270551a 100644
+index 2dcc6c366..661f24141 100644
 --- a/sim/hunter/pet.go
 +++ b/sim/hunter/pet.go
-@@ -232,10 +232,19 @@ func (hp *HunterPet) applyForeverRules() {
+@@ -246,10 +246,19 @@ func (hp *HunterPet) applyForeverRules() {
  	// Report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's behaviour is treated as
  	// a bug, so the hit scales with the swing as in Classic (a 1.0 sec pet's hit is half a 2.0 sec
  	// pet's), and every pet's white damage a second is the same.
@@ -446,7 +443,7 @@ index dcdff9271..a0270551a 100644
  	mh.BaseDamageMin = foreverPetSwingAverage * (1 - 0.2) * hitSeconds / 2
  	mh.BaseDamageMax = foreverPetSwingAverage * (1 + 0.2) * hitSeconds / 2
 diff --git a/sim/hunter/raptor_strike.go b/sim/hunter/raptor_strike.go
-index ce96f63f1..8d959ade0 100644
+index 17653598e..cddb8744f 100644
 --- a/sim/hunter/raptor_strike.go
 +++ b/sim/hunter/raptor_strike.go
 @@ -76,6 +76,9 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
@@ -488,23 +485,6 @@ index a316554cc..7b2787648 100644
  
  		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
  			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-diff --git a/sim/paladin/assume_init.go b/sim/paladin/assume_init.go
-new file mode 100644
-index 000000000..2088f47dc
---- /dev/null
-+++ b/sim/paladin/assume_init.go
-@@ -0,0 +1,11 @@
-+package paladin
-+
-+import "github.com/wowsims/classic/sim/core"
-+
-+// Dashboard assumption pal_soc_wf = 0: Seal of Command procs (also from Echo of Command) don't
-+// proc Windfury Totem.
-+func init() {
-+	for _, id := range []int32{20424, 20944, 20945, 20946, 20947} {
-+		core.AssumeNoWindfury[id] = "pal_soc_wf"
-+	}
-+}
 diff --git a/sim/paladin/consecration.go b/sim/paladin/consecration.go
 index 7ccae987d..c1409d168 100644
 --- a/sim/paladin/consecration.go
@@ -535,7 +515,7 @@ index a9e99b97e..77742dd56 100644
  		paladin.RegisterSpell(core.SpellConfig{
  			ActionID:    core.ActionID{SpellID: rank.spellID},
 diff --git a/sim/paladin/soc.go b/sim/paladin/soc.go
-index d2d97892c..d3922c62e 100644
+index 928e560bd..23affd084 100644
 --- a/sim/paladin/soc.go
 +++ b/sim/paladin/soc.go
 @@ -60,7 +60,8 @@ func (paladin *Paladin) registerSealOfCommand() {
@@ -755,19 +735,18 @@ index 000000000..50354ab1a
 +	}
 +}
 diff --git a/sim/warrior/execute.go b/sim/warrior/execute.go
-index b0f6c55b5..dab1503ff 100644
+index fc3491615..5ded03c34 100644
 --- a/sim/warrior/execute.go
 +++ b/sim/warrior/execute.go
-@@ -49,6 +49,9 @@ func (warrior *Warrior) registerExecuteSpell() {
- 
+@@ -42,6 +42,8 @@ func (warrior *Warrior) registerExecuteSpell() {
+ 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+ 			extraRage := spell.Unit.CurrentRage()
  			baseDamage := flatDamage + convertedRageDamage*(extraRage)
- 
 +			// dashboard assumption warr_exec_wf2 = 1: the cast's own attack rolls Windfury Totem first
 +			warrior.AssumeWindfuryPreAttack(sim, spell, target, "warr_exec_wf2")
-+
- 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+ 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
  
- 			if !result.Landed() {
+ 			// Under Forever the extra rage goes only when the Execute lands: a miss, dodge or parry
 diff --git a/sim/warrior/rend.go b/sim/warrior/rend.go
 index 908df2ecd..d4a7ed2de 100644
 --- a/sim/warrior/rend.go

@@ -26,6 +26,8 @@ Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun 
 The base rows are the same sims run_build.py ran (seed 1: the main 180 s run at 20k, the 120 and 300 s lengths at 5k,
 and with no DASH_ASSUME this binary is bit-identical to the plain one), so they are copied from out/<id>.json when it
 is newer than the request. ASM_REUSE_OUT=0 sims them again.
+Every run first checks that each DASH_ASSUME key a setting sets is named in patch 0004's sim code (--check-knobs does
+only that).
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
 from concurrent.futures import ThreadPoolExecutor
@@ -50,6 +52,23 @@ STAFF_IMBUE = {'mage__frostfire': 'ImbueGreaterFlame', 'mage__fire': 'ImbueGreat
 NO_ZONE_FLASK = {b: 'FlaskOfDistilledWisdom' for b in ('hunter__beast-mastery', 'hunter__marksmanship', 'hunter__lone-wolf', 'druid__feral-cat')}
 ICE_LANCE = {'action': {'castSpell': {'spellId': {'spellId': 1240047}}, 'condition': {'auraIsActive': {'auraId': {'spellId': 400669}}}},
              'notes': 'Ice Lance on a Fingers of Frost charge (assumption scenario).'}
+
+
+KNOB_PATCH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches', '0004-dash-DASH_ASSUME-knobs-for-the-assumption-scenarios.patch')
+
+
+def unread_knobs():
+    """The DASH_ASSUME keys a setting in assumptions_def.py sets that no sim code in patch 0004 names as a string,
+    so the setting would sim the base and pass for a measurement."""
+    code, go = set(), False
+    for line in open(KNOB_PATCH):
+        if line.startswith('+++ '):
+            go = line.rstrip().endswith('.go') and not line.rstrip().endswith('_test.go')
+        elif go and line.startswith('+') and not line.lstrip('+').lstrip().startswith('//'):
+            code.add(line)
+    text = ''.join(code)
+    keys = {k for a in A for s in a['settings'] for k in s['env']}
+    return sorted(k for k in keys if f'"{k}"' not in text)
 
 
 def setting(key, sid):
@@ -295,6 +314,10 @@ def identical(ids, iters=1000):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    if unread_knobs():
+        sys.exit(f'assumptions_def.py sets knobs no code in {os.path.basename(KNOB_PATCH)} reads: {", ".join(unread_knobs())}')
+    if args and args[0] == '--check-knobs':
+        sys.exit(0)
     allids = sorted(os.path.basename(p)[:-5] for p in os.listdir(os.path.join(D, 'req')) if p.endswith('.json') and not p.endswith('.meta.json'))
     if args and args[0] == '--identical':
         identical(args[1:] or allids)
