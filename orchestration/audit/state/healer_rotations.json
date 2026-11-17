@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "1a85df1d754f480e22380db2a2301bd594af5303"
+  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
  },
- "last_pass_at": "2026-11-15T19:30:55Z",
- "pass": 14,
- "result": "findings",
- "note": "Pass 14 on 25ce81de7. Wild Growth 0.033->0.066 moved the 7 druid_restoration_raid rows (mean -0.022 carry; gate doubled); filed -20261115-1 (gate x0.75 +0.018). Paladin/shaman changes damage-only, rows identical. -20261104-2 still open.",
+ "last_pass_at": "2026-11-17T19:27:19Z",
+ "pass": 15,
+ "result": "quiet",
+ "note": "Pass 15 on 5f20dfdf4. Only change: Five Thunders set (shaman, worn by no healer request) and two core accessors; all 63 rows byte-identical. -20261115-1 and -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
  "checked_at": "2026-11-17T12:45:03Z"

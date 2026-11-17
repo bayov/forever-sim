@@ -41,17 +41,17 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 
 | Class / system | Rows | Landed | In flight | Missing | Partial | Wrong | Not simulated on purpose | Ambiguous | n/a | Other |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Warrior | 84 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 24 | 0 |
-| Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
+| Warrior | 88 | 54 | 0 | 2 | 0 | 3 | 0 | 4 | 25 | 0 |
+| Paladin | 69 | 40 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
 | Hunter | 97 | 53 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
 | Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 111 | 65 | 12 | 4 | 0 | 2 | 2 | 2 | 24 | 0 |
+| Shaman | 113 | 67 | 12 | 4 | 0 | 2 | 2 | 2 | 24 | 0 |
 | Mage | 69 | 19 | 9 | 9 | 0 | 2 | 5 | 7 | 18 | 0 |
 | Warlock | 95 | 50 | 4 | 0 | 0 | 3 | 3 | 1 | 33 | 1 covered by another row |
 | Druid | 76 | 33 | 0 | 2 | 3 | 2 | 2 | 0 | 34 | 0 |
-| Shared (races, mechanics, items) | 75 | 28 | 1 | 3 | 3 | 3 | 4 | 9 | 24 | 0 |
-| **Total** | **797** | **396** | **47** | **32** | **9** | **23** | **22** | **33** | **231** | **4** |
+| Shared (races, mechanics, items) | 82 | 31 | 1 | 5 | 3 | 4 | 4 | 9 | 25 | 0 |
+| **Total** | **813** | **406** | **47** | **34** | **9** | **25** | **22** | **33** | **233** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -342,6 +342,31 @@ Text, cosmetic or out of scope, no rows: Wild Growth coefficient 0.033 -> 0.066 
 | DRU-U-19 | Blizzard 11-09 note; client 70938 | Idol of Ferocity (27851) no longer lists or discounts Mangle | yes (feral presets with the idol) | SpellEffect 704563 mask word 1 1024 -> 0 | landed | `sim/druid/items.go:38-46` only ever discounted Claw and Rake |
 | DRU-HF-02 | Blizzard 11-11 hotfix (FC) | Rend and Tear works on Pounce Bleed | n/a (Pounce not simulated) | server hotfix | n/a | |
 | SHR-U-23 | client 70938 (rogue and druid) | Poised (1328825 rogue, 1328829 druid) now triggers helper auras 1330741/1330746 and 1330763/1330765 (a dummy dropped on entering combat and a 0.5 s periodic check) instead of a bare dummy | yes (every rogue and cat preset) | SpellEffect 1368038 / 1368043 aura 4 -> 42, trigger 1330741 / 1330763; the 10 Energy effect is unchanged | landed | foreverchanges: nothing reads differently. The sim's 10 Energy off the first ability at the pull stands |
+
+## Build 1.60.1.70959 (first seen 2026-11-17)
+
+70959 writes Blizzard's hotfixes of November 13 (t/2403040 post 10) and November 16 (post 11, created 2026-11-17 02:17 UTC) into the client (foreverchanges.pro: no Blizzard notes for the build, "no talent, class spell, racial or item reads differently"). Both posts were read here; neither was in the ledger before. `table_summary.py 70938 70959`: Spell 21 changed, SpellEffect +8/-3/12 changed, SpellAuraOptions 23 removed (mostly default ProcChance 101 rows) and 2 changed, SpellMisc 115 changed, SpellCooldowns 4, SpellCategories 33, one TraitDefinitionEffectPoints row added, ItemSparse 38 changed, ItemEffect 1; ChrRaces, SpellItemEnchantment, cast times and durations identical. The 11-12 Enhancement hotfix (SHA-HF-04, SHA-HF-06) reaches the client: Stormstrike 17364 effect 2 150 -> 100 and RecoveryTime 6000 -> 8000; Maelstrom Weapon 408498 effect 1 (PPM) 50 -> 2 with curve 128299 = 6/7/8/9/10 by rank. The Windfury and Flametongue Weapon tooltips drop "disables any benefit from the totem" (SHA-HF-07).
+
+Text, cosmetic or out of scope, no rows: Attributes_2 bit 0x100 added on about 90 consumables, elixirs, flasks, juju, scrolls and every Well Fed (a logging flag; no value changes); Wild Growth shared 6 s category cooldown (healing); Siphon Life rank 1 not castable while silenced; Berserker Rage removes Sap (new mechanic-immunity effect); Gloves of Holy Might (ilvl 42) procs only on harmful damage; Echoes of Lordaeron targets; Unstable Package and Unstable Fuel Cell (quest, 600 -> 140); NPC spells; Blizzard 11-13/11-16 lines on stun diminishing returns, Frost Nova breaking, The Quick and the Dead, Wild Growth, Genesis on Pounce, Dark Inspiration stacking, Vampiric Embrace healing, rogue poison max rank, Shank combo points, Onyxia Blood Talisman, Krol'dok 4-piece, Violet Tragan, Escape Plan (ilvl 54 gun, 54-102 damage), Outrider's Gloves, dungeons, quests and camping.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| SHR-HF-01 | Blizzard 11-16 (post 11); client 70959 | Windfury Totem's proc spell becomes a weapon-damage strike: no extra white swing, no 2-charge attack power buff; the attack power sits on the totem aura. Blizzard: "attacks were ignoring armor and had no internal cooldown" fixed | **yes** (every melee request with Windfury Totem) | 8516/10608/10610 effect 0 aura 99 (+95/179/246 AP) -> Effect 58 (weapon damage) on the enemy, effect 1 (Effect 19, 1 extra attack) and SpellAuraOptions (2 charges) removed, duration 1 s -> none; totem auras 8515/10609/10612 add effect 1 dummy 95/179/246 | wrong | `sim/core/buffs.go:2195-2209` still a white extra swing plus a 1 s 2-charge AP buff; finding client_update-20261117-1 |
+| SHR-HF-02 | Blizzard 11-16 | Windfury Totem extra attacks generate Rage | yes (warriors with the totem) | server | landed | `sim/core/rage.go` gives white-hit rage on extra attacks; it never left them out |
+| SHR-HF-03 | Blizzard 11-13 and 11-16 | Windfury Totem rolls on every main hand melee ability (off-hand strikes never); Mutilate and Execute lose their extra attempt; Shield Slam, Shield Bash and Shieldworn Holy Strikes cannot roll it | yes (melee with the totem) | server | landed | `buffs.go` windfuryTotemRollsOnForever: one roll per main hand hit; shield abilities and Shieldworn not simulated; `sim/warrior/dps_warrior/windfury_totem_test.go` |
+| SHR-HF-04 | client 70959 | Windfury Totem's 100 ms proc cooldown is now in the client | yes | SpellAuraOptions 121576 / 124212 / 124158 ProcCategoryRecovery 100, 20% | landed | `buffs.go:2208` 100 ms |
+| SHR-HF-05 | Blizzard 11-16 (FC) | Darkmoon Card: Blue Dragon triggers on 3% of spellcasts (was 2%); the four Darkmoon Cards are ilvl 65 | minor (no request wears it) | server | missing | `sim/common/item_effects.go:3198` ProcChance .02; finding client_update-20261117-3 |
+| SHR-HF-06 | Blizzard 11-16 (FC) | Darkmoon Card: Heroism heals 198; Darkmoon Card: Maelstrom's Lightning Strike x2 against Aquatic | n/a (healing; no Aquatic target) | server | n/a | |
+| SHR-U-24 | Blizzard 11-13 items; client 70959 | Stat corrections: Darkspear Signet Mp5 (4316 -> 1764-2142 allocation), Bad Hat loses its fifth stat, Channeler's Ring Spirit -> Spell Power, Blessed Band of Light loses Hit, Souvenir Sea Shell, Militant's Band, Pristine Scorpid Leggings, and the Premier PvP mail sets reallocated | minor (gear search only; no request or preset wears them) | `items_diff.py 70938 70959` StatPercentEditor / StatModifier_bonusStat | missing | `assets/database/db.json` still has Darkspear Signet 272068 9 Mp5 (expect about 4); finding client_update-20261117-4 |
+| PAL-HF-05 | Blizzard 11-13 (post 10) | Judgement of Command activates on-hit effects and counts as a melee attack; the other judgements stay ranged | yes (Command presets) | client 70959 SpellCategories DefenseType 2 -> 3 on every other judgement rank | landed | `sim/paladin/soc.go:97-112` (user ruling 2026-11-15), `judgement.go:78-93` rangedJudgement |
+| PAL-HF-06 | client 70959 | Judgements of Fury, Justice, Light, Righteousness, Wisdom and the Crusader get ranged defense | yes | SpellCategories DefenseType 2 -> 3, 28 rows | landed | rangedJudgement (11-11 hotfix) |
+| PAL-U-14 | client 70959 | Unsealed Wrath gets a 100 ms proc cooldown, so a Windfury Totem strike right after a swing neither stores nor spends Echoes | yes (Retribution with the totem) | SpellAuraOptions 247745 ProcCategoryRecovery 0 -> 100 | landed | `sim/paladin/unsealed_wrath.go:85`: the totem strike stores none; it could only spend Echoes the triggering swing already spent, so no DPS change. Settles the spending half of assumption pal_unsealed_wrath |
+| SHA-HF-08 | Blizzard 11-16 | Maelstrom Weapon no longer benefits two casts | yes (enhancement) | server; client PPM curve 128299 6-10 | landed | `sim/shaman/talents.go` deactivates the aura on the first cast |
+| SHA-HF-09 | Blizzard 11-16 | Thundering Strikes gives its crit with no weapon equipped | n/a in practice | server | landed | `sim/shaman/talents.go:47-48` unconditional |
+| WAR-HF-01 | Blizzard 11-16 | Unbridled Wrath activated by Cleave and Heroic Strike | yes (Fury) | server (push 114097 ProcTypeMask 4 -> 20) | landed | `sim/warrior/talents.go:225-255` (ad1d7f469) |
+| WAR-HF-02 | Blizzard 11-16 | Flurry stacks no longer consumed by Cleave or Heroic Strike | **yes** (every Fury and Arms preset that queues Heroic Strike or Cleave) | server; push 114097 sets Flurry 12966's ProcTypeMask 4 -> 20 | wrong | `sim/warrior/talents.go:412-418` still spends a stack on Heroic Strike and Cleave (EV-0138 log, build 70938, before the hotfix); finding client_update-20261117-2 |
+| WAR-HF-03 | Blizzard 11-16 | Reckless Swings activated by Cleave and Heroic Strike | yes (Fury) | server (SpellAuraOptions 249144) | landed | `sim/warrior/reckless_swings.go` |
+| WAR-HF-04 | Blizzard 11-13; client 70959 | Berserker Rage removes Sap | n/a | SpellEffect 1372182 added (aura 77, mechanic 30) | n/a | |
 
 ## Per-class ledgers
 

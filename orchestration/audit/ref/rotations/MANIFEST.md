@@ -1,9 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_25ce81d_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  25ce81de7 (pass 67), all 68 rows re-simmed (shared CLI `/tmp/audit-cache/cli/25ce81de7755/wowsimcli`). Moves since
-  70ea588 come from the client 70938 / Nov 13 hotfix round (Windfury Totem on every main-hand melee hit, melee
-  Judgement of Command, Two-Handed Weapon Specialization's Holy reach) and that round's re-tuned rotations.
+- `baseline_5f20dfd_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  5f20dfdf4 (pass 68), all 68 rows re-simmed (shared CLI `/tmp/audit-cache/cli/5f20dfdf4cc7/wowsimcli`). Moves since
+  1a85df1d7: warriors +3 to +11 (push 114097, Unbridled Wrath on abilities), hunters -20 to -76 (pet white swings
+  without the hunter's crit), Subtlety +5.9 (Death Mark always hits).
 
 ## Not committed (kept locally, re-create as needed)
 

@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-15 UTC, master 25ce81de7, client 1.60.1.70938)
+# Mechanics audit: verdicts and settled items (as of 2026-11-17 UTC, master 5f20dfdf4, client 1.60.1.70959)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -74,6 +74,8 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Threat talents (70630/70707) | Subtlety -10/-20/-30% Nature and Arcane threat (17118, 3 ranks); Instrument of Law -10/-20% all threat without Righteous Fury (1311085 e1, curve 110348); Demonic Brand -17/-33/-50% Searing Pain threat (1293695 e0 op 2, curve 83195). Threat only | 70707 TraitDefinitionEffectPoints; pass 51 |
 | Intellect elixirs | Elixir of Wisdom 3 Int (spell 3166, named Lesser Intellect), Elixir of Lesser Intellect 6 (its own spell 1250988), 30 min | 70707 3166 / 1250988 aura 29 bp 3 / 6; pass 50 |
 | Power Infusion | +20% spell damage and +20% healing for 15 s, 3 min cooldown; the healing part since fbddbcba5 (sim/core/buffs.go `PowerInfusionAura`) | 70755 10060: e0 aura 136 bp 20, e1 aura 79 bp 20 misc 126; pass 65 |
+| Manual Crowd Pummeler (9449) | 13494 +50% attack speed for 30 s, 3 min cooldown (6ea6e47b4); charges not counted (one use in a 3 min fight) | 70959 ItemEffect 98990: Charges 3, CoolDownMSec 180000; 13494 aura 319 bp 50 dur 30000; pass 86 |
+| The Five Thunders (1679) bonuses | 2pc +8 all resist (18679), 3pc 8 mp5 (18378), 4pc 450626 -> 27775 +65 spell power 10 s, 6pc +23 spell power (14047) (6875e3b1e); 4pc proc rate 5% is an assumption (client row 100%, server sets it) | 70959 sp.py on all five; pass 86 |
 
 ## Settled (don't re-flag)
 
@@ -90,6 +92,8 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Hunter pet swings at its owner's melee and attack speed under Forever, ranged speed excluded (368b2e181, user's go 2026-11-12; wowsims/forever d729b13992 from a Nov 8 log, tier 1 log via their read: 1.965 s with 2% Wind Blessed, 1.40 s with Rapid Fire). Core: Pet.FollowsOwnerMeleeSpeed, taken at summon and shed on dismiss (pet.go Enable/Disable); only the hunter pet sets it. Owner haste rating (stats.MeleeHaste) is not passed on. Autocast skips an ability short of focus (same commit).
 - Rake's direct hit takes 0.065 of attack power under Forever, every rank, outside the Nov 2 scale (c380bbaef, user ruling 2026-11-12; wowsims/forever 0384d8f98c fit 0.0648 to a 70862 log, 26/26 hits). Client 70888 1822 eff 2 bp 27 apcoef 0 and eff 6 apcoef 0 (server-side, as for the tick's 0.055).
 - Leveling target (f878f6079, mksettings only): levels other than 20 and 30 fight a generic boss two levels up with 1.12 warrior elite armor; level 60 still uses the raid target. No Level 60 effect.
+
+- Client 70959 shared deltas (pass 86, tier 1): Attributes_2 0x100 on about 90 consumables and every Well Fed is a logging flag, and the dropped ProcChance 101 SpellAuraOptions rows (passive auras) change nothing. Windfury Totem's reshape (buff spells lose the AP aura and extra attack, AP moves to the raid auras 8515/10609/10612 effect 1) waits on the user (TASKS 2026-11-17, PR #133); the Nov 16 hotfix points (armor, ICD, Rage, Mutilate/Execute one roll) are in the sim (ledger SHR-HF-02..04). Class deltas are the client update auditor's ledger rows.
 
 ## Open items (not blocking)
 

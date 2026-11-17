@@ -16,6 +16,7 @@
   vaelastrasz 1.152 / 1.048 / 1.210 / 1.181 / 1.177.
   Mean vs now: x0.5 +0.001 (loses Golemagg -0.176, Magmadar -0.046), x0.75 +0.018 (wins 5 of 7; Golemagg -0.031, Magmadar -0.019, both bosses far above 1.0), no gate -0.034. Mana is not binding (5,200 to 7,300 left at each boss's own length on every variant), so the 180/300 s side was not re-run. Fairly sure on the direction (Vaelastrasz and Onyxia move well past noise); the 0.75 value itself is one point of a coarse scan.
 - proposed fix: multiply the gate's right side by 0.75 (`math OpMul spellExpectedHealing ... const 0.75`), note "Wild Growth when the most hurt misses three quarters of what it heals: the rest lands on its party". A 0.6-0.7 scan at 4,000 iterations may do slightly better.
+- update 2026-11-17, master 5f20dfdf4: unchanged (Onyxia 0.944, all 7 rows byte-identical).
 - needs: worker fix
 
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
@@ -47,6 +48,7 @@
   Distilled Wisdom wins Chromaggus by 0.075 (`docs/healing_sim.md`, Consumables) but loses the mean.
 - update 2026-11-13, master 71562a8b0: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s, 1,000 it; byte-identical row).
 - update 2026-11-15, master 70ea588bb: unchanged (same row, byte-identical).
+- update 2026-11-17, master 5f20dfdf4: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s; byte-identical row).
 - needs: worker fix
 
 ## Resolved

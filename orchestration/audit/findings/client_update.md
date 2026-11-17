@@ -4,6 +4,38 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261117-1: Windfury Totem's proc is a weapon-damage strike in 70959, not an extra white swing with a 2-charge attack power buff
+- severity: medium (estimate, not measured; probably 0.5-2% on melee requests with Windfury Totem, sign unclear: a special strike can't glance, which raises it, and the lost second AP charge on the next white swing lowers it)
+- affects: every melee request with Windfury Totem (warriors, rogues, Retribution, enhancement, feral); `sim/core/buffs.go`
+- found: 2026-11-17, master 5f20dfdf4c
+- evidence: client 70959 (`db2diff.py 70938 70959`, Shaman section): proc spells 8516/10608/10610 effect 0 aura 99 (+95/179/246 AP, ImplicitTarget 1) -> Effect 58 (weapon damage), ImplicitTarget 6 (the enemy); effect 1 (Effect 19, 1 extra attack) removed; SpellAuraOptions 246431/124422/124477 (2 charges) removed; DurationIndex 36 -> 0. The totem auras 8515/10609/10612 gain effect 1 (dummy, 95/179/246) and the tooltip "${$10612m2} extra melee attack power". Blizzard 11-16 (t/2403040 post 11): "Fixed an issue where Windfury Totem attacks were ignoring armor and had no internal cooldown" and "extra attacks to not generate Rage". The sim (`buffs.go:2195-2209`, CreateExtraAttackAuraCommon) still grants an extra white swing and a 1 s, 2-charge AP buff whose second charge can reach the next white swing. Ledger SHR-HF-01. Confidence: the client structure is clear; how the server rolls the strike (special table, procs, Flurry, rage formula) is not shown.
+- proposed fix: under Forever, make the proc a main hand weapon-damage special with the rank's AP added to that strike only (no lingering buff), keeping rage and on-hit procs as Blizzard's notes say; check a post-11-17 log first (log-audit: are the totem hits SPELL_DAMAGE 10610 rather than swings, and do they glance?), then size with `dps_beforeafter.sh` on the Windfury Totem requests.
+- needs: worker fix
+
+### client_update-20261117-2: Heroic Strike and Cleave still spend Flurry stacks; Blizzard's 11-16 hotfix says they no longer do
+- severity: medium (estimate, not measured: Fury presets that queue Heroic Strike every swing lose a Flurry stack per strike in the sim; about 1% on dual-wield Fury is plausible)
+- affects: warrior Fury and Arms with Flurry (every warrior request that queues Heroic Strike or Cleave)
+- found: 2026-11-17, master 5f20dfdf4c
+- evidence: Blizzard 11-16 (t/2403040/11, posted 2026-11-17 02:17 UTC): "Fury: Fixed an issue where Flurry stacks were consumed by Cleave or Heroic Strike." `sim/warrior/talents.go:412-418` (makeFlurryConsumptionTrigger) removes a stack on any ProcMaskMeleeWhiteHit, which includes Heroic Strike and Cleave; ad1d7f469 kept that on wowsims/forever's EV-0138 log, build 70938, recorded 2026-11-16, before the hotfix was posted. Push 114097's ProcTypeMask 20 on Flurry 12966 does not settle it either way. Ledger WAR-HF-02.
+- proposed fix: under Forever, only true white swings spend a Flurry stack; confirm with a warrior log after 2026-11-17 if one exists, then size with `dps_beforeafter.sh` on the warrior requests.
+- needs: worker fix
+
+### client_update-20261117-3: Darkmoon Card: Blue Dragon procs on 3% of spellcasts since 11-16; the sim uses 2%
+- severity: low (no request or preset wears it)
+- affects: casters wearing Darkmoon Card: Blue Dragon (gear search)
+- found: 2026-11-17, master 5f20dfdf4c
+- evidence: Blizzard 11-16 hotfix (foreverchanges, t/2403040/11 "Items"): "triggers on 3% of successful spellcasts instead of 2%"; `sim/common/item_effects.go:3198` ProcChance .02. Not in client 70959 (server side). Ledger SHR-HF-05.
+- proposed fix: ProcChance 0.03 under Forever.
+- needs: worker fix
+
+### client_update-20261117-4: The 11-13 item stat corrections are in client 70959 but not in the db
+- severity: low (gear search only; no request or preset wears these items)
+- affects: Darkspear Signet 272068-71, Bad Hat 260212, Channeler's Ring 272406, Blessed Band of Light 272407, Souvenir Sea Shell 274749, Militant's Band 271913/5, Pristine Scorpid Leggings 252606, the Premier PvP mail pieces
+- found: 2026-11-17, master 5f20dfdf4c
+- evidence: `items_diff.py 70938 70959`: Darkspear Signet StatPercentEditor_1 4316 -> 2000/1764/2142 (Mp5); `assets/database/db.json` still has 272068 at 9 Mp5 (expect about 4). Bad Hat bonusStat_4 88 removed, Channeler's Ring bonusStat_2 6 -> 45, Blessed Band bonusStat_4 31 removed. Blizzard 11-13 items section names the same corrections. Ledger SHR-U-24.
+- proposed fix: re-pull the client items for 70959 (`update-sources`) and regenerate the db (together with client_update-20261110-2).
+- needs: orchestrator fix
+
 ### client_update-20261110-2: Three ilvl 65 trinkets lose stats and Flamebreak Talisman's use weakens in 70888; the db still has the old values
 - severity: low (no request or preset wears them; only the gear search sees them)
 - affects: gear search (spell casters and expertise users); Adaptive Combat Assistant 272437, Weakness Analyzer 272438, Serenity Field 272439, Flamebreak Talisman 280071

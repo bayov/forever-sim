@@ -425,3 +425,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-16 00:58 | healer_fairness | pass 16 | master f30078da1 | quiet | healbench byte-identical to baseline
 2026-11-16 00:58 | tank_gear | pass 11 | master f30078da1 | quiet | only standards 17 changed
 2026-11-16 00:58 | tank_fairness | pass 17 | master f30078da1 | quiet | tankbench 84 rows match baseline
+2026-11-17 19:33 | results | pass 93 | master 5f20dfdf4 | quiet | builds.json lags 20 of 68 builds (hunter pet crit, warrior 114097, Death Mark); re-sim pending
+2026-11-17 19:33 | rotations | pass 68 | master 5f20dfdf4 | quiet | no APL change; 20 presets moved from sim changes; Heroic Strike gates re-tested, none passes
+2026-11-17 19:33 | consumables | pass 89 | master 5f20dfdf4 | quiet | no consumable/buff value changed in 70959
+2026-11-17 19:33 | mechanics | pass 86 | master 5f20dfdf4 | quiet | 70959 diff only logging bits and the Windfury Totem reshape (already awaiting ruling)
+2026-11-17 19:33 | fairness | pass 45 | master 5f20dfdf4 | quiet | movers traced to class commits; race sweep still best on 14 changed builds
+2026-11-17 19:33 | client_update | pass 14 | master 5f20dfdf4 | 4 new findings | 70959: Windfury Totem strike (medium), Flurry vs HS/Cleave (medium), Blue Dragon 3% (low), item stat fixes (low)
+2026-11-17 19:33 | healer_mechanics | pass 17 | master 5f20dfdf4 | 1 new finding | Vampiric Embrace 20% -> 10% party hotfix (low)
+2026-11-17 19:33 | healer_rotations | pass 15 | master 5f20dfdf4 | quiet | all 63 healbench rows match baseline
+2026-11-17 19:33 | healer_fairness | pass 17 | master 5f20dfdf4 | quiet | all 63 cells match baseline
+2026-11-17 19:33 | tank_mechanics | pass 18 | master 5f20dfdf4 | 1 new finding | Unbridled Wrath does not fire on Sunder Armor (low, needs user ruling)
+2026-11-17 19:33 | tank_rotations | pass 16 | master 5f20dfdf4 | quiet | warrior baseline rewritten after 114097; rage gates re-tested, none passes
+2026-11-17 19:33 | tank_fairness | pass 18 | master 5f20dfdf4 | quiet | only warrior moved; Max survival still warrior/paladin tie

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "1a85df1d754f480e22380db2a2301bd594af5303"
+  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
  },
- "last_pass_at": "2026-11-15T19:40:00Z",
- "pass": 67,
+ "last_pass_at": "2026-11-17T19:55:00Z",
+ "pass": 68,
  "result": "quiet",
- "note": "Pass 67: Nov 13 hotfix round. Arms WF gate (swing variant) and Feral Bite 65 landed -> resolved; Fury 2H 90-rage HS drop now loses 3.0 -> withdrawn. Dragonkin/Fury 2H/Fury DW WF gates and MM Multi-Shot-first lose. Rogue poison swap still open.",
+ "note": "Pass 68: push 114097 (warrior UW/RS on abilities), hunter pet crit/traps/Raptor, Death Mark. No APL changed. Warrior HS thresholds re-tested (Fury DW 50/70, 2H 75, Arms 75): all lose. Rogue poison swap still open; WF ability-timing item still not done.",
  "client_build": "1.60.1.70938",
  "checked_at": "2026-11-17T12:45:03Z",
- "baseline": "baseline_25ce81d_3000it_seed424242.tsv"
+ "baseline": "baseline_5f20dfd_3000it_seed424242.tsv"
 }

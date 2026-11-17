@@ -1,8 +1,9 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-16, pass 17, master f30078da1 (re-run identical
-to pass 16). Last full change: pass 16, master 25ce81de7, after the Nov 13 hotfixes (PR #130: Windfury Totem rolls on every landed main hand melee hit, standards 17;
+preset weight, its reasons, and the open questions. Last pass: 2026-11-17, pass 18, master 5f20dfdf4 (hotfix push 114097:
+Unbridled Wrath procs on the warrior's Heroic Strike and Cleave; warrior +12 / +23 / +43, the others identical). Last
+full change: pass 16, master 25ce81de7, after the Nov 13 hotfixes (PR #130: Windfury Totem rolls on every landed main hand melee hit, standards 17;
 Judgement of Command melee again) and the warrior's Balanced and Max survival re-tune (f2a5dfe25). The report has the details
 (orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
 
@@ -10,18 +11,18 @@ Judgement of Command melee again) and the warrior's Balanced and Max survival re
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3275 / 3123 / 2644 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3452 / 2843 / 2131 / 1280 |
-| Max survival (w 3) | Paladin = Warrior (tie), Bear, Warden | 1798 / 1794 / 364 / -2242 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4235 / 3275 / 3123 / 2644 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3475 / 2843 / 2131 / 1280 |
+| Max survival (w 3) | Warrior = Paladin (tie), Bear, Warden | 1837 / 1798 / 364 / -2242 |
 
 The Nov 13 Windfury rule (every landed main hand hit rolls the totem) gave the bear +328 / +260 / +129 (12% at Max
 threat, TPS +163) and the Warden +88 / +61 at Max threat / Balanced; the paladin +38 at Balanced; the warrior nothing
 (its rolling strikes already rolled; Shield Slam is a shield hit). Measured by building tankbench at b02b98c72 and
 d4325b775 (PR #130's merge), same requests. The bear is now 5% behind the paladin at Max threat (was 14%). Max survival
-stays a tie within the error (paladin 1797.7 ± 13.1, warrior 1793.8 ± 12.6); the paladin's potion action (finding
--20261105-1) is still open and would decide it.
+stays a tie within the error after push 114097 (seed 1: warrior 1836.7 ± 11.9, paladin 1797.7 ± 13.1; seed 2: paladin
+1832.5 ± 15.9, warrior 1822.3 ± 12.9); the paladin's potion action (finding -20261105-1) is still open and would decide it.
 
-TPS (Balanced): warrior 2063, bear 1628, paladin 1533, Warden 1387. Healing needed (Balanced): paladin 241, warrior 342,
+TPS (Balanced): warrior 2075, bear 1628, paladin 1533, Warden 1387. Healing needed (Balanced): paladin 241, warrior 340,
 bear 473, Warden 666.
 
 Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins

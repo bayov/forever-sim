@@ -1,32 +1,33 @@
-# client_update pass 13: build 1.60.1.70938 (2026-11-13)
+# client_update pass 14: build 1.60.1.70959 (2026-11-17)
 
-Master audited: 97da1cca5c34. Previous build 1.60.1.70888. Sim runs: none (no change needed sizing).
+Master audited: 5f20dfdf4c. Previous build 1.60.1.70938. Sim runs: none (the two medium findings need code changes before they can be sized).
 
-## What 70938 is
+## What 70959 is
 
-The client copy of the server hotfixes of November 10 and 11 (foreverchanges.pro: no Blizzard notes for it; nothing reads differently from the hotfixes already live). `table_summary.py 70888 70938`: 98 spells changed, ItemSparse 1,042 changed (cosmetic fields), 1 enchant (Spirit stat type fix); trait tables, ChrRaces, cast times and durations identical. Also read: Blizzard's 11-11 and 11-12 hotfix notes on foreverchanges (server side, not in this client).
+The client copy of Blizzard's hotfixes of November 13 and 16 (t/2403040 posts 10 and 11, both read here; foreverchanges: no notes for the build). `table_summary.py 70938 70959`: Spell 21, SpellEffect +8/-3/12, SpellAuraOptions -23/2, SpellMisc 115 (mostly a logging bit on consumables), SpellCategories 33, ItemSparse 38 changed; ChrRaces, enchants, trait tables (one curve row added), cast times and durations identical. Maelstrom Weapon's PPM curve 128299 reads 6/7/8/9/10, Stormstrike 100% / 8 s: the 11-12 Enhancement hotfix, already landed.
 
 ## DPS-relevant changes and sim status
 
 | Ledger row | Change | Sim |
 |---|---|---|
-| WL-HF-02 | Wrack: DoTs tick 100% faster while channelled (no more 10% damage taken), own damage x0.7 | landed (`sim/warlock/wrack.go`, `talents.go` applyWrack) |
-| WL-HF-03 | Soul Siphon counts only Corruption, Siphon Life, Bane of Agony | landed |
-| SHA-HF-02 | Lightning Overload rows now exactly half of Lightning Bolt and Chain Lightning (180.7 / 261.6 at 60, coef 0.357) | landed (x0.5 copy); settles SHA-HF-01 |
-| SHA-HF-04..07 | 11-12 Enhancement hotfix: Stormstrike 100% / 8 s, Mental Dexterity 33/66/100%, Maelstrom Weapon 20% a stack at 6-10 PPM, imbues and weapon totems both proc | landed |
-| HUN-HF-05 | Volley activates no procs, breaks on movement | landed (2fcb6fe2a), minor |
-| DRU-U-19 | Idol of Ferocity no longer discounts Mangle | landed (never did) |
-| SHR-U-23 | Poised's trigger restructured in the client (helper auras); 10 Energy unchanged | landed |
+| SHR-HF-01 | Windfury Totem proc becomes a weapon-damage strike (no extra white swing, no 2-charge AP buff); Blizzard: armor and ICD fixed | **wrong** (20261117-1) |
+| SHR-HF-02..04 | WF Totem rage, one roll per main hand hit (no Mutilate/Execute double, no shield abilities), 100 ms ICD | landed |
+| WAR-HF-02 | Flurry no longer spent by Heroic Strike or Cleave (Blizzard 11-16) | **wrong** (20261117-2) |
+| WAR-HF-01, 03 | Unbridled Wrath and Reckless Swings from Heroic Strike and Cleave | landed (ad1d7f469) |
+| PAL-HF-05, 06 | Judgement of Command melee with on-hit effects; other judgements ranged defense | landed |
+| PAL-U-14 | Unsealed Wrath 100 ms proc cooldown | landed (no DPS change) |
+| SHA-HF-08, 09 | Maelstrom Weapon one cast; Thundering Strikes without a weapon | landed |
+| SHR-HF-05 | Darkmoon Card: Blue Dragon 2% -> 3% | missing, minor (20261117-3) |
+| SHR-U-24 | 11-13 item stat corrections (Darkspear Signet Mp5, Bad Hat, Channeler's Ring...) | missing in db, minor (20261117-4) |
 
-n/a: Bane of Havoc GCD, Imp Firebolt ranks 1-4, Flametongue Totem rank 2, Rend and Tear on Pounce, healing and priest buff masks, low-level items.
+n/a: Berserker Rage vs Sap, Siphon Life silence, Wild Growth, Genesis on Pounce, Dark Inspiration, Vampiric Embrace, poison max rank, Shank, consumable logging bits, quest and dungeon lines.
 
 ## Findings
 
-- No new findings.
-- client_update-20261110-1 (Arcane Concentration split) resolved by ad6884211.
-- client_update-20261110-2 (ilvl 65 trinkets) partly fixed: Adaptive Combat Assistant updated in the db, Weakness Analyzer and Serenity Field still stale. Stays open.
+- New: client_update-20261117-1 (medium), -2 (medium), -3 (low), -4 (low).
+- Open ones not re-checked beyond: 70959 does not touch the 20261110-2 trinkets.
 
 ## For the orchestrator
 
-- `.agents/skills/dps-report/state.json` `foreverClientBuild` -> 1.60.1.70938.
-- Ledger section "Build 1.60.1.70938" added (14 rows: 10 landed, 4 n/a); Summary counts updated.
+- `.agents/skills/dps-report/state.json` `foreverClientBuild` -> 1.60.1.70959.
+- Ledger section "Build 1.60.1.70959" added (16 rows: 10 landed, 2 wrong, 2 missing, 2 n/a); Summary counts updated.

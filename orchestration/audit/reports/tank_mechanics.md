@@ -1,25 +1,44 @@
-# tank_mechanics pass 17
+# tank_mechanics pass 18
 
-- master: 25ce81de77 (from 70ea588bb1)
-- client: 1.60.1.70938 (unchanged; wago.tools latest)
-- result: quiet
+- master: 5f20dfdf4c (from 1a85df1d75)
+- client: 1.60.1.70959 (was 70938; wago.tools latest; bare-build diff, hotfix tables not fetched)
+- result: findings (1 new, low)
 
-## What changed
+## What changed on master
 
 | Commit | File | Change | Tank impact |
 |---|---|---|---|
-| 9ec69044f, 6ce77e5ef | sim/paladin/soc.go, judgement.go | Judgement of Command is a melee special again (Nov 13 hotfix t/2403040, client SpellCategories Melee; user ruling 2026-11-15) | none: prot paladin presets judge Fury, which stays ranged |
-| 9ec69044f | sim/paladin/sor.go, seal_of_fury.go, soc.go (+ sim/core/buffs.go) | Windfury Totem rolls on every landed main hand melee hit; the seal procs carry SpellFlagNoWindfuryTotem | prot paladin (Seal of Fury, Holy Strike, raid Windfury Totem): Holy Strike now rolls it, the Seal of Fury proc doesn't. Consistent with the notes ("all melee abilities"); seal procs are on-hit effects, not abilities (tier 1 notes, reading) |
-| baa363615 | sim/paladin/talents.go, consecration.go, seal_of_fury.go, sor.go | Two-Handed Weapon Specialization's Holy part follows defense type (user ruling 2026-11-15) | none: prot paladins hold a shield, multiplier 1 |
-| 78c395984, 98291cfa3 | sim/druid/healing.go | Wild Growth tick 0.066 (client 70938), ranks share category 1237 | none: no bear preset casts it |
-| 9f8a71d2d | sim/shaman/windfury_weapon.go | Windfury Imbue aura exposes its Icd via ActionIDForProc (aura.go:461, lookup only) | none: Warden presets use Rockbiter |
-| f2a5dfe25 | tools/tankbench/req/warrior_protection_{balanced,max_survival}.json | Revenge before Shield Slam, a 2s -> 8s and 50 -> 40 threshold | rotation tuning, no mechanic |
+| ad1d7f469, 3e1214a69 | sim/warrior/talents.go | Push 114097 (SpellAuraOptions 124699 ProcTypeMask 4 -> 20): Unbridled Wrath procs on landed melee specials with damage > 0, Whirlwind excepted | Prot warrior: all three Level 60 presets take Unbridled Wrath 5/5 (`05-05050005-...`), so Shield Slam, Revenge and Heroic Strike now proc it; Sunder Armor (no damage) doesn't, see 20261117-1. Thunder Clap is ProcMaskSpellDamage, no proc |
+| ad1d7f469 | sim/warrior/reckless_swings.go | One charge a Cleave cast | none: no tank preset uses Reckless Swings |
+| ad1d7f469 | talents.go (Flurry) | comment only | none |
+| 2ebdc14d6 | sim/warrior/execute.go | Avoided Execute keeps its extra Rage | none: no tank APL casts Execute |
+| 6875e3b1e | sim/shaman/item_sets_pve.go | Five Thunders (1679) set | none: no Warden preset wears it (golden adds only an AllItems row) |
+
+## Client 70938 -> 70959 (tier 1, bare build)
+
+| Row | Change | Sim | Verdict |
+|---|---|---|---|
+| Judgement of Fury / Righteousness / Crusader / Light / Wisdom / Justice (20183-20188, 20280-20286, 20411-20414, 1311650/5) | SpellCategories DefenseType 2 -> 3 (ranged) | ranged specials (rangedJudgement, pass 13) | match; pass 13's notes-only label is now client tier 1. Command (20467...) unchanged = melee, matches pass 17 |
+| Stormstrike 17364 | #2 150 -> 100, cooldown 6 -> 8 s | 100% / 8 s (pass 10) | match, now client tier 1 |
+| Windfury Totem 8515/8516, 10608-10612 | AP aura, extra-attack effect, 2 charges, 1 s duration leave the buff spells; AP moves to raid auras | sim/core/buffs.go WindfuryTotemBuffAura unchanged | open: already in TASKS.md for a user ruling (5f20dfdf4); every tank preset carries the raid totem. Nov 16 hotfix: totem attacks now generate Rage (prot warrior) |
+| Berserker Rage 18499 | new #2 mechanic immunity (aura 77) | n/a | no tank effect |
+| Gloves of Holy Might 1330855 | proc mask | not modelled | no tank preset; in TASKS |
+| Unsealed Wrath 1310735 | 100 ms proc recovery | no tank takes it | none |
+| 12322 / 12966 / 1329555 | not in the bare build | push 114097 per commit | rests on the commit's hotfix citation |
+
+## Measurement (20261117-1)
+
+Patch `$AUDIT_WORK/tank_mechanics/uw_sunder.patch` drops `result.Damage > 0`. tankbench, 3000 iters, -labeled, seed 1:
+
+| Preset | Objective (own weight) base -> patch | SafeDPS | TPS | Sunder casts |
+|---|---|---|---|---|
+| Max threat | 3854 ± 8 -> 3866 ± 7 | 2108 -> 2113 | 2049 -> 2053 | 58.3 |
+| Balanced | 3140 ± 9 -> 3153 ± 8 | 1981 -> 1986 | 1929 -> 1934 | 47.3 |
 
 ## Engine and tests
 
-- `windfuryTotemRollsOnForever` (sim/core/buffs.go:2216): MH proc mask, not flagged, not an extra attack (pass 14). Covered by sim/paladin/retribution/windfury_totem_test.go (TestJudgementsAndWindfuryTotem, seal procs).
-- No new tank ability or talent without a test.
+- `go test -tags=with_db ./sim/warrior/...` passes. TestForeverTankUnbridledWrath pins Heroic Strike and Cleave at 0.6; nothing pins Shield Slam, Revenge or Sunder (covered by the generic `procsOnAbility`).
 
 ## Findings
 
-None new. Open: 20261108-1 (Warden shock threat under Stormstrike, untested), 20261107-1 (client 70862 threat comments).
+New: 20261117-1 (low). Open: 20261108-1, 20261107-1.
