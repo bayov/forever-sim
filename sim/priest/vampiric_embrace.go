@@ -14,24 +14,23 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 	actionID := core.ActionID{SpellID: 15286}
 	manaCost := 40.0
 	// Forever: 30 sec (Classic 1 min) on a 30 sec cooldown (client 1.60.1.70425; 1 min in
-	// 70338), and Improved Vampiric Embrace is gone, so it heals the party for 20% of the
-	// Shadow damage.
+	// 70338), and Improved Vampiric Embrace is gone. What it heals is vampiricEmbraceHealing.
 	duration := time.Second * 30
 
 	partyPlayers := priest.Env.Raid.GetPlayerParty(&priest.Unit).Players
 	healthMetrics := priest.NewHealthMetrics(actionID)
-	healthReturnedMultuplier := 0.2
-
 	priest.VampiricEmbraceAuras = priest.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return target.GetOrRegisterAura(core.Aura{
 			ActionID: actionID,
 			Label:    "Vampiric Embrace (Health) - " + target.Label,
 			Duration: duration,
+			// Only the priest's own Shadow damage heals ("based on 10% of the Shadow damage done by the
+			// casting Priest").
 			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if result.Landed() && spell.SpellSchool.Matches(core.SpellSchoolShadow) {
-					healthGained := result.Damage * healthReturnedMultuplier
+				if spell.Unit == &priest.Unit && result.Landed() && spell.SpellSchool.Matches(core.SpellSchoolShadow) {
 					for _, player := range partyPlayers {
-						player.GetCharacter().GainHealth(sim, healthGained, healthMetrics)
+						char := player.GetCharacter()
+						char.GainHealth(sim, vampiricEmbraceHealing(result.Damage, char == &priest.Character), healthMetrics)
 					}
 				}
 			},
@@ -81,4 +80,16 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 			spell.DealOutcome(sim, result)
 		},
 	})
+}
+
+// vampiricEmbraceHealing is what a party member gains from the casting priest's Shadow damage
+// under Vampiric Embrace: 10% of it, and 20% for the priest, who "receives 100% increased healing
+// from this effect" (Blizzard's hotfixes of 2026-11-16, t/2403040/11, live with the weekly
+// maintenance of November 17/18; before, everyone got 20%).
+func vampiricEmbraceHealing(damage float64, isCaster bool) float64 {
+	healing := 0.1 * damage
+	if isCaster {
+		healing *= 2
+	}
+	return healing
 }

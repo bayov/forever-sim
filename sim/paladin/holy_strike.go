@@ -66,6 +66,14 @@ func (paladin *Paladin) registerHolyStrike() {
 	// 1.60.1.70707+hf, effect 0: aura 108 misc 2 at 30 for the third rank; it was 5% a rank of 5).
 	threatMultiplier := 1 + 0.1*float64(paladin.Talents.IronCreed)
 	ironCreed := paladin.registerIronCreed()
+	flags := core.SpellFlagMeleeMetrics | core.SpellFlagAPL
+	// A Shieldsworn Holy Strike strikes with the shield, so it doesn't roll Windfury Totem
+	// (Blizzard's hotfixes of 2026-11-16, t/2403040/11: "Shield Slam, Shield Bash, and Shieldworn
+	// empowered Holy Strikes could attempt to activate Windfury Totem", fixed). Its other main hand
+	// procs are unchanged: the post names only the totem.
+	if paladin.Talents.Shieldsworn {
+		flags |= core.SpellFlagNoWindfuryTotem
+	}
 
 	for i, rank := range ranks {
 		rank := rank
@@ -80,7 +88,7 @@ func (paladin *Paladin) registerHolyStrike() {
 			SpellSchool: core.SpellSchoolHoly,
 			DefenseType: core.DefenseTypeMelee,
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
+			Flags:       flags,
 
 			RequiredLevel: int(rank.level),
 			Rank:          i + 1,

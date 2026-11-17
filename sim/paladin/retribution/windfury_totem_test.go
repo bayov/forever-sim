@@ -163,3 +163,40 @@ func TestJudgementsAndWindfuryTotem(t *testing.T) {
 		}
 	}
 }
+
+// A Shieldsworn Holy Strike strikes with the shield and never rolls Windfury Totem (Blizzard's
+// hotfixes of 2026-11-16, t/2403040/11), where one without the talent rolls it at 20%.
+func TestShieldswornHolyStrikeNoWindfuryTotem(t *testing.T) {
+	const n = 150
+	for _, c := range []struct {
+		name    string
+		talents string
+		rolls   bool
+	}{
+		{"without Shieldsworn", "-00000000000001030", true},
+		{"with Shieldsworn", "-00000000000001031", false},
+	} {
+		sim, ret, totem, attack := retSimWindfuryTotem(t, c.talents)
+		var strike *core.Spell
+		for _, spell := range ret.Spellbook {
+			if spell.SpellCode == paladin.SpellCode_PaladinHolyStrike && (strike == nil || spell.Rank > strike.Rank) {
+				strike = spell
+			}
+		}
+		if strike == nil {
+			t.Fatalf("%s: no Holy Strike", c.name)
+		}
+		procs := 0
+		for range n {
+			if rollTotem(t, sim, ret, totem, attack, strike, nil) {
+				procs++
+			}
+		}
+		if c.rolls && (procs < n/10 || procs > n/3) {
+			t.Errorf("Holy Strike %s procced Windfury Totem %d times in %d landed hits, want about a fifth", c.name, procs, n)
+		}
+		if !c.rolls && procs != 0 {
+			t.Errorf("Holy Strike %s procced Windfury Totem %d times in %d landed hits, want none", c.name, procs, n)
+		}
+	}
+}
