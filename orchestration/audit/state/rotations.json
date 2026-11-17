@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "6f2e9c6938ce679be3a1ecf690e0fef91ca2cdb8"
+  "master": "63f49874ec019a79aec764bb09b81a49424412b1"
  },
  "last_pass_at": "2026-11-15T19:40:00Z",
  "pass": 67,
  "result": "quiet",
  "note": "Pass 67: Nov 13 hotfix round. Arms WF gate (swing variant) and Feral Bite 65 landed -> resolved; Fury 2H 90-rage HS drop now loses 3.0 -> withdrawn. Dragonkin/Fury 2H/Fury DW WF gates and MM Multi-Shot-first lose. Rogue poison swap still open.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-17T00:44:34Z",
+ "checked_at": "2026-11-17T06:44:41Z",
  "baseline": "baseline_25ce81d_3000it_seed424242.tsv"
 }
