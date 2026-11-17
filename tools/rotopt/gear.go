@@ -282,7 +282,9 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		if maxIlvl > 0 && item.Ilvl > maxIlvl {
 			continue
 		}
-		if item.Ilvl < minIlvl {
+		// An included item joins whatever its item level, like Manual Crowd Pummeler (item level 34),
+		// whose on-use haste keeps it in the running at 60.
+		if item.Ilvl < minIlvl && !included {
 			continue
 		}
 		// The client carries Season of Discovery's items, with sources, but Forever does
@@ -610,6 +612,9 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				improved = true
 				fmt.Printf("round %d: %s = %s (%+.1f), now %s\n", round, gearSlotNames[slot], bestOption.name, bestGain, bestScore)
 			}
+		}
+		if s.searchSets(pool, best, names, unsourced, &bestScore, knobs, round) {
+			improved = true
 		}
 		if s.enchantSearch && s.searchEnchants(best, &bestScore, knobs, s.enchantExclude, round) {
 			improved = true

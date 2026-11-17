@@ -257,6 +257,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 991.5335
+  tps: 865.73973
+  dtps: 1.79733
+ }
+}
+dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheTenStorms"
  value: {
   dps: 988.52017

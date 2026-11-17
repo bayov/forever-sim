@@ -41,8 +41,8 @@ bis() {
 # (the level30p5 line shaman_presets.sh had until 2026-10-31). The UI dropped its Level 30 presets
 # that day, so the set is written out here: mksettings takes the Level 60 set and we replace it.
 # The rotation comes from the template and the knobs, so the APL we name doesn't matter. Manual
-# Crowd Pummeler (9449) is left out, because the sim gives it its haste every 30 sec while its 3
-# charges never come back in 1.12.
+# Crowd Pummeler (9449) is left out, because its 3 charges never come back, so it's spent after
+# three fights.
 go run --tags=with_db ./tools/rotopt/mksettings -spec enh -gear level60_phase1_synthetic -apl optimized \
 	-talents -0540320010051122 -race Orc -level 30 -bonus-talents 5 -duration 120 -out "$tmp/enh60gear.json"
 jq '.raid.parties[0].players[0].equipment = {items: [{id: 3020}, {id: 13084, enchant: 1249057}, {id: 6697},

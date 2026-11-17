@@ -129,6 +129,12 @@ func findItemSet(item Item) *ItemSet {
 	return nil
 }
 
+// ItemSetOf returns the set an item counts toward, or nil. The rotopt gear search uses it to try
+// whole sets, since a set piece alone often loses to the item in its slot.
+func ItemSetOf(item Item) *ItemSet {
+	return findItemSet(item)
+}
+
 // Returns a list describing all active set bonuses.
 func (character *Character) GetActiveSetBonuses() []ActiveSetBonus {
 	var activeBonuses []ActiveSetBonus

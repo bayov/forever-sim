@@ -78,6 +78,66 @@ var ItemSetTheFiveThunders = core.NewItemSet(core.ItemSet{
 	}),
 })
 
+// https://www.wowhead.com/forever/item-set=1679/the-five-thunders
+//
+// Forever's reworked Five Thunders, sold by Mokvar in Orgrimmar. It has 24 pieces in three
+// variants (caster 227001-227008, healer 227009-227016, Strength 227017-227024) that all carry set
+// ID 1679, so pieces of different variants count together. The bonuses are the client's
+// ItemSetSpell rows for set 1679 (1.60.1.70938).
+//
+// The 5-piece row (1302718, Electrocute) disarms a melee attacker when struck, which a boss fight
+// does not test, so it is left out.
+var ItemSetTheFiveThundersForever = core.NewItemSet(core.ItemSet{
+	ID:   1679,
+	Name: "The Five Thunders",
+	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
+		// 18679: +8 all resistances.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddResistances(8)
+		},
+		// 18378: restores 8 mana per 5 sec.
+		3: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.MP5, 8)
+		},
+		// 450626: a chance on a melee auto attack or a magic spell cast (proc flags 0x14004) to
+		// gain 65 spell damage and healing for 10 sec (The Furious Storm, 27775).
+		//
+		// The client row says 100% with no rate, so the server sets the real one. We use 5% on
+		// each, the rate NickTew's pre-raid guide quotes (unconfirmed). Windfury's extra attacks
+		// are auto attack swings in the game and in the sim, so they roll too. Stormstrike and
+		// other melee specials don't. The Elements' 5-piece uses the same proc spell, but we give
+		// it 3 per minute on swings and 4% on casts (sim/common/item_sets/forever_dungeon_sets.go).
+		4: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			buff := c.NewTemporaryStatsAura("The Furious Storm", core.ActionID{SpellID: 27775}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+			handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				buff.Activate(sim)
+			}
+			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+				ActionID:   core.ActionID{SpellID: 450626},
+				Name:       "The Five Thunders - 4pc (Melee)",
+				Callback:   core.CallbackOnSpellHitDealt,
+				Outcome:    core.OutcomeLanded,
+				ProcMask:   core.ProcMaskMeleeWhiteHit,
+				ProcChance: 0.05,
+				Handler:    handler,
+			})
+			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+				ActionID:   core.ActionID{SpellID: 450626},
+				Name:       "The Five Thunders - 4pc (Spell)",
+				Callback:   core.CallbackOnCastComplete,
+				ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
+				ProcChance: 0.05,
+				Handler:    handler,
+			})
+		},
+		// 14047: increases damage and healing done by magical spells and effects by up to 23.
+		6: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 23)
+		},
+	}),
+})
+
 var ItemSetTheEarthfury = core.NewItemSet(core.ItemSet{
 	Name: "The Earthfury",
 	Bonuses: map[int32]core.ApplyEffect{

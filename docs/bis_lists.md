@@ -194,8 +194,8 @@ the user plays, from a real pre-raid set. `TALENTS` sets the talents, and the de
 (`tools/rotopt/phase0.go`). It also leaves out the items `tools/rotopt/phase0_content.json`
 marks `out`, and keeps 25 items a slot. Our item data puts Classic patch 1.10's Dungeon Set 2
 chain in phase 1 or 2, so its summoned bosses' drops (Sothos and Jarien, Lord Valthalak, Kormok,
-Isalien, Mor Grayhoof, Theldren) and its quest rewards (Beads of Ogre Might) are `out` there by
-hand. The other way round, the items marked `include` there join whatever their phase
+Isalien, Mor Grayhoof, Theldren) are `out` there by hand. Forever made the chain Mokvar's Five
+Thunders upgrades, so Beads of Ogre Might (Falrin's Vendetta, a step without a summon) is open. The other way round, the items marked `include` there join whatever their phase
 (`-gear-include`). Our data takes its phases from Classic, where these came later, but Forever has
 them now: the Darkmoon cards and ticket rewards (the Faire is open), Totem of Rage (Magmus) and
 Totem of Sustaining (Scholomance), the Defilers' Arathi Basin rewards (doubtful until we know

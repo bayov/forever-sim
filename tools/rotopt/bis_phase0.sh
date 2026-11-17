@@ -28,11 +28,14 @@
 #     rewards, Dungeon Set 2). Dire Maul (phase 2) is open in Forever.
 #   - Classic patch 1.10's Dungeon Set 2 chain, which our item data puts in phase 1 or 2: what
 #     the bosses summoned with the Brazier of Beckoning and the Banner of Provocation drop
-#     (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren), and the
-#     chain's quest rewards (Beads of Ogre Might from Falrin's Vendetta). They are "out" in
-#     phase0_content.json.
+#     (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren). They are "out"
+#     in phase0_content.json. Forever turned the chain into Mokvar's Five Thunders upgrades
+#     (2026-11-17), so its steps without a summon are open: Beads of Ogre Might from Falrin's
+#     Vendetta is "grind". The head and chest upgrades come at the end, after the Valthalak
+#     summons, so they are doubtful until we know the summons work.
 #   - -gear-min-ilvl 50: nothing under item level 50 competes at 60, and the random suffix rolls
-#     of those greens make the pool three times as big.
+#     of those greens make the pool three times as big. An "include" item joins anyway, like
+#     Manual Crowd Pummeler (item level 34, its on-use haste is what counts).
 #   - Forever items with no source at item level 66 and up, likely Forever's raid loot:
 #     Leafre's Ring of Precise Spell Power (276765) and Band of the Better Half (284716).
 #     The Tracker's Signets (275972 to 275975) used to be on this list too, but their tooltips

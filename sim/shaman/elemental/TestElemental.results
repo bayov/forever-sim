@@ -734,6 +734,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Phase1-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 718.31417
+  tps: 538.30799
+ }
+}
+dps_results: {
  key: "TestElemental-Phase1-AllItems-TheTenStorms"
  value: {
   dps: 738.15967
@@ -1018,6 +1025,13 @@ dps_results: {
  value: {
   dps: 736.6725
   tps: 553.75779
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase2-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 735.83417
+  tps: 554.49447
  }
 }
 dps_results: {
@@ -1308,6 +1322,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Phase3-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 771.9835
+  tps: 577.41058
+ }
+}
+dps_results: {
  key: "TestElemental-Phase3-AllItems-TheTenStorms"
  value: {
   dps: 790.683
@@ -1592,6 +1613,13 @@ dps_results: {
  value: {
   dps: 787.72833
   tps: 586.896
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase4-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 787.528
+  tps: 588.50251
  }
 }
 dps_results: {
@@ -1882,6 +1910,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Phase5-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 851.56967
+  tps: 634.64552
+ }
+}
+dps_results: {
  key: "TestElemental-Phase5-AllItems-TheTenStorms"
  value: {
   dps: 868.59233
@@ -2166,6 +2201,13 @@ dps_results: {
  value: {
   dps: 886.91183
   tps: 660.711
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase6-AllItems-TheFiveThunders-1679"
+ value: {
+  dps: 888.81517
+  tps: 661.43529
  }
 }
 dps_results: {
