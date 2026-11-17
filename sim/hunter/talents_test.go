@@ -354,3 +354,24 @@ func TestPredatorsEdgeRaptorStrike(t *testing.T) {
 		}
 	}
 }
+
+// TestQueuedRaptorStrikeKeepsDualWieldPenalty checks that under Forever a queued Raptor Strike leaves
+// the off hand's dual-wield miss penalty on, as Heroic Strike does since "Queueing Heroic Strike will
+// no longer increase off-hand hit chance"; Classic's queue still lifts it.
+func TestQueuedRaptorStrikeKeepsDualWieldPenalty(t *testing.T) {
+	for ruleset, want := range map[proto.Ruleset]bool{proto.Ruleset_RulesetForever: false, proto.Ruleset_RulesetClassic: true} {
+		sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, ruleset)
+		queued := hunter.GetAura("Raptor Strike Queued")
+		if queued == nil {
+			t.Fatalf("%v: no Raptor Strike queue aura", ruleset)
+		}
+		queued.Activate(sim)
+		if got := hunter.PseudoStats.DisableDWMissPenalty; got != want {
+			t.Errorf("%v: a queued Raptor Strike lifts the dual-wield miss penalty: %v, want %v", ruleset, got, want)
+		}
+		queued.Deactivate(sim)
+		if hunter.PseudoStats.DisableDWMissPenalty {
+			t.Errorf("%v: the penalty stays lifted after the queue ends", ruleset)
+		}
+	}
+}
