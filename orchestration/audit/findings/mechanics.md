@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261118-2: The hasted spell GCD tells spells from physical abilities by school, not by the client's damage class, so shouts and aspects keep 1.5s
+- severity: low (estimate, not measured: a warrior's Battle Shout or a hunter's aspect is one or two casts a fight; 0.2s back each under Warchief's Blessing is under 0.05% DPS)
+- affects: shared engine (sim/core/cast.go hasSpellGCD); warriors, hunters, rogues under Warchief's Blessing, Berserking or Wind Blessed cast speed
+- found: 2026-11-18, master a6677362fc
+- evidence: ee35da473 / c2efe4ae3 haste a Forever spell's GCD (1.5 / (1 + cast speed), floor 1s) and say physical abilities keep theirs "as the client's rule has it (melee and ranged damage classes)"; Warchief's Blessing now adds 15% cast speed to every class under Forever. But `hasSpellGCD` excludes any spell with `SpellSchoolNone` or physical school too. Client 70959 SpellCategories.DefenseType (tier 1 data; the rule itself is from the 2026-11-18 log, tier 1, which shows only magic spells against Stormstrike, DefenseType 2): Battle Shout 25289 and Demoralizing Shout 27579, Aspect of the Hawk 25296 / Monkey 13163 / Wild 20190 are 1 (magic), as Earth Shock 10414; Death Wish 12328, Berserker Rage 18499, Slice and Dice 6774, Blade Flurry 13877, Hunter's Mark 1213268 are 0 (none); Stormstrike 17364, Recklessness 13847 are 2 (melee). Under the stated damage-class rule the first group, and maybe the second, would be hasted; the sim hastes neither. The log doesn't show a shout or aspect, so which way the game goes is unverified.
+- proposed fix: a ruling: (a) keep the school test (document it as a sim choice in standards 27), or (b) follow the damage class: haste every spell whose client DefenseType is magic (and decide on none), e.g. a per-spell flag set from the client value instead of `SpellSchoolNone`. A log of a warrior or hunter under Warchief's Blessing casting Battle Shout or an aspect settles it.
+- needs: user ruling
+
 ### mechanics-20261118-1: Windfury Totem extra attacks still spend a Flurry stack (warrior and shaman); the November 17 hotfix stopped that
 - severity: low (+0.15% to +0.31% DPS when fixed, under the 1% bar; it is a Forever rule the sim contradicts)
 - affects: warrior (Fury, Fury 2H, any build with Flurry and Windfury Totem), shaman (Enhancement and any Flurry build under Windfury Totem); worker fix in sim/warrior and sim/shaman
@@ -11,6 +19,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: tier 1, hotfix post us.forums.blizzard.com/en/wow/t/2403040/12 (Kaivax, 2026-11-18 03:24Z, "November 17, 2026"), Shaman: "Fixed an issue where Flurry incorrectly lost stacks when Windfury totem attacks landed." The sim's consume triggers (sim/warrior/talents.go makeFlurryConsumptionTrigger, sim/shaman/talents.go:491) spend a stack on any `ProcMaskMeleeWhiteHit` hit, and a Windfury Totem extra attack lands as the swing spell (`ProcMaskMeleeMHAuto`, sim/core/attack.go ExtraMHAttack, at once). After a white swing or Heroic Strike the 0.5 sec batch ICD already hides it; after Bloodthirst, Whirlwind, Stormstrike and other specials that roll the totem, the extra hit spends a stack the game no longer spends. Measured with the patch below, report requests at 180 s, 20k iterations, paired seeds 1 / 1000003: Fury +1.62 / +1.60 (+0.15%), Fury 2H +3.16 / +3.45 (+0.28 / +0.31%), Enhancement level60 +2.24 / +1.91 (+0.21 / +0.18%).
 - proposed fix: skip the totem's attacks in both consume triggers (patch: /tmp/audit-work/mechanics/flurry_wf_totem.patch, scratch):
   `if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && !warrior.AutoAttacks.IsWindfuryTotemAttack() && icd.IsReady(sim) {` (the same with `shaman.` in sim/shaman/talents.go). Windfury Weapon's own extra attacks are unchanged (the hotfix names the totem only). A unit test: a Bloodthirst that rolls the totem leaves Flurry's stacks as they were.
+- 2026-11-18 (pass 90, a6677362fc): TASKS.md (a6677362f) holds the fix until it is live: foreverchanges.pro lists the Nov 17 note as "Announced, not in the game yet". Port it once a build or log shows it live; still open, no sim change in range.
 - needs: worker fix
 
 ### mechanics-20261113-2: Weakening Disease (Frightskull Shaft) lowers the target's Strength by 50 in the sim; the Forever client lowers its attack power by 92

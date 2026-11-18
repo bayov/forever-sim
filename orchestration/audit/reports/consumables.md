@@ -1,16 +1,18 @@
-# Consumables pass 91 (master c198d81e3)
+# Consumables pass 92 (master a6677362f, client 1.60.1.70959)
 
-Result: quiet, no new findings.
+Result: quiet. No new findings. Two open low findings (consumables-20261110-1, -20261105-1) unchanged.
 
-## Moved watched files (2f7e255af..c198d81e3)
-| File | Change | Verdict |
+## What moved since 8219f1083 (4 watched files, no presets.ts / mksettings / gear / consumes.go change)
+| file | change | verdict |
 |---|---|---|
-| tools/dps_report/assumptions_def.py | b77ffa52a removes the dead warr_exec_wf2 assumption (7 lines) | Not a consumable or buff value; nothing to check |
+| sim/core/buffs.go | `Assume("hunter_tsa60")` knob re-added at level 60 (default unchanged); Warchief's Blessing now also gives 15% cast speed under Forever (combat log 2026-11-18) | no preset/mksettings effect; value is a log-backed ruling |
+| sim/core/debuffs.go | `Assume("hunter_hm60")` knob on Hunter's Mark (raid debuff and own mark); default unchanged | none |
+| tools/dps_report/assumptions_def.py | `haste_gcd` now a single-value "Yes, for spells" row | assumption, not consumables |
+| orchestration/standards.md | rule 27 rewritten (haste shortens spell GCD) | doc |
 
-## Checks
-- Presets, mksettings, sim/core consumes/buffs/debuffs and forever_enchants.go: no diff since the last audited master.
-- wago latest build is 1.60.1.70959, same as the last pass; no builddiff needed.
-- Class branches show as ahead only through stale divergence; not audited.
-- Note: `oil_proc_damage` is no longer found in tools/dps_report/*.py (the pass doc names it); the doc watch item may be stale.
+## Verified
+- scan.sh: banned items, Revelation, trinkets, +2% crit elixirs all empty. Totem counts as baseline.
+- Minor-armor exclusive effects count is 3, not the doc's 2: the third is Dust Cloud (ForeverDustCloudAura, client 70532), unchanged since the last pass. Pass doc's expected count is stale (nit).
+- wago latest probe: 1.60.1.70959, no newer build.
 
-No open items beyond the two low findings in findings/consumables.md.
+No open items beyond the two low findings.

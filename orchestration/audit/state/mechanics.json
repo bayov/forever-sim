@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "8219f1083fee9fd246d24371df47037cca743946"
+  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
  },
- "last_pass_at": "2026-11-18T12:51:26Z",
- "pass": 89,
- "result": "quiet",
- "note": "Pass 89: c198d81e3..8219f1083. 8219f1083 (cast speed hastes Hurricane and Volley ticks) is the user's ruling; only those two dots set AffectedByCastSpeed under Forever, no preset casts them; client 70959 has no haste-periodic attribute on any spell, so it can't settle the ruling. Client still 70959.",
+ "last_pass_at": "2026-11-18T18:52:27Z",
+ "pass": 90,
+ "result": "findings",
+ "note": "Pass 90: 8219f1083..a6677362fc. ee35da473/c2efe4ae3 hasted spell GCD (log-backed; WB 16609 effects are dummy in 70959). New low finding mechanics-20261118-2 (school vs client damage class for shouts/aspects). c8b5275b1 report switches default-off, unchanged paths. Client still 70959; no new Blizzard posts.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-18T13:03:55Z",
+ "checked_at": "2026-11-18T19:08:34Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

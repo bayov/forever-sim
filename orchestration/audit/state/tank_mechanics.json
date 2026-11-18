@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8219f1083fee9fd246d24371df47037cca743946"
+  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
  },
- "last_pass_at": "2026-11-18T12:49:45Z",
- "pass": 20,
+ "last_pass_at": "2026-11-18T18:54:39Z",
+ "pass": 21,
  "result": "quiet",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-18T13:03:55Z",
+ "checked_at": "2026-11-18T19:08:34Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 20 (8219f1083f): only change sim/druid/hurricane.go (Forever cast speed hastes Hurricane ticks), a Balance channel no tank preset or tankbench casts; no tank effect. Client 70959 unchanged. 4 open findings unchanged."
+ "note": "Pass 21 (a6677362fc): watched changes are report assumption knobs (identity by default), healthAt binary search (equivalent), SpellMetrics accessor. Unwatched hasted spell GCD (ee35da473) checked: no tank preset has WCB. Tank tests pass with -tags=with_db. Open findings unchanged."
 }

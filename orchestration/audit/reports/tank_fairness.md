@@ -1,13 +1,45 @@
-# tank_fairness pass 20: 2026-11-18, master 8219f1083
+# tank_fairness pass 21: 2026-11-18, master a6677362f
 
-Due: 1 watched file changed since c198d81e3: `sim/druid/hurricane.go` (8219f1083: under Forever, cast speed shortens
-Hurricane's ticks, `AffectedByCastSpeed: druid.Env.IsForever()`; Volley gets the same rule in `sim/hunter/volley.go`).
-Quiet: no new finding, no re-sim.
+Due: 12 watched files changed since 8219f1083. What matters for tanks: standards 27 now lets spell haste shorten a
+spell's GCD to 1s (ee35da473, c2efe4ae3), and healers see a hit a reaction time late with the idle skip waking for it
+(7199c8f9c, `sim/core/target_death.go`, `health.go`). The rest is the DPS Report's assumption knobs (`core.Assume`,
+default values unchanged: Rend AP, rage scaling, Seal of Command PPM, Consecration / Holy Strike 31+ ranks, Hunter's Mark,
+Wrath rank 8) and the `SpellMetrics()` accessor rename, all identity at defaults. No change to `tools/tankbench`,
+`tools/encounters` or the tank requests. Quiet: no new finding.
 
-Why no bench: Hurricane appears in no tank request (`tools/tankbench/req/*.json`) and no tank APL, and the change only
-sets a flag on that one spell, so every Feral tank number is unchanged by construction. No change to `tools/tankbench`,
-`tools/encounters` or the tank requests in c198d81e3..8219f1083. The baseline `ref/tank_fairness/summary.tsv`, the
-ranking in `orchestration/fairness_tanks.md` and the four open findings stand as pass 19 left them.
+## Method
+
+Built tankbench at a6677362f (`--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on all 13 requests x six
+scoring bosses, 3,000 iterations, seed 1, and compared with `ref/tank_fairness/summary.tsv` (same seed both builds).
+Warrior, paladin and bear rows identical to the byte. Only the Warden moved; baseline refreshed (its 21 rows).
+
+## What moved (Warden, six-boss mean at its own weight, seed 1)
+
+| preset | score | ± | TPS | DTPS | healing needed |
+|---|---|---|---|---|---|
+| Max threat | 2644 -> 2628 (-16) | 4.5 | -4.1 | -0.5 | +5.3 |
+| Balanced | 1280 -> 1281 (+1) | 6.8 | -2.0 | +0.4 | -1.4 |
+| Max survival | -2242 -> -2211 (+30) | 17.8 | -2.9 | -0.9 | -4.5 |
+
+Per boss -38 to +60. The Warden is the only tank that casts its own heals and shocks, so it is the one the healer-wake
+fix and the spell GCD rule can reach; the paladin's spells are unchanged because none of its requests carries spell
+haste. Not split between the two changes (both small and fair: the GCD rule is Forever's, standards 27; the wake fix
+removes a lag no player had). Each Warden preset still wins its own weight: Max threat 2628 vs 2502 / 2412, Balanced
+1281 vs 1256 / 1051, Max survival -2211 vs -2383 / -3681.
+
+## Ranking (six-boss mean, own weight, seed 1)
+
+| weight | order | pass 21 |
+|---|---|---|
+| Max threat | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
+| Balanced | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |
+| Max survival | Warrior, Paladin, Bear, Warden | 1837 / 1776 / 364 / -2211 |
+
+Unchanged in order. Open findings re-checked against the requests (byte-identical to pass 20): paladin Major Mana Potion
+with no potion action (-20261105-1), Warden Night Elf / Night Elf / Undead (-20261105-2), paladin damage taken waiting on
+the user's calls (-20261104-2), legacy `warrior_protection.json` still read (-20261104-5). None fixed.
+
+Note: this pass's scratch landed in `/tank_fairness/` (AUDIT_WORK was unset in the shell that ran it); safe to delete.
 
 ---
 

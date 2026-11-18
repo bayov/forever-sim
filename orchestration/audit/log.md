@@ -461,3 +461,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-18 13:03 | tank_mechanics | pass 20 | master 8219f1083 | quiet | no tank casts Hurricane/Volley
 2026-11-18 13:03 | tank_rotations | pass 18 | master 8219f1083 | quiet | all 104 baseline rows identical
 2026-11-18 13:03 | tank_fairness | pass 20 | master 8219f1083 | quiet | tank numbers unchanged
+2026-11-18 19:08 | results | pass 95 | master a6677362f | quiet | builds match shared run; only metas lag (results-20261104-2 updated)
+2026-11-18 19:08 | rotations | pass 70 | master a6677362f | quiet | no rotation changed; 31 of 68 moved from hasted spell GCD
+2026-11-18 19:08 | gear | pass 69 | master a6677362f | quiet | only standards.md rule 27 changed
+2026-11-18 19:08 | consumables | pass 92 | master a6677362f | quiet | knob and rule changes only
+2026-11-18 19:08 | mechanics | pass 90 | master a6677362f | 1 new finding | hasted GCD school vs damage class (mechanics-20261118-2, low, needs user ruling)
+2026-11-18 19:08 | fairness | pass 47 | master a6677362f | 1 new finding | High Order beats Night Elf for Balance (fairness-20261118-1, medium)
+2026-11-18 19:08 | healer_mechanics | pass 21 | master a6677362f | quiet | no heal mechanic changed
+2026-11-18 19:08 | healer_rotations | pass 19 | master a6677362f | 1 new finding | 42 of 63 rows moved without rotation change (healer_rotations-20261118-1, medium)
+2026-11-18 19:08 | healer_gear | pass 11 | master a6677362f | quiet | only rule 27 changed
+2026-11-18 19:08 | healer_fairness | pass 21 | master a6677362f | quiet | spread 11% tank, 6.3% raid
+2026-11-18 19:08 | tank_mechanics | pass 21 | master a6677362f | quiet | no tank value changed
+2026-11-18 19:08 | tank_rotations | pass 19 | master a6677362f | quiet | only Warden rows moved
+2026-11-18 19:08 | tank_gear | pass 12 | master a6677362f | quiet | only rule 27 changed
+2026-11-18 19:08 | tank_fairness | pass 21 | master a6677362f | quiet | ranking unchanged

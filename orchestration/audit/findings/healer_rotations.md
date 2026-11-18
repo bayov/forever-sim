@@ -2,6 +2,14 @@
 
 ## Open
 
+### healer_rotations-20261118-1: Healer baseline moved without a rotation change (42 of 63 rows; 9 by more than 0.02 carry, Restoration shaman raid Magmadar -0.109), most likely by 7199c8f9c (idle skip now wakes for hits a healer sees a reaction time late)
+- severity: medium (carry only; one row large; signs mixed, so it may be mostly a reshuffled random stream)
+- affects: all healers but Holy paladin tank, Discipline and Holy priest tank (those rows byte-identical)
+- found: 2026-11-18, master a6677362f (last audited 8219f1083)
+- evidence: `tools/audit/healer_rotations/baseline.sh`, 1,000 it, default seed, vs `ref/healer_bench/summary.tsv` (now replaced). Moves over 0.02: shaman_restoration_raid magmadar 1.887 -> 1.778, golemagg 2.674 -> 2.636, broodlord 0.885 -> 0.918, chromaggus 1.115 -> 1.092; shaman_restoration onyxia 1.340 -> 1.391, golemagg +0.048, magmadar +0.040, broodlord -0.030 (other deaths 3.6% -> 5.7%), chromaggus +0.025; druid_restoration_raid broodlord 0.911 -> 0.873; paladin_holy_raid magmadar -0.027, golemagg -0.023; priest_holy_raid magmadar and ragnaros +0.038. Shaman raid Onyxia other deaths 7.4% -> 10.6% (over the 5% floor). Of the watched changes only 7199c8f9c changes healer behaviour by its own account (bbfd014e4 and c8b5275b1 claim bit-identical results; c788f8717 is a PGO profile). The rows that moved are the ones whose rotations idle-skip (raid healers, shaman/druid tank); the rows that held are tank healers that rarely idle. Not yet confirmed: a paired old (8219f1083) vs new run at 4,000 it on two seeds was started and cut short by the run's time limit. Reproduce with `go build` of ./tools/healbench at both shas and `-iters 4000 -seed 101/7001` on the rows above.
+- proposed fix: none to the code if the paired 4,000-it runs show the moves are within noise or the healers' earlier sight is right (the commit's intent). If shaman raid Magmadar's -0.1 holds, look at which shaman raid line now fires later or earlier (Chain Heal gate on Most Hurt health).
+- needs: orchestrator fix (confirm with paired runs; rule whether the new baseline stands)
+
 ### healer_rotations-20261115-1: Wild Growth at 0.066 a tick lowers the Restoration druid raid healer's carry (mean -0.022, Vaelastrasz -0.104, Onyxia -0.047), because its gate now waits for twice the missing health; the gate at 0.75x of expected healing wins back +0.018
 - severity: medium (raid healer carry, not DPS; Onyxia's other deaths 5.6% -> 7.1%, over the 5% floor)
 - affects: druid_restoration_raid (`ui/restoration_druid/apls/raid_healer.apl.json`, line "Wild Growth at the most hurt", and its copy in `tools/healbench/req/druid_restoration_raid.json`)
@@ -20,6 +28,7 @@
 - update 2026-11-18, master 2f7e255af: unchanged (Onyxia 0.944, all 7 rows byte-identical).
 - update 2026-11-18, master c198d81e3: unchanged (Onyxia 0.944, 7.1% other deaths; byte-identical).
 - update 2026-11-18, master 8219f1083: unchanged (Onyxia 0.944, 7.1% other deaths; byte-identical).
+- update 2026-11-18, master a6677362f: rows moved with -20261118-1 (Onyxia 0.946, 5.8% other deaths, still over 5%; Broodlord 0.873, Magmadar 1.857). Gate fix not re-measured.
 - needs: worker fix
 
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
@@ -55,6 +64,7 @@
 - update 2026-11-18, master 2f7e255af: not re-simmed (pass cut short before the Discipline rows); no change since touches its kit (Vampiric Embrace is not in its APL).
 - update 2026-11-18, master c198d81e3: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s, 1,000 it; byte-identical row).
 - update 2026-11-18, master 8219f1083: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s; byte-identical row).
+- update 2026-11-18, master a6677362f: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; row byte-identical).
 - needs: worker fix
 
 ## Resolved

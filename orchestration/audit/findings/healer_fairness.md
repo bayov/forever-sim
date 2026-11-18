@@ -20,6 +20,8 @@
   gate per role-length and its place against Regrowth and Healing Touch; also try a Wild Growth line in the tank preset
   (the tank's party takes it). Re-bench both druid presets after.
 - needs: worker fix
+- 2026-11-18, master a6677362f (pass 21): still open; after 7199c8f9c (healers react on time) the raid druid is
+  1.385, last, 0.005 behind the shaman's 1.390 (`ref/healer_fairness/bench_a667736.tsv`).
 
 ### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
 - severity: low (blocks a check; moves no number)

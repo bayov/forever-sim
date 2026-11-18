@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "8219f1083fee9fd246d24371df47037cca743946"
+  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
  },
- "last_pass_at": "2026-11-18T12:51:05Z",
- "pass": 20,
+ "last_pass_at": "2026-11-18T18:56:28Z",
+ "pass": 21,
  "result": "quiet",
- "note": "Pass 20: dot haste rule (8219f1083) reaches only Hurricane and Volley; no HoT or heal channel flagged, healer tests pass. Findings 10, 11 open.",
+ "note": "Pass 21: heal sight cache, healthAt binary search and idle-skip wake (bbfd014e4, 7199c8f9c) read in full, equivalent; report knobs default to old constants. Healer tests pass. Findings 10, 11 open.",
  "client_build": "1.60.1.70959",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-17T02:18:14Z"
  },
- "checked_at": "2026-11-18T13:03:55Z"
+ "checked_at": "2026-11-18T19:08:34Z"
 }
