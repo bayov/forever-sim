@@ -19,6 +19,7 @@
 - update 2026-11-17, master 5f20dfdf4: unchanged (Onyxia 0.944, all 7 rows byte-identical).
 - update 2026-11-18, master 2f7e255af: unchanged (Onyxia 0.944, all 7 rows byte-identical).
 - update 2026-11-18, master c198d81e3: unchanged (Onyxia 0.944, 7.1% other deaths; byte-identical).
+- update 2026-11-18, master 8219f1083: unchanged (Onyxia 0.944, 7.1% other deaths; byte-identical).
 - needs: worker fix
 
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
@@ -53,6 +54,7 @@
 - update 2026-11-17, master 5f20dfdf4: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s; byte-identical row).
 - update 2026-11-18, master 2f7e255af: not re-simmed (pass cut short before the Discipline rows); no change since touches its kit (Vampiric Embrace is not in its APL).
 - update 2026-11-18, master c198d81e3: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s, 1,000 it; byte-identical row).
+- update 2026-11-18, master 8219f1083: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s; byte-identical row).
 - needs: worker fix
 
 ## Resolved

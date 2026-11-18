@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
+  "master": "8219f1083fee9fd246d24371df47037cca743946"
  },
- "last_pass_at": "2026-11-18T06:52:49Z",
- "pass": 19,
+ "last_pass_at": "2026-11-18T12:51:05Z",
+ "pass": 20,
  "result": "quiet",
- "note": "Pass 19: Dark Inspiration given form now dropped for the talented priest's own party (ac0217aed): match, tested. Findings 10, 11 open.",
+ "note": "Pass 20: dot haste rule (8219f1083) reaches only Hurricane and Volley; no HoT or heal channel flagged, healer tests pass. Findings 10, 11 open.",
  "client_build": "1.60.1.70959",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-17T02:18:14Z"
  },
- "checked_at": "2026-11-18T07:07:12Z"
+ "checked_at": "2026-11-18T13:03:55Z"
 }

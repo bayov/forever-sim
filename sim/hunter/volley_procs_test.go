@@ -46,6 +46,9 @@ func TestForeverVolleyActivatesNoProcs(t *testing.T) {
 		stepTo(time.Second)
 		for i := 0; i < 20; i++ {
 			hunter.AddMana(sim, hunter.MaxMana(), manaMetrics)
+			// The idle rotation can hold the GCD a little past the step (the gear's haste rating shortens
+			// Volley's channel under Forever since 2026-11-18, which moves its wait off the 16 s grid).
+			hunter.SetGCDTimer(sim, sim.CurrentTime)
 			if !shot(hunter).Cast(sim, target) {
 				t.Fatalf("%v did not cast at %v", shot(hunter).ActionID, sim.CurrentTime)
 			}
