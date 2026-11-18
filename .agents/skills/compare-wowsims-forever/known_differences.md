@@ -115,6 +115,7 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 | Mental Dexterity | 33/66/100% (`sim/shaman/talents.go:39`, Nov 10 notes) | Client row 415140: 50/100/150% | Open. +144.5 AP for theirs at 3/3; `align.py` closes it. 29 unaligned |
 | Flametongue Totem beside Windfury Weapon | Works (`sham_ftt_stack`) | Nothing while any Windfury Totem stands | Open, notes.md To Verify. Enhancement 16.2 (not remeasured) |
 | Stormstrike's weapon speed | Normalized + 0.3 (3.6 two-hander), fitted to beta (shaman_audit.md 4.1) | Normalized | Evidence. Enhancement 4.6; Holy Strike the same, Retribution 2.7 |
+| Warchief's Blessing | 15% melee and cast speed, so the spell GCD shortens to 1.304 s (`sim/core/buffs.go` ApplyWarchiefsBlessing) | Melee haste only (A_MOD_MELEE_HASTE_3, `spells_auto_gen.go:23600`) | Evidence: a beta log (Lightning Bolt 1.30 s with it, 1.505 s without, notes.md), so theirs is wrong. No report preset turns it on |
 | Magma Totem's last pulse | 20 pulses per 40 s totem | About 19 | Engine timing, no log. Enhancement 3 |
 | Greater Blessing of Might and Wisdom | Rank 2's 133 AP, 40 MP5 (standards 8a) | Rank 1's 112, 36 | Ruling. `align.py` closes it |
 | Blood Fury's weapon damage | +10% of weapon average damage beside +10% AP (beta sheets, logs) | AP only | Evidence (their bug, not reported). Orc Enhancement 2.9 |
@@ -212,7 +213,9 @@ A gap on one of these is a regression.
   (their 8223020463, Nov 12, logs).
 - Pet Aggression: dropped (no trainer teaches it).
 - Haste and the GCD: spell haste shortens a spell's GCD down to 1 s, and physical abilities keep
-  1.5 s. Ours since 2026-11-18 (`sim/core/cast.go` hastedGCD, a combat log with Warchief's Blessing,
+  1.5 s, Nature's Grace composing to 1.227 s. Warchief's Blessing's cast speed is a separate row (Shaman
+  table). Theirs floors any hasted GCD at 1 s and ours keeps a base GCD already under 1 s, but no
+  magic spell of ours has one (the shortest is 1 s: a mage set bonus's 0.5 s cut, the totems). Ours since 2026-11-18 (`sim/core/cast.go` hastedGCD, a combat log with Warchief's Blessing,
   notes.md). Before, ours kept 1.5 s (`haste_gcd`): Elemental 5.6, Enhancement 0.9, Affliction 0.3,
   Balance 4.0, Balance Wrath 4.4 for theirs.
 - Explosive reach 10 yd.

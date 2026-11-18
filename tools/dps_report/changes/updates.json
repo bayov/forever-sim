@@ -5672,6 +5672,101 @@
       "6ea6e47",
       "6875e3b"
      ]
+    },
+    {
+     "title": "Haste now shortens a spell's global cooldown, down to 1 sec. Physical abilities keep 1.5 sec",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Mage",
+      "Paladin",
+      "Priest",
+      "Shaman",
+      "Warlock"
+     ],
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff",
+      "mage__arcane",
+      "mage__fire",
+      "mage__frost",
+      "mage__frostfire",
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead",
+      "priest__shadow",
+      "priest__shadow-holy",
+      "priest__smite",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__affliction_shadow_bolt",
+      "warlock__demonology",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "note": "Seen in a combat log: with Warchief's Blessing up, instants came 1.3 sec apart after a spell and Lightning Bolt cast in 1.3 sec, while Stormstrike kept 1.5 sec. Warchief's Blessing also gives 15% cast speed, though no preset has it. Warlocks gain up to 0.6% at 180s, Balance up to 0.6%, Elemental 0.4% and Frost Mage 0.2%. The damage Paladins lose 0.05 to 0.4%. Enhancement moves 0.1% or less.",
+     "commits": [
+      "ee35da4",
+      "c2efe4a"
+     ]
+    },
+    {
+     "title": "Tanking: the Warden Shaman after the haste rule",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "note": "Its spells now come faster with haste. Balanced 1,283 to 1,288, Max survival -2,221 to -2,193, Max threat 2,646 to 2,621. It stays 4th at every goal. The other tanks are unchanged.",
+     "moves": false,
+     "commits": [
+      "ee35da4"
+     ]
+    },
+    {
+     "title": "Healing: the Shaman, Druid, Priest and raid Paladin healers after the haste rule",
+     "kind": "sim",
+     "classes": [
+      "Shaman",
+      "Druid",
+      "Priest",
+      "Paladin"
+     ],
+     "note": "The tank healing Restoration Shaman rises from 1.26 to 1.28 and moves from 4th to 1st, a hair ahead of the Holy Priest (1.28) and the Discipline Priest (1.27). The tank healing Restoration Druid stays near 1.27 and drops to 4th. Among raid healers the Holy Priest rises from 1.46 to 1.48, while the Holy Paladin, the Restoration Shaman and the Restoration Druid dip by 0.01 or less. The raid order is unchanged. The tank healing Holy Paladin is unchanged.",
+     "moves": false,
+     "commits": [
+      "ee35da4"
+     ]
+    },
+    {
+     "title": "Method: the haste and global cooldown assumption now asks only about the 1 sec floor and other haste",
+     "kind": "method",
+     "note": "A combat log showed the rule with Warchief's Blessing, so the presets use it. What the log did not test is the 1 sec floor and whether every other haste shortens the global cooldown the same way.",
+     "moves": false,
+     "commits": [
+      "ee35da4"
+     ]
     }
    ],
    "internal": [
@@ -6030,6 +6125,14 @@
     {
      "commit": "056dccb4e",
      "why": "seen and revealed item data; no item any report preset wears changed, no number moves"
+    },
+    {
+     "commit": "8cf49f4",
+     "why": "an audit record snapshot of the whole repository; its build inputs came in through their own commits"
+    },
+    {
+     "commit": "7094bf0",
+     "why": "an audit record snapshot of the whole repository; its build inputs came in through their own commits"
     }
    ],
    "source": {

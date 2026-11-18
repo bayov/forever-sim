@@ -3,7 +3,7 @@ races: 247 rows, 76 KB
 lengths: 340 rows, 28 KB
 abilities: 694 rows, 193 KB
 auras: 1214 rows, 175 KB
-hist: 2768 rows, 147 KB
+hist: 2780 rows, 148 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 120 KB
 setup: 1836 rows, 457 KB
@@ -16,9 +16,9 @@ race_notes: 47 rows, 11 KB
 weights: 266 rows, 53 KB
 mana: 5044 rows, 391 KB
 mana_summary: 52 rows, 16 KB
-assumptions: 59 rows, 66 KB
+assumptions: 59 rows, 64 KB
 WARNING assumptions: 7 texts name the project's process, e.g. "Blizzard's post says a shaman can benefit from both at once, with a chance to activate both, but not whether one proc blocks the other. The sim rolls "
-assumption_dps: 353 rows, 58 KB
+assumption_dps: 251 rows, 40 KB
 rotation: 655 rows, 211 KB
 race_rotation: 293 rows, 109 KB
 WARNING race_rotation: 5 changed lines with no why in race_text.json, e.g. priest__smite Gnome priority:s10934
@@ -40,9 +40,9 @@ missing icons: []
 timeline_warrior: 12 rows, 45 KB
 timeline_rogue: 18 rows, 49 KB
 timeline_hunter: 12 rows, 38 KB
-timeline_paladin: 12 rows, 40 KB
-timeline_shaman: 18 rows, 59 KB
-timeline_druid: 9 rows, 26 KB
-timeline_mage: 12 rows, 39 KB
-timeline_warlock: 15 rows, 28 KB
+timeline_paladin: 12 rows, 41 KB
+timeline_shaman: 18 rows, 58 KB
+timeline_druid: 9 rows, 25 KB
+timeline_mage: 12 rows, 40 KB
+timeline_warlock: 15 rows, 29 KB
 timeline_priest: 9 rows, 22 KB
