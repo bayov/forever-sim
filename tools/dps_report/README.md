@@ -135,7 +135,7 @@ are read once when the binary starts.
 | Variable | What it does | Set by |
 |---|---|---|
 | `DASH_NAMES=<file>` | Each sim's finalize appends every unit's auras to the file, one `spellId itemId otherId tag label` line each (one copy per sim split). | `run_build.py` (`names/<id>.tsv`, the aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`) |
-| `DASH_SPLITS=<n>` | Splits a sim's iterations into n concurrent parts instead of one per CPU. The splits' seeds continue each other, but averaging the parts moves the last bits, so a fixed n keeps the raw outputs the same on every machine. | `pipeline.sh` (4, every step), `rawstore.py` (refuses packs made with another count) |
+| `DASH_SPLITS=<n>` | Splits a sim's iterations into n concurrent parts instead of one per CPU. The splits' seeds continue each other, but averaging the parts moves the last bits, so a fixed n keeps the raw outputs the same on every machine. | `pipeline.sh` (4, every step), `tankheal.py` (4, every bench call), `rawstore.py` and `tankheal.py unpack` (refuse packs made with another count) |
 | `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` | Leaves those Forever racial parts out: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial spells chastise, starshards, darksacrifice and shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` |
 | `DASH_RACIALS_OFF_CLASS=<Class>` | Keeps `DASH_RACIALS_OFF` to the players of one class (`Paladin`, `Priest`, ...), so a healing preset's racials go while the healbench raid's tank and damage dealers keep theirs. Alone it does nothing. | `bench_races.py` (the preset's class) |
 | `DASH_ASSUME="key=value,..."` | Overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). Each knob defaults to the constant master sets. | `run_assumptions.py` |
@@ -422,6 +422,8 @@ request, APL, code spans, ...): reword the text file, don't widen `LEAK_SKIP`.
 Building the benches: `pipeline.sh bins` (or `tankheal.py bins`, the same `build_bins.py`) builds them with every
 other binary, from the same code. The race sims use the racials switches (`DASH_RACIALS_OFF` and
 `DASH_RACIALS_OFF_CLASS`, see "Report switches"), and every bench run sets `DASH_SPLITS=4` as the DPS steps do.
+`run.json` records the count, and `tankheal.py unpack` refuses a pack made with another one (a pack from before has
+none and counts as 4, one part per CPU on the 4-CPU machine that made it).
 `tankheal.py run` refuses benches the stamp doesn't match to the code (see "Building the binaries").
 
 The main bench calls take about half a minute for tanking and a few minutes for healing; the race sims take most of

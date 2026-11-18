@@ -3,8 +3,8 @@
 and refuses sims whose binaries don't match the code.
 
   build_bins.py [--force] [--bin DIR]      build every binary in BINARIES into DIR (default $DASH_BIN, else
-                                           $DASH_DIR/bin) from a clean worktree at ${SIM_COMMIT:-HEAD} plus each
-                                           binary's patches, protos always regenerated, and write DIR/STAMP.json.
+                                           $DASH_DIR/bin) from a clean worktree at ${SIM_COMMIT:-HEAD}, protos
+                                           always regenerated, and write DIR/STAMP.json.
                                            Nothing is built when the stamp already matches. --force builds anyway
   build_bins.py hash [--commit REV]        the input hash at REV (default ${SIM_COMMIT:-HEAD}) and what it covers
   build_bins.py guard [--bin DIR] [--what TEXT] [--need NAME ...] [--mark ID ...] [--clear]
@@ -13,7 +13,7 @@ and refuses sims whose binaries don't match the code.
 
 The input hash covers exactly what the binaries are built from: sim/ (not _test.go, .md, .results or testdata, which
 go build never reads), proto/, cmd/wowsimcli, go.mod, go.sum, the Go sources of the built tools/ packages and those
-they import (TOOL_PACKAGES), all of assets/database (with_db embeds the database), the patch files the binaries use,
+they import (TOOL_PACKAGES), and all of assets/database (with_db embeds the database),
 and the recipe (the table below, the build flags). Like stale.mjs's inputHash it hashes git blob ids at a commit, not
 the commit, so a commit that changes none of these gives the same hash and needs no rebuild. The build uses
 -trimpath -buildvcs=false, so a binary's sha256 doesn't change with the commit alone either (bench_races.py keys its
@@ -35,21 +35,17 @@ import dashpaths  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 
-# Each binary: the package built and the patches (tools/dps_report/patches/<number>-*.patch) applied on top of the
-# commit, in this order. Binaries with the same package and patches are built once and copied: wowsimcli_r and
-# wowsimcli_assume are wowsimcli itself, since every patch acts only when its env var is set (DASH_NAMES, DASH_RACIALS_OFF,
-# DASH_ASSUME, DASH_SPLITS, DASH_RACIALS_OFF_CLASS) and 0003 changes only the Classic racials (README, "Local patches").
-DPS = ['0001', '0002', '0003', '0004', '0005', '0006']
-BENCH = ['0002', '0006']  # the racials switch for bench_races.py (whether to add 0003 and 0005 is open)
+# Each binary and the package it is built from, all from the same worktree with no patches: the sim reads the report
+# switches itself (sim/core/report_switches.go: DASH_NAMES, DASH_SPLITS, DASH_RACIALS_OFF, DASH_RACIALS_OFF_CLASS,
+# DASH_ASSUME), so one wowsimcli serves every DPS step and the benches get every switch too.
 BINARIES = {
-    'wowsimcli': ('./cmd/wowsimcli', DPS),
-    'wowsimcli_r': ('./cmd/wowsimcli', DPS),  # run_races.py (DASH_RACIALS_OFF)
-    'wowsimcli_assume': ('./cmd/wowsimcli', DPS),  # run_assumptions.py (DASH_ASSUME)
-    'dashstats': ('./tools/dashstats', DPS),  # patch 0001 adds tools/dashstats
-    'tankbench': ('./tools/tankbench', BENCH),
-    'healbench': ('./tools/healbench', BENCH),
+    'wowsimcli': './cmd/wowsimcli',  # every DPS step, each with its switches in the environment
+    'dashstats': './tools/dashstats',
+    'tankbench': './tools/tankbench',
+    'healbench': './tools/healbench',
 }
-DPS_BINS = ['wowsimcli', 'wowsimcli_r', 'wowsimcli_assume', 'dashstats']
+DPS_BINS = ['wowsimcli', 'dashstats']
+RETIRED = ['wowsimcli_r', 'wowsimcli_assume']  # copies of wowsimcli the patched recipe made, removed by a build
 BENCH_BINS = {'tank': 'tankbench', 'heal': 'healbench'}
 FLAGS = ['-tags=with_db', '-trimpath', '-buildvcs=false']
 BUILD_ENV = {'CGO_ENABLED': '0'}  # pure Go, so the binary doesn't depend on the machine's C toolchain
@@ -58,7 +54,6 @@ INPUTS = ['sim', 'proto', 'cmd/wowsimcli', 'go.mod', 'go.sum', 'assets/database'
 # the tools/ packages the binaries build or import (go list -deps, and build() checks no other module package is used): only
 # their .go files count, not the bench requests next to them, which are read at run time
 TOOL_PACKAGES = ['tools/dashstats', 'tools/tankbench', 'tools/healbench', 'tools/tankscore']
-PATCH_DIR = 'tools/dps_report/patches'
 NOT_BUILT = re.compile(r'(_test\.go|\.md|\.results|\.results\.tmp)$|(^|/)testdata/')
 STAMP = 'STAMP.json'
 OVERRIDE = 'DASH_ALLOW_BIN_MISMATCH'
@@ -76,18 +71,12 @@ def sim_rev():
     return os.environ.get('SIM_COMMIT') or 'HEAD'
 
 
-def used_patches():
-    return sorted({p for _, ps in BINARIES.values() for p in ps})
-
-
 def recipe():
     """What else decides a binary besides the files: the table and the flags."""
-    return {'binaries': {n: [pkg, ps] for n, (pkg, ps) in sorted(BINARIES.items())}, 'flags': FLAGS, 'env': BUILD_ENV}
+    return {'binaries': dict(sorted(BINARIES.items())), 'flags': FLAGS, 'env': BUILD_ENV}
 
 
 def is_input(path):
-    if path.startswith(PATCH_DIR + '/'):
-        return path.endswith('.patch') and os.path.basename(path)[:4] in used_patches()
     if path.startswith('assets/database/'):
         return True
     if NOT_BUILT.search(path):
@@ -98,27 +87,24 @@ def is_input(path):
 
 
 def group(path):
-    """The name a changed input is reported under: sim/<package>, a tools/ package, a patch file, or the top path."""
+    """The name a changed input is reported under: sim/<package>, a tools/ package, or the top path."""
     parts = path.split('/')
     if parts[0] == 'sim':
         return '/'.join(parts[:2]) if len(parts) > 2 else 'sim/*.go'
     if path.startswith('tools/'):
-        return path if path.startswith(PATCH_DIR) else '/'.join(parts[:2])
+        return '/'.join(parts[:2])
     return next(p for p in INPUTS if path == p or path.startswith(p + '/'))
 
 
 def input_files(rev, root=ROOT):
     """[(blob, path)] of every input at a revision, sorted by path."""
-    out = git(root, 'ls-tree', '-r', '-z', rev, '--', *INPUTS, *TOOL_PACKAGES, PATCH_DIR)
+    out = git(root, 'ls-tree', '-r', '-z', rev, '--', *INPUTS, *TOOL_PACKAGES)
     files = []
     for entry in out.split('\0'):
         if entry:
             meta, path = entry.split('\t', 1)
             if is_input(path):
                 files.append((meta.split()[2], path))
-    have = {os.path.basename(p)[:4] for _, p in files if p.startswith(PATCH_DIR + '/')}
-    if set(used_patches()) - have:
-        raise SystemExit(f'build_bins: no patch file for {" ".join(sorted(set(used_patches()) - have))} in {PATCH_DIR} at {rev}')
     return sorted(files, key=lambda f: f[1])
 
 
@@ -138,7 +124,7 @@ def input_hash(rev, root=ROOT):
 
 def dirty_inputs(root=ROOT):
     """Inputs with uncommitted changes in the working tree (untracked files included): no binary has them."""
-    out = git(root, 'status', '--porcelain=v1', '-z', '--untracked-files=all', '--no-renames', '--', *INPUTS, *TOOL_PACKAGES, PATCH_DIR)
+    out = git(root, 'status', '--porcelain=v1', '-z', '--untracked-files=all', '--no-renames', '--', *INPUTS, *TOOL_PACKAGES)
     return sorted({e[3:] for e in out.split('\0') if len(e) > 3 and is_input(e[3:])})
 
 
@@ -319,37 +305,29 @@ def build(bin_dir, rev=None, force=False, root=ROOT):
     tmp = tempfile.mkdtemp(prefix='binbuild_')
     built, info = {}, {}
     try:
-        groups = {}
-        for name, (pkg, ps) in BINARIES.items():
-            groups.setdefault(tuple(ps), []).append(name)
-        for i, (ps, names) in enumerate(groups.items()):
-            wt = os.path.join(tmp, f'wt{i}')
-            git(root, 'worktree', 'add', '--detach', '--quiet', wt, commit)
-            try:
-                for p in ps:
-                    f = glob.glob(os.path.join(wt, PATCH_DIR, p + '-*.patch'))
-                    run(['git', 'apply', *f], wt)
-                for f in glob.glob(os.path.join(wt, 'sim', 'core', 'proto', '*.pb.go')):
-                    os.remove(f)
-                protos = sorted(os.path.relpath(p, wt) for p in glob.glob(os.path.join(wt, 'proto', '*.proto')))
-                run(protoc_cmd() + ['-I=proto', '--go_out=sim/core'] + protos, wt, env)
-                if not glob.glob(os.path.join(wt, 'sim', 'core', 'proto', '*.pb.go')):
-                    sys.exit('build_bins: protoc wrote no sim/core/proto/*.pb.go')
-                pkgs = sorted({BINARIES[n][0] for n in names})
-                check_deps(wt, pkgs, env)
-                for pkg in pkgs:
-                    out = os.path.join(tmp, 'out', f'{i}-{os.path.basename(pkg)}')
-                    t = time.time()
-                    run(['nice', '-n', '10', 'go', 'build', '-p', env['GOMAXPROCS'], *FLAGS, '-o', out, pkg], wt, env)
-                    print(f'built {pkg} with {" ".join(ps)} in {time.time() - t:.0f}s', flush=True)
-                    for n in names:
-                        if BINARIES[n][0] == pkg:
-                            built[n] = out
-                info['protoc'] = run(protoc_cmd() + ['--version'], wt, env)
-                info['protoc-gen-go'] = run(['protoc-gen-go', '--version'], wt, env)
-                info['patchFiles'] = {p: os.path.basename(glob.glob(os.path.join(wt, PATCH_DIR, p + '-*.patch'))[0]) for p in ps} | info.get('patchFiles', {})
-            finally:
-                subprocess.run(['git', 'worktree', 'remove', '--force', wt], cwd=root, capture_output=True)
+        wt = os.path.join(tmp, 'wt')
+        git(root, 'worktree', 'add', '--detach', '--quiet', wt, commit)
+        try:
+            for f in glob.glob(os.path.join(wt, 'sim', 'core', 'proto', '*.pb.go')):
+                os.remove(f)
+            protos = sorted(os.path.relpath(p, wt) for p in glob.glob(os.path.join(wt, 'proto', '*.proto')))
+            run(protoc_cmd() + ['-I=proto', '--go_out=sim/core'] + protos, wt, env)
+            if not glob.glob(os.path.join(wt, 'sim', 'core', 'proto', '*.pb.go')):
+                sys.exit('build_bins: protoc wrote no sim/core/proto/*.pb.go')
+            pkgs = sorted(set(BINARIES.values()))
+            check_deps(wt, pkgs, env)
+            for pkg in pkgs:
+                out = os.path.join(tmp, 'out', os.path.basename(pkg))
+                t = time.time()
+                run(['nice', '-n', '10', 'go', 'build', '-p', env['GOMAXPROCS'], *FLAGS, '-o', out, pkg], wt, env)
+                print(f'built {pkg} in {time.time() - t:.0f}s', flush=True)
+                for n, p in BINARIES.items():
+                    if p == pkg:
+                        built[n] = out
+            info['protoc'] = run(protoc_cmd() + ['--version'], wt, env)
+            info['protoc-gen-go'] = run(['protoc-gen-go', '--version'], wt, env)
+        finally:
+            subprocess.run(['git', 'worktree', 'remove', '--force', wt], cwd=root, capture_output=True)
         os.makedirs(bin_dir, exist_ok=True)
         bins = {}
         for n in BINARIES:  # each next to its final path, then renamed over it, so a running sim keeps its old file
@@ -357,12 +335,14 @@ def build(bin_dir, rev=None, force=False, root=ROOT):
             shutil.copyfile(built[n], part)
             os.chmod(part, 0o755)
             os.replace(part, os.path.join(bin_dir, n))
-            pkg, ps = BINARIES[n]
-            bins[n] = {'package': pkg, 'patches': [info['patchFiles'][p] for p in ps], 'sha256': file_sha(os.path.join(bin_dir, n))}
+            bins[n] = {'package': BINARIES[n], 'sha256': file_sha(os.path.join(bin_dir, n))}
+        for n in RETIRED:  # binaries of the old recipe, which no script runs any more
+            if os.path.exists(os.path.join(bin_dir, n)):
+                os.remove(os.path.join(bin_dir, n))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
         subprocess.run(['git', 'worktree', 'prune'], cwd=root, capture_output=True)
-    stamp = {'format': 1, 'inputHash': want['hash'], 'inputs': want['groups'], 'commit': commit,
+    stamp = {'format': 2, 'inputHash': want['hash'], 'inputs': want['groups'], 'commit': commit,
              'builtAt': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
              'go': run(['go', 'version'], root, env), 'protoc': info.get('protoc'), 'protocGenGo': info.get('protoc-gen-go'),
              'recipe': recipe(), 'binaries': bins}

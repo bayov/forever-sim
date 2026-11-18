@@ -36,8 +36,9 @@
 #
 # Ids default to every request in $DASH_DIR/req. Builds run longest first (rogues, then hunters ...), so the last
 # minutes of each step are not one slow build alone. Every sim splits its iterations into DASH_SPLITS parts (default
-# 4, patch 0005) run in parallel, so the raw outputs don't depend on the machine; P=4 processes keep a 4-core machine
-# busy to the end.
+# 4, a report switch, sim/core/report_switches.go) run in parallel, so the raw outputs don't depend on the machine.
+# tankheal.py sets the same default for the benches. P=4 processes keep a 4-core machine busy to the end. One
+# wowsimcli serves every DPS step, each with its switches in the environment (DASH_NAMES, DASH_RACIALS_OFF, DASH_ASSUME).
 set -euo pipefail
 T="$(cd "$(dirname "$0")" && pwd)"
 R="$(cd "$T/../.." && pwd)"
@@ -113,7 +114,7 @@ plan | run | resume)
 	ALL=$(ids "$@")
 	if [ "$cmd" != plan ]; then  # the binaries must match the code (build_bins.py), checked before the clean deletes anything
 		python3 $T/build_bins.py guard --what "pipeline.sh $cmd" --bin "${DASH_BIN:-$DASH_DIR/bin}" \
-			--need wowsimcli wowsimcli_r wowsimcli_assume dashstats $( ([ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]) && echo tankbench healbench) \
+			--need wowsimcli dashstats $( ([ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]) && echo tankbench healbench) \
 			--mark $ALL $([ "$cmd" = run ] && echo --clear)
 	fi
 	if [ "$cmd" = run ]; then python3 $T/rawstore.py clean $ALL; fi
@@ -150,7 +151,7 @@ EOF
 	# timing/<start>.jsonl (with a line per step below); timing.py sums it up at the end
 	REAL_BIN=$(cd "${DASH_BIN:-$DASH_DIR/bin}" && pwd)
 	mkdir -p timing/bin
-	for b in wowsimcli wowsimcli_r wowsimcli_assume dashstats tankbench healbench; do
+	for b in wowsimcli dashstats tankbench healbench; do
 		rm -f timing/bin/$b
 		if [ -e "$REAL_BIN/$b" ]; then ln -s "$T/timing_cli.py" timing/bin/$b; fi
 	done

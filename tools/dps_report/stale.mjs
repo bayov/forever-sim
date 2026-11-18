@@ -1,10 +1,11 @@
 // Says which DPS Report builds are out of date, so a regeneration only re-sims what changed.
 //
 // Each build (a level 60 preset, id "<class>__<preset>") depends on:
-//   - shared inputs every build uses: the sim's own packages (sim/core, sim/common, sim/encounters, sim/lib), the
-//     top-level sim/*.go that registers the classes, the protos the sim compiles (not ui.proto or test.proto, which
-//     nothing in the sim imports), the CLI and go.mod, the report's local patches and dashstats, and the report's step
-//     scripts (their sims, iterations and post-processing, adaptive.py's fight counts among them);
+//   - shared inputs every build uses: the sim's own packages (sim/core, the report switches in
+//     sim/core/report_switches.go among its files, sim/common, sim/encounters, sim/lib), the top-level sim/*.go that
+//     registers the classes, the protos the sim compiles (not ui.proto or test.proto, which nothing in the sim
+//     imports), the CLI and go.mod, tools/dashstats, and the report's step scripts (their sims, iterations and post-processing, adaptive.py's fight
+//     counts among them);
 //   - its class's sim package sim/<class>/;
 //   - its own inputs: its request tools/dps_report/req/<id>.json (what is simmed), the fields of its meta file the
 //     step scripts read (class, spec, race, baseBuild, duty, pet, encounter), its base build's request (a variant's race
@@ -29,10 +30,10 @@
 //
 // The Tanking and Healing modes (tankheal.py) are recorded per preset under provenance.json's `benches` (tank, heal:
 // {presets: {<stem>: record}}), the same way as the DPS builds. A preset (a request in tools/tankbench/req or
-// tools/healbench/req) depends on the sim's packages (not the DPS-only CLI, patches and step scripts), the top-level
+// tools/healbench/req) depends on the sim's packages (not the DPS-only CLI, dashstats and step scripts), the top-level
 // sim/*.go, its bench's sources (tools/tankbench or tools/healbench, its req/ folder left out), tools/tankscore, the
-// seven boss files in tools/encounters, tankheal.py and the race sims' scripts and racials switch (bench_races.py,
-// adaptive.py, dashpaths.py, run_build.py's CLASS_RACES, patches 0002 and 0006), its own request, the class packages
+// seven boss files in tools/encounters, tankheal.py and the race sims' scripts (bench_races.py, adaptive.py,
+// dashpaths.py, run_build.py's CLASS_RACES), its own request, the class packages
 // of every class in its raid, and the database entries those requests wear. A tank preset's raid is the tank alone. A
 // healing preset's raid is the healer and healbench's frost mage fillers (-filler), plus its warrior tank (-tank) for a
 // tank healer: a raid healer's raid has no tank (healbench -role raid). They are listed apart (`benches` in --json, a
@@ -71,8 +72,7 @@ export const SHARED_INPUTS = [
 	'cmd/wowsimcli',
 	'go.mod',
 	'go.sum',
-	'tools/dps_report/patches',
-	'tools/dps_report/dashstats',
+	'tools/dashstats',
 	...STEP_SCRIPTS,
 ];
 // files inside the inputs that the sim binary and the step scripts never read
@@ -185,9 +185,7 @@ export const fingerprint = memo((r, id) => {
 // the Tanking and Healing modes' inputs (tankheal.py), per preset
 export const BENCH_FORMAT = 3;
 const BENCH_SHARED = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'go.mod', 'go.sum', 'tools/tankscore', 'tools/dps_report/tankheal.py',
-	'tools/dps_report/bench_races.py', 'tools/dps_report/adaptive.py', 'tools/dps_report/dashpaths.py', 'tools/dps_report/run_build.py',
-	'tools/dps_report/patches/0002-dash-DASH_RACIALS_OFF-switch-to-leave-racial-parts-o.patch',
-	'tools/dps_report/patches/0006-dash-DASH_RACIALS_OFF_CLASS-scopes-the-racials-switch.patch'];
+	'tools/dps_report/bench_races.py', 'tools/dps_report/adaptive.py', 'tools/dps_report/dashpaths.py', 'tools/dps_report/run_build.py'];
 const BOSSES = ['magmadar', 'golemagg', 'onyxia', 'broodlord', 'vaelastrasz', 'chromaggus', 'ragnaros'];
 const NOT_PRESETS = ['warrior_protection']; // the healing bench's tank (tankheal.py NOT_PRESETS)
 // healbench's default tank and filler requests (tools/healbench/main.go -tank, -filler)

@@ -254,5 +254,26 @@ class ResumeTest(unittest.TestCase):
         self.assertIsNone(tankheal.bench_inputs('tank', '0' * 40))
 
 
+
+class BenchSplitsTest(unittest.TestCase):
+    """The benches split like the DPS steps (DASH_SPLITS, default 4), and a pack from another count is refused."""
+
+    def test_default_is_four(self):
+        self.assertEqual(os.environ.get('DASH_SPLITS'), str(tankheal.SPLITS))
+        self.assertEqual(tankheal.SPLITS, int(os.environ.get('DASH_SPLITS', 4)))
+
+    def test_same_count_or_an_old_pack_passes(self):
+        tankheal.check_splits('heal', {'run.json': json.dumps({'splits': tankheal.SPLITS})})
+        tankheal.check_splits('heal', {'run.json': json.dumps({'iterations': 1000})} if tankheal.SPLITS == 4 else None)
+        tankheal.check_splits('heal', None)
+        tankheal.check_splits('heal', {'races.jsonl': ''})
+
+    def test_other_count_is_refused(self):
+        with self.assertRaises(SystemExit) as cm:
+            tankheal.check_splits('tank', {'run.json': json.dumps({'splits': tankheal.SPLITS + 1})})
+        self.assertIn('raw/bench/tank.tgz', str(cm.exception.code))
+        self.assertIn('splits', str(cm.exception.code))
+
+
 if __name__ == '__main__':
     unittest.main()

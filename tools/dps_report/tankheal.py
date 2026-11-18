@@ -11,8 +11,8 @@
                                                  from raw/bench/<mode>.tgz when its main-run rows there are the same
                                                  bytes as this run's (else it is re-simmed too). Only the presets
                                                  re-simmed are marked fresh (tankheal.py fresh prints <mode>:<stem,...>)
-  tankheal.py bins                               every report binary into the binaries directory (build_bins.py, the
-                                                 benches with the racials switch patches 0002 and 0006)
+  tankheal.py bins                               every report binary into the binaries directory (build_bins.py: the
+                                                 benches read every report switch, the racials switches among them)
   tankheal.py build                              the tank_* and heal_* datasets into $DASH_DIR/data (unpacks the raw
                                                  packs first when $DASH_DIR/tank or heal is missing)
   tankheal.py pack                               $DASH_DIR/tank and heal into raw/bench/<mode>.tgz (deterministic)
@@ -40,6 +40,8 @@ The binaries (tankbench, healbench) come from $TANKHEAL_BIN, else $DASH_BIN, els
 merged tree ($DASH_TREE, else this checkout when it has no w-dash) as their cwd. build_bins.py builds them, and run
 refuses binaries its stamp doesn't match to the code (DASH_ALLOW_BIN_MISMATCH=<reason> to sim anyway, recorded in
 <mode>/bin_override.json, which the pack keeps and stale.mjs --record-bench refuses).
+Every bench call splits its sims into DASH_SPLITS parts (default 4, as pipeline.sh sets for the DPS steps), so the
+outputs are the same on every machine. run.json records the count, and unpack refuses a pack made with another one.
 """
 import ast, glob, hashlib, io, json, math, os, re, shutil, subprocess, sys, tarfile, threading, time
 
@@ -56,6 +58,8 @@ TREE = dashpaths.TREE if os.path.isdir(dashpaths.TREE) else ROOT
 os.environ['DASH_TREE'] = TREE  # for the modules below that read dashpaths
 dashpaths.TREE = TREE
 BIN = os.path.abspath(os.environ.get('TANKHEAL_BIN') or dashpaths.BIN)
+os.environ.setdefault('DASH_SPLITS', '4')  # the benches' sims split as pipeline.sh's DPS steps do (bench_races.py too)
+SPLITS = int(os.environ['DASH_SPLITS'])
 RAW = os.path.join(HERE, 'raw', 'bench')  # not raw/*.tgz: rawstore.py prune drops packs with no DPS request
 MODES = ('tank', 'heal')
 BOSSES = ['magmadar', 'golemagg', 'onyxia', 'broodlord', 'vaelastrasz', 'chromaggus', 'ragnaros']
@@ -124,7 +128,7 @@ def bench(mode, args, files, out):
 
 def bins():
     """Every report binary, tankbench and healbench included, into BIN (build_bins.py: a clean worktree at
-    ${SIM_COMMIT:-HEAD} with each binary's patches, and the stamp run checks)."""
+    ${SIM_COMMIT:-HEAD}, and the stamp run checks)."""
     import build_bins
     t0 = time.time()
     build_bins.build(BIN)
@@ -160,7 +164,7 @@ def race_sims(mode, stems, out):
             rows = bench_races.preset(mode, B, s, cls, race_of(req), cr[cls], BOSSES, role=heal_role(s), start=start)
         offs = [r for r in rows if r['variant'] != 'race']
         if offs and all(r['same'] for r in offs) and any(r['variant'] == 'off' for r in offs):
-            sys.exit(f'{exe} ignores DASH_RACIALS_OFF: build it from a tree with patches 0002 and 0006 (README, Tanking and Healing)')
+            sys.exit(f'{exe} ignores DASH_RACIALS_OFF: rebuild it from this tree, which has the report switches (pipeline.sh bins)')
         with lock:
             with open(res, 'a') as fh:
                 for r in rows:
@@ -218,6 +222,16 @@ def pack_files(mode):
         return None
     with tarfile.open(p) as tar:
         return {ti.name: tar.extractfile(ti).read().decode() for ti in tar.getmembers() if ti.isfile()}
+
+
+def check_splits(mode, files):
+    """Stop when a pack's run was split into another number of parts than DASH_SPLITS (rawstore.py does the same for
+    the DPS packs): its outputs would not be this run's. A run.json without the count is from before the benches read
+    DASH_SPLITS, when they split one part per CPU on the 4-CPU machine that made every published pack."""
+    if not files or 'run.json' not in files:
+        return
+    import rawstore
+    rawstore.check_splits(f'raw/bench/{mode}.tgz', json.loads(files['run.json']).get('splits', 4), SPLITS)
 
 
 def bench_inputs(mode, commit):
@@ -303,7 +317,7 @@ def run(modes, races=True, resume=False, only=None):
         info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
                 'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
                 'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
-                'commit': commit_run, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
+                'splits': SPLITS, 'commit': commit_run, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
                 'runSeconds': secs, 'races': races}
         if only is not None:
             info['racesKept'] = sorted(kept)  # presets whose race rows came from the pack
@@ -342,6 +356,7 @@ def unpack(modes=MODES):
         if not os.path.exists(p):
             print(f'no pack for {mode}')
             continue
+        check_splits(mode, pack_files(mode))
         dst = os.path.join(D, mode)
         shutil.rmtree(dst, ignore_errors=True)
         with tarfile.open(p) as tar:

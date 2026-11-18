@@ -84,6 +84,22 @@ test('the DPS builds hash the top-level sim/*.go and adaptive.py', () => {
 	assert.deepEqual(r.json('--commit', 'HEAD').stale.map(s => s.reasons), [['sim/*.go changed', 'tools/dps_report/adaptive.py changed']]);
 });
 
+test('tools/dashstats and the report switches stale the DPS builds, a patch file nothing', () => {
+	const r = repo();
+	r.put('tools/dps_report/patches/0002-old.patch', 'no input any more\n');
+	r.commit('a patch file');
+	assert.deepEqual(r.json().stale, []);
+	assert.deepEqual(r.json().benches, []);
+	r.put('tools/dashstats/main.go', 'package main\n');
+	r.commit('dashstats');
+	assert.deepEqual(r.json().stale.map(s => s.reasons), [['tools/dashstats changed']]);
+	assert.deepEqual(r.json().benches, []);
+	r.put('sim/core/report_switches.go', 'package core\n');
+	r.commit('switches');
+	assert.deepEqual(r.json('--commit', 'HEAD').stale.map(s => s.reasons), [['sim/core changed', 'tools/dashstats changed']]);
+	assert.deepEqual(staleOf(r.json(), 'heal'), HEAL.slice().sort());
+});
+
 test('a class package stales only the presets whose raid has the class', () => {
 	const r = repo();
 	edit(r, 'sim/shaman/shaman.go');

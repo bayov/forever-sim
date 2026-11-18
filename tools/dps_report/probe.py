@@ -53,7 +53,7 @@ SETTINGS = {
 }
 AUDIT_N = int(os.environ.get('PROBE_AUDIT', 3))
 AUDIT_FILE = os.path.join(D, 'probe_audit.json')
-BINARIES = ('wowsimcli', 'wowsimcli_r', 'wowsimcli_assume', 'dashstats')
+BINARIES = tuple(build_bins.DPS_BINS)  # wowsimcli (every step, with its switches) and dashstats
 
 
 def meta(bid):

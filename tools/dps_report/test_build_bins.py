@@ -3,7 +3,7 @@
 
   python3 -m unittest discover -s tools/dps_report -p 'test_*.py'
 
-Each test makes a small git repository with the layout the hash reads (sim/, proto/, assets/database, the patches) and
+Each test makes a small git repository with the layout the hash reads (sim/, proto/, assets/database, the tools) and
 a fake binaries directory, so nothing is built and the real checkout is not touched.
 """
 import contextlib, hashlib, importlib, io, json, os, shutil, subprocess, sys, tempfile, unittest, warnings
@@ -39,13 +39,12 @@ class Repo:
             'tools/tankbench/main.go': 'package main\n',
             'tools/tankbench/req/a.json': '{}\n',
             'tools/healbench/main.go': 'package main\n',
+            'tools/dashstats/main.go': 'package main\n',
+            'tools/dps_report/patches/0002-old.patch': 'a patch file is no input any more\n',
             'tools/tankscore/s.go': 'package tankscore\n',
             'README.md': 'top\n',
             'ui/x.ts': 'x\n',
         }
-        for n in build_bins.used_patches():
-            files[f'{build_bins.PATCH_DIR}/{n}-p.patch'] = f'patch {n}\n'
-        files[f'{build_bins.PATCH_DIR}/0099-unused.patch'] = 'unused\n'
         for p, s in files.items():
             self.write(p, s)
         self.commit('init')
@@ -105,10 +104,11 @@ class InputHash(Case):
     def test_db_markdown_counts(self):  # all of assets/database is in
         self.assertTrue(self.changed_by('assets/database/NOTES.md', 'x\n'))
 
-    def test_proto_tool_and_patch_changes(self):
+    def test_proto_and_tool_changes(self):
         self.assertTrue(self.changed_by('proto/api.proto', 'syntax = "proto3"; // x\n'))
         self.assertTrue(self.changed_by('tools/tankscore/s.go', 'package tankscore // x\n'))
-        self.assertTrue(self.changed_by(f'{build_bins.PATCH_DIR}/0002-p.patch', 'patch 2 changed\n'))
+        self.assertTrue(self.changed_by('tools/dashstats/main.go', 'package main // x\n'))
+        self.assertTrue(self.changed_by('sim/core/report_switches.go', 'package core // the switches\n'))
         self.assertTrue(self.changed_by('go.sum', 'x\n'))
 
     def test_tests_and_docs_dont(self):
@@ -116,24 +116,24 @@ class InputHash(Case):
         self.assertFalse(self.changed_by('sim/core/NOTES.md', 'changed\n'))
         self.assertFalse(self.changed_by('sim/core/x.results', 'golden\n'))
         self.assertFalse(self.changed_by('sim/core/testdata/t.json', '{}\n'))
-        self.assertFalse(self.changed_by(f'{build_bins.PATCH_DIR}/0099-unused.patch', 'changed\n'))
+        self.assertFalse(self.changed_by('tools/dps_report/patches/0002-old.patch', 'changed\n'))
+        self.assertFalse(self.changed_by('tools/dps_report/patches/0007-new.patch', 'new\n'))
 
     def test_recipe_counts(self):
         before = self.r.hash()
-        with mock.patch.dict(build_bins.BINARIES, {'tankbench': ('./tools/tankbench', ['0002', '0003', '0005', '0006'])}):
+        with mock.patch.dict(build_bins.BINARIES, {'wowsimcli_r': './cmd/wowsimcli'}):
             self.assertNotEqual(before, self.r.hash())
         with mock.patch.object(build_bins, 'FLAGS', build_bins.FLAGS + ['-race']):
             self.assertNotEqual(before, self.r.hash())
 
-    def test_missing_patch_file(self):
-        os.remove(os.path.join(self.r.root, build_bins.PATCH_DIR, '0004-p.patch'))
-        self.r.commit('drop 0004')
-        with self.assertRaises(SystemExit):
-            self.r.hash()
+    def test_one_binary_per_package(self):
+        self.assertEqual(sorted(build_bins.BINARIES), ['dashstats', 'healbench', 'tankbench', 'wowsimcli'])
+        self.assertEqual(len(set(build_bins.BINARIES.values())), len(build_bins.BINARIES))
+        self.assertFalse(set(build_bins.RETIRED) & set(build_bins.BINARIES))
 
 
 class Guard(Case):
-    NEED = ['wowsimcli', 'wowsimcli_r']
+    NEED = ['wowsimcli', 'dashstats']
 
     def setUp(self):
         super().setUp()
@@ -201,8 +201,8 @@ class Guard(Case):
         self.assertNotIn('sim/core', msg)
 
     def test_binary_replaced(self):
-        open(os.path.join(self.bin, 'wowsimcli_r'), 'wb').write(b'hand built')
-        self.assertIn('wowsimcli_r is not the binary', self.refused())
+        open(os.path.join(self.bin, 'dashstats'), 'wb').write(b'hand built')
+        self.assertIn('dashstats is not the binary', self.refused())
 
     def test_binary_not_needed_is_not_checked(self):
         open(os.path.join(self.bin, 'healbench'), 'wb').write(b'hand built')
@@ -210,9 +210,9 @@ class Guard(Case):
         self.assertIn('healbench', self.refused(['healbench']))
 
     def test_missing_binary_is_an_error_even_with_override(self):
-        os.remove(os.path.join(self.bin, 'wowsimcli_r'))
+        os.remove(os.path.join(self.bin, 'dashstats'))
         os.environ[build_bins.OVERRIDE] = 'testing'
-        self.assertIn('wowsimcli_r missing', self.refused())
+        self.assertIn('dashstats missing', self.refused())
 
     def test_dirty_tree(self):
         self.r.write('sim/core/a.go', 'package core // uncommitted\n')
@@ -286,7 +286,8 @@ class Guard(Case):
 
 
 class NoFallback(Case):
-    """run_races.py and run_assumptions.py use their own binary or stop, and probe.py stands in for every binary."""
+    """run_races.py and run_assumptions.py run wowsimcli with their switches or stop, and probe.py stands in for every
+    binary."""
 
     def setUp(self):
         super().setUp()
@@ -295,7 +296,7 @@ class NoFallback(Case):
         self.dash = tempfile.mkdtemp(prefix='bbdash_')
         self.addCleanup(shutil.rmtree, self.dash, True)
         os.makedirs(os.path.join(self.dash, 'req'))
-        open(os.path.join(self.bin, 'wowsimcli'), 'w').write('plain')
+        open(os.path.join(self.bin, 'dashstats'), 'w').write('x')
         env = mock.patch.dict(os.environ, DASH_BIN=self.bin, DASH_DIR=self.dash)
         env.start()
         self.addCleanup(env.stop)
@@ -310,23 +311,24 @@ class NoFallback(Case):
 
     def test_run_races(self):
         m = self.load('run_races')
-        self.assertEqual(m.CLI, os.path.join(self.bin, 'wowsimcli_r'))
+        self.assertEqual(m.CLI, os.path.join(self.bin, 'wowsimcli'))
         with self.assertRaises(SystemExit) as cm:
             m.main([])
-        self.assertIn('wowsimcli_r', str(cm.exception.code))
+        self.assertIn('wowsimcli', str(cm.exception.code))
 
     def test_run_assumptions(self):
         m = self.load('run_assumptions')
-        self.assertEqual(m.CLI, os.path.join(self.bin, 'wowsimcli_assume'))
+        self.assertEqual(m.CLI, os.path.join(self.bin, 'wowsimcli'))
         with self.assertRaises(SystemExit) as cm:
             m.main([])
-        self.assertIn('wowsimcli_assume', str(cm.exception.code))
+        self.assertIn('wowsimcli', str(cm.exception.code))
 
     def test_probe_bin(self):
         m = self.load('probe')
+        self.assertEqual(sorted(m.BINARIES), sorted(build_bins.DPS_BINS))
         with self.assertRaises(SystemExit) as cm:
             m.probe_bin(self.dash)
-        self.assertIn('wowsimcli_r', str(cm.exception.code))
+        self.assertIn('wowsimcli', str(cm.exception.code))
         for n in m.BINARIES:
             open(os.path.join(self.bin, n), 'w').write('x')
         b = m.probe_bin(self.dash)

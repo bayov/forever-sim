@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""probe_cli.py: stands in for wowsimcli, wowsimcli_r, wowsimcli_assume and dashstats while probe.py runs the step scripts.
+"""probe_cli.py: stands in for wowsimcli and dashstats while probe.py runs the step scripts.
 
 probe.py links each binary name of $DASH_BIN to this file in a bin folder of its own, so the step scripts run unchanged
 and every sim they ask for comes through here. Each sim runs with its iterations cut to a tenth (PROBE_SCALE, at least

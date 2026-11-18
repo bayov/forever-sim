@@ -47,6 +47,14 @@ RV_KEY = ('build', 'race', 'variant')
 ASM_KEY = ('build', 'combo', 'secs', 'rot')
 
 
+def check_splits(what, splits, want=None):
+    """Stop when a pack was simmed with another DASH_SPLITS than this run's: the averages' last bits differ. The DPS
+    packs (fingerprint.json) and the Tanking and Healing packs (run.json, tankheal.py) both come through here."""
+    want = SPLITS if want is None else want
+    if splits != want:
+        sys.exit(f'{what}: simmed with {splits} splits, this run uses DASH_SPLITS={want}')
+
+
 def meta(bid):
     p = os.path.join(D, 'req', bid + '.meta.json')
     return json.load(open(p)) if os.path.exists(p) else None
@@ -129,7 +137,7 @@ def members(bid, commit, rv, asm, abl, problems):
         p = os.path.join(D, d, bid + ext)
         if os.path.exists(p):
             data = open(p, 'rb').read()
-            if d == 'names':  # patch 0001 appends one copy per sim split, in the order the splits finish
+            if d == 'names':  # DASH_NAMES appends one copy per sim split, in the order the splits finish
                 data = ''.join(sorted(set(data.decode().splitlines(keepends=True)))).encode()
             elif d == 'out':
                 data = json.dumps(canon(json.loads(data)), separators=(',', ':')).encode()
@@ -232,8 +240,7 @@ def unpack():
                 data = tar.extractfile(ti).read()
                 if ti.name == 'fingerprint.json':
                     fp = json.loads(data)
-                    if fp['splits'] != SPLITS:
-                        sys.exit(f'{bid}: simmed with {fp["splits"]} splits, this run uses DASH_SPLITS={SPLITS}')
+                    check_splits(bid, fp['splits'])
                     now = inputs(bid)
                     if any(fp.get(k, {}) != now.get(k, {}) for k in ('request', 'asmApls', 'raceOverrides')):
                         older.append(bid)

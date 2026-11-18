@@ -91,10 +91,10 @@ iterations, 20,000 for anything under 3 DPS.
 - **Theirs:** edit `req_theirs.json`, or patch their checkout (uncommitted, reverted as in
   step 1).
 - `run.py` takes other binaries: `OURS=<path>` (a scratch build, or
-  `tools/dps_report/bin/wowsimcli_assume` with `DASH_ASSUME=<key>=<value>` for a report
+  `tools/dps_report/bin/wowsimcli` with `DASH_ASSUME=<key>=<value>` for a report
   assumption) and `THEIRS=<name in $WSF_WORK/bin>` (e.g.
   `go build -tags=with_db -o $WSF_WORK/bin/theirs_cmpsim_x ./cmd/cmpsim` in `$WSF`). Measure an
-  assumption against `wowsimcli_assume` with no knob, not against `ours_cli`.
+  assumption against that `wowsimcli` with no knob, not against `ours_cli`.
 - The causes should add up to the gap within the error. If they don't, there is another cause.
 
 ## 5. Sort the causes

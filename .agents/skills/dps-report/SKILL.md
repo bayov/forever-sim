@@ -148,7 +148,7 @@ provenance. Design: `orchestration/dash_raw_store.md`.
 
 **B9. Assumption scenarios.** Template `prompts/dashboard/HANDOFF_assumptions.md`; re-run
 whenever presets change.
-1. Dashboard-only knobs in the merged tree: the DASH_ASSUME env var, defaults bit-identical.
+1. The DASH_ASSUME report switch (`sim/core/report_switches.go`): unset, every knob is master's constant.
 2. One-at-a-time sims per affected build (full grid where a build has 3 or fewer
    assumptions).
 3. The `assumptions` / `assumption_dps` datasets in `ui/dps_report/data`.

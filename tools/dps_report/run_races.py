@@ -16,14 +16,14 @@ gives them (race_override.py, standards 29), the "off" rows included. A race's o
 (GEAR_PART: the Dwarf's trades the hit Artisan's Precision makes spare), so a sim with that racial off wears the
 preset's gear: the trade counts in the racial, and "base stats" are the race's stats on the preset's gear.
 Results append to rv/results.jsonl, one line per sim, so a rerun only does what is missing.
-Needs wowsimcli_r: wowsimcli with the DASH_RACIALS_OFF switch (patch 0002), which build_bins.py builds.
+Needs $DASH_BIN/wowsimcli, which build_bins.py builds. It reads DASH_RACIALS_OFF (report switches, sim/core/report_switches.go).
 """
 import json, os, subprocess, sys, tempfile, copy, math, threading
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, BIN, TREE, RNG  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
-CLI = os.path.join(BIN, 'wowsimcli_r')  # built by build_bins.py, with no fallback to plain wowsimcli (main() stops without it)
+CLI = os.path.join(BIN, 'wowsimcli')  # built by build_bins.py (main() stops without it)
 RES = os.path.join(D, 'rv', 'results.jsonl')
 os.makedirs(os.path.dirname(RES), exist_ok=True)
 sys.path.insert(0, D)

@@ -32,7 +32,7 @@ The user reads the dashboard on a PHONE.
 ## What to build
 1. Data: new sims. For every preset and every race available to its class:
    a. **Baseline:** the existing race sweep (reuse it).
-   b. **Racials off:** the race's base stats only, with its racial abilities and passives disabled. If the sim has no switch for this, add a DASHBOARD-ONLY local patch in /home/user/w-dash (e.g. an env var read where racials register). This splits each race's edge into "base stats" and "racial abilities", and gives a per-racial breakdown where feasible (turn racials off one at a time).
+   b. **Racials off:** the race's base stats only, with its racial abilities and passives disabled. If the sim has no switch for this, add a report switch in sim/core/report_switches.go (an env var that does nothing unset, read where racials register; tools/dps_report/README.md "Report switches"). This splits each race's edge into "base stats" and "racial abilities", and gives a per-racial breakdown where feasible (turn racials off one at a time).
    c. **Weapon conditionals:** for each race with a weapon racial, sim the preset with its weapon(s) swapped to that racial's weapon type at the same budget and stats, i.e. "with the racial's weapon". Casters use a sword / mace / axe main hand plus off-hand instead of a staff, if legal for the class. Also sim "racial weapon not equipped", which is the baseline when the preset's weapon doesn't match.
       Way to do it: a copy of the preset's synthetic item with a different weaponType, via a request-embedded database if the sim's RaidSimRequest supports one, or local-only db additions in the merged tree that are never pushed. Weapon damage and speed should follow a real Era Phase 1 weapon of that type for physical builds; caster weapons only need the type.
       Skip type/class combinations the class can't use.
@@ -64,7 +64,7 @@ The user reads the dashboard on a PHONE.
 ## Rules
 - No model names in files. Don't message other sessions.
 - Never push or touch remote branches, and never touch /home/user/forever-sim.
-- Local patches in /home/user/w-dash are fine; commit them on the local dashdata branch only.
+- The sim gets no local patches: a switch the report needs goes in sim/core/report_switches.go and does nothing unset.
 
 ## Deliverable
 Reply briefly with:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""timing_cli.py: stands in for wowsimcli, wowsimcli_r, wowsimcli_assume, dashstats, tankbench and healbench during
-pipeline.sh run, and logs what each call cost.
+"""timing_cli.py: stands in for wowsimcli, dashstats, tankbench and healbench during pipeline.sh run, and logs what each
+call cost.
 
 pipeline.sh links each binary of $DASH_BIN to this file in $DASH_DIR/timing/bin, and the step scripts call it unchanged.
 It runs the real binary (TIMING_REAL_BIN) with the same arguments, then appends one line to TIMING_LOG: the step
