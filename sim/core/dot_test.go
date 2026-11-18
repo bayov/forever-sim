@@ -130,9 +130,9 @@ func SetupFakeSim() *Simulation {
 }
 
 func expectDotTickDamage(t *testing.T, sim *Simulation, dot *Dot, expectedDamage float64) {
-	damageBefore := dot.Spell.SpellMetrics[0].TotalDamage
+	damageBefore := dot.Spell.SpellMetrics()[0].TotalDamage
 	dot.TickOnce(sim)
-	damageAfter := dot.Spell.SpellMetrics[0].TotalDamage
+	damageAfter := dot.Spell.SpellMetrics()[0].TotalDamage
 	delta := damageAfter - damageBefore
 
 	if !WithinToleranceFloat64(expectedDamage, delta, 0.01) {

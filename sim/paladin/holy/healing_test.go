@@ -105,7 +105,7 @@ func healOf(sim *core.Simulation, spell *core.Spell, target *core.Unit) (float64
 	if spell.ActionID.SpellID == 20930 {
 		booked = spell.Unit.GetSpell(core.ActionID{SpellID: 25903})
 	}
-	m := &booked.SpellMetrics[target.UnitIndex]
+	m := &booked.SpellMetrics()[target.UnitIndex]
 	before, crits := m.TotalHealing, m.Crits
 	spell.ApplyEffects(sim, target, spell)
 	return m.TotalHealing - before, m.Crits > crits
@@ -213,20 +213,20 @@ func TestHealAmounts(t *testing.T) {
 
 	// A heal at a mob lands on the paladin.
 	hl := spell(t, pal, 25292)
-	before := hl.SpellMetrics[pal.UnitIndex].TotalHealing
+	before := hl.SpellMetrics()[pal.UnitIndex].TotalHealing
 	hl.ApplyEffects(sim, pal.CurrentTarget, hl)
-	if hl.SpellMetrics[pal.UnitIndex].TotalHealing <= before {
+	if hl.SpellMetrics()[pal.UnitIndex].TotalHealing <= before {
 		t.Errorf("Holy Light at the boss didn't heal the paladin")
 	}
 	// Holy Shock at a mob deals damage, and heals nobody.
 	hs := spell(t, pal, 20930)
-	dmg := hs.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalDamage
-	healed := hs.SpellMetrics[pal.UnitIndex].TotalHealing
+	dmg := hs.SpellMetrics()[pal.CurrentTarget.UnitIndex].TotalDamage
+	healed := hs.SpellMetrics()[pal.UnitIndex].TotalHealing
 	for range 20 {
 		hs.ApplyEffects(sim, pal.CurrentTarget, hs)
 	}
-	if hs.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalDamage <= dmg || hs.SpellMetrics[pal.UnitIndex].TotalHealing != healed {
-		t.Errorf("Holy Shock at the boss: %.0f damage, healing moved", hs.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalDamage-dmg)
+	if hs.SpellMetrics()[pal.CurrentTarget.UnitIndex].TotalDamage <= dmg || hs.SpellMetrics()[pal.UnitIndex].TotalHealing != healed {
+		t.Errorf("Holy Shock at the boss: %.0f damage, healing moved", hs.SpellMetrics()[pal.CurrentTarget.UnitIndex].TotalDamage-dmg)
 	}
 }
 
@@ -513,7 +513,7 @@ func TestLightsVigil(t *testing.T) {
 	hs := spell(t, pal, 20930)
 	before := map[int32]float64{}
 	for _, u := range units {
-		before[u.UnitIndex] = heal.SpellMetrics[u.UnitIndex].TotalHealing
+		before[u.UnitIndex] = heal.SpellMetrics()[u.UnitIndex].TotalHealing
 	}
 	castAt(t, sim, pal, hs, units[3])
 	if !hs.CD.IsReady(sim) {
@@ -523,7 +523,7 @@ func TestLightsVigil(t *testing.T) {
 		t.Errorf("the Vigil is still up")
 	}
 	for i, u := range units {
-		got := heal.SpellMetrics[u.UnitIndex].TotalHealing - before[u.UnitIndex]
+		got := heal.SpellMetrics()[u.UnitIndex].TotalHealing - before[u.UnitIndex]
 		if i < 5 && (got < 684.21-0.01 || got > 723.79+0.01) {
 			t.Errorf("player %d got %.1f from the Vigil, want 684 to 724", i, got)
 		}

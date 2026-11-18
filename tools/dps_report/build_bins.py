@@ -13,7 +13,7 @@ and refuses sims whose binaries don't match the code.
 
 The input hash covers exactly what the binaries are built from: sim/ (not _test.go, .md, .results or testdata, which
 go build never reads), proto/, cmd/wowsimcli, go.mod, go.sum, the Go sources of the built tools/ packages and those
-they import (TOOL_PACKAGES), and all of assets/database (with_db embeds the database),
+they import (TOOL_PACKAGES) with their default.pgo (go build's -pgo=auto reads it), and all of assets/database (with_db embeds the database),
 and the recipe (the table below, the build flags). Like stale.mjs's inputHash it hashes git blob ids at a commit, not
 the commit, so a commit that changes none of these gives the same hash and needs no rebuild. The build uses
 -trimpath -buildvcs=false, so a binary's sha256 doesn't change with the commit alone either (bench_races.py keys its
@@ -52,7 +52,8 @@ BUILD_ENV = {'CGO_ENABLED': '0'}  # pure Go, so the binary doesn't depend on the
 
 INPUTS = ['sim', 'proto', 'cmd/wowsimcli', 'go.mod', 'go.sum', 'assets/database']
 # the tools/ packages the binaries build or import (go list -deps, and build() checks no other module package is used): only
-# their .go files count, not the bench requests next to them, which are read at run time
+# their .go files and default.pgo (the profile go build optimises a main package with) count, not the bench requests next
+# to them, which are read at run time
 TOOL_PACKAGES = ['tools/dashstats', 'tools/tankbench', 'tools/healbench', 'tools/tankscore']
 NOT_BUILT = re.compile(r'(_test\.go|\.md|\.results|\.results\.tmp)$|(^|/)testdata/')
 STAMP = 'STAMP.json'
@@ -82,7 +83,7 @@ def is_input(path):
     if NOT_BUILT.search(path):
         return False
     if any(path.startswith(t + '/') for t in TOOL_PACKAGES):
-        return path.endswith('.go')
+        return path.endswith(('.go', '/default.pgo'))
     return any(path == p or path.startswith(p + '/') for p in INPUTS)
 
 

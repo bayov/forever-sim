@@ -24,7 +24,7 @@ func TestOrcShamanJudgementOfWisdom(t *testing.T) {
 	at(sim, 0.5, func(sim *core.Simulation) { enh.SpendMana(sim, enh.MaxMana(), enh.GetManaNotCastingMetrics()) })
 	runSim(sim)
 
-	swings := enh.AutoAttacks.MHAuto().SpellMetrics[enh.CurrentTarget.UnitIndex]
+	swings := enh.AutoAttacks.MHAuto().SpellMetrics()[enh.CurrentTarget.UnitIndex]
 	missed := swings.Misses + swings.Dodges + swings.Parries
 	if swings.Casts < 400 || missed*100 < swings.Casts*10 {
 		t.Fatalf("got %d swings and %d misses, want 400 or more with 10%% or more missed", swings.Casts, missed)

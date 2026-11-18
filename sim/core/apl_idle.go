@@ -114,7 +114,7 @@ func (apl *APLRotation) readyNotBefore(sim *Simulation) time.Duration {
 }
 
 func (apl *APLRotation) readyNotBeforeRotation(sim *Simulation) time.Duration {
-	if !apl.keepsResults {
+	if !apl.keepsResults && !apl.usesHealTargets {
 		return apl.readyNotBeforeNow(sim)
 	}
 	outer := sim.startAPLCheck()

@@ -242,6 +242,7 @@ func (aura *Aura) SetStacks(sim *Simulation, newStacks int32) {
 	}
 	oldStacks := aura.stacks
 	newStacks = min(newStacks, aura.MaxStacks)
+	sim.sightEpoch++
 
 	if oldStacks == newStacks {
 		return
@@ -679,6 +680,7 @@ restart:
 // exists it will be replaced with the new one.
 func (aura *Aura) Activate(sim *Simulation) {
 	aura.metrics.Procs++
+	sim.sightEpoch++
 	if aura.IsActive() {
 		aura.Refresh(sim)
 		return
@@ -781,6 +783,7 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 		return
 	}
 	aura.active = false
+	sim.sightEpoch++
 
 	if !aura.ActionID.IsEmptyAction() {
 		// fix logging timestamps for lazy aura expiration

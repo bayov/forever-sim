@@ -327,7 +327,7 @@ func TestDarkInspirationNeedsHit(t *testing.T) {
 	mindBlast := topRank(t, "Mind Blast", sp.MindBlast)
 	mindBlast.BonusHitRating -= 20 * core.SpellHitRatingPerHitChance
 
-	metrics := &mindBlast.SpellMetrics[target.UnitIndex]
+	metrics := &mindBlast.SpellMetrics()[target.UnitIndex]
 	missed, landed := false, false
 	for i := 0; i < 200 && !(missed && landed); i++ {
 		sp.DarkInspirationAura.Deactivate(sim)
@@ -450,7 +450,7 @@ func TestShadowguard(t *testing.T) {
 	for !sim.Step() {
 	}
 
-	metrics := strike.SpellMetrics[target.UnitIndex]
+	metrics := strike.SpellMetrics()[target.UnitIndex]
 	fired := float64(metrics.Hits + metrics.Misses)
 	if want := minutes * 60 / (3.5 + 60/hitsPerMinute); math.Abs(fired-want) > 10 {
 		t.Errorf("%.0f strikes fired at the boss, want about %.0f", fired, want)
@@ -549,7 +549,7 @@ func TestWandShoot(t *testing.T) {
 			}
 		}})
 		// A shot counts its outcome when it fires.
-		metrics := &shoot.SpellMetrics[target.UnitIndex]
+		metrics := &shoot.SpellMetrics()[target.UnitIndex]
 		shots := int32(0)
 		for !sim.Step() {
 			if n := metrics.Hits + metrics.Crits + metrics.Misses; n > shots {
@@ -591,7 +591,7 @@ func TestWandShoot(t *testing.T) {
 			}})
 			for !sim.Step() {
 			}
-			return shoot.SpellMetrics[target.UnitIndex]
+			return shoot.SpellMetrics()[target.UnitIndex]
 		}
 
 		at := shotTablesFor(t)
@@ -670,7 +670,7 @@ func TestShadowWordDeathSelfDamage(t *testing.T) {
 	swd.BonusHitRating -= 20 * core.SpellHitRatingPerHitChance
 	healthMetrics := sp.NewHealthMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionHealingModel})
 
-	metrics := &swd.SpellMetrics[target.UnitIndex]
+	metrics := &swd.SpellMetrics()[target.UnitIndex]
 	missed, landed := false, false
 	for i := 0; i < 200 && !(missed && landed); i++ {
 		sp.GainHealth(sim, sp.MaxHealth(), healthMetrics)

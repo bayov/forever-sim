@@ -3,6 +3,7 @@ package core
 import (
 	"math"
 	"time"
+	"unsafe"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -404,12 +405,39 @@ func (unit *Unit) NewFocusMetrics(actionID ActionID) *ResourceMetrics {
 var emptySpellMetrics SpellMetrics
 
 func empty(spellMetrics []SpellMetrics) bool {
+	// Most of a spell's metrics are for targets it never touched, which reset left all zero bytes,
+	// and those are empty. Only where a byte isn't zero do we compare the fields (a -0 total is
+	// still empty).
+	if allZeroBytes(spellMetrics) {
+		return true
+	}
 	for _, spellMetric := range spellMetrics {
 		if spellMetric != emptySpellMetrics {
 			return false
 		}
 	}
 	return true
+}
+
+// allZeroBytes is whether every byte of spellMetrics is zero. SpellMetrics holds 8-byte floats, so
+// its size is a whole number of words.
+func allZeroBytes(spellMetrics []SpellMetrics) bool {
+	if len(spellMetrics) == 0 {
+		return true
+	}
+	words := unsafe.Slice((*uint64)(unsafe.Pointer(&spellMetrics[0])), uintptr(len(spellMetrics))*unsafe.Sizeof(SpellMetrics{})/8)
+	var a, b, c, d uint64
+	for len(words) >= 4 {
+		a |= words[0]
+		b |= words[1]
+		c |= words[2]
+		d |= words[3]
+		words = words[4:]
+	}
+	for _, w := range words {
+		a |= w
+	}
+	return a|b|c|d == 0
 }
 
 // Adds the results of a spell to the character metrics.

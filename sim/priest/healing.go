@@ -396,7 +396,7 @@ func (priest *Priest) registerRenewSpell() {
 						s.Hot(target).Deactivate(sim)
 					}
 				}
-				spell.SpellMetrics[target.UnitIndex].Hits++
+				spell.SpellMetrics()[target.UnitIndex].Hits++
 				spell.Hot(target).Apply(sim)
 			},
 			// What the HoT heals in all at its target, before crits, for a rotation's conditions.
@@ -503,7 +503,7 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 				if target.IsDead() {
 					return
 				}
-				spell.SpellMetrics[target.UnitIndex].Hits++
+				spell.SpellMetrics()[target.UnitIndex].Hits++
 				priest.PowerWordShieldAbsorbs.Get(target).Apply(sim, spell, amount(target))
 				priest.WeakenedSouls.Get(target).Activate(sim)
 			},
@@ -674,7 +674,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				target = priest.healTarget(target)
 				priest.litanyOfLight(sim, spell, r.manaCost)
-				spell.SpellMetrics[target.UnitIndex].Hits++
+				spell.SpellMetrics()[target.UnitIndex].Hits++
 				current = heal
 				charges = PrayerOfMendingCharges
 				place(sim, target)

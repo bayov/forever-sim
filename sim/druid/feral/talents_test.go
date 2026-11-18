@@ -107,7 +107,7 @@ func TestCatPredatoryDiscipline(t *testing.T) {
 		if !spell.Cast(sim, target) {
 			t.Fatalf("%q: Bite didn't cast", talents)
 		}
-		return spell.SpellMetrics[target.UnitIndex].TotalDamage, cat.CurrentEnergy()
+		return spell.SpellMetrics()[target.UnitIndex].TotalDamage, cat.CurrentEnergy()
 	}
 	plainDamage, plainEnergy := bite(withoutPD)
 	pdDamage, pdEnergy := bite(withPD)
@@ -219,7 +219,7 @@ func nearDamage(got, want float64) bool { return math.Abs(got-want) < 1e-6 }
 
 // tickDamage is what one tick of the dot deals.
 func tickDamage(sim *core.Simulation, spell *druid.DruidSpell, target *core.Unit) float64 {
-	metrics := &spell.SpellMetrics[target.UnitIndex]
+	metrics := &spell.SpellMetrics()[target.UnitIndex]
 	before := metrics.TotalDamage
 	spell.Dot(target).TickOnce(sim)
 	return metrics.TotalDamage - before
@@ -254,7 +254,7 @@ func TestCatRakeHitAttackPower(t *testing.T) {
 	// The multiplier the hit carries, on a base of 1.
 	multiplier := cat.Rake.CalcDamage(sim, target, 1, cat.Rake.OutcomeAlwaysHit).Damage
 	hit := func() float64 {
-		metrics := &cat.Rake.SpellMetrics[target.UnitIndex]
+		metrics := &cat.Rake.SpellMetrics()[target.UnitIndex]
 		before, hits := metrics.TotalDamage, metrics.Hits
 		cat.Rake.ApplyEffects(sim, target, cat.Rake.Spell)
 		if metrics.Hits != hits+1 {
@@ -457,7 +457,7 @@ func TestCatFerociousBiteNov2(t *testing.T) {
 		cat.SpendEnergy(sim, cat.CurrentEnergy()-35, cat.FerociousBite.EnergyMetrics())
 		ap := cat.FerociousBite.MeleeAttackPower(target)
 		multiplier := cat.FerociousBite.CalcDamage(sim, target, 1000, cat.FerociousBite.OutcomeAlwaysHit).Damage / 1000
-		metrics := &cat.FerociousBite.SpellMetrics[target.UnitIndex]
+		metrics := &cat.FerociousBite.SpellMetrics()[target.UnitIndex]
 		cat.SetGCDTimer(sim, sim.CurrentTime)
 		if !cat.FerociousBite.Cast(sim, target) {
 			t.Fatal("Ferocious Bite not cast")

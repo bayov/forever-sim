@@ -149,7 +149,7 @@ func TestOrcShamanRaidDamageHits(t *testing.T) {
 	})
 	runSim(sim)
 	// An orb can miss (TestOrcShamanLightningShieldOrbOutcome), so we count misses too.
-	metrics := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	metrics := orb.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 	fired := metrics.Hits + metrics.Misses
 	if want := minutes * 60 / (3.5 + 60.0/hitsPerMinute); math.Abs(float64(fired)-want) > 15 {
 		t.Errorf("%d orbs fired at our target, want about %.0f", fired, want)
@@ -176,7 +176,7 @@ func TestOrcShamanLightningShieldOrbOutcome(t *testing.T) {
 	})
 	runSim(sim)
 
-	metrics := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	metrics := orb.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 	if missed := float64(metrics.Misses) / orbs; math.Abs(missed-0.17) > 0.025 {
 		t.Errorf("%.1f%% of orbs missed, want 17%%", 100*missed)
 	}
@@ -224,7 +224,7 @@ func TestOrcShamanLightningShieldOrbs(t *testing.T) {
 		castNow(t, sim, enh, shield)
 	}
 	fired := func() int32 {
-		m := orb.SpellMetrics[enemy.UnitIndex]
+		m := orb.SpellMetrics()[enemy.UnitIndex]
 		return m.Hits + m.Misses
 	}
 
@@ -271,10 +271,10 @@ func TestOrcShamanLightningShieldOrbs(t *testing.T) {
 			t.Errorf("cycle %d: orb %d at %s, want %s", i/len(want)+1, i%len(want)+1, got, want[i%len(want)])
 		}
 	}
-	if m := orb.SpellMetrics[enemy.UnitIndex]; m.Misses == 0 {
+	if m := orb.SpellMetrics()[enemy.UnitIndex]; m.Misses == 0 {
 		t.Errorf("none of %d orbs missed", len(orbs))
 	}
-	if m := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]; m.Hits+m.Misses > 0 {
+	if m := orb.SpellMetrics()[enh.CurrentTarget.UnitIndex]; m.Hits+m.Misses > 0 {
 		t.Errorf("%d orbs hit our target, which never hit us", m.Hits+m.Misses)
 	}
 }

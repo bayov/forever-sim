@@ -50,7 +50,7 @@ func TestOrcShamanLightningOverload(t *testing.T) {
 	}
 	var copies int32
 	at(sim, float64(1+3*casts), func(sim *core.Simulation) {
-		copies = overload.SpellMetrics[target.UnitIndex].Casts - 1
+		copies = overload.SpellMetrics()[target.UnitIndex].Casts - 1
 		if rate := float64(copies) / casts; math.Abs(rate-.30) > .03 {
 			t.Errorf("%d of %d bolts overloaded (%.1f%%), want 30%%", copies, casts, rate*100)
 		}
@@ -63,7 +63,7 @@ func TestOrcShamanLightningOverload(t *testing.T) {
 		})
 	}
 	runSim(sim)
-	if got := overload.SpellMetrics[target.UnitIndex].Casts; got != 1+copies+casts {
+	if got := overload.SpellMetrics()[target.UnitIndex].Casts; got != 1+copies+casts {
 		t.Errorf("casting the overload %d times made %d more", casts, got-1-copies-casts)
 	}
 }

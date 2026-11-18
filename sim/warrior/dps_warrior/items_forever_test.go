@@ -45,7 +45,7 @@ func newWarriorWithGear(t *testing.T, ruleset proto.Ruleset, mainHand int32, off
 // uncritted casts, with resists off.
 func procRange(sim *core.Simulation, war *DpsWarrior, spell *core.Spell, n int) (float64, float64) {
 	spell.Flags |= core.SpellFlagIgnoreResists
-	metrics := &spell.SpellMetrics[war.CurrentTarget.UnitIndex]
+	metrics := &spell.SpellMetrics()[war.CurrentTarget.UnitIndex]
 	lo, hi := 1e9, 0.0
 	for i := 0; i < n; i++ {
 		damage, hits := metrics.TotalDamage, metrics.Hits
@@ -180,7 +180,7 @@ func TestThunderstrikeHitsEachTargetOnce(t *testing.T) {
 				spell.Cast(sim, war.CurrentTarget)
 			}
 			for i := range targets {
-				m := spell.SpellMetrics[sim.GetTargetUnit(int32(i)).UnitIndex]
+				m := spell.SpellMetrics()[sim.GetTargetUnit(int32(i)).UnitIndex]
 				blasts := m.Hits + m.Crits + m.Misses
 				lo, hi := int32(casts), int32(casts)
 				switch {
@@ -366,9 +366,9 @@ func TestForeverBladeOfHanna(t *testing.T) {
 	}
 	strength := war.GetStat(stats.Strength)
 	swing(core.OutcomeCrit)
-	if stacks.IsActive() || !buff.IsActive() || perfectedForm.SpellMetrics[war.CurrentTarget.UnitIndex].Casts != 1 {
+	if stacks.IsActive() || !buff.IsActive() || perfectedForm.SpellMetrics()[war.CurrentTarget.UnitIndex].Casts != 1 {
 		t.Errorf("the 30th hit: stacks up %v, Perfected Form up %v, %d casts; want no stacks, the buff and 1 cast",
-			stacks.IsActive(), buff.IsActive(), perfectedForm.SpellMetrics[war.CurrentTarget.UnitIndex].Casts)
+			stacks.IsActive(), buff.IsActive(), perfectedForm.SpellMetrics()[war.CurrentTarget.UnitIndex].Casts)
 	}
 	if got := war.GetStat(stats.Strength) - strength; got < 20-1e-9 {
 		t.Errorf("Perfected Form added %.1f Strength, want at least 20", got)

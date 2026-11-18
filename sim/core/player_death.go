@@ -12,6 +12,7 @@ func (env *Environment) killPlayer(sim *Simulation, player *Unit) {
 		return
 	}
 	player.dead = true
+	sim.sightEpoch++
 
 	// A channel isn't a hardcast: its dot lives on its target.
 	if dot := player.ChanneledDot; dot != nil {

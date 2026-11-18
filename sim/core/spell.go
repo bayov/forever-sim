@@ -139,7 +139,10 @@ type Spell struct {
 
 	castFn CastSuccessFunc // Performs a cast of this spell.
 
-	SpellMetrics []SpellMetrics
+	// The metrics of the split we're in, by target (SpellMetrics).
+	metrics []SpellMetrics
+	// Whether anything took the metrics since the last reset. Until then they are all zero.
+	metricsTaken bool
 
 	splitSpellMetrics [][]SpellMetrics // Used to split metrics by some condition, via SetMetricsSplit
 	splitTags         []int32          // Tags for each splitSpellMetrics used in doneIteration, defaults to the metrics splitIdx.
@@ -435,14 +438,14 @@ func (spell *Spell) SelfShield() *Shield {
 
 // Metrics for the current iteration
 func (spell *Spell) CurDamagePerCast() float64 {
-	if spell.SpellMetrics[0].Casts == 0 {
+	if spell.SpellMetrics()[0].Casts == 0 {
 		return 0
 	} else {
 		casts := int32(0)
 		damage := 0.0
 		for _, opponent := range spell.Unit.GetOpponents() {
-			casts += spell.SpellMetrics[opponent.UnitIndex].Casts
-			damage += spell.SpellMetrics[opponent.UnitIndex].TotalDamage
+			casts += spell.SpellMetrics()[opponent.UnitIndex].Casts
+			damage += spell.SpellMetrics()[opponent.UnitIndex].TotalDamage
 		}
 		return damage / float64(casts)
 	}
@@ -467,7 +470,7 @@ func (spell *Spell) finalize() {
 		}
 	}
 
-	spell.SpellMetrics = spell.splitSpellMetrics[0]
+	spell.metrics = spell.splitSpellMetrics[0]
 
 	// Set the "static" "default" cost here
 	if spell.Cost != nil {
@@ -475,18 +478,31 @@ func (spell *Spell) finalize() {
 	}
 }
 
+// SpellMetrics is the spell's metrics this iteration, by target (Unit.UnitIndex), in the split
+// we're in (SetMetricsSplit). Everything that reads or writes them takes them here, which marks
+// them taken: metrics nothing took since the last reset are still all zero, and the iteration's
+// end and the next reset skip them (most spells touch nothing in an iteration).
+func (spell *Spell) SpellMetrics() []SpellMetrics {
+	spell.metricsTaken = true
+	return spell.metrics
+}
+
 func (spell *Spell) reset(_ *Simulation) {
-	for i := range spell.splitSpellMetrics {
-		for j := range spell.SpellMetrics {
-			spell.splitSpellMetrics[i][j] = SpellMetrics{}
+	if spell.metricsTaken {
+		// Reading what's still all zero is cheaper than writing it again.
+		for i := range spell.splitSpellMetrics {
+			if m := spell.splitSpellMetrics[i][:len(spell.metrics)]; !allZeroBytes(m) {
+				clear(m)
+			}
 		}
+		spell.metricsTaken = false
 	}
 	spell.casts = 0
 	spell.LastCastAt = 0
 }
 
 func (spell *Spell) SetMetricsSplit(splitIdx int32) {
-	spell.SpellMetrics = spell.splitSpellMetrics[splitIdx]
+	spell.metrics = spell.splitSpellMetrics[splitIdx]
 	spell.Tag = spell.splitTags[splitIdx]
 }
 
@@ -496,7 +512,8 @@ func (spell *Spell) TagSplitMetric(splitIdx int32, tag int32) {
 }
 
 func (spell *Spell) doneIteration() {
-	if spell.Flags.Matches(SpellFlagNoMetrics) {
+	// Metrics nothing took since the reset are all zero, which add nothing (addSpellMetrics).
+	if spell.Flags.Matches(SpellFlagNoMetrics) || !spell.metricsTaken {
 		return
 	}
 
@@ -641,7 +658,7 @@ func (spell *Spell) attacksTarget() bool {
 }
 
 func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
-	spell.SpellMetrics[target.UnitIndex].Casts++
+	spell.SpellMetrics()[target.UnitIndex].Casts++
 	spell.casts++
 
 	if leveling := sim.Encounter.leveling; leveling != nil && target.Type == EnemyUnit {
@@ -653,7 +670,7 @@ func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
 func (spell *Spell) ApplyAOEThreatIgnoreMultipliers(threatAmount float64) {
 	numTargets := spell.Unit.Env.GetNumTargets()
 	for i := int32(0); i < numTargets; i++ {
-		spell.SpellMetrics[i].TotalThreat += threatAmount
+		spell.SpellMetrics()[i].TotalThreat += threatAmount
 	}
 }
 func (spell *Spell) ApplyAOEThreat(threatAmount float64) {

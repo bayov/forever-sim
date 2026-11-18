@@ -52,7 +52,7 @@ func TestOrcShamanPrepull(t *testing.T) {
 	if sim.CurrentTime != -6*time.Second {
 		t.Fatalf("the sim starts at %s, want -6 sec", sim.CurrentTime)
 	}
-	casts := func(spell *core.Spell) int32 { return spell.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts }
+	casts := func(spell *core.Spell) int32 { return spell.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts }
 
 	// Our prepull casts go first, so the shield is up by the time we look.
 	at(sim, -6, func(sim *core.Simulation) {

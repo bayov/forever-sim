@@ -48,6 +48,8 @@ type Unit struct {
 	// The players this one heals (Player.heal_assignment), which its rotation's Most Hurt and
 	// Lowest Health pick from (heal_targets.go). Empty is the whole raid.
 	healAssignment []*Unit
+	// What this healer sees of the raid within one rotation check (heal_sight.go).
+	healSight healSight
 	// Player.stop_cast_overheal (heal_comm.go).
 	stopCastOverheal float64
 
@@ -274,6 +276,9 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	}
 
 	unit.statsWithoutDeps.AddInplace(&bonus)
+	if sim != nil {
+		sim.sightEpoch++
+	}
 
 	if unit.FloorAttributes && unit.Env.IsFinalized() && bonus.HasAttributes() {
 		// Dropping the fraction from an attribute depends on the whole value, so we

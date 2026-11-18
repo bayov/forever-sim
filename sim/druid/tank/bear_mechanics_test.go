@@ -59,13 +59,13 @@ func TestBearRageGainThreat(t *testing.T) {
 		metrics := bear.NewRageMetrics(core.ActionID{SpellID: 2})
 		const gain = 12.0
 		var before []float64
-		for _, m := range spell.SpellMetrics {
+		for _, m := range spell.SpellMetrics() {
 			before = append(before, m.TotalThreat)
 		}
 		bear.AddRage(sim, gain, metrics)
 		want := core.ThreatPerRageGained * formThreat * gain / float64(targets)
 		for i := 0; i < targets; i++ {
-			if got := spell.SpellMetrics[i].TotalThreat - before[i]; !near(got, want, 1e-6) {
+			if got := spell.SpellMetrics()[i].TotalThreat - before[i]; !near(got, want, 1e-6) {
 				t.Errorf("%d targets: %.0f Rage in Bear Form made %.3f threat on target %d, want %.3f", targets, gain, got, i, want)
 			}
 		}
@@ -88,13 +88,13 @@ func TestBearManaGainThreat(t *testing.T) {
 		const gain = 100.0
 		bear.SpendMana(sim, 2*gain, bear.NewManaMetrics(core.ActionID{SpellID: 1}))
 		var before []float64
-		for _, m := range spell.SpellMetrics {
+		for _, m := range spell.SpellMetrics() {
 			before = append(before, m.TotalThreat)
 		}
 		bear.AddMana(sim, gain, bear.NewManaMetrics(core.ActionID{SpellID: 20190}))
 		want := core.ThreatPerManaGained * gain / float64(targets)
 		for i := 0; i < targets; i++ {
-			if got := spell.SpellMetrics[i].TotalThreat - before[i]; !near(got, want, 1e-6) {
+			if got := spell.SpellMetrics()[i].TotalThreat - before[i]; !near(got, want, 1e-6) {
 				t.Errorf("%d targets: %.0f mana in Bear Form made %.3f threat on target %d, want %.3f (unmultiplied)", targets, gain, got, i, want)
 			}
 		}

@@ -36,7 +36,7 @@ func TestOrcShamanFlameShockTicks(t *testing.T) {
 		crit   bool
 	}
 	var ticks []tick
-	metrics := &flameShock.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	metrics := &flameShock.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 	dot := flameShock.Dot(enh.CurrentTarget)
 	onTick := dot.OnTick
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -89,7 +89,7 @@ func TestOrcShamanFlameShockMiss(t *testing.T) {
 	sim.PrePull()
 	flameShock := topRank(t, "Flame Shock", enh.FlameShock)
 	dot := flameShock.Dot(enh.CurrentTarget)
-	metrics := &flameShock.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	metrics := &flameShock.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 
 	missesWithoutDot, missesWithDot := 0, 0
 	for i := range 100 {
@@ -139,7 +139,7 @@ func TestOrcShamanHealingStreamCrits(t *testing.T) {
 	if heal == nil || enh.WaterShield == nil {
 		t.Fatalf("no Healing Stream Totem rank 2 or no Water Shield at level 30")
 	}
-	metrics := &heal.SpellMetrics[enh.UnitIndex]
+	metrics := &heal.SpellMetrics()[enh.UnitIndex]
 
 	heals := func(sim *core.Simulation) int32 {
 		crits := metrics.Crits
@@ -193,7 +193,7 @@ func TestOrcShamanHealingStreamTalents(t *testing.T) {
 	runSim(sim)
 
 	// A crit heals for 13.5.
-	metrics := heal.SpellMetrics[enh.UnitIndex]
+	metrics := heal.SpellMetrics()[enh.UnitIndex]
 	if want := 9*float64(metrics.Hits) + 13.5*float64(metrics.Crits); metrics.Hits+metrics.Crits != 2 || math.Abs(metrics.TotalHealing-want) > 1e-9 {
 		t.Errorf("got %d normal heals and %d crits for %.2f, want 2 heals for 9 each (13.5 on a crit)", metrics.Hits, metrics.Crits, metrics.TotalHealing)
 	}
@@ -214,7 +214,7 @@ func TestOrcShamanHealingStreamHeals(t *testing.T) {
 		t.Fatalf("level 30 casts Healing Stream Totem rank %d, want 2", stream.Rank)
 	}
 	heal := enh.GetSpell(core.ActionID{SpellID: shaman.HealingStreamTotemHealId[2]})
-	metrics := &heal.SpellMetrics[enh.UnitIndex]
+	metrics := &heal.SpellMetrics()[enh.UnitIndex]
 
 	type tick struct {
 		at      time.Duration
@@ -265,9 +265,9 @@ func TestOrcShamanSearingTotemBolts(t *testing.T) {
 	dot := searing.AOEDot()
 	onTick := dot.OnTick
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-		casts := bolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts
+		casts := bolt.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts
 		onTick(sim, target, dot)
-		if bolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts == casts+1 {
+		if bolt.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts == casts+1 {
 			bolts = append(bolts, sim.CurrentTime)
 		}
 	}
@@ -315,12 +315,12 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 		var before []core.SpellMetrics
 		for _, u := range targets {
-			before = append(before, pulse.SpellMetrics[u.UnitIndex])
+			before = append(before, pulse.SpellMetrics()[u.UnitIndex])
 		}
 		onTick(sim, target, dot)
 		pulses = append(pulses, sim.CurrentTime)
 		for i, u := range targets {
-			m, b := pulse.SpellMetrics[u.UnitIndex], before[i]
+			m, b := pulse.SpellMetrics()[u.UnitIndex], before[i]
 			hits, misses, damage := m.Hits-b.Hits, m.Misses-b.Misses, m.TotalDamage-b.TotalDamage
 			if hits+misses != 1 || m.Crits != b.Crits || math.Abs(damage-73*float64(hits)) > 1e-9 {
 				t.Errorf("at %s, target %d: %d hits and %d misses for %.2f, want one hit for 73 or one miss",
@@ -379,7 +379,7 @@ func TestOrcShamanFireNova(t *testing.T) {
 			castNow(t, sim, enh, magma)
 			castNow(t, sim, enh, fireNova)
 			for i, u := range targets {
-				if m := topRank(t, "Fire Nova", enh.FireNovaHits).SpellMetrics[u.UnitIndex]; m.Hits+m.Crits+m.Misses != 1 {
+				if m := topRank(t, "Fire Nova", enh.FireNovaHits).SpellMetrics()[u.UnitIndex]; m.Hits+m.Crits+m.Misses != 1 {
 					t.Errorf("talents %q: Fire Nova rolled %d times on target %d, want 1", c.talents, m.Hits+m.Crits+m.Misses, i+1)
 				}
 			}

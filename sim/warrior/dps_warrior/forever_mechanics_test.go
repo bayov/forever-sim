@@ -261,7 +261,7 @@ func TestForeverWarriorAvoidedExecuteKeepsRage(t *testing.T) {
 	sim, war := newForeverWarrior(t, "000000000000002-50000000002")
 	execute := war.Execute.Spell
 	target := war.CurrentTarget
-	metrics := &execute.SpellMetrics[target.UnitIndex]
+	metrics := &execute.SpellMetrics()[target.UnitIndex]
 	avoided, landed := 0, 0
 	for i := 0; i < 400; i++ {
 		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
@@ -332,7 +332,7 @@ func TestForeverWarriorDeepWoundsRolls(t *testing.T) {
 		t.Errorf("an off hand crit before any tick gave a %.3f tick, want the first's 4 ticks and the main hand's share: %.3f", got, 2*want)
 	}
 
-	metrics := &war.DeepWounds.SpellMetrics[target.UnitIndex]
+	metrics := &war.DeepWounds.SpellMetrics()[target.UnitIndex]
 	before := metrics.TotalDamage
 	dot.TickOnce(sim)
 	multiplier := war.DeepWounds.AttackerDamageMultiplier(war.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
@@ -373,7 +373,7 @@ func TestForeverWarriorDeepWoundsKeepsTimer(t *testing.T) {
 	sim.AddPendingAction(&core.PendingAction{NextActionAt: start + 4*time.Second, OnAction: crit})
 	for !sim.Step() && sim.CurrentTime < start+4*time.Second {
 	}
-	if got := war.DeepWounds.SpellMetrics[target.UnitIndex].Ticks; got != 1 {
+	if got := war.DeepWounds.SpellMetrics()[target.UnitIndex].Ticks; got != 1 {
 		t.Fatalf("the bleed ticked %d times before the second crit, want 1", got)
 	}
 	if got, want := dot.NextTickAt(), start+6*time.Second; got != want {
@@ -386,7 +386,7 @@ func TestForeverWarriorDeepWoundsKeepsTimer(t *testing.T) {
 	sim.AddPendingAction(&core.PendingAction{NextActionAt: start + 20*time.Second, OnAction: func(*core.Simulation) {}})
 	for !sim.Step() && sim.CurrentTime < start+20*time.Second {
 	}
-	if got := war.DeepWounds.SpellMetrics[target.UnitIndex].Ticks; got != 5 {
+	if got := war.DeepWounds.SpellMetrics()[target.UnitIndex].Ticks; got != 5 {
 		t.Errorf("the bleed ticked %d times, want 5: 1 before the second crit and 4 after", got)
 	}
 }
@@ -400,7 +400,7 @@ func TestForeverWarriorRendAttackPower(t *testing.T) {
 	target := war.CurrentTarget
 	dot := war.Rend.Dot(target)
 	dot.Apply(sim)
-	metrics := &war.Rend.SpellMetrics[target.UnitIndex]
+	metrics := &war.Rend.SpellMetrics()[target.UnitIndex]
 	tick := func() float64 {
 		before := metrics.TotalDamage
 		dot.TickOnce(sim)
@@ -496,7 +496,7 @@ func TestForeverWarriorSweepingStrikesAndCharge(t *testing.T) {
 // plain hits (no crit, block or avoid).
 func landedRange(sim *core.Simulation, spell *core.Spell, target *core.Unit, n int) (float64, float64) {
 	low, high := math.Inf(1), math.Inf(-1)
-	metrics := &spell.SpellMetrics[target.UnitIndex]
+	metrics := &spell.SpellMetrics()[target.UnitIndex]
 	for i := 0; i < n; i++ {
 		before := *metrics
 		spell.ApplyEffects(sim, target, spell)
@@ -589,15 +589,15 @@ func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
 	for i := 0; i < 50; i++ {
 		ss.Activate(sim)
 		ss.SetStacks(sim, ss.MaxStacks)
-		before := slam.SpellMetrics[first.UnitIndex].TotalDamage
+		before := slam.SpellMetrics()[first.UnitIndex].TotalDamage
 		slam.ApplyEffects(sim, first, slam)
-		if slam.SpellMetrics[first.UnitIndex].TotalDamage > before {
+		if slam.SpellMetrics()[first.UnitIndex].TotalDamage > before {
 			copies++
 		}
 	}
 
-	hit := slam.SpellMetrics[first.UnitIndex].TotalDamage
-	copied := war.GetSpell(core.ActionID{SpellID: 12723}).SpellMetrics[second.UnitIndex].TotalDamage
+	hit := slam.SpellMetrics()[first.UnitIndex].TotalDamage
+	copied := war.GetSpell(core.ActionID{SpellID: 12723}).SpellMetrics()[second.UnitIndex].TotalDamage
 	// Forever rounds damage to whole numbers, so each copy comes within 1 of its hit.
 	if copies == 0 || math.Abs(copied-hit) > float64(copies) {
 		t.Errorf("Sweeping Strikes copied %.1f damage of %.1f over %d hits", copied, hit, copies)
@@ -617,7 +617,7 @@ func TestForeverWarriorSweepingStrikesKeepsCharges(t *testing.T) {
 		for i := 0; i < 3; i++ {
 			slam.ApplyEffects(sim, first, slam)
 		}
-		landed := int32(slam.SpellMetrics[first.UnitIndex].Hits + slam.SpellMetrics[first.UnitIndex].Crits)
+		landed := int32(slam.SpellMetrics()[first.UnitIndex].Hits + slam.SpellMetrics()[first.UnitIndex].Crits)
 		if landed == 0 {
 			t.Fatalf("%d targets: no Slam landed", targets)
 		}
@@ -641,7 +641,7 @@ func TestForeverWarriorRageGainThreat(t *testing.T) {
 	rageGain := war.GetSpell(core.ActionID{OtherID: proto.OtherAction_OtherActionRageGain})
 	threat := func() (float64, float64) {
 		targets := sim.Encounter.TargetUnits
-		return rageGain.SpellMetrics[targets[0].UnitIndex].TotalThreat, rageGain.SpellMetrics[targets[1].UnitIndex].TotalThreat
+		return rageGain.SpellMetrics()[targets[0].UnitIndex].TotalThreat, rageGain.SpellMetrics()[targets[1].UnitIndex].TotalThreat
 	}
 
 	war.Stance = warrior.BattleStance
@@ -678,13 +678,13 @@ func TestForeverWarriorCleaveSplitsFlatThreat(t *testing.T) {
 	for i := 0; i < 200 && (both == 0 || one == 0); i++ {
 		var before [2]core.SpellMetrics
 		for j, target := range targets {
-			before[j] = cleave.SpellMetrics[target.UnitIndex]
+			before[j] = cleave.SpellMetrics()[target.UnitIndex]
 		}
 		cleave.ApplyEffects(sim, targets[0], cleave)
 		landed := 0
 		var flats []float64
 		for j, target := range targets {
-			after := cleave.SpellMetrics[target.UnitIndex]
+			after := cleave.SpellMetrics()[target.UnitIndex]
 			if after.Hits+after.Crits == before[j].Hits+before[j].Crits {
 				continue
 			}

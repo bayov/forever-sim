@@ -204,8 +204,8 @@ func TestForeverWarriorImprovedWhirlwind(t *testing.T) {
 			war.AddRage(sim, 100, war.RageRefundMetrics)
 			war.Whirlwind.Cast(sim, first)
 		}
-		d1 = war.Whirlwind.SpellMetrics[first.UnitIndex].TotalDamage
-		d2 = war.Whirlwind.SpellMetrics[second.UnitIndex].TotalDamage
+		d1 = war.Whirlwind.SpellMetrics()[first.UnitIndex].TotalDamage
+		d2 = war.Whirlwind.SpellMetrics()[second.UnitIndex].TotalDamage
 		return war.Whirlwind.CD.Duration, d1, d2
 	}
 	cd0, a0, b0 := damage("")

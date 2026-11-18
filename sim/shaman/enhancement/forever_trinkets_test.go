@@ -63,7 +63,7 @@ func TestForeverBoltsChargedEyeball(t *testing.T) {
 		t.Fatal("no Grounded Electroshock with Bolt's Charged Eyeball")
 	}
 	target := enh.CurrentTarget
-	casts := func() int32 { return shock.SpellMetrics[target.UnitIndex].Casts }
+	casts := func() int32 { return shock.SpellMetrics()[target.UnitIndex].Casts }
 	flameShock := topRank(t, "Flame Shock", enh.FlameShock)
 
 	for _, tc := range []struct {
@@ -95,7 +95,7 @@ func TestForeverBoltsChargedEyeball(t *testing.T) {
 	}
 
 	// Each shock that lands deals 60 Nature, or 90 on a crit, before the target's resistance.
-	metrics := shock.SpellMetrics[target.UnitIndex]
+	metrics := shock.SpellMetrics()[target.UnitIndex]
 	landed := metrics.Hits + metrics.ResistedHits + metrics.Crits + metrics.ResistedCrits
 	if landed == 0 || metrics.TotalDamage <= 0 || metrics.TotalDamage > 90*float64(landed) {
 		t.Errorf("%d landed shocks dealt %.1f, want more than 0 and up to 90 each", landed, metrics.TotalDamage)
@@ -157,7 +157,7 @@ func TestForeverEverlookPathcarver(t *testing.T) {
 
 		hitTargets := 0
 		for _, target := range sim.Encounter.TargetUnits {
-			m := use.SpellMetrics[target.UnitIndex]
+			m := use.SpellMetrics()[target.UnitIndex]
 			if m.Casts+m.Hits+m.Crits+m.Misses == 0 {
 				continue
 			}
@@ -218,7 +218,7 @@ func TestForeverChainedEssenceOfEranikus(t *testing.T) {
 
 	clouded := 0
 	for _, target := range sim.Encounter.TargetUnits {
-		m := cloud.SpellMetrics[target.UnitIndex]
+		m := cloud.SpellMetrics()[target.UnitIndex]
 		if m.Misses > 0 {
 			continue
 		}

@@ -76,7 +76,7 @@ func retSimRaidBuffs(t *testing.T, talents string, items map[proto.ItemSlot]int3
 // landedHit returns the damage of one cast of spell when it was a normal hit, and false
 // for anything else.
 func landedHit(sim *core.Simulation, ret *RetributionPaladin, spell *core.Spell) (float64, bool) {
-	metrics := &spell.SpellMetrics[ret.CurrentTarget.UnitIndex]
+	metrics := &spell.SpellMetrics()[ret.CurrentTarget.UnitIndex]
 	before := *metrics
 	spell.ApplyEffects(sim, ret.CurrentTarget, spell)
 	if metrics.Hits == before.Hits+1 && metrics.Crits == before.Crits {

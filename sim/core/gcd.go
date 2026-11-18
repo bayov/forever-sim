@@ -17,6 +17,7 @@ func (unit *Unit) newHardcastAction(sim *Simulation) {
 			OnAction: func(sim *Simulation) {
 				if hc := &unit.Hardcast; hc.Expires != startingCDTime && !unit.IsCasting(sim) {
 					hc.Expires = startingCDTime
+					sim.sightEpoch++
 					if hc.OnComplete != nil {
 						hc.OnComplete(sim, hc.Target)
 					}
@@ -46,6 +47,7 @@ func (unit *Unit) completeDueHardcast(sim *Simulation) {
 		// The cast that completes is another event, as when the GCD action completes it.
 		sim.events++
 		hc.Expires = startingCDTime
+		sim.sightEpoch++
 		hc.OnComplete(sim, hc.Target)
 	}
 }
@@ -120,6 +122,7 @@ func (unit *Unit) interruptHardcast(sim *Simulation) {
 		}
 	}
 	unit.Hardcast = Hardcast{Expires: startingCDTime}
+	sim.sightEpoch++
 	unit.AutoAttacks.releaseMeleeHeldByCast(sim)
 	unit.ChanneledDot = nil
 	if unit.hardcastAction != nil && !unit.hardcastAction.consumed {

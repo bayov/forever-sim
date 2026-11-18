@@ -451,7 +451,7 @@ func TestHealAtDyingMob(t *testing.T) {
 	at(sim, 1.5, func(sim *core.Simulation) { killNow(sim, enh, mobs[0]) })
 	// The other mob's swings can push the heal back, by up to its 1.5 sec cast.
 	at(sim, 4.2, func(sim *core.Simulation) {
-		if got := heal.SpellMetrics[enh.UnitIndex].TotalHealing; got < 200 {
+		if got := heal.SpellMetrics()[enh.UnitIndex].TotalHealing; got < 200 {
 			t.Errorf("the heal healed us for %.0f", got)
 		}
 	})

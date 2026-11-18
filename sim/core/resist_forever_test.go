@@ -217,7 +217,7 @@ func TestForeverFullResistIsAMiss(t *testing.T) {
 				result.Landed(), result.Outcome, result.Damage)
 		}
 	}
-	metrics := spell.SpellMetrics[target.UnitIndex]
+	metrics := spell.SpellMetrics()[target.UnitIndex]
 	if metrics.Misses != 200 || metrics.Hits != 0 || metrics.Crits != 0 || metrics.ResistedHits != 0 {
 		t.Errorf("200 fully resisted hits counted %d misses, %d hits, %d crits and %d resisted hits, want 200 misses only",
 			metrics.Misses, metrics.Hits, metrics.Crits, metrics.ResistedHits)

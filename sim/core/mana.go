@@ -130,7 +130,7 @@ func (mb *manaBar) gainMakesThreat(metrics *ResourceMetrics) bool {
 // mana gain) shows otherwise.
 func (mb *manaBar) manaGainThreat(sim *Simulation, gain float64) {
 	mb.manaGainSpell.BookSplitThreat(sim, gain*ThreatPerManaGained)
-	mb.manaGainSpell.SpellMetrics[0].Casts++
+	mb.manaGainSpell.SpellMetrics()[0].Casts++
 }
 
 func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -179,7 +179,7 @@ func (mb *manaBar) doneIteration(sim *Simulation) {
 			continue
 		}
 
-		manaGainSpell.SpellMetrics[0].Casts += resourceMetrics.EventsForCurrentIteration()
+		manaGainSpell.SpellMetrics()[0].Casts += resourceMetrics.EventsForCurrentIteration()
 		manaGainSpell.ApplyAOEThreatIgnoreMultipliers(resourceMetrics.ActualGainForCurrentIteration() * ThreatPerManaGained * mb.unit.PseudoStats.ThreatMultiplier)
 	}
 }

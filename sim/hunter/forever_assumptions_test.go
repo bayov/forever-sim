@@ -308,7 +308,7 @@ func TestForeverPetAreaStrikes(t *testing.T) {
 		spell.ApplyEffects(sim, sim.Encounter.TargetUnits[0], spell)
 		reached := 0
 		for _, target := range sim.Encounter.TargetUnits {
-			m := spell.SpellMetrics[target.UnitIndex]
+			m := spell.SpellMetrics()[target.UnitIndex]
 			if m.Hits+m.Crits+m.Misses+m.Dodges+m.Parries+m.Blocks > 0 {
 				reached++
 			}
@@ -336,7 +336,7 @@ func TestForeverPetClosers(t *testing.T) {
 		if pet := hunter.pet; pet.DistanceFromTarget > core.MaxMeleeAttackDistance || pet.IsMoving() {
 			t.Errorf("%v: the pet is %.0f yd away at %v, want in melee range", c.pet, pet.DistanceFromTarget, c.at)
 		}
-		if casts := hunter.pet.closers[0].SpellMetrics[0].Casts; casts != 1 || hunter.pet.closers[0].ActionID.SpellID != c.closer {
+		if casts := hunter.pet.closers[0].SpellMetrics()[0].Casts; casts != 1 || hunter.pet.closers[0].ActionID.SpellID != c.closer {
 			t.Errorf("%v: closer %d cast %d times, want %d once", c.pet, hunter.pet.closers[0].ActionID.SpellID, casts, c.closer)
 		}
 	}
@@ -365,8 +365,8 @@ func TestForeverPetRunsIn(t *testing.T) {
 			t.Errorf("ruleset %v: the pet is %.0f yd away at 5 sec, want in melee range", c.ruleset, pet.DistanceFromTarget)
 		}
 		melee := pet.AutoAttacks.MHAuto()
-		if c.ruleset == proto.Ruleset_RulesetForever && melee.SpellMetrics[0].Casts != 2 {
-			t.Errorf("ruleset %v: the pet swung %d times in 5 sec, want 2 after running in for 2.8 sec", c.ruleset, melee.SpellMetrics[0].Casts)
+		if c.ruleset == proto.Ruleset_RulesetForever && melee.SpellMetrics()[0].Casts != 2 {
+			t.Errorf("ruleset %v: the pet swung %d times in 5 sec, want 2 after running in for 2.8 sec", c.ruleset, melee.SpellMetrics()[0].Casts)
 		}
 	}
 }
@@ -671,8 +671,8 @@ func TestForeverPetAutocastPassesAnAbilityShortOfFocus(t *testing.T) {
 		t.Fatalf("want Furious Howl ready but short of focus and Bite castable at 40 focus")
 	}
 	pet.foreverRotation(sim)
-	if bite.SpellMetrics[0].Casts != 1 || howl.SpellMetrics[0].Casts != 0 {
-		t.Errorf("at 40 focus the wolf cast Bite %d and Furious Howl %d times, want Bite once", bite.SpellMetrics[0].Casts, howl.SpellMetrics[0].Casts)
+	if bite.SpellMetrics()[0].Casts != 1 || howl.SpellMetrics()[0].Casts != 0 {
+		t.Errorf("at 40 focus the wolf cast Bite %d and Furious Howl %d times, want Bite once", bite.SpellMetrics()[0].Casts, howl.SpellMetrics()[0].Casts)
 	}
 }
 

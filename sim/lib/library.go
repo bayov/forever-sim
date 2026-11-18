@@ -303,7 +303,7 @@ func getDamageDone() float64 {
 	spellbook := player.GetCharacter().Spellbook
 	totalDamage := 0.0
 	for _, spell := range spellbook {
-		for _, metrics := range spell.SpellMetrics {
+		for _, metrics := range spell.SpellMetrics() {
 			totalDamage += metrics.TotalDamage
 		}
 	}
@@ -317,7 +317,7 @@ func getSpellMetrics() *C.char {
 	spellbook := player.GetCharacter().Spellbook
 	for _, spell := range spellbook {
 		spell_id := spell.ActionID.SpellID
-		for _, metrics := range spell.SpellMetrics {
+		for _, metrics := range spell.SpellMetrics() {
 			if metrics.Casts > 0 {
 				all_metrics[spell_id] = append(all_metrics[spell_id], metrics)
 			}

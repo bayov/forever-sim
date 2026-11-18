@@ -122,7 +122,7 @@ func TestWarlockSiphonLifeCrits(t *testing.T) {
 	})
 	runSim(sim)
 
-	metrics := siphonLife.SpellMetrics[lock.CurrentTarget.UnitIndex]
+	metrics := siphonLife.SpellMetrics()[lock.CurrentTarget.UnitIndex]
 	if metrics.CritTicks == 0 || metrics.Ticks != 0 {
 		t.Errorf("Siphon Life at 100%% crit: %d crit ticks and %d plain ticks, want only crits", metrics.CritTicks, metrics.Ticks)
 	}
@@ -480,7 +480,7 @@ func TestWarlockDemonicBrandAlwaysHits(t *testing.T) {
 		for range 100 {
 			brand.Cast(sim, target)
 		}
-		if m := brand.SpellMetrics[target.UnitIndex]; m.Misses != 0 || m.Hits+m.Crits != 100 {
+		if m := brand.SpellMetrics()[target.UnitIndex]; m.Misses != 0 || m.Hits+m.Crits != 100 {
 			t.Errorf("Demonic Brand at -300%% hit: %d misses, %d hits and %d crits in 100", m.Misses, m.Hits, m.Crits)
 		}
 	})

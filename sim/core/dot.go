@@ -379,7 +379,7 @@ func newDot(config Dot) *Dot {
 				dot.Spell.Unit.Log(sim, "Channel %s ended", dot.Spell.ActionID)
 			}
 			// track time metrics for channels
-			dot.Spell.SpellMetrics[aura.Unit.UnitIndex].TotalCastTime += dot.fadeTime - dot.StartedAt()
+			dot.Spell.SpellMetrics()[aura.Unit.UnitIndex].TotalCastTime += dot.fadeTime - dot.StartedAt()
 		}
 	})
 

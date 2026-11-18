@@ -127,10 +127,10 @@ func TestHolyShieldRank4(t *testing.T) {
 	swing := boss.AutoAttacks.MHAuto()
 	blocked := swing.NewResult(&pal.Unit)
 	blocked.Outcome = core.OutcomeBlock
-	casts := proc.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts
+	casts := proc.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts
 	aura.OnSpellHitTaken(aura, sim, swing, blocked)
-	if aura.GetStacks() != 3 || proc.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts != casts+1 {
-		t.Errorf("a block left %d charges and %d damage casts, want 3 and 1", aura.GetStacks(), proc.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts-casts)
+	if aura.GetStacks() != 3 || proc.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts != casts+1 {
+		t.Errorf("a block left %d charges and %d damage casts, want 3 and 1", aura.GetStacks(), proc.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts-casts)
 	}
 }
 
@@ -158,9 +158,9 @@ func TestSealOfFury(t *testing.T) {
 	white.Outcome = core.OutcomeHit
 	shield := pal.GetAuraByID(core.ActionID{SpellID: 20423, Tag: 1})
 	for i := 0; i < 20; i++ {
-		before := proc.SpellMetrics[pal.CurrentTarget.UnitIndex]
+		before := proc.SpellMetrics()[pal.CurrentTarget.UnitIndex]
 		aura.OnSpellHitDealt(aura, sim, mh, white)
-		after := proc.SpellMetrics[pal.CurrentTarget.UnitIndex]
+		after := proc.SpellMetrics()[pal.CurrentTarget.UnitIndex]
 		if after.Casts != before.Casts+1 {
 			t.Fatalf("a white hit cast the seal's hit %d times, want once", after.Casts-before.Casts)
 		}
@@ -185,9 +185,9 @@ func TestSealOfFury(t *testing.T) {
 	}
 	missed := mh.NewResult(pal.CurrentTarget)
 	missed.Outcome = core.OutcomeMiss
-	casts := proc.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts
+	casts := proc.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts
 	aura.OnSpellHitDealt(aura, sim, mh, missed)
-	if proc.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts != casts {
+	if proc.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts != casts {
 		t.Errorf("a missed swing cast the seal's hit")
 	}
 
@@ -196,9 +196,9 @@ func TestSealOfFury(t *testing.T) {
 	// Roll the judgement itself and read its normal hits.
 	judgement.BonusHitRating = 10000
 	for i := 0; i < 400; i++ {
-		before := judgement.SpellMetrics[pal.CurrentTarget.UnitIndex]
+		before := judgement.SpellMetrics()[pal.CurrentTarget.UnitIndex]
 		judgement.ApplyEffects(sim, pal.CurrentTarget, judgement)
-		after := judgement.SpellMetrics[pal.CurrentTarget.UnitIndex]
+		after := judgement.SpellMetrics()[pal.CurrentTarget.UnitIndex]
 		if after.Crits != before.Crits {
 			continue
 		}
@@ -211,9 +211,9 @@ func TestSealOfFury(t *testing.T) {
 
 	// Judgement judges the active seal.
 	jud := spell(t, pal, 20271)
-	before := judgement.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts
+	before := judgement.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts
 	jud.Cast(sim, pal.CurrentTarget)
-	if judgement.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts != before+1 {
+	if judgement.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts != before+1 {
 		t.Errorf("Judgement under Seal of Fury didn't cast Judgement of Fury")
 	}
 
@@ -252,7 +252,7 @@ func TestJudgementOfFuryRanged(t *testing.T) {
 
 	tables := pal.AttackTables[pal.CurrentTarget.UnitIndex]
 	ranged, mh := tables[proto.CastType_CastTypeRanged], tables[proto.CastType_CastTypeMainHand]
-	metrics := &judgement.SpellMetrics[pal.CurrentTarget.UnitIndex]
+	metrics := &judgement.SpellMetrics()[pal.CurrentTarget.UnitIndex]
 	ranged.BaseMissChance, mh.BaseMissChance = 2, -1
 	for range 20 {
 		judgement.ApplyEffects(sim, pal.CurrentTarget, judgement)
@@ -367,11 +367,11 @@ func TestDivineShieldAndProtection(t *testing.T) {
 	dp = spell(t, pal, 5573)
 	swings := func(until time.Duration) int32 {
 		mh := pal.AutoAttacks.MHAuto()
-		before := mh.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts
+		before := mh.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts
 		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
 		for !sim.Step() && sim.CurrentTime < until {
 		}
-		return mh.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts - before
+		return mh.SpellMetrics()[pal.CurrentTarget.UnitIndex].Casts - before
 	}
 	if got := swings(time.Second); got == 0 { // the pull starts the swings
 		t.Fatalf("no swings in the first second")
@@ -550,15 +550,15 @@ func TestShieldSpecializationMakesNoThreat(t *testing.T) {
 	blocked.Outcome = core.OutcomeBlock
 	before := pal.CurrentMana()
 	manaGain := pal.GetSpell(core.ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
-	threat := manaGain.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalThreat
+	threat := manaGain.SpellMetrics()[pal.CurrentTarget.UnitIndex].TotalThreat
 	aura.OnSpellHitTaken(aura, sim, boss.AutoAttacks.MHAuto(), blocked)
 	near(t, "Shield Specialization mana", pal.CurrentMana()-before, 0.04*pal.MaxMana(), 1e-6)
-	if got := manaGain.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalThreat - threat; got != 0 {
+	if got := manaGain.SpellMetrics()[pal.CurrentTarget.UnitIndex].TotalThreat - threat; got != 0 {
 		t.Errorf("Shield Specialization's mana made %.1f threat, want none", got)
 	}
 	// Another mana gain does make threat: half a threat a mana, which Righteous Fury does not multiply.
 	pal.AddMana(sim, 100, pal.NewManaMetrics(core.ActionID{SpellID: 1}))
-	near(t, "threat of 100 other mana", manaGain.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalThreat-threat, 100*0.5, 1e-6)
+	near(t, "threat of 100 other mana", manaGain.SpellMetrics()[pal.CurrentTarget.UnitIndex].TotalThreat-threat, 100*0.5, 1e-6)
 }
 
 // TestIronCreedAndShieldsworn checks Iron Creed 3/3 (1311034: 30% Holy Strike threat, and with
@@ -592,9 +592,9 @@ func TestIronCreedAndShieldsworn(t *testing.T) {
 	spell(t, sw, 1239570).Cast(sim, sw.CurrentTarget)
 	proc := sw.GetSpell(core.ActionID{SpellID: 1239570, Tag: 1})
 	strike.BonusHitRating = 100000
-	casts := proc.SpellMetrics[sw.CurrentTarget.UnitIndex].Casts
+	casts := proc.SpellMetrics()[sw.CurrentTarget.UnitIndex].Casts
 	strike.ApplyEffects(sim, sw.CurrentTarget, strike)
-	if got := proc.SpellMetrics[sw.CurrentTarget.UnitIndex].Casts - casts; got != 1 {
+	if got := proc.SpellMetrics()[sw.CurrentTarget.UnitIndex].Casts - casts; got != 1 {
 		t.Errorf("Shieldsworn Holy Strike cast Holy Shield's damage %d times, want 1", got)
 	}
 	if got := sw.GetAuraByID(core.ActionID{SpellID: 1239570}).GetStacks(); got != 4 {

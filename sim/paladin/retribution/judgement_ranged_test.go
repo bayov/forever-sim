@@ -53,7 +53,7 @@ func TestJudgementsAreRanged(t *testing.T) {
 		// on the other table doesn't reach it.
 		tables := ret.AttackTables[ret.CurrentTarget.UnitIndex]
 		ranged, mh := tables[proto.CastType_CastTypeRanged], tables[proto.CastType_CastTypeMainHand]
-		metrics := &judge.SpellMetrics[ret.CurrentTarget.UnitIndex]
+		metrics := &judge.SpellMetrics()[ret.CurrentTarget.UnitIndex]
 		cast := func(rangedMiss, mhMiss float64) int32 {
 			savedRanged, savedMH := ranged.BaseMissChance, mh.BaseMissChance
 			defer func() { ranged.BaseMissChance, mh.BaseMissChance = savedRanged, savedMH }()

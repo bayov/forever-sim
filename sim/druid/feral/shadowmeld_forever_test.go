@@ -77,7 +77,7 @@ func TestForeverShadowmeldIntoRavage(t *testing.T) {
 	if got := energy - cat.CurrentEnergy(); !near(got, 60) && !near(got, 12) {
 		t.Errorf("Ravage cost %.1f Energy, want 60 (12 on a miss)", got)
 	}
-	if result := cat.Ravage.SpellMetrics[target.UnitIndex]; result.Dodges+result.Parries+result.Blocks > 0 {
+	if result := cat.Ravage.SpellMetrics()[target.UnitIndex]; result.Dodges+result.Parries+result.Blocks > 0 {
 		t.Error("Ravage was dodged, parried or blocked")
 	}
 }

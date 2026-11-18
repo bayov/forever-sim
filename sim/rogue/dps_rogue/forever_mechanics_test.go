@@ -69,10 +69,10 @@ func TestForeverBladeFlurryCopiesFinalDamage(t *testing.T) {
 	var meleeDamage float64
 	for _, spell := range rogue.Spellbook {
 		if spell.ProcMask.Matches(core.ProcMaskMelee) {
-			meleeDamage += spell.SpellMetrics[first.UnitIndex].TotalDamage
+			meleeDamage += spell.SpellMetrics()[first.UnitIndex].TotalDamage
 		}
 	}
-	copied := rogue.GetSpell(core.ActionID{SpellID: 22482}).SpellMetrics[second.UnitIndex].TotalDamage
+	copied := rogue.GetSpell(core.ActionID{SpellID: 22482}).SpellMetrics()[second.UnitIndex].TotalDamage
 	if meleeDamage == 0 || math.Abs(copied-meleeDamage) > 1e-6*meleeDamage {
 		t.Errorf("Blade Flurry copied %.1f damage of %.1f", copied, meleeDamage)
 	}
@@ -127,11 +127,11 @@ func TestForeverInstantPoisonAttackPower(t *testing.T) {
 		for i := 0; i < casts; i++ {
 			rogue.InstantPoison.Cast(sim, rogue.CurrentTarget)
 		}
-		return rogue.InstantPoison.SpellMetrics[rogue.CurrentTarget.UnitIndex].TotalDamage, rogue.InstantPoison
+		return rogue.InstantPoison.SpellMetrics()[rogue.CurrentTarget.UnitIndex].TotalDamage, rogue.InstantPoison
 	}
 	base, _ := damage(0)
 	more, poison := damage(2000)
-	metrics := poison.SpellMetrics[poison.Unit.CurrentTarget.UnitIndex]
+	metrics := poison.SpellMetrics()[poison.Unit.CurrentTarget.UnitIndex]
 	want := 0.01 * 2000 * poison.DamageMultiplier * (float64(metrics.Hits) + 1.5*float64(metrics.Crits))
 	if got := more - base; math.Abs(got-want) > 0.01*want {
 		t.Errorf("2000 attack power added %.1f Instant Poison damage over %d casts, want %.1f", got, casts, want)
@@ -156,11 +156,11 @@ func TestForeverEviscerateAttackPower(t *testing.T) {
 				t.Fatalf("Eviscerate didn't cast at %s", sim.CurrentTime)
 			}
 		}
-		return rogue.Eviscerate.SpellMetrics[target.UnitIndex].TotalDamage, rogue.Eviscerate
+		return rogue.Eviscerate.SpellMetrics()[target.UnitIndex].TotalDamage, rogue.Eviscerate
 	}
 	base, _ := damage(0)
 	more, eviscerate := damage(2000)
-	metrics := eviscerate.SpellMetrics[eviscerate.Unit.CurrentTarget.UnitIndex]
+	metrics := eviscerate.SpellMetrics()[eviscerate.Unit.CurrentTarget.UnitIndex]
 	if metrics.Hits+metrics.Crits < casts/2 {
 		t.Fatalf("only %d of %d Eviscerates landed", metrics.Hits+metrics.Crits, casts)
 	}
@@ -195,7 +195,7 @@ func TestForeverRuptureTicksOnLiveStats(t *testing.T) {
 	if dot.NumberOfTicks != 8 {
 		t.Fatalf("a 5 point Rupture has %d ticks, want 8", dot.NumberOfTicks)
 	}
-	metrics := &rogue.Rupture.SpellMetrics[target.UnitIndex]
+	metrics := &rogue.Rupture.SpellMetrics()[target.UnitIndex]
 	tick := func() float64 {
 		before := metrics.TotalDamage
 		dot.TickOnce(sim)
@@ -226,7 +226,7 @@ func TestForeverGarroteTicksOnLiveStats(t *testing.T) {
 	target := rogue.CurrentTarget
 	dot := rogue.Garrote.Dot(target)
 	dot.Apply(sim)
-	metrics := &rogue.Garrote.SpellMetrics[target.UnitIndex]
+	metrics := &rogue.Garrote.SpellMetrics()[target.UnitIndex]
 	for _, extra := range []float64{0, 1000} {
 		rogue.AddStatDynamic(sim, stats.AttackPower, extra)
 		rogue.PseudoStats.DamageDealtMultiplier *= 1.1

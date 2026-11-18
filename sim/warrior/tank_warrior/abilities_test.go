@@ -169,7 +169,7 @@ func TestForeverTankThreat(t *testing.T) {
 	}
 	target := war.CurrentTarget
 	for _, c := range cases {
-		metrics := &c.spell.SpellMetrics[target.UnitIndex]
+		metrics := &c.spell.SpellMetrics()[target.UnitIndex]
 		landed := 0
 		for i := 0; i < 200; i++ {
 			before := *metrics

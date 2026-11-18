@@ -61,7 +61,7 @@ func TestForeverVolleyActivatesNoProcs(t *testing.T) {
 			t.Fatal("the Undead hunter has no Touch of the Grave")
 		}
 		casts := 0
-		for _, m := range drain.SpellMetrics {
+		for _, m := range drain.SpellMetrics() {
 			casts += int(m.Casts)
 		}
 		return casts

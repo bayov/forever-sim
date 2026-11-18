@@ -111,7 +111,7 @@ func (spell *Spell) bookHitThreat(result *SpellResult, isPeriodic bool) {
 	if result.Threat == 0 {
 		return
 	}
-	m := &spell.SpellMetrics[result.Target.UnitIndex]
+	m := &spell.SpellMetrics()[result.Target.UnitIndex]
 	m.TotalHitThreat += result.Threat
 	if isPeriodic {
 		m.TotalTickThreat += result.Threat
@@ -161,7 +161,7 @@ func (spell *Spell) BookSplitThreat(sim *Simulation, threat float64) {
 	}
 	each := threat / float64(len(targets))
 	for _, target := range targets {
-		spell.SpellMetrics[target.UnitIndex].TotalThreat += each
+		spell.SpellMetrics()[target.UnitIndex].TotalThreat += each
 		spell.Unit.watchThreat(sim, target, each)
 	}
 }
@@ -350,7 +350,7 @@ func (spell *Spell) applyOutcomeUnlessFullyResisted(sim *Simulation, result *Spe
 	result.Outcome = OutcomeMiss
 	result.Damage = 0
 	result.ResistanceMultiplier = 1
-	spell.SpellMetrics[result.Target.UnitIndex].Misses++
+	spell.SpellMetrics()[result.Target.UnitIndex].Misses++
 	return OutcomeEmpty
 }
 
@@ -545,38 +545,38 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 	isPartialResist := result.DidResist()
 
 	if sim.CurrentTime >= 0 {
-		spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage
+		spell.SpellMetrics()[result.Target.UnitIndex].TotalDamage += result.Damage
 		if isPartialResist {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalResistedDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalResistedDamage += result.Damage
 		}
 		if isPeriodic {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalTickDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalTickDamage += result.Damage
 			if isPartialResist {
-				spell.SpellMetrics[result.Target.UnitIndex].TotalResistedTickDamage += result.Damage
+				spell.SpellMetrics()[result.Target.UnitIndex].TotalResistedTickDamage += result.Damage
 			}
 		}
 
 		if result.DidBlockCrit() {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalBlockedCritDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalBlockedCritDamage += result.Damage
 		} else if result.DidCrit() {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalCritDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalCritDamage += result.Damage
 			if isPartialResist {
-				spell.SpellMetrics[result.Target.UnitIndex].TotalResistedCritDamage += result.Damage
+				spell.SpellMetrics()[result.Target.UnitIndex].TotalResistedCritDamage += result.Damage
 			}
 			if isPeriodic {
-				spell.SpellMetrics[result.Target.UnitIndex].TotalCritTickDamage += result.Damage
+				spell.SpellMetrics()[result.Target.UnitIndex].TotalCritTickDamage += result.Damage
 				if isPartialResist {
-					spell.SpellMetrics[result.Target.UnitIndex].TotalResistedCritTickDamage += result.Damage
+					spell.SpellMetrics()[result.Target.UnitIndex].TotalResistedCritTickDamage += result.Damage
 				}
 			}
 		} else if result.DidGlance() {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalGlanceDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalGlanceDamage += result.Damage
 		} else if result.DidBlock() {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalBlockDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalBlockDamage += result.Damage
 		} else if result.DidCrush() {
-			spell.SpellMetrics[result.Target.UnitIndex].TotalCrushDamage += result.Damage
+			spell.SpellMetrics()[result.Target.UnitIndex].TotalCrushDamage += result.Damage
 		}
-		spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+		spell.SpellMetrics()[result.Target.UnitIndex].TotalThreat += result.Threat
 		spell.bookHitThreat(result, isPeriodic)
 		spell.Unit.watchThreat(sim, result.Target, result.Threat)
 	}
@@ -706,10 +706,10 @@ func (dot *Dot) SnapshotHeal(target *Unit, baseHealing float64, isRollover bool)
 // Applies the fully computed spell result to the sim.
 func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result *SpellResult) {
 	if result.DidCrit() {
-		spell.SpellMetrics[result.Target.UnitIndex].TotalCritHealing += result.Damage
+		spell.SpellMetrics()[result.Target.UnitIndex].TotalCritHealing += result.Damage
 	}
-	spell.SpellMetrics[result.Target.UnitIndex].TotalHealing += result.Damage
-	spell.SpellMetrics[result.Target.UnitIndex].TotalOverhealing += result.Damage - result.Target.effectiveHealing(result.Damage)
+	spell.SpellMetrics()[result.Target.UnitIndex].TotalHealing += result.Damage
+	spell.SpellMetrics()[result.Target.UnitIndex].TotalOverhealing += result.Damage - result.Target.effectiveHealing(result.Damage)
 	// Overhealing makes no threat, so we take the heal's threat before the health goes up.
 	result.Threat = spell.healingThreat(result)
 	spell.BookSplitThreat(sim, result.Threat)

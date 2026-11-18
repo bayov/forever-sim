@@ -218,7 +218,7 @@ func TestOrcShamanWindfuryTotemAura(t *testing.T) {
 				t.Errorf("level %d, asking for %d: aura %d isn't up", c.level, auraID, shaman.WindfuryBuffAuraId[c.rank])
 			}
 			totem := enh.WindfuryTotem[c.rank]
-			if casts := totem.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts; casts != 1 {
+			if casts := totem.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts; casts != 1 {
 				t.Errorf("level %d, asking for %d: Windfury Totem rank %d cast %d times, want 1", c.level, auraID, c.rank, casts)
 			}
 		}

@@ -352,7 +352,7 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 		return apl.controllingActions[len(apl.controllingActions)-1].GetNextAction(sim)
 	}
 
-	if !apl.keepsResults {
+	if !apl.keepsResults && !apl.usesHealTargets {
 		return apl.firstReady(sim)
 	}
 	outer := sim.startAPLCheck()

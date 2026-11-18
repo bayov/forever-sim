@@ -107,7 +107,7 @@ func advance(sim *core.Simulation, d time.Duration) {
 // healBooked applies s at target once and returns what booked (the spell that books the heal) healed
 // there and whether it crit.
 func healBooked(sim *core.Simulation, s, booked *core.Spell, target *core.Unit) (float64, bool) {
-	m := &booked.SpellMetrics[target.UnitIndex]
+	m := &booked.SpellMetrics()[target.UnitIndex]
 	before, crits := m.TotalHealing, m.Crits
 	s.ApplyEffects(sim, target, s)
 	return m.TotalHealing - before, m.Crits > crits
@@ -245,9 +245,9 @@ func TestLightsVigilRanks(t *testing.T) {
 	for range 200 {
 		vigil.CD.Reset()
 		castAt(t, sim, pal, vigil, units[1])
-		before := heal.SpellMetrics[units[1].UnitIndex].TotalHealing
+		before := heal.SpellMetrics()[units[1].UnitIndex].TotalHealing
 		castAt(t, sim, pal, hs, units[1])
-		h := heal.SpellMetrics[units[1].UnitIndex].TotalHealing - before
+		h := heal.SpellMetrics()[units[1].UnitIndex].TotalHealing - before
 		lo, hi = min(lo, h), max(hi, h)
 	}
 	if lo < low-0.05 || hi > high+0.05 || lo > low+1.5 || hi < high-1.5 {
@@ -346,7 +346,7 @@ func TestHolyPowerShockAndVigil(t *testing.T) {
 		// Holy Shock at the boss: every landing a crit at 100 crit, none at 0.
 		pal.AddStatDynamic(sim, stats.SpellHit, 20*core.SpellHitRatingPerHitChance)
 		boss := pal.CurrentTarget
-		m := &hs.SpellMetrics[boss.UnitIndex]
+		m := &hs.SpellMetrics()[boss.UnitIndex]
 		perLanding := func(crit float64) float64 {
 			noCrit(sim, pal, crit)
 			dmg := m.TotalDamage
@@ -383,11 +383,11 @@ func TestIlluminationVigilAndLibram(t *testing.T) {
 		crits := 0
 		before := pal.CurrentMana()
 		for _, u := range units {
-			crits -= int(vigilHeal.SpellMetrics[u.UnitIndex].Crits)
+			crits -= int(vigilHeal.SpellMetrics()[u.UnitIndex].Crits)
 		}
 		vigilHeal.ApplyEffects(sim, units[1], vigilHeal)
 		for _, u := range units {
-			crits += int(vigilHeal.SpellMetrics[u.UnitIndex].Crits)
+			crits += int(vigilHeal.SpellMetrics()[u.UnitIndex].Crits)
 		}
 		if got := pal.CurrentMana() - before; math.Abs(got-c.want) > 0.01 || (c.crit == 100 && crits != 5) {
 			t.Errorf("a Vigil at %.0f crit (%d crits) gave back %.2f, want %.0f", c.crit, crits, got, c.want)
@@ -425,9 +425,9 @@ func TestInfusionOfLightMore(t *testing.T) {
 	pal.AddStatDynamic(sim, stats.SpellHit, 20*core.SpellHitRatingPerHitChance)
 	noCrit(sim, pal, 100)
 	boss := pal.CurrentTarget
-	crits := hs.SpellMetrics[boss.UnitIndex].Crits
+	crits := hs.SpellMetrics()[boss.UnitIndex].Crits
 	castAt(t, sim, pal, hs, boss)
-	if hs.SpellMetrics[boss.UnitIndex].Crits != crits+1 {
+	if hs.SpellMetrics()[boss.UnitIndex].Crits != crits+1 {
 		t.Fatalf("Holy Shock at the boss didn't crit")
 	}
 	noCrit(sim, pal, 0)
@@ -460,7 +460,7 @@ func TestDivineFavorShockDamageAndVigil(t *testing.T) {
 	aura := pal.GetAura("Divine Favor")
 	hs := spell(t, pal, 20930)
 	boss := pal.CurrentTarget
-	m := &hs.SpellMetrics[boss.UnitIndex]
+	m := &hs.SpellMetrics()[boss.UnitIndex]
 	for range 5 {
 		aura.Activate(sim)
 		crits := m.Crits + m.ResistedCrits
