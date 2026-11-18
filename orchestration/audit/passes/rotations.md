@@ -111,6 +111,10 @@ Give each the brief in `tools/audit/rotations/brief.txt`, with its "What changed
   melee abilities proc Unbridled Wrath, Flurry and Reckless Swings, not only white swings. The warrior builds moved under
   1% in update_1117, so their rage thresholds weren't re-searched. Re-search them the next time a warrior rotation search
   runs for any reason.
+- **Paladin rotations for the hasted GCD (user ruling 2026-11-18):** since haste_gcd_1118 (master a70462c42), spell
+  haste shortens a spell's GCD, Seals included, down to 1s. The paladin rotations are still timed for a 1.5s GCD and
+  lost 0.1 to 0.4% (Level 60, Shock Ret, Sub Holy and their duty variants). Re-time them the next time any paladin
+  rotation changes for any reason.
 - **Main-hand ability timing for Windfury (user request 2026-11-15):** since Blizzard's Nov 13 hotfix (PR #130,
   landing through `orchestration/round_notes_2026-11-11/briefs/update_1115.md`) Windfury Totem rolls on every landed
   main-hand melee hit, white or ability, behind a 100 ms cooldown. Windfury Weapon already rolled on every main-hand
