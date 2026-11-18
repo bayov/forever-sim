@@ -337,10 +337,12 @@ Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read th
 
 ```sh
 pipeline.sh tankheal [tank|heal]   # = TANKHEAL_BIN=<bin dir> tankheal.py run: sims into $DASH_DIR/{tank,heal}/, run.json, .fresh
+pipeline.sh tankheal --stale       # the main benches whole, race sims only for the presets stale.mjs calls stale
+tankheal.py run heal --presets priest_holy,priest_holy_raid   # the same for the presets named
 tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json, same commit)
 tankheal.py build                  # $DASH_DIR/{tank,heal}/ -> $DASH_DIR/data/{tank,heal}_*.json
 tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz <-> $DASH_DIR/{tank,heal}/
-tankheal.py fresh [--clear]        # the modes simmed since their last publish
+tankheal.py fresh [--clear]        # the modes simmed since their last publish (<mode>:<stem,...> when some were kept)
 ```
 
 The raw outputs are kept in the repository like the DPS ones (`raw/bench/<mode>.tgz`, deterministic tars), outside
@@ -348,9 +350,26 @@ The raw outputs are kept in the repository like the DPS ones (`raw/bench/<mode>.
 sim both modes after the DPS builds (all of them when no DPS build is stale or `TANKHEAL=1`; `resume` skips a mode
 already marked fresh), `hydrate` unpacks and builds them, and `publish` builds them before `rawstore.py copy`, then for a
 fresh mode records its provenance (`stale.mjs --record-bench <modes> --iterations 1000`, into `provenance.json`'s
-`benches`), packs it and clears the mark. `stale.mjs` reports a stale mode separately from the DPS builds (`benches` in
-`--json`, so probe.py's ids are unchanged): its fingerprint covers the shared sim code, `sim/<class>/`, the encounters,
-the reqs' db items, tools/tankbench, tools/healbench, tools/tankscore and `tankheal.py`.
+`benches`), packs it and clears the mark.
+
+Staleness is per preset, like the DPS builds. `stale.mjs` reports the stale presets of each mode separately from the DPS
+builds (`benches` in `--json`, so probe.py's ids are unchanged). A preset's fingerprint covers the shared sim code and
+the top-level `sim/*.go`, the bench's sources (its `req/` left out), `tools/tankscore`, the seven boss files,
+`tankheal.py`, `bench_races.py`, `adaptive.py`, `dashpaths.py`, `run_build.py` (its `CLASS_RACES`) and patches 0002
+and 0006, then its own request and the code of every class in its raid with the db items those requests wear. A tank
+preset's raid is the tank alone. A healing preset's raid is the healer and healbench's frost mage fillers, plus the
+warrior tank for a tank healer (a raid healer's raid has no tank). So a `sim/shaman` change stales the shaman presets, a
+`sim/mage` change every healing preset, and a `sim/core` change every preset.
+
+A whole mode costs about 20min for Tanking and 1.5h to 4.3h for Healing, almost all of it the race sims. So
+`tankheal.py run --stale` (or `--presets <stem,...>`) runs the main bench whole (one call covers every preset of a
+role, about 15min to 20min), then the race sims only for the stale presets. Every other preset keeps its rows from the
+mode's pack, but only when its main-run rows on every boss (what its race sims start from, `main_carries`) are the
+same bytes as the pack's: a preset whose main rows moved is re-simmed too. The run sorts `races.jsonl` by preset, so
+the pack is the same bytes for the same results, and `tankheal.py fresh` then prints `<mode>:<stem,...>`, the presets
+simmed, so `publish` records only those (`stale.mjs --record-bench heal:priest_holy,...`). The kept presets keep their
+records. A record from before per-preset staleness (one for the whole mode) is compared at its own commit, like an
+old DPS record.
 
 Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races` (with `pse`, the paired error of each race's
 gap to every other race), `_race_breakdown` (base stats and each racial part, `v` and `se`, in the preset's score),
@@ -408,11 +427,13 @@ another request, race override or assumption rotation than the current one.
 | Every build, no probe (packs without probes, or a probe audit failed) | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
 
 - `node tools/dps_report/stale.mjs` gives the scope: which builds *may* have moved. It hashes the shared inputs (the sim's
-  packages, the protos the sim compiles, the CLI and `go.mod`, the patches, `dashstats` and the step scripts), the class's
-  `sim/<class>/`, the item database entries the build wears, and each build's request, the sim fields of its meta, its
+  packages and the top-level `sim/*.go`, the protos the sim compiles, the CLI and `go.mod`, the patches, `dashstats` and
+  the step scripts, `adaptive.py` among them), the class's `sim/<class>/`, the item database entries the build wears
+  (its request's gear and its race overrides' own gear sets), and each build's request, the sim fields of its meta, its
   base build's request, race overrides (`req/races/`, its base build's too) and assumption rotations. Test files,
   goldens, testdata and docs are left out, and so are `tools/rotopt` and `ui/<spec>` (they make requests, which are
-  hashed themselves). It lists new requests and removed presets too.
+  hashed themselves). It lists new requests and removed presets too, and the stale Tanking and Healing presets.
+  Tests: `node --test tools/dps_report/stale.test.mjs` and `python3 tools/dps_report/test_tankheal.py`.
 - `hydrate [ids]` empties `$DASH_DIR`'s outputs, unpacks every pack, runs `build_data.py` and compares the sim numbers
   (`builds`, `races`, `lengths`, `hist`, `weights`, `mana`, `mana_summary`, `race_variants`, `assumption_dps`) with the
   published datasets. A build outside `[ids]` whose numbers differ stops it: re-sim it too, or find why the pack and the

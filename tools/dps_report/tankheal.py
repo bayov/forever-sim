@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """tankheal.py: the report's Tanking and Healing modes, from tools/tankbench and tools/healbench.
 
-  tankheal.py run [tank|heal ...] [--no-races] [--resume]
+  tankheal.py run [tank|heal ...] [--stale | --presets <stem,...>] [--no-races] [--resume]
                                                  the sims, into $DASH_DIR/tank and $DASH_DIR/heal (the benches' text,
                                                  log lines dropped, and run.json); marks the mode fresh for publish.
-                                                 --resume keeps the bench calls a stopped run finished (.progress.json)
+                                                 --resume keeps the bench calls a stopped run finished (.progress.json).
+                                                 --presets re-sims the race rows of those presets only, --stale of the
+                                                 presets stale.mjs calls stale (a mode with none is skipped): the main
+                                                 bench still runs whole, and every other preset keeps its race rows
+                                                 from raw/bench/<mode>.tgz when its main-run rows there are the same
+                                                 bytes as this run's (else it is re-simmed too). Only the presets
+                                                 re-simmed are marked fresh (tankheal.py fresh prints <mode>:<stem,...>)
   tankheal.py bins                               tankbench and healbench into the binaries directory, from HEAD with
                                                  the racials switch patches (0002, 0006)
   tankheal.py build                              the tank_* and heal_* datasets into $DASH_DIR/data (unpacks the raw
@@ -171,10 +177,68 @@ def race_sims(mode, stems, out):
         list(ex.map(one, [s for s in stems if s not in done]))
 
 
-def run(modes, races=True, resume=False):
+def race_lines_sorted(lines, stems):
+    """races.jsonl's lines in preset order (stems), each preset's lines in the order they were written: race_sims
+    appends them as presets finish, so this makes the pack the same bytes for the same results."""
+    order = {s: i for i, s in enumerate(stems)}
+    return sorted((l for l in lines if l.strip()), key=lambda l: order.get(json.loads(l)['build'], len(order)))
+
+
+def main_rows(texts, mode, stem):
+    """A preset's rows in the main run's outputs (texts: {file name: text}), one tuple of row lines a boss file, or
+    None when a file is missing. The rows hold what the race sims start from (main_carries) and show whether the
+    preset's sims moved."""
+    names = BOSSES if mode == 'tank' else [f'{heal_role(stem)}_{b}' for b in BOSSES]
+    out = []
+    for n in names:
+        t = texts.get(n + '.txt')
+        if t is None:
+            return None
+        out.append(tuple(l for l in t.split('\n') if l.startswith('|') and l.strip().strip('|').split('|')[0].strip() == stem))
+    return tuple(out)
+
+
+def reusable(mode, stems, stale, old, new):
+    """The presets whose race rows a run with a stale list keeps from the pack: {stem: its races.jsonl lines}. old is
+    the pack's files ({name: text}, None for no pack), new this run's main outputs. A preset is kept when it is not
+    stale, the pack has its race rows, and its main-run rows on every boss are the same bytes as the pack's."""
+    if not old:
+        return {}
+    rows = {}
+    for l in old.get('races.jsonl', '').splitlines():
+        if l.strip():
+            rows.setdefault(json.loads(l)['build'], []).append(l + '\n')
+    keep = {}
+    for s in stems:
+        if s in stale or s not in rows:
+            continue
+        a = main_rows(old, mode, s)
+        if a is not None and all(a) and a == main_rows(new, mode, s):
+            keep[s] = rows[s]
+    return keep
+
+
+def pack_files(mode):
+    """raw/bench/<mode>.tgz's files as {name: text}, None when there is no pack."""
+    p = os.path.join(RAW, mode + '.tgz')
+    if not os.path.exists(p):
+        return None
+    with tarfile.open(p) as tar:
+        return {ti.name: tar.extractfile(ti).read().decode() for ti in tar.getmembers() if ti.isfile()}
+
+
+def stale_presets():
+    """The presets stale.mjs calls stale, by mode."""
+    r = subprocess.run(['node', os.path.join(HERE, 'stale.mjs'), '--json'], cwd=ROOT, capture_output=True, text=True, check=True)
+    return {b['id']: set(b['presets']) for b in json.loads(r.stdout)['benches']}
+
+
+def run(modes, races=True, resume=False, only=None):
+    """only: {mode: the stale presets} for a run that re-sims only those presets' race rows (None: every preset)."""
     commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=TREE, capture_output=True, text=True).stdout.strip()
     for mode in modes:
         out = os.path.join(D, mode)
+        old = pack_files(mode) if only is not None else None
         prog = os.path.join(out, '.progress.json')
         done = json.load(open(prog)) if resume and os.path.exists(prog) else {}
         if done.get('commit') != commit or os.path.exists(os.path.join(out, 'run.json')):
@@ -198,18 +262,36 @@ def run(modes, races=True, resume=False):
                 if name not in secs:
                     note(name, round(bench(mode, args, files, os.path.join(out, name + '.txt')), 1))
                     print(f'{mode} {name}: {secs[name]} s', flush=True)
+        kept = {}
         if races:
             t1 = time.time()
+            res = os.path.join(out, 'races.jsonl')
+            if only is not None:
+                new = {n: open(os.path.join(out, n)).read() for n in os.listdir(out) if n.endswith('.txt')}
+                kept = reusable(mode, stems, only.get(mode, set()), old, new)
+                have = {json.loads(l)['build'] for l in open(res)} if os.path.exists(res) else set()
+                with open(res, 'a') as fh:
+                    for s in stems:
+                        if s in kept and s not in have:
+                            fh.writelines(kept[s])
+                print(f'{mode} races kept from the pack: {" ".join(kept) or "none"}', flush=True)
             race_sims(mode, stems, out)
+            if os.path.exists(res):
+                lines = race_lines_sorted(open(res).readlines(), stems)
+                open(res, 'w').writelines(lines)
             note('races', round(time.time() - t1, 1))
         info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
                 'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
                 'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
                 'commit': commit, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
                 'runSeconds': secs, 'races': races}
+        if only is not None:
+            info['racesKept'] = sorted(kept)  # presets whose race rows came from the pack
         json.dump(info, open(os.path.join(out, 'run.json'), 'w'), indent=1)
         os.remove(prog)
-        open(os.path.join(out, '.fresh'), 'w').write(commit + '\n')
+        # the presets simmed here, for stale.mjs --record-bench: a second line names them when some were kept
+        simmed = [s for s in stems if s not in kept]
+        open(os.path.join(out, '.fresh'), 'w').write(commit + '\n' + (','.join(simmed) + '\n' if kept else ''))
         print(f'{mode}: {info["seconds"]} s')
 
 
@@ -866,18 +948,38 @@ def build():
 
 
 def fresh(clear=False):
+    """The modes simmed since the last publish: <mode> when the run simmed every preset, <mode>:<stem,...> when it kept
+    some presets' race rows from the pack (stale.mjs --record-bench records only the presets named)."""
     got = [m for m in MODES if os.path.exists(os.path.join(D, m, '.fresh'))]
     if clear:
         for m in got:
             os.remove(os.path.join(D, m, '.fresh'))
     else:
-        print(' '.join(got))
+        out = []
+        for m in got:
+            lines = open(os.path.join(D, m, '.fresh')).read().split('\n')
+            out.append(f'{m}:{lines[1]}' if len(lines) > 1 and lines[1].strip() else m)
+        print(' '.join(out))
 
 
 if __name__ == '__main__':
     cmd, args = (sys.argv[1], sys.argv[2:]) if len(sys.argv) > 1 else ('', [])
     if cmd == 'run':
-        run([a for a in args if a in MODES] or list(MODES), races='--no-races' not in args, resume='--resume' in args)
+        modes, only = [a for a in args if a in MODES], None
+        if '--stale' in args:
+            only = stale_presets()
+        elif '--presets' in args:
+            want = set(args[args.index('--presets') + 1].split(','))
+            only = {m: want & set(presets(m)) for m in MODES}
+            if want - set().union(*only.values()):
+                sys.exit(f'no such preset: {" ".join(sorted(want - set().union(*only.values())))}')
+        if only is not None:
+            # a mode with no preset to re-sim is left as it is
+            modes = [m for m in (modes or MODES) if only.get(m)]
+            print(f'presets to re-sim: {only}, modes: {" ".join(modes) or "none"}', flush=True)
+        elif not modes:
+            modes = list(MODES)
+        run(modes, races='--no-races' not in args, resume='--resume' in args, only=only)
     elif cmd == 'build':
         build()
     elif cmd == 'bins':

@@ -44,11 +44,17 @@ and removed presets. A stale build *may* have moved; the probe says whether it d
 - **A false positive** that plainly can't feed the build, with no binaries for a probe:
   `stale.mjs --record <ids> --by hand`, reason in the commit message. Prefer the probe.
 
-It also lists stale Tanking and Healing modes in a second block (`benches` in `--json`):
-their fingerprint covers the shared sim code, the classes' code, the encounters and the
-benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about 15 min;
-`pipeline.sh tankheal heal`, about 3 h on 4 cores, most of each the race sims); there is no probe
-for it. Run it in the background with its log in a file.
+It also lists the stale Tanking and Healing presets in a second block (`benches` in
+`--json`), per preset like the DPS builds: a preset's fingerprint covers the shared sim
+code, the encounters, the bench and its scripts, its request and the code of every class in
+its raid (healing raids hold frost mage fillers, and a warrior tank for tank healers). So a
+`sim/shaman` change stales the shaman presets, a `sim/mage` change every healing preset.
+Re-sim them with `pipeline.sh tankheal --stale` (or `tankheal.py run <mode> --presets
+<stem,...>`): the main bench runs whole (about 15min to 20min a mode), then the race sims,
+most of a mode's cost (Healing 1.5h to 4.3h on 4 cores in full), only for the stale presets.
+The others keep their pack's race rows when their main-run rows match the pack's bytes, else
+they are re-simmed too. `publish` records only the presets simmed. With no flag, a mode
+re-sims whole. There is no probe for them. Run it in the background with its log in a file.
 
 Tell the user the scope in one line before long runs.
 
