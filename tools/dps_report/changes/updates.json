@@ -5780,6 +5780,21 @@
      "commits": [
       "8219f10"
      ]
+    },
+    {
+     "title": "Healing: raid healers react to a hit as soon as they could see it",
+     "kind": "sim",
+     "classes": [
+      "Shaman",
+      "Druid",
+      "Priest",
+      "Paladin"
+     ],
+     "note": "A raid healer with nothing to cast sometimes noticed a new hit up to a few tenths of a second late. The raid Restoration Shaman drops from 1.40 to 1.39, the raid Holy Priest from 1.48 to 1.47, and the raid Restoration Druid and Holy Paladin move by less than 0.01. The raid order is unchanged, and the tank healers are unchanged.",
+     "moves": false,
+     "commits": [
+      "7199c8f"
+     ]
     }
    ],
    "internal": [
@@ -6146,6 +6161,38 @@
     {
      "commit": "7094bf0",
      "why": "an audit record snapshot of the whole repository; its build inputs came in through their own commits"
+    },
+    {
+     "commit": "39e0b9c",
+     "why": "report tooling (split runs across sessions); the probe and the audit show no result moves"
+    },
+    {
+     "commit": "bbfd014",
+     "why": "faster Healing sims with byte-identical output; no number moves"
+    },
+    {
+     "commit": "cc5a55f",
+     "why": "faster sim start-up and rolls with the same results; the probe clears every build"
+    },
+    {
+     "commit": "95c6e1a",
+     "why": "report tooling (one sim binary for every step); no result moves"
+    },
+    {
+     "commit": "c8b5275",
+     "why": "the report's sim switches moved from patches into the code with the same results; the probe clears every build"
+    },
+    {
+     "commit": "1a6c26c",
+     "why": "report tooling (binary build stamps); no result moves"
+    },
+    {
+     "commit": "31b0202",
+     "why": "a display change to the race bars; no number moves"
+    },
+    {
+     "commit": "ad64ef0",
+     "why": "a task note on Windfury Totem keeping its attack power, which the presets already had; no number moves"
     }
    ],
    "source": {
