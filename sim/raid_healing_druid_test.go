@@ -615,8 +615,10 @@ func TestDruidNaturesGraceOnHeals(t *testing.T) {
 		graced := `{"auraIsActive":{"auraId":{"spellId":16886}}}`
 		hurt := `{"cmp":{"op":"OpGe","lhs":{"healthMissing":{"sourceUnit":{"type":"Tank"}}},"rhs":{"const":{"val":"2000"}}}}`
 		l := runDruidLog(t, druidRaid(t, talents, 0, castAt(rjTop, "Tank", graced), castAt(htTop, "Tank", hurt)))
+		// Rejuvenation is instant, so its effective time is its GCD. Nature's Grace cuts it 10%
+		// and hastes it 10% on top (cast.go hastedGCD): 1.35 / 1.1 sec.
 		for _, c := range l.casts[rjTop] {
-			if druidNear(c.effective, 1.35, 0.001) {
+			if druidNear(c.effective, 1.35/1.1, 0.002) {
 				n++
 			}
 		}

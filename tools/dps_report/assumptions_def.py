@@ -38,7 +38,6 @@ ALL_BASE = sorted(f[:-5] for f in os.listdir(_REQ)
 
 
 # warn: a note the page shows as a warning icon on those builds' non-default cells, where a number needs a caveat.
-GCD_ROT_WARN = "This rotation is timed for a 1.5s GCD. Retuned for a shorter one, it would likely lose less, or nothing."
 
 
 def S(id_, label, value, why, env=None, edit=None):
@@ -88,14 +87,12 @@ A = [
       builds=WARR + R(ROGUE) + PAL_ALL + ENH + ['hunter__survival', 'hunter__beast-mastery', 'hunter__marksmanship', 'hunter__lone-wolf'],
       settings=[S('expected', 'Resets the swing', 'the 1s cast holds the swing and restarts it', 'Casts with a cast time reset the swing.')],
       default='expected', expected='expected'),
- dict(key='haste_gcd', cls='All', group='swings', label='Does haste shorten the GCD?',
-      short="Classic keeps the GCD at 1.5s. Later expansions let spell haste shorten it.",
-      desc="The presets keep Classic's 1.5s GCD. wowsims/forever lets haste shorten a spell's GCD to 1s, from its Burning Crusade code, not a Forever test. Forever's Nature's Grace has its own 10% GCD cut, which hints that haste alone doesn't.",
-      src="wowsims/forever (from its Burning Crusade code). Forever client (Nature's Grace, spell 16886).",
+ dict(key='haste_gcd', cls='All', group='swings', label='Does all haste shorten the GCD the same way?',
+      short="Haste shortens a spell's GCD, down to 1s. A log shows it for Warchief's Blessing.",
+      desc="A combat log settled that haste shortens a spell's GCD and not a physical ability's: with Warchief's Blessing (15% haste) up, instants came 1.30s apart after a magic spell, and 1.5s apart after Stormstrike. The sim does the same for every haste: Spellstone, Berserking, Nature's Grace (which also cuts the GCD by 10% on its own). It keeps a 1s floor, as wowsims/forever does, which holds the totems at 1s. The log tested neither the floor nor other haste.",
+      src="Combat log, Enhancement shaman on the Forever beta, 2026-11-18. wowsims/forever (the 1s floor).",
       builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__affliction_shadow_bolt', 'warlock__demonology', 'warlock__destruction'],
-      settings=[S('expected', 'No (Classic)', 'the GCD stays 1.5s', "Classic's rule. Forever gives Nature's Grace its own GCD cut."),
-                S('high', 'Yes, for spells', "haste shortens a spell's GCD, down to 1s", "wowsims/forever's rule, from its Burning Crusade code.", {'haste_gcd': 1})],
-      warn={b: GCD_ROT_WARN for b in PAL_ALL + ENH},
+      settings=[S('expected', 'Yes, for spells', "haste shortens a spell's GCD, down to 1s", "From a combat log with Warchief's Blessing.")],
       default='expected', expected='expected'),
  dict(key='raid_hits', cls='All', group='fight', label='How often does raid damage hit a DPS?',
       short='Each hit can fire a shield, give Rage or push back a cast.',

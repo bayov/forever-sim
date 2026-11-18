@@ -40,6 +40,9 @@ sim/paladin/assume_init.go): the seal's hits carry SpellFlagNoWindfuryTotem, so 
 assumption is one value, No. warr_exec_wf2 is dropped too (Blizzard's post of 2026-11-16: Execute rolls Windfury
 Totem once; user ruling 2026-11-17): AssumeWindfuryPreAttack, Character.dashWindfuryRoll, the proc's roll split
 out of CreateExtraAttackAuraCommon for it, Execute's call and TestAssumeExecuteWindfuryTwice.
+
+2026-11-18: haste_gcd is dropped: the sim hastes a spell's GCD under Forever (cast.go hastedGCD), from a combat
+log with Warchief's Blessing up, so the knob's cast.go hunk is gone.
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
 index 000000000..e74a37ac7
@@ -134,22 +137,6 @@ index 545d104f2..9ecd773e8 100644
  	}
  
  	aura := MakePermanent(unit.RegisterAura(Aura{
-diff --git a/sim/core/cast.go b/sim/core/cast.go
-index b0516909d..86f09d721 100644
---- a/sim/core/cast.go
-+++ b/sim/core/cast.go
-@@ -264,6 +264,11 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
- 			// Vanilla has no natural GCD reduction besides abilities with 1s GCDs
- 			// spell.CurCast.GCD = spell.Unit.ApplyFlatCastSpeed(spell.CurCast.GCD)
- 			spell.CurCast.CastTime = config.CastTime(spell)
-+			// haste_gcd=1: cast speed shortens a spell's GCD too, as in wowsims/forever (cast.go hastedGCD), down to the
-+			// 1s minimum EffectiveTime keeps. Physical abilities keep theirs, as there (spelldata/resolve_spell.go Cast).
-+			if v, ok := AssumeOk("haste_gcd"); ok && v > 0 && spell.CurCast.GCD > 0 && spell.SpellSchool != SpellSchoolPhysical {
-+				spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD).Round(time.Millisecond)
-+			}
- 		}
- 
- 		if config.CD.Timer != nil {
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
 index e22f7e4b6..d7a12ae04 100644
 --- a/sim/core/debuffs.go
