@@ -74,14 +74,15 @@ func (cast *Cast) EffectiveTime() time.Duration {
 // 1.40s or more apart (2026-11-18). Physical abilities keep theirs, as the client's rule has it
 // (melee and ranged damage classes). The sim tells them apart by defense type and school: a
 // spell is a cast with no melee or ranged defense type and a magic school, so shouts and
-// aspects (no school) keep 1.5s. The 1 sec floor is wowsims/forever's, untested in a log; it
-// keeps the totems' and the rogue's 1s GCD at 1s, and a GCD already under 1 sec stays as it is.
+// aspects (no school) keep 1.5s. The 1 sec floor is wowsims/forever's rule (user ruling 2026-11-18,
+// untested in a log): every hasted GCD above 0 ends at 1 sec or more, so the totems' 1s GCD stays
+// 1s and a base GCD under 1 sec rises to 1s (no spell of ours has one).
 func (spell *Spell) hastedGCD(gcd time.Duration) time.Duration {
 	if gcd <= 0 || !spell.hasSpellGCD() {
 		return gcd
 	}
 	hasted := spell.Unit.ApplyCastSpeed(gcd).Round(time.Millisecond)
-	return max(min(gcd, GCDMin), hasted)
+	return max(GCDMin, hasted)
 }
 
 // hasSpellGCD: the cast is a spell, not a physical ability, for the hasted GCD.

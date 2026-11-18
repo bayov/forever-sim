@@ -33,7 +33,7 @@ func TestHastedGCD(t *testing.T) {
 		{"seal (no defense type, Holy)", 1.15, SpellSchoolHoly, DefenseTypeNone, GCDDefault, 1304 * ms},
 		{"floor", 2, SpellSchoolFire, DefenseTypeMagic, GCDDefault, GCDMin},
 		{"totem's 1s", 1.15, SpellSchoolFire, DefenseTypeNone, time.Second, time.Second},
-		{"under 1s stays", 1.15, SpellSchoolFire, DefenseTypeMagic, 500 * ms, 500 * ms},
+		{"under 1s floors at 1s", 1.15, SpellSchoolFire, DefenseTypeMagic, 500 * ms, GCDMin},
 		{"Nature's Grace with its own cut", 1.15 * 1.1, SpellSchoolNature, DefenseTypeMagic, GCDDefault - GCDDefault/10, 1067 * ms},
 		{"melee ability", 1.15, SpellSchoolNature, DefenseTypeMelee, GCDDefault, GCDDefault},
 		{"physical school", 1.15, SpellSchoolPhysical, DefenseTypeMelee, GCDDefault, GCDDefault},
