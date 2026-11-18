@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """run_assumptions.py [ids]: the sims behind the dashboard's assumption scenarios (assumptions_def.py).
 
-Binary: $DASH_BIN/wowsimcli_assume (else wowsimcli), built from the merged tree with patches/0004 (the DASH_ASSUME knobs,
+Binary: $DASH_BIN/wowsimcli_assume, which build_bins.py builds with patches/0004 (the DASH_ASSUME knobs,
 sim/core/assumptions.go). With no DASH_ASSUME it is bit-identical to the plain build (check with --identical <plain wowsimcli>).
 
 Per build an assumption touches, seed 1, the build's request (req/<id>.json) otherwise:
@@ -36,10 +36,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, BIN, TREE, RNG  # noqa: E402
 from assumptions_def import A  # noqa: E402
 import adaptive  # noqa: E402
+import build_bins  # noqa: E402
 
-CLI = os.path.join(BIN, 'wowsimcli_assume')
-if not os.path.exists(CLI):  # any wowsimcli built with the DASH_ASSUME patch will do
-    CLI = os.path.join(BIN, 'wowsimcli')
+CLI = os.path.join(BIN, 'wowsimcli_assume')  # built by build_bins.py, with no fallback to plain wowsimcli (main() stops without it)
 OUT = os.path.join(D, 'asm')
 RES = os.path.join(OUT, 'results.jsonl')
 
@@ -240,6 +239,7 @@ def base_from_out(bid):
 
 
 def main(ids):
+    build_bins.require(CLI)
     os.makedirs(OUT, exist_ok=True)
     done = set()
     if os.path.exists(RES):

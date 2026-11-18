@@ -33,6 +33,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, BIN  # noqa: E402
+import build_bins  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -116,8 +117,8 @@ def probe_bin(base):
         link = os.path.join(b, name)
         if os.path.lexists(link):
             os.remove(link)
-        if os.path.exists(os.path.join(BIN, name)):  # the scripts fall back to wowsimcli when a variant is missing
-            os.symlink(os.path.join(HERE, 'probe_cli.py'), link)
+        build_bins.require(os.path.join(BIN, name))  # every binary: no script falls back to plain wowsimcli
+        os.symlink(os.path.join(HERE, 'probe_cli.py'), link)
     return b
 
 
@@ -221,6 +222,9 @@ def check(ids, as_json=False):
     if not ids:
         print('nothing is stale')
         return
+    rec = build_bins.guard(BIN, BINARIES, 'probe.py check')  # the binaries must be the code's (build_bins.py)
+    if rec:
+        build_bins.mark_builds(ids, rec)  # stale.mjs --record (by probe) refuses these
     new = run(ids, os.path.join(D, 'probe_check'))
     same, differ = [], {}
     for bid in ids:

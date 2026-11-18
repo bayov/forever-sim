@@ -24,7 +24,8 @@ lines of rv/results.jsonl and asm/results.jsonl (rv.jsonl, asm.jsonl: sorted by 
 winning as in build_races.py and asm_data.py), its abl/ablate.json entry with that file's iters and seed (abl.json),
 its probe (probe.json, probe.py: the fingerprints of its sims at a tenth of their iterations, which the next probe
 check compares with), and fingerprint.json: the sha256 of its request, its races' override files (req/races/, race_override.py) and its
-assumption rotations, the sim split count and the commit simmed at.
+assumption rotations, the sim split count and the commit simmed at. A build simmed with DASH_ALLOW_BIN_MISMATCH also
+has bin_override/<id>.json (build_bins.py), which unpack puts back, so stale.mjs keeps refusing to record it current.
 Packs are deterministic (sorted members, zero mtimes and owners, gzip without a name or time), so an unchanged
 build's pack is byte-identical and git stores it once.
 """
@@ -159,6 +160,9 @@ def members(bid, commit, rv, asm, abl, problems):
     if os.path.exists(p):
         members['probe.json'] = json.dumps(json.load(open(p)), indent=0, sort_keys=True).encode()
     members['fingerprint.json'] = json.dumps(inputs(bid) | {'splits': SPLITS, 'commit': commit}, indent=1, sort_keys=True).encode()
+    p = os.path.join(D, 'bin_override', bid + '.json')  # simmed with DASH_ALLOW_BIN_MISMATCH (build_bins.py), which unpack restores
+    if os.path.exists(p):
+        members[f'bin_override/{bid}.json'] = open(p, 'rb').read()
     return members
 
 

@@ -20,6 +20,9 @@
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
 #   pipeline.sh tankheal [tank|heal]    the Tanking and Healing modes' sims alone (tankheal.py run: tankbench and
 #                                       healbench, every preset, seven bosses, races; then publish)
+#   pipeline.sh bins [--force]          build every binary of the three modes into $DASH_BIN with its STAMP.json
+#                                       (build_bins.py). Run, resume, probe, tankheal and publish <ids> refuse
+#                                       binaries the stamp doesn't match to the code
 #
 # The Tanking and Healing modes (tankheal.py) ride along: run with no ids (or TANKHEAL=1) runs their sims after the
 # DPS steps, hydrate unpacks their raw packs (raw/bench/<mode>.tgz), publish builds their datasets (tank_*, heal_*)
@@ -60,7 +63,7 @@ hydrate)
 	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
 		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
 	fi
-	rm -rf out names weights mana rv asm abl probe probe_check data vec tank heal
+	rm -rf out names weights mana rv asm abl probe probe_check data vec tank heal bin_override
 	python3 $T/rawstore.py unpack
 	python3 $T/tankheal.py unpack
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
@@ -104,6 +107,11 @@ publish)
 plan | run | resume)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi
 	ALL=$(ids "$@")
+	if [ "$cmd" != plan ]; then  # the binaries must match the code (build_bins.py), checked before the clean deletes anything
+		python3 $T/build_bins.py guard --what "pipeline.sh $cmd" --bin "${DASH_BIN:-$DASH_DIR/bin}" \
+			--need wowsimcli wowsimcli_r wowsimcli_assume dashstats $( ([ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]) && echo tankbench healbench) \
+			--mark $ALL $([ "$cmd" = run ] && echo --clear)
+	fi
 	if [ "$cmd" = run ]; then python3 $T/rawstore.py clean $ALL; fi
 	BASE=$(for i in $ALL; do python3 -c "import json,sys; m = json.load(open('req/$i.meta.json')); sys.exit(0 if m.get('duty') or m.get('pet') else 1)" || echo $i; done)
 	MANA=$(for i in $ALL; do case $i in warrior__* | rogue__*) ;; *) echo $i ;; esac; done)
@@ -174,6 +182,9 @@ EOF
 	python3 $T/timing.py "$TIMING_LOG"
 	echo "next: pipeline.sh publish $*"
 	;;
+bins)
+	python3 $T/build_bins.py "$@"
+	;;
 tankheal)
 	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py run "$@"
 	echo "next: pipeline.sh publish"
@@ -236,5 +247,5 @@ EOF
 	rm -rf "$tmp"
 	;;
 *)
-	sed -n '2,22p' "$0"; exit 1 ;;
+	sed -n '2,25p' "$0"; exit 1 ;;
 esac

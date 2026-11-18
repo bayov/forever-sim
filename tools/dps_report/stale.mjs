@@ -192,6 +192,16 @@ export const benchFingerprint = memo((r, mode) => {
 });
 const benchModes = Object.keys(BENCH).filter(m => fs.existsSync(path.join(dataDir, `${m}_builds.json`)));
 
+// results simmed with DASH_ALLOW_BIN_MISMATCH (build_bins.py), which --record and --record-bench refuse to mark current
+const dashDir = process.env.DASH_DIR || path.join(root, 'tools/dps_report');
+const binOverride = rel => (fs.existsSync(path.join(dashDir, rel)) ? JSON.parse(fs.readFileSync(path.join(dashDir, rel), 'utf8')) : null);
+const refuseOverridden = (names, rel) => {
+	const bad = names.filter(n => binOverride(rel(n)));
+	for (const n of bad)
+		console.error(`REFUSED to record ${n} current: simmed with binaries that don't match the code (DASH_ALLOW_BIN_MISMATCH=${binOverride(rel(n)).reason}, ${rel(n)}). Rebuild (pipeline.sh bins) and re-sim it.`);
+	return names.filter(n => !bad.includes(n));
+};
+
 const diff = (a, b) => [...new Set([...Object.keys(a), ...Object.keys(b)])].filter(k => (a[k] ?? null) !== (b[k] ?? null)).sort();
 
 // every build in the report, and every request not in it yet (a new preset)
@@ -212,6 +222,7 @@ if (args.includes('--record-bench')) {
 		if (!BENCH[a]) throw new Error(`Unknown mode ${a}: tank or heal`);
 		modes.push(a);
 	}
+	modes.splice(0, modes.length, ...refuseOverridden(modes, m => `${m}/bin_override.json`));
 	const commit = git('rev-parse', rev).trim();
 	prov.benches = prov.benches || {};
 	for (const m of modes)
@@ -235,6 +246,7 @@ if (args.includes('--record')) {
 		ids.push(a);
 	}
 	if (ids.includes('all')) ids = builds;
+	ids = refuseOverridden(ids, id => `bin_override/${id}.json`);
 	const commit = git('rev-parse', rev).trim();
 	const iterations = Number(opt('--iterations')) || undefined;
 	const by = opt('--by') || 'sim';

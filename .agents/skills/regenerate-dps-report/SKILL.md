@@ -54,8 +54,14 @@ Tell the user the scope in one line before long runs.
 
 ## 2. Generate data
 
-Build the merged tree (master plus `patches/`) and the binaries per
-`tools/dps_report/README.md`, then run `tools/dps_report/pipeline.sh` with `DASH_DIR` set
+Commit any sim or data change first, then build the binaries with
+`tools/dps_report/pipeline.sh bins` (`build_bins.py`: every binary of the three modes from a
+clean worktree at `${SIM_COMMIT:-HEAD}` plus `patches/`, stamped in `bin/STAMP.json`). It
+builds nothing when the stamp already matches. `run`, `resume`, `probe`, `tankheal` and
+`publish <ids>` refuse binaries whose stamp doesn't match the code, and uncommitted changes
+under the sim's inputs: rebuild, don't override. `DASH_ALLOW_BIN_MISMATCH=<reason>` is for
+throwaway checks only, since `stale.mjs --record` then refuses those builds (README
+"Building the binaries"). Then run `tools/dps_report/pipeline.sh` with `DASH_DIR` set
 (README "Partial regenerations"):
 
 - **Some builds:** `pipeline.sh hydrate <ids>`. It checks the packs reproduce the published
@@ -88,14 +94,14 @@ seeds (healbench: 101). Their races (`bench_races.py`) sim every race, its racia
 racial part off on paired fights (seed 1, labeled streams), sized by adaptive.py's `BENCH_GOALS`
 (the DPS luck goals with floors 2.5 times looser, in each score's unit; healing capped at
 6,000 fights), into `<mode>/races.jsonl` and the `<mode>_races` and `<mode>_race_breakdown`
-datasets. Build `tankbench` and `healbench` with `tankheal.py bins` (HEAD plus patches 0002 and
-0006, the racials switch); a bench without the switch stops the run. Their text
+datasets. `pipeline.sh bins` builds `tankbench` and `healbench` too (patches 0002 and 0006, the
+racials switch). Their text
 (preset lines, notes, boss lines, Method) is written in `tools/dps_report/tankheal_text/{tank,heal}.md`,
 for players, not taken from the docs: a new preset or boss needs its entry there, and the build
 stops on a missing one or on a tool or file word in anything the page shows (`tankheal.py` LEAK).
 
 Settings come from `orchestration/standards.md`: 20,000+ iterations, the generic boss,
-120 / 180 / 300 s, binaries rebuilt after the last gear or DB change.
+120 / 180 / 300 s, binaries rebuilt after the last gear or DB change (the stamp check enforces it).
 
 ### The Changes tab
 
