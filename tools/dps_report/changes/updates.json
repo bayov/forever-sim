@@ -5767,6 +5767,19 @@
      "commits": [
       "ee35da4"
      ]
+    },
+    {
+     "title": "Cast speed now speeds up the ticks of Hurricane and Volley",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Hunter"
+     ],
+     "note": "Hurricane keeps its 10 sec and gains ticks. Volley keeps its 6 waves and ends sooner. No preset casts either.",
+     "moves": false,
+     "commits": [
+      "8219f10"
+     ]
     }
    ],
    "internal": [
