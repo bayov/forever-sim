@@ -6018,6 +6018,18 @@
     {
      "commit": "39b94e3",
      "why": "the gear search tries whole item sets; the sim helper it adds changes no result"
+    },
+    {
+     "commit": "ac0217aed",
+     "why": "Dark Inspiration's party buff drops for a party with a talented priest; no report or Healing number moves (probe, audit and Healing re-sim identical)"
+    },
+    {
+     "commit": "b77ffa52a",
+     "why": "drops the dead warr_exec_wf2 assumption and its knob; only that Assumptions row goes, no number moves"
+    },
+    {
+     "commit": "056dccb4e",
+     "why": "seen and revealed item data; no item any report preset wears changed, no number moves"
     }
    ],
    "source": {
