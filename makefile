@@ -63,7 +63,7 @@ ui/core/index.ts: $(TS_CORE_SRC)
 
 # The DPS Report as one self-contained HTML file: dist/dps_report.html.
 .PHONY: dps-report-artifact
-dps-report-artifact: node_modules
+dps-report-artifact: node_modules ui/core/proto/api.ts
 	node tools/dps_report/build_artifact.mjs
 
 # Build it and deploy it to Cloudflare Pages: https://forever-dps.pages.dev.

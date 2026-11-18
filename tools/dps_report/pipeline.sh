@@ -177,6 +177,16 @@ EOF
 	}
 	mark run_build
 	[ -n "$RB" ] && echo $RB | tr ' ' '\n' | xargs -P$P -n1 python3 $T/run_build.py
+	# run_build's "(published ...)" is the request's verify.py note, which can be older than the report: compare with
+	# the DPS the report shows (its data, builds.json)
+	[ -n "$RB" ] && ROOT="$T/../.." python3 - $RB <<-'PY'
+		import json, os, sys
+		rep = {b['id']: b['dps'] for b in json.load(open(os.path.join(os.environ['ROOT'], 'ui/dps_report/data/builds.json')))}
+		for bid in sys.argv[1:]:
+		    new = json.load(open(os.path.join(os.environ['DASH_DIR'], 'out', bid + '.json')))['main']['dps']
+		    old = rep.get(bid)
+		    print(f"{bid}: {new:.1f} against the report's {old:.1f}" if old is not None else f"{bid}: {new:.1f} (new to the report)")
+	PY
 	mark weights
 	echo $BASE | tr ' ' '\n' | xargs -P$P -n1 python3 $T/weights.py
 	mark races
