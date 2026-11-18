@@ -164,7 +164,7 @@ The coordinator (this session):
 2. `python3 tools/dps_report/parallel.py plan --run <run> --commit <sha>`, with `--heal-presets <stem,...>` when only
    some Healing presets are stale and `--modes` to leave a mode out. It prints one worker command per session (dps-0..
    with the DPS builds split by cost, as many as keep each within the longest other session, tank, heal-0 with the
-   Healing main bench, heal-1.. with every priest preset alone and the rest balanced by measured cost) and pushes
+   Healing main bench, heal-1.. with every priest and raid preset alone and the rest balanced by measured cost) and pushes
    `plan.json` to the slot `dash-raw/slot/plan`. `--dry` prints only.
 3. Read your own session id (`get_session` with no id). For each planned session, `create_session` with the repo as
    `source_url`, `source_revision=<sha>`, and a prompt that says: run `<its command>` in the background

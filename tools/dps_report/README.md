@@ -629,9 +629,9 @@ wago.tools page of the changed client rows or hotfix, foreverchanges.pro only wh
 ## Parallel runs
 
 `parallel.py` runs a full regeneration in several cloud sessions at once (the `regenerate-dps-report` skill's "Parallel
-full regeneration" has the coordinator's steps). Today's one-session full run takes DPS about 80min, Tanking 20min to
-55min and Healing 1.5h to 4.3h, one after the other; in parallel it takes the longest session, Healing's heal-0 at about
-55min, plus each session's binary build.
+full regeneration" has the coordinator's steps). A one-session full run does DPS, Tanking and Healing one after the
+other; in parallel it takes the longest session, about 25min since the 2026-11-18 engine speedups (heal-0, and heal-1
+with the raid Restoration Druid), plus each session's binary build.
 
 ```sh
 parallel.py plan --run <run> --commit <sha> [--dps-shards N] [--ids <id,...>] [--heal-groups N] [--heal-presets <stem,...>] [--modes dps,tank,heal] [--log <file>...] [--dry]
@@ -643,13 +643,15 @@ parallel.py slots                  # the run, session and commit each slot holds
 
 - **The plan.** The DPS builds split by cost over `dps-0`.. (`pipeline.sh shard`: each build with its variants, the
   longest family first to the least loaded shard, a shard's time its share of the whole set's 80min). N is the fewest
-  shards none of which outlasts the longest other session (2 for the 2026-11-18 set: about 40min each against heal-0's
-  53min), or `--dps-shards N`; `--ids` shards only those builds. One session for Tanking, and the Healing presets split
-  by cost: `heal-0` runs the main bench (7 bosses, tank and raid roles, 1,000 iterations, about 18min) and then its own
+  shards none of which outlasts the longest other session (4 for the 2026-11-18 set: about 20min each against heal-0's
+  24min), or `--dps-shards N`; `--ids` shards only those builds. One session for Tanking, and the Healing presets split
+  by cost: `heal-0` runs the main bench (7 bosses, tank and raid roles, 1,000 iterations, about 4min) and then its own
   presets, and every other Healing session starts its race sims from heal-0's main bench outputs. Each priest preset
-  runs alone (priest_holy_raid is the longest, about 35min); the rest are shared out so no session runs longer than the
-  longest lone one. A preset's cost is its race rows times the 2026-11-18 probe rate of its role scaled to a full run,
-  or a run log's measured seconds with `--log` (`<mode> races <stem>: <n> rows, <s> s`).
+  and each raid preset runs alone (priest_holy_raid is the longest, about 21min, then druid_restoration_raid); the rest
+  are shared out so no session runs longer than the longest lone one. On 2026-11-18 the raid Druid and Shaman shared a
+  session with the tank healers on the old model, which made it the longest at 31min. A preset's cost is its measured
+  seconds in the 2026-11-18 run (`HEAL_S`), else its race rows times its role's rate from that run, or a run log's
+  measured seconds with `--log` (`<mode> races <stem>: <n> rows, <s> s`).
 - **A part.** A DPS shard is `pipeline.sh run <its ids>` in an empty `$DASH_DIR`, `pipeline.sh pack` of them and a
   manifest (`dps-<k>.json`: ids, commit, `DASH_SPLITS`, the binaries' stamp). `tankheal.py run <mode> --part`,
   `--main-only` or `--carries <part>` writes the mode's outputs and `part.json` instead of `run.json` and `.fresh`: the

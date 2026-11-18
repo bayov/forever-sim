@@ -8,8 +8,8 @@ hand-backs, merges, then publishes and deploys as for one run. Workers never pub
         the worker sessions: dps-0.. (the DPS builds split by cost, pipeline.sh run on each share; N by default the
         fewest shards that none outlasts the longest other session), tank (the Tanking mode whole), heal-0 (the
         Healing main bench, handed to the others, then its own presets) and heal-1.. (each a group of Healing presets:
-        every priest preset alone, the rest balanced by cost). Prints each session's command and estimated time, and
-        writes plan.json to $DASH_DIR/parallel/<run>/ and to the slot dash-raw/slot/plan (--dry: print only)
+        every priest and raid preset alone, the rest balanced by cost). Prints each session's command and estimated
+        time, and writes plan.json to $DASH_DIR/parallel/<run>/ and to the slot dash-raw/slot/plan (--dry: print only)
   parallel.py worker <run> <session> --commit <sha> [--shard K/N] [--ids <id,...>] [--main] [--presets <stem,...>]
                      [--carries-from <session>]
         one session's whole job, in the background with its log in a file: checks HEAD is <sha>, builds the binaries
@@ -55,16 +55,21 @@ PREFIX = 'dash-raw'
 
 # ---------------------------------------------------------------- costs and the plan
 #
-# A preset's race sims cost about its race rows (one a race and racial variant) times a role's seconds a row. The rates
-# are the bench probes measured on 4 cores on 2026-11-18 (README "Bench probes": priest_holy_raid 565s for 26 rows,
-# shaman_restoration 120s for 10, warrior_protection_balanced 80s for 29), and FULL_X scales a probe to the full run:
-# the 2026-11-18 Healing run's race sims took 4,123s wall at 2 presets at a time, about 8,250 preset-seconds, against
-# 2,235 for this model of its 9 presets. --log takes measured times instead, from a run's log lines
-# '<mode> races <stem>: <n> rows, <s> s' (the same 2-at-a-time seconds).
-ROW_S = {('heal', 'raid'): 565 / 26, ('heal', 'tank'): 120 / 10, ('tank', None): 80 / 29}
-FULL_X = 3.7
-MAIN_S = {'heal': 1090, 'tank': 20}  # the main bench, 2026-11-18 Healing and 2026-11-17 Tanking run.json
-MODE_S = {'dps': 80 * 60, 'tank': 3013}  # DPS: pipeline.sh plan's 310 core-minutes on 4 cores; Tanking: 2026-11-17 run.json
+# A preset's cost is the seconds of its race sims in a full run, 2 presets at a time on 4 cores. HEAL_S holds the
+# 2026-11-18 run at 87ce834 (after the engine speedups): the log lines '<mode> races <stem>: <n> rows, <s> s' of
+# heal-3, and for the priests, which ran alone, their seconds over ALONE_X. A preset not in it costs its race rows (one
+# a race and racial variant) times a role's seconds a row, the same run's rates (raid: Druid 1872s for 13 rows, Shaman
+# 1362s for 10; tank: Druid 647s for 13, Shaman 375s for 10, Paladin 290s for 8), and Tanking the 2026-11-18 bench
+# probe (warrior_protection_balanced 80s for 29) times FULL_X. --log takes measured times instead, from a run's log.
+HEAL_S = {'druid_restoration_raid': 1872, 'shaman_restoration_raid': 1362, 'druid_restoration': 647,
+          'shaman_restoration': 375, 'paladin_holy': 290,
+          'priest_holy_raid': 1235 / 0.6, 'priest_discipline': 691 / 0.6, 'priest_holy': 670 / 0.6}
+ROW_S = {('heal', 'raid'): 140, ('heal', 'tank'): 42, ('tank', None): 80 / 29 * 3.7}
+FULL_X = 1
+ALONE_X = 0.6  # a preset alone has all 4 cores: the priests, alone on 2026-11-18, took about 0.6 of the model
+MAIN_S = {'heal': 231, 'tank': 20}  # the main bench, the 2026-11-18 Healing run at 87ce834 and 2026-11-17 Tanking run.json
+MODE_S = {'dps': 80 * 60, 'tank': 1140}  # DPS: pipeline.sh plan's 310 core-minutes on 4 cores; Tanking: the
+# 2026-11-18 run at 87ce834 (its session took 20 min with the build)
 SLOTS = 2  # tankheal.race_sims runs 2 presets at a time
 
 
@@ -92,30 +97,35 @@ def costs(mode, stems, logs=()):
     import tankheal
     got = logged_costs(logs, mode)
     role = (lambda s: tankheal.heal_role(s)) if mode == 'heal' else (lambda s: None)
-    return {s: got.get(s) or round(preset_rows(mode, s) * ROW_S[(mode, role(s))] * FULL_X) for s in stems}
+    table = HEAL_S if mode == 'heal' else {}
+    return {s: round(got.get(s) or table.get(s) or preset_rows(mode, s) * ROW_S[(mode, role(s))] * FULL_X) for s in stems}
 
 
 def wall(cs, slots=SLOTS):
-    """The wall time of presets of these costs run `slots` at a time, longest first (race_sims' pool)."""
+    """The wall time of presets of these costs run `slots` at a time, longest first (race_sims' pool). One preset
+    alone has the whole machine (ALONE_X)."""
+    if len(cs) == 1:
+        return cs[0] * ALONE_X
     load = [0.0] * slots
     for c in sorted(cs, reverse=True):
         load[load.index(min(load))] += c
     return max(load) if cs else 0.0
 
 
-def split(cost, groups=None, alone=lambda s: s.startswith('priest_')):
-    """The presets in groups, one a worker session: each `alone` preset (the priests: the most race rows) in a group of
-    its own, the rest spread over the other groups longest first, each to the group that would end soonest. groups:
-    how many in all (default: as few as keep every group within the longest lone preset's time, at least one)."""
+def split(cost, groups=None, alone=lambda s: s.startswith('priest_') or s.endswith('_raid')):
+    """The presets in groups, one a worker session: each `alone` preset (the priests, with the most race rows, and the
+    raid presets, whose rows cost about 3 times a tank healer's) in a group of its own, the rest spread over the other
+    groups longest first, each to the group that would end soonest. groups: how many in all (default: as few as keep
+    every group within the longest lone preset's time, at least one)."""
     lone = sorted((s for s in cost if alone(s)), key=lambda s: (-cost[s], s))
     rest = sorted((s for s in cost if not alone(s)), key=lambda s: (-cost[s], s))
-    if groups is not None and groups <= len(lone):  # too few sessions for the priests alone: one balanced spread
+    if groups is not None and groups <= len(lone):  # too few sessions for the lone presets: one balanced spread
         rest, lone = sorted(cost, key=lambda s: (-cost[s], s)), []
         n = max(1, groups)
     elif groups is not None:
         n = groups - len(lone)
     else:
-        cap = max([cost[s] for s in lone] or [cost[s] for s in rest])  # no group longer than the longest lone preset
+        cap = max([wall([cost[s]]) for s in lone] or [cost[s] for s in rest])  # no group longer than the longest lone preset
         n = 1
         while rest and n < len(rest) and max(wall([cost[s] for s in g]) for g in spread(rest, cost, n)) > cap:
             n += 1

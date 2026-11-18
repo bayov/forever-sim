@@ -243,15 +243,18 @@ class Planner(unittest.TestCase):
     def tearDown(self):
         tankheal.TREE, parallel.D = self.saved
 
-    def test_priests_alone_rest_balanced(self):
+    def test_priests_and_raid_presets_alone_rest_balanced(self):
         cost = parallel.costs('heal', tankheal.presets('heal'))
         groups = parallel.split(cost)
         self.assertEqual(sorted(s for g in groups for s in g), sorted(cost))  # every preset once
+        lone = lambda s: s.startswith('priest_') or s.endswith('_raid')  # noqa: E731
         for g in groups:
-            if any(s.startswith('priest_') for s in g):
+            if any(lone(s) for s in g):
                 self.assertEqual(len(g), 1, g)
-        cap = max(cost[s] for s in cost if s.startswith('priest_'))
+        self.assertTrue(any(len(g) > 1 for g in groups))  # the tank healers share a session
+        cap = max(parallel.wall([cost[s]]) for s in cost if lone(s))
         self.assertLessEqual(max(parallel.wall([cost[s] for s in g]) for g in groups), cap)
+        self.assertEqual(parallel.wall([100]), 100 * parallel.ALONE_X)  # one preset alone has the whole machine
         self.assertEqual(max(cost, key=cost.get), 'priest_holy_raid')
 
     def test_more_groups_never_slower(self):
@@ -285,12 +288,12 @@ class Planner(unittest.TestCase):
     def test_plan_commands(self):
         pl = parallel.plan('r1', 'abc', heal_groups=5)
         names = [s['session'] for s in pl['sessions']]
-        self.assertEqual(names, ['dps-0', 'dps-1', 'tank', 'heal-0', 'heal-1', 'heal-2', 'heal-3', 'heal-4'])
-        h0, h1 = pl['sessions'][3], pl['sessions'][4]
+        self.assertEqual(names, ['dps-0', 'dps-1', 'dps-2', 'dps-3', 'tank', 'heal-0', 'heal-1', 'heal-2', 'heal-3', 'heal-4'])
+        h0, h1 = pl['sessions'][5], pl['sessions'][6]
         self.assertIn('--main', h0['command'])
         self.assertIn('--carries-from heal-0', h1['command'])
         self.assertNotIn('--main', h1['command'])
-        self.assertIn('dps-1 --commit abc --shard 1/2', pl['sessions'][1]['command'])
+        self.assertIn('dps-1 --commit abc --shard 1/4', pl['sessions'][1]['command'])
 
     def test_dps_shards_within_the_longest_other_session(self):
         pl = parallel.plan('r1', 'abc')
