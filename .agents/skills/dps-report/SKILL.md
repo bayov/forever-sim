@@ -121,7 +121,7 @@ results, then fairness. Results are in `orchestration/audit/findings/<id>.md` an
 
 **B7. Report data refresh.** Run the `regenerate-dps-report` skill. On top of it, when
 classes have unmerged work:
-- Build the merged tree from master plus any unmerged class heads, plus `patches/`.
+- Build the merged tree from master plus any unmerged class heads (no patches: the sim has the report switches).
 - Check each regenerated request against its class's published 180 s number (within 2).
 - For a delegated job use `prompts/dashboard/HANDOFF_dash_refresh.md`, but publish per
   regenerate-dps-report: its own publishing steps are for the deleted legacy dashboard.

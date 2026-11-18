@@ -12,8 +12,8 @@ merged tree ──► requests ──► sims ──────────► 
 Each build's raw sim outputs are kept in `raw/<id>.tgz`, committed with the datasets they made, so a regeneration re-sims
 only the builds that changed and still rebuilds every dataset, the cross-build ones included (see "Partial regenerations").
 
-1. **Merged tree.** One local checkout with every class branch and the consumes branch merged in, the item DB regenerated, and
-   the local dashboard patches (`patches/`) applied. The binaries are built from it.
+1. **Merged tree.** One local checkout with every class branch and the consumes branch merged in, and the item DB regenerated.
+   The binaries are built from it. The sim reads the report switches (below) itself, so the tree needs no patches.
 2. **Requests.** `req/<id>.json` is the exact RaidSimRequest for each of the 36 level 60 presets. `req/<id>.meta.json` holds
    its class, spec, build name, preset race, talents, gear set, APL, published and verified DPS, summary, key talents, rotation,
    consumes and caveats.
@@ -32,7 +32,6 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
-| `patches/` | Local-only sim patches for the merged tree (see below) | yes |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
 | `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
 | `probe.py`, `probe_cli.py` | The probe: every step's sims at a tenth of their iterations, fingerprinted, to tell which stale builds really moved (see "Probes") | yes |
@@ -42,9 +41,8 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `adaptive.py` | The luck goals and the fight counts sized to them: a pilot, then a top-up to what the paired spread needs (see "Luck goals") | yes |
 | `vec/` | Per-fight DPS of the race, racial and assumption sims, keyed by request, which the top-ups extend; cleared per build by `run_build.py`, never packed | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
-| `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
-| `bin/` | `wowsimcli`, `dashstats` and optionally `wowsimcli_r`, built from the merged tree | no |
+| `bin/` | `wowsimcli` and `dashstats` (`tools/dashstats`), built from the merged tree | no |
 | `out/ rv/ abl/ weights/ names/ mana/` | Raw sim outputs | no |
 | `icons/` | Download cache of wow.zamimg.com icons and talent-tree backgrounds | no |
 | `data/` | The generated datasets | no |
@@ -86,47 +84,41 @@ Conflict rules:
 - `assets/database/db.{json,bin}`: take ours and regenerate after all the merges. `resolve.sh` does this.
 - `*.md`: union of both sides. `resolve.sh` does this too.
 - Code: take the class's side for that class's files. For `tools/rotopt/run.go`, the hunter side won last time.
-- If `tools/rotopt` ends up with two `func manaAbove`, delete the one in `priest_shadow.go`. Patch 0001 does this.
+- If `tools/rotopt` ends up with two `func manaAbove`, delete the one in `priest_shadow.go`.
 
-Then regenerate the DB, apply the patches and build:
+Then regenerate the DB and build:
 
 ```bash
 go run tools/database/gen_db/*.go -outDir=./assets -gen=db      # every class's synthetic items and trinkets, the spell renames
 git commit -am "dash: regenerate db"                               # local only
-git am -3 ../forever-sim/tools/dps_report/patches/000[1-3]-*.patch  # `git am --skip` a patch the merged heads already contain
-git apply ../forever-sim/tools/dps_report/patches/0004-*.patch    # a plain diff, not a mail
-git apply ../forever-sim/tools/dps_report/patches/0005-*.patch    # DASH_SPLITS, a plain diff too
-git apply ../forever-sim/tools/dps_report/patches/0006-*.patch    # DASH_RACIALS_OFF_CLASS on top of 0002 (tankheal.py's race sims)
 protoc -I=./proto --go_out=./sim/core ./proto/*.proto              # only if sim/core/proto/*.pb.go are missing (protoc-gen-go in ~/go/bin on PATH)
 B=../forever-sim/tools/dps_report/bin; mkdir -p $B
 go build -tags=with_db -o $B/wowsimcli ./cmd/wowsimcli
 go build -tags=with_db -o $B/mksettings ./tools/rotopt/mksettings
 go build -tags=with_db -o $B/rotopt ./tools/rotopt
 go build -tags=with_db -o $B/dashstats ./tools/dashstats
-cp $B/wowsimcli $B/wowsimcli_r   # optional; run_races.py uses wowsimcli when wowsimcli_r is missing
 ```
 
 After regenerating the DB, check that every class's synthetic item ids (990000 and up, from
 `tools/database/forever_synthetic_items_<class>.go`) are in `db.json`.
 
-### Local patches (`patches/`)
+### Report switches
 
-These were exported with `git format-patch` from the local `dashdata` branch, against the merged class heads. They are
-dashboard-only and never go to a class branch.
+The sim reads these environment variables for the report (`sim/core/report_switches.go`). Each one does nothing unless
+it is set, so every `wowsimcli`, `tankbench` and `healbench` built from master runs the plain sim without them. They
+are read once when the binary starts.
 
-| Patch | What it does | Needed by |
+| Variable | What it does | Set by |
 |---|---|---|
-| `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
-| `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go` and the priest racials (Chastise, Dark Sacrifice, Starshards, Shadowguard): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, chastise, starshards, darksacrifice, shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` (the same for the Tanking and Healing races, with 0006) |
-| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
-| `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Rebased 2026-10-23 onto the wowsims/forever alignment round: the knobs of the assumptions it settled are gone (orchestration/alignment_round_2026-10-23.md). Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
-| `0005` DASH_SPLITS | `sim/core/sim_concurrent.go`: `DASH_SPLITS=<n>` sets how many parts a sim's iterations are split into (default one per CPU). `pipeline.sh` sets 4, so the raw outputs are the same on every machine: the splits' seeds already continue each other, but averaging the parts moves the last bits. A plain diff; apply with `git apply`. | `pipeline.sh` (every step), `rawstore.py` (refuses packs made with another count) |
-| `0006` DASH_RACIALS_OFF_CLASS | On top of 0002: `DASH_RACIALS_OFF_CLASS=<Class>` (`Paladin`, `Priest`, ...) keeps the switch to the players of that class, so a healing preset's racials go while the healbench raid's tank (an Orc Warrior) and damage dealers keep theirs. `core.DashRacialOffFor(class, part)`. | `bench_races.py` (sets it to the preset's class) |
+| `DASH_NAMES=<file>` | Each sim's finalize appends every unit's auras to the file, one `spellId itemId otherId tag label` line each (one copy per sim split). | `run_build.py` (`names/<id>.tsv`, the aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`) |
+| `DASH_SPLITS=<n>` | Splits a sim's iterations into n concurrent parts instead of one per CPU. The splits' seeds continue each other, but averaging the parts moves the last bits, so a fixed n keeps the raw outputs the same on every machine. | `pipeline.sh` (4, every step), `rawstore.py` (refuses packs made with another count) |
+| `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` | Leaves those Forever racial parts out: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial spells chastise, starshards, darksacrifice and shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` |
+| `DASH_RACIALS_OFF_CLASS=<Class>` | Keeps `DASH_RACIALS_OFF` to the players of one class (`Paladin`, `Priest`, ...), so a healing preset's racials go while the healbench raid's tank and damage dealers keep theirs. Alone it does nothing. | `bench_races.py` (the preset's class) |
+| `DASH_ASSUME="key=value,..."` | Overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). Each knob defaults to the constant master sets. | `run_assumptions.py` |
 
-The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
-their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
-unchanged. `run_assumptions.py --identical`
-checks that a 0004 build is bit-identical to the plain one with `DASH_ASSUME` unset.
+`go test ./sim/core/ -run 'Report|Dash'` and the switch tests in `sim/priest/shadow` and `sim/warrior/dps_warrior`
+check each switch. `run_assumptions.py --identical` checks that a run with `DASH_ASSUME` unset matches a plain binary.
+`tools/dashstats` (the `stats` dataset's stat sheets) is a plain tool in the tree.
 
 ## Requests
 
@@ -369,11 +361,10 @@ tool, file or process word (`LEAK`: tools/, docs/, file extensions, bench, rotop
 request, APL, code spans, ...): reword the text file, don't widen `LEAK_SKIP`.
 
 Building the benches: `PATH=$PATH:~/go/bin tankheal.py bins` builds both into the binaries directory from a worktree
-of HEAD with patches 0002 and 0006 applied (the racials switch; a bench without it fails the race sims, since every
-racial would measure exactly nothing). By hand:
+of HEAD. The race sims use the racials switches (`DASH_RACIALS_OFF` and `DASH_RACIALS_OFF_CLASS`, see "Report switches").
+By hand:
 
 ```sh
-git apply tools/dps_report/patches/0002-*.patch tools/dps_report/patches/0006-*.patch
 PATH=$PATH:~/go/bin npx protoc -I=./proto --go_out=./sim/core ./proto/*.proto
 go build -tags=with_db -o $B/tankbench ./tools/tankbench
 go build -tags=with_db -o $B/healbench ./tools/healbench
@@ -408,7 +399,7 @@ another request, race override or assumption rotation than the current one.
 | Every build, no probe (packs without probes, or a probe audit failed) | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
 
 - `node tools/dps_report/stale.mjs` gives the scope: which builds *may* have moved. It hashes the shared inputs (the sim's
-  packages, the protos the sim compiles, the CLI and `go.mod`, the patches, `dashstats` and the step scripts), the class's
+  packages, the protos the sim compiles, the CLI and `go.mod`, `dashstats` and the step scripts), the class's
   `sim/<class>/`, the item database entries the build wears, and each build's request, the sim fields of its meta, its
   base build's request, race overrides (`req/races/`, its base build's too) and assumption rotations. Test files,
   goldens, testdata and docs are left out, and so are `tools/rotopt` and `ui/<spec>` (they make requests, which are

@@ -26,6 +26,7 @@ func (warrior *Warrior) registerRendSpell() {
 	}[warrior.Level]
 
 	baseDamage := rend.damage
+	rendAPPerTick := core.Assume("warr_rend_ap", ForeverRendAPPerTick) // DPS Report assumption knob
 
 	damageMultiplier := []float64{1, 1.12, 1.23, 1.35}[warrior.Talents.ImprovedRend] // client 70338: 12, 23 and 35%
 
@@ -69,7 +70,7 @@ func (warrior *Warrior) registerRendSpell() {
 				// cancelling Battle Shout mid-Rend lowers the next ticks (wowsims/forever 1172f1c745
 				// and 36cfc58328, level 13 and 14 combat logs).
 				if sim.IsForever() {
-					damage := baseDamage + ForeverRendAPPerTick*dot.Spell.MeleeAttackPower(target)
+					damage := baseDamage + rendAPPerTick*dot.Spell.MeleeAttackPower(target)
 					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
 					return
 				}

@@ -82,6 +82,10 @@ func (paladin *Paladin) registerConsecration() {
 			baseTick = rank.foreverAll / 8
 			extraTick = rank.foreverExtra / 8
 			tickCoefficient = 0.042 // client 70425 (spells 1280345-1280349; 0.095 in 70338)
+			if v, ok := core.AssumeOk("pal_cons31"); ok && rank.level >= 40 {
+				baseTick *= v // DPS Report assumption knob: the 31+ ranks held to the level 30 trend
+				extraTick *= v
+			}
 		}
 
 		paladin.RegisterSpell(core.SpellConfig{

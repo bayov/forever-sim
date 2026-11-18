@@ -461,6 +461,14 @@ func (priest *Priest) registerShadowform() {
 	costSpell := func(spell *core.Spell) bool {
 		return spell.Cost != nil && spell.Flags.Matches(SpellFlagPriest) && spell.SpellSchool.Matches(core.SpellSchoolShadow)
 	}
+	// DPS Report assumption knob priest_sf_tick_crit: the extra crit bonus on the periodic spells
+	tickCritBonus := core.Assume("priest_sf_tick_crit", 1)
+	critBonus := func(spell *core.Spell) float64 {
+		if spell.SpellCode == SpellCode_PriestMindBlast {
+			return 1
+		}
+		return tickCritBonus
+	}
 
 	priest.ShadowformAura = priest.RegisterAura(core.Aura{
 		Label:    "Shadowform",
@@ -471,7 +479,7 @@ func (priest *Priest) registerShadowform() {
 			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= 0.85
 			for _, spell := range priest.Spellbook {
 				if critSpell(spell) {
-					spell.CritDamageBonus += 1
+					spell.CritDamageBonus += critBonus(spell)
 				}
 				if costSpell(spell) {
 					spell.Cost.Factor *= 0.5
@@ -483,7 +491,7 @@ func (priest *Priest) registerShadowform() {
 			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= 0.85
 			for _, spell := range priest.Spellbook {
 				if critSpell(spell) {
-					spell.CritDamageBonus -= 1
+					spell.CritDamageBonus -= critBonus(spell)
 				}
 				if costSpell(spell) {
 					spell.Cost.Factor /= 0.5

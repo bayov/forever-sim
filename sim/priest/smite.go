@@ -41,8 +41,9 @@ func SmiteBaseDamageAt(rank int, level int32) (float64, float64) {
 	low := SmiteScaling[rank].At(SmiteBaseDamage[rank][0], level)
 	high := SmiteScaling[rank].At(SmiteBaseDamage[rank][1], level)
 	if rank == 8 {
-		low *= SmiteRank8DamageScale
-		high *= SmiteRank8DamageScale
+		scale := core.Assume("priest_smite8_tuning", SmiteRank8DamageScale) // DPS Report assumption knob
+		low *= scale
+		high *= scale
 	}
 	return low, high
 }

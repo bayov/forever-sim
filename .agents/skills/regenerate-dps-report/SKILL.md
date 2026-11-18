@@ -54,8 +54,8 @@ Tell the user the scope in one line before long runs.
 
 ## 2. Generate data
 
-Build the merged tree (master plus `patches/`) and the binaries per
-`tools/dps_report/README.md`, then run `tools/dps_report/pipeline.sh` with `DASH_DIR` set
+Build the merged tree (master, no patches: the sim reads the report switches itself, README
+"Report switches") and the binaries per `tools/dps_report/README.md`, then run `tools/dps_report/pipeline.sh` with `DASH_DIR` set
 (README "Partial regenerations"):
 
 - **Some builds:** `pipeline.sh hydrate <ids>`. It checks the packs reproduce the published
@@ -71,7 +71,7 @@ Build the merged tree (master plus `patches/`) and the binaries per
 - **Every build:** only when packs have no probes or an audit failed: `run`, then
   `publish`, no hydrate (about 95 min on 4 cores). For more than one class's worth, shard
   over remote sessions: `pipeline.sh shard <k> <n> <ids>` splits by cost; each session, on
-  the same master commit with `patches/` applied and binaries built, runs
+  the same master commit with binaries built, runs
   `pipeline.sh run <its ids>` in an empty `$DASH_DIR`, then
   `pipeline.sh pack shard<k>.tgz <its ids>`, and pushes the pack to `dash-raw/<run>/<k>`.
   Fetch the packs, `pipeline.sh unpack` each into a hydrated `$DASH_DIR`, then publish.
@@ -88,8 +88,8 @@ seeds (healbench: 101). Their races (`bench_races.py`) sim every race, its racia
 racial part off on paired fights (seed 1, labeled streams), sized by adaptive.py's `BENCH_GOALS`
 (the DPS luck goals with floors 2.5 times looser, in each score's unit; healing capped at
 6,000 fights), into `<mode>/races.jsonl` and the `<mode>_races` and `<mode>_race_breakdown`
-datasets. Build `tankbench` and `healbench` with `tankheal.py bins` (HEAD plus patches 0002 and
-0006, the racials switch); a bench without the switch stops the run. Their text
+datasets. Build `tankbench` and `healbench` with `tankheal.py bins` (HEAD, which has the racials
+switches `DASH_RACIALS_OFF` and `DASH_RACIALS_OFF_CLASS`). Their text
 (preset lines, notes, boss lines, Method) is written in `tools/dps_report/tankheal_text/{tank,heal}.md`,
 for players, not taken from the docs: a new preset or boss needs its entry there, and the build
 stops on a missing one or on a tool or file word in anything the page shows (`tankheal.py` LEAK).

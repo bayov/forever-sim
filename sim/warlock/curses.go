@@ -293,7 +293,7 @@ func (warlock *Warlock) registerBaneOfDoomSpell() {
 			},
 			NumberOfTicks:    1,
 			TickLength:       time.Minute,
-			BonusCoefficient: 4,
+			BonusCoefficient: core.Assume("lock_bod_coef", 4), // DPS Report assumption knob
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, 1742, isRollover)
 			},

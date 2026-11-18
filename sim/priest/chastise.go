@@ -19,7 +19,7 @@ var ChastiseManaCost = [ChastiseRanks + 1]float64{0, 50, 100, 135, 180, 225}
 var ChastiseLevel = [ChastiseRanks + 1]int{0, 20, 30, 40, 50, 60}
 
 func (priest *Priest) registerChastiseSpell() {
-	if priest.Race != proto.Race_RaceDwarf {
+	if priest.Race != proto.Race_RaceDwarf || core.DashRacialOffFor(priest.Class, "chastise") {
 		return
 	}
 

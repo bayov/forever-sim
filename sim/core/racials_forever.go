@@ -27,6 +27,8 @@ import (
 
 func applyForeverRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
+	// on reports whether a racial part applies. Only the DPS Report leaves parts out (DASH_RACIALS_OFF).
+	on := func(name string) bool { return !DashRacialOffFor(character.Class, name) }
 
 	switch character.Race {
 	case proto.Race_RaceHuman:
@@ -35,77 +37,109 @@ func applyForeverRaceEffects(agent Agent) {
 		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
 		// Development notes 2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)",
 		// "Human Spirit now increases Spirit by 10% (was 5%)"; client 70753 has both.
-		character.MultiplyStat(stats.Spirit, 1.10)
-		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
-		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
+		if on("spirit") {
+			character.MultiplyStat(stats.Spirit, 1.10)
+		}
+		if on("ruthless") {
+			character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
+			character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
+		}
 
 	case proto.Race_RaceDwarf:
 		// Artisan's Precision: "Increases hit chance with spells and attacks by 1%" (development
 		// notes 2026-10-26, which remove Earth Fury, 70425's 2% critical strike bonus to damage
 		// and healing; 70338 had Mace Specialization, 1% crit with a mace). And Big Game
 		// Hunter. Stoneform is a defensive cooldown the sim does not measure.
-		character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
-		character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
-		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
+		if on("precision") {
+			character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
+			character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
+		}
+		if on("beast") {
+			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
+		}
 
 	case proto.Race_RaceNightElf:
 		// Quickness keeps its dodge. Elune's Light is the new offensive cooldown.
-		character.AddStat(stats.Dodge, 1)
-		character.registerElunesLight()
-		character.registerShadowmeld()
+		if on("dodge") {
+			character.AddStat(stats.Dodge, 1)
+		}
+		if on("elune") {
+			character.registerElunesLight()
+		}
+		if on("shadowmeld") {
+			character.registerShadowmeld()
+		}
 
 	case proto.Race_RaceGnome:
 		// Expansive Mind raises the resource pool itself now rather than Intellect.
-		if character.HasManaBar() {
-			character.MultiplyStat(stats.Mana, 1.05)
+		if on("mind") {
+			if character.HasManaBar() {
+				character.MultiplyStat(stats.Mana, 1.05)
+			}
+			if character.HasRageBar() {
+				character.MultiplyMaxRage(1.05)
+			}
+			if character.HasEnergyBar() {
+				character.MultiplyMaxEnergy(1.05)
+			}
 		}
-		if character.HasRageBar() {
-			character.MultiplyMaxRage(1.05)
+		if on("eureka") {
+			character.registerEureka()
 		}
-		if character.HasEnergyBar() {
-			character.MultiplyMaxEnergy(1.05)
-		}
-		character.registerEureka()
 
 	case proto.Race_RaceOrc:
 		// Development notes 2026-10-26: "Savage removed (1% increased critical strike chance)",
 		// "Command re-added, increasing Warlock and Hunter pet damage by 5%". Savage was 70425's
 		// weaponless Axe Specialization. Command is Classic's: every pet but the guardians
 		// (a hunter's hawks, a warlock's Infernal), as racials.go has it.
-		if character.Class == proto.Class_ClassHunter || character.Class == proto.Class_ClassWarlock {
+		if on("command") && (character.Class == proto.Class_ClassHunter || character.Class == proto.Class_ClassWarlock) {
 			for _, pet := range character.Pets {
 				if !pet.IsGuardian() {
 					pet.PseudoStats.DamageDealtMultiplier *= 1.05
 				}
 			}
 		}
-		character.registerForeverBloodFury()
+		if on("bloodfury") {
+			character.registerForeverBloodFury()
+		}
 
 	case proto.Race_RaceUndead:
-		character.registerTouchOfTheGrave()
+		if on("touch") {
+			character.registerTouchOfTheGrave()
+		}
 
 	case proto.Race_RaceTauren:
 		// Endurance (20550): 5% health. Development notes 2026-10-26: "Endurance no longer
 		// provides any modifiers beyond 5% increased Health" (70425 added 2% critical strike
 		// bonus to damage and healing, 70338 had 1% hit). Plainsrunning is movement.
-		character.MultiplyStat(stats.Health, 1.05)
+		if on("endurance") {
+			character.MultiplyStat(stats.Health, 1.05)
+		}
 
 	case proto.Race_RaceTroll:
 		// Beast Slaying stays. Bow and Throwing Specialization are gone, and Berserking
 		// is a flat 10% instead of scaling with missing health.
-		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
-		makeBerserkingCooldown(character, .1, character.NewTimer())
+		if on("beast") {
+			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
+		}
+		if on("berserking") {
+			makeBerserkingCooldown(character, .1, character.NewTimer())
+		}
 
 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
 		// Wind Blessed (1259710): 2% spellcasting, melee and ranged haste ("Wind-Blessed Haste
 		// bonus reduced to 2% (was 3%)", development notes 2026-10-26; 3% in client 70425 to
 		// 70630, 1% in 70338) and Elemental Insight. Walk on Air and Skysight are movement; the
 		// High Order's Read Leyline is regeneration, the one active the sim models.
-		character.PseudoStats.MeleeSpeedMultiplier *= 1.02
-		character.PseudoStats.RangedSpeedMultiplier *= 1.02
-		character.PseudoStats.CastSpeedMultiplier *= 1.02
-		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
-		if character.Race == proto.Race_RaceSkyborneHighOrder {
+		if on("windblessed") {
+			character.PseudoStats.MeleeSpeedMultiplier *= 1.02
+			character.PseudoStats.RangedSpeedMultiplier *= 1.02
+			character.PseudoStats.CastSpeedMultiplier *= 1.02
+		}
+		if on("insight") {
+			character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
+		}
+		if character.Race == proto.Race_RaceSkyborneHighOrder && on("leyline") {
 			character.registerReadLeyline()
 		}
 	}
@@ -224,6 +258,7 @@ func (character *Character) registerForeverBloodFury() {
 	weapons := func() [3]*Weapon {
 		return [3]*Weapon{character.AutoAttacks.MH(), character.AutoAttacks.OH(), character.AutoAttacks.Ranged()}
 	}
+	weaponPart := AssumeBloodFuryWeapon() // report assumption orc_bf_weapon = 0: no weapon damage
 	aura := character.RegisterAura(Aura{
 		Label:    "Blood Fury",
 		ActionID: actionID,
@@ -233,6 +268,9 @@ func (character *Character) registerForeverBloodFury() {
 				character.EnableDynamicStatDep(sim, dep)
 			}
 			for i, weapon := range weapons() {
+				if !weaponPart {
+					break
+				}
 				bonusWeaponDamage[i] = weapon.AverageDamage() * 0.1
 				weapon.BaseDamageMin += bonusWeaponDamage[i]
 				weapon.BaseDamageMax += bonusWeaponDamage[i]

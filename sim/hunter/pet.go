@@ -246,9 +246,18 @@ func (hp *HunterPet) applyForeverRules() {
 	// Report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's behaviour is treated as
 	// a bug, so the hit scales with the swing as in Classic (a 1.0 sec pet's hit is half a 2.0 sec
 	// pet's), and every pet's white damage a second is the same.
+	scales := ForeverPetHitScalesWithSpeed
 	hitSeconds := hp.AutoAttacks.MH().SwingSpeed
-	if !ForeverPetHitScalesWithSpeed {
+	if !scales {
 		hitSeconds = 2
+	}
+	if v, ok := core.AssumeOk("hunter_cobra_damage"); ok && hp.hunterOwner.Options.CobraReflexes {
+		// DPS Report assumption knob: a Cobra Reflexes hit is v of the hit the pet has without it
+		// (wowsims/forever's 0.85, TBC's cut), not a hit that shrinks with the faster swing
+		if scales {
+			hitSeconds *= 1 + foreverCobraReflexesSpeedPercent/100
+		}
+		hitSeconds *= v
 	}
 	mh := hp.AutoAttacks.MH()
 	mh.BaseDamageMin = foreverPetSwingAverage * (1 - 0.2) * hitSeconds / 2

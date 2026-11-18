@@ -73,7 +73,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
 	if level <= 30 {
 		return 1
 	}
-	return 1 + ForeverNormalizedRageScaling*float64(level-30)/30
+	return 1 + reportSwitches.rageScaling*float64(level-30)/30 // ForeverNormalizedRageScaling unless DASH_ASSUME warr_rage_s sets it
 }
 
 // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
@@ -151,7 +151,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult) float64 {
 		return 0
 	}
 	attackerLevel := spell.Unit.Level
-	return ForeverDamageTakenRageFactor * (1 - foreverDamageTakenRageArmor(attackerLevel)) * damage / foreverRageConversion(attackerLevel)
+	// reportSwitches.damageTakenRageFactor is ForeverDamageTakenRageFactor unless DASH_ASSUME warr_dt_rage_k sets it
+	return reportSwitches.damageTakenRageFactor * (1 - foreverDamageTakenRageArmor(attackerLevel)) * damage / foreverRageConversion(attackerLevel)
 }
 
 // ForeverDamageTakenRageFactor is the 2.5 of ForeverDamageTakenRage (report assumption

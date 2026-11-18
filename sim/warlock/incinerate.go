@@ -11,6 +11,10 @@ func (warlock *Warlock) getIncinerateConfig(rank int) core.SpellConfig {
 	data := incinerateRanks[rank]
 	damageLow, damageHigh := data.rangeAt(warlock.Level)
 
+	// DPS Report assumption knob lock_incinerate_bonus=0: the 25% on the base damage only
+	v, ok := core.AssumeOk("lock_incinerate_bonus")
+	bonusOnBaseOnly := ok && v == 0
+
 	return core.SpellConfig{
 		SpellCode:     SpellCode_WarlockIncinerate,
 		ActionID:      core.ActionID{SpellID: data.SpellID},
@@ -42,6 +46,13 @@ func (warlock *Warlock) getIncinerateConfig(rank int) core.SpellConfig {
 			multiplier := 1.0
 			if warlock.getActiveImmolateSpell(target) != nil {
 				multiplier = 1.25
+			}
+			if bonusOnBaseOnly {
+				result := spell.CalcDamage(sim, target, sim.Roll(damageLow, damageHigh)*multiplier, spell.OutcomeMagicHitAndCrit)
+				spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+					spell.DealDamage(sim, result)
+				})
+				return
 			}
 			spell.DamageMultiplier *= multiplier
 			result := spell.CalcDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
