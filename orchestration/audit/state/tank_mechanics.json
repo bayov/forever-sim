@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
+  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
  },
- "last_pass_at": "2026-11-17T18:58:00Z",
- "pass": 18,
- "result": "findings",
+ "last_pass_at": "2026-11-18T00:53:54Z",
+ "pass": 19,
+ "result": "quiet",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-17T18:58:00Z",
+ "checked_at": "2026-11-18T01:10:18Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 18 (5f20dfdf4c): push 114097 Unbridled Wrath on damaging melee specials reaches prot warrior; Sunder excluded (20261117-1, low, user ruling). Client 70959: Judgements DefenseType 3 and Stormstrike 100%/8s now client-backed; WF Totem reshape pending user ruling in TASKS. Forum notes not re-read."
+ "note": "Pass 19 (2f7e255af8): Shieldsworn Holy Strike no longer rolls Windfury Totem (Nov 16 hotfix, tier 1 notes; tested); prot paladin presets take Shieldsworn. Druid/shaman changes healing-only. Client 70959 unchanged. 3 open findings unchanged."
 }

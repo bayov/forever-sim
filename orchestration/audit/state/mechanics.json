@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
+  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
  },
- "last_pass_at": "2026-11-17T19:45:00Z",
- "pass": 86,
+ "last_pass_at": "2026-11-18T01:03:29Z",
+ "pass": 87,
  "result": "quiet",
- "note": "Pass 86: 1a85df1d7..5f20dfdf4. New client 70959 diffed vs 70938: shared deltas are a logging bit on consumables and the Windfury Totem reshape (user ruling pending in TASKS). MCP 3 min CD and Five Thunders bonuses verified on 70959. Hotfix post 11 (Nov 16) read. No findings.",
+ "note": "Pass 87: 5f20dfdf4..2f7e255af. Nov 16 hotfix commits checked: Darkmoon Blue Dragon 3% and Heroism 198 +-20% match push 114044 rows; Vampiric Embrace 10%/20% caster-only and Shieldsworn Holy Strike no-WF match post 11 wording. Client still 70959; no new dev notes, hotfix or blue posts. No findings.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-17T19:45:00Z",
+ "checked_at": "2026-11-18T01:10:18Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -27,11 +27,11 @@
   "newest_push": 114157,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-15T01:18:23Z",
+ "blue_tracker_seen": "2026-11-17T18:38:11Z",
  "hotfix_post_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040/11",
   "date": "2026-11-17T02:17:43Z",
-  "post1_edited": "2026-11-14T01:54:25Z",
+  "post1_edited": "2026-11-17T02:18:14Z",
   "post6_edited": "2026-11-12T00:46:56Z"
  }
 }

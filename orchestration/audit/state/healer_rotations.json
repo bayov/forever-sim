@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
+  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
  },
- "last_pass_at": "2026-11-17T19:27:19Z",
- "pass": 15,
+ "last_pass_at": "2026-11-18T01:12:00Z",
+ "pass": 16,
  "result": "quiet",
- "note": "Pass 15 on 5f20dfdf4. Only change: Five Thunders set (shaman, worn by no healer request) and two core accessors; all 63 rows byte-identical. -20261115-1 and -20261104-2 still open.",
+ "note": "Pass 16 on 2f7e255af. Changes: Idol of Rejuvenation, Totem of Tides, Darkmoon Blue Dragon/Heroism (worn by no healer request), Vampiric Embrace (no healer casts it), Shieldsworn Holy Strike flag. First 23 of 63 rows re-simmed byte-identical (cut short by coordinator); rest not re-run. -20261115-1 and -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-17T12:45:03Z"
+ "checked_at": "2026-11-18T01:10:18Z"
 }

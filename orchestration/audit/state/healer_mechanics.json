@@ -1,15 +1,15 @@
 {
-  "last": {
-    "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
-  },
-  "last_pass_at": "2026-11-17T18:57:47Z",
-  "pass": 17,
-  "result": "findings",
-  "note": "Pass 17: client 70959 Wild Growth shared CD already modeled; Five Thunders reaches no healer; Nov 16 Vampiric Embrace 10%/20% caster (finding 16). Findings 10, 11, 16 open.",
-  "client_build": "1.60.1.70959",
-  "dev_notes_seen": {
-    "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
-    "date": "2026-11-17T02:18:14Z"
-  },
-  "checked_at": "2026-11-17T12:45:03Z"
+ "last": {
+  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
+ },
+ "last_pass_at": "2026-11-18T00:56:29Z",
+ "pass": 18,
+ "result": "quiet",
+ "note": "Pass 18: Idol of Rejuvenation and Totem of Tides match client 70959; Vampiric Embrace fixed (finding 16 resolved). Findings 10, 11 open.",
+ "client_build": "1.60.1.70959",
+ "dev_notes_seen": {
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
+  "date": "2026-11-17T02:18:14Z"
+ },
+ "checked_at": "2026-11-18T01:10:18Z"
 }
