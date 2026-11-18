@@ -131,6 +131,23 @@ class ProbeKey(unittest.TestCase):
         self.assertEqual(self.key(), self.key())
         self.assertNotEqual(self.key(), self.key('paladin_holy'))
 
+    def test_report_switches_move_it(self):
+        saved = {v: os.environ.pop(v, None) for v in tankheal.SWITCH_VARS}
+        try:
+            base = self.key()
+            for v in tankheal.SWITCH_VARS:
+                os.environ[v] = 'x'
+                one = self.key()
+                self.assertNotEqual(base, one, v)
+                os.environ[v] = 'y'
+                self.assertNotEqual(one, self.key(), v)
+                del os.environ[v]
+                self.assertEqual(base, self.key(), v)
+        finally:
+            for v, x in saved.items():
+                if x is not None:
+                    os.environ[v] = x
+
     def test_each_input_moves_it(self):
         base = self.key()
         for rel in ('bin/healbench', 'tree/tools/healbench/req/priest_holy.json', 'tree/tools/encounters/onyxia.json',
@@ -180,6 +197,21 @@ def probe_rec(main=None, races=None, values=None, **kw):
            'races': races or {'Human:race': 'r1', 'Human:off': 'r2'}, 'values': values or {'Human:race': 1.0, 'Human:off': 0.99}}
     rec.update(kw)
     return rec
+
+
+class ProbeCheckNoPack(unittest.TestCase):
+    def test_no_probe_in_the_pack_says_so_and_exits_nonzero(self):
+        import contextlib, io
+        orig = tankheal.stored_probes
+        tankheal.stored_probes = lambda mode: {}
+        err = io.StringIO()
+        try:
+            with contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as cm:
+                tankheal.probe_check(['heal'], want={'priest_holy'})
+        finally:
+            tankheal.stored_probes = orig
+        self.assertEqual(cm.exception.code, 1)
+        self.assertIn('no probe', err.getvalue())
 
 
 class ProbeCompare(unittest.TestCase):

@@ -24,7 +24,7 @@
                                                  and ceiling of adaptive.py divided by 10, fingerprinted (probe_cli's
                                                  canon and digest) under a _key of the settings, the real bench binary,
                                                  the requests, boss files and scripts. run makes them after its races
-                                                 (TANKHEAL_PROBE=0 skips it); alone, it refuses stale presets the last run
+                                                 (only with TANKHEAL_PROBE=1); alone, it refuses stale presets the last run
                                                  here didn't sim (--stale-ok for a throwaway measurement)
   tankheal.py probe check [tank|heal ...] [--presets <stem,...>] [--json]
                                                  probe the presets (default: the stale ones) into probe_check/bench/<mode>/,
@@ -331,8 +331,8 @@ def run(modes, races=True, resume=False, only=None):
                 lines = race_lines_sorted(open(res).readlines(), stems)
                 open(res, 'w').writelines(lines)
             note('races', round(time.time() - t1, 1))
-            if os.environ.get('TANKHEAL_PROBE', '1') != '0':
-                # the probe of every preset, packed with the mode for the next probe check; a probe the check made or
+            if os.environ.get('TANKHEAL_PROBE') == '1':
+                # opt-in (TANKHEAL_PROBE=1): the probe of every preset, packed with the mode for the next probe check; a probe the check made or
                 # the old pack holds under the key it would get now is copied, and a stopped run keeps what it probed
                 t2 = time.time()
                 probe_presets(mode, stems, os.path.join(out, 'probe'), reuse=(probe_records(os.path.join(CHECK_DIR, mode)), stored_probes(mode)))
@@ -362,6 +362,8 @@ def run(modes, races=True, resume=False, only=None):
 PROBE_SCALE = 10
 PROBE_P = int(os.environ.get('TANKHEAL_PROBE_P', 2))  # presets at a time, each sim split DASH_SPLITS ways
 CHECK_DIR = os.path.join(D, 'probe_check', 'bench')  # a check's probes and audit.json, by mode (hydrate empties it)
+# the report switches sim/core/report_switches.go reads: each one set in the caller's environment changes the sims
+SWITCH_VARS = ('DASH_NAMES', 'DASH_SPLITS', 'DASH_RACIALS_OFF', 'DASH_RACIALS_OFF_CLASS', 'DASH_ASSUME')
 PROBE_SCRIPTS = ('tankheal.py', 'bench_races.py', 'adaptive.py', 'dashpaths.py', 'run_build.py', 'probe_cli.py')
 HEAL_RAID = ('tools/tankbench/req/warrior_protection.json', 'tools/dps_report/req/mage__frost.json')  # healbench -tank, -filler
 _hashes = {}
@@ -392,7 +394,8 @@ def probe_key(mode, stem, settings):
     exe = build_bins.BENCH_BINS[mode]
     k = {'settings': settings, 'bin': file_hash(build_bins.real_bin(os.path.join(BIN, exe))), 'req': file_hash(req_path(mode, stem)),
          'encounters': {b: file_hash(os.path.join(TREE, 'tools/encounters', b + '.json')) for b in BOSSES},
-         'scripts': {f: file_hash(os.path.join(HERE, f)) for f in PROBE_SCRIPTS}}
+         'scripts': {f: file_hash(os.path.join(HERE, f)) for f in PROBE_SCRIPTS},
+         'switches': {v: os.environ[v] for v in SWITCH_VARS if v in os.environ}}
     if mode == 'heal':
         k['raid'] = {p: file_hash(os.path.join(TREE, p)) for p in HEAL_RAID}
     return hashlib.sha256(json.dumps(k, sort_keys=True).encode()).hexdigest()[:20]
@@ -574,8 +577,13 @@ def probe_check(modes, want=None, as_json=False):
     with the probe in the mode's pack, and write audit.json there: the presets it cleared, the one it re-sims anyway (the
     audit) and the ones that moved."""
     stale = stale_presets() if want is None else None
-    commit, report = head(), {}
+    commit, report, no_probe = head(), {}, []
     for mode in modes:
+        if not stored_probes(mode):
+            print(f'{mode}: the pack has no probe to compare with (made before probes were kept, or run without TANKHEAL_PROBE=1): '
+                  f're-sim the mode with tankheal.py run {mode}, or make probes with tankheal.py probe {mode} afterwards', file=sys.stderr)
+            no_probe.append(mode)
+            continue
         stems = sorted(want & set(presets(mode)) if want is not None else stale.get(mode, ()))
         if not stems:
             print(f'{mode}: nothing to probe')
@@ -609,6 +617,8 @@ def probe_check(modes, want=None, as_json=False):
         print(json.dumps(report, indent=1))
     elif report:
         print('then: pipeline.sh publish: it checks the audit and records the cleared presets (stale.mjs --record-bench --by probe)')
+    if no_probe:
+        sys.exit(1)
 
 
 def probe_audit():

@@ -172,6 +172,10 @@ def file_hash(path):
     return _hashes[path]
 
 
+# the report switches sim/core/report_switches.go reads: each one set in the caller's environment changes the sims
+SWITCH_VARS = ('DASH_NAMES', 'DASH_SPLITS', 'DASH_RACIALS_OFF', 'DASH_RACIALS_OFF_CLASS', 'DASH_ASSUME')
+
+
 def real_binary(name):
     """The binary a probe really runs: pipeline.sh run points DASH_BIN at timing_cli.py shims, so follow them to the
     real directory (TIMING_REAL_BIN) or the key would hash the shim."""
@@ -183,6 +187,7 @@ def common_key():
     the assumptions."""
     k = {'settings': SETTINGS, 'bin': {n: file_hash(real_binary(n)) for n in BINARIES},
          'db': file_hash(os.path.join(TREE, 'assets', 'database', 'db.json')),
+         'switches': {v: os.environ[v] for v in SWITCH_VARS if v in os.environ},
          'scripts': {f: file_hash(f) for pat in SCRIPTS for f in sorted(glob.glob(os.path.join(HERE, pat)))},
          'asm_apls': {os.path.relpath(f, D): file_hash(f) for f in sorted(glob.glob(os.path.join(D, 'asm_apls', '**', '*'), recursive=True))
                       if os.path.isfile(f)}}

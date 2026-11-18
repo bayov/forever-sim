@@ -446,12 +446,15 @@ A `sim/core` change stales every Tanking and Healing preset, though most come ou
   `digest`), plus the carry or score of each row. The sim reseeds every fight, so unchanged code and data give the same
   fingerprints. A probe is only ever compared with another probe, never with the full run: the healbench `-carry`
   bisection and the race walk pick their next scale from the deaths seen so far, so a shorter run sims other scales.
-- `tankheal.py run` ends by probing the presets it ran the races for (`TANKHEAL_PROBE=0` skips it), into
-  `<mode>/probe/<stem>.json`, and the pack keeps them. A check compares the new probe with the pack's: the same means the
+- The probe is optional. It is worth turning on only when a mode is mostly stale and a full re-sim of it would take well
+  over 2h, so the next check can save that time. `tankheal.py run` probes the presets it ran the races for only with
+  `TANKHEAL_PROBE=1`, into `<mode>/probe/<stem>.json`, and the pack keeps them. `tankheal.py probe <mode>` and
+  `probe check` work on demand either way. With no probe in the pack, `probe check` says so and exits 1. A check compares the new probe with the pack's: the same means the
   full sims would come out the same, anything else names the bosses or the share of race rows that moved.
 - Every probe carries a `_key`, the same idea as the DPS probe's: the probe settings (sizes, splits, architecture), the
   sha256 of the real bench binary (`build_bins.real_bin`, behind the timing links), the preset's request, the boss
-  files, the healing raid's filler requests and the scripts the probe runs (`tankheal.py`, `bench_races.py`,
+  files, the report switches set in the environment (`DASH_NAMES`, `DASH_SPLITS`, `DASH_RACIALS_OFF`,
+  `DASH_RACIALS_OFF_CLASS`, `DASH_ASSUME`), the healing raid's filler requests and the scripts the probe runs (`tankheal.py`, `bench_races.py`,
   `adaptive.py`, `dashpaths.py`, `run_build.py`, `probe_cli.py`). `run` keeps a probe whose key matches, copies one from
   `probe_check/bench/<mode>/` or the pack when that has it, and probes the rest (`PROBE_FORCE=1` probes all). `compare`
   ignores the key.

@@ -155,6 +155,23 @@ class ProbeTest(unittest.TestCase):
                 write(path, old)
             self.assertEqual(base, self.key(), path)
 
+    def test_key_follows_the_report_switches(self):
+        saved = {v: os.environ.pop(v, None) for v in probe.SWITCH_VARS}
+        try:
+            base = self.key()
+            for v in probe.SWITCH_VARS:
+                os.environ[v] = 'x'
+                one = self.key()
+                self.assertNotEqual(base, one, v)
+                os.environ[v] = 'y'
+                self.assertNotEqual(one, self.key(), v)
+                del os.environ[v]
+                self.assertEqual(base, self.key(), v)
+        finally:
+            for v, x in saved.items():
+                if x is not None:
+                    os.environ[v] = x
+
     def test_key_changes_with_settings(self):
         base = self.key()
         probe.SETTINGS['scale'] += 1

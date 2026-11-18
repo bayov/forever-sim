@@ -65,8 +65,10 @@ audit fails, re-sim every cleared preset. On 4 cores a check of every preset tak
 30min to 48min for Healing (a raid healer about 565s, a tank healer about 120s) and 8min to
 16min for Tanking (about 80s a preset), against about 87min and 50min for full runs. So probe
 when most of a mode is stale, and just re-sim when only a few presets are. A pack without
-probes (packs from before 2026-11-18) can't be checked: re-sim the mode, which then packs
-probes. A full `tankheal.py run` spends the same time again probing what it simmed.
+probes can't be checked (`benchprobe` says so and exits 1): re-sim the mode. The bench probe
+is optional: `tankheal.py run` makes it only with `TANKHEAL_PROBE=1`, and that is worth it only
+when a mode is mostly stale and a full re-sim of it would take well over 2h. It spends the same
+time again probing what it simmed.
 
 Tell the user the scope in one line before long runs.
 
