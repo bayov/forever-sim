@@ -323,6 +323,8 @@ def build(bin_dir, rev=None, force=False, root=ROOT):
             for f in glob.glob(os.path.join(wt, 'sim', 'core', 'proto', '*.pb.go')):
                 os.remove(f)
             protos = sorted(os.path.relpath(p, wt) for p in glob.glob(os.path.join(wt, 'proto', '*.proto')))
+            if not shutil.which('protoc-gen-go', path=env['PATH']):  # a fresh container: the version go.mod pins
+                run(['go', 'install', 'google.golang.org/protobuf/cmd/protoc-gen-go'], wt, env)
             run(protoc_cmd() + ['-I=proto', '--go_out=sim/core'] + protos, wt, env)
             if not glob.glob(os.path.join(wt, 'sim', 'core', 'proto', '*.pb.go')):
                 sys.exit('build_bins: protoc wrote no sim/core/proto/*.pb.go')

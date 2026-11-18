@@ -32,8 +32,9 @@
 #                                       binaries the stamp doesn't match to the code
 #
 # The Tanking and Healing modes (tankheal.py) ride along: run with no ids (or TANKHEAL=1) runs their sims after the
-# DPS steps, hydrate unpacks their raw packs (raw/bench/<mode>.tgz), publish builds their datasets (tank_*, heal_*)
-# before the copy and, for a mode simmed since, records it (stale.mjs --record-bench) and packs it.
+# DPS steps (TANKHEAL=0 never does), hydrate unpacks their raw packs (raw/bench/<mode>.tgz), publish builds their
+# datasets (tank_*, heal_*) before the copy and, for a mode simmed since, records it (stale.mjs --record-bench) and
+# packs it.
 #
 # After a code or data change (a game update), stale.mjs says what may have moved: hydrate, probe, run <what probe
 # names>, publish <the same ids>. Re-sim a few builds: hydrate, run <ids>, publish <ids>. Add a preset: write req/<id>.*, then the same. Remove one:
@@ -120,11 +121,12 @@ publish)
 	echo "next: give the live update public lines for what changed (changes.py check, then changes.py build), check the report (make dps-report-artifact), commit ui/dps_report, tools/dps_report/raw and tools/dps_report/changes together, push, then deploy"
 	;;
 plan | run | resume)
+	tankheal_on() { if [ -n "${TANKHEAL:-}" ]; then [ "$TANKHEAL" != 0 ]; else [ $# -eq 0 ]; fi; }  # TANKHEAL if set
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi
 	ALL=$(ids "$@")
 	if [ "$cmd" != plan ]; then  # the binaries must match the code (build_bins.py), checked before the clean deletes anything
 		python3 $T/build_bins.py guard --what "pipeline.sh $cmd" --bin "${DASH_BIN:-$DASH_DIR/bin}" \
-			--need wowsimcli dashstats $( ([ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]) && echo tankbench healbench) \
+			--need wowsimcli dashstats $(tankheal_on "$@" && echo tankbench healbench) \
 			--mark $ALL $([ "$cmd" = run ] && echo --clear)
 	fi
 	if [ "$cmd" = run ]; then python3 $T/rawstore.py clean $ALL; fi
@@ -187,7 +189,7 @@ EOF
 	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
 	mark probe  # these sims at a tenth of their iterations, kept in the packs for the next probe check
 	PROBE_P=$P python3 $T/probe.py run $ALL
-	if [ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]; then  # a full run (or TANKHEAL=1): the Tanking and Healing modes too
+	if tankheal_on "$@"; then  # a full run (or TANKHEAL=1): the Tanking and Healing modes too
 		mark tankheal
 		TH=tank\ heal
 		if [ "$cmd" = resume ]; then TH=$(for m in tank heal; do [ -e $m/.fresh ] || echo $m; done); fi

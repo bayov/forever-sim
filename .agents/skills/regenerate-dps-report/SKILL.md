@@ -168,7 +168,8 @@ The coordinator (this session):
    `plan.json` to the slot `dash-raw/slot/plan`. `--dry` prints only.
 3. Read your own session id (`get_session` with no id). For each planned session, `create_session` with the repo as
    `source_url`, `source_revision=<sha>`, and a prompt that says: run `<its command>` in the background
-   (`run_in_background`, output to a log file), wait for it to exit without polling, then `send_message` the
+   (`run_in_background` with `timeout: 7200000`, since the default 30 minutes kills a long part, output to a log
+   file), wait for it to exit without polling, then `send_message` the
    coordinator `<session id>` its last 20 log lines and exit code. Do not publish, deploy, commit, merge or push
    anything else, and do not touch master (the worker pushes only its slot `dash-raw/slot/<session>`, a fast-forward
    made with git plumbing). On a failure, report it the same way and stop.
