@@ -1,40 +1,42 @@
-# Fairness pass 46 (2026-11-18, master 2f7e255af)
+# Fairness pass 47 (2026-11-18, master a6677362f)
 
-Result: quiet (no new finding). Range 5f20dfdf4..2f7e255af. No re-sweep: no report build moved.
+Result: findings (1 new). Range 8219f1083..a6677362f (46 commits). Full re-sweep (5k, seed 1, every race) on the
+loop's a6677362f CLI; baseline replaced.
 
 ## What changed in the watched paths
 
 | Change | Commit | Effect on the comparison |
 |---|---|---|
-| Beast Mastery weaves for every main hand swing (APL, presets) | 084813024, 5533c0701 | BM 1115.5 (5k baseline) vs 1115.2 (20k shared run): no move |
-| Shieldsworn Holy Strike no Windfury Totem (core flag comment, paladin holy_strike.go) | 4e81669a9 | tank only; DPS paladins unchanged (Ret 1024.2 vs 1023.3) |
-| Vampiric Embrace heals 10% / 20% | 4e81669a9 | healing only; Shadow 948.6 vs 948.7 |
-| Druid Idol of Rejuvenation, Shaman Totem of Tides | 192cb2e06, 6a3cadbfc | healers only; no DPS request uses them |
-| Item hotfixes (Darkmoon Cards, Bad Hat, Militant's Band, Onyxia Blood Talisman, ...), item_effects.go | fa03a8689, 52596be22, 3ec610c40, 16b197c5b, 056dccb4e | synthetic gear untouched; no DPS build moved |
-| Re-sim of 32 builds; hunter / warrior / Subtlety metas and builds.json refreshed | f42ee71bd, 2c6bd10e5 | published lag of pass 45 closed |
-| report_hashes.txt | 5533c0701 | test data |
+| Haste shortens a spell's GCD, floor 1s (standards 27) | ee35da473, c2efe4ae3 | casters only: Destruction +5.9, Affliction +5.7, Balance +4.2, Elemental +3.8, Frost +1.4, Demonology +1.3, Shadow +0.7; Ret -2.0 (rotations timed for 1.5s, re-time deferred by user ruling, rotations.md) |
+| Report switches folded into code, faster start-up, healbench speedups | c8b5275b1, cc5a55f47, bbfd014e4 | no DPS build moved beyond 5k noise |
+| Healers' idle skip wakes for a hit | 7199c8f9c | healing only |
+| DPS Report full regeneration | 392503f55 | builds.json current |
+
+Every melee, hunter and rogue row is identical to the 5f20dfdf4 baseline: the GCD change did not leak to physical abilities.
 
 ## Checks
 
-- Shared 20k run of 2f7e255af vs `ref/fairness/sweep_baseline.log` (5k) at each report race: all 43 base builds
-  within 1.4 except Enhancement Water Shield (1027.8 -> 1025.7). Paired 20k seed 1 on the 5f20dfdf4 CLI for all 8
-  Enhancement / Frostfire / Demonology requests: 0 of 8 moved more than 0.3. The -2.1 is 5k baseline noise. No leak.
-- Race: report race still best or within 0.6 (MM Orc 1201.7 vs Night Elf 1202.3; Fire Human 1053.8 vs Gnome 1054.2;
-  Combat Daggers Undead 936.0 vs Gnome 936.6). Unchanged from pass 45.
-- Gear: `audit1b.py` on 2f7e255af, 19 of 19 "5a PASS | 1b PASS".
-- Published vs current: builds.json within 1.5 of the shared run on 68 of 68 (results auditor, update 2026-11-18 under
-  results-20261104-2). The pass-45 ranking flips (Survival under Ret, Arms over Affliction in the published order) are
-  gone. Meta-only lags remain: Affliction +31.9 to +36.7, Lone Wolf -22.4, rogues -10.5 to -20.1, Fire -4.9
-  (results-20261104-1 / -2; confirmed independently, not refiled). They do not reach builds.json.
+- Published vs current: builds.json within 1.3 of the shared 20k run on 68 of 68 (no ranking flip). The meta
+  published.dps lags (Affliction +42.5, Lone Wolf -22.4, rogues -10.5 to -20.1, Destruction +6.6, Balance +3.9,
+  Elemental +4.0, Fire -4.9) do not reach builds.json; independent confirmation of results-20261104-1 / -2, not refiled.
+- Race: **Balance** (fairness-20261118-1). The report's race table now names High Order best on all four Balance builds
+  (+3.8 to +6.1). Paired 20k seeds 1 / 1000003: Balance NE 956.1 / 956.2 vs High Order with its race rotation
+  959.8 / 959.8; Wrath NE 866.0 / 866.1 vs High Order 871.9 / 871.9. Cause: the hasted GCD raises the Skyborne
+  haste racial. Elsewhere the report race is best within 0.7 (Shadow Troll +0.7, Combat Daggers Gnome +0.6, Frostfire
+  High Order +0.4, Fire Gnome +0.4); MM wolf / tallstrider Night Elf +1.3 / +1.5 over Orc in the report's 10k table,
+  unchanged since pass 45 and a tie on the base MM build.
+- Gear: `audit1b.py` on a6677362f, 19 of 19 "5a PASS | 1b PASS".
+- Note: `sweep.py` swaps only the race, so for Balance it misses the race-tuned rotation (its table shows Night Elf best);
+  the report's race table and the paired check above use it.
 
 ## Ranking
 
-Unchanged from pass 45 (top Lone Wolf 1291.8, bottom Smite 781.0, 1.65x). Full table: `ref/fairness/table_baseline.md`.
+Order unchanged (top Lone Wolf 1291.8, bottom Smite 781.0, 1.65x). Full table: `ref/fairness/table_baseline.md`,
+copied into `orchestration/fairness_report.md` §1.
 
 ## Baseline
 
-Kept at 5f20dfdf4 (no build moved). `orchestration/fairness_report.md` §1: published column refreshed for the 13 hunter /
-warrior / Subtlety rows and a pass-46 note added; the DPS columns stand.
+Replaced with the a6677362f sweep (`ref/fairness/sweep_baseline.log`, `table_baseline.md`).
 
 ## Open items (unchanged)
 

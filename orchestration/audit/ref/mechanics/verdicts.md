@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-18 UTC, master 8219f1083, client 1.60.1.70959)
+# Mechanics audit: verdicts and settled items (as of 2026-11-18 UTC, master a6677362fc, client 1.60.1.70959)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -110,3 +110,5 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Kang the Decapitator (2291) Rend proc 17153: 100 every 3 sec for 15 sec, physical bleed, verified on 70707 (`sp.py 17153`: dur 15000, eff 6 aura 3 bp 100 per 3000); 1 PPM assumed (no rate in the client). Pass 55, tier 1.
 - Swiftmend (pass 64): post 9's 2026-11-04T02:12Z edit adds "This ability does not consume the Rejuvenation or Regrowth effect on the target" (tier 1). Correction (healer_mechanics-20261104-2/-9): the sim has Swiftmend (`sim/druid/healing.go`); it consumed the HoT until the druid worker gated the cancel off under Forever.
 - Sharpened Claws (16942) is effect 6 aura 290 (all crit), base points 2 on 70938 with the trait curve giving 3% a point: melee and spell crit in the feral forms, as the sim gives since 0cc2c3c8b (tier 1, pass 83).
+- Haste shortens a spell's GCD under Forever (ee35da473, c2efe4ae3; standards 27): 1.5 / (1 + cast speed), floor 1s (wowsims/forever's floor, user ruling 2026-11-18, untested in a log). Tier 1: the user's Enhancement log of 2026-11-18 (instants 1.27-1.33s apart after a magic spell under Warchief's Blessing, 1.52s without; 1.40s+ after Stormstrike). Warchief's Blessing 16609 hastes casts 15% under Forever: in 70959 all three effects are aura 4 (dummy, bp 300 / 15 / 10), so the client can't say what they do and the log is the source. Open: the sim's spell test is school-based, the client's damage class differs for shouts and aspects (mechanics-20261118-2, user ruling).
+- c8b5275b1 (pass 90): the DPS Report's patches became env-var switches (sim/core/report_switches.go); unset, every racial, rage, dot-crit and Hunter's Mark path is as before (tickCritMultiplier returns CritMultiplier unless DASH_ASSUME bleed_tick_crit is set). The old haste_gcd knob is gone from sim/ (merge kept only hastedGCD), so a report run can't haste a GCD twice.

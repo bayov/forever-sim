@@ -1,7 +1,9 @@
-# healer_gear pass 9, master 25ce81de7755
+# healer_gear pass 11 (master a6677362fc)
 
-Changed since 70ea588bb1 on watched paths: only orchestration/standards.md, standard 17 (Windfury Totem internal cooldown wording). Standards 1b, 5, 5a, 35 untouched.
-No change to tools/database synthetic items, ui/*/gear_sets, sim/*/items.go or the recipes input, so no piece, set or row inputs moved. No recompute; earlier verdicts stand. No open findings; none new.
+Trigger: orchestration/standards.md changed (1 line) since 8219f1083f.
 
-## Pass 10 (master f30078da1)
-Watched-file change since cfc7f9382: standards.md rule 17 only (Windfury Weapon/Totem cooldowns), not a healer rule. No healer synthetic sets, gear_sets, healer rows or healer items.go changed, so the pass 9 verdicts above stand. Quiet.
+- Diff: rule 27 only (haste now shortens the spell GCD, 1.5/(1+haste), 1s floor; ruling 2026-11-18). No change to rules 1b, 5, 5a, 35.
+- No change on master since the last pass to tools/database synthetic healer items, ui/*/gear_sets, or orchestration/gear_targets.md.
+- Haste is not in the healer weights (Sta/Int/Spi/crit/SP/healing/MP5/hit), so no piece's linear total, norm or set share moves.
+- Per-piece and per-set tables from pass 10 stand (not recomputed: inputs and standards unchanged).
+- Findings: none open; none new.

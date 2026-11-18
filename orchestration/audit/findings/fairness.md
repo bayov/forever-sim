@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261118-1: Balance's report race (Night Elf) is no longer its best; High Order sims 3.7 to 6.1 higher since haste shortens the GCD
+- severity: medium (0.4% to 0.7% on all four Balance builds; Balance keeps its class-level place between Elemental and Shadow)
+- affects: druid__balance (default), druid__balance-duty-ff, druid__balance-wrath, druid__balance-wrath-duty-ff
+- found: 2026-11-18, master a6677362f
+- evidence: the published report's own race table (ui/dps_report/data/builds.json at a6677362f, raceIters 10000) now names High Order as bestRace for all four: Balance 955.6 vs 959.4 (+3.8), FF duty 920.0 vs 924.9 (+4.9), Wrath 865.8 vs 871.9 (+6.1), Wrath FF duty 833.9 vs 840.0 (+6.1). At 8219f1083 Night Elf was best for all four. Paired check, shared CLI a6677362fc06, 20000 iterations, seeds 1 / 1000003, report request with only the race changed: druid__balance Night Elf 956.1 / 956.2, High Order with its race rotation (req/races/druid__balance.SkyborneHighOrder.json) 959.8 / 959.8 (+3.7), High Order on the preset rotation 948.8 / 949.0; druid__balance-wrath Night Elf 866.0 / 866.1, High Order (no race rotation) 871.9 / 871.9 (+5.9). Sure of the numbers. Cause: ee35da473 / c2efe4ae3 (standards 27, haste shortens a spell GCD to 1s) makes the Skyborne 2% haste racial worth more; the 87ce834 regeneration re-simmed at the old race. Standards 16 / 29 say presets re-pick to the best race; this is outside noise.
+- proposed fix: set the four Balance requests' and presets' race to Skyborne High Order (Balance and Balance FF duty with the race-tuned rotation the race table already uses) and re-sim them; or record in standards why Night Elf stays.
+- needs: orchestrator fix
+
 ## Resolved
 
 ### fairness-20261112-1: Combat Daggers is now the rogue Combat default, but Combat Swords sims 10 DPS higher at master

@@ -1,8 +1,10 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-18, pass 19, master 2f7e255af (Nov 16 hotfix:
-a Shieldsworn Holy Strike no longer rolls Windfury Totem; paladin -29 / -38 / -22, TPS -1%, the others identical). Last
+preset weight, its reasons, and the open questions. Last pass: 2026-11-18, pass 21, master a6677362f (spell GCD
+haste, standards 27, and the healer reaction-time wake fix: the Warden -16 / +1 / +30, within about 2 sigma, the others
+identical; ranking unchanged). Pass 19, master 2f7e255af: a Shieldsworn Holy Strike no longer rolls Windfury Totem
+(paladin -29 / -38 / -22, TPS -1%). Last
 full change: pass 16, master 25ce81de7, after the Nov 13 hotfixes (PR #130: Windfury Totem rolls on every landed main hand melee hit, standards 17;
 Judgement of Command melee again) and the warrior's Balanced and Max survival re-tune (f2a5dfe25). The report has the details
 (orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
@@ -11,9 +13,9 @@ Judgement of Command melee again) and the warrior's Balanced and Max survival re
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2644 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1280 |
-| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1837 / 1776 / 364 / -2242 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |
+| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1837 / 1776 / 364 / -2211 |
 
 The Nov 13 Windfury rule (every landed main hand hit rolls the totem) gave the bear +328 / +260 / +129 (12% at Max
 threat, TPS +163) and the Warden +88 / +61 at Max threat / Balanced; the paladin +38 at Balanced; the warrior nothing
@@ -24,8 +26,8 @@ so fair): two-seed means now warrior 1830 (1836.7 / 1822.3), paladin 1781 (1775.
 ahead by 49 (2.7%), outside the error. The paladin's open potion action (finding -20261105-1, +374 at Max survival in
 pass 13) would still put the paladin first.
 
-TPS (Balanced): warrior 2075, bear 1628, paladin 1519, Warden 1387. Healing needed (Balanced): paladin 245, warrior 340,
-bear 473, Warden 666.
+TPS (Balanced): warrior 2075, bear 1628, paladin 1519, Warden 1385. Healing needed (Balanced): paladin 245, warrior 340,
+bear 473, Warden 664.
 
 Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins
 at its preset (pass 11).

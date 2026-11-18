@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8219f1083fee9fd246d24371df47037cca743946"
+  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
  },
- "last_pass_at": "2026-11-18T13:03:44Z",
- "pass": 18,
- "result": "quiet",
- "note": "Pass 18 on 8219f1083. Only sim change: Forever dot haste rule (sim/core/dot.go) used by Hurricane and Volley only; no healer HoT or channel sets AffectedByCastSpeed. Full 63-row baseline re-simmed at 1,000 it, byte-identical to ref. -20261115-1 and -20261104-2 still open.",
+ "last_pass_at": "2026-11-18T19:08:04Z",
+ "pass": 19,
+ "result": "findings",
+ "note": "Pass 19 on a6677362f. 7199c8f9c (idle skip wakes for late-seen hits) moved 42 of 63 baseline rows; filed -20261118-1 (unconfirmed paired check). Ref replaced. -20261115-1 and -20261104-2 still open (Disc Chromaggus unchanged, OOM 101 s).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-18T13:03:55Z"
+ "checked_at": "2026-11-18T19:08:34Z"
 }

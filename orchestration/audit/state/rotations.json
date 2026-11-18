@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8219f1083fee9fd246d24371df47037cca743946"
+  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
  },
- "last_pass_at": "2026-11-18T01:06:46Z",
- "pass": 69,
+ "last_pass_at": "2026-11-18T18:54:43Z",
+ "pass": 70,
  "result": "quiet",
- "note": "Pass 69: BM weave (084813024) verified on seed 2e8 (+0.9/+0.9/+2.2 over old). Sim changes (Shieldsworn HS no WF, VE heal, item hotfixes) reach no DPS preset. WF ability-timing item partly done: Fury BT, Combat SS, Arms MS gated 100 ms after swing: all null. Rogue poison finding still open.",
+ "note": "Pass 70: no APL/req change. Hasted spell GCD (ee35da473/c2efe4ae3) moved casters +0.2..0.9%, paladins -0.1..0.4% (open re-timing item). Melee/rogue/hunter unchanged. vs_published gaps (Affliction +4%, rogues -2%, LW -1.7%) are report switches, not rotations.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-18T13:03:55Z",
- "baseline": "baseline_2f7e255_3000it_seed424242.tsv"
+ "checked_at": "2026-11-18T19:08:34Z",
+ "baseline": "baseline_a667736_3000it_seed424242.tsv"
 }
