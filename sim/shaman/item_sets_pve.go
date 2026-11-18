@@ -83,7 +83,8 @@ var ItemSetTheFiveThunders = core.NewItemSet(core.ItemSet{
 // Forever's reworked Five Thunders, sold by Mokvar in Orgrimmar. It has 24 pieces in three
 // variants (caster 227001-227008, healer 227009-227016, Strength 227017-227024) that all carry set
 // ID 1679, so pieces of different variants count together. The bonuses are the client's
-// ItemSetSpell rows for set 1679 (1.60.1.70938).
+// ItemSetSpell rows for set 1679 (1.60.1.70938). Forever's Dungeon Set 1 pieces (227033-227040,
+// revealed 2026-11-17) are in set 1679 too, and their tooltips list the same bonuses.
 //
 // The 5-piece row (1302718, Electrocute) disarms a melee attacker when struck, which a boss fight
 // does not test, so it is left out.
