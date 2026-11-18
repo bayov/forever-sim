@@ -18,6 +18,22 @@
   tankheal.py pack                               $DASH_DIR/tank and heal into raw/bench/<mode>.tgz (deterministic)
   tankheal.py unpack                             the packs back into $DASH_DIR/tank and heal
   tankheal.py fresh [--clear]                    the modes run since the last publish (stale.mjs --record-bench them)
+  tankheal.py probe [tank|heal ...] [--presets <stem,...>] [--stale-ok]
+                                                 each preset's probe into $DASH_DIR/<mode>/probe/<stem>.json, packed with
+                                                 the mode: its main bench at ITERS / 10 and its race sims with every pilot
+                                                 and ceiling of adaptive.py divided by 10, fingerprinted (probe_cli's
+                                                 canon and digest) under a _key of the settings, the real bench binary,
+                                                 the requests, boss files and scripts. run makes them after its races
+                                                 (TANKHEAL_PROBE=0 skips it); alone, it refuses stale presets the last run
+                                                 here didn't sim (--stale-ok for a throwaway measurement)
+  tankheal.py probe check [tank|heal ...] [--presets <stem,...>] [--json]
+                                                 probe the presets (default: the stale ones) into probe_check/bench/<mode>/,
+                                                 compare with the pack's probes, print the moved and cleared presets and
+                                                 one cleared preset to re-sim anyway (the audit, seeded by HEAD), and write
+                                                 audit.json there for publish
+  tankheal.py probe audit | passed               publish's steps: exit 1 unless the run since kept the cleared presets'
+                                                 main rows and the audit preset's race rows as the pack had them; then the
+                                                 cleared presets no run re-simmed, as <mode>:<stem,...> (--record-bench --by probe)
 
 Tanking: every preset request in tools/tankbench/req (warrior_protection.json is no preset) on the seven boss files
 of tools/encounters, `tankbench -iters 1000 -encounter <boss>`, the requests' own seed (simOptions.randomSeed).
@@ -43,7 +59,7 @@ refuses binaries its stamp doesn't match to the code (DASH_ALLOW_BIN_MISMATCH=<r
 Every bench call splits its sims into DASH_SPLITS parts (default 4, as pipeline.sh sets for the DPS steps), so the
 outputs are the same on every machine. run.json records the count, and unpack refuses a pack made with another one.
 """
-import ast, glob, hashlib, io, json, math, os, re, shutil, subprocess, sys, tarfile, threading, time
+import ast, glob, hashlib, io, json, math, os, platform, random, re, shutil, subprocess, sys, tarfile, threading, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -117,7 +133,8 @@ def class_races():
 def bench(mode, args, files, out):
     exe = os.path.join(BIN, 'tankbench' if mode == 'tank' else 'healbench')
     t = time.time()
-    r = subprocess.run([exe] + args + files, cwd=TREE, capture_output=True, text=True, env=dict(os.environ, TIMING_STEP=mode))  # the step timing_cli.py logs it under
+    step = os.environ.get('TANKHEAL_STEP') or mode  # the step timing_cli.py logs it under (a probe's: <mode>_probe)
+    r = subprocess.run([exe] + args + files, cwd=TREE, capture_output=True, text=True, env=dict(os.environ, TIMING_STEP=step))
     if r.returncode:
         sys.exit(f'{exe} failed ({r.returncode}):\n{r.stderr[-2000:]}')
     text = ''.join(l + '\n' for l in (r.stdout + r.stderr).split('\n') if l.strip() and not LOG_LINE.match(l))
@@ -314,6 +331,12 @@ def run(modes, races=True, resume=False, only=None):
                 lines = race_lines_sorted(open(res).readlines(), stems)
                 open(res, 'w').writelines(lines)
             note('races', round(time.time() - t1, 1))
+            if os.environ.get('TANKHEAL_PROBE', '1') != '0':
+                # the probe of every preset, packed with the mode for the next probe check; a probe the check made or
+                # the old pack holds under the key it would get now is copied, and a stopped run keeps what it probed
+                t2 = time.time()
+                probe_presets(mode, stems, os.path.join(out, 'probe'), reuse=(probe_records(os.path.join(CHECK_DIR, mode)), stored_probes(mode)))
+                note('probe', round(time.time() - t2, 1))
         info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
                 'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
                 'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
@@ -327,6 +350,314 @@ def run(modes, races=True, resume=False, only=None):
         simmed = [s for s in stems if s not in kept]
         open(os.path.join(out, '.fresh'), 'w').write(commit_run + '\n' + (','.join(simmed) + '\n' if kept else ''))
         print(f'{mode}: {info["seconds"]} s')
+
+
+# ---------------------------------------------------------------- probes
+#
+# A preset's probe is its sims at fixed reduced sizes, a tenth of the full run's: the main bench at ITERS / 10 and the
+# race sims with every pilot and ceiling of adaptive.py divided by 10. It is compared with the probe the last full run
+# made at the same sizes, never with the full run itself: the carry's bisection and the race lattice walk pick their
+# scales from the death shares seen so far, so a fight prefix of the full run is not what fewer fights sim.
+
+PROBE_SCALE = 10
+PROBE_P = int(os.environ.get('TANKHEAL_PROBE_P', 2))  # presets at a time, each sim split DASH_SPLITS ways
+CHECK_DIR = os.path.join(D, 'probe_check', 'bench')  # a check's probes and audit.json, by mode (hydrate empties it)
+PROBE_SCRIPTS = ('tankheal.py', 'bench_races.py', 'adaptive.py', 'dashpaths.py', 'run_build.py', 'probe_cli.py')
+HEAL_RAID = ('tools/tankbench/req/warrior_protection.json', 'tools/dps_report/req/mage__frost.json')  # healbench -tank, -filler
+_hashes = {}
+
+
+def probe_settings():
+    """The probe's sizes: a tenth of the full run's, recorded in every probe (a probe of other sizes isn't compared)."""
+    s = PROBE_SCALE
+    return {'format': 1, 'scale': s, 'iters': ITERS // s, 'racePilot': adaptive.RACE_PILOT // s, 'pilot': adaptive.PILOT // s,
+            'ceil': adaptive.CEIL // s, 'healCeil': adaptive.HEAL_CEIL // s, 'splits': SPLITS, 'arch': platform.machine()}
+
+
+def file_hash(path):
+    """sha256 of a file ('-' when it is missing), kept for the process: the binaries are tens of megabytes."""
+    if path not in _hashes:
+        try:
+            _hashes[path] = hashlib.sha256(open(path, 'rb').read()).hexdigest()
+        except OSError:
+            _hashes[path] = '-'
+    return _hashes[path]
+
+
+def probe_key(mode, stem, settings):
+    """What a preset's probe is made from (probe.py's _key for the benches): the settings, the bench binary behind any
+    timing link (build_bins.real_bin), the preset's request, the boss files, healbench's tank and filler requests, and
+    the scripts. When it is equal, the probe is too."""
+    import build_bins
+    exe = build_bins.BENCH_BINS[mode]
+    k = {'settings': settings, 'bin': file_hash(build_bins.real_bin(os.path.join(BIN, exe))), 'req': file_hash(req_path(mode, stem)),
+         'encounters': {b: file_hash(os.path.join(TREE, 'tools/encounters', b + '.json')) for b in BOSSES},
+         'scripts': {f: file_hash(os.path.join(HERE, f)) for f in PROBE_SCRIPTS}}
+    if mode == 'heal':
+        k['raid'] = {p: file_hash(os.path.join(TREE, p)) for p in HEAL_RAID}
+    return hashlib.sha256(json.dumps(k, sort_keys=True).encode()).hexdigest()[:20]
+
+
+def probe_env(mode, settings, work):
+    """The environment of one preset's probe: its own DASH_DIR (so the race vectors start empty) and the reduced sizes."""
+    return dict(os.environ, DASH_DIR=work, DASH_TREE=TREE, TANKHEAL_BIN=BIN, DASH_SPLITS=str(settings['splits']),
+                ADAPT_PILOT=str(settings['pilot']), ADAPT_RACE_PILOT=str(settings['racePilot']), ADAPT_MAX=str(settings['ceil']),
+                ADAPT_HEAL_MAX=str(settings['healCeil']), TANKHEAL_PROBE_ITERS=str(settings['iters']), TANKHEAL_STEP=mode + '_probe')
+
+
+def boss_files(mode, stem):
+    return list(BOSSES) if mode == 'tank' else [f'{heal_role(stem)}_{b}' for b in BOSSES]
+
+
+def probe_one(mode, stem, work):
+    """One preset's probe, in a process of its own (probe_env): the main bench on each boss at the probe's iterations,
+    then its race sims (race_sims at adaptive.py's reduced sizes), fingerprinted into <work>/probe.json."""
+    from probe_cli import digest
+    for boss, name in zip(BOSSES, boss_files(mode, stem)):
+        args = ['-encounter', f'tools/encounters/{boss}.json', '-iters', os.environ['TANKHEAL_PROBE_ITERS']]
+        bench(mode, args if mode == 'tank' else ['-carry', '-role', heal_role(stem)] + args, [req_path(mode, stem)], os.path.join(work, name + '.txt'))
+    race_sims(mode, [stem], work)
+    texts = {n: open(os.path.join(work, n)).read() for n in os.listdir(work) if n.endswith('.txt')}
+    rows = main_rows(texts, mode, stem)
+    if rows is None or not all(rows):
+        sys.exit(f'{mode} {stem}: the main bench printed no row for it')
+    score = 'score' if mode == 'tank' else 'carry'
+    rec = {'main': {n: digest(list(r)) for n, r in zip(boss_files(mode, stem), rows)}, 'races': {}, 'values': {}}
+    for l in open(os.path.join(work, 'races.jsonl')):
+        r = json.loads(l)
+        k = f'{r["race"]}:{r["variant"]}'
+        rec['races'][k] = digest(r)
+        rec['values'][k] = r.get(score)  # to say how far a moved probe moved; compare reads the fingerprints
+    json.dump(rec, open(os.path.join(work, 'probe.json'), 'w'))
+
+
+def probe_records(d):
+    """The probe records in a folder: {stem: record}."""
+    out = {}
+    for p in glob.glob(os.path.join(d, '*.json')):
+        if os.path.basename(p) not in ('audit.json', 'bin_override.json'):
+            try:
+                out[os.path.basename(p)[:-5]] = json.load(open(p))
+            except ValueError:
+                pass
+    return out
+
+
+def stored_probes(mode):
+    """The probes in raw/bench/<mode>.tgz: {stem: record} (none in a pack made before probes were kept)."""
+    files = pack_files(mode) or {}
+    return {n[len('probe/'):-5]: json.loads(t) for n, t in files.items() if n.startswith('probe/') and n.endswith('.json')}
+
+
+def probe_presets(mode, stems, dest, reuse=()):
+    """Probe these presets into dest/<stem>.json: {stem: record}. A record already there with the key it would get now is
+    kept (a stopped run restarts where it was), and one in a reuse source ({stem: record}) with it is copied (a full run
+    after a check, or a pack of the same binary and inputs). PROBE_FORCE=1 probes everything."""
+    from concurrent.futures import ThreadPoolExecutor
+    settings, force = probe_settings(), os.environ.get('PROBE_FORCE') == '1'
+    os.makedirs(dest, exist_ok=True)
+    base = os.path.join(D, 'probe_work', 'bench_' + mode)
+
+    def save(path, rec):
+        with open(path, 'w') as fh:
+            json.dump(rec, fh, indent=0, sort_keys=True)
+            fh.write('\n')
+
+    def one(s):
+        key, path = probe_key(mode, s, settings), os.path.join(dest, s + '.json')
+        if not force:
+            have = probe_records(dest).get(s) if os.path.exists(path) else None
+            for i, rec in enumerate([have] + [r.get(s) for r in reuse]):
+                if rec and rec.get('_key') == key and not rec.get('failed'):
+                    if i:
+                        save(path, rec)
+                    print(f'{mode} probe {s}: {"kept" if not i else "copied"} (same key)', flush=True)
+                    return s, rec
+        work = os.path.join(base, s)
+        shutil.rmtree(work, ignore_errors=True)
+        os.makedirs(work)
+        t = time.time()
+        r = subprocess.run([sys.executable, os.path.abspath(__file__), '_probe1', mode, s, work], env=probe_env(mode, settings, work),
+                           capture_output=True, text=True)
+        rec = {'settings': settings, '_key': key}
+        if r.returncode or not os.path.exists(os.path.join(work, 'probe.json')):
+            rec['failed'] = r.returncode or 1
+            print(f'{mode} probe {s} FAILED (exit {r.returncode}):\n{(r.stdout + r.stderr)[-1500:]}', file=sys.stderr, flush=True)
+        else:
+            rec.update(json.load(open(os.path.join(work, 'probe.json'))))
+        save(path, rec)
+        shutil.rmtree(work, ignore_errors=True)
+        print(f'{mode} probe {s}: {len(rec.get("races", {}))} race rows, {round(time.time() - t)} s', flush=True)
+        return s, rec
+
+    with ThreadPoolExecutor(PROBE_P) as ex:
+        res = dict(ex.map(one, stems))
+    shutil.rmtree(base, ignore_errors=True)
+    return res
+
+
+def probe_compare(old, new):
+    """What differs between two probes of a preset: [] when they're the same."""
+    if old is None:
+        return ['no stored probe (the mode was last simmed before bench probes were kept)']
+    if old.get('settings') != new.get('settings'):
+        return [f'the stored probe has other settings ({old.get("settings")})']
+    if old.get('failed') or new.get('failed'):
+        return [f'a probe failed (stored: {old.get("failed") or "no"}, new: {new.get("failed") or "no"})']
+    out = []
+    main = sorted(k for k in old['main'].keys() | new['main'].keys() if old['main'].get(k) != new['main'].get(k))
+    if main:
+        out.append('main bench: ' + ', '.join(main))
+    o, n = old['races'], new['races']
+    changed, gone, added = [k for k in o.keys() & n.keys() if o[k] != n[k]], o.keys() - n.keys(), n.keys() - o.keys()
+    if changed or gone or added:
+        moves = [abs(new['values'][k] / old['values'][k] - 1) for k in changed
+                 if (old.get('values') or {}).get(k) and (new.get('values') or {}).get(k) is not None]
+        out.append('races: ' + ', '.join(x for x in (
+            f'{len(changed)} of {len(o.keys() & n.keys())} rows differ' + (f' (score up to {100 * max(moves):.2f}% apart)' if moves else '') if changed else '',
+            f'{len(gone)} rows gone' if gone else '', f'{len(added)} new rows' if added else '') if x))
+    return out
+
+
+def audit_pick(cleared, commit, mode, n=1):
+    """The cleared presets a check re-sims in full anyway, seeded by the commit and the mode (probe.py's audit)."""
+    rng = random.Random(f'{commit}:{mode}')
+    return sorted(rng.sample(sorted(cleared), min(n, len(cleared))))
+
+
+def head():
+    return subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+
+
+def fresh_simmed(mode):
+    """The presets the mode's last run simmed (its .fresh), None when it hasn't run since the last publish."""
+    p = os.path.join(D, mode, '.fresh')
+    if not os.path.exists(p):
+        return None
+    lines = open(p).read().split('\n')
+    return set(lines[1].split(',')) if len(lines) > 1 and lines[1].strip() else set(presets(mode))
+
+
+def probe_guard(mode, what, marker):
+    """The bin check before a probe: a probe on binaries that don't match the code is marked (marker), so stale.mjs
+    --record-bench refuses what it vouches for."""
+    import build_bins
+    rec = build_bins.guard(BIN, [build_bins.BENCH_BINS[mode]], what)
+    if rec:
+        build_bins.mark(marker, rec)
+    elif os.path.exists(marker) and 'probe_check' in marker:
+        os.remove(marker)
+
+
+def probe_write(modes, want=None, stale_ok=False):
+    """tankheal.py probe: the probes the packs keep, into $DASH_DIR/<mode>/probe/ (pack after). A probe must describe the
+    sims of the pack it goes into, so a preset stale.mjs calls stale is refused unless this $DASH_DIR's last run simmed
+    it (.fresh) or --stale-ok (a throwaway measurement)."""
+    stale = {} if stale_ok else stale_presets()
+    for mode in modes:
+        stems = [s for s in presets(mode) if want is None or s in want]
+        simmed = fresh_simmed(mode) or set()
+        bad = [s for s in stems if s in stale.get(mode, ()) and s not in simmed]
+        if bad:
+            print(f'{mode}: not probing {" ".join(bad)}: stale, so the pack\'s sims are not this code\'s (re-sim them, or --stale-ok)', file=sys.stderr)
+            stems = [s for s in stems if s not in bad]
+        if not stems:
+            continue
+        probe_guard(mode, f'tankheal.py probe {mode}', os.path.join(D, mode, 'bin_override.json'))
+        t = time.time()
+        probe_presets(mode, stems, os.path.join(D, mode, 'probe'))
+        print(f'{mode}: probed {len(stems)} presets in {round(time.time() - t)} s')
+
+
+def probe_check(modes, want=None, as_json=False):
+    """tankheal.py probe check: probe the presets (default: the stale ones) into probe_check/bench/<mode>/, compare each
+    with the probe in the mode's pack, and write audit.json there: the presets it cleared, the one it re-sims anyway (the
+    audit) and the ones that moved."""
+    stale = stale_presets() if want is None else None
+    commit, report = head(), {}
+    for mode in modes:
+        stems = sorted(want & set(presets(mode)) if want is not None else stale.get(mode, ()))
+        if not stems:
+            print(f'{mode}: nothing to probe')
+            continue
+        dest = os.path.join(CHECK_DIR, mode)
+        os.makedirs(dest, exist_ok=True)
+        probe_guard(mode, f'tankheal.py probe check {mode}', os.path.join(dest, 'bin_override.json'))
+        t = time.time()
+        new, old = probe_presets(mode, stems, dest), stored_probes(mode)
+        moved, cleared = {}, []
+        for s in stems:
+            why = probe_compare(old.get(s), new[s])
+            if why:
+                moved[s] = why
+            else:
+                cleared.append(s)
+        audit = audit_pick(cleared, commit, mode)
+        passed = sorted(set(cleared) - set(audit))
+        json.dump({'commit': commit, 'cleared': passed, 'audit': audit, 'moved': sorted(moved), 'why': moved},
+                  open(os.path.join(dest, 'audit.json'), 'w'), indent=1)
+        report[mode] = {'cleared': passed, 'audit': audit, 'moved': moved}
+        if as_json:
+            continue
+        print(f'{mode}: {len(cleared)} of {len(stems)} presets come out the same: {" ".join(cleared) or "none"} ({round(time.time() - t)} s)')
+        for s, why in sorted(moved.items()):
+            print(f'  {s}: {"; ".join(why)}')
+        print(f'  audit (cleared, but its races re-simmed in full): {" ".join(audit) or "none"}')
+        resim = sorted(moved) + audit
+        print(f'  next: tankheal.py run {mode} --presets {",".join(resim)}' if resim else '  next: nothing to sim')
+    if as_json:
+        print(json.dumps(report, indent=1))
+    elif report:
+        print('then: pipeline.sh publish: it checks the audit and records the cleared presets (stale.mjs --record-bench --by probe)')
+
+
+def probe_audit():
+    """publish's check, before the pack is rewritten: for every mode a check left an audit.json for, the run since must
+    have re-simmed the audit preset, its main rows and race rows must be the pack's, and every cleared preset's main
+    rows (the full main bench, which ran whole) must be the pack's too. Exit 1 otherwise."""
+    for mode in MODES:
+        p = os.path.join(CHECK_DIR, mode, 'audit.json')
+        if not os.path.exists(p):
+            continue
+        a = json.load(open(p))
+        simmed = fresh_simmed(mode)
+        missing = [s for s in a['audit'] if simmed is None or s not in simmed]
+        if simmed is None or missing:
+            sys.exit(f'{mode} probe audit: run the main bench and re-sim the audit preset first (tankheal.py run {mode} --presets '
+                     f'{",".join(sorted(set(a["moved"]) | set(a["audit"])))}), or delete {p} to record nothing by probe')
+        old, out = pack_files(mode) or {}, os.path.join(D, mode)
+        new = {n: open(os.path.join(out, n)).read() for n in os.listdir(out) if n.endswith('.txt') or n == 'races.jsonl'}
+        bad = [s for s in a['audit'] if main_rows(old, mode, s) != main_rows(new, mode, s) or race_rows_of(old, s) != race_rows_of(new, s)]
+        bad += [s for s in a['cleared'] if main_rows(old, mode, s) != main_rows(new, mode, s)]
+        if bad:
+            sys.exit(f'{mode} probe audit FAILED: {" ".join(sorted(set(bad)))} passed the probe, but the full sims moved. The probe '
+                     f'missed a change, so its other clearances can\'t be trusted: re-sim them (tankheal.py run {mode} --presets '
+                     f'{",".join(sorted(set(a["cleared"]) | set(a["audit"]) | set(a["moved"])))}), then delete {p} and publish')
+        print(f'{mode} probe audit: the main bench unchanged for {len(a["cleared"])} cleared presets, the audit preset\'s races '
+              f'({" ".join(a["audit"]) or "none"}) unchanged')
+
+
+def race_rows_of(files, stem):
+    """A preset's races.jsonl rows in a mode's files, in order."""
+    return [json.loads(l) for l in (files.get('races.jsonl') or '').splitlines() if l.strip() and json.loads(l)['build'] == stem]
+
+
+def probe_passed():
+    """The presets the checks cleared and no run since re-simmed, as stale.mjs --record-bench takes them (<mode>:<stem,...>)."""
+    out, commit = [], head()
+    for mode in MODES:
+        p = os.path.join(CHECK_DIR, mode, 'audit.json')
+        if not os.path.exists(p):
+            continue
+        a = json.load(open(p))
+        if a['commit'] != commit:
+            print(f'{p} is from {a["commit"][:10]}, not HEAD: its presets are not recorded (probe again)', file=sys.stderr)
+            continue
+        simmed = fresh_simmed(mode) or set()
+        cleared = [s for s in a['cleared'] if s not in simmed]
+        if cleared:
+            out.append(f'{mode}:{",".join(cleared)}')
+    return out
 
 
 # ---------------------------------------------------------------- packs
@@ -1025,6 +1356,23 @@ if __name__ == '__main__':
         unpack()
     elif cmd == 'fresh':
         fresh('--clear' in args)
+    elif cmd == 'probe':
+        sub = args[0] if args and args[0] in ('check', 'audit', 'passed') else ''
+        rest = args[1:] if sub else args
+        modes = [a for a in rest if a in MODES] or list(MODES)
+        want = set(rest[rest.index('--presets') + 1].split(',')) if '--presets' in rest else None
+        if want and want - set().union(*(presets(m) for m in MODES)):
+            sys.exit(f'no such preset: {" ".join(sorted(want - set().union(*(presets(m) for m in MODES))))}')
+        if sub == 'check':
+            probe_check(modes, want, '--json' in rest)
+        elif sub == 'audit':
+            probe_audit()
+        elif sub == 'passed':
+            print(' '.join(probe_passed()))
+        else:
+            probe_write(modes, want, '--stale-ok' in rest)
+    elif cmd == '_probe1':  # one preset's probe, in the process probe_presets starts (probe_env)
+        probe_one(*args)
     else:
         print(__doc__)
         sys.exit(1)

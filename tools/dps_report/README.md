@@ -369,6 +369,8 @@ tankheal.py run heal --resume      # a stopped run keeps the bench calls it fini
 tankheal.py build                  # $DASH_DIR/{tank,heal}/ -> $DASH_DIR/data/{tank,heal}_*.json
 tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz <-> $DASH_DIR/{tank,heal}/
 tankheal.py fresh [--clear]        # the modes simmed since their last publish (<mode>:<stem,...> when some were kept)
+pipeline.sh benchprobe [heal]      # = tankheal.py probe check: which stale presets really moved ("Bench probes" below)
+tankheal.py probe heal [--presets <stem,...>]   # the probes the pack keeps, into $DASH_DIR/heal/probe/ (run makes them too)
 ```
 
 `--resume` reuses a mode's `.progress.json` when the run started at the current HEAD, or at another commit whose bench
@@ -431,7 +433,52 @@ The main bench calls take about half a minute for tanking and a few minutes for 
 the run: on a 4-core machine about 15 minutes for tanking (2026-11-04: 12 minutes, some race fights already kept)
 and about 3 hours for healing (most of it the raid healers' race sims, 25 to 95 minutes a preset).
 
-## Partial regenerations
+### Bench probes
+
+A `sim/core` change stales every Tanking and Healing preset, though most come out the same. `pipeline.sh benchprobe`
+(`tankheal.py probe check`) finds the ones that don't, the way "Probes" below does for the DPS builds:
+
+- It runs each stale preset's main bench (every boss) and its race sims in a scratch folder (`probe_work/`, so the race
+  sims start with an empty vector store), at a tenth of the full sizes: the main bench at 100 fights, and every pilot
+  and ceiling of `adaptive.py` divided by 10 (race pilot 200, pilot 100, ceiling 4000, healing ceiling 600). Each preset
+  runs in its own child process, `TANKHEAL_PROBE_P` presets at a time (default 2), each sim split `DASH_SPLITS` ways.
+- The probe of a preset is a fingerprint of each boss's main rows and of each race row (`probe_cli.py`'s `canon` and
+  `digest`), plus the carry or score of each row. The sim reseeds every fight, so unchanged code and data give the same
+  fingerprints. A probe is only ever compared with another probe, never with the full run: the healbench `-carry`
+  bisection and the race walk pick their next scale from the deaths seen so far, so a shorter run sims other scales.
+- `tankheal.py run` ends by probing the presets it ran the races for (`TANKHEAL_PROBE=0` skips it), into
+  `<mode>/probe/<stem>.json`, and the pack keeps them. A check compares the new probe with the pack's: the same means the
+  full sims would come out the same, anything else names the bosses or the share of race rows that moved.
+- Every probe carries a `_key`, the same idea as the DPS probe's: the probe settings (sizes, splits, architecture), the
+  sha256 of the real bench binary (`build_bins.real_bin`, behind the timing links), the preset's request, the boss
+  files, the healing raid's filler requests and the scripts the probe runs (`tankheal.py`, `bench_races.py`,
+  `adaptive.py`, `dashpaths.py`, `run_build.py`, `probe_cli.py`). `run` keeps a probe whose key matches, copies one from
+  `probe_check/bench/<mode>/` or the pack when that has it, and probes the rest (`PROBE_FORCE=1` probes all). `compare`
+  ignores the key.
+- A change only one fight in thousands reaches can hide from a probe. So a check picks one cleared preset per mode for
+  a full re-sim anyway (the audit, picked at random with HEAD as the seed). `publish` then checks that the run kept the
+  audit preset's main and race rows and every cleared preset's main rows (the main bench always runs whole) exactly as
+  the pack had them. If one moved it stops: re-sim every cleared preset. Otherwise it records the cleared presets as
+  current (`stale.mjs --record-bench heal:<stem,...> --by probe`), and their race rows stay as they are. Like
+  `--by probe` for the DPS builds, it refuses a mode the check ran on mismatched binaries (`bin_override.json`).
+- A pack without probes is re-simmed. To start the probes for a mode without re-simming it, run `tankheal.py probe
+  <mode>` right after a `tankheal.py run` of the same code (it refuses a stale preset the last run didn't sim), then pack.
+
+```bash
+pipeline.sh hydrate
+node stale.mjs                                   # stale Tanking and Healing presets
+pipeline.sh benchprobe heal                      # prints what moved and the audit preset, writes probe_check/bench/heal/audit.json
+tankheal.py run heal --presets <moved>,<audit>   # with TANKHEAL_BIN set, as pipeline.sh tankheal does
+pipeline.sh publish                              # checks the audit, records the cleared presets --by probe
+```
+
+Measured on 4 cores (2026-11-18, one preset at a time, twice each with the same fingerprints): a raid healer
+(`priest_holy_raid`) 565s wall and 1,500s CPU, a tank healer (`shaman_restoration`) 120s wall and 260s CPU, a tank
+preset (`warrior_protection_balanced`) 80s wall and 145s CPU. So a check of a whole mode at the default 2 presets at a
+time takes about 30min to 48min for Healing (4 raid and 5 tank healers, about 7,300s CPU), against about 87min for a
+full run, and about 8min to 16min for Tanking (about 1,750s CPU), against about 50min. That is far more than a tenth:
+each probe sim still starts the bench, loads the raid and walks as many bisection and race steps, only with fewer
+fights. The probe pass at the end of `tankheal.py run` costs the same per preset it ran races for.
 
 Every build's raw sim outputs live in `raw/<id>.tgz`, committed on master with the datasets and `provenance.json` they
 made (design and audits: `orchestration/dash_raw_store.md`). `build_data.py` always rebuilds every dataset from every

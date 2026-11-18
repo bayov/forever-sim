@@ -44,8 +44,11 @@
 //   node tools/dps_report/stale.mjs --record <id...|all> [--commit <rev>] [--iterations N] [--by sim|probe|hand]
 //                                                                   record builds as current at <rev>
 //   node tools/dps_report/stale.mjs --record-bench <tank|heal|tank:<stem,...>|heal:<stem,...> ...> [--commit <rev>]
-//                                   [--iterations N]                record a mode's presets (all, or the ones named)
-//                                                                   as current at <rev>
+//                                   [--iterations N] [--by sim|probe]
+//                                                                   record a mode's presets (all, or the ones named)
+//                                                                   as current at <rev>; --by probe for the presets
+//                                                                   tankheal.py probe check cleared (refused when the
+//                                                                   check ran on binaries that don't match the code)
 //   node tools/dps_report/stale.mjs --bench-fingerprint <tank|heal> [--commit <rev>]
 //                                                                   print a mode's per-preset input fingerprints, the
 //                                                                   ones --record-bench records (tankheal.py --resume)
@@ -264,6 +267,9 @@ if (args.includes('--record-bench')) {
 	const i = args.indexOf('--record-bench');
 	const commit = git('rev-parse', rev).trim();
 	const done = [];
+	// --by probe: presets tankheal.py probe check cleared, not re-simmed (their records keep the sims' commit and iterations)
+	const by = opt('--by') || 'sim';
+	if (!['sim', 'probe'].includes(by)) throw new Error(`--record-bench --by ${by}: sim or probe`);
 	prov.benches = prov.benches || {};
 	for (const a of args.slice(i + 1)) {
 		if (a.startsWith('--')) break;
@@ -271,25 +277,31 @@ if (args.includes('--record-bench')) {
 		if (!BENCH[m]) throw new Error(`Unknown mode ${m}: tank or heal`);
 		// a mode simmed on binaries that don't match the code (build_bins.py): its main bench ran whole, so no preset of it
 		if (!refuseOverridden([m], x => `${x}/bin_override.json`).length) continue;
+		// a probe check on such binaries vouches for nothing either
+		if (by === 'probe' && !refuseOverridden([m], x => `probe_check/bench/${x}/bin_override.json`).length) continue;
 		const all = benchPresets(commit, m);
 		const stems = list ? list.split(',').filter(Boolean) : all;
 		for (const s of stems) if (!all.includes(s)) throw new Error(`Unknown ${m} preset ${s}`);
 		// the presets left as they were keep their records (an older whole-mode one becomes theirs), and removed ones go
 		const presets = {};
 		for (const s of all) if (benchRecord(m, s)) presets[s] = benchRecord(m, s);
-		for (const s of stems)
+		for (const s of stems) {
+			const old = benchRecord(m, s);
 			presets[s] = {
 				commit,
 				recordedAt: new Date().toISOString(),
-				iterations: Number(opt('--iterations')) || undefined,
+				iterations: by === 'sim' ? Number(opt('--iterations')) || undefined : old?.iterations,
+				by,
+				simCommit: by === 'sim' ? commit : old?.simCommit || old?.commit,
 				format: BENCH_FORMAT,
 				inputs: benchFingerprint(commit, m, s),
 			};
+		}
 		prov.benches[m] = { presets };
 		done.push(`${m} (${stems.length} of ${all.length} presets)`);
 	}
 	fs.writeFileSync(provPath, JSON.stringify(prov, null, '\t') + '\n');
-	console.log(`Recorded ${done.join(', ') || 'no mode'} at ${commit.slice(0, 10)}`);
+	console.log(`Recorded ${done.join(', ') || 'no mode'} at ${commit.slice(0, 10)} (by ${by})`);
 	process.exit(0);
 }
 

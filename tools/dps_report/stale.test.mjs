@@ -166,6 +166,31 @@ test('record-bench <mode>:<stems> records only those presets', () => {
 	assert.throws(() => r.stale('--record-bench', 'heal:no_such_preset'));
 });
 
+test('record-bench --by probe keeps the sims, and refuses a mode the probe check ran on mismatched binaries', () => {
+	const r = repo();
+	const provPath = path.join(r.dir, 'ui/dps_report/provenance.json');
+	r.stale('--record-bench', 'heal:priest_holy', '--iterations', '1000');
+	const simmed = JSON.parse(fs.readFileSync(provPath, 'utf8')).benches.heal.presets.priest_holy;
+	assert.equal(simmed.by, 'sim');
+	edit(r, 'sim/core/core.go');
+	const later = r.commit('core');
+	const marker = path.join(r.dir, 'tools/dps_report/probe_check/bench/heal/bin_override.json');
+	fs.mkdirSync(path.dirname(marker), { recursive: true });
+	fs.writeFileSync(marker, JSON.stringify({ reason: 'a test' }));
+	r.stale('--record-bench', 'heal:priest_holy', '--by', 'probe');
+	assert.deepEqual(JSON.parse(fs.readFileSync(provPath, 'utf8')).benches.heal.presets.priest_holy, simmed);
+	assert.ok(staleOf(r.json(), 'heal').includes('priest_holy'));
+	fs.rmSync(marker);
+	r.stale('--record-bench', 'heal:priest_holy', '--by', 'probe');
+	const rec = JSON.parse(fs.readFileSync(provPath, 'utf8')).benches.heal.presets.priest_holy;
+	assert.equal(rec.by, 'probe');
+	assert.equal(rec.commit, later);
+	assert.equal(rec.simCommit, simmed.commit);
+	assert.equal(rec.iterations, 1000);
+	assert.ok(!staleOf(r.json(), 'heal').includes('priest_holy'));
+	assert.throws(() => r.stale('--record-bench', 'heal', '--by', 'hand'));
+});
+
 test('an older whole-mode record is compared at its own commit', () => {
 	const r = repo();
 	const provPath = path.join(r.dir, 'ui/dps_report/provenance.json');

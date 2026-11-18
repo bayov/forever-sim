@@ -20,6 +20,11 @@
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
 #   pipeline.sh tankheal [tank|heal]    the Tanking and Healing modes' sims alone (tankheal.py run: tankbench and
 #                                       healbench, every preset, seven bosses, races; then publish)
+#   pipeline.sh benchprobe [tank|heal] [--presets <stem,...>]
+#                                       which stale Tanking and Healing presets really moved (tankheal.py probe check):
+#                                       each one's sims at a tenth of the sizes against the probe in the mode's pack;
+#                                       prints the presets to re-sim (tankheal.py run <mode> --presets ...), and
+#                                       publish records the ones it cleared
 #   pipeline.sh bins [--force]          build every binary of the three modes into $DASH_BIN with its STAMP.json
 #                                       (build_bins.py). Run, resume, probe, tankheal and publish <ids> refuse
 #                                       binaries the stamp doesn't match to the code
@@ -84,6 +89,8 @@ publish)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi  # what run <ids> re-simmed
 	python3 $T/probe.py audit "$@"  # after a probe check: its audit builds must come out unchanged (exits 1 if not)
 	PASSED=$(python3 $T/probe.py passed "$@")  # the builds it cleared, recorded below without sims
+	python3 $T/tankheal.py probe audit  # after a bench probe check: the same for the Tanking and Healing presets
+	BENCH_PASSED=$(python3 $T/tankheal.py probe passed)
 	python3 $T/rawstore.py prune  # removed presets: their outputs, packs and sample fights
 	rm -rf data
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
@@ -102,7 +109,8 @@ publish)
 		python3 $T/tankheal.py pack && python3 $T/tankheal.py fresh --clear
 	fi
 	if [ -n "$PASSED" ]; then (cd "$R" && node tools/dps_report/stale.mjs --record $PASSED --by probe ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
-	rm -f probe_audit.json
+	if [ -n "$BENCH_PASSED" ]; then (cd "$R" && node tools/dps_report/stale.mjs --record-bench $BENCH_PASSED --by probe ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
+	rm -f probe_audit.json probe_check/bench/*/audit.json
 	# only the re-simmed builds' packs: the others are already the outputs they were made from
 	if [ $# -gt 0 ]; then python3 $T/rawstore.py pack "$@"; fi
 	python3 $T/changes.py build  # the Changes tab: the live update against the report's new data
@@ -193,6 +201,9 @@ bins)
 tankheal)
 	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py run "$@"
 	echo "next: pipeline.sh publish"
+	;;
+benchprobe)
+	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py probe check "$@"
 	;;
 shard)
 	k=$1 n=$2; shift 2

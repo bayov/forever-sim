@@ -54,7 +54,19 @@ Re-sim them with `pipeline.sh tankheal --stale` (or `tankheal.py run <mode> --pr
 most of a mode's cost (Healing 1.5h to 4.3h on 4 cores in full), only for the stale presets.
 The others keep their pack's race rows when their main-run rows match the pack's bytes, else
 they are re-simmed too. `publish` records only the presets simmed. With no flag, a mode
-re-sims whole. There is no probe for them. Run it in the background with its log in a file.
+re-sims whole. Run it in the background with its log in a file.
+
+**Many stale presets** (a `sim/core` change stales them all): probe them first (README
+"Bench probes"). `pipeline.sh hydrate`, then `pipeline.sh benchprobe [tank|heal]`. It
+prints per mode the presets that moved, the cleared ones and one audit preset, and the
+`tankheal.py run <mode> --presets <moved>,<audit>` to run next. Then `pipeline.sh publish`:
+it checks the audit and records the cleared presets (`--record-bench --by probe`). If the
+audit fails, re-sim every cleared preset. On 4 cores a check of every preset takes about
+30min to 48min for Healing (a raid healer about 565s, a tank healer about 120s) and 8min to
+16min for Tanking (about 80s a preset), against about 87min and 50min for full runs. So probe
+when most of a mode is stale, and just re-sim when only a few presets are. A pack without
+probes (packs from before 2026-11-18) can't be checked: re-sim the mode, which then packs
+probes. A full `tankheal.py run` spends the same time again probing what it simmed.
 
 Tell the user the scope in one line before long runs.
 
