@@ -57,6 +57,7 @@ EOF
 
 case "$cmd" in
 hydrate)
+	T0=$(date +%s.%N)
 	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
 		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
 	fi
@@ -66,6 +67,7 @@ hydrate)
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
 	python3 $T/tankheal.py build >tankheal.log || { tail -20 tankheal.log; exit 1; }
 	python3 $T/rawstore.py check "$@"
+	python3 $T/timing_cli.py phase hydrate $T0
 	;;
 clean)
 	python3 $T/rawstore.py clean "$@"
@@ -74,6 +76,7 @@ probe)
 	python3 $T/probe.py check "$@"
 	;;
 publish)
+	T0=$(date +%s.%N)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi  # what run <ids> re-simmed
 	python3 $T/probe.py audit "$@"  # after a probe check: its audit builds must come out unchanged (exits 1 if not)
 	PASSED=$(python3 $T/probe.py passed "$@")  # the builds it cleared, recorded below without sims
@@ -99,6 +102,7 @@ publish)
 	# only the re-simmed builds' packs: the others are already the outputs they were made from
 	if [ $# -gt 0 ]; then python3 $T/rawstore.py pack "$@"; fi
 	python3 $T/changes.py build  # the Changes tab: the live update against the report's new data
+	python3 $T/timing_cli.py phase publish $T0
 	echo "next: give the live update public lines for what changed (changes.py check, then changes.py build), check the report (make dps-report-artifact), commit ui/dps_report, tools/dps_report/raw and tools/dps_report/changes together, push, then deploy"
 	;;
 plan | run | resume)
@@ -138,7 +142,7 @@ EOF
 	# timing/<start>.jsonl (with a line per step below); timing.py sums it up at the end
 	REAL_BIN=$(cd "${DASH_BIN:-$DASH_DIR/bin}" && pwd)
 	mkdir -p timing/bin
-	for b in wowsimcli wowsimcli_r wowsimcli_assume dashstats; do
+	for b in wowsimcli wowsimcli_r wowsimcli_assume dashstats tankbench healbench; do
 		rm -f timing/bin/$b
 		if [ -e "$REAL_BIN/$b" ]; then ln -s "$T/timing_cli.py" timing/bin/$b; fi
 	done
@@ -168,7 +172,7 @@ EOF
 		mark tankheal
 		TH=tank\ heal
 		if [ "$cmd" = resume ]; then TH=$(for m in tank heal; do [ -e $m/.fresh ] || echo $m; done); fi
-		[ -n "$TH" ] && TANKHEAL_BIN=$REAL_BIN python3 $T/tankheal.py run $TH $([ "$cmd" = resume ] && echo --resume)
+		[ -n "$TH" ] && TANKHEAL_BIN=$DASH_BIN python3 $T/tankheal.py run $TH $([ "$cmd" = resume ] && echo --resume)
 	fi
 	mark done
 	python3 $T/timing.py "$TIMING_LOG"

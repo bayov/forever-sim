@@ -39,13 +39,14 @@ Text: what players read (preset lines, notes, boss lines, Method, rotation rewor
 The binaries (tankbench, healbench) come from $TANKHEAL_BIN, else $DASH_BIN, else $DASH_DIR/bin, and run with the
 merged tree ($DASH_TREE, else this checkout when it has no w-dash) as their cwd; README.md has the build recipe.
 """
-import ast, glob, io, json, math, os, re, shutil, subprocess, sys, tarfile, tempfile, threading, time
+import ast, glob, hashlib, io, json, math, os, re, shutil, subprocess, sys, tarfile, tempfile, threading, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import dashpaths  # noqa: E402
 import adaptive  # noqa: E402
 import bench_races  # noqa: E402
+import timing_cli  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 D = dashpaths.D
@@ -110,7 +111,7 @@ def class_races():
 def bench(mode, args, files, out):
     exe = os.path.join(BIN, 'tankbench' if mode == 'tank' else 'healbench')
     t = time.time()
-    r = subprocess.run([exe] + args + files, cwd=TREE, capture_output=True, text=True)
+    r = subprocess.run([exe] + args + files, cwd=TREE, capture_output=True, text=True, env=dict(os.environ, TIMING_STEP=mode))  # the step timing_cli.py logs it under
     if r.returncode:
         sys.exit(f'{exe} failed ({r.returncode}):\n{r.stderr[-2000:]}')
     text = ''.join(l + '\n' for l in (r.stdout + r.stderr).split('\n') if l.strip() and not LOG_LINE.match(l))
@@ -122,6 +123,7 @@ def bench(mode, args, files, out):
 def bins():
     """tankbench and healbench into BIN, built from this checkout's HEAD with the racials switch (patches 0002 and 0006:
     DASH_RACIALS_OFF, scoped to the preset's class) in a throwaway worktree."""
+    t0 = time.time()
     tmp = tempfile.mkdtemp(prefix='benchbuild_')
     git = lambda *a, **k: subprocess.run(['git', *a], cwd=ROOT, check=True, **k)  # noqa: E731
     git('worktree', 'add', '--detach', tmp, 'HEAD', capture_output=True)
@@ -136,6 +138,7 @@ def bins():
             print('built', os.path.join(BIN, b))
     finally:
         git('worktree', 'remove', '--force', tmp)
+    timing_cli.phase('bins', time.time() - t0)
 
 
 def main_carries(out, stem):
@@ -227,6 +230,25 @@ def pack_files(mode):
         return {ti.name: tar.extractfile(ti).read().decode() for ti in tar.getmembers() if ti.isfile()}
 
 
+def bench_inputs(mode, commit):
+    """A hash of the mode's sim inputs at a commit (stale.mjs --bench-fingerprint: the same fingerprint publish records),
+    or None when it can't be had (no node, or a commit this checkout doesn't know)."""
+    r = subprocess.run(['node', os.path.join(HERE, 'stale.mjs'), '--bench-fingerprint', mode, '--commit', commit], cwd=ROOT, capture_output=True, text=True)
+    if r.returncode or not r.stdout.strip():
+        return None
+    return hashlib.sha256(r.stdout.encode()).hexdigest()[:20]
+
+
+def can_resume(done, commit, inputs):
+    """Whether a stopped run's .progress.json (done) still holds for a run at commit whose sim inputs hash to `inputs`: it
+    was started at this commit, or at another one with the same sim inputs (master moved on, nothing the sims read did)."""
+    if not done:
+        return False
+    if done.get('commit') == commit:
+        return True
+    return inputs is not None and done.get('inputs') == inputs
+
+
 def stale_presets():
     """The presets stale.mjs calls stale, by mode."""
     r = subprocess.run(['node', os.path.join(HERE, 'stale.mjs'), '--json'], cwd=ROOT, capture_output=True, text=True, check=True)
@@ -241,8 +263,12 @@ def run(modes, races=True, resume=False, only=None):
         old = pack_files(mode) if only is not None else None
         prog = os.path.join(out, '.progress.json')
         done = json.load(open(prog)) if resume and os.path.exists(prog) else {}
-        if done.get('commit') != commit or os.path.exists(os.path.join(out, 'run.json')):
-            done = {}  # another commit's outputs, or a finished run: start over
+        inputs = bench_inputs(mode, commit)
+        if os.path.exists(os.path.join(out, 'run.json')) or not can_resume(done, commit, inputs):
+            done = {}  # a finished run, another commit's outputs with other sim inputs: start over
+        if done and done['commit'] != commit:
+            print(f'{mode}: resuming the run started at {done["commit"][:10]} (HEAD is {commit[:10]}, same sim inputs)', flush=True)
+        commit_run = done.get('commit', commit)  # the commit the run started at: what its packs are stamped with
         if not done:
             shutil.rmtree(out, ignore_errors=True)
         os.makedirs(out, exist_ok=True)
@@ -251,7 +277,7 @@ def run(modes, races=True, resume=False, only=None):
 
         def note(k, v):
             secs[k] = v
-            json.dump({'commit': commit, 'secs': secs, 'seconds': round(time.time() - t0, 1)}, open(prog, 'w'))
+            json.dump({'commit': commit_run, 'inputs': inputs, 'secs': secs, 'seconds': round(time.time() - t0, 1)}, open(prog, 'w'))
         groups = {'tank': stems} if mode == 'tank' else {r: [s for s in stems if heal_role(s) == r] for r in ('tank', 'raid')}
         for boss in BOSSES:
             enc = ['-encounter', f'tools/encounters/{boss}.json', '-iters', str(ITERS)]
@@ -283,7 +309,7 @@ def run(modes, races=True, resume=False, only=None):
         info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
                 'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
                 'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
-                'commit': commit, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
+                'commit': commit_run, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
                 'runSeconds': secs, 'races': races}
         if only is not None:
             info['racesKept'] = sorted(kept)  # presets whose race rows came from the pack
@@ -291,7 +317,7 @@ def run(modes, races=True, resume=False, only=None):
         os.remove(prog)
         # the presets simmed here, for stale.mjs --record-bench: a second line names them when some were kept
         simmed = [s for s in stems if s not in kept]
-        open(os.path.join(out, '.fresh'), 'w').write(commit + '\n' + (','.join(simmed) + '\n' if kept else ''))
+        open(os.path.join(out, '.fresh'), 'w').write(commit_run + '\n' + (','.join(simmed) + '\n' if kept else ''))
         print(f'{mode}: {info["seconds"]} s')
 
 

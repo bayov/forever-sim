@@ -168,3 +168,19 @@ test('an older whole-mode record is compared at its own commit', () => {
 	assert.equal(now.presets.shaman_restoration.format, 2);
 	assert.deepEqual(staleOf(r.json(), 'heal'), ['priest_holy_raid']);
 });
+
+test('bench-fingerprint prints the per-preset inputs record-bench stores, and moves only with a sim input', () => {
+	const r = repo();
+	const fp = JSON.parse(r.stale('--bench-fingerprint', 'heal'));
+	const prov = JSON.parse(fs.readFileSync(path.join(r.dir, 'ui/dps_report/provenance.json'), 'utf8'));
+	assert.deepEqual(Object.keys(fp).sort(), HEAL);
+	for (const s of HEAL) assert.deepEqual(fp[s], prov.benches.heal.presets[s].inputs);
+	// a commit that touches no input keeps the fingerprint (tankheal.py --resume carries on across it)
+	r.put('README.md', 'docs\n');
+	r.commit('docs');
+	assert.equal(r.stale('--bench-fingerprint', 'heal'), r.stale('--bench-fingerprint', 'heal', '--commit', r.base));
+	edit(r, 'sim/priest/priest.go');
+	r.commit('priest');
+	assert.notEqual(r.stale('--bench-fingerprint', 'heal'), r.stale('--bench-fingerprint', 'heal', '--commit', r.base));
+	assert.throws(() => r.stale('--bench-fingerprint', 'dps'));
+});

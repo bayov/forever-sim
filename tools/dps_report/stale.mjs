@@ -45,6 +45,9 @@
 //   node tools/dps_report/stale.mjs --record-bench <tank|heal|tank:<stem,...>|heal:<stem,...> ...> [--commit <rev>]
 //                                   [--iterations N]                record a mode's presets (all, or the ones named)
 //                                                                   as current at <rev>
+//   node tools/dps_report/stale.mjs --bench-fingerprint <tank|heal> [--commit <rev>]
+//                                                                   print a mode's per-preset input fingerprints, the
+//                                                                   ones --record-bench records (tankheal.py --resume)
 import { execFileSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -237,6 +240,16 @@ const benchRecord = (m, stem) => {
 	const rec = (prov.benches || {})[m];
 	return rec?.presets ? rec.presets[stem] : rec?.commit ? { commit: rec.commit, recordedAt: rec.recordedAt, iterations: rec.iterations, format: rec.format } : undefined;
 };
+
+if (args.includes('--bench-fingerprint')) {
+	// tankheal.py --resume: the mode's per-preset fingerprints at --commit, as JSON ({<stem>: the inputs --record-bench
+	// records for it}), so a stopped run resumes across commits exactly when no preset's recorded inputs moved
+	const m = opt('--bench-fingerprint');
+	if (!BENCH[m]) throw new Error(`Unknown mode ${m}: tank or heal`);
+	const commit = git('rev-parse', rev).trim();
+	console.log(JSON.stringify(Object.fromEntries(benchPresets(commit, m).map(s => [s, benchFingerprint(commit, m, s)])), null, '\t'));
+	process.exit(0);
+}
 
 if (args.includes('--record-bench')) {
 	// <mode> records all of the mode's presets, <mode>:<stem>,<stem> only those (tankheal.py fresh prints these)

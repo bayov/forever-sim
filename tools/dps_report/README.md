@@ -32,13 +32,14 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
+| `tests/` | Unit tests for the timing shim, the probe key and skip, and tankheal's resume decision (no sims): `python3 -m unittest discover -s tools/dps_report/tests` | yes |
 | `patches/` | Local-only sim patches for the merged tree (see below) | yes |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
 | `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
 | `probe.py`, `probe_cli.py` | The probe: every step's sims at a tenth of their iterations, fingerprinted, to tell which stale builds really moved (see "Probes") | yes |
 | `probe/`, `probe_check/`, `probe_audit.json` | Probes of this run, of the last check, and the check's verdict (what publish records) | no |
 | `timing.py`, `timing_cli.py` | Where a `pipeline.sh run` spent its time: every sim's CPU and wall time, logged by `timing_cli.py` standing in for the binaries and summed up by `timing.py` (see "Sim steps") | yes |
-| `timing/` | One log per `pipeline.sh run` or `resume` (`<start>.jsonl`) and the binary links the run used (`timing/bin`) | no |
+| `timing/` | One log per `pipeline.sh run` or `resume` (`<start>.jsonl`), the binary links the run used (`timing/bin`) and `phases.jsonl`, the wall time of each `hydrate`, `publish` and `tankheal.py bins` | no |
 | `adaptive.py` | The luck goals and the fight counts sized to them: a pilot, then a top-up to what the paired spread needs (see "Luck goals") | yes |
 | `vec/` | Per-fight DPS of the race, racial and assumption sims, keyed by request, which the top-ups extend; cleared per build by `run_build.py`, never packed | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
@@ -250,10 +251,17 @@ it (`raceSe` in report.js). `run_build.py` prints a race pair still over its goa
 The runtimes above are from the runs that first measured them, before later changes to the scripts. `pipeline.sh run`
 and `resume` now measure every run: the binaries run through `timing_cli.py`, which logs each call's step, class, race,
 iterations, fight length, targets, CPU seconds and wall seconds to `timing/<start>.jsonl`, and the run ends with
-`timing.py`'s summary of that log. It shows:
+`timing.py`'s summary of that log. `tankbench` and `healbench` run through it too: `tankheal.py` logs the main runs
+under the steps `tank` and `heal` and `bench_races.py` the race sims under `tank_races` and `heal_races`, with the bench's
+role, boss, iterations, number of request files and fight length read from its flags. The shim prints nothing and passes
+the bench's output and exit code through, because `tankheal.py` keeps that output as the mode's raw text. It shows:
 - **Per step:** wall time, the CPU time of its sims, and how many cores those kept busy. A busy figure well under P
-  means the step was waiting on its last builds or on its own Python.
-- **Sim kinds:** the costliest kinds of sim, grouped by step, binary, iterations, fight length and targets.
+  means the step was waiting on its last builds or on its own Python. The `tankheal` step lists its four bench steps
+  beneath it.
+- **Sim kinds:** the costliest kinds of sim, grouped by step, binary, iterations, fight length and targets (benches:
+  role, boss, iterations and request count).
+- **Phases:** the wall time of the work that is no sim, from `timing/phases.jsonl`: `pipeline.sh hydrate` and `publish`
+  and `tankheal.py bins` (the binary build) each log one line when they finish, so the latest of each shows here.
 - **Per class:** core-minutes per base build. This is the unit of pipeline.sh's cost table `W`, which orders and shards
   builds, so the summary is what to refresh `W` from.
 
@@ -339,16 +347,24 @@ Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read th
 pipeline.sh tankheal [tank|heal]   # = TANKHEAL_BIN=<bin dir> tankheal.py run: sims into $DASH_DIR/{tank,heal}/, run.json, .fresh
 pipeline.sh tankheal --stale       # the main benches whole, race sims only for the presets stale.mjs calls stale
 tankheal.py run heal --presets priest_holy,priest_holy_raid   # the same for the presets named
-tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json, same commit)
+tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json), if HEAD is its commit or the bench inputs are the same
 tankheal.py build                  # $DASH_DIR/{tank,heal}/ -> $DASH_DIR/data/{tank,heal}_*.json
 tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz <-> $DASH_DIR/{tank,heal}/
 tankheal.py fresh [--clear]        # the modes simmed since their last publish (<mode>:<stem,...> when some were kept)
 ```
 
+`--resume` reuses a mode's `.progress.json` when the run started at the current HEAD, or at another commit whose bench
+inputs are the same: `stale.mjs --bench-fingerprint <mode> --commit <rev>` prints the per-preset fingerprints publish
+records for the mode (`{<stem>: inputs}`, the same `benchFingerprint` that `--record-bench` stores), and `.progress.json`
+keeps their hash (`inputs`) next to the commit the run started at. So a master that moved on
+mid-run without touching the sim doesn't redo the run. The commit in `run.json` and `.fresh` is the one the run started
+at. A progress file from before this, with no `inputs`, resumes only at its own commit, and so does any run when node
+or the commit isn't available. A finished run (`run.json`) is always redone.
+
 The raw outputs are kept in the repository like the DPS ones (`raw/bench/<mode>.tgz`, deterministic tars), outside
 `raw/*.tgz` so `rawstore.py prune` never takes them for removed builds. The pipeline wires them in: `run` and `resume`
 sim both modes after the DPS builds (all of them when no DPS build is stale or `TANKHEAL=1`; `resume` skips a mode
-already marked fresh), `hydrate` unpacks and builds them, and `publish` builds them before `rawstore.py copy`, then for a
+already marked fresh and passes `--resume` to the others), `hydrate` unpacks and builds them, and `publish` builds them before `rawstore.py copy`, then for a
 fresh mode records its provenance (`stale.mjs --record-bench <modes> --iterations 1000`, into `provenance.json`'s
 `benches`), packs it and clears the mark.
 
@@ -472,6 +488,14 @@ check`) finds the ones that don't, in about a tenth of a full run:
   for a full re-sim anyway (the audit; `PROBE_AUDIT`), and `publish` first checks that their new outputs equal their old
   packs exactly. If one doesn't, it stops: re-sim every cleared build. Otherwise it records the cleared builds as current
   (`stale.mjs --record <ids> --by probe`), and their packs and data stay as they are.
+- Every probe record carries a `_key`: a hash of the probe settings, the sha256 of each binary it runs (`wowsimcli`,
+  `_r`, `_assume`, `dashstats`, found behind the timing links), the sim's `db.json`, the build's `req/<id>.json`,
+  `.meta.json` and `req/races/<id>.*`, `asm_apls/`, `assumptions_def.py` and the scripts the probe runs (`probe.py`,
+  `probe_cli.py`, `adaptive.py`, `run_*.py`, `weights.py`, `mana_curves.py`, `ablate.py`, `rotation.py` and what they
+  import, `race_override.py`, `dashpaths.py`). `probe.py run` skips a build whose `probe/<id>.json` has the key it
+  would get now (so a stopped run restarts where it was), and copies `probe_check/<id>.json` when that has it (the
+  check probed the same inputs, so `pipeline.sh run` after `pipeline.sh probe` doesn't probe the builds it just
+  probed). Anything else is probed as before, and `PROBE_FORCE=1` probes everything. `compare` ignores the key.
 - A pack without a probe (simmed before probes were kept) or from another split count, scale or architecture is re-simmed.
 
 ```bash
