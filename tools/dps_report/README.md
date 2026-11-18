@@ -33,7 +33,9 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
-| `tests/` | Unit tests for the timing shim, the probe key and skip, and tankheal's resume decision (no sims): `python3 -m unittest discover -s tools/dps_report/tests` | yes |
+| `tests/` | Unit tests for the timing shim, the probe key and skip, tankheal's resume decision, and the parallel parts, merge, planner and transport (no sims): `python3 -m unittest discover -s tools/dps_report/tests` | yes |
+| `parallel.py` | A full regeneration over several cloud sessions at once: the plan, each worker's job, the transport and the merge (see "Parallel runs") | yes |
+| `parallel/<run>/` | A parallel run's plan and the parts the merge fetched | no |
 | `build_bins.py`, `test_build_bins.py` | Builds and stamps every binary, and the guard that refuses sims on binaries that don't match the code (see "Building the binaries"), with its tests | yes |
 | `bin_override/` | Builds simmed with `DASH_ALLOW_BIN_MISMATCH`, and why (packed with them) | no |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
@@ -371,6 +373,11 @@ tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz 
 tankheal.py fresh [--clear]        # the modes simmed since their last publish (<mode>:<stem,...> when some were kept)
 pipeline.sh benchprobe [heal]      # = tankheal.py probe check: which stale presets really moved ("Bench probes" below)
 tankheal.py probe heal [--presets <stem,...>]   # the probes the pack keeps, into $DASH_DIR/heal/probe/ (run makes them too)
+tankheal.py run heal --main-only   # a part ("Parallel runs"): the main bench alone, part.json instead of run.json and .fresh
+tankheal.py run heal --carries <part.tgz> --presets <stem,...>   # a part: those presets' race sims from another part's main bench outputs
+tankheal.py run tank --part        # a part: the whole mode, merged later
+tankheal.py part <mode> <dest.tgz> # pack a finished part (its outputs and part.json)
+tankheal.py merge <mode> [--keep-rest] <part.tgz|dir>...   # parts -> $DASH_DIR/<mode>/ as one run writes it, run.json and .fresh
 ```
 
 `--resume` reuses a mode's `.progress.json` when the run started at the current HEAD, or at another commit whose bench
@@ -616,6 +623,41 @@ pass); a sim/preset update for our first change of our own after a game update's
 B11). Everything else joins the live update. `new` refuses while the four datasets a snapshot reads have uncommitted
 changes, and warns when the finished update lists commits its data doesn't include yet. Commit what it writes. Lines are plain game terms, with only public links as sources, primary first (standards 30): Blizzard's posts, a
 wago.tools page of the changed client rows or hotfix, foreverchanges.pro only when nothing else shows it. They ship.
+
+## Parallel runs
+
+`parallel.py` runs a full regeneration in several cloud sessions at once (the `regenerate-dps-report` skill's "Parallel
+full regeneration" has the coordinator's steps). Today's one-session full run takes DPS about 80min, Tanking 20min to
+55min and Healing 1.5h to 4.3h, one after the other; in parallel it takes the longest session, about 80min to 90min.
+
+```sh
+parallel.py plan --run <run> --commit <sha> [--heal-groups N] [--heal-presets <stem,...>] [--modes dps,tank,heal] [--log <file>...] [--dry]
+parallel.py worker <run> <session> --commit <sha> [--main] [--presets <stem,...>] [--carries-from heal-0]   # what each worker session runs
+parallel.py merge <run>            # fetch, check and merge every part into $DASH_DIR, then print the publish command
+parallel.py clean <run>            # delete the run's dash-raw/<run>/* branches
+```
+
+- **The plan.** One session for DPS (every build), one for Tanking, and the Healing presets split by cost: `heal-0` runs
+  the main bench (7 bosses, tank and raid roles, 1,000 iterations, about 18min) and then its own presets, and every other
+  Healing session starts its race sims from heal-0's main bench outputs. Each priest preset runs alone (priest_holy_raid
+  is the longest, about 35min); the rest are shared out so no session runs longer than the longest lone one. A preset's
+  cost is its race rows times the 2026-11-18 probe rate of its role scaled to a full run, or a run log's measured
+  seconds with `--log` (`<mode> races <stem>: <n> rows, <s> s`).
+- **A part.** `tankheal.py run <mode> --part`, `--main-only` or `--carries <part>` writes the mode's outputs and
+  `part.json` instead of `run.json` and `.fresh`: the run settings (iterations, seed, race goals, pilot and ceiling),
+  the commit, the bench inputs' fingerprint, `DASH_SPLITS`, the binaries' stamp (input hash, Go and each sha256), the
+  presets raced and whether the main bench was simmed here or carried. `--carries` refuses a main bench made with any of
+  these different.
+- **The transport.** Each worker pushes its parts to its own branch, `dash-raw/<run>/<session>`, as orphan commits made
+  with git plumbing (the checkout and master are never touched). A Healing worker waits for `heal-main.tgz` on heal-0's
+  branch by polling the remote in its background job, so it spends no turns. The plan is on `dash-raw/<run>/plan`.
+- **The merge.** `tankheal.py merge` refuses parts whose mode, commit, bench inputs (also against HEAD), splits, binaries
+  or run settings differ, main bench outputs that aren't the same bytes in every part, a preset raced twice with
+  different rows, rows of a preset its part didn't declare, and presets left out (unless `--keep-rest`, which keeps them
+  from the pack as `run --presets` does). It writes the main outputs, `races.jsonl` sorted as one run sorts it, the
+  probes, `run.json` (the run's timing keys from the parts, plus `parts`) and `.fresh`. Everything else is the same
+  bytes as one run's, so the packs and datasets are too (`tests/test_parallel.py` checks this on a fake bench).
+  `parallel.py merge` adds the DPS pack (`pipeline.sh unpack`) and refuses a part whose manifest differs from the plan.
 
 ## Publishing
 

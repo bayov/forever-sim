@@ -11,6 +11,21 @@
                                                  from raw/bench/<mode>.tgz when its main-run rows there are the same
                                                  bytes as this run's (else it is re-simmed too). Only the presets
                                                  re-simmed are marked fresh (tankheal.py fresh prints <mode>:<stem,...>)
+  tankheal.py run <tank|heal> --part [--presets <stem,...>] | --main-only | --presets <stem,...> --carries <part>
+                                                 one share of a mode for a worker session (parallel.py): --part the main
+                                                 bench and the race sims of the presets named (default: every preset),
+                                                 --main-only the main bench alone, --carries the race sims of the presets
+                                                 named on another part's main bench outputs (the carries the healing race
+                                                 sims start from), checked to be simmed alike. Writes <mode>/part.json, not
+                                                 run.json or .fresh; --resume works as for a run
+  tankheal.py part <tank|heal> <dest.tgz>        a finished part, packed deterministically (the worker's hand-back)
+  tankheal.py merge <tank|heal> [--keep-rest] <part>...
+                                                 parts (.tgz or folders) into $DASH_DIR/<mode>, as one run would have
+                                                 left it (main bench files, races.jsonl and probes the same bytes), with
+                                                 run.json and .fresh; refuses parts of other commits, sim inputs, binary
+                                                 stamps or DASH_SPLITS, main outputs that differ, presets raced twice
+                                                 differently, and presets no part raced (--keep-rest: those keep the
+                                                 pack's rows when their main rows are its bytes, as run --presets does)
   tankheal.py bins                               every report binary into the binaries directory (build_bins.py: the
                                                  benches read every report switch, the racials switches among them)
   tankheal.py build                              the tank_* and heal_* datasets into $DASH_DIR/data (unpacks the raw
@@ -276,8 +291,21 @@ def stale_presets():
     return {b['id']: set(b['presets']) for b in json.loads(r.stdout)['benches']}
 
 
-def run(modes, races=True, resume=False, only=None):
-    """only: {mode: the stale presets} for a run that re-sims only those presets' race rows (None: every preset)."""
+def run_info(mode, commit, secs, seconds, races):
+    """run.json (and a part's part.json): the settings and what the run took."""
+    return {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
+            'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
+            'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
+            'splits': SPLITS, 'commit': commit, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': seconds,
+            'runSeconds': secs, 'races': races}
+
+
+def run(modes, races=True, resume=False, only=None, part=None):
+    """only: {mode: the stale presets} for a run that re-sims only those presets' race rows (None: every preset).
+    part: one share of a mode, simmed in a worker session and combined by merge() (parallel.py): {'presets': the presets
+    whose race sims it runs (None: every preset), 'main_only': the main bench alone, 'carries': another part (its .tgz or
+    folder) whose main bench outputs it takes instead of running the main bench}. A part writes part.json (what it
+    simmed, at which commit, inputs, binaries and DASH_SPLITS), not run.json or .fresh: alone it is not publishable."""
     import build_bins
     override = build_bins.guard(BIN, [build_bins.BENCH_BINS[m] for m in modes], f'tankheal.py run {" ".join(modes)}')
     commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=TREE, capture_output=True, text=True).stdout.strip()
@@ -287,7 +315,7 @@ def run(modes, races=True, resume=False, only=None):
         prog = os.path.join(out, '.progress.json')
         done = json.load(open(prog)) if resume and os.path.exists(prog) else {}
         inputs = bench_inputs(mode, commit)
-        if os.path.exists(os.path.join(out, 'run.json')) or not can_resume(done, commit, inputs):
+        if any(os.path.exists(os.path.join(out, f)) for f in ('run.json', PART)) or not can_resume(done, commit, inputs):
             done = {}  # a finished run, another commit's outputs with other sim inputs: start over
         if done and done['commit'] != commit:
             print(f'{mode}: resuming the run started at {done["commit"][:10]} (HEAD is {commit[:10]}, same sim inputs)', flush=True)
@@ -299,6 +327,15 @@ def run(modes, races=True, resume=False, only=None):
             build_bins.mark(os.path.join(out, 'bin_override.json'), override)
         stems = presets(mode)
         secs, t0 = dict(done.get('secs', {})), time.time() - done.get('seconds', 0)
+        me = None
+        if part is not None:
+            me = {'commit': commit_run, 'inputs': inputs, 'splits': SPLITS, 'stamp': build_bins.summary(BIN, [build_bins.BENCH_BINS[mode]])}
+        carried = {}
+        if part and part.get('carries'):  # the main bench outputs of the part that ran it (the main worker's)
+            carried = carries(mode, part['carries'], stems, me)
+            for n, data in carried.items():
+                open(os.path.join(out, n), 'wb').write(data)
+            print(f'{mode}: the main bench outputs from {part["carries"]} ({len(carried)} files)', flush=True)
 
         def note(k, v):
             secs[k] = v
@@ -310,11 +347,12 @@ def run(modes, races=True, resume=False, only=None):
                 files = [req_path(mode, s) for s in st]
                 name = boss if mode == 'tank' else f'{g}_{boss}'
                 args = enc if mode == 'tank' else ['-carry', '-role', g] + enc
-                if name not in secs:
+                if name not in secs and name + '.txt' not in carried:
                     note(name, round(bench(mode, args, files, os.path.join(out, name + '.txt')), 1))
                     print(f'{mode} {name}: {secs[name]} s', flush=True)
-        kept = {}
-        if races:
+        kept, raced = {}, []
+        if races and not (part and part.get('main_only')):
+            raced = stems if not part or part.get('presets') is None else [s for s in stems if s in part['presets']]
             t1 = time.time()
             res = os.path.join(out, 'races.jsonl')
             if only is not None:
@@ -326,7 +364,7 @@ def run(modes, races=True, resume=False, only=None):
                         if s in kept and s not in have:
                             fh.writelines(kept[s])
                 print(f'{mode} races kept from the pack: {" ".join(kept) or "none"}', flush=True)
-            race_sims(mode, stems, out)
+            race_sims(mode, raced, out)
             if os.path.exists(res):
                 lines = race_lines_sorted(open(res).readlines(), stems)
                 open(res, 'w').writelines(lines)
@@ -335,13 +373,16 @@ def run(modes, races=True, resume=False, only=None):
                 # opt-in (TANKHEAL_PROBE=1): the probe of every preset, packed with the mode for the next probe check; a probe the check made or
                 # the old pack holds under the key it would get now is copied, and a stopped run keeps what it probed
                 t2 = time.time()
-                probe_presets(mode, stems, os.path.join(out, 'probe'), reuse=(probe_records(os.path.join(CHECK_DIR, mode)), stored_probes(mode)))
+                probe_presets(mode, raced if part else stems, os.path.join(out, 'probe'),
+                              reuse=(probe_records(os.path.join(CHECK_DIR, mode)), stored_probes(mode)))
                 note('probe', round(time.time() - t2, 1))
-        info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
-                'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
-                'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
-                'splits': SPLITS, 'commit': commit_run, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
-                'runSeconds': secs, 'races': races}
+        info = run_info(mode, commit_run, secs, round(time.time() - t0, 1), bool(raced))
+        if part is not None:  # a worker's share: merge() makes run.json and .fresh from every part
+            info.update(me, mode=mode, presets=raced, main='carries' if carried else 'here', probes=os.environ.get('TANKHEAL_PROBE') == '1')
+            json.dump(info, open(os.path.join(out, PART), 'w'), indent=1)
+            os.remove(prog)
+            print(f'{mode} part ({len(raced)} presets raced, main bench {info["main"]}): {info["seconds"]} s')
+            continue
         if only is not None:
             info['racesKept'] = sorted(kept)  # presets whose race rows came from the pack
         json.dump(info, open(os.path.join(out, 'run.json'), 'w'), indent=1)
@@ -350,6 +391,189 @@ def run(modes, races=True, resume=False, only=None):
         simmed = [s for s in stems if s not in kept]
         open(os.path.join(out, '.fresh'), 'w').write(commit_run + '\n' + (','.join(simmed) + '\n' if kept else ''))
         print(f'{mode}: {info["seconds"]} s')
+
+
+# ---------------------------------------------------------------- parts: a mode split over worker sessions
+#
+# A full regeneration can run each mode, and Healing's presets, in separate cloud sessions at once (parallel.py, the
+# regenerate-dps-report skill's "Parallel"). Each session runs a part (run --part, --main-only or --carries), packs it
+# (tankheal.py part), and the coordinating session merges the parts into $DASH_DIR/<mode> as one run would have left it:
+# the same main bench files, races.jsonl and probes byte for byte (a preset's race sims are independent of the other
+# presets', and every sim's seed and split count are fixed), then run.json and .fresh. merge refuses parts simmed at
+# other commits, inputs, binaries or DASH_SPLITS, main bench outputs that differ, and presets missing or simmed twice
+# differently.
+
+PART = 'part.json'
+
+
+def main_names(mode, stems):
+    """The main bench's output files of a mode: one a boss (tank), one a boss and role with presets (heal)."""
+    if mode == 'tank':
+        return [b + '.txt' for b in BOSSES]
+    roles = [r for r in ('tank', 'raid') if any(heal_role(s) == r for s in stems)]
+    return [f'{r}_{b}.txt' for b in BOSSES for r in roles]
+
+
+def read_part(src):
+    """A part's part.json (None when it has none) and its files {name: bytes}, from its .tgz or its folder."""
+    if os.path.isdir(src):
+        files = {os.path.relpath(p, src): open(p, 'rb').read() for p in sorted(glob.glob(os.path.join(src, '**', '*'), recursive=True))
+                 if os.path.isfile(p) and not os.path.basename(p).startswith('.')}
+    else:
+        with tarfile.open(src) as tar:
+            files = {ti.name: tar.extractfile(ti).read() for ti in tar.getmembers() if ti.isfile()}
+    info = json.loads(files.pop(PART)) if PART in files else None
+    return info, files
+
+
+def part_mismatch(a, b):
+    """Why two parts' outputs can't be put together (or a part used as another's carries): [] when they can."""
+    a, b = json.loads(json.dumps(a)), json.loads(json.dumps(b))  # as part.json holds them (tuples are lists)
+    out = []
+    for k, what in (('mode', 'mode'), ('commit', 'commit'), ('inputs', 'sim inputs (stale.mjs --bench-fingerprint)'),
+                    ('splits', 'DASH_SPLITS')):
+        if a.get(k) != b.get(k):
+            out.append(f'other {what}: {a.get(k)} and {b.get(k)}')
+    sa, sb = a.get('stamp'), b.get('stamp')
+    if not sa or not sb:
+        out.append('a part has no binary stamp (bins not built by build_bins.py)')
+    elif sa.get('inputHash') != sb.get('inputHash') or sa.get('binaries') != sb.get('binaries'):
+        out.append(f'other binaries (STAMP.json): {sa} and {sb}' + (' (other Go versions)' if sa.get('go') != sb.get('go') else ''))
+    for k in ('iterations', 'seed', 'raceGoals', 'racePilot', 'raceCeil'):
+        if a.get(k) != b.get(k):
+            out.append(f'other {k}: {a.get(k)} and {b.get(k)}')
+    return out
+
+
+def carries(mode, src, stems, me):
+    """The main bench files of the part at src, for a part that runs only race sims: refused unless it was simmed like
+    this run (part_mismatch) and has every main file."""
+    info, files = read_part(src)
+    if info is None:
+        sys.exit(f'{src}: no {PART}, not a part (tankheal.py part)')
+    probs = part_mismatch(info, dict(run_info(mode, me['commit'], {}, 0, True), mode=mode, **me))
+    if probs:
+        sys.exit(f'{src} can\'t be this run\'s main bench:\n' + '\n'.join('  - ' + p for p in probs))
+    names = main_names(mode, stems)
+    missing = [n for n in names if n not in files]
+    if missing:
+        sys.exit(f'{src} lacks main bench outputs: {" ".join(missing)}')
+    return {n: files[n] for n in names}
+
+
+def part_pack(mode, dest):
+    """$DASH_DIR/<mode>, a finished part, into a deterministic .tgz (the worker's hand-back)."""
+    import rawstore
+    src = os.path.join(D, mode)
+    if not os.path.exists(os.path.join(src, PART)):
+        sys.exit(f'{src} holds no finished part ({PART}): tankheal.py run {mode} --part | --main-only | --carries <part> first')
+    _, files = read_part(src)
+    files[PART] = open(os.path.join(src, PART), 'rb').read()
+    os.makedirs(os.path.dirname(os.path.abspath(dest)), exist_ok=True)
+    open(dest, 'wb').write(rawstore.tgz(files))
+    print(f'{mode} part: {len(files)} files into {dest}')
+
+
+def merge(mode, sources, keep_rest=False):
+    """The parts at sources (.tgz or folders) into $DASH_DIR/<mode>, as one run of the mode would have left it. Every
+    preset must be raced by a part, unless keep_rest (a split of run --presets): then the presets no part raced keep the
+    pack's race rows when their main rows are the pack's bytes, as run --presets keeps them."""
+    import rawstore
+    stems = presets(mode)
+    parts = []
+    for src in sources:
+        info, files = read_part(src)
+        if info is None:
+            sys.exit(f'{src}: no {PART}, not a part (tankheal.py part)')
+        if info.get('mode') != mode:
+            sys.exit(f'{src}: a {info.get("mode")} part, not {mode}')
+        rawstore.check_splits(src, info.get('splits'), SPLITS)
+        parts.append((src, info, files))
+    if not parts:
+        sys.exit(f'merge {mode}: no parts')
+    ref = parts[0][1]
+    for src, info, _ in parts[1:]:
+        probs = part_mismatch(ref, info)
+        if probs:
+            sys.exit(f'{src} and {parts[0][0]} were not simmed alike:\n' + '\n'.join('  - ' + p for p in probs))
+    here = bench_inputs(mode, head())
+    if here is not None and here != ref['inputs']:
+        sys.exit(f'the parts were simmed on other {mode} sim inputs than HEAD has ({ref["inputs"]}, HEAD {here}): '
+                 f'check out their commit {ref["commit"][:10]}, or re-sim')
+    names, main = main_names(mode, stems), {}
+    for src, info, files in parts:
+        for n in names:
+            if n in files:
+                if n in main and main[n] != files[n]:
+                    sys.exit(f'{n} differs between the parts ({src}): the main bench is not the same run')
+                main.setdefault(n, files[n])
+    if [n for n in names if n not in main]:
+        sys.exit(f'no part has the main bench outputs {" ".join(n for n in names if n not in main)}')
+    rows, by = {}, {}
+    for src, info, files in parts:
+        got = {}
+        for l in files.get('races.jsonl', b'').decode().splitlines():
+            if l.strip():
+                got.setdefault(json.loads(l)['build'], []).append(l + '\n')
+        said = set(info.get('presets') or [])
+        if set(got) - said or said - set(got):
+            sys.exit(f'{src}: its races.jsonl holds {sorted(got)}, its {PART} names {sorted(said)}')
+        for s, ls in got.items():
+            if s in rows and rows[s] != ls:
+                sys.exit(f'{s}: its race rows differ between {by[s]} and {src}')
+            rows[s], by[s] = ls, src
+    if set(rows) - set(stems):
+        sys.exit(f'the parts sim presets this checkout doesn\'t have: {" ".join(sorted(set(rows) - set(stems)))}')
+    kept, rest = {}, [s for s in stems if s not in rows]
+    if rest and not keep_rest:
+        sys.exit(f'no part raced {",".join(rest)} (--keep-rest keeps the pack\'s rows of presets no part was to sim)')
+    if rest:  # presets no part raced: their pack rows, when their main rows are the pack's bytes (run --presets's rule)
+        old = pack_files(mode)
+        check_splits(mode, old)
+        kept = reusable(mode, rest, set(), old, {n: t.decode() for n, t in main.items()})
+        if [s for s in rest if s not in kept]:
+            miss = [s for s in rest if s not in kept]
+            sys.exit(f'no part raced {",".join(miss)}, and the pack\'s rows can\'t be kept (none, or the main bench rows moved): '
+                     f'sim them (tankheal.py run {mode} --presets {",".join(miss)} --carries <a part>, then tankheal.py part) and merge again')
+    out = os.path.join(D, mode)
+    shutil.rmtree(out, ignore_errors=True)
+    os.makedirs(out)
+    for n, data in main.items():
+        open(os.path.join(out, n), 'wb').write(data)
+    lines = race_lines_sorted([l for s in stems for l in rows.get(s) or kept.get(s) or []], stems)
+    if lines:
+        open(os.path.join(out, 'races.jsonl'), 'w').writelines(lines)
+    probes = {}
+    for src, info, files in parts:
+        for n, data in files.items():
+            if n.startswith('probe/'):
+                if n in probes and probes[n] != data:
+                    sys.exit(f'{n} differs between the parts ({src})')
+                probes[n] = data
+    if probes and kept:  # a run with TANKHEAL_PROBE=1 keeps a probe of every preset: the kept ones' from the pack
+        for n, t in (pack_files(mode) or {}).items():
+            if n.startswith('probe/') and n[6:-5] in kept:
+                probes.setdefault(n, t.encode())
+    for n, data in probes.items():
+        os.makedirs(os.path.dirname(os.path.join(out, n)), exist_ok=True)
+        open(os.path.join(out, n), 'wb').write(data)
+    over = [files['bin_override.json'] for _, _, files in parts if 'bin_override.json' in files]
+    if over:  # stale.mjs --record-bench refuses the mode, as for one run with DASH_ALLOW_BIN_MISMATCH
+        open(os.path.join(out, 'bin_override.json'), 'wb').write(over[0])
+        print(f'{mode}: a part was simmed with DASH_ALLOW_BIN_MISMATCH: the mode is marked (bin_override.json)', file=sys.stderr)
+    mains = [i for _, i, f in parts if i.get('main') == 'here']
+    secs = {k: v for k, v in (mains[0] if mains else ref)['runSeconds'].items() if k != 'races' and k != 'probe'}
+    raced = [i['runSeconds'].get('races', 0) for _, i, _ in parts if i.get('presets')]
+    if raced:
+        secs['races'] = max(raced)  # the parts ran at once: the longest
+    info = {k: ref[k] for k in run_info(mode, '', {}, 0, True)}
+    info.update(at=max(i['at'] for _, i, _ in parts), seconds=max(i['seconds'] for _, i, _ in parts), runSeconds=secs, races=bool(rows) or bool(kept),
+                parts=[{'presets': i.get('presets'), 'main': i.get('main'), 'seconds': i['seconds']} for _, i, _ in parts])
+    if kept:
+        info['racesKept'] = sorted(kept)
+    json.dump(info, open(os.path.join(out, 'run.json'), 'w'), indent=1)
+    open(os.path.join(out, '.fresh'), 'w').write(info['commit'] + '\n' + (','.join(s for s in stems if s not in kept) + '\n' if kept else ''))
+    print(f'{mode}: merged {len(parts)} parts, {len(rows)} presets raced' + (f', {len(kept)} kept from the pack' if kept else '') + f' into {out}')
 
 
 # ---------------------------------------------------------------- probes
@@ -1342,6 +1566,19 @@ if __name__ == '__main__':
     cmd, args = (sys.argv[1], sys.argv[2:]) if len(sys.argv) > 1 else ('', [])
     if cmd == 'run':
         modes, only = [a for a in args if a in MODES], None
+        part = None
+        if {'--part', '--main-only', '--carries'} & set(args):  # a worker's share of one mode (parallel.py), for merge
+            if len(modes) != 1 or '--stale' in args or '--no-races' in args:
+                sys.exit('a part is one mode (run tank|heal --part), with --presets, --main-only or --carries, not --stale or --no-races')
+            want = set(args[args.index('--presets') + 1].split(',')) if '--presets' in args else None
+            if want and want - set(presets(modes[0])):
+                sys.exit(f'no such {modes[0]} preset: {" ".join(sorted(want - set(presets(modes[0]))))}')
+            part = {'presets': want, 'main_only': '--main-only' in args,
+                    'carries': os.path.abspath(args[args.index('--carries') + 1]) if '--carries' in args else None}
+            if part['main_only'] and (want or part['carries']):
+                sys.exit('--main-only runs the main bench alone: no --presets or --carries')
+            run(modes, resume='--resume' in args, part=part)
+            sys.exit(0)
         if '--stale' in args:
             only = stale_presets()
         elif '--presets' in args:
@@ -1356,6 +1593,15 @@ if __name__ == '__main__':
         elif not modes:
             modes = list(MODES)
         run(modes, races='--no-races' not in args, resume='--resume' in args, only=only)
+    elif cmd == 'part':
+        if len(args) != 2 or args[0] not in MODES:
+            sys.exit('tankheal.py part <tank|heal> <dest.tgz>')
+        part_pack(args[0], args[1])
+    elif cmd == 'merge':
+        srcs = [a for a in args[1:] if a != '--keep-rest']
+        if not args or args[0] not in MODES or not srcs:
+            sys.exit('tankheal.py merge <tank|heal> [--keep-rest] <part.tgz | folder> ...')
+        merge(args[0], srcs, keep_rest='--keep-rest' in args)
     elif cmd == 'build':
         build()
     elif cmd == 'bins':

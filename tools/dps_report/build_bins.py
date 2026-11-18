@@ -166,6 +166,17 @@ def load_stamp(bin_dir):
         return json.load(f)
 
 
+def summary(bin_dir, names):
+    """What a run's binaries were built from, kept with what it simmed so runs made on other machines can be compared
+    (tankheal.py merge, parallel.py gather): the stamp's input hash, the sha256 of each binary named, and the Go version
+    (the binaries are byte-identical only under the same Go). None when there is no stamp."""
+    stamp = load_stamp(real_dir(os.path.abspath(bin_dir)))
+    if stamp is None:
+        return None
+    return {'inputHash': stamp.get('inputHash'), 'go': stamp.get('go'),
+            'binaries': {n: (stamp.get('binaries', {}).get(n) or {}).get('sha256') for n in sorted(names)}}
+
+
 def few(xs, n=6):
     return ', '.join(xs[:n]) + (f' and {len(xs) - n} more' if len(xs) > n else '')
 
