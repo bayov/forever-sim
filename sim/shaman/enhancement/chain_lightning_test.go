@@ -50,7 +50,7 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 	var last [4]core.SpellMetrics
 	hits := func() (got [4]hit) {
 		for i, target := range targets {
-			m := cl.SpellMetrics[target.UnitIndex]
+			m := cl.SpellMetrics()[target.UnitIndex]
 			got[i] = hit{m.TotalDamage - last[i].TotalDamage, m.Hits+m.Crits+m.Misses > last[i].Hits+last[i].Crits+last[i].Misses}
 			if m.Crits > last[i].Crits {
 				t.Fatalf("Chain Lightning crit with no spell crit")
@@ -68,10 +68,10 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 			if marked {
 				mark.Activate(sim)
 			}
-			jumpMisses := cl.SpellMetrics[targets[1].UnitIndex].Misses
+			jumpMisses := cl.SpellMetrics()[targets[1].UnitIndex].Misses
 			cl.ApplyEffects(sim, targets[0], cl)
 			// Since client 1.60.1.70425 a jump that misses leaves the mark.
-			jumpMissed := cl.SpellMetrics[targets[1].UnitIndex].Misses > jumpMisses
+			jumpMissed := cl.SpellMetrics()[targets[1].UnitIndex].Misses > jumpMisses
 			if mark.IsActive() != (marked && jumpMissed) {
 				t.Fatalf("the jump to the marked target (missed %v) left the mark up %v", jumpMissed, mark.IsActive())
 			}

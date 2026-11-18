@@ -406,7 +406,7 @@ func TestForeverTrapsRollWithSpellHit(t *testing.T) {
 		}
 		for sim.CurrentTime < time.Second && !sim.Step() {
 		}
-		return float64(spell.SpellMetrics[target.UnitIndex].Misses) / casts
+		return float64(spell.SpellMetrics()[target.UnitIndex].Misses) / casts
 	}
 	for name, misses := range map[string]func(*core.Simulation, *Hunter) float64{
 		"Immolation Trap": immolationMisses,

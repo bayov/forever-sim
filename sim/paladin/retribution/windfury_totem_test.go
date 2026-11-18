@@ -84,7 +84,7 @@ func TestUnsealedWrathWindfuryTotemSwingFromAnyTrigger(t *testing.T) {
 					continue
 				}
 				// The extra swing's metrics (split 1), which the proc switched to.
-				metrics := &ret.AutoAttacks.MHAuto().SpellMetrics[ret.CurrentTarget.UnitIndex]
+				metrics := &ret.AutoAttacks.MHAuto().SpellMetrics()[ret.CurrentTarget.UnitIndex]
 				before := *metrics
 				stepTo(t, sim, sim.CurrentTime+50*time.Millisecond)
 				if metrics.Casts != before.Casts+1 {

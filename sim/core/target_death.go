@@ -24,6 +24,7 @@ func (encounter *Encounter) killTarget(sim *Simulation, target *Unit) {
 	}
 	target.AutoAttacks.CancelAutoSwing(sim)
 	target.Hardcast = Hardcast{}
+	sim.sightEpoch++
 	target.auraTracker.expireAll(sim)
 
 	for _, unit := range target.Env.Raid.AllUnits {

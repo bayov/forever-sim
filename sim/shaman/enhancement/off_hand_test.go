@@ -40,7 +40,7 @@ func TestOrcShamanOffHandWeapon(t *testing.T) {
 			t.Errorf("off hand %d: the main hand swings every %s, want %s", offHand, got, want)
 		}
 		runSim(sim)
-		mh := enh.AutoAttacks.MHAuto().SpellMetrics[0]
+		mh := enh.AutoAttacks.MHAuto().SpellMetrics()[0]
 		f.damage, f.swings = mh.TotalDamage, mh.Casts
 		return f
 	}
@@ -54,8 +54,8 @@ func TestOrcShamanOffHandWeapon(t *testing.T) {
 	if with.enh.AutoAttacks.IsDualWielding {
 		t.Errorf("we dual wield")
 	}
-	if oh := with.enh.AutoAttacks.OHAuto(); oh != nil && oh.SpellMetrics[0].Casts > 0 {
-		t.Errorf("the off hand swung %d times", oh.SpellMetrics[0].Casts)
+	if oh := with.enh.AutoAttacks.OHAuto(); oh != nil && oh.SpellMetrics()[0].Casts > 0 {
+		t.Errorf("the off hand swung %d times", oh.SpellMetrics()[0].Casts)
 	}
 	if got, want := with.enh.GetStats(), without.enh.GetStats(); got != want {
 		t.Errorf("stats with the off hand differ:\n%s\nwant\n%s", got, want)

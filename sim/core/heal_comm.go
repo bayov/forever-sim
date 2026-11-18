@@ -58,13 +58,31 @@ func (target *Unit) IncomingHealing(except *Unit) float64 {
 	if sim == nil || !sim.Encounter.TrackHealth {
 		return 0
 	}
-	total := 0.0
-	for _, unit := range target.Env.Raid.AllPlayerUnits {
+	var buf [16]*Unit
+	return target.incomingFrom(sim.healCasters(except, buf[:0]))
+}
+
+// healCasters appends to casters the players other than except casting a heal with an average size
+// now, in raid order: the heals in flight, for IncomingHealing on any target.
+func (sim *Simulation) healCasters(except *Unit, casters []*Unit) []*Unit {
+	for _, unit := range sim.Raid.AllPlayerUnits {
 		hc := &unit.Hardcast
-		if unit == except || hc.Target != target || hc.spell == nil || hc.spell.expectedHealing == nil || !unit.IsCasting(sim) {
+		if unit == except || hc.spell == nil || hc.spell.expectedHealing == nil || !unit.IsCasting(sim) {
 			continue
 		}
-		total += hc.spell.expectedHealing(target)
+		casters = append(casters, unit)
+	}
+	return casters
+}
+
+// incomingFrom is the healing in flight at target from casters (healCasters): the same terms in the
+// same order as a walk over the raid, so the sum is the same to the bit.
+func (target *Unit) incomingFrom(casters []*Unit) float64 {
+	total := 0.0
+	for _, unit := range casters {
+		if hc := &unit.Hardcast; hc.Target == target {
+			total += hc.spell.expectedHealing(target)
+		}
 	}
 	return total
 }
@@ -72,7 +90,22 @@ func (target *Unit) IncomingHealing(except *Unit) float64 {
 // seenMissing is the health target is missing as viewer sees it: late by viewer's reaction time,
 // less the heals in flight from the other healers. Never below 0.
 func (viewer *Unit) seenMissing(target *Unit) float64 {
+	// Within a rotation check, from the sight (heal_sight.go): the same terms.
+	if s := viewer.sight(target.Env.sim); s != nil {
+		for i := range s.picks {
+			if p := &s.picks[i]; p.picked && p.best == target {
+				return p.missing
+			}
+		}
+		return viewer.seenMissingWith(target, s.casters)
+	}
 	return max(0, target.MaxHealth()-viewer.seenHealth(target)-target.IncomingHealing(viewer))
+}
+
+// seenMissingWith is seenMissing with the heals in flight from casters, healCasters(viewer), worked
+// out once for a pick over many targets.
+func (viewer *Unit) seenMissingWith(target *Unit, casters []*Unit) float64 {
+	return max(0, target.MaxHealth()-viewer.seenHealth(target)-target.incomingFrom(casters))
 }
 
 // onHealCastStart sets up cancelling for a heal with a cast time, when the healer cancels heals.

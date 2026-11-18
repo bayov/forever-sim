@@ -84,7 +84,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			if sim.Encounter.AoETargetCount(0) > 1 {
 				target := warrior.Env.NextTargetUnit(result.Target)
 				spellToUse.Cast(sim, target)
-				spellToUse.SpellMetrics[target.UnitIndex].Casts--
+				spellToUse.SpellMetrics()[target.UnitIndex].Casts--
 			} else if warrior.Env.IsForever() {
 				// "Sweeping Strikes no longer loses charges if no second target is hit"
 				// (Blizzard hotfixes of 2026-11-10).

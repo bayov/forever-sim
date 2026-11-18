@@ -28,7 +28,7 @@ func TestOrcShamanStormstrikeOutcomes(t *testing.T) {
 	player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: darkEdge})
 	sim, enh := newShamanSim(player, &proto.Debuffs{}, 10)
 	mark := enh.CurrentTarget.GetAuraByID(enh.Stormstrike.ActionID)
-	metrics := &enh.Stormstrike.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	metrics := &enh.Stormstrike.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 
 	outcome := func(before core.SpellMetrics) string {
 		switch {
@@ -152,9 +152,9 @@ func TestOrcShamanStormstrikeMark(t *testing.T) {
 				}
 
 				names[earthShock] = "Earth Shock on the mark"
-				before := earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses
+				before := earthShock.SpellMetrics()[enh.CurrentTarget.UnitIndex].Misses
 				earthShock.ApplyEffects(sim, enh.CurrentTarget, earthShock)
-				missed := earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > before
+				missed := earthShock.SpellMetrics()[enh.CurrentTarget.UnitIndex].Misses > before
 				if missed {
 					misses++
 				}
@@ -169,9 +169,9 @@ func TestOrcShamanStormstrikeMark(t *testing.T) {
 				if marked {
 					mark.Activate(sim)
 				}
-				boltMisses := lightningBolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses
+				boltMisses := lightningBolt.SpellMetrics()[enh.CurrentTarget.UnitIndex].Misses
 				lightningBolt.ApplyEffects(sim, enh.CurrentTarget, lightningBolt)
-				boltMissed := lightningBolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > boltMisses
+				boltMissed := lightningBolt.SpellMetrics()[enh.CurrentTarget.UnitIndex].Misses > boltMisses
 				if mark.IsActive() != (marked && boltMissed) {
 					t.Fatalf("Lightning Bolt (missed %v) left the mark up %v", boltMissed, mark.IsActive())
 				}

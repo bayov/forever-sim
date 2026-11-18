@@ -31,9 +31,9 @@ func (shield *Shield) Apply(sim *Simulation, shieldAmount float64) {
 	shield.Aura.Activate(sim)
 
 	threat := 0.0 // TODO
-	shield.Spell.SpellMetrics[target.UnitIndex].TotalThreat += threat
-	shield.Spell.SpellMetrics[target.UnitIndex].TotalShielding += shieldAmount
-	shield.Spell.SpellMetrics[target.UnitIndex].Hits++
+	shield.Spell.SpellMetrics()[target.UnitIndex].TotalThreat += threat
+	shield.Spell.SpellMetrics()[target.UnitIndex].TotalShielding += shieldAmount
+	shield.Spell.SpellMetrics()[target.UnitIndex].Hits++
 
 	if sim.Log != nil {
 		caster.Log(sim, "%s %s Hit for %0.3f shielding. (Threat: %0.3f)", target.LogLabel(), shield.Spell.ActionID, shieldAmount, threat)

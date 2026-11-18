@@ -67,11 +67,11 @@ func TestHealingCoreDirectHealSchoolCrit(t *testing.T) {
 	gh := hp.GreaterHeal[5]
 	critRate := func(sim *core.Simulation) float64 {
 		const n = 1000
-		before := gh.SpellMetrics[tank.UnitIndex].Crits
+		before := gh.SpellMetrics()[tank.UnitIndex].Crits
 		for i := 0; i < n; i++ {
 			gh.ApplyEffects(sim, tank, gh)
 		}
-		return float64(gh.SpellMetrics[tank.UnitIndex].Crits-before) / n
+		return float64(gh.SpellMetrics()[tank.UnitIndex].Crits-before) / n
 	}
 	at(sim, map[time.Duration]func(*core.Simulation){time.Second: func(sim *core.Simulation) {
 		without := critRate(sim)

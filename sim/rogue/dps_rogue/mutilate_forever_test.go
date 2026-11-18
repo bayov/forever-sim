@@ -105,7 +105,7 @@ func TestForeverColdBloodBothMutilateHalves(t *testing.T) {
 	}
 	coldBlood := rogue.GetAura("Cold Blood")
 	oh := rogue.GetSpell(rogue.Mutilate.ActionID.WithTag(2))
-	ohCrits := oh.SpellMetrics[target.UnitIndex].Crits
+	ohCrits := oh.SpellMetrics()[target.UnitIndex].Crits
 	rogue.SetGCDTimer(sim, sim.CurrentTime)
 	if !rogue.Mutilate.Cast(sim, target) {
 		t.Fatal("Mutilate didn't cast")
@@ -113,7 +113,7 @@ func TestForeverColdBloodBothMutilateHalves(t *testing.T) {
 	if coldBlood.IsActive() {
 		t.Error("Cold Blood still up after Mutilate")
 	}
-	if got := oh.SpellMetrics[target.UnitIndex].Crits - ohCrits; got != 1 {
+	if got := oh.SpellMetrics()[target.UnitIndex].Crits - ohCrits; got != 1 {
 		t.Errorf("Mutilate's off hand half under Cold Blood: %d crits, want 1", got)
 	}
 }

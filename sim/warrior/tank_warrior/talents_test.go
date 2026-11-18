@@ -72,7 +72,7 @@ func TestForeverTankUnbridledWrath(t *testing.T) {
 		war.CurrentTarget.AutoAttacks.CancelAutoSwing(sim)
 		target := war.CurrentTarget
 		for _, spell := range []*core.Spell{war.HeroicStrike.Spell, war.Cleave.Spell} {
-			metrics := &spell.SpellMetrics[target.UnitIndex]
+			metrics := &spell.SpellMetrics()[target.UnitIndex]
 			hits, procs := 0, 0
 			for i := 0; i < 400; i++ {
 				war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
@@ -189,7 +189,7 @@ func TestForeverTankHeroicStrikeDamage(t *testing.T) {
 	wantLow, wantHigh := (138+mh.BaseDamageMin+ap)*m, (138+mh.BaseDamageMax+ap)*m
 
 	low, high := math.Inf(1), math.Inf(-1)
-	metrics := &spell.SpellMetrics[target.UnitIndex]
+	metrics := &spell.SpellMetrics()[target.UnitIndex]
 	for i := 0; i < 800; i++ {
 		war.AddRage(sim, 100, war.RageRefundMetrics)
 		before := *metrics

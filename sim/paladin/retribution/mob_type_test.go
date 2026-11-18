@@ -30,7 +30,7 @@ func TestUndeadOnlySpells(t *testing.T) {
 		if got := exorcism.CanCast(sim, target); got != c.lands {
 			t.Errorf("%v: Exorcism castable = %v, want %v", c.mobType, got, c.lands)
 		}
-		metrics := &holyWrath.SpellMetrics[target.UnitIndex]
+		metrics := &holyWrath.SpellMetrics()[target.UnitIndex]
 		for range 10 {
 			holyWrath.ApplyEffects(sim, target, holyWrath)
 		}

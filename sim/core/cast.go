@@ -186,8 +186,9 @@ func (unit *Unit) applySpellPushback() {
 				}
 
 				aura.Unit.Hardcast.Expires += pushback
+				sim.sightEpoch++
 				if metricsTarget := aura.Unit.CurrentTarget; metricsTarget != nil {
-					hcSpell.SpellMetrics[metricsTarget.UnitIndex].TotalCastTime += pushback
+					hcSpell.SpellMetrics()[metricsTarget.UnitIndex].TotalCastTime += pushback
 				}
 
 				// Update GCDTimer
@@ -332,7 +333,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			// do not add channeled time here as they have variable cast length
 			// cast time for channels is handled in dot.OnExpire
 			if !spell.Flags.Matches(SpellFlagChanneled) {
-				spell.SpellMetrics[target.UnitIndex].TotalCastTime += effectiveTime
+				spell.SpellMetrics()[target.UnitIndex].TotalCastTime += effectiveTime
 			}
 			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+effectiveTime)
 		}
@@ -400,6 +401,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 				ResetsSwing: resetsSwing,
 				spell:       spell,
 			}
+			sim.sightEpoch++
 
 			if spell.Unit.Hardcast.Expires != spell.Unit.NextGCDAt() {
 				spell.Unit.newHardcastAction(sim)

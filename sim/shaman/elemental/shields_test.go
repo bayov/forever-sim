@@ -51,7 +51,7 @@ func TestOrcShamanRaidDamageHits(t *testing.T) {
 		for !sim.Step() {
 		}
 
-		metrics := orb.SpellMetrics[ele.CurrentTarget.UnitIndex]
+		metrics := orb.SpellMetrics()[ele.CurrentTarget.UnitIndex]
 		fired := float64(metrics.Hits + metrics.Misses)
 		want := 0.0
 		if hitsPerMinute > 0 {

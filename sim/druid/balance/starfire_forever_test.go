@@ -21,9 +21,9 @@ func TestStarfireNov2Damage(t *testing.T) {
 	low, high := 1.4*313.43, 1.4*369.77
 	seen, lowest, highest := 0, 1e9, 0.0
 	for i := 0; i < 400; i++ {
-		metrics := &starfire.SpellMetrics[target.UnitIndex]
+		metrics := &starfire.SpellMetrics()[target.UnitIndex]
 		before, hits := metrics.TotalDamage, metrics.Hits
-		starfire.SpellMetrics[target.UnitIndex].Casts++
+		starfire.SpellMetrics()[target.UnitIndex].Casts++
 		starfire.ApplyEffects(sim, target, starfire.Spell)
 		if metrics.Hits == hits || metrics.TotalDamage == before {
 			continue

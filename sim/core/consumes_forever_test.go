@@ -167,7 +167,7 @@ func setupProcSim(t *testing.T, ruleset proto.Ruleset, consumes *proto.Consumes)
 func procDamageRange(t *testing.T, sim *Simulation, spell *Spell) (float64, float64) {
 	t.Helper()
 	target := sim.GetTargetUnit(0)
-	metrics := &spell.SpellMetrics[target.UnitIndex]
+	metrics := &spell.SpellMetrics()[target.UnitIndex]
 	lo, hi := 1e9, 0.0
 	hits := 0
 	for i := 0; i < 4000; i++ {
@@ -320,16 +320,16 @@ func TestForeverOpenExplosives(t *testing.T) {
 		spell.Flags |= SpellFlagIgnoreResists
 		lo, hi := 1e9, 0.0
 		for range 2000 {
-			before := spell.SpellMetrics[0]
+			before := spell.SpellMetrics()[0]
 			spell.ApplyEffects(sim, sim.GetTargetUnit(0), spell)
-			after := spell.SpellMetrics[0]
+			after := spell.SpellMetrics()[0]
 			if after.Hits == before.Hits+1 && after.Crits == before.Crits {
 				d := after.TotalDamage - before.TotalDamage
 				lo, hi = min(lo, d), max(hi, d)
 			}
 		}
 		for i := range 2 {
-			if got := spell.SpellMetrics[i].Hits; got < 1900 {
+			if got := spell.SpellMetrics()[i].Hits; got < 1900 {
 				t.Errorf("%s: target %d was hit %d times in 2000", c.explosive, i, got)
 			}
 		}
@@ -424,13 +424,13 @@ func TestForeverOffensivePotions(t *testing.T) {
 		}
 		runUntil(start + c.lands - time.Millisecond)
 		for i := range 3 {
-			if spell.SpellMetrics[i].TotalDamage != 0 || spell.Dot(sim.GetTargetUnit(int32(i))).IsActive() {
+			if spell.SpellMetrics()[i].TotalDamage != 0 || spell.Dot(sim.GetTargetUnit(int32(i))).IsActive() {
 				t.Errorf("%s: target %d took damage before %v", c.potion, i, c.lands)
 			}
 		}
 		runUntil(start + c.lands + time.Second*13)
 		for i := range 3 {
-			m := spell.SpellMetrics[i]
+			m := spell.SpellMetrics()[i]
 			if m.Misses != 0 || m.Ticks != c.ticks {
 				t.Errorf("%s: target %d took %d ticks and %d misses, want %d ticks", c.potion, i, m.Ticks, m.Misses, c.ticks)
 			}

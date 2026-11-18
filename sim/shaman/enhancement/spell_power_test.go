@@ -127,7 +127,7 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		t.Fatalf("the level 30 ranks changed")
 	}
 	check := func(sim *core.Simulation, c rollCase) {
-		metrics := &c.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
+		metrics := &c.spell.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 		low, high := math.Inf(1), math.Inf(-1)
 		for range 2000 {
 			// An orb takes a charge, so we put the shield up again before each one.
@@ -165,7 +165,7 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		if c.wantTick == 0 {
 			continue
 		}
-		metrics := c.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
+		metrics := c.spell.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 		if metrics.Ticks == 0 {
 			t.Fatalf("%s didn't tick", c.name)
 		}

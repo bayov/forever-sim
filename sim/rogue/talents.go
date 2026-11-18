@@ -317,7 +317,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			}
 
 			bfHit.Cast(sim, rogue.Env.NextTargetUnit(result.Target))
-			bfHit.SpellMetrics[result.Target.UnitIndex].Casts--
+			bfHit.SpellMetrics()[result.Target.UnitIndex].Casts--
 		},
 	})
 

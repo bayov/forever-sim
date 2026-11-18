@@ -33,7 +33,7 @@ func TestRaidForeverVampiricEmbrace(t *testing.T) {
 		priestBefore, mageBefore := shadow.CurrentHealth(), mage.CurrentHealth()
 		mb := topRank(t, shadow.MindBlast)
 		mb.BonusHitRating = 1e6
-		metrics := &mb.SpellMetrics[shadow.CurrentTarget.UnitIndex]
+		metrics := &mb.SpellMetrics()[shadow.CurrentTarget.UnitIndex]
 		damageBefore := metrics.TotalDamage
 		castFree(sim, mb)
 		damage := metrics.TotalDamage - damageBefore

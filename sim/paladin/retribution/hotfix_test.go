@@ -25,7 +25,7 @@ func whiteHit(sim *core.Simulation, ret *RetributionPaladin, aura *core.Aura, ou
 }
 
 func procCasts(ret *RetributionPaladin, spellID int32) int32 {
-	return ret.GetSpell(core.ActionID{SpellID: spellID}).SpellMetrics[ret.CurrentTarget.UnitIndex].Casts
+	return ret.GetSpell(core.ActionID{SpellID: spellID}).SpellMetrics()[ret.CurrentTarget.UnitIndex].Casts
 }
 
 // TestUnsealedWrathStoresAndSpends checks Unsealed Wrath (spell 1310735): a landed white swing
@@ -281,9 +281,9 @@ func TestHolyShieldAndShieldsworn(t *testing.T) {
 	shield := ret.GetAuraByID(core.ActionID{SpellID: 20928})
 	proc := ret.GetSpell(core.ActionID{SpellID: 20957})
 	holyStrike.BonusHitRating = 10000
-	before := proc.SpellMetrics[ret.CurrentTarget.UnitIndex].Casts
+	before := proc.SpellMetrics()[ret.CurrentTarget.UnitIndex].Casts
 	holyStrike.ApplyEffects(sim, ret.CurrentTarget, holyStrike)
-	if got := proc.SpellMetrics[ret.CurrentTarget.UnitIndex].Casts - before; got != 1 {
+	if got := proc.SpellMetrics()[ret.CurrentTarget.UnitIndex].Casts - before; got != 1 {
 		t.Errorf("Holy Shield procs from a Shieldsworn Holy Strike = %d, want 1", got)
 	}
 	if got := shield.GetStacks(); got != 4 {
@@ -360,7 +360,7 @@ func TestUnsealedWrathWindfuryTotemStoresNone(t *testing.T) {
 			start := sim.CurrentTime
 			ret.AutoAttacks.ExtraMHAttack(sim, 1, core.ActionID{SpellID: c.source}, core.ActionID{})
 			// The extra swings' metrics (split 1), which the call above switched to.
-			metrics := &ret.AutoAttacks.MHAuto().SpellMetrics[ret.CurrentTarget.UnitIndex]
+			metrics := &ret.AutoAttacks.MHAuto().SpellMetrics()[ret.CurrentTarget.UnitIndex]
 			before := *metrics
 			for sim.CurrentTime == start && !sim.Step() {
 			}

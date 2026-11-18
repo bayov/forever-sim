@@ -515,6 +515,7 @@ func (character *Character) initialize(agent Agent) {
 				// The cast that completes is another event, on top of this wake-up.
 				sim.events++
 				hc.Expires = startingCDTime
+				sim.sightEpoch++
 				if hc.OnComplete != nil {
 					hc.OnComplete(sim, hc.Target)
 				}

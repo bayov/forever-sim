@@ -215,7 +215,7 @@ func TestHealingPriestHealVariance(t *testing.T) {
 			// The game rolls the base heal in whole points (core.Simulation.Roll).
 			lowBase, highBase = math.Round(lowBase), math.Round(highBase)
 			low, high := c.spell.ExpectedHealing(tank, lowBase), c.spell.ExpectedHealing(tank, highBase)
-			m := &c.spell.SpellMetrics[tank.UnitIndex]
+			m := &c.spell.SpellMetrics()[tank.UnitIndex]
 			least, most := math.Inf(1), math.Inf(-1)
 			for i := 0; i < 400; i++ {
 				healing, crit := m.TotalHealing, m.TotalCritHealing
@@ -315,7 +315,7 @@ func TestHealingPriestInnerFocusPenance(t *testing.T) {
 			}
 		},
 	})
-	if got := bolt.SpellMetrics[tank.UnitIndex].Hits + bolt.SpellMetrics[tank.UnitIndex].Crits; got != 3 {
+	if got := bolt.SpellMetrics()[tank.UnitIndex].Hits + bolt.SpellMetrics()[tank.UnitIndex].Crits; got != 3 {
 		t.Errorf("Penance under Inner Focus fired %d heal bolts, want 3", got)
 	}
 }
@@ -328,7 +328,7 @@ func TestHealingPriestPowerInfusion(t *testing.T) {
 	if got, want := pi.Cost.GetCurrentCost(), 0.2*hp.BaseMana; got != want || want <= 0 {
 		t.Errorf("Power Infusion costs %.0f, want %.0f (20%% of base mana)", got, want)
 	}
-	m := &renew.SpellMetrics[tank.UnitIndex]
+	m := &renew.SpellMetrics()[tank.UnitIndex]
 	type ticks struct{ healing, n float64 }
 	var under ticks
 	at(sim, map[time.Duration]func(*core.Simulation){
@@ -379,7 +379,7 @@ func TestHealingPriestPrayerOfMendingTriggers(t *testing.T) {
 	heal := hp.GetSpell(core.ActionID{SpellID: priest.PrayerOfMendingHealID, Tag: 3})
 	healed := func() int32 {
 		n := int32(0)
-		for _, m := range heal.SpellMetrics {
+		for _, m := range heal.SpellMetrics() {
 			n += m.Hits + m.Crits
 		}
 		return n
@@ -398,7 +398,7 @@ func TestHealingPriestPrayerOfMendingTriggers(t *testing.T) {
 		},
 		12 * time.Second: func(sim *core.Simulation) {
 			holders := pomHolders(sim)
-			if n := healed(); n != 1 || heal.SpellMetrics[tank.UnitIndex].Hits+heal.SpellMetrics[tank.UnitIndex].Crits != 1 {
+			if n := healed(); n != 1 || heal.SpellMetrics()[tank.UnitIndex].Hits+heal.SpellMetrics()[tank.UnitIndex].Crits != 1 {
 				t.Errorf("a Flash Heal on the tank set off %d Prayer of Mending heals, want 1 on the tank", n)
 			}
 			if holders[tank] != 0 || len(holders) != 1 {
@@ -493,7 +493,7 @@ func TestHealingPriestBlessedRecoveryCarryOver(t *testing.T) {
 		},
 		4 * time.Second: func(sim *core.Simulation) { hit(sim, big) },
 	})
-	if got, want := hot.SpellMetrics[hp.UnitIndex].TotalHealing, 0.25*2*big; !near(got, want, 1e-9) {
+	if got, want := hot.SpellMetrics()[hp.UnitIndex].TotalHealing, 0.25*2*big; !near(got, want, 1e-9) {
 		t.Errorf("two hits of %.0f gave Blessed Recovery %.1f healing, want %.1f", big, got, want)
 	}
 }

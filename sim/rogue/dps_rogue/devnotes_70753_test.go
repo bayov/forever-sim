@@ -81,10 +81,10 @@ func TestForeverShank(t *testing.T) {
 			t.Fatalf("Energy after a Shank is %.1f, want 70", rogue.CurrentEnergy())
 		}
 	}
-	if m := rogue.Shank.SpellMetrics[target.UnitIndex]; m.Dodges+m.Parries != 0 {
+	if m := rogue.Shank.SpellMetrics()[target.UnitIndex]; m.Dodges+m.Parries != 0 {
 		t.Errorf("Shank was dodged or parried %d times", m.Dodges+m.Parries)
 	}
-	if misses := rogue.Shank.SpellMetrics[target.UnitIndex].Misses; misses != 0 {
+	if misses := rogue.Shank.SpellMetrics()[target.UnitIndex].Misses; misses != 0 {
 		t.Errorf("Shank missed %d times", misses)
 	}
 	if got := rogue.Shank.CD.Duration; got != 10*time.Second {
@@ -152,7 +152,7 @@ func TestForeverHemorrhageGarrote(t *testing.T) {
 	target := rogue.CurrentTarget
 	dot := rogue.Garrote.Dot(target)
 	dot.Apply(sim)
-	metrics := &rogue.Garrote.SpellMetrics[target.UnitIndex]
+	metrics := &rogue.Garrote.SpellMetrics()[target.UnitIndex]
 	rogue.HemorrhageAuras.Get(target).Activate(sim)
 	ap := rogue.Garrote.MeleeAttackPower(target)
 	multiplier := rogue.Garrote.AttackerDamageMultiplier(rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
@@ -181,7 +181,7 @@ func TestForeverMutilateNinetyPercent(t *testing.T) {
 	low := mh.BaseDamageMin + mh.NormalizedSwingSpeed*ap/mh.AttackPowerPerDPS
 	high := mh.BaseDamageMax + mh.NormalizedSwingSpeed*ap/mh.AttackPowerPerDPS
 	rogue.Mutilate.Cast(sim, target)
-	got := rogue.Mutilate.SpellMetrics[target.UnitIndex].TotalDamage / rogue.Mutilate.DamageMultiplier /
+	got := rogue.Mutilate.SpellMetrics()[target.UnitIndex].TotalDamage / rogue.Mutilate.DamageMultiplier /
 		rogue.Mutilate.AttackerDamageMultiplier(rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], false)
 	if got < 0.9*(88+low)-1e-6 || got > 0.9*(88+high)+1e-6 {
 		t.Errorf("a Mutilate main hand half hit for %.2f, want between %.2f and %.2f", got, 0.9*(88+low), 0.9*(88+high))
@@ -236,13 +236,13 @@ func TestForeverDeathMark(t *testing.T) {
 		damageCap := (156 + 245*float64(points) + 0.04*float64(points)*ap) * (1 + rogue.GetStat(stats.MeleeCrit)/core.CritRatingPerCritChance/100)
 		// 1000 damage of Garrote is 2 x 12% x points x 1.2 stored.
 		rogue.Garrote.CalcAndDealPeriodicDamage(sim, target, 1000, rogue.Garrote.OutcomeAlwaysHitNoHitCounter)
-		dealt := rogue.Garrote.SpellMetrics[target.UnitIndex].TotalDamage
-		rogue.Garrote.SpellMetrics[target.UnitIndex].TotalDamage = 0
-		before := detonation.SpellMetrics[target.UnitIndex].TotalDamage
+		dealt := rogue.Garrote.SpellMetrics()[target.UnitIndex].TotalDamage
+		rogue.Garrote.SpellMetrics()[target.UnitIndex].TotalDamage = 0
+		before := detonation.SpellMetrics()[target.UnitIndex].TotalDamage
 		for rogue.DeathMarkAuras.Get(target).IsActive() {
 			sim.Step()
 		}
-		got := detonation.SpellMetrics[target.UnitIndex].TotalDamage - before
+		got := detonation.SpellMetrics()[target.UnitIndex].TotalDamage - before
 		want := min(dealt*2*0.12*float64(points)*1.2, damageCap) * 1.2
 		if math.Abs(got-want) > 1 { // damage is whole numbers
 			t.Errorf("a %d point Death Mark dealt %.2f, want %.2f (stored from %.1f, cap %.1f)", points, got, want, dealt, damageCap)
@@ -276,15 +276,15 @@ func TestForeverDeathMarkAlwaysHitsAndPaysTheCap(t *testing.T) {
 		crit := rogue.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance
 		want := (156 + 245*5 + 0.04*5*ap) * (1 + crit/100) * 1.2
 		rogue.Garrote.CalcAndDealPeriodicDamage(sim, target, 100000, rogue.Garrote.OutcomeAlwaysHitNoHitCounter)
-		before := detonation.SpellMetrics[target.UnitIndex].TotalDamage
+		before := detonation.SpellMetrics()[target.UnitIndex].TotalDamage
 		for rogue.DeathMarkAuras.Get(target).IsActive() {
 			sim.Step()
 		}
-		if got := detonation.SpellMetrics[target.UnitIndex].TotalDamage - before; math.Abs(got-want) > 1 {
+		if got := detonation.SpellMetrics()[target.UnitIndex].TotalDamage - before; math.Abs(got-want) > 1 {
 			t.Fatalf("cast %d: Death Mark paid %.2f, want the cap %.2f", i, got, want)
 		}
 	}
-	if crits := detonation.SpellMetrics[target.UnitIndex].Crits; crits != 0 {
+	if crits := detonation.SpellMetrics()[target.UnitIndex].Crits; crits != 0 {
 		t.Errorf("Death Mark's payout crit %d times at 50%% more crit, want never", crits)
 	}
 }

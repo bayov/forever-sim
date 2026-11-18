@@ -59,16 +59,38 @@ func (hb *healthBar) record(sim *Simulation, before float64) {
 
 // healthAt is the health at t, from the recent changes: the health before the first change after
 // t. Changes older than the ring read as the oldest one kept.
+//
+// The changes kept, newest first, are those after t and then the rest (the ring is in time order and
+// fills from its start), so a binary search finds the first change after t.
 func (hb *healthBar) healthAt(t time.Duration) float64 {
-	health := hb.currentHealth
-	for k := 1; k <= healthHistorySize; k++ {
-		c := hb.history[(hb.next-k+healthHistorySize)%healthHistorySize]
-		if !c.set || c.at <= t {
-			break
-		}
-		health = c.before
+	// The newest change: none after t is the usual case.
+	newest := hb.next - 1
+	if newest < 0 {
+		newest += healthHistorySize
 	}
-	return health
+	if c := &hb.history[newest]; !c.set || c.at <= t {
+		return hb.currentHealth
+	}
+	// k changes back from the newest, for k in [lo, hi): changes 1..lo are after t, change hi isn't
+	// (or doesn't exist).
+	lo, hi := 1, healthHistorySize+1
+	for hi-lo > 1 {
+		mid := int(uint(lo+hi) >> 1)
+		i := hb.next - mid
+		if i < 0 {
+			i += healthHistorySize
+		}
+		if c := &hb.history[i]; c.set && c.at > t {
+			lo = mid
+		} else {
+			hi = mid
+		}
+	}
+	i := hb.next - lo
+	if i < 0 {
+		i += healthHistorySize
+	}
+	return hb.history[i].before
 }
 
 func (hb *healthBar) MaxHealth() float64 {
@@ -121,6 +143,7 @@ func (hb *healthBar) GainHealth(sim *Simulation, amount float64, metrics *Resour
 	}
 
 	hb.currentHealth = newHealth
+	sim.sightEpoch++
 
 	if m := &hb.unit.Metrics.CharacterIterationMetrics; m.scareOpen && newHealth >= scareEndPercent*hb.MaxHealth() {
 		m.scareOpen = false
@@ -177,6 +200,7 @@ func (hb *healthBar) removeHealth(sim *Simulation, amount float64, tmi bool) {
 	}
 
 	hb.currentHealth = newHealth
+	sim.sightEpoch++
 
 	if m := &hb.unit.Metrics.CharacterIterationMetrics; hb.unit.Type == PlayerUnit && !m.scareOpen && newHealth > 0 && newHealth < scarePercent*hb.MaxHealth() {
 		m.scareOpen = true

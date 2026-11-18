@@ -75,7 +75,7 @@ func TestHurricaneCastSpeed(t *testing.T) {
 			sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
 			for sim.CurrentTime < until && !sim.Step() {
 			}
-			metrics := hurricane.SpellMetrics[target.UnitIndex]
+			metrics := hurricane.SpellMetrics()[target.UnitIndex]
 			if got := metrics.Ticks + metrics.Misses; got != c.wantTicks {
 				t.Errorf("Hurricane rolled %d ticks and misses, want %d", got, c.wantTicks)
 			}

@@ -48,6 +48,8 @@ type Simulation struct {
 	// The rotation check going on, in which values keep their results, or 0. See aplMemo.
 	aplCheck  uint64
 	aplChecks uint64
+	// Counts the changes a healer's view of the raid can follow (heal_sight.go).
+	sightEpoch uint64
 
 	// Current Simulation State
 	pendingActions []*PendingAction

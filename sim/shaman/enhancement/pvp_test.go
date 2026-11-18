@@ -129,7 +129,7 @@ func TestOrcShamanMeleeDowntime(t *testing.T) {
 		Period: 100 * time.Millisecond,
 		OnAction: func(sim *core.Simulation) {
 			out := !enh.IsInMeleeRange()
-			swings := white.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts
+			swings := white.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts
 			samples++
 			if out {
 				outOfRange++
@@ -154,7 +154,7 @@ func TestOrcShamanMeleeDowntime(t *testing.T) {
 	if !checkedOut || !checkedIn {
 		t.Errorf("never checked the casts out of range (%v) and back in range (%v)", checkedOut, checkedIn)
 	}
-	if swings := white.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts; swings < seconds/2/4 {
+	if swings := white.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts; swings < seconds/2/4 {
 		t.Errorf("%d white swings in range, want at least %d", swings, seconds/2/4)
 	}
 	if share := float64(outOfRange) / float64(samples); math.Abs(share-0.5) > 0.05 {

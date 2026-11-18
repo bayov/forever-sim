@@ -319,7 +319,7 @@ func TestForeverMoonkinSwingAndHurricane(t *testing.T) {
 	sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
 	for sim.CurrentTime < until && !sim.Step() {
 	}
-	metrics := hurricane.SpellMetrics[target.UnitIndex]
+	metrics := hurricane.SpellMetrics()[target.UnitIndex]
 	if metrics.CritTicks != 0 {
 		t.Errorf("Hurricane critted %d ticks", metrics.CritTicks)
 	}

@@ -23,7 +23,7 @@ const HealingStreamTotemCritChance = 0.05
 
 func outcomeHealingStreamCrit(spell *core.Spell) core.OutcomeApplier {
 	return func(sim *core.Simulation, result *core.SpellResult, attackTable *core.AttackTable) {
-		metrics := &spell.SpellMetrics[result.Target.UnitIndex]
+		metrics := &spell.SpellMetrics()[result.Target.UnitIndex]
 		if sim.RandomFloat("Healing Stream Crit Roll") < HealingStreamTotemCritChance {
 			result.Outcome = core.OutcomeCrit
 			result.Damage *= spell.CritMultiplier(attackTable)

@@ -989,8 +989,8 @@ func TestExplosivesInForm(t *testing.T) {
 			mcd.Spell.Cast(sim, bear.CurrentTarget)
 		}
 		advance(sim, 2*time.Second)
-		if mcd.Spell.SpellMetrics[0].Casts != 1 {
-			t.Errorf("%s: %d casts, want 1", c.name, mcd.Spell.SpellMetrics[0].Casts)
+		if mcd.Spell.SpellMetrics()[0].Casts != 1 {
+			t.Errorf("%s: %d casts, want 1", c.name, mcd.Spell.SpellMetrics()[0].Casts)
 		}
 		if got := bear.InForm(druid.Bear); got != c.inForm {
 			t.Errorf("%s: in Dire Bear Form after use %v, want %v", c.name, got, c.inForm)

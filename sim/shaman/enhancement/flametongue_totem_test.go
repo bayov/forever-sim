@@ -94,7 +94,7 @@ func TestOrcShamanFlametongueTotemCrits(t *testing.T) {
 	if proc == nil {
 		t.Fatalf("no Flametongue Totem rank 1 proc")
 	}
-	metrics := &proc.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	metrics := &proc.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 
 	procs := func(sim *core.Simulation) int32 {
 		crits := metrics.Crits

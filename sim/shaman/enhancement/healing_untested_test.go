@@ -144,7 +144,7 @@ func TestOrcShamanRiptideTickCrits(t *testing.T) {
 		}
 	})
 	runSim(sim)
-	if got := enh.Riptide.SpellMetrics[enh.UnitIndex].CritTicks; got != 5 {
+	if got := enh.Riptide.SpellMetrics()[enh.UnitIndex].CritTicks; got != 5 {
 		t.Errorf("%d of Riptide's 5 ticks crit at 100%% crit, want 5", got)
 	}
 
@@ -160,7 +160,7 @@ func TestOrcShamanRiptideTickCrits(t *testing.T) {
 			for range ticks {
 				hot.TickOnce(sim)
 			}
-			n = enh.Riptide.SpellMetrics[enh.UnitIndex].CritTicks
+			n = enh.Riptide.SpellMetrics()[enh.UnitIndex].CritTicks
 		})
 		runSim(sim)
 		return n
@@ -201,7 +201,7 @@ func TestOrcShamanRiptideTickCritsProcNothing(t *testing.T) {
 	}
 	healOnce(t, sim, enh, enh.LesserHealingWave[6], 17, 1.5)
 	at(sim, 19, func(sim *core.Simulation) {
-		if crits := enh.Riptide.SpellMetrics[enh.UnitIndex].CritTicks; crits != 5 {
+		if crits := enh.Riptide.SpellMetrics()[enh.UnitIndex].CritTicks; crits != 5 {
 			t.Errorf("%d of Riptide's 5 ticks crit, want 5", crits)
 		}
 		if !fortitude.IsActive() || enh.WaterShieldAura.GetStacks() != 2 {

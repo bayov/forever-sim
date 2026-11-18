@@ -61,8 +61,8 @@ func TestConsecrationFirstFourTargets(t *testing.T) {
 			}
 		}
 		consecration.AOEDot().TickOnce(sim)
-		first = consecration.SpellMetrics[targets[0].UnitIndex].TotalDamage
-		fifth = consecration.SpellMetrics[targets[4].UnitIndex].TotalDamage
+		first = consecration.SpellMetrics()[targets[0].UnitIndex].TotalDamage
+		fifth = consecration.SpellMetrics()[targets[4].UnitIndex].TotalDamage
 		firstMult = consecration.TargetDamageMultiplier(ret.AttackTables[targets[0].UnitIndex][consecration.CastType], true)
 		fifthMult = consecration.TargetDamageMultiplier(ret.AttackTables[targets[4].UnitIndex][consecration.CastType], true)
 		return
@@ -189,12 +189,12 @@ func TestSwiftJudgement(t *testing.T) {
 	seal.Cast(sim, target)
 	cost := judgement.Cost.GetCurrentCost()
 	judgement.CD.Use(sim)
-	casts := jor.SpellMetrics[target.UnitIndex].Casts
+	casts := jor.SpellMetrics()[target.UnitIndex].Casts
 	mana := ret.CurrentMana()
 	if !swift.Cast(sim, target) {
 		t.Fatalf("Swift Judgement not cast while Judgement is on cooldown")
 	}
-	if got := jor.SpellMetrics[target.UnitIndex].Casts - casts; got != 1 {
+	if got := jor.SpellMetrics()[target.UnitIndex].Casts - casts; got != 1 {
 		t.Errorf("Swift Judgement cast Judgement of Righteousness %d times, want 1", got)
 	}
 	if got := mana - ret.CurrentMana(); got != 0 {
@@ -257,7 +257,7 @@ func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
 				t.Errorf("proc spell power coefficient = %.4f, want %.4f", proc.BonusCoefficient, c.coeff)
 			}
 			proc.BonusCritRating = -10000 // no crits, so every proc is a plain hit
-			metrics := &proc.SpellMetrics[target.UnitIndex]
+			metrics := &proc.SpellMetrics()[target.UnitIndex]
 			hit := func() float64 {
 				before := metrics.TotalDamage
 				proc.ApplyEffects(sim, target, proc)

@@ -109,7 +109,7 @@ func (absorb *Absorb) end(sim *Simulation) {
 	}
 	// The fight is over once Cleanup has set the time to the fight's length.
 	if absorb.remaining > 0 && absorb.Spell != nil && sim.CurrentTime < sim.Duration {
-		metrics := &absorb.Spell.SpellMetrics[unit.UnitIndex]
+		metrics := &absorb.Spell.SpellMetrics()[unit.UnitIndex]
 		metrics.TotalHealing += absorb.remaining
 		metrics.TotalOverhealing += absorb.remaining
 	}
@@ -126,7 +126,7 @@ func (unit *Unit) absorbDamage(sim *Simulation, spell *Spell, result *SpellResul
 		taken := min(absorb.remaining, result.Damage)
 		absorb.remaining -= taken
 		result.Damage -= taken
-		absorb.Spell.SpellMetrics[unit.UnitIndex].TotalHealing += taken
+		absorb.Spell.SpellMetrics()[unit.UnitIndex].TotalHealing += taken
 		if sim.Log != nil {
 			absorb.Spell.Unit.Log(sim, "%s %s absorbs %0.3f of %s, %0.3f left.", unit.LogLabel(), absorb.Spell.ActionID, taken, spell.ActionID, absorb.remaining)
 		}

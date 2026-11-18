@@ -190,7 +190,7 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 		runSim(sim)
 		metrics := map[string]core.SpellMetrics{}
 		for _, s := range spells {
-			metrics[s.name] = s.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
+			metrics[s.name] = s.spell.SpellMetrics()[enh.CurrentTarget.UnitIndex]
 		}
 		return metrics
 	}

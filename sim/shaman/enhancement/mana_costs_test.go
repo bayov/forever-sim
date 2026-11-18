@@ -268,7 +268,7 @@ func TestOrcShamanClearcasting(t *testing.T) {
 			t.Errorf("Clearcasting is still up after 16 sec")
 		}
 		attacks := enh.GetSpell(core.ActionID{SpellID: shaman.SearingTotemAttackSpellId[searing.Rank]})
-		if casts := attacks.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts; casts < 120 {
+		if casts := attacks.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts; casts < 120 {
 			t.Errorf("Searing Totem attacked only %d times", casts)
 		}
 	})
@@ -406,8 +406,8 @@ func TestOrcShamanNotEnoughMana(t *testing.T) {
 	sim, enh = newShamanSim(player, &proto.Debuffs{}, 60)
 	runSim(sim)
 	target := enh.CurrentTarget.UnitIndex
-	lbCasts := topRank(t, "Lightning Bolt", enh.LightningBolt).SpellMetrics[target].Casts
-	esCasts := enh.EarthShock[1].SpellMetrics[target].Casts
+	lbCasts := topRank(t, "Lightning Bolt", enh.LightningBolt).SpellMetrics()[target].Casts
+	esCasts := enh.EarthShock[1].SpellMetrics()[target].Casts
 	if lbCasts == 0 || esCasts < 5 {
 		t.Errorf("cast Lightning Bolt %d times and Earth Shock %d times, want Earth Shock once out of mana", lbCasts, esCasts)
 	}

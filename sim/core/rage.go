@@ -486,10 +486,10 @@ func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64) {
 	}
 	threat := gain * ThreatPerRageGained * rb.unit.PseudoStats.ThreatMultiplier / float64(len(targets))
 	for _, target := range targets {
-		rb.rageGainSpell.SpellMetrics[target.UnitIndex].TotalThreat += threat
+		rb.rageGainSpell.SpellMetrics()[target.UnitIndex].TotalThreat += threat
 		rb.unit.watchThreat(sim, target, threat)
 	}
-	rb.rageGainSpell.SpellMetrics[0].Casts++
+	rb.rageGainSpell.SpellMetrics()[0].Casts++
 }
 
 func (rb *rageBar) doneIteration(sim *Simulation) {
@@ -516,11 +516,11 @@ func (rb *rageBar) doneIteration(sim *Simulation) {
 		// Need to exclude rage gained from white hits. Rather than have a manual list of all IDs that would
 		// apply here (autos, WF attack, sword spec procs, etc), just check if the effect caused any damage.
 		sourceSpell := rb.unit.GetSpell(resourceMetrics.ActionID)
-		if sourceSpell != nil && sourceSpell.SpellMetrics[0].TotalDamage > 0 {
+		if sourceSpell != nil && sourceSpell.SpellMetrics()[0].TotalDamage > 0 {
 			continue
 		}
 
-		rageGainSpell.SpellMetrics[0].Casts += resourceMetrics.EventsForCurrentIteration()
+		rageGainSpell.SpellMetrics()[0].Casts += resourceMetrics.EventsForCurrentIteration()
 		rageGainSpell.ApplyAOEThreatIgnoreMultipliers(resourceMetrics.ActualGainForCurrentIteration() * ThreatPerRageGained)
 	}
 }

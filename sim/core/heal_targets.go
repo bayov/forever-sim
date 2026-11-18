@@ -34,14 +34,30 @@ func (unit *Unit) HealCandidates() []*Unit {
 // Hurt) or at the lowest health percent (Lowest Health). Ties go to the first in order. Nil when
 // nobody is hurt.
 func (unit *Unit) pickHealTarget(pick proto.UnitReference_Type) *Unit {
+	sim := unit.Env.sim
+	// Within a rotation check, the pick made earlier in it (heal_sight.go).
+	s := unit.sight(sim)
+	if s != nil {
+		if p := &s.picks[healSightIndex(pick)]; p.picked {
+			return p.best
+		}
+	}
 	var best *Unit
-	bestScore := 0.0
+	bestScore, bestMissing := 0.0, 0.0
+	// The other healers' heals in flight, found once for all the candidates.
+	var buf [16]*Unit
+	var casters []*Unit
+	if s != nil {
+		casters = s.casters
+	} else if sim != nil && sim.Encounter.TrackHealth {
+		casters = sim.healCasters(unit, buf[:0])
+	}
 	for _, player := range unit.HealCandidates() {
 		if player.dead || !player.HasHealthBar() {
 			continue
 		}
 		// As we see it: a reaction time late, less the other healers' heals in flight (heal_comm.go).
-		missing := unit.seenMissing(player)
+		missing := unit.seenMissingWith(player, casters)
 		if missing <= 0 {
 			continue
 		}
@@ -50,8 +66,11 @@ func (unit *Unit) pickHealTarget(pick proto.UnitReference_Type) *Unit {
 			score = missing / player.MaxHealth()
 		}
 		if best == nil || score > bestScore {
-			best, bestScore = player, score
+			best, bestScore, bestMissing = player, score, missing
 		}
+	}
+	if s != nil && s.current(sim) {
+		s.picks[healSightIndex(pick)] = healSightPick{picked: true, best: best, missing: bestMissing}
 	}
 	return best
 }

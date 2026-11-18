@@ -82,13 +82,13 @@ func TestMageHeatingUpFireBlastAndPresenceOfMind(t *testing.T) {
 		mage.HeatingUpAura.Deactivate(sim)
 		fireBlast.CD.Reset()
 		mage.SetGCDTimer(sim, sim.CurrentTime)
-		crits := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Crits
-		hits := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Hits
+		crits := fireBlast.SpellMetrics()[mage.CurrentTarget.UnitIndex].Crits
+		hits := fireBlast.SpellMetrics()[mage.CurrentTarget.UnitIndex].Hits
 		if !fireBlast.Cast(sim, mage.CurrentTarget) {
 			t.Fatalf("Fire Blast %d didn't cast (mana %.0f)", i, mage.CurrentMana())
 		}
-		crit := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Crits > crits
-		hit := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Hits > hits
+		crit := fireBlast.SpellMetrics()[mage.CurrentTarget.UnitIndex].Crits > crits
+		hit := fireBlast.SpellMetrics()[mage.CurrentTarget.UnitIndex].Hits > hits
 		want := int32(0)
 		if crit {
 			want = 2
@@ -197,7 +197,7 @@ func TestMageArcaneWrath(t *testing.T) {
 	}
 	for !sim.Step() && sim.CurrentTime < 5*time.Second {
 	}
-	metrics := arcaneWrath.SpellMetrics[mage.CurrentTarget.UnitIndex]
+	metrics := arcaneWrath.SpellMetrics()[mage.CurrentTarget.UnitIndex]
 	if metrics.Casts != 1 {
 		t.Fatalf("%d Arcane Wrath casts, want 1", metrics.Casts)
 	}
@@ -609,7 +609,7 @@ func TestMageFingersOfFrostCharges(t *testing.T) {
 			t.Fatalf("%d Fingers of Frost charges a batch after a Fire Blast, want 1", got)
 		}
 	}
-	metrics := fireBlast.SpellMetrics[target.UnitIndex]
+	metrics := fireBlast.SpellMetrics()[target.UnitIndex]
 	if got := metrics.Crits + metrics.ResistedCrits; got != casts {
 		t.Errorf("%d of %d Fire Blasts crit at 51%% crit with Fingers of Frost, want all (Shatter's 50%%)", got, casts)
 	}
@@ -841,7 +841,7 @@ func TestForeverLordSakrasisScepter(t *testing.T) {
 		t.Fatal("no Holy Smite with Lord Sakrasis' Scepter")
 	}
 	topRank(t, "Fire Blast", mage.FireBlast).Cast(sim, mage.CurrentTarget)
-	if got := smite.SpellMetrics[mage.CurrentTarget.UnitIndex].Casts; got != 1 {
+	if got := smite.SpellMetrics()[mage.CurrentTarget.UnitIndex].Casts; got != 1 {
 		t.Errorf("Fire Blast cast %d Holy Smites, want 1", got)
 	}
 }
@@ -857,7 +857,7 @@ func TestForeverEverlookDeliveryBot(t *testing.T) {
 	use.Cast(sim, mage.CurrentTarget)
 	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
 	hits := 0
-	for delivery.SpellMetrics[mage.CurrentTarget.UnitIndex].Casts == 0 && hits < 20 {
+	for delivery.SpellMetrics()[mage.CurrentTarget.UnitIndex].Casts == 0 && hits < 20 {
 		result := fireBlast.NewResult(mage.CurrentTarget)
 		result.Outcome = core.OutcomeHit
 		result.Damage = 100
@@ -1048,11 +1048,11 @@ func TestMageIgniteOnFlamestrikeBurn(t *testing.T) {
 	}
 	// The 3 sec cast, then the four 2 sec ticks.
 	advance(3*time.Second + 100*time.Millisecond)
-	if got := mage.Ignite.SpellMetrics[target.UnitIndex].Casts; got != 1 {
+	if got := mage.Ignite.SpellMetrics()[target.UnitIndex].Casts; got != 1 {
 		t.Fatalf("%d ignites after Flamestrike's first hit, want 1", got)
 	}
 	advance(8 * time.Second)
-	if got := mage.Ignite.SpellMetrics[target.UnitIndex].Casts; got != 5 {
+	if got := mage.Ignite.SpellMetrics()[target.UnitIndex].Casts; got != 5 {
 		t.Errorf("%d ignites after Flamestrike's hit and its four burn crits, want 5", got)
 	}
 }
