@@ -1,26 +1,28 @@
-# Mechanics pass 87 (2026-11-18, master 2f7e255af)
+# Mechanics pass 88 (2026-11-18, master c198d81e3)
 
-Range 5f20dfdf4..2f7e255af. Client unchanged at 1.60.1.70959. No new findings; both open findings unchanged
-(mechanics-20261113-2 Weakening Disease, mechanics-20261104-1 druid scales).
+Range 2f7e255af..c198d81e3. Client unchanged at 1.60.1.70959 (probe 300 past it: none). One new finding,
+mechanics-20261118-1 (low). Open findings mechanics-20261113-2 and mechanics-20261104-1 unchanged.
 
 ## Get current
 
-| Source | Newest | New since pass 86 |
+| Source | Newest | New since pass 87 |
 |---|---|---|
-| Client build (gate) | 1.60.1.70959 | none |
+| Client build (probe 300) | 1.60.1.70959 | none |
 | Dev notes t/2360696 | post 10, 2026-11-04 | none |
-| Hotfix post t/2403040 | post 11, 2026-11-17 02:17Z; post 1 edited 02:18Z (consolidates post 11) | none |
-| Blue tracker | 2026-11-17 18:38Z (Blackmaw Hold abuse, not a mechanic) | nothing mechanical |
-| Daily update / TASKS | Nov 15-17 items (WF Totem rulings, item reveals) | settled by user rulings already recorded |
+| Hotfix post t/2403040 | post 12, 2026-11-18 03:24Z ("November 17, 2026"); post 1 edited 03:24Z to match | yes, below |
+| Daily update / TASKS / forever-update merges | none in range | none |
 
-## Commits triaged
+## Commits
 
-| Commit | Change | Check | Verdict |
-|---|---|---|---|
-| 3ec610c40 | Darkmoon Blue Dragon 3%, Heroism 158-238 (Forever only) | wago hotfix rows, push 114044: 23688 SpellAuraOptions ProcChance 3; 23682 SpellEffect bp 198, variance 0.4 | matches (tier 1) |
-| 4e81669a9 | Shieldsworn Holy Strike: SpellFlagNoWindfuryTotem; Vampiric Embrace 10% of the casting priest's Shadow damage, x2 for the priest | post 11 wording quoted in code; Shield Slam/Bash already OH specials (sim/warrior/shield_slam.go:25) | matches (tier 1); flags.go change is a comment only |
-| 2dbcd19a0 | Revealed items: Cannibal's Cleaver +25 AP vs Humanoid, Draconian Aegis +9 SP vs Dragonkin | tooltip-sourced item effects, no shared formula moved | no finding |
-| 192cb2e06, 6a3cadbfc | Idol of Rejuvenation, Totem of Tides (healer items) | tooltip-only, healer scope | left to the healer auditors |
+| Commit | Change | Verdict |
+|---|---|---|
+| ac0217aed | Priest AddPartyBuffs clears PartyBuffs.dark_inspiration when the priest has the talent | Correct. Party.GetPartyBuffs clones the base buffs per party, so only the priest's own party loses the given form; its members get the real aura (1326168, implicit target 20, party). Matches the Nov 16 hotfix ("Dark Inspiration was stacking if there were multiple Shadow priests in the same party"). |
 
-Knock-on: windfuryTotemRollsOnForever (sim/core/buffs.go:2216) is the only reader of SpellFlagNoWindfuryTotem; Holy Strike
-is Retribution's too, but the flag is set only with the tank talent Shieldsworn, so DPS presets are unaffected.
+## November 17 hotfix, shared items
+
+| Item | Sim | Result |
+|---|---|---|
+| Flurry no longer loses stacks to Windfury Totem attacks | Warrior and shaman consume triggers spend a stack on the totem's extra white hit; hidden by the 0.5 s ICD after a white swing or HS, not after Bloodthirst / Whirlwind / Stormstrike | mechanics-20261118-1: fixed patch +0.15% Fury, +0.28-0.31% Fury 2H, +0.18-0.21% Enhancement (20k it, seeds 1 / 1000003, 180 s) |
+| Might of Stormwind / Warchief's Blessing no longer on non-players | applyPetBuffEffects passes Warchief's Blessing to a demon if enabled; world buffs off in every preset | No number moves; confirms pet_buffs.md section 3. Recorded in verdicts.md |
+| Whiteout / Crackling Staff 25 Sta 25 Int 74 SP; Soulforge Armor Spell Power; Night Watchman's Torch usable by Shadow priests | item data | For the gear / item auditors, not mechanics |
+| UBRS mob health and damage, camping, quests, PvP | not simulated | none |
