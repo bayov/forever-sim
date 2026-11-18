@@ -43,8 +43,9 @@ func WrathBaseDamageAt(rank int, level int32) (float64, float64) {
 	low := WrathScaling[rank].At(WrathBaseDamage[rank][0], level)
 	high := WrathScaling[rank].At(WrathBaseDamage[rank][1], level)
 	if rank == 8 {
-		low *= WrathRank8DamageScale
-		high *= WrathRank8DamageScale
+		scale := core.Assume("druid_wrath8_tuning", WrathRank8DamageScale) // DPS Report assumption knob
+		low *= scale
+		high *= scale
 	}
 	return low, high
 }

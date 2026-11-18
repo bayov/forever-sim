@@ -227,6 +227,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		if !forever {
 			MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5)))
 		} else if bonus := bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:]); bonus > 0 {
+			if level >= 60 {
+				bonus = Assume("hunter_hm60", bonus)
+			}
 			MakePermanent(huntersMarkAura(target, bonus))
 		}
 	}
@@ -1220,7 +1223,11 @@ func HuntersMarkAura(target *Unit, points int32) *Aura {
 // ForeverHuntersMarkAura is the mark a level's hunter casts under Forever, the same one the raid
 // debuff gives (standards 23: a hunter on Hunter's Mark duty casts it with the debuff off).
 func ForeverHuntersMarkAura(target *Unit, level int32) *Aura {
-	return huntersMarkAura(target, bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:]))
+	bonus := bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:])
+	if level >= 60 {
+		bonus = Assume("hunter_hm60", bonus)
+	}
+	return huntersMarkAura(target, bonus)
 }
 
 // bonus is the ranged attack power every attacker gains against the target.

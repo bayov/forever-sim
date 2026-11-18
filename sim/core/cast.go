@@ -264,6 +264,11 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			// Vanilla has no natural GCD reduction besides abilities with 1s GCDs
 			// spell.CurCast.GCD = spell.Unit.ApplyFlatCastSpeed(spell.CurCast.GCD)
 			spell.CurCast.CastTime = config.CastTime(spell)
+			// haste_gcd=1: cast speed shortens a spell's GCD too, as in wowsims/forever (cast.go hastedGCD), down to the
+			// 1s minimum EffectiveTime keeps. Physical abilities keep theirs, as there (spelldata/resolve_spell.go Cast).
+			if reportSwitches.hasteGCD && spell.CurCast.GCD > 0 && spell.SpellSchool != SpellSchoolPhysical {
+				spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD).Round(time.Millisecond)
+			}
 		}
 
 		if config.CD.Timer != nil {

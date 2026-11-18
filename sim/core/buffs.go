@@ -1851,6 +1851,9 @@ func TrueshotAura(unit *Unit) *Aura {
 	if unit.Env.IsForever() {
 		rangedAP = bestLearnedRank(unit.Level, foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:])
 		meleeAP = 0
+		if unit.Level >= 60 {
+			rangedAP = Assume("hunter_tsa60", rangedAP) // DPS Report assumption knob
+		}
 	}
 
 	aura := MakePermanent(unit.RegisterAura(Aura{

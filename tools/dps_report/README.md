@@ -12,9 +12,9 @@ binaries ─────► requests ──► sims ─────────�
 Each build's raw sim outputs are kept in `raw/<id>.tgz`, committed with the datasets they made, so a regeneration re-sims
 only the builds that changed and still rebuilds every dataset, the cross-build ones included (see "Partial regenerations").
 
-1. **Binaries.** `pipeline.sh bins` (`build_bins.py`) builds them from a clean worktree of this repository with the local
-   dashboard patches (`patches/`) applied, and stamps what they were built from. Every sim step refuses binaries whose
-   stamp doesn't match the code.
+1. **Binaries.** `pipeline.sh bins` (`build_bins.py`) builds them from a clean worktree of this repository, with no
+   patches (the sim reads the report switches itself, see "Report switches"), and stamps what they were built from.
+   Every sim step refuses binaries whose stamp doesn't match the code.
 2. **Requests.** `req/<id>.json` is the exact RaidSimRequest for each of the 36 level 60 presets. `req/<id>.meta.json` holds
    its class, spec, build name, preset race, talents, gear set, APL, published and verified DPS, summary, key talents, rotation,
    consumes and caveats.
@@ -34,7 +34,6 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
 | `tests/` | Unit tests for the timing shim, the probe key and skip, and tankheal's resume decision (no sims): `python3 -m unittest discover -s tools/dps_report/tests` | yes |
-| `patches/` | Local-only sim patches the binaries are built with (see below) | yes |
 | `build_bins.py`, `test_build_bins.py` | Builds and stamps every binary, and the guard that refuses sims on binaries that don't match the code (see "Building the binaries"), with its tests | yes |
 | `bin_override/` | Builds simmed with `DASH_ALLOW_BIN_MISMATCH`, and why (packed with them) | no |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
@@ -46,9 +45,8 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `adaptive.py` | The luck goals and the fight counts sized to them: a pilot, then a top-up to what the paired spread needs (see "Luck goals") | yes |
 | `vec/` | Per-fight DPS of the race, racial and assumption sims, keyed by request, which the top-ups extend; cleared per build by `run_build.py`, never packed | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
-| `dashstats/main.go` | The `dashstats` helper. Patch 0001 adds the same file as `tools/dashstats/`, which is what `build_bins.py` builds. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
-| `bin/` | `wowsimcli`, `wowsimcli_r`, `wowsimcli_assume`, `dashstats`, `tankbench`, `healbench` and `STAMP.json`, built by `build_bins.py` (see "Building the binaries") | no |
+| `bin/` | `wowsimcli`, `dashstats` (`tools/dashstats`), `tankbench`, `healbench` and `STAMP.json`, built by `build_bins.py` (see "Building the binaries") | no |
 | `out/ rv/ abl/ weights/ names/ mana/` | Raw sim outputs | no |
 | `icons/` | Download cache of wow.zamimg.com icons and talent-tree backgrounds | no |
 | `data/` | The generated datasets | no |
@@ -80,33 +78,29 @@ tools/dps_report/pipeline.sh bins           # or: python3 tools/dps_report/build
 ```
 
 `build_bins.py` builds every binary of the three modes into `$DASH_BIN` (default `$DASH_DIR/bin`) from a clean
-worktree at `${SIM_COMMIT:-HEAD}`, so uncommitted edits never reach a binary. In that worktree it applies each binary's
-patches from the table at the top of `build_bins.py`, always regenerates the protos (`protoc`, else `npx protoc`, with
+worktree at `${SIM_COMMIT:-HEAD}`, so uncommitted edits never reach a binary. In that worktree it builds the packages
+in the table at the top of `build_bins.py`, always regenerates the protos (`protoc`, else `npx protoc`, with
 `protoc-gen-go` from `$(go env GOPATH)/bin`), and runs `go build -tags=with_db -trimpath -buildvcs=false` with
 `CGO_ENABLED=0`, two jobs at a time (`BUILD_P`) under `nice`.
 
-| Binary | Package | Patches | Used by |
-|---|---|---|---|
-| `wowsimcli` | `cmd/wowsimcli` | 0001 to 0006 | `run_build.py`, `weights.py`, `ablate.py`, `mana_curves.py`, `events.py`, `verify.py` |
-| `wowsimcli_r` | the same binary | 0001 to 0006 | `run_races.py` (`DASH_RACIALS_OFF`, 0002) |
-| `wowsimcli_assume` | the same binary | 0001 to 0006 | `run_assumptions.py` (`DASH_ASSUME`, 0004) |
-| `dashstats` | `tools/dashstats` (added by 0001) | 0001 to 0006 | `run_build.py`, `race_gear.py` |
-| `tankbench`, `healbench` | `tools/tankbench`, `tools/healbench` | 0002, 0006 | `tankheal.py`, `bench_races.py` |
+| Binary | Package | Used by |
+|---|---|---|
+| `wowsimcli` | `cmd/wowsimcli` | `run_build.py`, `run_races.py` (`DASH_RACIALS_OFF`), `run_assumptions.py` (`DASH_ASSUME`), `weights.py`, `ablate.py`, `mana_curves.py`, `events.py`, `verify.py` |
+| `dashstats` | `tools/dashstats` | `run_build.py`, `race_gear.py` |
+| `tankbench`, `healbench` | `tools/tankbench`, `tools/healbench` | `tankheal.py`, `bench_races.py` |
 
-`wowsimcli_r` and `wowsimcli_assume` are copies of `wowsimcli`: every patch acts only when its env var is set, and 0003
-changes only the Classic racials (see "Local patches"). Whether the benches also get 0003 and 0005 is still open: it
-is a one-line change to `BENCH` in `build_bins.py`. No script falls back to plain `wowsimcli` when a variant is
-missing any more: a missing binary stops the step.
+Every binary is built from the same code with no patches, so each reads every report switch (see "Report switches"):
+one `wowsimcli` serves every DPS step, with the step's switches in its environment. A missing binary stops the step.
 
-`bin/STAMP.json` records what the binaries were built from: the input hash, the commit, the patch files, each binary's
-sha256, and the Go, `protoc` and `protoc-gen-go` versions. The input hash covers exactly what goes into a binary: all
-of `sim/` but `_test.go`, `.md`, `.results` and `testdata/`, `proto/`, `cmd/wowsimcli`, `go.mod`, `go.sum`, the Go files of
-`tools/dashstats`, `tools/tankbench`, `tools/healbench` and `tools/tankscore`, all of `assets/database`, the patch files
-the table uses, and the table and flags themselves. It hashes git blob ids at the commit, as `stale.mjs` does, so a
-commit that changes none of these gives the same hash and `bins` builds nothing. The build also checks with `go list
--deps` that the binaries use no package of this repository outside these inputs. With `-trimpath` and
-`-buildvcs=false` the same inputs give byte-identical binaries at any commit, path or Go cache, so the race-vector
-cache of `bench_races.py`, keyed by the binary's sha256, keeps hitting across commits.
+`bin/STAMP.json` records what the binaries were built from: the input hash, the commit, each binary's sha256, and the
+Go, `protoc` and `protoc-gen-go` versions. The input hash covers exactly what goes into a binary: all of `sim/` but
+`_test.go`, `.md`, `.results` and `testdata/`, `proto/`, `cmd/wowsimcli`, `go.mod`, `go.sum`, the Go files of
+`tools/dashstats`, `tools/tankbench`, `tools/healbench` and `tools/tankscore`, all of `assets/database`, and the table
+and flags themselves. It hashes git blob ids at the commit, as `stale.mjs` does, so a commit that changes none of these
+gives the same hash and `bins` builds nothing. The build also checks with `go list -deps` that the binaries use no
+package of this repository outside these inputs. With `-trimpath` and `-buildvcs=false` the same inputs give
+byte-identical binaries at any commit, path or Go cache, so the race-vector cache of `bench_races.py`, keyed by the
+binary's sha256, keeps hitting across commits.
 
 On the shared 4-CPU box (2026-11-18) a cold build (empty Go cache) took 66s, a rebuild with a warm cache 11s, and a
 `bins` with a matching stamp 0.3s.
@@ -128,28 +122,27 @@ builds or modes current until a `run` without the override re-sims them. A missi
 `mksettings` and `rotopt` make requests, not report numbers, so they aren't stamped. Build them from the checkout when
 you need them: `go build -tags=with_db -o tools/dps_report/bin/mksettings ./tools/rotopt/mksettings`.
 
-The binaries run with `$DASH_TREE` as their cwd, and the scripts read `db.json`, talents and racials from it. The
-patches change only sim code, so this checkout works as `$DASH_TREE`. The `w-dash` tree of the first reports (every
+The binaries run with `$DASH_TREE` as their cwd, and the scripts read `db.json`, talents and racials from it. This
+checkout works as `$DASH_TREE`. The `w-dash` tree of the first reports (every
 class branch merged, the db regenerated) is no longer needed to build anything.
 
-### Local patches (`patches/`)
+### Report switches
 
-These were exported with `git format-patch` from the local `dashdata` branch, against the merged class heads. They are
-dashboard-only and never go to a class branch.
+The sim reads these environment variables for the report (`sim/core/report_switches.go`). Each one does nothing unless
+it is set, so every `wowsimcli`, `tankbench` and `healbench` built from master runs the plain sim without them. They
+are read once when the binary starts.
 
-| Patch | What it does | Needed by |
+| Variable | What it does | Set by |
 |---|---|---|
-| `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
-| `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go` and the priest racials (Chastise, Dark Sacrifice, Starshards, Shadowguard): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, chastise, starshards, darksacrifice, shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` (the same for the Tanking and Healing races, with 0006) |
-| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
-| `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Rebased 2026-10-23 onto the wowsims/forever alignment round: the knobs of the assumptions it settled are gone (orchestration/alignment_round_2026-10-23.md). Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
-| `0005` DASH_SPLITS | `sim/core/sim_concurrent.go`: `DASH_SPLITS=<n>` sets how many parts a sim's iterations are split into (default one per CPU). `pipeline.sh` sets 4, so the raw outputs are the same on every machine: the splits' seeds already continue each other, but averaging the parts moves the last bits. A plain diff; apply with `git apply`. | `pipeline.sh` (every step), `rawstore.py` (refuses packs made with another count) |
-| `0006` DASH_RACIALS_OFF_CLASS | On top of 0002: `DASH_RACIALS_OFF_CLASS=<Class>` (`Paladin`, `Priest`, ...) keeps the switch to the players of that class, so a healing preset's racials go while the healbench raid's tank (an Orc Warrior) and damage dealers keep theirs. `core.DashRacialOffFor(class, part)`. | `bench_races.py` (sets it to the preset's class) |
+| `DASH_NAMES=<file>` | Each sim's finalize appends every unit's auras to the file, one `spellId itemId otherId tag label` line each (one copy per sim split). | `run_build.py` (`names/<id>.tsv`, the aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`) |
+| `DASH_SPLITS=<n>` | Splits a sim's iterations into n concurrent parts instead of one per CPU. The splits' seeds continue each other, but averaging the parts moves the last bits, so a fixed n keeps the raw outputs the same on every machine. | `pipeline.sh` (4, every step), `rawstore.py` (refuses packs made with another count) |
+| `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` | Leaves those Forever racial parts out: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial spells chastise, starshards, darksacrifice and shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` |
+| `DASH_RACIALS_OFF_CLASS=<Class>` | Keeps `DASH_RACIALS_OFF` to the players of one class (`Paladin`, `Priest`, ...), so a healing preset's racials go while the healbench raid's tank and damage dealers keep theirs. Alone it does nothing. | `bench_races.py` (the preset's class) |
+| `DASH_ASSUME="key=value,..."` | Overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). Each knob defaults to the constant master sets. | `run_assumptions.py` |
 
-The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
-their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
-unchanged. `run_assumptions.py --identical`
-checks that a 0004 build is bit-identical to the plain one with `DASH_ASSUME` unset.
+`go test ./sim/core/ -run 'Report|Dash'` and the switch tests in `sim/priest/shadow` and `sim/warrior/dps_warrior`
+check each switch. `run_assumptions.py --identical` checks that a run with `DASH_ASSUME` unset matches a plain binary.
+`tools/dashstats` (the `stats` dataset's stat sheets) is a plain tool in the tree.
 
 ## Requests
 
@@ -395,8 +388,7 @@ fresh mode records its provenance (`stale.mjs --record-bench <modes> --iteration
 Staleness is per preset, like the DPS builds. `stale.mjs` reports the stale presets of each mode separately from the DPS
 builds (`benches` in `--json`, so probe.py's ids are unchanged). A preset's fingerprint covers the shared sim code and
 the top-level `sim/*.go`, the bench's sources (its `req/` left out), `tools/tankscore`, the seven boss files,
-`tankheal.py`, `bench_races.py`, `adaptive.py`, `dashpaths.py`, `run_build.py` (its `CLASS_RACES`) and patches 0002
-and 0006, then its own request and the code of every class in its raid with the db items those requests wear. A tank
+`tankheal.py`, `bench_races.py`, `adaptive.py`, `dashpaths.py` and `run_build.py` (its `CLASS_RACES`), then its own request and the code of every class in its raid with the db items those requests wear. A tank
 preset's raid is the tank alone. A healing preset's raid is the healer and healbench's frost mage fillers, plus the
 warrior tank for a tank healer (a raid healer's raid has no tank). So a `sim/shaman` change stales the shaman presets, a
 `sim/mage` change every healing preset, and a `sim/core` change every preset.
@@ -428,9 +420,9 @@ tool, file or process word (`LEAK`: tools/, docs/, file extensions, bench, rotop
 request, APL, code spans, ...): reword the text file, don't widen `LEAK_SKIP`.
 
 Building the benches: `pipeline.sh bins` (or `tankheal.py bins`, the same `build_bins.py`) builds them with every
-other binary, with patches 0002 and 0006 (the racials switch: a bench without it fails the race sims, since every
-racial would measure exactly nothing). `tankheal.py run` refuses benches the stamp doesn't match to the code (see
-"Building the binaries").
+other binary, from the same code. The race sims use the racials switches (`DASH_RACIALS_OFF` and
+`DASH_RACIALS_OFF_CLASS`, see "Report switches"), and every bench run sets `DASH_SPLITS=4` as the DPS steps do.
+`tankheal.py run` refuses benches the stamp doesn't match to the code (see "Building the binaries").
 
 The main bench calls take about half a minute for tanking and a few minutes for healing; the race sims take most of
 the run: on a 4-core machine about 15 minutes for tanking (2026-11-04: 12 minutes, some race fights already kept)
@@ -461,9 +453,10 @@ another request, race override or assumption rotation than the current one.
 | Every build, no probe (packs without probes, or a probe audit failed) | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
 
 - `node tools/dps_report/stale.mjs` gives the scope: which builds *may* have moved. It hashes the shared inputs (the sim's
-  packages and the top-level `sim/*.go`, the protos the sim compiles, the CLI and `go.mod`, the patches, `dashstats` and
-  the step scripts, `adaptive.py` among them), the class's `sim/<class>/`, the item database entries the build wears
-  (its request's gear and its race overrides' own gear sets), and each build's request, the sim fields of its meta, its
+  packages and the top-level `sim/*.go` (`sim/core/report_switches.go` among them), the protos the sim compiles, the CLI
+  and `go.mod`, `tools/dashstats` and the step scripts, `adaptive.py` among them), the class's `sim/<class>/`, the item
+  database entries the build wears (its request's gear and its race overrides' own gear sets), and each build's
+  request, the sim fields of its meta, its
   base build's request, race overrides (`req/races/`, its base build's too) and assumption rotations. Test files,
   goldens, testdata and docs are left out, and so are `tools/rotopt` and `ui/<spec>` (they make requests, which are
   hashed themselves). It lists new requests and removed presets too, and the stale Tanking and Healing presets.

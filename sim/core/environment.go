@@ -240,6 +240,7 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 	}
 	env.postFinalizeEffects = nil
 
+	dumpAuraNames(env) // DASH_NAMES, for the DPS Report
 	env.State = Finalized
 
 	slices.SortStableFunc(env.prepullActions, func(a1, a2 PrepullAction) int {

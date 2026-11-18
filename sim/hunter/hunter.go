@@ -184,7 +184,7 @@ func (hunter *Hunter) Initialize() {
 	if hunter.Env.IsForever() {
 		// The stat dependencies add up, so this tops Classic's crit per Agility (NewHunter) up to
 		// Forever's. At 60 the two are the same.
-		if scale := ForeverCritPerAgiScale(hunter.Level); scale != 1 {
+		if scale := core.Assume("hunter_crit_per_agi", ForeverCritPerAgiScale(hunter.Level)); scale != 1 { // DPS Report assumption knob
 			hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (scale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
 		}
 		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot

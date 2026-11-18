@@ -100,7 +100,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int, cdTimer *core.Timer) core.Spe
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: IceLanceSpellCoeff,
+		BonusCoefficient: core.Assume("mage_ice_lance_coef", IceLanceSpellCoeff), // DPS Report assumption knob
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)

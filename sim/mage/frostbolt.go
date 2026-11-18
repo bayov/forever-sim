@@ -43,8 +43,9 @@ func FrostboltBaseDamageAt(rank int, level int32) (float64, float64) {
 	low := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][0], level)
 	high := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][1], level)
 	if rank == 10 {
-		low *= FrostboltRank10DamageScale
-		high *= FrostboltRank10DamageScale
+		scale := core.Assume("mage_frostbolt10", FrostboltRank10DamageScale) // DPS Report assumption knob
+		low *= scale
+		high *= scale
 	}
 	return low, high
 }

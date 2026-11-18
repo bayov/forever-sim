@@ -60,7 +60,8 @@ func (paladin *Paladin) registerSealOfCommand() {
 		{level: 60, spellID: 20920, manaCost: 210, scaleLevel: 60, proc: proc{spellID: 20947}, judge: judge{spellID: 20966, minDamage: 339, maxDamage: 373, scale: 6.1}},
 	}
 
-	ppmm := paladin.AutoAttacks.NewPPMManager(SealOfCommandPPM, core.ProcMaskMelee)
+	// DPS Report assumption knob pal_soc_ppm
+	ppmm := paladin.AutoAttacks.NewPPMManager(core.Assume("pal_soc_ppm", SealOfCommandPPM), core.ProcMaskMelee)
 	improvedSeals := paladin.improvedSeals()
 
 	icd := core.Cooldown{

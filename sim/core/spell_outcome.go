@@ -33,7 +33,7 @@ func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *A
 
 	if dot.canCrit(sim) && dot.critCheck(sim, result.Target, attackTable) {
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
+		result.Damage *= dot.tickCritMultiplier(attackTable)
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
 		if isPartialResist {
 			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
@@ -66,7 +66,7 @@ func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, at
 
 	if dot.Spell.PhysicalCritCheck(sim, attackTable) {
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
+		result.Damage *= dot.tickCritMultiplier(attackTable)
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
 		if isPartialResist {
 			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
@@ -85,7 +85,7 @@ func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellResult, attack
 
 	if sim.RandomFloat("Snapshot Crit Roll") < dot.SnapshotCritChance {
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
+		result.Damage *= dot.tickCritMultiplier(attackTable)
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
 		if isPartialResist {
 			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
@@ -105,7 +105,7 @@ func (dot *Dot) OutcomeMagicHitAndSnapshotCrit(sim *Simulation, result *SpellRes
 
 		if sim.RandomFloat("Snapshot Crit Roll") < dot.SnapshotCritChance {
 			result.Outcome = OutcomeCrit
-			result.Damage *= dot.Spell.CritMultiplier(attackTable)
+			result.Damage *= dot.tickCritMultiplier(attackTable)
 			dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
 			if isPartialResist {
 				dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
@@ -830,7 +830,7 @@ func (result *SpellResult) applyAttackTableCritSeparateRollSnapshot(sim *Simulat
 	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
 		isPartialResist := result.DidResist()
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
+		result.Damage *= dot.tickCritMultiplier(attackTable)
 		if countHits {
 			dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
 			if isPartialResist {
@@ -1052,7 +1052,7 @@ func (spell *Spell) OutcomeExpectedMagicHitAndCrit(_ *Simulation, result *SpellR
 
 func (dot *Dot) OutcomeExpectedMagicSnapshotCrit(_ *Simulation, result *SpellResult, attackTable *AttackTable) {
 	averageMultiplier := 1.0
-	averageMultiplier += dot.SnapshotCritChance * (dot.Spell.CritMultiplier(attackTable) - 1)
+	averageMultiplier += dot.SnapshotCritChance * (dot.tickCritMultiplier(attackTable) - 1)
 
 	result.Damage *= averageMultiplier
 }

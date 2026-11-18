@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """run_assumptions.py [ids]: the sims behind the dashboard's assumption scenarios (assumptions_def.py).
 
-Binary: $DASH_BIN/wowsimcli_assume, which build_bins.py builds with patches/0004 (the DASH_ASSUME knobs,
-sim/core/assumptions.go). With no DASH_ASSUME it is bit-identical to the plain build (check with --identical <plain wowsimcli>).
+Binary: $DASH_BIN/wowsimcli, which reads the DASH_ASSUME knobs (report switches, sim/core/report_switches.go). With no
+DASH_ASSUME it is the plain sim (check with PLAIN_CLI=<a wowsimcli from another commit> run_assumptions.py --identical).
 
 Per build an assumption touches, seed 1, the build's request (req/<id>.json) otherwise:
   base      no knob set: 180 s at 20k iterations, 120 and 300 s at 5k
@@ -24,10 +24,10 @@ asm_apls/<id>.<name>.apl.json, talents=<string> sets the talents and distance=<y
 (mage_cone_of_cold sets the APL, the preset's rotation with a Cone of Cold line after Missile Barrage, and the distance).
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
 The base rows are the same sims run_build.py ran (seed 1: the main 180 s run at 20k, the 120 and 300 s lengths at 5k,
-and with no DASH_ASSUME this binary is bit-identical to the plain one), so they are copied from out/<id>.json when it
+and with no DASH_ASSUME the binary runs the plain sim), so they are copied from out/<id>.json when it
 is newer than the request. ASM_REUSE_OUT=0 sims them again.
-Every run first checks that each DASH_ASSUME key a setting sets is named in patch 0004's sim code (--check-knobs does
-only that).
+Every run first checks that each DASH_ASSUME key a setting sets is named in the sim code (sim/**/*.go without the tests).
+--check-knobs does only that.
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
 from concurrent.futures import ThreadPoolExecutor
@@ -38,7 +38,7 @@ from assumptions_def import A  # noqa: E402
 import adaptive  # noqa: E402
 import build_bins  # noqa: E402
 
-CLI = os.path.join(BIN, 'wowsimcli_assume')  # built by build_bins.py, with no fallback to plain wowsimcli (main() stops without it)
+CLI = os.path.join(BIN, 'wowsimcli')  # built by build_bins.py (main() stops without it)
 OUT = os.path.join(D, 'asm')
 RES = os.path.join(OUT, 'results.jsonl')
 
@@ -53,18 +53,17 @@ ICE_LANCE = {'action': {'castSpell': {'spellId': {'spellId': 1240047}}, 'conditi
              'notes': 'Ice Lance on a Fingers of Frost charge (assumption scenario).'}
 
 
-KNOB_PATCH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches', '0004-dash-DASH_ASSUME-knobs-for-the-assumption-scenarios.patch')
+SIM_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'sim')  # the code that reads the knobs
 
 
 def unread_knobs():
-    """The DASH_ASSUME keys a setting in assumptions_def.py sets that no sim code in patch 0004 names as a string,
+    """The DASH_ASSUME keys a setting in assumptions_def.py sets that no sim code names as a string,
     so the setting would sim the base and pass for a measurement."""
-    code, go = set(), False
-    for line in open(KNOB_PATCH):
-        if line.startswith('+++ '):
-            go = line.rstrip().endswith('.go') and not line.rstrip().endswith('_test.go')
-        elif go and line.startswith('+') and not line.lstrip('+').lstrip().startswith('//'):
-            code.add(line)
+    code = []
+    for root, _, files in os.walk(SIM_DIR):
+        for f in files:
+            if f.endswith('.go') and not f.endswith('_test.go') and not f.endswith('.pb.go'):
+                code += [line for line in open(os.path.join(root, f)) if not line.lstrip().startswith('//')]
     text = ''.join(code)
     keys = {k for a in A for s in a['settings'] for k in s['env']}
     return sorted(k for k in keys if f'"{k}"' not in text)
@@ -315,7 +314,7 @@ def identical(ids, iters=1000):
 if __name__ == '__main__':
     args = sys.argv[1:]
     if unread_knobs():
-        sys.exit(f'assumptions_def.py sets knobs no code in {os.path.basename(KNOB_PATCH)} reads: {", ".join(unread_knobs())}')
+        sys.exit(f'assumptions_def.py sets knobs no sim code reads: {", ".join(unread_knobs())}')
     if args and args[0] == '--check-knobs':
         sys.exit(0)
     allids = sorted(os.path.basename(p)[:-5] for p in os.listdir(os.path.join(D, 'req')) if p.endswith('.json') and not p.endswith('.meta.json'))

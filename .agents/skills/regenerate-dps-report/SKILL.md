@@ -62,7 +62,8 @@ Tell the user the scope in one line before long runs.
 
 Commit any sim or data change first, then build the binaries with
 `tools/dps_report/pipeline.sh bins` (`build_bins.py`: every binary of the three modes from a
-clean worktree at `${SIM_COMMIT:-HEAD}` plus `patches/`, stamped in `bin/STAMP.json`). It
+clean worktree at `${SIM_COMMIT:-HEAD}`, stamped in `bin/STAMP.json`, with no patches: the sim
+reads the report switches itself, README "Report switches"). It
 builds nothing when the stamp already matches. `run`, `resume`, `probe`, `tankheal` and
 `publish <ids>` refuse binaries whose stamp doesn't match the code, and uncommitted changes
 under the sim's inputs: rebuild, don't override. `DASH_ALLOW_BIN_MISMATCH=<reason>` is for
@@ -83,7 +84,7 @@ throwaway checks only, since `stale.mjs --record` then refuses those builds (REA
 - **Every build:** only when packs have no probes or an audit failed: `run`, then
   `publish`, no hydrate (about 95 min on 4 cores). For more than one class's worth, shard
   over remote sessions: `pipeline.sh shard <k> <n> <ids>` splits by cost; each session, on
-  the same master commit with `patches/` applied and binaries built, runs
+  the same master commit with binaries built, runs
   `pipeline.sh run <its ids>` in an empty `$DASH_DIR`, then
   `pipeline.sh pack shard<k>.tgz <its ids>`, and pushes the pack to `dash-raw/<run>/<k>`.
   Fetch the packs, `pipeline.sh unpack` each into a hydrated `$DASH_DIR`, then publish.
@@ -104,8 +105,9 @@ seeds (healbench: 101). Their races (`bench_races.py`) sim every race, its racia
 racial part off on paired fights (seed 1, labeled streams), sized by adaptive.py's `BENCH_GOALS`
 (the DPS luck goals with floors 2.5 times looser, in each score's unit; healing capped at
 6,000 fights), into `<mode>/races.jsonl` and the `<mode>_races` and `<mode>_race_breakdown`
-datasets. `pipeline.sh bins` builds `tankbench` and `healbench` too (patches 0002 and 0006, the
-racials switch). Their text
+datasets. `pipeline.sh bins` builds `tankbench` and `healbench` too, from the same code as
+`wowsimcli`, so they read every report switch (the race sims use `DASH_RACIALS_OFF` and
+`DASH_RACIALS_OFF_CLASS`, and every bench run sets `DASH_SPLITS=4`). Their text
 (preset lines, notes, boss lines, Method) is written in `tools/dps_report/tankheal_text/{tank,heal}.md`,
 for players, not taken from the docs: a new preset or boss needs its entry there, and the build
 stops on a missing one or on a tool or file word in anything the page shows (`tankheal.py` LEAK).
