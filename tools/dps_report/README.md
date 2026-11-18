@@ -628,36 +628,52 @@ wago.tools page of the changed client rows or hotfix, foreverchanges.pro only wh
 
 `parallel.py` runs a full regeneration in several cloud sessions at once (the `regenerate-dps-report` skill's "Parallel
 full regeneration" has the coordinator's steps). Today's one-session full run takes DPS about 80min, Tanking 20min to
-55min and Healing 1.5h to 4.3h, one after the other; in parallel it takes the longest session, about 80min to 90min.
+55min and Healing 1.5h to 4.3h, one after the other; in parallel it takes the longest session, Healing's heal-0 at about
+55min, plus each session's binary build.
 
 ```sh
-parallel.py plan --run <run> --commit <sha> [--heal-groups N] [--heal-presets <stem,...>] [--modes dps,tank,heal] [--log <file>...] [--dry]
-parallel.py worker <run> <session> --commit <sha> [--main] [--presets <stem,...>] [--carries-from heal-0]   # what each worker session runs
+parallel.py plan --run <run> --commit <sha> [--dps-shards N] [--ids <id,...>] [--heal-groups N] [--heal-presets <stem,...>] [--modes dps,tank,heal] [--log <file>...] [--dry]
+parallel.py worker <run> <session> --commit <sha> [--shard K/N] [--ids <id,...>] [--main] [--presets <stem,...>] [--carries-from heal-0]   # what each worker session runs
 parallel.py merge <run>            # fetch, check and merge every part into $DASH_DIR, then print the publish command
-parallel.py clean <run>            # delete the run's dash-raw/<run>/* branches
+parallel.py shard <k> <n> [ids]    # DPS shard k of n (pipeline.sh shard)
+parallel.py slots                  # the run, session and commit each slot holds
 ```
 
-- **The plan.** One session for DPS (every build), one for Tanking, and the Healing presets split by cost: `heal-0` runs
-  the main bench (7 bosses, tank and raid roles, 1,000 iterations, about 18min) and then its own presets, and every other
-  Healing session starts its race sims from heal-0's main bench outputs. Each priest preset runs alone (priest_holy_raid
-  is the longest, about 35min); the rest are shared out so no session runs longer than the longest lone one. A preset's
-  cost is its race rows times the 2026-11-18 probe rate of its role scaled to a full run, or a run log's measured
-  seconds with `--log` (`<mode> races <stem>: <n> rows, <s> s`).
-- **A part.** `tankheal.py run <mode> --part`, `--main-only` or `--carries <part>` writes the mode's outputs and
-  `part.json` instead of `run.json` and `.fresh`: the run settings (iterations, seed, race goals, pilot and ceiling),
-  the commit, the bench inputs' fingerprint, `DASH_SPLITS`, the binaries' stamp (input hash, Go and each sha256), the
-  presets raced and whether the main bench was simmed here or carried. `--carries` refuses a main bench made with any of
-  these different.
-- **The transport.** Each worker pushes its parts to its own branch, `dash-raw/<run>/<session>`, as orphan commits made
-  with git plumbing (the checkout and master are never touched). A Healing worker waits for `heal-main.tgz` on heal-0's
-  branch by polling the remote in its background job, so it spends no turns. The plan is on `dash-raw/<run>/plan`.
-- **The merge.** `tankheal.py merge` refuses parts whose mode, commit, bench inputs (also against HEAD), splits, binaries
-  or run settings differ, main bench outputs that aren't the same bytes in every part, a preset raced twice with
-  different rows, rows of a preset its part didn't declare, and presets left out (unless `--keep-rest`, which keeps them
-  from the pack as `run --presets` does). It writes the main outputs, `races.jsonl` sorted as one run sorts it, the
-  probes, `run.json` (the run's timing keys from the parts, plus `parts`) and `.fresh`. Everything else is the same
-  bytes as one run's, so the packs and datasets are too (`tests/test_parallel.py` checks this on a fake bench).
-  `parallel.py merge` adds the DPS pack (`pipeline.sh unpack`) and refuses a part whose manifest differs from the plan.
+- **The plan.** The DPS builds split by cost over `dps-0`.. (`pipeline.sh shard`: each build with its variants, the
+  longest family first to the least loaded shard, a shard's time its share of the whole set's 80min). N is the fewest
+  shards none of which outlasts the longest other session (2 for the 2026-11-18 set: about 40min each against heal-0's
+  53min), or `--dps-shards N`; `--ids` shards only those builds. One session for Tanking, and the Healing presets split
+  by cost: `heal-0` runs the main bench (7 bosses, tank and raid roles, 1,000 iterations, about 18min) and then its own
+  presets, and every other Healing session starts its race sims from heal-0's main bench outputs. Each priest preset
+  runs alone (priest_holy_raid is the longest, about 35min); the rest are shared out so no session runs longer than the
+  longest lone one. A preset's cost is its race rows times the 2026-11-18 probe rate of its role scaled to a full run,
+  or a run log's measured seconds with `--log` (`<mode> races <stem>: <n> rows, <s> s`).
+- **A part.** A DPS shard is `pipeline.sh run <its ids>` in an empty `$DASH_DIR`, `pipeline.sh pack` of them and a
+  manifest (`dps-<k>.json`: ids, commit, `DASH_SPLITS`, the binaries' stamp). `tankheal.py run <mode> --part`,
+  `--main-only` or `--carries <part>` writes the mode's outputs and `part.json` instead of `run.json` and `.fresh`: the
+  run settings (iterations, seed, race goals, pilot and ceiling), the commit, the bench inputs' fingerprint,
+  `DASH_SPLITS`, the binaries' stamp (input hash, Go and each sha256), the presets raced and whether the main bench was
+  simmed here or carried. `--carries` refuses a main bench made with any of these different.
+- **The transport: slots.** The cloud sessions can't delete a branch (the git proxy answers 403 and the GitHub API
+  delete is denied), so the runs share a fixed set of slot branches, `dash-raw/slot/<session>` (`plan`, `dps-0`..,
+  `tank`, `heal-0`..), and leave them in place. Each push is one commit made with git plumbing (the checkout and master
+  are never touched) whose parent is the slot's remote tip, so it is always a fast-forward, never a force-push. Its tree
+  holds only this run's files and `slot.json` (run, session, commit simmed, files); its message names the run. A second
+  push of the same run (heal-0's main bench, then its presets) keeps the first's files. A Healing worker waits for this
+  run's `heal-main.tgz` on heal-0's slot by polling the remote in its background job, so it spends no turns, and waits
+  past the slot's last run. One run at a time uses the slots.
+- **The merge.** `parallel.py merge` reads only the planned sessions' slots and refuses a slot whose tip names another
+  run (a session not done, or the slot's last run) or another commit than the plan's, a missing file, a DPS manifest
+  whose ids aren't the plan's, and parts simmed with other binaries or `DASH_SPLITS`. It empties the outputs for a full
+  DPS run (a partial one needs a hydrated `$DASH_DIR`), unpacks every DPS shard (`pipeline.sh unpack`, which first
+  cleans the pack's builds as `run` does, so `$DASH_DIR` ends as one run of those builds leaves it) and runs
+  `tankheal.py merge`. That refuses parts whose mode, commit, bench inputs (also against HEAD), splits, binaries or run
+  settings differ, main bench outputs that aren't the same bytes in every part, a preset raced twice with different
+  rows, rows of a preset its part didn't declare, and presets left out (unless `--keep-rest`, which keeps them from the
+  pack as `run --presets` does). It writes the main outputs, `races.jsonl` sorted as one run sorts it, the probes,
+  `run.json` (the run's timing keys from the parts, plus `parts`) and `.fresh`. Everything else is the same bytes as
+  one run's, so the packs and datasets are too (`tests/test_parallel.py` checks this on a fake bench; the DPS shards
+  were checked on a real run of four builds, see "Sharding DPS").
 
 ## Publishing
 

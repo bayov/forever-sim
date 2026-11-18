@@ -188,7 +188,7 @@ def common_key():
     k = {'settings': SETTINGS, 'bin': {n: file_hash(real_binary(n)) for n in BINARIES},
          'db': file_hash(os.path.join(TREE, 'assets', 'database', 'db.json')),
          'switches': {v: os.environ[v] for v in SWITCH_VARS if v in os.environ},
-         'scripts': {f: file_hash(f) for pat in SCRIPTS for f in sorted(glob.glob(os.path.join(HERE, pat)))},
+         'scripts': {os.path.relpath(f, HERE): file_hash(f) for pat in SCRIPTS for f in sorted(glob.glob(os.path.join(HERE, pat)))},
          'asm_apls': {os.path.relpath(f, D): file_hash(f) for f in sorted(glob.glob(os.path.join(D, 'asm_apls', '**', '*'), recursive=True))
                       if os.path.isfile(f)}}
     return k
