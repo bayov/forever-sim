@@ -233,14 +233,15 @@ class MergeRefuses(Sandbox):
 
 
 class Planner(unittest.TestCase):
-    """On this checkout's healing presets (their requests only: the cost model counts race rows)."""
+    """On this checkout's healing presets and DPS requests (their requests only: the cost models count race rows and
+    builds), whatever $DASH_DIR another test file set."""
 
     def setUp(self):
-        self.tree = tankheal.TREE
-        tankheal.TREE = os.path.dirname(os.path.dirname(TOOLS))
+        self.saved = tankheal.TREE, parallel.D
+        tankheal.TREE, parallel.D = os.path.dirname(os.path.dirname(TOOLS)), TOOLS
 
     def tearDown(self):
-        tankheal.TREE = self.tree
+        tankheal.TREE, parallel.D = self.saved
 
     def test_priests_alone_rest_balanced(self):
         cost = parallel.costs('heal', tankheal.presets('heal'))

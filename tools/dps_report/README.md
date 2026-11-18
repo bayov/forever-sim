@@ -538,7 +538,9 @@ another request, race override or assumption rotation than the current one.
   `stale.mjs`, re-sim what that adds and publish again (as with `db.json`). Deploy after the push, from the pushed commit:
   `deploy_pages.py` refuses a dirty report tree or a HEAD not on origin/master (`--unmerged` when the user asks for it).
 - Shards don't hydrate: each runs `pipeline.sh run <its ids>` in an empty `$DASH_DIR` and hands back `pipeline.sh pack
-  shard<k>.tgz <its ids>`. The orchestrator hydrates, `pipeline.sh unpack`s every shard and publishes.
+  <tgz> <its ids>` on its slot (`parallel.py`, "Parallel runs"; `pipeline.sh shard` keeps each build with its
+  variants). The orchestrator hydrates, `pipeline.sh unpack`s every shard (which drops those builds first, as `run`
+  does) and publishes.
 - **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then publish.
 - **Talent links**: each rank links to the Forever client's rank 1 spell on Forever's wowhead, because Forever keeps only that one (`talent_links.py`). Forever's wowhead adds spells over time, so `python3 talent_links.py ids`, then `python3 whcache.py --retry talent_ids.json` asks it again for what it didn't know. `python3 talent_links.py refresh` then rewrites the links in the shipped `talenttrees.json` without a full `build_data.py` run.
 - `merge.mjs` (merge a partial `data/` folder into the report) is for hand repairs only now.
@@ -672,8 +674,13 @@ parallel.py slots                  # the run, session and commit each slot holds
   rows, rows of a preset its part didn't declare, and presets left out (unless `--keep-rest`, which keeps them from the
   pack as `run --presets` does). It writes the main outputs, `races.jsonl` sorted as one run sorts it, the probes,
   `run.json` (the run's timing keys from the parts, plus `parts`) and `.fresh`. Everything else is the same bytes as
-  one run's, so the packs and datasets are too (`tests/test_parallel.py` checks this on a fake bench; the DPS shards
-  were checked on a real run of four builds, see "Sharding DPS").
+  one run's, so the packs and datasets are too (`tests/test_parallel.py` checks this on a fake bench). The DPS shards
+  were checked on a real run of four builds (2026-11-18): `pipeline.sh run` of all four in one empty `$DASH_DIR`
+  against two shards each run in its own and unpacked into a third, then `publish` of each in its own worktree:
+  `ui/dps_report/data` (but `events/`), `datasets.json`, `tools/dps_report/raw` and `changes` were the same bytes.
+  What differs between any two publishes, sharded or not: `events/` (the Go sim's action order), `provenance.json`'s
+  `recordedAt`, and in `$DASH_DIR` the line order of `rv`/`asm` results (thread-pool completion order) and the sim's
+  action and names order, which `rawstore` canonicalises in the packs.
 
 ## Publishing
 

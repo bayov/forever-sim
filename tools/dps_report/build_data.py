@@ -809,7 +809,7 @@ for r in tt_rows:
     if prev is None or order.get(src, 1) < order.get(prev, 1):
         ids[ident] = src
 cov['ids'] = dict(collections.Counter(v or 'none' for v in ids.values()))
-cov['idsBySource'] = {k: sorted(i for i, v in ids.items() if (v or 'none') == k) for k in set(v or 'none' for v in ids.values())}
+cov['idsBySource'] = {k: sorted(i for i, v in ids.items() if (v or 'none') == k) for k in sorted(set(v or 'none' for v in ids.values()))}
 cov['talentLinks'] = dict(collections.Counter((w.split(':')[0] if w else 'none') for t in trees for w in t['wh']))
 cov.update(tt_report)
 json.dump(cov, open(os.path.join(D, 'fortt_coverage.json'), 'w'), indent=1)
