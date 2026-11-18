@@ -77,6 +77,9 @@ func (rot *APLRotation) getUnit(ref *proto.UnitReference, defaultRef *proto.Unit
 		return NewUnitReference(defaultRef, rot.unit)
 	} else {
 		unitRef := NewUnitReference(ref, rot.unit)
+		if unitRef.IsHealTarget() {
+			rot.usesHealTargets = true
+		}
 		if unitRef.Get() == nil && !unitRef.IsDynamic() {
 			rot.ValidationWarning("No unit found matching reference: %s", ref)
 		}
