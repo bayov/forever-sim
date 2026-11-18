@@ -1,0 +1,175 @@
+{
+ "run": "2026-11-18-abc1234",
+ "commit": "06a8f8446a2c3f41bd70962d10f32527b4798d81",
+ "modes": [
+  "dps",
+  "tank",
+  "heal"
+ ],
+ "healAll": true,
+ "sessions": [
+  {
+   "session": "dps",
+   "mode": "dps",
+   "ids": [
+    "druid__balance",
+    "druid__balance-duty-ff",
+    "druid__balance-wrath",
+    "druid__balance-wrath-duty-ff",
+    "druid__feral-cat",
+    "druid__feral-cat-duty-ff",
+    "hunter__beast-mastery",
+    "hunter__beast-mastery-tallstrider",
+    "hunter__beast-mastery-wolf",
+    "hunter__lone-wolf",
+    "hunter__marksmanship",
+    "hunter__marksmanship-tallstrider",
+    "hunter__marksmanship-wolf",
+    "hunter__survival",
+    "hunter__survival-tallstrider",
+    "hunter__survival-wolf",
+    "mage__arcane",
+    "mage__fire",
+    "mage__frost",
+    "mage__frostfire",
+    "paladin__level_60",
+    "paladin__level_60-duty-crusader",
+    "paladin__level_60-duty-wisdom",
+    "paladin__level_60_shock_ret",
+    "paladin__level_60_shock_ret-duty-crusader",
+    "paladin__level_60_shock_ret-duty-wisdom",
+    "paladin__level_60_sub_holy",
+    "paladin__level_60_sub_holy-duty-crusader",
+    "paladin__level_60_sub_holy-duty-wisdom",
+    "paladin__level_60_sub_holy_undead",
+    "priest__shadow",
+    "priest__shadow-holy",
+    "priest__smite",
+    "rogue__combat-daggers",
+    "rogue__combat-swords",
+    "rogue__mutilate",
+    "rogue__seal-fate-daggers",
+    "rogue__seal-fate-swords",
+    "rogue__subtlety",
+    "shaman__elemental-level60",
+    "shaman__elemental-level60-mana-tide",
+    "shaman__enhancement-imp-gw",
+    "shaman__enhancement-level60",
+    "shaman__enhancement-mana-tide",
+    "shaman__enhancement-water-shield",
+    "warlock__affliction",
+    "warlock__affliction-duty-curse",
+    "warlock__affliction-duty-recklessness",
+    "warlock__affliction_shadow_bolt",
+    "warlock__demonology",
+    "warlock__demonology-duty-curse",
+    "warlock__demonology-duty-recklessness",
+    "warlock__destruction",
+    "warlock__destruction-duty-curse",
+    "warlock__destruction-duty-recklessness",
+    "warlock__destruction_fire",
+    "warlock__destruction_fire-duty-curse",
+    "warlock__destruction_fire-duty-recklessness",
+    "warrior__arms",
+    "warrior__arms-duty-battle-shout",
+    "warrior__arms-duty-sunder",
+    "warrior__arms_dragonkin",
+    "warrior__fury",
+    "warrior__fury-duty-battle-shout",
+    "warrior__fury-duty-sunder",
+    "warrior__fury_2h",
+    "warrior__fury_2h-duty-battle-shout",
+    "warrior__fury_2h-duty-sunder"
+   ],
+   "estimate": 4800,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-abc1234 dps --commit 06a8f8446a2c3f41bd70962d10f32527b4798d81"
+  },
+  {
+   "session": "tank",
+   "mode": "tank",
+   "presets": [
+    "druid_bear_balanced",
+    "druid_bear_max_survival",
+    "druid_bear_max_threat",
+    "paladin_protection_balanced",
+    "paladin_protection_max_survival",
+    "paladin_protection_max_threat",
+    "shaman_warden_balanced",
+    "shaman_warden_max_survival",
+    "shaman_warden_max_threat",
+    "warrior_protection_balanced",
+    "warrior_protection_max_survival",
+    "warrior_protection_max_threat"
+   ],
+   "main": true,
+   "estimate": 3013,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-abc1234 tank --commit 06a8f8446a2c3f41bd70962d10f32527b4798d81"
+  },
+  {
+   "session": "heal-0",
+   "mode": "heal",
+   "presets": [
+    "priest_holy_raid"
+   ],
+   "main": true,
+   "carriesFrom": null,
+   "raceSeconds": {
+    "priest_holy_raid": 2090
+   },
+   "estimate": 3180,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-abc1234 heal-0 --commit 06a8f8446a2c3f41bd70962d10f32527b4798d81 --main --presets priest_holy_raid"
+  },
+  {
+   "session": "heal-1",
+   "mode": "heal",
+   "presets": [
+    "priest_discipline"
+   ],
+   "main": false,
+   "carriesFrom": "heal-0",
+   "raceSeconds": {
+    "priest_discipline": 1154
+   },
+   "estimate": 2244,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-abc1234 heal-1 --commit 06a8f8446a2c3f41bd70962d10f32527b4798d81 --presets priest_discipline --carries-from heal-0"
+  },
+  {
+   "session": "heal-2",
+   "mode": "heal",
+   "presets": [
+    "priest_holy"
+   ],
+   "main": false,
+   "carriesFrom": "heal-0",
+   "raceSeconds": {
+    "priest_holy": 1154
+   },
+   "estimate": 2244,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-abc1234 heal-2 --commit 06a8f8446a2c3f41bd70962d10f32527b4798d81 --presets priest_holy --carries-from heal-0"
+  },
+  {
+   "session": "heal-3",
+   "mode": "heal",
+   "presets": [
+    "druid_restoration",
+    "druid_restoration_raid",
+    "paladin_holy",
+    "paladin_holy_raid",
+    "shaman_restoration",
+    "shaman_restoration_raid"
+   ],
+   "main": false,
+   "carriesFrom": "heal-0",
+   "raceSeconds": {
+    "druid_restoration": 577,
+    "druid_restoration_raid": 1045,
+    "paladin_holy": 355,
+    "paladin_holy_raid": 643,
+    "shaman_restoration": 444,
+    "shaman_restoration_raid": 804
+   },
+   "estimate": 3067,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-abc1234 heal-3 --commit 06a8f8446a2c3f41bd70962d10f32527b4798d81 --presets druid_restoration,druid_restoration_raid,paladin_holy,paladin_holy_raid,shaman_restoration,shaman_restoration_raid --carries-from heal-0"
+  }
+ ]
+}
