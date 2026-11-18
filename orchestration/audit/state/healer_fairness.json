@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "5f20dfdf4cc7c35244f8cef503ed7f4255cb7c77"
+  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
  },
- "last_pass_at": "2026-11-17T19:28:11Z",
- "pass": 17,
+ "last_pass_at": "2026-11-18T01:09:56Z",
+ "pass": 18,
  "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 17 on 5f20dfdf4: Forever's Five Thunders set (1679) is worn by no healer preset; full bench re-run (seed 101, 1,000 it, healbench built -tags with_db) carry and EHPS identical to ref/healer_fairness/bench_25ce81d.tsv in all 63 cells. Open: -20261115-1, -20261104-4.",
+ "note": "Pass 18 on 2f7e255af: update_1117 code (Idol of Rejuvenation, Totem of Tides, Blue Dragon/Heroism cards, Holy Strike Shieldsworn, Vampiric Embrace) worn or used by no healer preset; 39 of 63 bench cells re-run (all tank, raid druid) identical to bench_25ce81d.tsv, the other 24 cut short by the coordinator. Relic screens (seed 101, 1,000 it): Idol of Rejuvenation for Idol of Swiftness tank +0.006, raid 0.000; Totem of Tides for Polished Driftwood Icon tank -0.004. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-17T12:45:03Z"
+ "checked_at": "2026-11-18T01:10:18Z"
 }

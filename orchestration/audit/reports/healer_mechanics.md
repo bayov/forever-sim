@@ -1,28 +1,28 @@
-# healer_mechanics pass 17 (2026-11-17, master 5f20dfdf4c)
+# healer_mechanics pass 18 (2026-11-18, master 2f7e255af8)
 
-Range 1a85df1d75..5f20dfdf4c, 1 watched file (sim/shaman/item_sets_pve.go). Client 1.60.1.70938 -> 1.60.1.70959
-(`wago.py diff --set mechanics`). Blizzard: hotfix thread t/2403040 posts 7-11 and post 1's Nov 16 edit.
+Range 5f20dfdf4c..2f7e255af8, 5 watched files. Client 1.60.1.70959 (unchanged since pass 17). Blizzard: hotfix
+thread t/2403040 has no post or edit after post 11 / post 1's 2026-11-17T02:18Z edit.
 
 ## What changed
 
-| Source | Change | Healer reach | Verdict | Tier |
-|---|---|---|---|---|
-| sim/shaman/item_sets_pve.go (6875e3b1e) | Forever Five Thunders set 1679: 2pc +8 res, 3pc 8 mp5, 4pc 5% Furious Storm (65 SP, 10 s) on white hits and on damage/heal casts, 6pc +23 SP | healer pieces 227009-227016 exist, but no healer preset or healbench gear uses any piece (only Enhancement BiS) | n/a for healers | - |
-| client 70959 SpellCooldowns 84777/94542/94543, SpellCategories 150689/173189/173190 | Wild Growth 6 s RecoveryTime -> 6 s CategoryRecoveryTime, Category 1237 (all ranks share) | Restoration druid | sim already shares one timer across ranks (sim/druid/healing.go:632-639): match | 1 |
-| client 70959 SpellCategories 76027/76028/76053/76065 | Judgement of Light DefenseType melee -> ranged | Holy paladin's JoL is a debuff toggle only, no hit roll | no reach | 1 |
-| client 70959 Gloves of Holy Might proc mask | damage-only procs | not healer gear | no reach | 1 |
-| Nov 16 hotfix | Wild Growth ranks go on cooldown | as above | match | 1 |
-| Nov 16 hotfix | Vampiric Embrace heals 10% (was 20%), caster takes 100% more | Shadow priest party healing; no healer preset | sim 20% for all: finding 16 | 1 |
-| Nov 12-14 posts | Quick and the Dead perk on Divine Spirit cost; Darkspear signet mp5, Channeler's Ring SP, Everstaring Abomination Eye Spirit | legacy perk not simmed; item stats are the gear data's | no heal mechanic | 1 |
+| Source | Change | Client / source | Sim | Verdict | Tier |
+|---|---|---|---|---|---|
+| sim/druid/items_restoration.go, healing.go (192cb2e06) | Idol of Rejuvenation 22398: Regrowth's direct heal +5% on a target with our Rejuvenation | spell 27853: aura 4 (dummy), bp 5; tooltip carries the rule | DamageMultiplier x1.05 around the direct heal only when one of our Rejuvenation ranks is active (hasHot); restored before the HoT applies | match | 1 (value), rule from tooltip |
+| sim/shaman/items.go (6a3cadbfc) | Totem of Tides 22345: Riptide mana -5% | spell 27797: aura 108 misc 14 (cost %) -5, mask word 2 0x10 = Riptide 1239242/1239243 | Cost.Factor x0.95 on every SpellCode_ShamanRiptide spell | match | 1 |
+| sim/priest/vampiric_embrace.go (4e81669a9) | Vampiric Embrace 10% party, 20% caster, own Shadow damage only | Nov 16 hotfix (t/2403040/11) | vampiricEmbraceHealing(damage, isCaster) | match: finding 16 resolved | 1 |
+| sim/paladin/holy_strike.go (4e81669a9) | Shieldsworn Holy Strike no longer rolls Windfury Totem | Nov 16 hotfix | SpellFlagNoWindfuryTotem when Shieldsworn | no healer reach (Prot talent, melee) | 1 |
 
-No other heal, healing talent or engine row changed in 70959 (rest of the diff is Windfury Totem, Stormstrike,
-Maelstrom Weapon, Arcane Blast, buff-scroll attributes).
+Note (not a finding): Regrowth's ExpectedHealing (HealComm / heal-in-flight) does not add the Idol's 5%. No healer
+preset wears Idol of Rejuvenation, and whether HealComm counts a dummy-aura bonus in game is unknown; recheck if a
+preset takes the Idol.
 
 ## Tests
 
-`go test -tags=with_db ./sim/druid/... ./sim/shaman/... ./sim/priest/... ./sim/paladin/holy/...`: all ok.
+`go test -tags=with_db ./sim/ -run 'TestDruidIdolOfRejuvenation|TestRaidForeverVampiricEmbrace'` and
+`./sim/shaman/enhancement/ -run TestOrcShamanTotemOfTides`: all ok. Each new mechanic has a test that fails if it breaks.
 
 ## Findings
 
-- New: healer_mechanics-20261117-16 (low): Vampiric Embrace party heal 20% vs Forever's 10% / 20% caster.
+- New: none.
+- Resolved: healer_mechanics-20261117-16 (4e81669a9).
 - Still open: 10 (test coverage), 11 (Riptide mana 147/180/231 vs client 150/180/230).

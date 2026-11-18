@@ -437,3 +437,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-17 19:33 | tank_mechanics | pass 18 | master 5f20dfdf4 | 1 new finding | Unbridled Wrath does not fire on Sunder Armor (low, needs user ruling)
 2026-11-17 19:33 | tank_rotations | pass 16 | master 5f20dfdf4 | quiet | warrior baseline rewritten after 114097; rage gates re-tested, none passes
 2026-11-17 19:33 | tank_fairness | pass 18 | master 5f20dfdf4 | quiet | only warrior moved; Max survival still warrior/paladin tie
+2026-11-18 01:10 | results | pass 94 | master 2f7e255af | quiet | builds.json matches shared run on 68/68; only known meta lag
+2026-11-18 01:10 | rotations | pass 69 | master 2f7e255af | quiet | BM weave kept; baseline refreshed
+2026-11-18 01:10 | gear | pass 68 | master 2f7e255af | quiet | 4 new low-level items, none in level60 sets
+2026-11-18 01:10 | consumables | pass 90 | master 2f7e255af | quiet | no consumable values changed
+2026-11-18 01:10 | mechanics | pass 87 | master 2f7e255af | quiet | Nov 16 hotfixes match Forever data
+2026-11-18 01:10 | fairness | pass 46 | master 2f7e255af | quiet | no DPS build moved; published lag fixed
+2026-11-18 01:10 | healer_mechanics | pass 18 | master 2f7e255af | quiet | Idol/Totem match client; VE finding resolved
+2026-11-18 01:10 | healer_rotations | pass 16 | master 2f7e255af | quiet | unchanged; Discipline rows not re-simmed
+2026-11-18 01:10 | healer_fairness | pass 18 | master 2f7e255af | quiet | no new findings
+2026-11-18 01:10 | tank_mechanics | pass 19 | master 2f7e255af | quiet | Shieldsworn Holy Strike no longer rolls Windfury Totem
+2026-11-18 01:10 | tank_rotations | pass 17 | master 2f7e255af | quiet | paladin baseline moved by hotfix; Consecration-first loses
+2026-11-18 01:10 | tank_fairness | pass 19 | master 2f7e255af | quiet | warrior now leads paladin at Max survival (2.7%)

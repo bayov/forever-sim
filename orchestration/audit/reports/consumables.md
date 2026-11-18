@@ -1,18 +1,18 @@
-# Consumables pass 89 (master 5f20dfdf4, client 70959)
+# Consumables pass 90 (master 2f7e255af82b)
 
-No new findings. Open items: the two low nits already in findings (consumables-20261110-1, consumables-20261105-1), unchanged.
+Result: quiet, no new findings.
 
-## Moved files
+## Moved watched files (5f20dfdf4..2f7e255af)
 | File | Change | Verdict |
 |---|---|---|
-| sim/common/item_effects.go | Manual Crowd Pummeler haste CD 30 s -> 3 min (Forever tooltip, 3 charges uncounted) | Item is in no preset or level60 gear set (rotopt excludes it); no effect |
-| tools/dps_report/assumptions_def.py | Paladin SoC Windfury, Unsealed Wrath, Warrior UW and Reckless Swings wording | Rage and proc-rule text, not a buff/consumable value |
+| sim/common/item_effects.go | Cannibal's Cleaver and Draconian Aegis mob-type effects; Darkmoon Blue Dragon 3%, Heroism 158-238, Maelstrom comment (hotfix 114044) | Trinket/weapon item effects only; no preset or mksettings uses these items (git grep empty) |
+| tools/dps_report/assumptions_def.py | warr_exec_wf2 reduced to single setting (Execute extra Windfury roll fixed Nov 16) | Not a consumable or buff value; consistent with the Windfury Totem main-hand ruling |
+| ui/hunter/presets.ts | Comment and tooltip text only (BM weave) | No Consumes or buff change |
 
-## Client 70938 -> 70959 (builddiff.py)
-- Consumable spell changes: 1, Maelstrom Weapon (408498) effect 1 value 50 -> 2. A shaman class aura, not a consumable; no preset consumes touched. Class auditors' area.
-- Forever enchants: 58 checked, 0 changed.
+## Checks
+- scan.sh origin/master: banned, Revelation, non-synthetic trinkets, multi-crit-elixir sections all empty.
+- No change to consumes.go, buffs.go, debuffs.go, forever_enchants.go or mksettings in the range.
+- wago latest build 1.60.1.70959, same as state; no new client.
+- Class branches: only stale copies of other classes' files (gotcha 1); not audited further.
 
-## scan.sh on master
-Banned, Revelation, trinket and crit-elixir sections empty. Totem counts as the ruling. Minor-armor exclusive count is 3 (expect 2): the third is the Dust Cloud pet aura (debuffs.go:1167, client 70532), 505 armor, same slot; benign, scan expectation is stale.
-
-Class branches listed "ahead" carry stale copies (gotcha 1); not audited.
+No open items beyond the two low findings already in findings/consumables.md.

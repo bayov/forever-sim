@@ -1,58 +1,40 @@
-# Fairness pass 45 (2026-11-17, master 5f20dfdf4)
+# Fairness pass 46 (2026-11-18, master 2f7e255af)
 
-Result: quiet (no new finding; the published lag is results-20261104-2, confirmed below). Range 1a85df1d7..5f20dfdf4.
+Result: quiet (no new finding). Range 5f20dfdf4..2f7e255af. No re-sweep: no report build moved.
 
 ## What changed in the watched paths
 
 | Change | Commit | Effect on the comparison |
 |---|---|---|
-| Hunter pet white swings take none of the hunter's crit (wowsims/forever 7e0e0c2e46) | b075ae64d | BM -5.6%, MM -2.6%, Survival -2.2%; Lone Wolf (no pet) unchanged |
-| Raptor Strike: queued keeps the DW miss penalty; Predator's Edge counts twice | eada6763e, 4a8541e46 | Survival / melee-weaving hunters (folded into the moves above) |
-| Immolation and Explosive Trap roll spell hit | 29481dd0e | Survival (folded in) |
-| Warrior hotfix 114097 (Unbridled Wrath, Flurry, Reckless Swings on abilities); avoided Execute keeps Rage | ad1d7f469, 2ebdc14d6, 3e1214a69 | Arms +9.5, Fury +9.8, Fury 2H +7.8 (+0.7 to +0.9%) |
-| Rogue Death Mark always hits, cap uses sheet crit | cf95c3e32 | Subtlety +5.4 (+0.6%); other rogues unchanged |
-| Five Thunders set (1679), Manual Crowd Pummeler 3 min CD, core ItemSetOf / Pet.InheritedStats | 6875e3b1e, 6ea6e47b4, 39b94e364 | no report request uses them; no build moved |
-| report_hashes.txt, goldens | d5e59ef48 | test data only |
+| Beast Mastery weaves for every main hand swing (APL, presets) | 084813024, 5533c0701 | BM 1115.5 (5k baseline) vs 1115.2 (20k shared run): no move |
+| Shieldsworn Holy Strike no Windfury Totem (core flag comment, paladin holy_strike.go) | 4e81669a9 | tank only; DPS paladins unchanged (Ret 1024.2 vs 1023.3) |
+| Vampiric Embrace heals 10% / 20% | 4e81669a9 | healing only; Shadow 948.6 vs 948.7 |
+| Druid Idol of Rejuvenation, Shaman Totem of Tides | 192cb2e06, 6a3cadbfc | healers only; no DPS request uses them |
+| Item hotfixes (Darkmoon Cards, Bad Hat, Militant's Band, Onyxia Blood Talisman, ...), item_effects.go | fa03a8689, 52596be22, 3ec610c40, 16b197c5b, 056dccb4e | synthetic gear untouched; no DPS build moved |
+| Re-sim of 32 builds; hunter / warrior / Subtlety metas and builds.json refreshed | f42ee71bd, 2c6bd10e5 | published lag of pass 45 closed |
+| report_hashes.txt | 5533c0701 | test data |
 
 ## Checks
 
-- Shared 20k run of 5f20dfdf4 vs `ref/fairness/sweep_baseline.log` (25ce81d) at each report race: only the 13 hunter /
-  warrior / Subtlety base builds moved beyond 2.1; every other class within noise. No leak from sim/core.
-- Race re-sweep (5k, seed 1, every race) of the 14 builds in changed classes: report race is still best within noise
-  (MM Night Elf 1202.3 vs Orc 1201.7; Subtlety Night Elf 872.0 vs Undead 871.5; Fury 2H Orc 1111.4 vs NE 1106.3).
-- Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
-- Symmetry: the pet-crit rule is hunter-only by its source; warlock demons keep their (separate) inheritance, already
-  covered by the open "demon / pet scaling" item. Not flagged.
-- Published vs current: builds.json, current on 68 of 68 at the 2026-11-15 re-sim, now lags 20 of 68 builds by more
-  than 1.5 (BM -67 to -76, MM -30 to -33, Survival -19 to -22, warriors +8 to +10, Subtlety +5). Ranking flips against
-  the published one: Survival under Ret, Arms over Affliction. The results auditor recorded this lag in the same run
-  (update 2026-11-17 under results-20261104-2); independently confirmed here, with the ranking effect, not refiled.
-  Older meta-only lags unchanged: Affliction +37, four rogues -10.6 to -19.6, Fire -4.1.
+- Shared 20k run of 2f7e255af vs `ref/fairness/sweep_baseline.log` (5k) at each report race: all 43 base builds
+  within 1.4 except Enhancement Water Shield (1027.8 -> 1025.7). Paired 20k seed 1 on the 5f20dfdf4 CLI for all 8
+  Enhancement / Frostfire / Demonology requests: 0 of 8 moved more than 0.3. The -2.1 is 5k baseline noise. No leak.
+- Race: report race still best or within 0.6 (MM Orc 1201.7 vs Night Elf 1202.3; Fire Human 1053.8 vs Gnome 1054.2;
+  Combat Daggers Undead 936.0 vs Gnome 936.6). Unchanged from pass 45.
+- Gear: `audit1b.py` on 2f7e255af, 19 of 19 "5a PASS | 1b PASS".
+- Published vs current: builds.json within 1.5 of the shared run on 68 of 68 (results auditor, update 2026-11-18 under
+  results-20261104-2). The pass-45 ranking flips (Survival under Ret, Arms over Affliction in the published order) are
+  gone. Meta-only lags remain: Affliction +31.9 to +36.7, Lone Wolf -22.4, rogues -10.5 to -20.1, Fire -4.9
+  (results-20261104-1 / -2; confirmed independently, not refiled). They do not reach builds.json.
 
-## Ranking (5k, best race; top 10 and movers)
+## Ranking
 
-| # | Spec | DPS | Before (25ce81d) |
-|---|---|---|---|
-| 1 | Lone Wolf | 1291.8 | 1291.8 |
-| 2 | Marksmanship | 1202.3 | 1235.0 |
-| 3 | Feral | 1186.0 | 1186.0 |
-| 4 | Beast Mastery | 1115.5 | 1182.0 |
-| 5 | Fury 2H | 1111.4 | 1103.6 |
-| 6 | Fury | 1102.6 | 1092.8 |
-| 7 | Enhancement | 1081.1 | 1081.1 |
-| 8 | Arms | 1079.0 | 1069.5 |
-| 9 | Affliction | 1071.1 | 1071.1 |
-| 14 | Retribution | 1024.2 | 1024.2 |
-| 15 | Survival | 1012.9 | 1035.2 |
-| 26 | Subtlety | 872.0 | 866.6 |
-
-Top over bottom 1.65x. Full table: `ref/fairness/table_baseline.md`.
+Unchanged from pass 45 (top Lone Wolf 1291.8, bottom Smite 781.0, 1.65x). Full table: `ref/fairness/table_baseline.md`.
 
 ## Baseline
 
-Replaced: the 14 re-swept lines in `sweep_baseline.log` are from 5f20dfdf4; the rest stay from 25ce81d (their classes'
-code did not change and the 20k run confirms them). `table_baseline.md` regenerated. `orchestration/fairness_report.md`
-§1 updated, old table in `<details>`.
+Kept at 5f20dfdf4 (no build moved). `orchestration/fairness_report.md` §1: published column refreshed for the 13 hunter /
+warrior / Subtlety rows and a pass-46 note added; the DPS columns stand.
 
 ## Open items (unchanged)
 
