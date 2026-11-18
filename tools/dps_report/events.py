@@ -25,6 +25,7 @@ import argparse, base64, copy, gzip, json, os, re, subprocess, sys, tempfile, ur
 from concurrent.futures import ThreadPoolExecutor
 
 import whcache
+import build_bins
 from dashpaths import D, BIN, TREE, RNG
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -175,6 +176,10 @@ def main():
     for rows in samples.values():
         rows.sort(key=lambda s: int(s['pct']) != 50)
     builds = [] if a.lookups_only else a.builds or sorted(samples)
+    if builds:  # the fights are simmed again: the binary must be the code's (build_bins.py)
+        rec = build_bins.guard(BIN, ['wowsimcli'], 'events.py')
+        if rec:
+            build_bins.mark_builds(builds, rec)
 
     total, warnings = 0, []
     with ThreadPoolExecutor(a.j) as ex:

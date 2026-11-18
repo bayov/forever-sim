@@ -11,8 +11,8 @@
                                                  from raw/bench/<mode>.tgz when its main-run rows there are the same
                                                  bytes as this run's (else it is re-simmed too). Only the presets
                                                  re-simmed are marked fresh (tankheal.py fresh prints <mode>:<stem,...>)
-  tankheal.py bins                               tankbench and healbench into the binaries directory, from HEAD with
-                                                 the racials switch patches (0002, 0006)
+  tankheal.py bins                               every report binary into the binaries directory (build_bins.py, the
+                                                 benches with the racials switch patches 0002 and 0006)
   tankheal.py build                              the tank_* and heal_* datasets into $DASH_DIR/data (unpacks the raw
                                                  packs first when $DASH_DIR/tank or heal is missing)
   tankheal.py pack                               $DASH_DIR/tank and heal into raw/bench/<mode>.tgz (deterministic)
@@ -37,9 +37,11 @@ Text: what players read (preset lines, notes, boss lines, Method, rotation rewor
 <mode>.md, not taken from the docs; the build stops when a string the page shows has a tool or file word (LEAK).
 
 The binaries (tankbench, healbench) come from $TANKHEAL_BIN, else $DASH_BIN, else $DASH_DIR/bin, and run with the
-merged tree ($DASH_TREE, else this checkout when it has no w-dash) as their cwd; README.md has the build recipe.
+merged tree ($DASH_TREE, else this checkout when it has no w-dash) as their cwd. build_bins.py builds them, and run
+refuses binaries its stamp doesn't match to the code (DASH_ALLOW_BIN_MISMATCH=<reason> to sim anyway, recorded in
+<mode>/bin_override.json, which the pack keeps and stale.mjs --record-bench refuses).
 """
-import ast, glob, hashlib, io, json, math, os, re, shutil, subprocess, sys, tarfile, tempfile, threading, time
+import ast, glob, hashlib, io, json, math, os, re, shutil, subprocess, sys, tarfile, threading, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -121,23 +123,11 @@ def bench(mode, args, files, out):
 
 
 def bins():
-    """tankbench and healbench into BIN, built from this checkout's HEAD with the racials switch (patches 0002 and 0006:
-    DASH_RACIALS_OFF, scoped to the preset's class) in a throwaway worktree."""
+    """Every report binary, tankbench and healbench included, into BIN (build_bins.py: a clean worktree at
+    ${SIM_COMMIT:-HEAD} with each binary's patches, and the stamp run checks)."""
+    import build_bins
     t0 = time.time()
-    tmp = tempfile.mkdtemp(prefix='benchbuild_')
-    git = lambda *a, **k: subprocess.run(['git', *a], cwd=ROOT, check=True, **k)  # noqa: E731
-    git('worktree', 'add', '--detach', tmp, 'HEAD', capture_output=True)
-    try:
-        for pat in ('0002', '0006'):
-            subprocess.run(['git', 'apply'] + glob.glob(os.path.join(HERE, 'patches', pat + '-*.patch')), cwd=tmp, check=True)
-        env = dict(os.environ, PATH=os.environ['PATH'] + ':' + os.path.expanduser('~/go/bin'))
-        subprocess.run(['npx', 'protoc', f'-I={tmp}/proto', f'--go_out={tmp}/sim/core'] + glob.glob(f'{tmp}/proto/*.proto'), cwd=ROOT, check=True, env=env)
-        os.makedirs(BIN, exist_ok=True)
-        for b in ('tankbench', 'healbench'):
-            subprocess.run(['go', 'build', '-tags=with_db', '-o', os.path.join(BIN, b), './tools/' + b], cwd=tmp, check=True, env=env)
-            print('built', os.path.join(BIN, b))
-    finally:
-        git('worktree', 'remove', '--force', tmp)
+    build_bins.build(BIN)
     timing_cli.phase('bins', time.time() - t0)
 
 
@@ -257,6 +247,8 @@ def stale_presets():
 
 def run(modes, races=True, resume=False, only=None):
     """only: {mode: the stale presets} for a run that re-sims only those presets' race rows (None: every preset)."""
+    import build_bins
+    override = build_bins.guard(BIN, [build_bins.BENCH_BINS[m] for m in modes], f'tankheal.py run {" ".join(modes)}')
     commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=TREE, capture_output=True, text=True).stdout.strip()
     for mode in modes:
         out = os.path.join(D, mode)
@@ -272,6 +264,8 @@ def run(modes, races=True, resume=False, only=None):
         if not done:
             shutil.rmtree(out, ignore_errors=True)
         os.makedirs(out, exist_ok=True)
+        if override:  # packed with the outputs, and stale.mjs --record-bench refuses the mode
+            build_bins.mark(os.path.join(out, 'bin_override.json'), override)
         stems = presets(mode)
         secs, t0 = dict(done.get('secs', {})), time.time() - done.get('seconds', 0)
 

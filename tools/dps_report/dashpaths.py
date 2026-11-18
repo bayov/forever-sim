@@ -2,8 +2,8 @@
 
 DASH_DIR   base directory: req/ (inputs), forever_tt_cache/, and the outputs out/, rv/, abl/, weights/,
            names/, icons/, data/. Default: this directory (tools/dps_report).
-DASH_BIN   directory holding the binaries built from the merged tree: wowsimcli, dashstats (and
-           wowsimcli_r, optional). Default: $DASH_DIR/bin.
+DASH_BIN   directory holding the binaries and their STAMP.json, built by build_bins.py: wowsimcli,
+           wowsimcli_r, wowsimcli_assume, dashstats, tankbench, healbench. Default: $DASH_DIR/bin.
 DASH_TREE  the merged local tree every sim runs in (cwd for the binaries, source of db.json, talents,
            racials, ui/ presets ...). Default: a `w-dash` checkout next to this repository.
 """

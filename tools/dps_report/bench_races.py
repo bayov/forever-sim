@@ -35,6 +35,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import adaptive  # noqa: E402
+import build_bins  # noqa: E402
 from dashpaths import D, RNG  # noqa: E402
 
 # Racial parts a tank or healer can feel, by race: run_races.py's PARTS (the DPS ones) plus Night Elf dodge. The boss
@@ -70,10 +71,8 @@ def sha(path):
 
 def real_exe(exe):
     """The bench binary itself: pipeline.sh run links tankbench and healbench to timing_cli.py (TIMING_REAL_BIN holds the
-    real ones), and the result cache's key must follow the binary, not the shim."""
-    if os.path.basename(os.path.realpath(exe)) == 'timing_cli.py' and os.environ.get('TIMING_REAL_BIN'):
-        return os.path.join(os.environ['TIMING_REAL_BIN'], os.path.basename(exe))
-    return exe
+    real ones), and the result cache's key must follow the binary, not the shim (build_bins.real_bin)."""
+    return build_bins.real_bin(exe)
 
 
 # ---------------------------------------------------------------- the benches

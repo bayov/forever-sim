@@ -37,6 +37,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, BIN, TREE  # noqa: E402
+import build_bins  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -120,8 +121,8 @@ def probe_bin(base):
         link = os.path.join(b, name)
         if os.path.lexists(link):
             os.remove(link)
-        if os.path.exists(os.path.join(BIN, name)):  # the scripts fall back to wowsimcli when a variant is missing
-            os.symlink(os.path.join(HERE, 'probe_cli.py'), link)
+        build_bins.require(os.path.join(BIN, name))  # every binary: no script falls back to plain wowsimcli
+        os.symlink(os.path.join(HERE, 'probe_cli.py'), link)
     return b
 
 
@@ -174,10 +175,7 @@ def file_hash(path):
 def real_binary(name):
     """The binary a probe really runs: pipeline.sh run points DASH_BIN at timing_cli.py shims, so follow them to the
     real directory (TIMING_REAL_BIN) or the key would hash the shim."""
-    p = os.path.join(BIN, name)
-    if os.path.basename(os.path.realpath(p)) == 'timing_cli.py' and os.environ.get('TIMING_REAL_BIN'):
-        p = os.path.join(os.environ['TIMING_REAL_BIN'], name)
-    return p
+    return build_bins.real_bin(os.path.join(BIN, name))
 
 
 def common_key():
@@ -295,6 +293,9 @@ def check(ids, as_json=False):
     if not ids:
         print('nothing is stale')
         return
+    rec = build_bins.guard(BIN, BINARIES, 'probe.py check')  # the binaries must be the code's (build_bins.py)
+    if rec:
+        build_bins.mark_builds(ids, rec)  # stale.mjs --record (by probe) refuses these
     new = run(ids, os.path.join(D, 'probe_check'))
     same, differ = [], {}
     for bid in ids:
