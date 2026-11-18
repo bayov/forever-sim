@@ -260,3 +260,9 @@ A gap on one of these is a regression.
   blocked; Righteousness and Fury are ranged since the Nov 11 hotfix. Ours since 2026-11-15 (their
   `seal_of_command.go:36`, client SpellCategories; their post-hotfix log, 1.062 n=109 under Two-Handed
   Weapon Specialization).
+- DoT and channel ticks and haste: cast speed shortens the ticks of Hurricane and Volley only,
+  rounded to the ms and read at the cast (a channel through ApplyCastSpeedForSpell). Hurricane keeps
+  its 10 s and gains the ticks that fit; Volley keeps its 6 waves and ends sooner, and Auto Shot waits
+  out the shorter channel. Every other DoT and channel ticks at its base length in both. Ours since
+  2026-11-18, to verify against a log (user ruling; their `dot.go` CalcTickPeriod, `hurricane.go:41`,
+  `volley.go:38-39`, b83fe9df5f).

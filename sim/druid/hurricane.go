@@ -70,6 +70,10 @@ func (druid *Druid) registerHurricaneSpell() {
 				},
 				NumberOfTicks: 10,
 				TickLength:    time.Second * 1,
+				// Under Forever, cast speed shortens the ticks and Hurricane keeps its 10 s, gaining the
+				// ticks that fit (wowsims/forever's hurricane.go sets AffectedByCastSpeed without
+				// HasteReducesDuration). The user's ruling of 2026-11-18; to verify against a log.
+				AffectedByCastSpeed: druid.Env.IsForever(),
 
 				BonusCoefficient: 0.03,
 

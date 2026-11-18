@@ -1,6 +1,7 @@
 package core
 
 import (
+	"math"
 	"strconv"
 	"time"
 )
@@ -22,6 +23,11 @@ type DotConfig struct {
 
 	AffectedByCastSpeed bool // If true, tick length will be shortened based on casting speed.
 
+	// Under Forever, for a dot AffectedByCastSpeed: true keeps NumberOfTicks and lets haste shorten
+	// the whole dot (wowsims/forever's Volley), false keeps the base duration and adds the ticks that
+	// fit in it (wowsims/forever's Hurricane). See RecomputeAuraDuration.
+	HasteReducesDuration bool
+
 	OnSnapshot OnSnapshot
 	OnTick     OnTick
 
@@ -41,6 +47,8 @@ type Dot struct {
 
 	// If true, tick length will be shortened based on casting speed.
 	AffectedByCastSpeed bool
+	// See DotConfig.HasteReducesDuration.
+	HasteReducesDuration bool
 
 	OnSnapshot OnSnapshot
 	OnTick     OnTick
@@ -57,6 +65,9 @@ type Dot struct {
 
 	tickAction *PendingAction
 	tickPeriod time.Duration
+	// The ticks haste added to NumberOfTicks at the last application (Forever, hasted dots that keep
+	// their duration). Always 0 otherwise.
+	hasteTicks int32
 
 	// Number of ticks since last call to Apply().
 	TickCount int32
@@ -82,7 +93,7 @@ func (dot *Dot) TimeUntilNextTick(sim *Simulation) time.Duration {
 }
 
 func (dot *Dot) MaxTicksRemaining() int32 {
-	return dot.NumberOfTicks - dot.TickCount
+	return dot.NumberOfTicks + dot.hasteTicks - dot.TickCount
 }
 
 func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
@@ -216,13 +227,47 @@ func (dot *Dot) Cancel(sim *Simulation) {
 
 // Call this after manually changing NumberOfTicks or TickLength.
 func (dot *Dot) RecomputeAuraDuration() {
-	if dot.AffectedByCastSpeed {
-		dot.tickPeriod = dot.Spell.Unit.ApplyCastSpeedForSpell(dot.TickLength, dot.Spell)
-		dot.Aura.Duration = dot.tickPeriod * time.Duration(dot.NumberOfTicks)
-	} else {
-		dot.tickPeriod = dot.TickLength
-		dot.Aura.Duration = dot.tickPeriod * time.Duration(dot.NumberOfTicks)
+	dot.tickPeriod, dot.hasteTicks = dot.hastedTicks()
+	dot.Aura.Duration = dot.tickPeriod * time.Duration(dot.NumberOfTicks+dot.hasteTicks)
+}
+
+// FreshDuration is the duration an application now would give the dot, haste included.
+func (dot *Dot) FreshDuration() time.Duration {
+	period, hasteTicks := dot.hastedTicks()
+	return period * time.Duration(dot.NumberOfTicks+hasteTicks)
+}
+
+// The tick period an application now would get, and the ticks haste adds to NumberOfTicks.
+//
+// Under Forever this is wowsims/forever's rule (sim/core/dot.go CalcTickPeriod and
+// recomputeAuraDuration, origin/master b83fe9df5f), adopted by the user's ruling of 2026-11-18 and
+// still to verify against a log: a dot AffectedByCastSpeed ticks at its base tick length times cast
+// speed, through ApplyCastSpeedForSpell for a channel and ApplyCastSpeed otherwise, rounded to the
+// ms. With HasteReducesDuration the tick count stays and the dot ends sooner (Volley); without it
+// the dot keeps its base duration and ticks round(base duration / hasted period) times, rounding
+// half to even (Hurricane). Haste is read at the application, as theirs does; a haste change while
+// the dot runs does not move it. Theirs sets the flag on Hurricane and Volley only, so every other
+// dot and channel (Arcane Missiles, Blizzard, Mind Flay, Drain Life, ...) ticks at its base length.
+func (dot *Dot) hastedTicks() (time.Duration, int32) {
+	if !dot.AffectedByCastSpeed {
+		return dot.TickLength, 0
 	}
+	unit := dot.Spell.Unit
+	if unit.Env == nil || !unit.Env.IsForever() {
+		// Era: cast speed shortens the ticks, unrounded, and the tick count stays.
+		return unit.ApplyCastSpeedForSpell(dot.TickLength, dot.Spell), 0
+	}
+	var period time.Duration
+	if dot.isChanneled {
+		period = unit.ApplyCastSpeedForSpell(dot.TickLength, dot.Spell).Round(time.Millisecond)
+	} else {
+		period = unit.ApplyCastSpeed(dot.TickLength).Round(time.Millisecond)
+	}
+	if period <= 0 || dot.HasteReducesDuration {
+		return max(period, time.Millisecond), 0
+	}
+	baseDuration := dot.TickLength * time.Duration(dot.NumberOfTicks)
+	return period, int32(math.RoundToEven(float64(baseDuration)/float64(period))) - dot.NumberOfTicks
 }
 
 // Takes a new snapshot of this Dot's effects.
@@ -315,7 +360,7 @@ func newDot(config Dot) *Dot {
 			// The channel's start, its pushbacks (cast.go) and its end, for the channel bar with
 			// tick markers in the Replay view of the Events tab.
 			if sim.Log != nil && !dot.isWandShoot() {
-				dot.Spell.Unit.Log(sim, "Channeling %s until %0.3f (%d ticks every %0.3f)", dot.Spell.ActionID, aura.ExpiresAt().Seconds(), dot.NumberOfTicks, dot.tickPeriod.Seconds())
+				dot.Spell.Unit.Log(sim, "Channeling %s until %0.3f (%d ticks every %0.3f)", dot.Spell.ActionID, aura.ExpiresAt().Seconds(), dot.NumberOfTicks+dot.hasteTicks, dot.tickPeriod.Seconds())
 			}
 		}
 	})
@@ -372,6 +417,7 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 		NumberOfTicks:         config.NumberOfTicks,
 		TickLength:            config.TickLength,
 		AffectedByCastSpeed:   config.AffectedByCastSpeed,
+		HasteReducesDuration:  config.HasteReducesDuration,
 
 		OnSnapshot: config.OnSnapshot,
 		OnTick:     config.OnTick,

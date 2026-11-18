@@ -60,9 +60,14 @@ func (hunter *Hunter) getVolleyConfig(rank int) core.SpellConfig {
 			Aura: core.Aura{
 				Label: fmt.Sprintf("Volley (Rank %d)", rank),
 			},
-			NumberOfTicks:    6,
-			TickLength:       time.Second * 1,
-			BonusCoefficient: .056,
+			NumberOfTicks: 6,
+			TickLength:    time.Second * 1,
+			// Under Forever, cast speed shortens the ticks and the channel with them, and the wave count
+			// stays 6 (wowsims/forever's volley.go sets AffectedByCastSpeed and HasteReducesDuration).
+			// Ranged haste does not. The user's ruling of 2026-11-18; to verify against a log.
+			AffectedByCastSpeed:  hunter.Env.IsForever(),
+			HasteReducesDuration: true,
+			BonusCoefficient:     .056,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
 			},
@@ -78,7 +83,8 @@ func (hunter *Hunter) getVolleyConfig(rank int) core.SpellConfig {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			hunter.Unit.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+(time.Second*6))
+			// Auto Shot waits out the channel, hasted or not.
+			hunter.Unit.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+spell.AOEDot().FreshDuration())
 			spell.AOEDot().Apply(sim)
 		},
 	}
