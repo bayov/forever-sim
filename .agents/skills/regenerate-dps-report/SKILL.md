@@ -96,7 +96,8 @@ throwaway checks only, since `stale.mjs --record` then refuses those builds (REA
 - **After a probe:** `pipeline.sh run <the ids it names>`, then `publish` the same ids. Run
   the probe with the binaries the run will use, after the requests are regenerated.
 - **Every build:** only when packs have no probes or an audit failed: `run`, then
-  `publish`, no hydrate (about 95 min on 4 cores). With Tanking and Healing too, prefer
+  `publish <every id>` (the line `run` prints; a bare `publish` records, packs and
+  samples none of them), no hydrate (about 95 min on 4 cores). With Tanking and Healing too, prefer
   "Parallel full regeneration" below. For more than one class's worth, shard
   over remote sessions: `pipeline.sh shard <k> <n> <ids>` splits by cost; each session, on
   the same master commit with binaries built, runs

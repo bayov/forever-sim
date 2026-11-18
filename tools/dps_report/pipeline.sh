@@ -193,7 +193,7 @@ EOF
 	fi
 	mark done
 	python3 $T/timing.py "$TIMING_LOG"
-	echo "next: pipeline.sh publish $*"
+	echo "next: pipeline.sh publish" $ALL  # every id it ran: a bare publish records, packs and samples none of them
 	;;
 bins)
 	python3 $T/build_bins.py "$@"
