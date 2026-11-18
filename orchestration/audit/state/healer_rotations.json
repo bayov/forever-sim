@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
+  "master": "8219f1083fee9fd246d24371df47037cca743946"
  },
- "last_pass_at": "2026-11-18T07:06:51Z",
- "pass": 17,
+ "last_pass_at": "2026-11-18T13:03:44Z",
+ "pass": 18,
  "result": "quiet",
- "note": "Pass 17 on c198d81e3. Only change: Dark Inspiration given form dropped for a priest with the talent (no healer priest has Shadow points; no healer request sets dark_inspiration). Full 63-row baseline re-simmed at 1,000 it, byte-identical to ref. -20261115-1 and -20261104-2 still open.",
+ "note": "Pass 18 on 8219f1083. Only sim change: Forever dot haste rule (sim/core/dot.go) used by Hurricane and Volley only; no healer HoT or channel sets AffectedByCastSpeed. Full 63-row baseline re-simmed at 1,000 it, byte-identical to ref. -20261115-1 and -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-18T07:07:12Z"
+ "checked_at": "2026-11-18T13:03:55Z"
 }

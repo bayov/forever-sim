@@ -1,24 +1,25 @@
-# healer_mechanics pass 19 (2026-11-18, master c198d81e3)
+# healer_mechanics pass 20 (2026-11-18, master 8219f1083)
 
-Range 2f7e255af8..c198d81e3, 2 watched files (sim/priest/priest.go, sim/priest/talents.go), one commit (ac0217aed).
+Range c198d81e3..8219f1083, 2 watched files (sim/core/dot.go, sim/druid/hurricane.go), one commit (8219f1083).
 Client 1.60.1.70959 (wago latest, unchanged since pass 17). Blizzard posts not rechecked this pass (last seen
 t/2403040 edit 2026-11-17T02:18Z).
 
 ## What changed
 
-| Source | Change | Client / source | Sim | Verdict | Tier |
+| Source | Change | Rule / source | Sim | Verdict | Tier |
 |---|---|---|---|---|---|
-| sim/priest/priest.go, talents.go (ac0217aed) | PartyBuffs.dark_inspiration (given form, Spirit x(1+0.15*0.999)) dropped for a party holding a priest with Dark Inspiration, who gives the real aura (registerDarkInspiration) | 1326168: aura 80 (% stat), implicit target 20 (caster's party); same aura does not stack | Priest.AddPartyBuffs clears the flag; Party.GetPartyBuffs clones the base buffs then runs every member's AddPartyBuffs before applying, so the clear reaches the whole party; pets already excluded (buffs.go:566) | match: no double count | 1 |
+| sim/core/dot.go (8219f1083) | Under Forever a dot flagged AffectedByCastSpeed ticks at base x cast speed, rounded to the ms, read at application; HasteReducesDuration keeps the ticks (Volley), otherwise keeps the duration and adds ticks rounded half to even (Hurricane). MaxTicksRemaining adds hasteTicks | wowsims/forever b83fe9df5f, user ruling 2026-11-18, to verify against a log | hastedTicks returns (TickLength, 0) for every unflagged dot, so RecomputeAuraDuration is unchanged for them | no healer effect | other sim (ruling) |
+| sim/druid/hurricane.go | AffectedByCastSpeed under Forever | as above | damage spell only | out of scope (DPS mechanics pass) | - |
 
-Healer reach: Spirit drives healer mana regen, so this removes a Spirit double count for any healer partied with a
-Dark Inspiration priest. Edge case (not a finding): a priest who takes the talent but never casts Mind Blast or a
-full Mind Flay (a healing priest) would now remove the given form from its party and give nothing back. No healer
-priest preset is known to take this Shadow talent; recheck if one does.
+Healer reach: `grep AffectedByCastSpeed sim/` sets it true only on Hurricane and Volley (Mind Flay, Siphon Life
+and one item effect set it false). No HoT or heal channel (Renew, Rejuvenation, Regrowth, Tranquility, Wild Growth,
+Riptide, Healing Stream) is flagged, so their ticks, durations and MaxTicksRemaining (read by priest
+healing_talents.go:270) are unchanged. Added an engine row to ref/healer_mechanics/verdicts.md.
 
 ## Tests
 
-`go test -tags=with_db ./sim/ -run DarkInspiration`: TestRaidForeverDarkInspirationGivenOnce passes
-(sim/raid_dark_inspiration_test.go). The change has a test that fails if it breaks.
+At 8219f1083 (cached worktree with protos): `go test -tags=with_db ./sim/priest/healing/ ./sim/paladin/holy/
+./sim/core/` ok; `go test -tags=with_db ./sim/ -run 'Healing|Heal'` ok. No healing golden moved.
 
 ## Findings
 

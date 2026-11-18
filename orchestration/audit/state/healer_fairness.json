@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
+  "master": "8219f1083fee9fd246d24371df47037cca743946"
  },
- "last_pass_at": "2026-11-18T07:02:35Z",
- "pass": 19,
+ "last_pass_at": "2026-11-18T13:05:00Z",
+ "pass": 20,
  "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 19 on c198d81e3: Dark Inspiration given form (PartyBuffs.dark_inspiration) now dropped for a party whose priest has the talent; no healer preset has Shadow points or the party buff, so inert. 35 cells re-run (priest tank x2, raid priest/paladin/shaman: the 21 raid cells pass 18 left) identical to bench_25ce81d.tsv. Open: -20261115-1, -20261104-4.",
+ "note": "Pass 20 on 8219f1083: Forever cast-speed-hasted ticks (dot.go hastedTicks) apply only to dots with AffectedByCastSpeed, set on Hurricane and Volley only; no HoT or healer channel sets it, so the non-hasted path (TickLength, 0 extra ticks) is unchanged. 28 cells re-run (raid druid, raid shaman, tank druid, tank Holy priest) identical to bench_25ce81d.tsv. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-18T07:07:12Z"
+ "checked_at": "2026-11-18T13:03:55Z"
 }

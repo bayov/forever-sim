@@ -454,3 +454,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-18 07:07 | healer_mechanics | pass 19 | master c198d81e3 | quiet | Dark Inspiration party-buff double count removed; no healer effect
 2026-11-18 07:07 | healer_rotations | pass 17 | master c198d81e3 | quiet | all 63 baseline rows unchanged
 2026-11-18 07:07 | healer_fairness | pass 19 | master c198d81e3 | quiet | 35 cells re-run, all match; ranking unchanged
+2026-11-18 13:03 | mechanics | pass 89 | master 8219f1083 | quiet | Forever cast-speed Hurricane/Volley ticks (user ruling); no report number moves
+2026-11-18 13:03 | healer_mechanics | pass 20 | master 8219f1083 | quiet | haste-tick rule reaches no healer HoT/channel
+2026-11-18 13:03 | healer_rotations | pass 18 | master 8219f1083 | quiet | all 63 baseline rows identical
+2026-11-18 13:03 | healer_fairness | pass 20 | master 8219f1083 | quiet | 28 healbench cells re-run, all match
+2026-11-18 13:03 | tank_mechanics | pass 20 | master 8219f1083 | quiet | no tank casts Hurricane/Volley
+2026-11-18 13:03 | tank_rotations | pass 18 | master 8219f1083 | quiet | all 104 baseline rows identical
+2026-11-18 13:03 | tank_fairness | pass 20 | master 8219f1083 | quiet | tank numbers unchanged

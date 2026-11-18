@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-18 UTC, master c198d81e3, client 1.60.1.70959)
+# Mechanics audit: verdicts and settled items (as of 2026-11-18 UTC, master 8219f1083, client 1.60.1.70959)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -96,6 +96,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Leveling target (f878f6079, mksettings only): levels other than 20 and 30 fight a generic boss two levels up with 1.12 warrior elite armor; level 60 still uses the raid target. No Level 60 effect.
 
 - Client 70959 shared deltas (pass 86, tier 1): Attributes_2 0x100 on about 90 consumables and every Well Fed is a logging flag, and the dropped ProcChance 101 SpellAuraOptions rows (passive auras) change nothing. Windfury Totem's reshape (buff spells lose the AP aura and extra attack, AP moves to the raid auras 8515/10609/10612 effect 1) waits on the user (TASKS 2026-11-17, PR #133); the Nov 16 hotfix points (armor, ICD, Rage, Mutilate/Execute one roll) are in the sim (ledger SHR-HF-02..04). Class deltas are the client update auditor's ledger rows.
+- Cast speed hastes Hurricane and Volley ticks under Forever (8219f1083, user's ruling 2026-11-18, wowsims/forever b83fe9df5f, to verify against a log): Hurricane keeps 10 s and gains the ticks that fit (round half to even), Volley keeps 6 waves and ends sooner; haste read at the application; no other dot or channel sets AffectedByCastSpeed under Forever (Mind Flay, Siphon Life and an item dot set it false). The client can't settle it either way (pass 89, 70959): no spell at all carries Attributes_5 0x2000 (haste affects periodic) or Attributes_8 0x80000 (haste affects duration), so their absence on 16914/17401/17402 and 1510/14294/14295 says nothing. No report preset casts either spell.
 
 ## Open items (not blocking)
 

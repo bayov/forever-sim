@@ -1,4 +1,19 @@
-# tank_fairness pass 19: 2026-11-18, master 2f7e255af
+# tank_fairness pass 20: 2026-11-18, master 8219f1083
+
+Due: 1 watched file changed since c198d81e3: `sim/druid/hurricane.go` (8219f1083: under Forever, cast speed shortens
+Hurricane's ticks, `AffectedByCastSpeed: druid.Env.IsForever()`; Volley gets the same rule in `sim/hunter/volley.go`).
+Quiet: no new finding, no re-sim.
+
+Why no bench: Hurricane appears in no tank request (`tools/tankbench/req/*.json`) and no tank APL, and the change only
+sets a flag on that one spell, so every Feral tank number is unchanged by construction. No change to `tools/tankbench`,
+`tools/encounters` or the tank requests in c198d81e3..8219f1083. The baseline `ref/tank_fairness/summary.tsv`, the
+ranking in `orchestration/fairness_tanks.md` and the four open findings stand as pass 19 left them.
+
+---
+
+Pass 19 (carried, still current):
+
+### tank_fairness pass 19: 2026-11-18, master 2f7e255af
 
 Due: 4 watched files changed since 5f20dfdf4: `sim/paladin/holy_strike.go` (Nov 16 hotfix: a Shieldsworn Holy Strike
 strikes with the shield and no longer rolls Windfury Totem, 4e81669a9), `sim/druid/{healing,items_restoration}.go`

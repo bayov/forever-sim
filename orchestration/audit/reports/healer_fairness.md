@@ -1,16 +1,16 @@
-# Healer fairness pass 19 (2026-11-18, master c198d81e3)
+# Healer fairness pass 20 (2026-11-18, master 8219f1083)
 
 Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth),
 -20261104-4 (low).
 
-Due because master changed 2 watched files since 2f7e255af: `sim/priest/priest.go`, `sim/priest/talents.go`
-(ac0217aed). The change: `Priest.AddPartyBuffs` now clears `PartyBuffs.dark_inspiration` (the given form,
-`core.DarkInspirationUptime`) when the priest has the Dark Inspiration talent, which already gives the party the real aura;
-`talents.go` only gains a comment. What could reach a healer:
-- Dark Inspiration is a Shadow talent (`proto/priest.proto:58`). The healer priest presets' talent strings have no Shadow
-  points (Disc `005005031330011531-0350510303`, Holy `00500503113-03505103030121531`, Holy raid
-  `00500503113-33505100030121531`), so `AddPartyBuffs` is a no-op for them.
-- No healbench request sets the party buff (`grep -i darkInspiration tools/healbench/req/*.json`: none).
+Due because master changed 2 watched files since c198d81e3: `sim/core/dot.go`, `sim/druid/hurricane.go` (8219f1083,
+"cast speed hastes Hurricane and Volley ticks"). The change: under Forever, `Dot.hastedTicks` gives a dot with
+`AffectedByCastSpeed` a hasted, ms-rounded tick period, and either keeps its tick count (`HasteReducesDuration`, Volley)
+or keeps its base duration with the extra ticks that fit (Hurricane). What could reach a healer:
+- Only `sim/druid/hurricane.go:76` and `sim/hunter/volley.go:68` set `AffectedByCastSpeed` (grep of `sim/`, non-test).
+  No HoT (Renew, Rejuvenation, Regrowth, Wild Growth, Lifebloom-likes) and no healer channel (Tranquility) sets it.
+- For every other dot `hastedTicks` returns `(TickLength, 0)`, the old `RecomputeAuraDuration` result, and
+  `MaxTicksRemaining` adds `hasteTicks` = 0. No healer preset casts Hurricane.
 - `tools/healbench/`, `tools/encounters/`, healer requests: unchanged.
 
 ## 1. Same terms
@@ -19,10 +19,9 @@ Requests unchanged, so pass 11's check holds: everything but the healer row is i
 
 ## 2. The numbers (healbench -carry, 1,000 iterations, seed 101)
 
-Healbench built from c198d81e3 (`go build -tags with_db`). 35 cells re-run with `tools/audit/healer_fairness/screen.sh`:
-the priest tank presets (Disc, Holy) and the raid priest, paladin and shaman (the 21 raid cells pass 18 left).
-Carry and EHPS identical to `ref/healer_fairness/bench_25ce81d.tsv` in all 35; with pass 18's 39 cells, every one of the
-63 is now confirmed on this code. Table unchanged:
+Healbench built from 8219f1083 (`go build -tags with_db`, after `make sim/core/proto/api.pb.go`). 28 cells re-run with
+`tools/audit/healer_fairness/screen.sh`: the druid in both roles (the class whose code changed), the raid shaman and the
+tank Holy priest. Carry and EHPS identical to `ref/healer_fairness/bench_25ce81d.tsv` in all 28. Table unchanged:
 
 | Role | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|

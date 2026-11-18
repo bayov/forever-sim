@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
+  "master": "8219f1083fee9fd246d24371df47037cca743946"
  },
- "last_pass_at": "2026-11-18T07:00:00Z",
- "pass": 88,
- "result": "findings",
- "note": "Pass 88: 2f7e255af..c198d81e3. ac0217aed (Dark Inspiration given form dropped for a talented priest's party) correct. Nov 17 hotfix post 12: Flurry vs Windfury Totem attacks -> mechanics-20261118-1 (low, +0.15-0.31%); Might of Stormwind / Warchief's Blessing off non-players confirms pet_buffs.md. Client still 70959.",
+ "last_pass_at": "2026-11-18T12:51:26Z",
+ "pass": 89,
+ "result": "quiet",
+ "note": "Pass 89: c198d81e3..8219f1083. 8219f1083 (cast speed hastes Hurricane and Volley ticks) is the user's ruling; only those two dots set AffectedByCastSpeed under Forever, no preset casts them; client 70959 has no haste-periodic attribute on any spell, so it can't settle the ruling. Client still 70959.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-18T07:07:12Z",
+ "checked_at": "2026-11-18T13:03:55Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
