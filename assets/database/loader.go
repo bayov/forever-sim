@@ -17,3 +17,12 @@ func Load() *proto.UIDatabase {
 	}
 	return db
 }
+
+// LoadSim decodes only the part of the database the sim reads (see SimDatabaseFile).
+func LoadSim() *proto.SimDatabaseFile {
+	db := &proto.SimDatabaseFile{}
+	if err := (googleProto.UnmarshalOptions{DiscardUnknown: true}).Unmarshal(dbBytes, db); err != nil {
+		panic(err)
+	}
+	return db
+}
