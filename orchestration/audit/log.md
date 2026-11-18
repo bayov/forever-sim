@@ -449,3 +449,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-18 01:10 | tank_mechanics | pass 19 | master 2f7e255af | quiet | Shieldsworn Holy Strike no longer rolls Windfury Totem
 2026-11-18 01:10 | tank_rotations | pass 17 | master 2f7e255af | quiet | paladin baseline moved by hotfix; Consecration-first loses
 2026-11-18 01:10 | tank_fairness | pass 19 | master 2f7e255af | quiet | warrior now leads paladin at Max survival (2.7%)
+2026-11-18 07:07 | consumables | pass 91 | master c198d81e3 | quiet | only change removes dead warr_exec_wf2 assumption
+2026-11-18 07:07 | mechanics | pass 88 | master c198d81e3 | 1 new finding | Windfury Totem extra attacks still consume Flurry (low)
+2026-11-18 07:07 | healer_mechanics | pass 19 | master c198d81e3 | quiet | Dark Inspiration party-buff double count removed; no healer effect
+2026-11-18 07:07 | healer_rotations | pass 17 | master c198d81e3 | quiet | all 63 baseline rows unchanged
+2026-11-18 07:07 | healer_fairness | pass 19 | master c198d81e3 | quiet | 35 cells re-run, all match; ranking unchanged

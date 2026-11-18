@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
+  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
  },
- "last_pass_at": "2026-11-18T01:03:29Z",
- "pass": 87,
- "result": "quiet",
- "note": "Pass 87: 5f20dfdf4..2f7e255af. Nov 16 hotfix commits checked: Darkmoon Blue Dragon 3% and Heroism 198 +-20% match push 114044 rows; Vampiric Embrace 10%/20% caster-only and Shieldsworn Holy Strike no-WF match post 11 wording. Client still 70959; no new dev notes, hotfix or blue posts. No findings.",
+ "last_pass_at": "2026-11-18T07:00:00Z",
+ "pass": 88,
+ "result": "findings",
+ "note": "Pass 88: 2f7e255af..c198d81e3. ac0217aed (Dark Inspiration given form dropped for a talented priest's party) correct. Nov 17 hotfix post 12: Flurry vs Windfury Totem attacks -> mechanics-20261118-1 (low, +0.15-0.31%); Might of Stormwind / Warchief's Blessing off non-players confirms pet_buffs.md. Client still 70959.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-18T01:10:18Z",
+ "checked_at": "2026-11-18T07:07:12Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -29,9 +29,9 @@
  },
  "blue_tracker_seen": "2026-11-17T18:38:11Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/11",
-  "date": "2026-11-17T02:17:43Z",
-  "post1_edited": "2026-11-17T02:18:14Z",
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/12",
+  "date": "2026-11-18T03:24:08Z",
+  "post1_edited": "2026-11-18T03:24:32Z",
   "post6_edited": "2026-11-12T00:46:56Z"
  }
 }

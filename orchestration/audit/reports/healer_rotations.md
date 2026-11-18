@@ -1,36 +1,35 @@
-# Healer rotations pass 16 (quiet; healer_rotations-20261115-1 and -20261104-2 still open)
+# Healer rotations pass 17 (quiet; healer_rotations-20261115-1 and -20261104-2 still open)
 
-- Master: 2f7e255af (`last.master` was 5f20dfdf4). Audited 2026-11-18.
+- Master: c198d81e3 (`last.master` was 2f7e255af). Audited 2026-11-18.
 - Bench: `tools/healbench` built from this checkout (Go protos generated with `make sim/core/proto/api.pb.go`
-  first), default seed, `-carry`, 1,000 iterations, via `tools/audit/healer_rotations/baseline.sh`.
-- The run was cut short by the coordinator after 23 of 63 rows (all `druid_restoration`, all
-  `druid_restoration_raid`, and the first 9 `paladin_holy` rows). The box was shared with other auditors and the
-  full sweep was on course for about an hour.
+  first), default seed, `-carry`, 1,000 iterations, via `tools/audit/healer_rotations/baseline.sh` (about 14 min
+  on 4 cores, while other auditors were running).
 
-## What changed since 5f20dfdf4
+## What changed since 2f7e255af
 
-- `sim/druid/healing.go`, `sim/druid/items_restoration.go`: Forever's Idol of Rejuvenation (22398), Regrowth's
-  direct heal +5% on a target with our Rejuvenation. Gated on the idol; neither druid request wears it (relic
-  279250).
-- `sim/shaman/items.go`: Totem of Tides (22345), -5% Riptide cost. Neither shaman request wears it (relic 249398).
-- `sim/common/item_effects.go`: Darkmoon Card: Blue Dragon (3% of casts) and Heroism (158-238). Worn by no
-  healer request (grep of `tools/healbench/req/*.json` for 19288/19287 ids: none).
-- `sim/priest/vampiric_embrace.go`: heals 10% (caster 20%) of the priest's Shadow damage. No healer priest
-  APL casts Shadow spells or Vampiric Embrace.
-- `sim/paladin/holy_strike.go`, `sim/core/flags.go`: Shieldsworn Holy Strike no longer rolls Windfury Totem
-  (a melee spec's matter; healbench has no Windfury Totem on the holy paladin).
+- `sim/priest/priest.go`, `sim/priest/talents.go` (ac0217aed): `AddPartyBuffs` clears `PartyBuffs.dark_inspiration`
+  for the party of a priest who has Dark Inspiration, because that priest already gives the party the real aura.
+  None of the three healer priest requests has Shadow points (talents `005005031330011531-0350510303`,
+  `00500503113-03505103030121531`, `00500503113-33505100030121531`), and no healbench request sets
+  `dark_inspiration`. The new code can't reach the healers.
 - No healer APL, healbench request, encounter file or `tools/healbench/main.go` changed.
 
 ## Baseline
 
-The 23 rows re-simmed are byte-identical to `ref/healer_bench/summary.tsv` (e.g. `druid_restoration_raid` Onyxia
-0.944, 7.1% other deaths, as in the reference). The other 40 rows were not re-run; none of this window's changes
-reaches their kits, so the reference stays as it is.
+All 63 rows (9 requests x 7 boss files, each in its own role) were re-simmed in full this time, since pass 16
+stopped after 23 rows. Every row is byte-identical to `ref/healer_bench/summary.tsv`, so the reference stays
+as it is. Rows that bear on the open findings:
+
+| request | boss | carry | mana left | OOM at | other deaths |
+|---|---|---|---|---|---|
+| druid_restoration_raid | onyxia | 0.944 | 6,314 | - | 7.1% |
+| priest_discipline | chromaggus | 0.871 | 341 | 101 s | 23.6% |
 
 ## Changes tried
 
-None: no rotation or bench input moved, and both open findings stand as measured on 5f20dfdf4.
+None. No rotation or kit input moved, and the two open findings already carry their A/B numbers.
 
-## Open items
+## Findings
 
-- Next pass: run the full 63-row sweep (start it early; about 60 minutes on a shared 4-core box).
+No new findings. healer_rotations-20261115-1 (Wild Growth gate) and -20261104-2 (Discipline OOM on Chromaggus)
+remain open and unchanged.

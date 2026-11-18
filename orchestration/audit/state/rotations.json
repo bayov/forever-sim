@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
+  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
  },
  "last_pass_at": "2026-11-18T01:06:46Z",
  "pass": 69,
  "result": "quiet",
  "note": "Pass 69: BM weave (084813024) verified on seed 2e8 (+0.9/+0.9/+2.2 over old). Sim changes (Shieldsworn HS no WF, VE heal, item hotfixes) reach no DPS preset. WF ability-timing item partly done: Fury BT, Combat SS, Arms MS gated 100 ms after swing: all null. Rogue poison finding still open.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-18T01:10:18Z",
+ "checked_at": "2026-11-18T07:07:12Z",
  "baseline": "baseline_2f7e255_3000it_seed424242.tsv"
 }

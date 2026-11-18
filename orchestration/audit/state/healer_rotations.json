@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "2f7e255af82b5a5db6ea7934e91be143e145a27c"
+  "master": "c198d81e3af189e2238c1a0ef29929c79b71faa4"
  },
- "last_pass_at": "2026-11-18T01:12:00Z",
- "pass": 16,
+ "last_pass_at": "2026-11-18T07:06:51Z",
+ "pass": 17,
  "result": "quiet",
- "note": "Pass 16 on 2f7e255af. Changes: Idol of Rejuvenation, Totem of Tides, Darkmoon Blue Dragon/Heroism (worn by no healer request), Vampiric Embrace (no healer casts it), Shieldsworn Holy Strike flag. First 23 of 63 rows re-simmed byte-identical (cut short by coordinator); rest not re-run. -20261115-1 and -20261104-2 still open.",
+ "note": "Pass 17 on c198d81e3. Only change: Dark Inspiration given form dropped for a priest with the talent (no healer priest has Shadow points; no healer request sets dark_inspiration). Full 63-row baseline re-simmed at 1,000 it, byte-identical to ref. -20261115-1 and -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-18T01:10:18Z"
+ "checked_at": "2026-11-18T07:07:12Z"
 }

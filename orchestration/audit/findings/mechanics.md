@@ -4,6 +4,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261118-1: Windfury Totem extra attacks still spend a Flurry stack (warrior and shaman); the November 17 hotfix stopped that
+- severity: low (+0.15% to +0.31% DPS when fixed, under the 1% bar; it is a Forever rule the sim contradicts)
+- affects: warrior (Fury, Fury 2H, any build with Flurry and Windfury Totem), shaman (Enhancement and any Flurry build under Windfury Totem); worker fix in sim/warrior and sim/shaman
+- found: 2026-11-18, master c198d81e3
+- evidence: tier 1, hotfix post us.forums.blizzard.com/en/wow/t/2403040/12 (Kaivax, 2026-11-18 03:24Z, "November 17, 2026"), Shaman: "Fixed an issue where Flurry incorrectly lost stacks when Windfury totem attacks landed." The sim's consume triggers (sim/warrior/talents.go makeFlurryConsumptionTrigger, sim/shaman/talents.go:491) spend a stack on any `ProcMaskMeleeWhiteHit` hit, and a Windfury Totem extra attack lands as the swing spell (`ProcMaskMeleeMHAuto`, sim/core/attack.go ExtraMHAttack, at once). After a white swing or Heroic Strike the 0.5 sec batch ICD already hides it; after Bloodthirst, Whirlwind, Stormstrike and other specials that roll the totem, the extra hit spends a stack the game no longer spends. Measured with the patch below, report requests at 180 s, 20k iterations, paired seeds 1 / 1000003: Fury +1.62 / +1.60 (+0.15%), Fury 2H +3.16 / +3.45 (+0.28 / +0.31%), Enhancement level60 +2.24 / +1.91 (+0.21 / +0.18%).
+- proposed fix: skip the totem's attacks in both consume triggers (patch: /tmp/audit-work/mechanics/flurry_wf_totem.patch, scratch):
+  `if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && !warrior.AutoAttacks.IsWindfuryTotemAttack() && icd.IsReady(sim) {` (the same with `shaman.` in sim/shaman/talents.go). Windfury Weapon's own extra attacks are unchanged (the hotfix names the totem only). A unit test: a Bloodthirst that rolls the totem leaves Flurry's stacks as they were.
+- needs: worker fix
+
 ### mechanics-20261113-2: Weakening Disease (Frightskull Shaft) lowers the target's Strength by 50 in the sim; the Forever client lowers its attack power by 92
 - severity: low (no player DPS effect: the debuff only weakens the target, and raid damage taken is a fixed 1500 per hit; not measured)
 - affects: shared item effects (Frightskull Shaft; Enhancement leveling and any build wielding it)
