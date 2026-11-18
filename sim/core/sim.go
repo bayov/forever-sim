@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
@@ -44,7 +45,10 @@ type Simulation struct {
 	// rotations over the same seeds, for a little more time per session.
 	labeledRands bool
 	testRands    map[string]*labeledRand
-	reseeds      int
+	// labelCache finds a label's source by where its text is, which skips hashing the text
+	// in testRands for almost every roll (see labeledRandOf).
+	labelCache *[labelCacheSize]labelCacheEntry
+	reseeds    int
 	// The rotation check going on, in which values keep their results, or 0. See aplMemo.
 	aplCheck  uint64
 	aplChecks uint64
@@ -253,6 +257,7 @@ func newSimWithEnv(env *Environment, simOptions *proto.SimOptions, signals simsi
 		isTest:       simOptions.IsTest || simOptions.UseLabeledRands,
 		labeledRands: simOptions.IsTest || simOptions.UseLabeledRands || env.Encounter.leveling != nil,
 		testRands:    make(map[string]*labeledRand),
+		labelCache:   new([labelCacheSize]labelCacheEntry),
 
 		Signals: signals,
 	}
@@ -265,24 +270,52 @@ func newSimWithEnv(env *Environment, simOptions *proto.SimOptions, signals simsi
 // testing we use a separate rand object for each RandomFloat callsite,
 // distinguished by the label string.
 func (sim *Simulation) RandomFloat(label string) float64 {
-	return sim.labelRand(label).NextFloat64()
+	if !sim.labeledRands {
+		return sim.rand.NextFloat64()
+	}
+	return sim.labeledRandOf(label).NextFloat64()
 }
 
 func (sim *Simulation) labelRand(label string) Rand {
 	if !sim.labeledRands {
 		return sim.rand
 	}
+	return sim.labeledRandOf(label)
+}
 
-	// Add the seed to the label, so we still have run-run variance for stat weights.
-	labelRng, ok := sim.testRands[label]
-	if !ok {
-		labelRng = &labeledRand{rng: NewSplitMix(uint64(makeTestRandSeed(sim.rand.GetSeed(), label)))}
-		sim.testRands[label] = labelRng
-	} else if labelRng.reseeds != sim.reseeds {
-		labelRng.rng.Seed(makeTestRandSeed(sim.rand.GetSeed(), label))
+// labeledRandOf gives the random source of a label, seeded for the current reseed.
+func (sim *Simulation) labeledRandOf(label string) *SplitMix64 {
+	// Almost every label is a constant or a spell's or aura's name, so the same few strings come
+	// back on every roll. The cache knows them by the address and length of their text, and the
+	// entry keeps its string alive, so that memory can't hold other text while it's there. Two
+	// strings with the same text at different addresses still find one source, through testRands.
+	p := unsafe.StringData(label)
+	slot := &sim.labelCache[(uint64(uintptr(unsafe.Pointer(p)))*0x9E3779B97F4A7C15)>>(64-labelCacheBits)]
+	labelRng := slot.rand
+	if labelRng == nil || unsafe.StringData(slot.label) != p || len(slot.label) != len(label) {
+		labelRng = sim.testRands[label]
+		if labelRng == nil {
+			// Add the seed to the label, so we still have run-run variance for stat weights.
+			labelRng = &labeledRand{rng: NewSplitMix(uint64(makeTestRandSeed(sim.rand.GetSeed(), label))), reseeds: sim.reseeds}
+			sim.testRands[label] = labelRng
+		}
+		slot.label, slot.rand = label, labelRng
 	}
-	labelRng.reseeds = sim.reseeds
+	if labelRng.reseeds != sim.reseeds {
+		labelRng.rng.Seed(makeTestRandSeed(sim.rand.GetSeed(), label))
+		labelRng.reseeds = sim.reseeds
+	}
 	return labelRng.rng
+}
+
+const (
+	labelCacheBits = 8
+	labelCacheSize = 1 << labelCacheBits
+)
+
+type labelCacheEntry struct {
+	label string
+	rand  *labeledRand
 }
 
 // labeledRand is the random source of one RandomFloat label.

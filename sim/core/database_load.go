@@ -6,12 +6,19 @@
 package core
 
 import (
+	"runtime/debug"
+
 	"github.com/wowsims/classic/assets/database"
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func init() {
-	db := database.Load()
+	// Loading the database allocates about 36 MB, nearly all of it garbage once the items are in
+	// the maps, which made the collector run about five times while start-up did nothing else.
+	// It runs once afterwards instead.
+	defer debug.SetGCPercent(debug.SetGCPercent(-1))
+
+	db := database.LoadSim()
 	WITH_DB = true
 
 	simDB := &proto.SimDatabase{

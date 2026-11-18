@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"slices"
+	"sync"
 
 	"github.com/wowsims/classic/sim/core/stats"
 )
@@ -35,11 +36,33 @@ func (set *ItemSet) Items() []Item {
 
 var sets []*ItemSet
 
-// Registers a new ItemSet with item IDs populated.
-func NewItemSet(set ItemSet) *ItemSet {
-	foundID := set.ID == 0
-	foundName := false
-	foundAlternativeName := set.AlternativeName == ""
+// The set IDs and set names the items carry, so registering a set (193 of them at start-up)
+// doesn't scan all the items each time. Built at the first set registered, after the database
+// loaded. A set it doesn't find is looked for in the items again (findSetItems), in case items
+// were added since; that set panics anyway with the database.
+var (
+	setIndexOnce sync.Once
+	itemSetIDs   map[int32]bool
+	itemSetNames map[string]bool
+)
+
+func indexItemSets() {
+	itemSetIDs, itemSetNames = map[int32]bool{}, map[string]bool{}
+	for _, item := range ItemsByID {
+		if item.SetID > 0 {
+			itemSetIDs[item.SetID] = true
+		}
+		if item.SetName != "" {
+			itemSetNames[item.SetName] = true
+		}
+	}
+}
+
+// findSetItems tells whether any item has the set's ID (or the set has none), its name, and its
+// alternative name (or the set has none), by scanning every item.
+func findSetItems(set *ItemSet) (foundID, foundName, foundAlternativeName bool) {
+	foundID = set.ID == 0
+	foundAlternativeName = set.AlternativeName == ""
 	for _, item := range ItemsByID {
 		if item.SetName == "" && item.SetID == 0 {
 			continue
@@ -51,9 +74,22 @@ func NewItemSet(set ItemSet) *ItemSet {
 			break
 		}
 	}
+	return
+}
+
+// Registers a new ItemSet with item IDs populated.
+func NewItemSet(set ItemSet) *ItemSet {
+	setIndexOnce.Do(indexItemSets)
+	foundID := set.ID == 0 || itemSetIDs[set.ID]
+	foundName := set.Name != "" && itemSetNames[set.Name]
+	foundAlternativeName := set.AlternativeName == "" || itemSetNames[set.AlternativeName]
 	// A set Forever added has only pieces the client puts in it by ID, and no piece carries its
 	// name (item names come from Wowhead's Classic tooltips).
 	foundName = foundName || (set.ID > 0 && foundID)
+	if !foundID || !foundName || !foundAlternativeName {
+		foundID, foundName, foundAlternativeName = findSetItems(&set)
+		foundName = foundName || (set.ID > 0 && foundID)
+	}
 
 	if WITH_DB {
 		if !foundID {
