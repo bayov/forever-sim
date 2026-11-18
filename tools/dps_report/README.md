@@ -102,8 +102,9 @@ package of this repository outside these inputs. With `-trimpath` and `-buildvcs
 byte-identical binaries at any commit, path or Go cache, so the race-vector cache of `bench_races.py`, keyed by the
 binary's sha256, keeps hitting across commits.
 
-On the shared 4-CPU box (2026-11-18) a cold build (empty Go cache) took 66s, a rebuild with a warm cache 11s, and a
-`bins` with a matching stamp 0.3s.
+On the shared 4-CPU box (2026-11-18) a cold build (empty Go cache) took 29s, a rebuild with a warm cache 6s, and a
+`bins` with a matching stamp 0.2s. That is one worktree and one build per package, where the old recipe needed a
+worktree for each patch group.
 
 **The guard.** `pipeline.sh run` and `resume` (before the clean), `probe.py check` (`pipeline.sh probe`),
 `tankheal.py run` (`pipeline.sh tankheal`) and `events.py` when it sims (`pipeline.sh publish <ids>`) refuse to start when:
