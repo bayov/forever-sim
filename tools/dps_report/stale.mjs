@@ -40,6 +40,8 @@
 //                                                                   record builds as current at <rev>
 //   node tools/dps_report/stale.mjs --record-bench <tank|heal...> [--commit <rev>] [--iterations N]
 //                                                                   record a mode's datasets as current at <rev>
+//   node tools/dps_report/stale.mjs --bench-fingerprint <tank|heal> [--commit <rev>]
+//                                                                   print a mode's input fingerprint (tankheal.py --resume)
 import { execFileSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -203,6 +205,13 @@ const requested = fs
 const builds = [...new Set([...published, ...requested])].filter(id => requested.includes(id)).sort();
 const removed = published.filter(id => !requested.includes(id));
 const prov = fs.existsSync(provPath) ? JSON.parse(fs.readFileSync(provPath, 'utf8')) : { builds: {} };
+
+if (args.includes('--bench-fingerprint')) {  // tankheal.py --resume: a mode's input fingerprint at --commit, as JSON
+	const m = opt('--bench-fingerprint');
+	if (!BENCH[m]) throw new Error(`Unknown mode ${m}: tank or heal`);
+	console.log(JSON.stringify(benchFingerprint(rev, m), null, '\t'));
+	process.exit(0);
+}
 
 if (args.includes('--record-bench')) {
 	const i = args.indexOf('--record-bench');

@@ -68,6 +68,14 @@ def sha(path):
     return hashlib.sha1(open(path, 'rb').read()).hexdigest()[:12]
 
 
+def real_exe(exe):
+    """The bench binary itself: pipeline.sh run links tankbench and healbench to timing_cli.py (TIMING_REAL_BIN holds the
+    real ones), and the result cache's key must follow the binary, not the shim."""
+    if os.path.basename(os.path.realpath(exe)) == 'timing_cli.py' and os.environ.get('TIMING_REAL_BIN'):
+        return os.path.join(os.environ['TIMING_REAL_BIN'], os.path.basename(exe))
+    return exe
+
+
 # ---------------------------------------------------------------- the benches
 
 class Bench:
@@ -75,14 +83,14 @@ class Bench:
 
     def __init__(self, mode, exe, tree, req_path, encounters):
         self.mode, self.exe, self.tree, self.req_path, self.enc = mode, exe, tree, req_path, encounters
-        self.binsha = sha(exe)
+        self.binsha = sha(real_exe(exe))
         self.lock = threading.Lock()
 
     def _run(self, stem, race, off, args, seed, count):
         req = json.load(open(self.req_path(stem)))
         req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
         cls = req['raid']['parties'][0]['players'][0]['class'][5:]
-        env = dict(os.environ)
+        env = dict(os.environ, TIMING_STEP=self.mode + '_races')  # timing_cli.py's step
         for k in ('DASH_RACIALS_OFF', 'DASH_RACIALS_OFF_CLASS', 'DASH_NAMES'):
             env.pop(k, None)
         if off:

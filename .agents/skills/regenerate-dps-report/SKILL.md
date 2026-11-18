@@ -76,7 +76,11 @@ Build the merged tree (master plus `patches/`) and the binaries per
   `pipeline.sh pack shard<k>.tgz <its ids>`, and pushes the pack to `dash-raw/<run>/<k>`.
   Fetch the packs, `pipeline.sh unpack` each into a hydrated `$DASH_DIR`, then publish.
 
-A stopped run finishes with `pipeline.sh resume <ids>`. `publish` writes every output
+A stopped run finishes with `pipeline.sh resume <ids>` (its probe step skips what it probed, and the Tanking and Healing
+modes resume from `.progress.json` even if master moved, as long as the sim inputs `stale.mjs --bench-fingerprint <mode>` hashes
+are the same). `pipeline.sh run` after `pipeline.sh probe` copies each build's check probe instead of probing it again.
+The end-of-run `timing.py` summary now covers the Tanking and Healing benches and the time `hydrate`, `publish` and
+`tankheal.py bins` took. `publish` writes every output
 (datasets, Changes data, sample fights, provenance, raw packs, removed presets dropped);
 set `SIM_COMMIT=<rev>` if the sims didn't run at HEAD. `merge.mjs` is for hand repairs only.
 
