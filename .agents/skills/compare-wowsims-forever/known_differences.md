@@ -214,8 +214,8 @@ A gap on one of these is a regression.
 - Pet Aggression: dropped (no trainer teaches it).
 - Haste and the GCD: spell haste shortens a spell's GCD down to 1 s, and physical abilities keep
   1.5 s, Nature's Grace composing to 1.227 s. Warchief's Blessing's cast speed is a separate row (Shaman
-  table). Theirs floors any hasted GCD at 1 s and ours keeps a base GCD already under 1 s, but no
-  magic spell of ours has one (the shortest is 1 s: a mage set bonus's 0.5 s cut, the totems). Ours since 2026-11-18 (`sim/core/cast.go` hastedGCD, a combat log with Warchief's Blessing,
+  table). Both floor every hasted GCD at 1 s, a base GCD under 1 s included (user ruling 2026-11-18,
+  unverified in a log). Ours since 2026-11-18 (`sim/core/cast.go` hastedGCD, a combat log with Warchief's Blessing,
   notes.md). Before, ours kept 1.5 s (`haste_gcd`): Elemental 5.6, Enhancement 0.9, Affliction 0.3,
   Balance 4.0, Balance Wrath 4.4 for theirs.
 - Explosive reach 10 yd.
