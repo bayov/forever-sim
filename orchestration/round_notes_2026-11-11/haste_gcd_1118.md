@@ -100,3 +100,10 @@ The paladin drops are small (0.1 to 0.4%). Their rotations were timed around a 1
 1. **The `haste_gcd` assumption text.** It still says the log tested neither the floor nor other haste, and it cites wowsims for the floor. Should it now cite the user ruling? Rewording it makes all 68 builds stale, so it was left alone.
 2. **Warchief's Blessing.** wowsims/forever gives it melee haste only. Ours adds 15% cast speed, from the log. That's in known_differences, and they may want to adopt it.
 3. **Paladin small drops.** Should the paladin rotations be re-timed for the hasted Seal GCD? Every move is under 0.4%, below the 1% re-optimize bar.
+
+## Rulings (user, 2026-11-18)
+
+1. The `haste_gcd` assumption text stays as it is.
+2. The paladin rotations stay under the 1% bar for now. Re-time them the next time a paladin rotation changes
+   (`orchestration/audit/passes/rotations.md`, open items).
+3. Warchief's Blessing stays off in every preset.
