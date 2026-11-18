@@ -2310,11 +2310,20 @@ func ApplyWarchiefsBlessing(unit *Unit, category string) {
 			{stats.Health, 300, false},
 			{stats.MP5, 10, false},
 		},
+		// Under Forever it hastes casts too: a combat log has Lightning Bolt cast in 1.30s with it
+		// against 1.505s without (2026-11-18), and the spell GCD shortens with it (cast.go
+		// hastedGCD). Classic's 16609 hastes melee only.
 		ExtraOnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.15
+			if aura.Unit.Env.IsForever() {
+				aura.Unit.MultiplyCastSpeed(1.15)
+			}
 		},
 		ExtraOnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.15
+			if aura.Unit.Env.IsForever() {
+				aura.Unit.MultiplyCastSpeed(1 / 1.15)
+			}
 		},
 	})
 }

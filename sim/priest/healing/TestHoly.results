@@ -50,33 +50,33 @@ character_stats_results: {
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sInvestiture"
  value: {
-  tps: 62.27617
+  tps: 62.4375
   dtps: 119.4
-  hps: 224.67338
+  hps: 233.02366
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sInvestiture-2072"
  value: {
-  tps: 62.27617
+  tps: 62.4375
   dtps: 119.4
-  hps: 227.73311
+  hps: 236.1421
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sRaiment"
  value: {
-  tps: 62.27617
+  tps: 62.4375
   dtps: 119.4
-  hps: 223.58875
+  hps: 231.9003
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sRaiment-549"
  value: {
-  tps: 62.32842
+  tps: 62.48838
   dtps: 119.4
-  hps: 224.98262
+  hps: 233.35109
  }
 }
 dps_results: {
@@ -98,9 +98,9 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Phase1-AllItems-FieldMarshal'sRaiment"
  value: {
-  tps: 62.27617
+  tps: 62.4375
   dtps: 119.4
-  hps: 225.34642
+  hps: 233.64017
  }
 }
 dps_results: {
@@ -114,25 +114,25 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  tps: 65.37258
+  tps: 69.44117
   dtps: 119.4
-  hps: 253.6507
+  hps: 287.26694
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-LieutenantCommander'sInvestiture"
  value: {
-  tps: 62.27617
+  tps: 62.4375
   dtps: 119.4
-  hps: 227.73311
+  hps: 236.1421
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-LieutenantCommander'sRaiment"
  value: {
-  tps: 62.32842
+  tps: 62.48838
   dtps: 119.4
-  hps: 224.98262
+  hps: 233.35109
  }
 }
 dps_results: {
@@ -162,9 +162,9 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Phase1-AllItems-VestmentsofProphecy"
  value: {
-  tps: 59.35317
+  tps: 59.3625
   dtps: 113.22
-  hps: 215.04935
+  hps: 220.94692
  }
 }
 dps_results: {
@@ -178,9 +178,9 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Phase1-AllItems-VestmentsoftheVirtuous"
  value: {
-  tps: 61.56542
+  tps: 61.66583
   dtps: 117.69333
-  hps: 226.53916
+  hps: 233.90304
  }
 }
 dps_results: {
@@ -194,9 +194,9 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Warlord'sRaiment"
  value: {
-  tps: 62.27617
+  tps: 62.4375
   dtps: 119.4
-  hps: 225.34642
+  hps: 233.64017
  }
 }
 dps_results: {

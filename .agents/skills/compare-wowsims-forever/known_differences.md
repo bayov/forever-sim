@@ -36,8 +36,8 @@ Raw gaps of the last full run (theirs - ours) and how far the rows explained the
   raid damage and Flurry rows; Fury leaves 13 for ours (more Heroic Strikes, 15.1 to 13.8, rage not
   traced).
 - **Shaman:** Enhancement +53 to +60: the Nov 10 tuning rows move about 78 together, leaving 25
-  for theirs, about 20 of it the older rows. Elemental +8.6 to +9.4: haste GCD 5.6, about 3 left
-  (likely the spell queue window).
+  for theirs, about 20 of it the older rows. Elemental +8.6 to +9.4: haste GCD 5.6 (both sims' rule since 2026-11-18, Settled), about 3
+  left (likely the spell queue window).
 - **Mage:** Frost -78.6, Frostfire -62.1, Fire -14.9 within about 2. Arcane -26.1: Evocation 21.8,
   then raid damage and the Presence of Mind opener leave about 2.
 - **Warlock:** Affliction -2.1 (Wrack rows that cancel, then about 4 to 6 each on Wrack, Corruption
@@ -115,7 +115,6 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 | Mental Dexterity | 33/66/100% (`sim/shaman/talents.go:39`, Nov 10 notes) | Client row 415140: 50/100/150% | Open. +144.5 AP for theirs at 3/3; `align.py` closes it. 29 unaligned |
 | Flametongue Totem beside Windfury Weapon | Works (`sham_ftt_stack`) | Nothing while any Windfury Totem stands | Open, notes.md To Verify. Enhancement 16.2 (not remeasured) |
 | Stormstrike's weapon speed | Normalized + 0.3 (3.6 two-hander), fitted to beta (shaman_audit.md 4.1) | Normalized | Evidence. Enhancement 4.6; Holy Strike the same, Retribution 2.7 |
-| Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (`sim/core/cast.go:95`) | Assumption. For theirs: Elemental 5.6, Enhancement 0.9, Affliction 0.3; Balance 4.0, Balance Wrath 4.4; Retribution none |
 | Magma Totem's last pulse | 20 pulses per 40 s totem | About 19 | Engine timing, no log. Enhancement 3 |
 | Greater Blessing of Might and Wisdom | Rank 2's 133 AP, 40 MP5 (standards 8a) | Rank 1's 112, 36 | Ruling. `align.py` closes it |
 | Blood Fury's weapon damage | +10% of weapon average damage beside +10% AP (beta sheets, logs) | AP only | Evidence (their bug, not reported). Orc Enhancement 2.9 |
@@ -212,6 +211,10 @@ A gap on one of these is a regression.
 - Pet autocast: an ability short of focus passes to the next one on the bar. Ours since 2026-11-12
   (their 8223020463, Nov 12, logs).
 - Pet Aggression: dropped (no trainer teaches it).
+- Haste and the GCD: spell haste shortens a spell's GCD down to 1 s, and physical abilities keep
+  1.5 s. Ours since 2026-11-18 (`sim/core/cast.go` hastedGCD, a combat log with Warchief's Blessing,
+  notes.md). Before, ours kept 1.5 s (`haste_gcd`): Elemental 5.6, Enhancement 0.9, Affliction 0.3,
+  Balance 4.0, Balance Wrath 4.4 for theirs.
 - Explosive reach 10 yd.
 - Windfury Totem ICD 100 ms, extra attacks don't reset the swing, Eviscerate 4% AP a combo point
   (on notes.md's To Verify list).

@@ -68,6 +68,28 @@ func (cast *Cast) EffectiveTime() time.Duration {
 	return max(gcd, cast.CastTime)
 }
 
+// hastedGCD is a cast's GCD under Forever. A spell's GCD is 1.5 / (1 + spell haste), down to
+// 1 sec: a combat log with Warchief's Blessing (+15% haste) up has instants 1.27-1.33s apart after
+// a magic spell (1.5 / 1.15 = 1.304s) and 1.52s apart without it, while after Stormstrike they stay
+// 1.40s or more apart (2026-11-18). Physical abilities keep theirs, as the client's rule has it
+// (melee and ranged damage classes). The sim tells them apart by defense type and school: a
+// spell is a cast with no melee or ranged defense type and a magic school, so shouts and
+// aspects (no school) keep 1.5s. The 1 sec floor is wowsims/forever's, untested in a log; it
+// keeps the totems' and the rogue's 1s GCD at 1s, and a GCD already under 1 sec stays as it is.
+func (spell *Spell) hastedGCD(gcd time.Duration) time.Duration {
+	if gcd <= 0 || !spell.hasSpellGCD() {
+		return gcd
+	}
+	hasted := spell.Unit.ApplyCastSpeed(gcd).Round(time.Millisecond)
+	return max(min(gcd, GCDMin), hasted)
+}
+
+// hasSpellGCD: the cast is a spell, not a physical ability, for the hasted GCD.
+func (spell *Spell) hasSpellGCD() bool {
+	return spell.DefenseType != DefenseTypeMelee && spell.DefenseType != DefenseTypeRanged &&
+		spell.SpellSchool != SpellSchoolNone && !spell.SpellSchool.Matches(SpellSchoolPhysical)
+}
+
 type CastFunc func(*Simulation, *Unit)
 type CastSuccessFunc func(*Simulation, *Unit) bool
 
@@ -261,8 +283,11 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		}
 
 		if !config.IgnoreHaste {
-			// Vanilla has no natural GCD reduction besides abilities with 1s GCDs
-			// spell.CurCast.GCD = spell.Unit.ApplyFlatCastSpeed(spell.CurCast.GCD)
+			// Classic has no natural GCD reduction besides abilities with 1s GCDs. Forever's spells
+			// have a hasted one (hastedGCD).
+			if sim.IsForever() {
+				spell.CurCast.GCD = spell.hastedGCD(spell.CurCast.GCD)
+			}
 			spell.CurCast.CastTime = config.CastTime(spell)
 		}
 

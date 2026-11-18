@@ -11,9 +11,10 @@ import (
 // TestOrcShamanGCD checks the global cooldown of each shaman spell at level 60.
 //
 // Spells and Stormstrike take 1.5 sec and totems 1 sec. Rage of the Farseer and Nature's
-// Swiftness take none (wowhead Forever spell pages, 2026-10-08). Haste never shortens it, as
-// in 1.12. A cast longer than 1.5 sec holds it until the cast ends, and a shorter one still
-// holds it for 1.5 sec.
+// Swiftness take none (wowhead Forever spell pages, 2026-10-08). Haste shortens a spell's GCD,
+// down to 1 sec, and not Stormstrike's (a beta combat log, 2026-11-18, core/cast.go hastedGCD).
+// A cast longer than the GCD holds it until the cast ends, and a shorter one still holds it for
+// the GCD.
 func TestOrcShamanGCD(t *testing.T) {
 	// Stormstrike, Maelstrom Weapon 5/5, Rage of the Farseer, Water Shield and Nature's
 	// Swiftness.
@@ -94,7 +95,7 @@ func TestOrcShamanGCD(t *testing.T) {
 	}{
 		{"Lightning Bolt", 50, 1, 0, 2500 * time.Millisecond, 2500 * time.Millisecond},
 		{"Lightning Bolt at 25% haste", 55, 1.25, 0, 2000 * time.Millisecond, 2000 * time.Millisecond},
-		{"Lightning Bolt at 100% haste", 60, 2, 0, 1250 * time.Millisecond, 1500 * time.Millisecond},
+		{"Lightning Bolt at 100% haste", 60, 2, 0, 1250 * time.Millisecond, 1250 * time.Millisecond},
 		{"Lightning Bolt with 3 Maelstrom Weapon stacks", 65, 1, 3, time.Second, 1500 * time.Millisecond},
 	}
 	for _, b := range bolts {
@@ -123,15 +124,26 @@ func TestOrcShamanGCD(t *testing.T) {
 		})
 	}
 
-	// Haste doesn't shorten the GCD of an instant or a totem.
+	// Haste shortens an instant spell's GCD, down to 1 sec. A totem's stays 1 sec, and
+	// Stormstrike's 1.5 sec.
+	at(sim, 78, func(sim *core.Simulation) {
+		enh.MultiplyCastSpeed(1.15)
+		cast(sim, topRank(t, "Earth Shock", enh.EarthShock))
+		checkGCD(sim, "Earth Shock at 15% haste", 1304*time.Millisecond)
+		enh.MultiplyCastSpeed(1 / 1.15)
+	})
 	at(sim, 80, func(sim *core.Simulation) {
 		enh.MultiplyCastSpeed(2)
 		cast(sim, topRank(t, "Earth Shock", enh.EarthShock))
-		checkGCD(sim, "Earth Shock at 100% haste", 1500*time.Millisecond)
+		checkGCD(sim, "Earth Shock at 100% haste", time.Second)
 	})
 	at(sim, 82, func(sim *core.Simulation) {
 		cast(sim, topRank(t, "Searing Totem", enh.SearingTotem))
 		checkGCD(sim, "Searing Totem at 100% haste", time.Second)
+	})
+	at(sim, 84, func(sim *core.Simulation) {
+		cast(sim, enh.Stormstrike)
+		checkGCD(sim, "Stormstrike at 100% haste", 1500*time.Millisecond)
 		enh.MultiplyCastSpeed(0.5)
 	})
 	runSim(sim)

@@ -184,7 +184,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 ## Mechanics where wowsims/forever differs
 
-27. Haste doesn't shorten the GCD, as in Classic (user ruling 2026-10-26). wowsims/forever's rule (cast speed shortens a spell's GCD down to 1s, physical abilities keep 1.5s) came with its Burning Crusade code, and Forever's Nature's Grace has a GCD cut of its own. It is the report's `haste_gcd` assumption, "Yes, for spells" being the other setting (patch 0004's `haste_gcd` knob).
+27. Haste shortens a spell's GCD under Forever: 1.5 / (1 + spell haste), down to 1s (2026-11-18, a combat log with Warchief's Blessing, notes.md). Physical abilities (melee and ranged defense types, or a physical or no school) keep theirs. It replaced the user ruling of 2026-10-26 (Classic's 1.5s), and the `haste_gcd` knob in patch 0004 is gone. The report's `haste_gcd` assumption keeps only the open part: the 1s floor and haste other than Warchief's Blessing.
 28. The presets take these as their one value (user rulings 2026-10-26), each a single-value assumption in the report:
    - Multi-Shot has a 0.5 sec cast, sped up by ranged haste, keeping the Auto Shot timer (wowsims/forever 3fe8cfe64), though client 70425 made it instant (`hunter_multishot_cast`).
    - Spell DoT and channel ticks read spell power, damage buffs and crit when they land, not at the cast (wowsims/forever 36cfc5832, `dot_live_ticks`). Bleeds already did.
