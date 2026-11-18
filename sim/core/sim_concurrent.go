@@ -5,7 +5,6 @@ import (
 	"log"
 	"math"
 	"reflect"
-	"runtime"
 	"runtime/debug"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -584,7 +583,7 @@ func runSimConcurrent(request *proto.RaidSimRequest, progress chan *proto.Progre
 		}
 	}
 
-	splitRes := SplitSimRequestForConcurrency(request, TernaryInt32(request.SimOptions.IsTest, 3, int32(runtime.NumCPU())))
+	splitRes := SplitSimRequestForConcurrency(request, TernaryInt32(request.SimOptions.IsTest, 3, concurrentSplits()))
 
 	if splitRes.ErrorResult != "" {
 		panic(splitRes.ErrorResult)

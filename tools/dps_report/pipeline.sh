@@ -20,6 +20,14 @@
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
 #   pipeline.sh tankheal [tank|heal]    the Tanking and Healing modes' sims alone (tankheal.py run: tankbench and
 #                                       healbench, every preset, seven bosses, races; then publish)
+#   pipeline.sh benchprobe [tank|heal] [--presets <stem,...>]
+#                                       which stale Tanking and Healing presets really moved (tankheal.py probe check):
+#                                       each one's sims at a tenth of the sizes against the probe in the mode's pack;
+#                                       prints the presets to re-sim (tankheal.py run <mode> --presets ...), and
+#                                       publish records the ones it cleared
+#   pipeline.sh bins [--force]          build every binary of the three modes into $DASH_BIN with its STAMP.json
+#                                       (build_bins.py). Run, resume, probe, tankheal and publish <ids> refuse
+#                                       binaries the stamp doesn't match to the code
 #
 # The Tanking and Healing modes (tankheal.py) ride along: run with no ids (or TANKHEAL=1) runs their sims after the
 # DPS steps, hydrate unpacks their raw packs (raw/bench/<mode>.tgz), publish builds their datasets (tank_*, heal_*)
@@ -33,8 +41,9 @@
 #
 # Ids default to every request in $DASH_DIR/req. Builds run longest first (rogues, then hunters ...), so the last
 # minutes of each step are not one slow build alone. Every sim splits its iterations into DASH_SPLITS parts (default
-# 4, patch 0005) run in parallel, so the raw outputs don't depend on the machine; P=4 processes keep a 4-core machine
-# busy to the end.
+# 4, a report switch, sim/core/report_switches.go) run in parallel, so the raw outputs don't depend on the machine.
+# tankheal.py sets the same default for the benches. P=4 processes keep a 4-core machine busy to the end. One
+# wowsimcli serves every DPS step, each with its switches in the environment (DASH_NAMES, DASH_RACIALS_OFF, DASH_ASSUME).
 set -euo pipefail
 T="$(cd "$(dirname "$0")" && pwd)"
 R="$(cd "$T/../.." && pwd)"
@@ -57,15 +66,17 @@ EOF
 
 case "$cmd" in
 hydrate)
+	T0=$(date +%s.%N)
 	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
 		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
 	fi
-	rm -rf out names weights mana rv asm abl probe probe_check data vec tank heal
+	rm -rf out names weights mana rv asm abl probe probe_check data vec tank heal bin_override
 	python3 $T/rawstore.py unpack
 	python3 $T/tankheal.py unpack
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
 	python3 $T/tankheal.py build >tankheal.log || { tail -20 tankheal.log; exit 1; }
 	python3 $T/rawstore.py check "$@"
+	python3 $T/timing_cli.py phase hydrate $T0
 	;;
 clean)
 	python3 $T/rawstore.py clean "$@"
@@ -74,9 +85,12 @@ probe)
 	python3 $T/probe.py check "$@"
 	;;
 publish)
+	T0=$(date +%s.%N)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi  # what run <ids> re-simmed
 	python3 $T/probe.py audit "$@"  # after a probe check: its audit builds must come out unchanged (exits 1 if not)
 	PASSED=$(python3 $T/probe.py passed "$@")  # the builds it cleared, recorded below without sims
+	python3 $T/tankheal.py probe audit  # after a bench probe check: the same for the Tanking and Healing presets
+	BENCH_PASSED=$(python3 $T/tankheal.py probe passed)
 	python3 $T/rawstore.py prune  # removed presets: their outputs, packs and sample fights
 	rm -rf data
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
@@ -95,15 +109,22 @@ publish)
 		python3 $T/tankheal.py pack && python3 $T/tankheal.py fresh --clear
 	fi
 	if [ -n "$PASSED" ]; then (cd "$R" && node tools/dps_report/stale.mjs --record $PASSED --by probe ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
-	rm -f probe_audit.json
+	if [ -n "$BENCH_PASSED" ]; then (cd "$R" && node tools/dps_report/stale.mjs --record-bench $BENCH_PASSED --by probe ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
+	rm -f probe_audit.json probe_check/bench/*/audit.json
 	# only the re-simmed builds' packs: the others are already the outputs they were made from
 	if [ $# -gt 0 ]; then python3 $T/rawstore.py pack "$@"; fi
 	python3 $T/changes.py build  # the Changes tab: the live update against the report's new data
+	python3 $T/timing_cli.py phase publish $T0
 	echo "next: give the live update public lines for what changed (changes.py check, then changes.py build), check the report (make dps-report-artifact), commit ui/dps_report, tools/dps_report/raw and tools/dps_report/changes together, push, then deploy"
 	;;
 plan | run | resume)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi
 	ALL=$(ids "$@")
+	if [ "$cmd" != plan ]; then  # the binaries must match the code (build_bins.py), checked before the clean deletes anything
+		python3 $T/build_bins.py guard --what "pipeline.sh $cmd" --bin "${DASH_BIN:-$DASH_DIR/bin}" \
+			--need wowsimcli dashstats $( ([ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]) && echo tankbench healbench) \
+			--mark $ALL $([ "$cmd" = run ] && echo --clear)
+	fi
 	if [ "$cmd" = run ]; then python3 $T/rawstore.py clean $ALL; fi
 	BASE=$(for i in $ALL; do python3 -c "import json,sys; m = json.load(open('req/$i.meta.json')); sys.exit(0 if m.get('duty') or m.get('pet') else 1)" || echo $i; done)
 	MANA=$(for i in $ALL; do case $i in warrior__* | rogue__*) ;; *) echo $i ;; esac; done)
@@ -138,7 +159,7 @@ EOF
 	# timing/<start>.jsonl (with a line per step below); timing.py sums it up at the end
 	REAL_BIN=$(cd "${DASH_BIN:-$DASH_DIR/bin}" && pwd)
 	mkdir -p timing/bin
-	for b in wowsimcli wowsimcli_r wowsimcli_assume dashstats; do
+	for b in wowsimcli dashstats tankbench healbench; do
 		rm -f timing/bin/$b
 		if [ -e "$REAL_BIN/$b" ]; then ln -s "$T/timing_cli.py" timing/bin/$b; fi
 	done
@@ -168,15 +189,21 @@ EOF
 		mark tankheal
 		TH=tank\ heal
 		if [ "$cmd" = resume ]; then TH=$(for m in tank heal; do [ -e $m/.fresh ] || echo $m; done); fi
-		[ -n "$TH" ] && TANKHEAL_BIN=$REAL_BIN python3 $T/tankheal.py run $TH $([ "$cmd" = resume ] && echo --resume)
+		[ -n "$TH" ] && TANKHEAL_BIN=$DASH_BIN python3 $T/tankheal.py run $TH $([ "$cmd" = resume ] && echo --resume)
 	fi
 	mark done
 	python3 $T/timing.py "$TIMING_LOG"
-	echo "next: pipeline.sh publish $*"
+	echo "next: pipeline.sh publish" $ALL  # every id it ran: a bare publish records, packs and samples none of them
+	;;
+bins)
+	python3 $T/build_bins.py "$@"
 	;;
 tankheal)
 	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py run "$@"
 	echo "next: pipeline.sh publish"
+	;;
+benchprobe)
+	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py probe check "$@"
 	;;
 shard)
 	k=$1 n=$2; shift 2
@@ -236,5 +263,5 @@ EOF
 	rm -rf "$tmp"
 	;;
 *)
-	sed -n '2,22p' "$0"; exit 1 ;;
+	sed -n '2,25p' "$0"; exit 1 ;;
 esac

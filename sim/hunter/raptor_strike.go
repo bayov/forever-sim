@@ -76,6 +76,9 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
 func (hunter *Hunter) newRaptorStrikeHitSpell(rank int) *core.Spell {
 	spellID := RaptorStrikeSpellId[rank]
 	baseDamage := RaptorStrikeBaseDamage[rank]
+	if rank == 8 {
+		baseDamage = core.Assume("hunter_raptor8", baseDamage) // DPS Report assumption knob
+	}
 
 	return hunter.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_HunterRaptorStrikeHit,

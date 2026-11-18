@@ -23,7 +23,7 @@ var StarshardsLevel = [StarshardsRanks + 1]int{0, 10, 18, 26, 34, 42, 50, 58}
 const StarshardsTickCoef = 0.167
 
 func (priest *Priest) registerStarshardsSpell() {
-	if priest.Race != proto.Race_RaceNightElf {
+	if priest.Race != proto.Race_RaceNightElf || core.DashRacialOffFor(priest.Class, "starshards") {
 		return
 	}
 

@@ -81,6 +81,9 @@ func (paladin *Paladin) registerHolyStrike() {
 			break
 		}
 		holy := rank.holy + rank.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level)
+		if v, ok := core.AssumeOk("pal_hs_flat31"); ok && rank.level >= 36 {
+			holy *= v // DPS Report assumption knob: the 31+ ranks' flat part held to the level 30 trend
+		}
 
 		paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: rank.spellID},

@@ -21,7 +21,7 @@ var DarkSacrificeTickMana = [DarkSacrificeRanks + 1]float64{0, 88, 144, 204, 266
 var DarkSacrificeLevel = [DarkSacrificeRanks + 1]int{0, 20, 30, 40, 50, 60}
 
 func (priest *Priest) registerDarkSacrificeSpell() {
-	if priest.Race != proto.Race_RaceUndead {
+	if priest.Race != proto.Race_RaceUndead || core.DashRacialOffFor(priest.Class, "darksacrifice") {
 		return
 	}
 

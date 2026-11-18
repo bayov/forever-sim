@@ -26,6 +26,7 @@ func (hunter *Hunter) getImmolationTrapConfig(rank int, timer *core.Timer) core.
 	dotDamage := [6]float64{0, 105, 215, 340, 510, 690}[rank]
 	manaCost := [6]float64{0, 50, 90, 135, 190, 245}[rank]
 	level := [6]int{0, 16, 26, 36, 46, 56}[rank]
+	rapPerTick := core.Assume("hunter_trap_ap", ImmolationTrapRAPPerTick) // DPS Report assumption knob
 
 	return core.SpellConfig{
 		SpellCode:     SpellCode_HunterImmolationTrap,
@@ -66,7 +67,7 @@ func (hunter *Hunter) getImmolationTrapConfig(rank int, timer *core.Timer) core.
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				tickDamage := dotDamage / float64(dot.NumberOfTicks)
 				if sim.IsForever() {
-					tickDamage += ImmolationTrapRAPPerTick * dot.Spell.RangedAttackPower(target, false)
+					tickDamage += rapPerTick * dot.Spell.RangedAttackPower(target, false)
 				}
 				dot.Snapshot(target, tickDamage, isRollover)
 			},

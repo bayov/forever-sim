@@ -4,16 +4,17 @@ These scripts produce every dataset behind the Forever level 60 DPS Report: the 
 `ui/dps_report/data/`, deployed to https://forever-dps.pages.dev (`make dps-report-deploy`).
 
 ```
-merged tree ──► requests ──► sims ──────────► raw packs ◄──► datasets ──► report
- (w-dash)        req/        out/ rv/ asm/     raw/<id>.tgz    ui/dps_report/data/   forever-dps.pages.dev
+binaries ─────► requests ──► sims ──────────► raw packs ◄──► datasets ──► report
+ (bin/)          req/        out/ rv/ asm/     raw/<id>.tgz    ui/dps_report/data/   forever-dps.pages.dev
                              abl/ weights/ mana/
 ```
 
 Each build's raw sim outputs are kept in `raw/<id>.tgz`, committed with the datasets they made, so a regeneration re-sims
 only the builds that changed and still rebuilds every dataset, the cross-build ones included (see "Partial regenerations").
 
-1. **Merged tree.** One local checkout with every class branch and the consumes branch merged in, the item DB regenerated, and
-   the local dashboard patches (`patches/`) applied. The binaries are built from it.
+1. **Binaries.** `pipeline.sh bins` (`build_bins.py`) builds them from a clean worktree of this repository, with no
+   patches (the sim reads the report switches itself, see "Report switches"), and stamps what they were built from.
+   Every sim step refuses binaries whose stamp doesn't match the code.
 2. **Requests.** `req/<id>.json` is the exact RaidSimRequest for each of the 36 level 60 presets. `req/<id>.meta.json` holds
    its class, spec, build name, preset race, talents, gear set, APL, published and verified DPS, summary, key talents, rotation,
    consumes and caveats.
@@ -32,19 +33,22 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
-| `patches/` | Local-only sim patches for the merged tree (see below) | yes |
+| `tests/` | Unit tests for the timing shim, the probe key and skip, tankheal's resume decision, and the parallel parts, merge, planner and transport (no sims): `python3 -m unittest discover -s tools/dps_report/tests` | yes |
+| `parallel.py` | A full regeneration over several cloud sessions at once: the plan, each worker's job, the transport and the merge (see "Parallel runs") | yes |
+| `parallel/<run>/` | A parallel run's plan and the parts the merge fetched | no |
+| `build_bins.py`, `test_build_bins.py` | Builds and stamps every binary, and the guard that refuses sims on binaries that don't match the code (see "Building the binaries"), with its tests | yes |
+| `bin_override/` | Builds simmed with `DASH_ALLOW_BIN_MISMATCH`, and why (packed with them) | no |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
 | `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
 | `probe.py`, `probe_cli.py` | The probe: every step's sims at a tenth of their iterations, fingerprinted, to tell which stale builds really moved (see "Probes") | yes |
 | `probe/`, `probe_check/`, `probe_audit.json` | Probes of this run, of the last check, and the check's verdict (what publish records) | no |
 | `timing.py`, `timing_cli.py` | Where a `pipeline.sh run` spent its time: every sim's CPU and wall time, logged by `timing_cli.py` standing in for the binaries and summed up by `timing.py` (see "Sim steps") | yes |
-| `timing/` | One log per `pipeline.sh run` or `resume` (`<start>.jsonl`) and the binary links the run used (`timing/bin`) | no |
+| `timing/` | One log per `pipeline.sh run` or `resume` (`<start>.jsonl`), the binary links the run used (`timing/bin`) and `phases.jsonl`, the wall time of each `hydrate`, `publish` and `tankheal.py bins` | no |
 | `adaptive.py` | The luck goals and the fight counts sized to them: a pilot, then a top-up to what the paired spread needs (see "Luck goals") | yes |
 | `vec/` | Per-fight DPS of the race, racial and assumption sims, keyed by request, which the top-ups extend; cleared per build by `run_build.py`, never packed | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
-| `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
-| `bin/` | `wowsimcli`, `dashstats` and optionally `wowsimcli_r`, built from the merged tree | no |
+| `bin/` | `wowsimcli`, `dashstats` (`tools/dashstats`), `tankbench`, `healbench` and `STAMP.json`, built by `build_bins.py` (see "Building the binaries") | no |
 | `out/ rv/ abl/ weights/ names/ mana/` | Raw sim outputs | no |
 | `icons/` | Download cache of wow.zamimg.com icons and talent-tree backgrounds | no |
 | `data/` | The generated datasets | no |
@@ -69,64 +73,79 @@ Not included:
   `backgroundUrl` in `ui/core/talents/trees/<class>.json`.
 - **`spellname.csv`.** The scratch copy was an HTML error page, and no script reads it.
 
-## Building the merged tree
+## Building the binaries
 
 ```bash
-# once: a worktree on a local-only branch (never push it)
-git worktree add ../w-dash -b dashdata <the class branches' common base, or the previous dashdata>
-cd ../w-dash
-git fetch origin
-for c in warrior paladin hunter rogue priest shaman mage warlock druid consumes; do
-  git merge --no-edit origin/claude/wow-forever-dps-presets-m9u15h-$c || { DASH_TREE=$PWD bash ../forever-sim/tools/dps_report/resolve.sh; git status; }
-done
+tools/dps_report/pipeline.sh bins           # or: python3 tools/dps_report/build_bins.py [--force] [--bin DIR]
 ```
 
-Conflict rules:
+`build_bins.py` builds every binary of the three modes into `$DASH_BIN` (default `$DASH_DIR/bin`) from a clean
+worktree at `${SIM_COMMIT:-HEAD}`, so uncommitted edits never reach a binary. In that worktree it builds the packages
+in the table at the top of `build_bins.py`, always regenerates the protos (`protoc`, else `npx protoc`, with
+`protoc-gen-go` from `$(go env GOPATH)/bin`), and runs `go build -tags=with_db -trimpath -buildvcs=false` with
+`CGO_ENABLED=0`, two jobs at a time (`BUILD_P`) under `nice`.
 
-- `assets/database/db.{json,bin}`: take ours and regenerate after all the merges. `resolve.sh` does this.
-- `*.md`: union of both sides. `resolve.sh` does this too.
-- Code: take the class's side for that class's files. For `tools/rotopt/run.go`, the hunter side won last time.
-- If `tools/rotopt` ends up with two `func manaAbove`, delete the one in `priest_shadow.go`. Patch 0001 does this.
-
-Then regenerate the DB, apply the patches and build:
-
-```bash
-go run tools/database/gen_db/*.go -outDir=./assets -gen=db      # every class's synthetic items and trinkets, the spell renames
-git commit -am "dash: regenerate db"                               # local only
-git am -3 ../forever-sim/tools/dps_report/patches/000[1-3]-*.patch  # `git am --skip` a patch the merged heads already contain
-git apply ../forever-sim/tools/dps_report/patches/0004-*.patch    # a plain diff, not a mail
-git apply ../forever-sim/tools/dps_report/patches/0005-*.patch    # DASH_SPLITS, a plain diff too
-git apply ../forever-sim/tools/dps_report/patches/0006-*.patch    # DASH_RACIALS_OFF_CLASS on top of 0002 (tankheal.py's race sims)
-protoc -I=./proto --go_out=./sim/core ./proto/*.proto              # only if sim/core/proto/*.pb.go are missing (protoc-gen-go in ~/go/bin on PATH)
-B=../forever-sim/tools/dps_report/bin; mkdir -p $B
-go build -tags=with_db -o $B/wowsimcli ./cmd/wowsimcli
-go build -tags=with_db -o $B/mksettings ./tools/rotopt/mksettings
-go build -tags=with_db -o $B/rotopt ./tools/rotopt
-go build -tags=with_db -o $B/dashstats ./tools/dashstats
-cp $B/wowsimcli $B/wowsimcli_r   # optional; run_races.py uses wowsimcli when wowsimcli_r is missing
-```
-
-After regenerating the DB, check that every class's synthetic item ids (990000 and up, from
-`tools/database/forever_synthetic_items_<class>.go`) are in `db.json`.
-
-### Local patches (`patches/`)
-
-These were exported with `git format-patch` from the local `dashdata` branch, against the merged class heads. They are
-dashboard-only and never go to a class branch.
-
-| Patch | What it does | Needed by |
+| Binary | Package | Used by |
 |---|---|---|
-| `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
-| `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go` and the priest racials (Chastise, Dark Sacrifice, Starshards, Shadowguard): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, chastise, starshards, darksacrifice, shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` (the same for the Tanking and Healing races, with 0006) |
-| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
-| `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Rebased 2026-10-23 onto the wowsims/forever alignment round: the knobs of the assumptions it settled are gone (orchestration/alignment_round_2026-10-23.md). Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
-| `0005` DASH_SPLITS | `sim/core/sim_concurrent.go`: `DASH_SPLITS=<n>` sets how many parts a sim's iterations are split into (default one per CPU). `pipeline.sh` sets 4, so the raw outputs are the same on every machine: the splits' seeds already continue each other, but averaging the parts moves the last bits. A plain diff; apply with `git apply`. | `pipeline.sh` (every step), `rawstore.py` (refuses packs made with another count) |
-| `0006` DASH_RACIALS_OFF_CLASS | On top of 0002: `DASH_RACIALS_OFF_CLASS=<Class>` (`Paladin`, `Priest`, ...) keeps the switch to the players of that class, so a healing preset's racials go while the healbench raid's tank (an Orc Warrior) and damage dealers keep theirs. `core.DashRacialOffFor(class, part)`. | `bench_races.py` (sets it to the preset's class) |
+| `wowsimcli` | `cmd/wowsimcli` | `run_build.py`, `run_races.py` (`DASH_RACIALS_OFF`), `run_assumptions.py` (`DASH_ASSUME`), `weights.py`, `ablate.py`, `mana_curves.py`, `events.py`, `verify.py` |
+| `dashstats` | `tools/dashstats` | `run_build.py`, `race_gear.py` |
+| `tankbench`, `healbench` | `tools/tankbench`, `tools/healbench` | `tankheal.py`, `bench_races.py` |
 
-The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
-their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
-unchanged. `run_assumptions.py --identical`
-checks that a 0004 build is bit-identical to the plain one with `DASH_ASSUME` unset.
+Every binary is built from the same code with no patches, so each reads every report switch (see "Report switches"):
+one `wowsimcli` serves every DPS step, with the step's switches in its environment. A missing binary stops the step.
+
+`bin/STAMP.json` records what the binaries were built from: the input hash, the commit, each binary's sha256, and the
+Go, `protoc` and `protoc-gen-go` versions. The input hash covers exactly what goes into a binary: all of `sim/` but
+`_test.go`, `.md`, `.results` and `testdata/`, `proto/`, `cmd/wowsimcli`, `go.mod`, `go.sum`, the Go files of
+`tools/dashstats`, `tools/tankbench`, `tools/healbench` and `tools/tankscore`, all of `assets/database`, and the table
+and flags themselves. It hashes git blob ids at the commit, as `stale.mjs` does, so a commit that changes none of these
+gives the same hash and `bins` builds nothing. The build also checks with `go list -deps` that the binaries use no
+package of this repository outside these inputs. With `-trimpath` and `-buildvcs=false` the same inputs give
+byte-identical binaries at any commit, path or Go cache, so the race-vector cache of `bench_races.py`, keyed by the
+binary's sha256, keeps hitting across commits.
+
+On the shared 4-CPU box (2026-11-18) a cold build (empty Go cache) took 29s, a rebuild with a warm cache 6s, and a
+`bins` with a matching stamp 0.2s. That is one worktree and one build per package, where the old recipe needed a
+worktree for each patch group.
+
+**The guard.** `pipeline.sh run` and `resume` (before the clean), `probe.py check` (`pipeline.sh probe`),
+`tankheal.py run` (`pipeline.sh tankheal`) and `events.py` when it sims (`pipeline.sh publish <ids>`) refuse to start when:
+
+- `$DASH_BIN/STAMP.json` (or `$TANKHEAL_BIN`'s) is missing,
+- its input hash differs from the inputs at `${SIM_COMMIT:-HEAD}` (the message names what changed),
+- a binary they run is missing or its sha256 differs from the stamp's,
+- or the working tree has uncommitted changes under the stamped inputs.
+
+`hydrate`, `plan` and a plain `publish` run no sims and aren't checked. To sim anyway, set
+`DASH_ALLOW_BIN_MISMATCH=<reason>`: the run prints a loud warning and records the reason with what it simmed,
+`$DASH_DIR/bin_override/<id>.json` for a build and `<mode>/bin_override.json` for a Tanking or Healing mode. The raw
+packs carry these files (hydrate restores them), and `stale.mjs --record` and `--record-bench` refuse to mark those
+builds or modes current until a `run` without the override re-sims them. A missing binary can't be overridden.
+
+`mksettings` and `rotopt` make requests, not report numbers, so they aren't stamped. Build them from the checkout when
+you need them: `go build -tags=with_db -o tools/dps_report/bin/mksettings ./tools/rotopt/mksettings`.
+
+The binaries run with `$DASH_TREE` as their cwd, and the scripts read `db.json`, talents and racials from it. This
+checkout works as `$DASH_TREE`. The `w-dash` tree of the first reports (every
+class branch merged, the db regenerated) is no longer needed to build anything.
+
+### Report switches
+
+The sim reads these environment variables for the report (`sim/core/report_switches.go`). Each one does nothing unless
+it is set, so every `wowsimcli`, `tankbench` and `healbench` built from master runs the plain sim without them. They
+are read once when the binary starts.
+
+| Variable | What it does | Set by |
+|---|---|---|
+| `DASH_NAMES=<file>` | Each sim's finalize appends every unit's auras to the file, one `spellId itemId otherId tag label` line each (one copy per sim split). | `run_build.py` (`names/<id>.tsv`, the aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`) |
+| `DASH_SPLITS=<n>` | Splits a sim's iterations into n concurrent parts instead of one per CPU. The splits' seeds continue each other, but averaging the parts moves the last bits, so a fixed n keeps the raw outputs the same on every machine. | `pipeline.sh` (4, every step), `tankheal.py` (4, every bench call), `rawstore.py` and `tankheal.py unpack` (refuse packs made with another count) |
+| `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` | Leaves those Forever racial parts out: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial spells chastise, starshards, darksacrifice and shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` |
+| `DASH_RACIALS_OFF_CLASS=<Class>` | Keeps `DASH_RACIALS_OFF` to the players of one class (`Paladin`, `Priest`, ...), so a healing preset's racials go while the healbench raid's tank and damage dealers keep theirs. Alone it does nothing. | `bench_races.py` (the preset's class) |
+| `DASH_ASSUME="key=value,..."` | Overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). Each knob defaults to the constant master sets. | `run_assumptions.py` |
+
+`go test ./sim/core/ -run 'Report|Dash'` and the switch tests in `sim/priest/shadow` and `sim/warrior/dps_warrior`
+check each switch. `run_assumptions.py --identical` checks that a run with `DASH_ASSUME` unset matches a plain binary.
+`tools/dashstats` (the `stats` dataset's stat sheets) is a plain tool in the tree.
 
 ## Requests
 
@@ -250,10 +269,19 @@ it (`raceSe` in report.js). `run_build.py` prints a race pair still over its goa
 The runtimes above are from the runs that first measured them, before later changes to the scripts. `pipeline.sh run`
 and `resume` now measure every run: the binaries run through `timing_cli.py`, which logs each call's step, class, race,
 iterations, fight length, targets, CPU seconds and wall seconds to `timing/<start>.jsonl`, and the run ends with
-`timing.py`'s summary of that log. It shows:
+`timing.py`'s summary of that log. `tankbench` and `healbench` run through it too: `tankheal.py` logs the main runs
+under the steps `tank` and `heal` and `bench_races.py` the race sims under `tank_races` and `heal_races`, with the bench's
+role, boss, iterations, number of request files and fight length read from its flags. The shim prints nothing and passes
+the bench's output and exit code through, because `tankheal.py` keeps that output as the mode's raw text. Whatever
+hashes or checks a binary follows the shim to the real one in `TIMING_REAL_BIN` (`build_bins.real_bin` and `real_dir`):
+the guard and its `STAMP.json`, `bench_races.py`'s cache key and the probe's `_key`. It shows:
 - **Per step:** wall time, the CPU time of its sims, and how many cores those kept busy. A busy figure well under P
-  means the step was waiting on its last builds or on its own Python.
-- **Sim kinds:** the costliest kinds of sim, grouped by step, binary, iterations, fight length and targets.
+  means the step was waiting on its last builds or on its own Python. The `tankheal` step lists its four bench steps
+  beneath it.
+- **Sim kinds:** the costliest kinds of sim, grouped by step, binary, iterations, fight length and targets (benches:
+  role, boss, iterations and request count).
+- **Phases:** the wall time of the work that is no sim, from `timing/phases.jsonl`: `pipeline.sh hydrate` and `publish`
+  and `tankheal.py bins` (the binary build) each log one line when they finish, so the latest of each shows here.
 - **Per class:** core-minutes per base build. This is the unit of pipeline.sh's cost table `W`, which orders and shards
   builds, so the summary is what to refresh `W` from.
 
@@ -337,20 +365,53 @@ Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read th
 
 ```sh
 pipeline.sh tankheal [tank|heal]   # = TANKHEAL_BIN=<bin dir> tankheal.py run: sims into $DASH_DIR/{tank,heal}/, run.json, .fresh
-tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json, same commit)
+pipeline.sh tankheal --stale       # the main benches whole, race sims only for the presets stale.mjs calls stale
+tankheal.py run heal --presets priest_holy,priest_holy_raid   # the same for the presets named
+tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json), if HEAD is its commit or the bench inputs are the same
 tankheal.py build                  # $DASH_DIR/{tank,heal}/ -> $DASH_DIR/data/{tank,heal}_*.json
 tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz <-> $DASH_DIR/{tank,heal}/
-tankheal.py fresh [--clear]        # the modes simmed since their last publish
+tankheal.py fresh [--clear]        # the modes simmed since their last publish (<mode>:<stem,...> when some were kept)
+pipeline.sh benchprobe [heal]      # = tankheal.py probe check: which stale presets really moved ("Bench probes" below)
+tankheal.py probe heal [--presets <stem,...>]   # the probes the pack keeps, into $DASH_DIR/heal/probe/ (run makes them too)
+tankheal.py run heal --main-only   # a part ("Parallel runs"): the main bench alone, part.json instead of run.json and .fresh
+tankheal.py run heal --carries <part.tgz> --presets <stem,...>   # a part: those presets' race sims from another part's main bench outputs
+tankheal.py run tank --part        # a part: the whole mode, merged later
+tankheal.py part <mode> <dest.tgz> # pack a finished part (its outputs and part.json)
+tankheal.py merge <mode> [--keep-rest] <part.tgz|dir>...   # parts -> $DASH_DIR/<mode>/ as one run writes it, run.json and .fresh
 ```
+
+`--resume` reuses a mode's `.progress.json` when the run started at the current HEAD, or at another commit whose bench
+inputs are the same: `stale.mjs --bench-fingerprint <mode> --commit <rev>` prints the per-preset fingerprints publish
+records for the mode (`{<stem>: inputs}`, the same `benchFingerprint` that `--record-bench` stores), and `.progress.json`
+keeps their hash (`inputs`) next to the commit the run started at. So a master that moved on
+mid-run without touching the sim doesn't redo the run. The commit in `run.json` and `.fresh` is the one the run started
+at. A progress file from before this, with no `inputs`, resumes only at its own commit, and so does any run when node
+or the commit isn't available. A finished run (`run.json`) is always redone.
 
 The raw outputs are kept in the repository like the DPS ones (`raw/bench/<mode>.tgz`, deterministic tars), outside
 `raw/*.tgz` so `rawstore.py prune` never takes them for removed builds. The pipeline wires them in: `run` and `resume`
 sim both modes after the DPS builds (all of them when no DPS build is stale or `TANKHEAL=1`; `resume` skips a mode
-already marked fresh), `hydrate` unpacks and builds them, and `publish` builds them before `rawstore.py copy`, then for a
+already marked fresh and passes `--resume` to the others), `hydrate` unpacks and builds them, and `publish` builds them before `rawstore.py copy`, then for a
 fresh mode records its provenance (`stale.mjs --record-bench <modes> --iterations 1000`, into `provenance.json`'s
-`benches`), packs it and clears the mark. `stale.mjs` reports a stale mode separately from the DPS builds (`benches` in
-`--json`, so probe.py's ids are unchanged): its fingerprint covers the shared sim code, `sim/<class>/`, the encounters,
-the reqs' db items, tools/tankbench, tools/healbench, tools/tankscore and `tankheal.py`.
+`benches`), packs it and clears the mark.
+
+Staleness is per preset, like the DPS builds. `stale.mjs` reports the stale presets of each mode separately from the DPS
+builds (`benches` in `--json`, so probe.py's ids are unchanged). A preset's fingerprint covers the shared sim code and
+the top-level `sim/*.go`, the bench's sources (its `req/` left out), `tools/tankscore`, the seven boss files,
+`tankheal.py`, `bench_races.py`, `adaptive.py`, `dashpaths.py` and `run_build.py` (its `CLASS_RACES`), then its own request and the code of every class in its raid with the db items those requests wear. A tank
+preset's raid is the tank alone. A healing preset's raid is the healer and healbench's frost mage fillers, plus the
+warrior tank for a tank healer (a raid healer's raid has no tank). So a `sim/shaman` change stales the shaman presets, a
+`sim/mage` change every healing preset, and a `sim/core` change every preset.
+
+A whole mode costs about 20min for Tanking and 1.5h to 4.3h for Healing, almost all of it the race sims. So
+`tankheal.py run --stale` (or `--presets <stem,...>`) runs the main bench whole (one call covers every preset of a
+role, about 15min to 20min), then the race sims only for the stale presets. Every other preset keeps its rows from the
+mode's pack, but only when its main-run rows on every boss (what its race sims start from, `main_carries`) are the
+same bytes as the pack's: a preset whose main rows moved is re-simmed too. The run sorts `races.jsonl` by preset, so
+the pack is the same bytes for the same results, and `tankheal.py fresh` then prints `<mode>:<stem,...>`, the presets
+simmed, so `publish` records only those (`stale.mjs --record-bench heal:priest_holy,...`). The kept presets keep their
+records. A record from before per-preset staleness (one for the whole mode) is compared at its own commit, like an
+old DPS record.
 
 Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races` (with `pse`, the paired error of each race's
 gap to every other race), `_race_breakdown` (base stats and each racial part, `v` and `se`, in the preset's score),
@@ -368,22 +429,66 @@ library is installed). Then `tankheal.py`'s leak check reads every string the pa
 tool, file or process word (`LEAK`: tools/, docs/, file extensions, bench, rotopt, seed, iterations, template,
 request, APL, code spans, ...): reword the text file, don't widen `LEAK_SKIP`.
 
-Building the benches: `PATH=$PATH:~/go/bin tankheal.py bins` builds both into the binaries directory from a worktree
-of HEAD with patches 0002 and 0006 applied (the racials switch; a bench without it fails the race sims, since every
-racial would measure exactly nothing). By hand:
-
-```sh
-git apply tools/dps_report/patches/0002-*.patch tools/dps_report/patches/0006-*.patch
-PATH=$PATH:~/go/bin npx protoc -I=./proto --go_out=./sim/core ./proto/*.proto
-go build -tags=with_db -o $B/tankbench ./tools/tankbench
-go build -tags=with_db -o $B/healbench ./tools/healbench
-```
+Building the benches: `pipeline.sh bins` (or `tankheal.py bins`, the same `build_bins.py`) builds them with every
+other binary, from the same code. The race sims use the racials switches (`DASH_RACIALS_OFF` and
+`DASH_RACIALS_OFF_CLASS`, see "Report switches"), and every bench run sets `DASH_SPLITS=4` as the DPS steps do.
+`run.json` records the count, and `tankheal.py unpack` refuses a pack made with another one (a pack from before has
+none and counts as 4, one part per CPU on the 4-CPU machine that made it).
+`tankheal.py run` refuses benches the stamp doesn't match to the code (see "Building the binaries").
 
 The main bench calls take about half a minute for tanking and a few minutes for healing; the race sims take most of
 the run: on a 4-core machine about 15 minutes for tanking (2026-11-04: 12 minutes, some race fights already kept)
 and about 3 hours for healing (most of it the raid healers' race sims, 25 to 95 minutes a preset).
 
-## Partial regenerations
+### Bench probes
+
+A `sim/core` change stales every Tanking and Healing preset, though most come out the same. `pipeline.sh benchprobe`
+(`tankheal.py probe check`) finds the ones that don't, the way "Probes" below does for the DPS builds:
+
+- It runs each stale preset's main bench (every boss) and its race sims in a scratch folder (`probe_work/`, so the race
+  sims start with an empty vector store), at a tenth of the full sizes: the main bench at 100 fights, and every pilot
+  and ceiling of `adaptive.py` divided by 10 (race pilot 200, pilot 100, ceiling 4000, healing ceiling 600). Each preset
+  runs in its own child process, `TANKHEAL_PROBE_P` presets at a time (default 2), each sim split `DASH_SPLITS` ways.
+- The probe of a preset is a fingerprint of each boss's main rows and of each race row (`probe_cli.py`'s `canon` and
+  `digest`), plus the carry or score of each row. The sim reseeds every fight, so unchanged code and data give the same
+  fingerprints. A probe is only ever compared with another probe, never with the full run: the healbench `-carry`
+  bisection and the race walk pick their next scale from the deaths seen so far, so a shorter run sims other scales.
+- The probe is optional. It is worth turning on only when a mode is mostly stale and a full re-sim of it would take well
+  over 2h, so the next check can save that time. `tankheal.py run` probes the presets it ran the races for only with
+  `TANKHEAL_PROBE=1`, into `<mode>/probe/<stem>.json`, and the pack keeps them. `tankheal.py probe <mode>` and
+  `probe check` work on demand either way. With no probe in the pack, `probe check` says so and exits 1. A check compares the new probe with the pack's: the same means the
+  full sims would come out the same, anything else names the bosses or the share of race rows that moved.
+- Every probe carries a `_key`, the same idea as the DPS probe's: the probe settings (sizes, splits, architecture), the
+  sha256 of the real bench binary (`build_bins.real_bin`, behind the timing links), the preset's request, the boss
+  files, the report switches set in the environment (`DASH_NAMES`, `DASH_SPLITS`, `DASH_RACIALS_OFF`,
+  `DASH_RACIALS_OFF_CLASS`, `DASH_ASSUME`), the healing raid's filler requests and the scripts the probe runs (`tankheal.py`, `bench_races.py`,
+  `adaptive.py`, `dashpaths.py`, `run_build.py`, `probe_cli.py`). `run` keeps a probe whose key matches, copies one from
+  `probe_check/bench/<mode>/` or the pack when that has it, and probes the rest (`PROBE_FORCE=1` probes all). `compare`
+  ignores the key.
+- A change only one fight in thousands reaches can hide from a probe. So a check picks one cleared preset per mode for
+  a full re-sim anyway (the audit, picked at random with HEAD as the seed). `publish` then checks that the run kept the
+  audit preset's main and race rows and every cleared preset's main rows (the main bench always runs whole) exactly as
+  the pack had them. If one moved it stops: re-sim every cleared preset. Otherwise it records the cleared presets as
+  current (`stale.mjs --record-bench heal:<stem,...> --by probe`), and their race rows stay as they are. Like
+  `--by probe` for the DPS builds, it refuses a mode the check ran on mismatched binaries (`bin_override.json`).
+- A pack without probes is re-simmed. To start the probes for a mode without re-simming it, run `tankheal.py probe
+  <mode>` right after a `tankheal.py run` of the same code (it refuses a stale preset the last run didn't sim), then pack.
+
+```bash
+pipeline.sh hydrate
+node stale.mjs                                   # stale Tanking and Healing presets
+pipeline.sh benchprobe heal                      # prints what moved and the audit preset, writes probe_check/bench/heal/audit.json
+tankheal.py run heal --presets <moved>,<audit>   # with TANKHEAL_BIN set, as pipeline.sh tankheal does
+pipeline.sh publish                              # checks the audit, records the cleared presets --by probe
+```
+
+Measured on 4 cores (2026-11-18, one preset at a time, twice each with the same fingerprints): a raid healer
+(`priest_holy_raid`) 565s wall and 1,500s CPU, a tank healer (`shaman_restoration`) 120s wall and 260s CPU, a tank
+preset (`warrior_protection_balanced`) 80s wall and 145s CPU. So a check of a whole mode at the default 2 presets at a
+time takes about 30min to 48min for Healing (4 raid and 5 tank healers, about 7,300s CPU), against about 87min for a
+full run, and about 8min to 16min for Tanking (about 1,750s CPU), against about 50min. That is far more than a tenth:
+each probe sim still starts the bench, loads the raid and walks as many bisection and race steps, only with fewer
+fights. The probe pass at the end of `tankheal.py run` costs the same per preset it ran races for.
 
 Every build's raw sim outputs live in `raw/<id>.tgz`, committed on master with the datasets and `provenance.json` they
 made (design and audits: `orchestration/dash_raw_store.md`). `build_data.py` always rebuilds every dataset from every
@@ -397,7 +502,7 @@ rotations, the sim split count, the commit simmed at). Packs are deterministic, 
 change. `rawstore.py pack` refuses a build with a step missing or a failed sim, and `unpack` lists the packs simmed from
 another request, race override or assumption rotation than the current one.
 
-| Change | Commands (`$DASH_DIR` set, binaries built from the tree, run from the repo root) |
+| Change | Commands (`$DASH_DIR` set, binaries built with `pipeline.sh bins`, run from the repo root) |
 |---|---|
 | A few builds changed (a class's code, presets, gear or rotation) | regenerate their requests, `pipeline.sh hydrate <ids>`, `pipeline.sh run <ids>`, `pipeline.sh publish <ids>` |
 | Add a preset | write `req/<id>.json` and `.meta.json` (`verify.py`), then as above with its id |
@@ -408,11 +513,14 @@ another request, race override or assumption rotation than the current one.
 | Every build, no probe (packs without probes, or a probe audit failed) | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
 
 - `node tools/dps_report/stale.mjs` gives the scope: which builds *may* have moved. It hashes the shared inputs (the sim's
-  packages, the protos the sim compiles, the CLI and `go.mod`, the patches, `dashstats` and the step scripts), the class's
-  `sim/<class>/`, the item database entries the build wears, and each build's request, the sim fields of its meta, its
+  packages and the top-level `sim/*.go` (`sim/core/report_switches.go` among them), the protos the sim compiles, the CLI
+  and `go.mod`, `tools/dashstats` and the step scripts, `adaptive.py` among them), the class's `sim/<class>/`, the item
+  database entries the build wears (its request's gear and its race overrides' own gear sets), and each build's
+  request, the sim fields of its meta, its
   base build's request, race overrides (`req/races/`, its base build's too) and assumption rotations. Test files,
   goldens, testdata and docs are left out, and so are `tools/rotopt` and `ui/<spec>` (they make requests, which are
-  hashed themselves). It lists new requests and removed presets too.
+  hashed themselves). It lists new requests and removed presets too, and the stale Tanking and Healing presets.
+  Tests: `node --test tools/dps_report/stale.test.mjs` and `python3 tools/dps_report/test_tankheal.py`.
 - `hydrate [ids]` empties `$DASH_DIR`'s outputs, unpacks every pack, runs `build_data.py` and compares the sim numbers
   (`builds`, `races`, `lengths`, `hist`, `weights`, `mana`, `mana_summary`, `race_variants`, `assumption_dps`) with the
   published datasets. A build outside `[ids]` whose numbers differ stops it: re-sim it too, or find why the pack and the
@@ -451,6 +559,14 @@ check`) finds the ones that don't, in about a tenth of a full run:
   for a full re-sim anyway (the audit; `PROBE_AUDIT`), and `publish` first checks that their new outputs equal their old
   packs exactly. If one doesn't, it stops: re-sim every cleared build. Otherwise it records the cleared builds as current
   (`stale.mjs --record <ids> --by probe`), and their packs and data stay as they are.
+- Every probe record carries a `_key`: a hash of the probe settings, the sha256 of each binary it runs (`wowsimcli`,
+  `_r`, `_assume`, `dashstats`, found behind the timing links), the sim's `db.json`, the build's `req/<id>.json`,
+  `.meta.json` and `req/races/<id>.*`, `asm_apls/`, `assumptions_def.py` and the scripts the probe runs (`probe.py`,
+  `probe_cli.py`, `adaptive.py`, `run_*.py`, `weights.py`, `mana_curves.py`, `ablate.py`, `rotation.py` and what they
+  import, `race_override.py`, `dashpaths.py`). `probe.py run` skips a build whose `probe/<id>.json` has the key it
+  would get now (so a stopped run restarts where it was), and copies `probe_check/<id>.json` when that has it (the
+  check probed the same inputs, so `pipeline.sh run` after `pipeline.sh probe` doesn't probe the builds it just
+  probed). Anything else is probed as before, and `PROBE_FORCE=1` probes everything. `compare` ignores the key.
 - A pack without a probe (simmed before probes were kept) or from another split count, scale or architecture is re-simmed.
 
 ```bash
@@ -507,6 +623,41 @@ pass); a sim/preset update for our first change of our own after a game update's
 B11). Everything else joins the live update. `new` refuses while the four datasets a snapshot reads have uncommitted
 changes, and warns when the finished update lists commits its data doesn't include yet. Commit what it writes. Lines are plain game terms, with only public links as sources, primary first (standards 30): Blizzard's posts, a
 wago.tools page of the changed client rows or hotfix, foreverchanges.pro only when nothing else shows it. They ship.
+
+## Parallel runs
+
+`parallel.py` runs a full regeneration in several cloud sessions at once (the `regenerate-dps-report` skill's "Parallel
+full regeneration" has the coordinator's steps). Today's one-session full run takes DPS about 80min, Tanking 20min to
+55min and Healing 1.5h to 4.3h, one after the other; in parallel it takes the longest session, about 80min to 90min.
+
+```sh
+parallel.py plan --run <run> --commit <sha> [--heal-groups N] [--heal-presets <stem,...>] [--modes dps,tank,heal] [--log <file>...] [--dry]
+parallel.py worker <run> <session> --commit <sha> [--main] [--presets <stem,...>] [--carries-from heal-0]   # what each worker session runs
+parallel.py merge <run>            # fetch, check and merge every part into $DASH_DIR, then print the publish command
+parallel.py clean <run>            # delete the run's dash-raw/<run>/* branches
+```
+
+- **The plan.** One session for DPS (every build), one for Tanking, and the Healing presets split by cost: `heal-0` runs
+  the main bench (7 bosses, tank and raid roles, 1,000 iterations, about 18min) and then its own presets, and every other
+  Healing session starts its race sims from heal-0's main bench outputs. Each priest preset runs alone (priest_holy_raid
+  is the longest, about 35min); the rest are shared out so no session runs longer than the longest lone one. A preset's
+  cost is its race rows times the 2026-11-18 probe rate of its role scaled to a full run, or a run log's measured
+  seconds with `--log` (`<mode> races <stem>: <n> rows, <s> s`).
+- **A part.** `tankheal.py run <mode> --part`, `--main-only` or `--carries <part>` writes the mode's outputs and
+  `part.json` instead of `run.json` and `.fresh`: the run settings (iterations, seed, race goals, pilot and ceiling),
+  the commit, the bench inputs' fingerprint, `DASH_SPLITS`, the binaries' stamp (input hash, Go and each sha256), the
+  presets raced and whether the main bench was simmed here or carried. `--carries` refuses a main bench made with any of
+  these different.
+- **The transport.** Each worker pushes its parts to its own branch, `dash-raw/<run>/<session>`, as orphan commits made
+  with git plumbing (the checkout and master are never touched). A Healing worker waits for `heal-main.tgz` on heal-0's
+  branch by polling the remote in its background job, so it spends no turns. The plan is on `dash-raw/<run>/plan`.
+- **The merge.** `tankheal.py merge` refuses parts whose mode, commit, bench inputs (also against HEAD), splits, binaries
+  or run settings differ, main bench outputs that aren't the same bytes in every part, a preset raced twice with
+  different rows, rows of a preset its part didn't declare, and presets left out (unless `--keep-rest`, which keeps them
+  from the pack as `run --presets` does). It writes the main outputs, `races.jsonl` sorted as one run sorts it, the
+  probes, `run.json` (the run's timing keys from the parts, plus `parts`) and `.fresh`. Everything else is the same
+  bytes as one run's, so the packs and datasets are too (`tests/test_parallel.py` checks this on a fake bench).
+  `parallel.py merge` adds the DPS pack (`pipeline.sh unpack`) and refuses a part whose manifest differs from the plan.
 
 ## Publishing
 

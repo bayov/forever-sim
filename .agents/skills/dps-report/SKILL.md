@@ -121,7 +121,7 @@ results, then fairness. Results are in `orchestration/audit/findings/<id>.md` an
 
 **B7. Report data refresh.** Run the `regenerate-dps-report` skill. On top of it, when
 classes have unmerged work:
-- Build the merged tree from master plus any unmerged class heads, plus `patches/`.
+- Build the merged tree from master plus any unmerged class heads (no patches: the sim has the report switches).
 - Check each regenerated request against its class's published 180 s number (within 2).
 - For a delegated job use `prompts/dashboard/HANDOFF_dash_refresh.md`, but publish per
   regenerate-dps-report: its own publishing steps are for the deleted legacy dashboard.
@@ -148,7 +148,7 @@ provenance. Design: `orchestration/dash_raw_store.md`.
 
 **B9. Assumption scenarios.** Template `prompts/dashboard/HANDOFF_assumptions.md`; re-run
 whenever presets change.
-1. Dashboard-only knobs in the merged tree: the DASH_ASSUME env var, defaults bit-identical.
+1. The DASH_ASSUME report switch (`sim/core/report_switches.go`): unset, every knob is master's constant.
 2. One-at-a-time sims per affected build (full grid where a build has 3 or fewer
    assumptions).
 3. The `assumptions` / `assumption_dps` datasets in `ui/dps_report/data`.

@@ -16,7 +16,11 @@ checked equals the pack's, the build's full sims would come out the same: it is 
 probe) instead of re-simmed. Only fights the probe doesn't sim can hide a change (a code path one fight in thousands
 reaches), so every check re-sims a few cleared builds in full (the audit) and publish refuses if one moved.
 
-  probe.py run [ids]          probe these builds (default: every request) into $DASH_DIR/probe/<id>.json
+  probe.py run [ids]          probe these builds (default: every request) into $DASH_DIR/probe/<id>.json. Each record
+                              carries a `_key`, a hash of the settings, the binaries, the database, the build's request, the
+                              assumptions and the step scripts. A build whose probe/<id>.json has the key it would get now is
+                              skipped (so a stopped run restarts where it was), and one whose probe_check/<id>.json has it is
+                              copied from there (pipeline.sh run after pipeline.sh probe). PROBE_FORCE=1 probes everything.
   probe.py check [ids]        probe these builds (default: the ones stale.mjs lists) into $DASH_DIR/probe_check/,
                               compare each with the probe in its raw pack, and write $DASH_DIR/probe_audit.json:
                               the builds it cleared, the ones it picked to re-sim anyway (the audit) and the ones to re-sim
@@ -32,7 +36,8 @@ import glob, hashlib, io, json, os, platform, random, shutil, subprocess, sys, t
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import D, BIN  # noqa: E402
+from dashpaths import D, BIN, TREE  # noqa: E402
+import build_bins  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -48,7 +53,7 @@ SETTINGS = {
 }
 AUDIT_N = int(os.environ.get('PROBE_AUDIT', 3))
 AUDIT_FILE = os.path.join(D, 'probe_audit.json')
-BINARIES = ('wowsimcli', 'wowsimcli_r', 'wowsimcli_assume', 'dashstats')
+BINARIES = tuple(build_bins.DPS_BINS)  # wowsimcli (every step, with its switches) and dashstats
 
 
 def meta(bid):
@@ -116,8 +121,8 @@ def probe_bin(base):
         link = os.path.join(b, name)
         if os.path.lexists(link):
             os.remove(link)
-        if os.path.exists(os.path.join(BIN, name)):  # the scripts fall back to wowsimcli when a variant is missing
-            os.symlink(os.path.join(HERE, 'probe_cli.py'), link)
+        build_bins.require(os.path.join(BIN, name))  # every binary: no script falls back to plain wowsimcli
+        os.symlink(os.path.join(HERE, 'probe_cli.py'), link)
     return b
 
 
@@ -152,21 +157,93 @@ def probe_one(bid, base, pbin):
     return rec
 
 
-def run(ids, dest):
+SCRIPTS = ('probe.py', 'probe_cli.py', 'adaptive.py', 'run_*.py', 'weights.py', 'mana_curves.py', 'ablate.py', 'rotation.py',
+           'race_override.py', 'dashpaths.py', 'assumptions_def.py')  # the scripts probe_one runs, and what they import
+_hashes = {}
+
+
+def file_hash(path):
+    """sha256 of a file ('-' when it is missing), kept for the process: the binaries are tens of megabytes."""
+    if path not in _hashes:
+        try:
+            _hashes[path] = hashlib.sha256(open(path, 'rb').read()).hexdigest()
+        except OSError:
+            _hashes[path] = '-'
+    return _hashes[path]
+
+
+# the report switches sim/core/report_switches.go reads: each one set in the caller's environment changes the sims
+SWITCH_VARS = ('DASH_NAMES', 'DASH_SPLITS', 'DASH_RACIALS_OFF', 'DASH_RACIALS_OFF_CLASS', 'DASH_ASSUME')
+
+
+def real_binary(name):
+    """The binary a probe really runs: pipeline.sh run points DASH_BIN at timing_cli.py shims, so follow them to the
+    real directory (TIMING_REAL_BIN) or the key would hash the shim."""
+    return build_bins.real_bin(os.path.join(BIN, name))
+
+
+def common_key():
+    """What every build's probe depends on: the settings, the binaries, the database the sim reads, the step scripts and
+    the assumptions."""
+    k = {'settings': SETTINGS, 'bin': {n: file_hash(real_binary(n)) for n in BINARIES},
+         'db': file_hash(os.path.join(TREE, 'assets', 'database', 'db.json')),
+         'switches': {v: os.environ[v] for v in SWITCH_VARS if v in os.environ},
+         'scripts': {f: file_hash(f) for pat in SCRIPTS for f in sorted(glob.glob(os.path.join(HERE, pat)))},
+         'asm_apls': {os.path.relpath(f, D): file_hash(f) for f in sorted(glob.glob(os.path.join(D, 'asm_apls', '**', '*'), recursive=True))
+                      if os.path.isfile(f)}}
+    return k
+
+
+def probe_key(bid, common=None):
+    """The fingerprint of everything a build's probe is made from: when it is equal, the probe is too."""
+    k = {'common': common or common_key(), 'req': file_hash(os.path.join(D, 'req', bid + '.json')),
+         'meta': file_hash(os.path.join(D, 'req', bid + '.meta.json')),
+         'races': {os.path.basename(f): file_hash(f) for f in sorted(glob.glob(os.path.join(D, 'req', 'races', bid + '.*')))}}
+    return h(json.dumps(k, sort_keys=True))
+
+
+def load_if_key(path, key):
+    """The probe record at path when it is whole and made under this key, else None."""
+    try:
+        rec = json.load(open(path))
+    except (OSError, ValueError):
+        return None
+    return rec if rec.get('_key') == key and not rec.get('failed') else None
+
+
+def run(ids, dest, reuse_from=None):
+    """Probe these builds into dest. A build whose record there has the key it would get now is kept, and one in reuse_from
+    with that key is copied (probe run: probe_check made it from the same inputs). PROBE_FORCE=1 probes everything."""
     base = os.path.join(D, 'probe_work')
     pbin = probe_bin(base)
     os.makedirs(dest, exist_ok=True)
+    common, force, how = common_key(), os.environ.get('PROBE_FORCE') == '1', {}
 
     def one(bid):
-        rec = probe_one(bid, base, pbin)
-        json.dump(rec, open(os.path.join(dest, bid + '.json'), 'w'), indent=0, sort_keys=True)
+        key = probe_key(bid, common)
+        path = os.path.join(dest, bid + '.json')
+        if not force:
+            rec = load_if_key(path, key)
+            if rec:
+                how[bid] = 'kept'
+                return bid, rec
+            src = os.path.join(reuse_from, bid + '.json') if reuse_from else None
+            rec = src and load_if_key(src, key)
+            if rec:
+                shutil.copyfile(src, path)
+                how[bid] = 'copied'
+                return bid, rec
+        rec = dict(probe_one(bid, base, pbin), _key=key)
+        json.dump(rec, open(path, 'w'), indent=0, sort_keys=True)
         return bid, rec
 
     with ThreadPoolExecutor(P) as ex:
         res = dict(ex.map(one, ids))
     shutil.rmtree(base, ignore_errors=True)
-    n = sum(len(r['sims']) for r in res.values())
-    print(f'probed {len(ids)} builds ({n} sims) into {dest}')
+    n = sum(len(r['sims']) for b, r in res.items() if b not in how)
+    kept, copied = sum(1 for v in how.values() if v == 'kept'), sum(1 for v in how.values() if v == 'copied')
+    print(f'probed {len(ids) - len(how)} builds ({n} sims) into {dest}'
+          + (f', kept {kept} already probed' if kept else '') + (f', copied {copied} from probe_check' if copied else ''))
     return res
 
 
@@ -221,6 +298,9 @@ def check(ids, as_json=False):
     if not ids:
         print('nothing is stale')
         return
+    rec = build_bins.guard(BIN, BINARIES, 'probe.py check')  # the binaries must be the code's (build_bins.py)
+    if rec:
+        build_bins.mark_builds(ids, rec)  # stale.mjs --record (by probe) refuses these
     new = run(ids, os.path.join(D, 'probe_check'))
     same, differ = [], {}
     for bid in ids:
@@ -297,7 +377,7 @@ def passed(resimmed):
 if __name__ == '__main__':
     cmd, args = (sys.argv[1], sys.argv[2:]) if len(sys.argv) > 1 else ('', [])
     if cmd == 'run':
-        run(args or all_ids(), os.path.join(D, 'probe'))
+        run(args or all_ids(), os.path.join(D, 'probe'), reuse_from=os.path.join(D, 'probe_check'))
     elif cmd == 'check':
         check([a for a in args if not a.startswith('--')], '--json' in args)
     elif cmd == 'audit':

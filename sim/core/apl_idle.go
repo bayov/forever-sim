@@ -101,7 +101,19 @@ func (apl *APLRotation) noteIdle(sim *Simulation) {
 
 // readyNotBefore is the earliest time an action of the priority list could be ready when nothing
 // happens in the sim before then, or the current time when we can't tell.
+//
+// A healer's Most Hurt and Lowest Health, and the health values they read, see the raid a reaction
+// time late (heal_comm.go). So a hit changes what the rotation sees a reaction time after it
+// lands, with no event then, and we look again by that time.
 func (apl *APLRotation) readyNotBefore(sim *Simulation) time.Duration {
+	t := apl.readyNotBeforeRotation(sim)
+	if apl.usesHealTargets {
+		t = min(t, apl.unit.seenHealthChangesAt(sim))
+	}
+	return t
+}
+
+func (apl *APLRotation) readyNotBeforeRotation(sim *Simulation) time.Duration {
 	if !apl.keepsResults {
 		return apl.readyNotBeforeNow(sim)
 	}

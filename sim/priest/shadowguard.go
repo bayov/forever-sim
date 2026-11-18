@@ -28,7 +28,7 @@ var ShadowguardLevel = [ShadowguardRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
 const ShadowguardStrikeCoef = 0.267
 
 func (priest *Priest) registerShadowguardSpell() {
-	if priest.Race != proto.Race_RaceTroll || !priest.Env.IsForever() {
+	if priest.Race != proto.Race_RaceTroll || !priest.Env.IsForever() || core.DashRacialOffFor(priest.Class, "shadowguard") {
 		return
 	}
 

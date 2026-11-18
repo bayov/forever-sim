@@ -35,6 +35,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import adaptive  # noqa: E402
+import build_bins  # noqa: E402
 from dashpaths import D, RNG  # noqa: E402
 
 # Racial parts a tank or healer can feel, by race: run_races.py's PARTS (the DPS ones) plus Night Elf dodge. The boss
@@ -68,21 +69,41 @@ def sha(path):
     return hashlib.sha1(open(path, 'rb').read()).hexdigest()[:12]
 
 
+def real_exe(exe):
+    """The bench binary itself: pipeline.sh run links tankbench and healbench to timing_cli.py (TIMING_REAL_BIN holds the
+    real ones), and the result cache's key must follow the binary, not the shim (build_bins.real_bin)."""
+    return build_bins.real_bin(exe)
+
+
 # ---------------------------------------------------------------- the benches
+
+def fight_values(v, keys, count, what):
+    """A bench's -vectors line as adaptive.values takes it: the values of `keys`, fight by fight, flat. A run can hand
+    back fewer fights than it asked for (adaptive.values then keeps the share asked for, as under probe_cli.py), so the
+    fights are as many as the vectors hold, not `count`: indexing up to `count` failed on a short vector. The vectors
+    must agree on that number, and hold at least one fight and no more than asked."""
+    lens = {k: len(v.get(k) or []) for k in keys}
+    n = min(lens.values())
+    if n == 0 or n > count or len(set(lens.values())) != 1:
+        raise RuntimeError(f'{what}: vectors of {lens} fights, asked for {count}')
+    if n < count:
+        print(f'{what}: the bench returned {n} fights of {count}', file=sys.stderr, flush=True)
+    return [v[k][i] for i in range(n) for k in keys]
+
 
 class Bench:
     """Runs one bench binary on a preset at a race with racials left out, and keeps its per-fight values."""
 
     def __init__(self, mode, exe, tree, req_path, encounters):
         self.mode, self.exe, self.tree, self.req_path, self.enc = mode, exe, tree, req_path, encounters
-        self.binsha = sha(exe)
+        self.binsha = sha(real_exe(exe))
         self.lock = threading.Lock()
 
     def _run(self, stem, race, off, args, seed, count):
         req = json.load(open(self.req_path(stem)))
         req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
         cls = req['raid']['parties'][0]['players'][0]['class'][5:]
-        env = dict(os.environ)
+        env = dict(os.environ, TIMING_STEP=os.environ.get('TANKHEAL_STEP') or self.mode + '_races')  # timing_cli.py's step (a probe's: <mode>_probe)
         for k in ('DASH_RACIALS_OFF', 'DASH_RACIALS_OFF_CLASS', 'DASH_NAMES'):
             env.pop(k, None)
         if off:
@@ -105,10 +126,8 @@ class Bench:
         """[(safeDps, surviveHps (inf: none), dtps, tps)] for the first n fights."""
         def sim(seed, count):
             v = self._run(stem, race, off, ['-encounter', self.enc(boss)], seed, count)[0]
-            s = [x if x >= 0 else math.inf for x in v['surviveHps']]
-            if len(s) != count or len(v['safeDps']) != count:
-                raise RuntimeError(f'{stem} {race} {off} {boss}: {len(v["safeDps"])} fights of {count}')
-            return [y for i in range(count) for y in (v['safeDps'][i], s[i], v['dtps'][i], v['tps'][i])]
+            v['surviveHps'] = [x if x >= 0 else math.inf for x in v['surviveHps']]
+            return fight_values(v, ('safeDps', 'surviveHps', 'dtps', 'tps'), count, f'{stem} {race} {off} {boss}')
         k, e = self.key(stem, race, off, boss)
         return np.array(adaptive.values('bench_tank', k, e, n, sim, width=4)).reshape(-1, 4)
 
@@ -116,7 +135,7 @@ class Bench:
         """[(death flags, hps, useful hps, mana left)] for the first n fights at this damage scale."""
         def sim(seed, count):
             v = self._run(stem, race, off, ['-carry=false', '-role', role, '-encounter', self.enc(boss), '-scales', repr(scale)], seed, count)[0]
-            return [y for i in range(count) for y in (v['deaths'][i], v['hps'][i], v['ehps'][i], v['manaEnd'][i])]
+            return fight_values(v, ('deaths', 'hps', 'ehps', 'manaEnd'), count, f'{stem} {race} {off} {boss} x{scale}')
         k, e = self.key(stem, race, off, boss, {'role': role, 'scale': scale})
         return np.array(adaptive.values('bench_heal', k, e, n, sim, width=4)).reshape(-1, 4)
 

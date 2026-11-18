@@ -43,7 +43,7 @@ PUBLIC_LINE = ('title', 'kind', 'note', 'classes', 'builds', 'races', 'parts', '
 KINDS = ('game', 'sim', 'rotation', 'gear', 'talents', 'consumes', 'race', 'method')
 CLASSES = ('warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid')
 # Paths whose changes can move a build's numbers: stale.mjs's inputs, plus the report's own sim scripts (method).
-INPUT_PATHS = ['sim', 'proto', 'assets/database', 'tools/rotopt', 'tools/database', 'tools/dps_report/patches',
+INPUT_PATHS = ['sim', 'proto', 'assets/database', 'tools/rotopt', 'tools/database', 'tools/dashstats',
                'tools/dps_report/req', 'tools/dps_report/asm_apls', 'tools/dps_report/run_build.py',
                'tools/dps_report/run_races.py', 'tools/dps_report/build_data.py', 'tools/dps_report/race_override.py',
                'tools/dps_report/race_gear.py', 'tools/dps_report/build_races.py']

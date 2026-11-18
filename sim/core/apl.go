@@ -47,6 +47,9 @@ type APLRotation struct {
 	idleTries int
 	idleSkips int
 	idlePause int
+	// Whether a reference in the rotation is Most Hurt or Lowest Health, which see the raid's
+	// health a reaction time late. See readyNotBefore.
+	usesHealTargets bool
 
 	// The config of each value, until shareConditions. See aplMemo.
 	valueConfigs map[APLValue]string

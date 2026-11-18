@@ -25,6 +25,32 @@ func (viewer *Unit) seenHealth(target *Unit) float64 {
 	return target.healthAt(sim.CurrentTime - viewer.ReactionTime)
 }
 
+// seenHealthChangesAt is when viewer next sees a heal candidate's health change while nothing
+// happens in the sim: a reaction time after the first hit or heal on one that it doesn't see yet.
+// NeverExpires when it sees them all.
+func (viewer *Unit) seenHealthChangesAt(sim *Simulation) time.Duration {
+	at := NeverExpires
+	if !sim.Encounter.TrackHealth || viewer.ReactionTime <= 0 {
+		return at
+	}
+	seen := sim.CurrentTime - viewer.ReactionTime
+	for _, player := range viewer.HealCandidates() {
+		if player == viewer || player.dead || !player.HasHealthBar() {
+			continue
+		}
+		// From the newest change back to the first one viewer sees (healthAt).
+		hb := &player.healthBar
+		for k := 1; k <= healthHistorySize; k++ {
+			c := hb.history[(hb.next-k+healthHistorySize)%healthHistorySize]
+			if !c.set || c.at <= seen {
+				break
+			}
+			at = min(at, c.at+viewer.ReactionTime)
+		}
+	}
+	return at
+}
+
 // IncomingHealing is the healing in flight at target from everyone but except: the heals being cast
 // at it, at their average size.
 func (target *Unit) IncomingHealing(except *Unit) float64 {
