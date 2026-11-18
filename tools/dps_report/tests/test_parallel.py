@@ -233,14 +233,15 @@ class MergeRefuses(Sandbox):
 
 
 class Planner(unittest.TestCase):
-    """On this checkout's healing presets (their requests only: the cost model counts race rows)."""
+    """On this checkout's healing presets and DPS requests (their requests only: the cost models count race rows and
+    builds), whatever $DASH_DIR another test file set."""
 
     def setUp(self):
-        self.tree = tankheal.TREE
-        tankheal.TREE = os.path.dirname(os.path.dirname(TOOLS))
+        self.saved = tankheal.TREE, parallel.D
+        tankheal.TREE, parallel.D = os.path.dirname(os.path.dirname(TOOLS)), TOOLS
 
     def tearDown(self):
-        tankheal.TREE = self.tree
+        tankheal.TREE, parallel.D = self.saved
 
     def test_priests_alone_rest_balanced(self):
         cost = parallel.costs('heal', tankheal.presets('heal'))
@@ -284,21 +285,56 @@ class Planner(unittest.TestCase):
     def test_plan_commands(self):
         pl = parallel.plan('r1', 'abc', heal_groups=5)
         names = [s['session'] for s in pl['sessions']]
-        self.assertEqual(names, ['dps', 'tank', 'heal-0', 'heal-1', 'heal-2', 'heal-3', 'heal-4'])
-        h0, h1 = pl['sessions'][2], pl['sessions'][3]
+        self.assertEqual(names, ['dps-0', 'dps-1', 'tank', 'heal-0', 'heal-1', 'heal-2', 'heal-3', 'heal-4'])
+        h0, h1 = pl['sessions'][3], pl['sessions'][4]
         self.assertIn('--main', h0['command'])
         self.assertIn('--carries-from heal-0', h1['command'])
         self.assertNotIn('--main', h1['command'])
+        self.assertIn('dps-1 --commit abc --shard 1/2', pl['sessions'][1]['command'])
+
+    def test_dps_shards_within_the_longest_other_session(self):
+        pl = parallel.plan('r1', 'abc')
+        dps = [s for s in pl['sessions'] if s['mode'] == 'dps']
+        cap = max(s['estimate'] for s in pl['sessions'] if s['mode'] != 'dps')
+        self.assertLessEqual(max(s['estimate'] for s in dps), cap)
+        fewer = parallel.dps_shards(parallel.req_ids(), len(dps) - 1)  # the fewest that keep within it
+        self.assertGreater(max(parallel.dps_seconds(g) for g in fewer), cap)
+        ids = [b for s in dps for b in s['ids']]
+        self.assertEqual(sorted(ids), parallel.req_ids())  # every build once
+        for s in dps:  # each build with its variants
+            for b in s['ids']:
+                base = parallel.dps_meta(b).get('baseBuild')
+                self.assertTrue(base is None or base in s['ids'], (b, s['session']))
+
+    def test_dps_shards_of_some_ids_add_their_variants(self):
+        got = [parallel.dps_shards(['paladin__level_60', 'priest__smite', 'mage__frost'], 2)[k] for k in (0, 1)]
+        self.assertEqual(sorted(b for g in got for b in g), sorted(['paladin__level_60', 'paladin__level_60-duty-crusader',
+                                                                    'paladin__level_60-duty-wisdom', 'priest__smite', 'mage__frost']))
+        self.assertIn('paladin__level_60-duty-wisdom', next(g for g in got if 'paladin__level_60' in g))
+        env = dict(os.environ, DASH_DIR=parallel.D)
+        sh = subprocess.run([os.path.join(TOOLS, 'pipeline.sh'), 'shard', '1', '2', 'paladin__level_60', 'priest__smite', 'mage__frost'],
+                            capture_output=True, text=True, env=env, check=True).stdout.split()
+        self.assertEqual(sh, got[1])
+
+    def test_dps_only_plan_of_some_ids(self):
+        ids = ['priest__smite', 'priest__shadow', 'mage__frost']
+        pl = parallel.plan('r1', 'abc', modes=['dps'], dps_ids=ids, dps_n=2)
+        self.assertEqual([s['session'] for s in pl['sessions']], ['dps-0', 'dps-1'])
+        self.assertEqual(sorted(b for s in pl['sessions'] for b in s['ids']), sorted(ids))
+        self.assertIn('--ids priest__smite,priest__shadow,mage__frost', pl['sessions'][0]['command'])
 
 
 class Transport(unittest.TestCase):
-    """push, wait_for and gather against a bare repository standing in for origin."""
+    """push, wait_for and gather against a bare repository standing in for origin, which, like the cloud sessions' git
+    proxy, refuses branch deletes and non-fast-forward pushes."""
 
     def setUp(self):
         self.tmp = tempfile.mkdtemp(prefix='dps_parallel_git_')
         self.saved = (parallel.ROOT, parallel.REMOTE, parallel.D)
         remote, work = os.path.join(self.tmp, 'remote.git'), os.path.join(self.tmp, 'work')
         subprocess.run(['git', 'init', '-q', '--bare', remote], check=True)
+        for k in ('receive.denyDeletes', 'receive.denyNonFastForwards'):
+            subprocess.run(['git', '-C', remote, 'config', k, 'true'], check=True)
         subprocess.run(['git', 'init', '-q', work], check=True)
         parallel.ROOT, parallel.REMOTE, parallel.D = work, remote, os.path.join(self.tmp, 'dash')
 
@@ -311,41 +347,83 @@ class Transport(unittest.TestCase):
         open(p, 'wb').write(data)
         return p
 
-    def test_push_twice_then_wait_for(self):
+    def tip(self, session):
+        return parallel.remote_tips(parallel.ref_of(session)).get(parallel.ref_of(session))
+
+    def quiet(self, f, *a, **k):
         with contextlib.redirect_stdout(io.StringIO()):
-            parallel.push('r1', 'heal-0', {'heal-main.tgz': self.put('a', b'main')})
-            parallel.push('r1', 'heal-0', {'heal-0.tgz': self.put('b', b'races')})
-            got = parallel.wait_for('r1', 'heal-0', 'heal-main.tgz', os.path.join(self.tmp, 'got'), timeout=5, every=1)
+            return f(*a, **k)
+
+    def test_push_twice_then_wait_for(self):
+        self.quiet(parallel.push, 'r1', 'heal-0', {'heal-main.tgz': self.put('a', b'main')}, 'c1')
+        self.quiet(parallel.push, 'r1', 'heal-0', {'heal-0.tgz': self.put('b', b'races')}, 'c1')
+        got = self.quiet(parallel.wait_for, 'r1', 'heal-0', 'heal-main.tgz', os.path.join(self.tmp, 'got'), 'c1', timeout=5, every=1)
         with open(got, 'rb') as f:
             self.assertEqual(f.read(), b'main')
-        tip = parallel.remote_tips(parallel.ref_of('r1', 'heal-0'))[parallel.ref_of('r1', 'heal-0')]
-        self.assertEqual(sorted(parallel.tree_files(tip)), ['heal-0.tgz', 'heal-main.tgz'])
-        with self.assertRaises(SystemExit), contextlib.redirect_stdout(io.StringIO()):
-            parallel.wait_for('r1', 'heal-1', 'heal-main.tgz', os.path.join(self.tmp, 'x'), timeout=0, every=0)
+        tip = self.tip('heal-0')
+        self.assertEqual(sorted(parallel.tree_files(tip)), ['heal-0.tgz', 'heal-main.tgz', 'slot.json'])
+        self.assertEqual(parallel.slot_info(tip), {'run': 'r1', 'session': 'heal-0', 'commit': 'c1', 'files': ['heal-0.tgz', 'heal-main.tgz']})
+        with self.assertRaises(SystemExit):
+            self.quiet(parallel.wait_for, 'r1', 'heal-1', 'heal-main.tgz', os.path.join(self.tmp, 'x'), 'c1', timeout=0, every=0)
 
-    def test_clean_deletes_only_this_runs_branches(self):
-        with contextlib.redirect_stdout(io.StringIO()):
-            parallel.push('r1', 'tank', {'tank.tgz': self.put('a', b'x')})
-            parallel.push('r1', 'plan', {'plan.json': self.put('b', b'{}')})
-            parallel.push('r2', 'tank', {'tank.tgz': self.put('c', b'y')})
-            parallel.clean('r1')
-        self.assertEqual(sorted(parallel.remote_tips(f'refs/heads/{parallel.PREFIX}/*')), [parallel.ref_of('r2', 'tank')])
+    def test_the_next_run_reuses_the_slot(self):
+        first = self.quiet(parallel.push, 'r1', 'tank', {'tank.tgz': self.put('a', b'x'), 'extra.txt': self.put('e', b'e')}, 'c1')
+        second = self.quiet(parallel.push, 'r2', 'tank', {'tank.tgz': self.put('b', b'y')}, 'c2')
+        self.assertEqual(self.tip('tank'), second)
+        parents = subprocess.run(['git', '-C', parallel.REMOTE, 'rev-list', '--parents', '-n1', second], capture_output=True, text=True).stdout.split()
+        self.assertEqual(parents[1:], [first])  # a fast-forward on the slot's last tip
+        self.assertEqual(sorted(parallel.tree_files(second)), ['slot.json', 'tank.tgz'])  # only this run's files
+        self.assertIn('r2', subprocess.run(['git', '-C', parallel.REMOTE, 'log', '-1', '--format=%s', second], capture_output=True, text=True).stdout)
+        self.assertEqual(sorted(parallel.remote_tips(f'refs/heads/{parallel.PREFIX}/*')), [parallel.ref_of('tank')])  # no new branch
+        _, files, why = parallel.slot_of('r2', 'tank', 'c2')
+        self.assertEqual((sorted(files), why), (['tank.tgz'], None))
+
+    def test_wait_for_waits_past_another_run_and_refuses_another_commit(self):
+        self.quiet(parallel.push, 'r1', 'heal-0', {'heal-main.tgz': self.put('a', b'old main')}, 'c1')
+        with self.assertRaises(SystemExit) as e:  # the slot's last run: not this run's carries, so it waits (here, times out)
+            self.quiet(parallel.wait_for, 'r2', 'heal-0', 'heal-main.tgz', os.path.join(self.tmp, 'x'), 'c2', timeout=0, every=0)
+        self.assertIn('holds run r1', str(e.exception))
+        self.assertFalse(os.path.exists(os.path.join(self.tmp, 'x')))
+        self.quiet(parallel.push, 'r2', 'heal-0', {'heal-main.tgz': self.put('b', b'main')}, 'c3')
+        with self.assertRaises(SystemExit) as e:
+            self.quiet(parallel.wait_for, 'r2', 'heal-0', 'heal-main.tgz', os.path.join(self.tmp, 'x'), 'c2', timeout=60, every=0)
+        self.assertIn('simmed at c3', str(e.exception))
+
+    def plan_and_parts(self, run='r1', commit='c1'):
+        pl = {'run': run, 'commit': commit, 'sessions': [{'session': 'tank', 'mode': 'tank'}, {'session': 'heal-0', 'mode': 'heal', 'main': True, 'presets': ['x']}]}
+        info = {'mode': 'tank', 'commit': commit, 'splits': 4, 'stamp': STAMP, 'presets': ['x']}
+        self.quiet(parallel.push, run, 'plan', {'plan.json': self.put('plan.json', json.dumps(pl).encode())}, commit)
+        self.quiet(parallel.push, run, 'tank', {'tank.tgz': self.put('t.tgz', rawstore.tgz({'part.json': json.dumps(info).encode()}))}, commit)
+        return info
+
+    def gather_fails(self, run, why):
+        with self.assertRaises(SystemExit) as e:
+            self.quiet(parallel.gather, run, os.path.join(self.tmp, 'g'))
+        self.assertIn(why, str(e.exception))
 
     def test_gather_wants_every_planned_part(self):
-        pl = {'run': 'r1', 'commit': 'c1', 'sessions': [{'session': 'tank', 'mode': 'tank'}, {'session': 'heal-0', 'mode': 'heal', 'main': True, 'presets': ['x']}]}
-        info = {'mode': 'tank', 'commit': 'c1', 'splits': 4, 'stamp': STAMP, 'presets': ['x']}
-        with contextlib.redirect_stdout(io.StringIO()):
-            parallel.push('r1', 'plan', {'plan.json': self.put('plan.json', json.dumps(pl).encode())})
-            parallel.push('r1', 'tank', {'tank.tgz': self.put('t.tgz', rawstore.tgz({'part.json': json.dumps(info).encode()}))})
-            with self.assertRaises(SystemExit) as e:
-                parallel.gather('r1', os.path.join(self.tmp, 'g'))
-            self.assertIn('heal-0: heal-main.tgz', str(e.exception))
-            heal = dict(info, mode='heal')
-            parallel.push('r1', 'heal-0', {'heal-main.tgz': self.put('m.tgz', rawstore.tgz({'part.json': json.dumps(dict(heal, presets=[])).encode()})),
-                                           'heal-0.tgz': self.put('h.tgz', rawstore.tgz({'part.json': json.dumps(dict(heal, stamp=dict(STAMP, go='go2'))).encode()}))})
-            with self.assertRaises(SystemExit) as e:
-                parallel.gather('r1', os.path.join(self.tmp, 'g'))
-            self.assertIn('other inputs or Go', str(e.exception))
+        info = self.plan_and_parts()
+        self.gather_fails('r1', 'heal-0: its slot is empty')
+        heal = dict(info, mode='heal')
+        self.quiet(parallel.push, 'r1', 'heal-0', {'heal-main.tgz': self.put('m.tgz', rawstore.tgz({'part.json': json.dumps(dict(heal, presets=[])).encode()}))}, 'c1')
+        self.gather_fails('r1', 'heal-0: heal-0.tgz not pushed yet')
+        self.quiet(parallel.push, 'r1', 'heal-0', {'heal-0.tgz': self.put('h.tgz', rawstore.tgz({'part.json': json.dumps(dict(heal, stamp=dict(STAMP, go='go2'))).encode()}))}, 'c1')
+        self.gather_fails('r1', 'other inputs or Go')
+        self.quiet(parallel.push, 'r1', 'heal-0', {'heal-0.tgz': self.put('h.tgz', rawstore.tgz({'part.json': json.dumps(heal).encode()}))}, 'c1')
+        pl, got, _ = self.quiet(parallel.gather, 'r1', os.path.join(self.tmp, 'g'))
+        self.assertEqual(sorted(got), ['heal-0.tgz', 'heal-main.tgz', 'plan.json', 'tank.tgz'])
+
+    def test_gather_refuses_a_slot_of_another_run_or_commit(self):
+        info = self.plan_and_parts()
+        heal = dict(info, mode='heal')
+        for n in ('heal-main.tgz', 'heal-0.tgz'):
+            self.quiet(parallel.push, 'r1', 'heal-0', {n: self.put(n, rawstore.tgz({'part.json': json.dumps(heal).encode()}))}, 'c1')
+        self.quiet(parallel.gather, 'r1', os.path.join(self.tmp, 'g'))
+        self.gather_fails('r0', 'plan holds run r1')  # an old run's merge
+        self.plan_and_parts('r2', 'c2')  # the next run: its plan and tank pushed, heal-0 still holds r1's parts
+        self.gather_fails('r2', 'heal-0: its slot holds run r1, not r2')
+        self.quiet(parallel.push, 'r2', 'heal-0', {'heal-main.tgz': self.put('m', b'x'), 'heal-0.tgz': self.put('h', b'y')}, 'c9')
+        self.gather_fails('r2', 'heal-0: its slot holds r2 simmed at c9, not c2')
 
 
 if __name__ == '__main__':

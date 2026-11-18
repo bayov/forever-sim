@@ -15,9 +15,11 @@
 #   pipeline.sh publish [ids...]        build_data.py, the sample fights of [ids] and their variants (events.py),
 #                                       every dataset into ui/dps_report/data, and provenance and raw packs for them;
 #                                       after a probe, it checks the audit first and records the cleared builds
-#   pipeline.sh shard <k> <n> <ids...>  the ids of shard k of n (0-based), balanced by estimated cost
+#   pipeline.sh shard <k> <n> [ids...]  the ids of shard k of n (0-based): each build with its variants, balanced by
+#                                       estimated cost (parallel.py shard; parallel.py plan shards a run this way)
 #   pipeline.sh pack  <tgz> <ids...>    these builds' raw outputs, to merge on another machine (a shard's hand-back)
-#   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
+#   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR: drops its builds as run does (rawstore.py clean),
+#                                       then adds their files, result lines and ablation entries, as a run of them would
 #   pipeline.sh tankheal [tank|heal]    the Tanking and Healing modes' sims alone (tankheal.py run: tankbench and
 #                                       healbench, every preset, seven bosses, races; then publish)
 #   pipeline.sh benchprobe [tank|heal] [--presets <stem,...>]
@@ -206,17 +208,7 @@ benchprobe)
 	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py probe check "$@"
 	;;
 shard)
-	k=$1 n=$2; shift 2
-	python3 - $k $n $(ids "$@") <<'EOF'
-import json, sys
-k, n, ids = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3:]
-W = {'hunter': 12.1, 'warrior': 9.6, 'rogue': 6.5, 'warlock': 5.4, 'shaman': 4.7, 'mage': 4.4, 'druid': 4.3, 'paladin': 4.2, 'priest': 2.5}
-load, out = [0.0] * n, [[] for _ in range(n)]
-for i in ids:  # already most expensive first: give each build to the least loaded shard
-    c = W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
-    j = load.index(min(load)); load[j] += c; out[j].append(i)
-print(' '.join(out[k]))
-EOF
+	python3 $T/parallel.py shard "$@"  # each build with its variants, balanced by cost (parallel.dps_shards)
 	;;
 pack)
 	tgz=$1; shift
@@ -240,10 +232,16 @@ EOF
 	;;
 unpack)
 	tmp=$(mktemp -d); tar -xzf "$1" -C "$tmp"
-	python3 - "$tmp" <<'EOF'
+	python3 - "$tmp" "$T" <<'EOF'
 import glob, json, os, shutil, sys
 tmp = sys.argv[1]
+sys.path.insert(0, sys.argv[2])
+import build_bins, rawstore
 ids = {os.path.basename(p)[:-5] for p in glob.glob(f'{tmp}/out/*.json')}
+# first what run does before it sims them: drop these builds from every raw output (rawstore.py clean) and their
+# DASH_ALLOW_BIN_MISMATCH records (build_bins.py guard --clear), so nothing of an earlier sim of them stays behind
+rawstore.clean(ids)
+build_bins.clear_builds(ids)
 for d in ('out', 'names', 'weights', 'mana', 'probe'):
     for p in glob.glob(f'{tmp}/{d}/*'):
         os.makedirs(d, exist_ok=True); shutil.copy(p, d)

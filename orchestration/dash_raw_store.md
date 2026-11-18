@@ -4,7 +4,7 @@ Status: built on 2026-10-26, after three audits (data correctness against the co
 
 - `publish <ids>` packs only the re-simmed builds (and adds their variants, as `run` does). A pack records the commit it was simmed at, so repacking an unchanged build would rewrite it for nothing.
 - `resume <ids>` finishes a stopped run without cleaning: it skips the builds `run_build.py`, `mana_curves.py` and `ablate.py` already finished (they redo work otherwise), and the other steps skip done work themselves.
-- The shard branches keep their `dash-raw/<run>/<k>` names: there is no `dash-raw` branch to collide with.
+- The shards push to the slot branches `dash-raw/slot/<session>` (2026-11-18, `parallel.py`: a fixed set every run reuses with fast-forward pushes, since the cloud sessions can't delete branches): there is no `dash-raw` branch to collide with.
 - Bootstrap: the full run of 2026-10-26 (58 builds, every step) published through `publish`. The other 57 builds' values matched the published ones exactly; their ranks moved for the new build, numbers `merge.mjs` wrote as `1` are now `1.0`, and the sample fights differ only in the sim's action order.
 
 ## The problem
@@ -43,7 +43,7 @@ fingerprint.json     sha256 of req/<id>.json and asm_apls/<id>.*, of the wowsimc
 
 Packed deterministically (`tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner`, `gzip -n`), so an unchanged build's pack is byte-identical and git stores it once. Sizes (an `out/` file goes from 135 KB to 25 KB gzipped): about 2 MB for all 58, about 30 KB for a one-build change. Master already takes about 6 MB of new objects per full regeneration (`ui/dps_report/data` is 13 MB, half of it the per-build `events/*.json.gz`), so history grows about 30% faster.
 
-Why on master and not a branch or R2: the datasets, their raw outputs and `provenance.json` land in one commit, so they can't disagree, and the master push is the only lock. No new branch (a `dash-raw` branch also can't coexist with the shard branches `dash-raw/<run>/<k>`), no push permission, no pointer from master to a store, nothing to fetch: a fresh clone has it. Two regenerations of different builds merge cleanly; of the same build, they conflict on exactly that pack. R2 with content-addressed keys is the fallback if history size ever matters. A single `raw.tgz` (always rewritten, always conflicting) and git LFS are out.
+Why on master and not a branch or R2: the datasets, their raw outputs and `provenance.json` land in one commit, so they can't disagree, and the master push is the only lock. No new branch (a `dash-raw` branch also can't coexist with the slot branches `dash-raw/slot/<session>`), no push permission, no pointer from master to a store, nothing to fetch: a fresh clone has it. Two regenerations of different builds merge cleanly; of the same build, they conflict on exactly that pack. R2 with content-addressed keys is the fallback if history size ever matters. A single `raw.tgz` (always rewritten, always conflicting) and git LFS are out.
 
 `pipeline.sh pack` / `unpack` already split and join per build; they gain `--per-build <dir>` to write and read this layout.
 

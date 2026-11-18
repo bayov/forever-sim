@@ -99,11 +99,12 @@ throwaway checks only, since `stale.mjs --record` then refuses those builds (REA
   `publish <every id>` (the line `run` prints; a bare `publish` records, packs and
   samples none of them), no hydrate (about 95 min on 4 cores). With Tanking and Healing too, prefer
   "Parallel full regeneration" below. For more than one class's worth, shard
-  over remote sessions: `pipeline.sh shard <k> <n> <ids>` splits by cost; each session, on
-  the same master commit with binaries built, runs
-  `pipeline.sh run <its ids>` in an empty `$DASH_DIR`, then
-  `pipeline.sh pack shard<k>.tgz <its ids>`, and pushes the pack to `dash-raw/<run>/<k>`.
-  Fetch the packs, `pipeline.sh unpack` each into a hydrated `$DASH_DIR`, then publish.
+  over remote sessions as in "Parallel full regeneration", DPS only:
+  `parallel.py plan --run <run> --commit <sha> --modes dps --ids <id,...>` (`--dps-shards N` to
+  choose N; `pipeline.sh shard <k> <n> <ids>` splits by cost, each build with its variants).
+  Each session runs `pipeline.sh run <its ids>` in an empty `$DASH_DIR`, packs it and pushes it
+  to its slot `dash-raw/slot/dps-<k>`; then `pipeline.sh hydrate` and `parallel.py merge <run>`
+  here unpack every pack, then publish.
 
 A stopped run finishes with `pipeline.sh resume <ids>` (its probe step skips what it probed, and the Tanking and Healing
 modes resume from `.progress.json` even if master moved, as long as the sim inputs `stale.mjs --bench-fingerprint <mode>` hashes
@@ -152,7 +153,7 @@ what it writes (`tools/dps_report/changes/`, the two datasets, `datasets.json`).
 ### Parallel full regeneration
 
 For a full regeneration, or one that re-sims most of Healing: run the three modes, and Healing's presets, in
-separate cloud sessions at once (`tools/dps_report/parallel.py`, README "Parallel runs"). It takes about 1.5h of
+separate cloud sessions at once (`tools/dps_report/parallel.py`, README "Parallel runs"). It takes about 1h of
 sims instead of 3h to 6.5h, and the merged outputs are the same bytes as one session's. A few builds, one mode's
 stale presets or a no-sims publish keep the one-session path above: the workers' binary builds and the merge cost
 more than they save.
@@ -161,29 +162,32 @@ The coordinator (this session):
 
 1. Commit and push to master everything the sims read. Pin that SHA and pick a run id, `<date>-<sha7>`.
 2. `python3 tools/dps_report/parallel.py plan --run <run> --commit <sha>`, with `--heal-presets <stem,...>` when only
-   some Healing presets are stale and `--modes` to leave a mode out. It prints one worker command per session (dps,
-   tank, heal-0 with the Healing main bench, heal-1.. with every priest preset alone and the rest balanced by
-   measured cost) and pushes `plan.json` to `dash-raw/<run>/plan`. `--dry` prints only.
+   some Healing presets are stale and `--modes` to leave a mode out. It prints one worker command per session (dps-0..
+   with the DPS builds split by cost, as many as keep each within the longest other session, tank, heal-0 with the
+   Healing main bench, heal-1.. with every priest preset alone and the rest balanced by measured cost) and pushes
+   `plan.json` to the slot `dash-raw/slot/plan`. `--dry` prints only.
 3. Read your own session id (`get_session` with no id). For each planned session, `create_session` with the repo as
    `source_url`, `source_revision=<sha>`, and a prompt that says: run `<its command>` in the background
    (`run_in_background`, output to a log file), wait for it to exit without polling, then `send_message` the
    coordinator `<session id>` its last 20 log lines and exit code. Do not publish, deploy, commit, merge or push
-   anything else, and do not touch master (the worker pushes only its `dash-raw/<run>/<session>` branch, with git
-   plumbing). On a failure, report it the same way and stop.
+   anything else, and do not touch master (the worker pushes only its slot `dash-raw/slot/<session>`, a fast-forward
+   made with git plumbing). On a failure, report it the same way and stop.
 4. Meanwhile run `pipeline.sh bins` here (publish sims the sample fights with them), then wait for the hand-backs. A
    hand-back wakes the session; don't poll. Schedule at most one fallback check-in (`send_later`, 90 min or more
    ahead) that reads `get_session` of each worker before any transcript.
 5. When every worker has reported success: with `DASH_DIR` set, `python3 tools/dps_report/parallel.py merge <run>`.
-   It fetches every branch, refuses parts made at another commit, other sim inputs, other binaries (STAMP.json
-   inputHash and sha256s), another `DASH_SPLITS` or a Healing preset set other than the plan's, and refuses to merge
-   with binaries here that another input hash would build. For a full DPS run it empties the outputs first; a
-   partial Healing plan needs a hydrated `$DASH_DIR` (`pipeline.sh hydrate`), whose pack keeps the other presets.
-   It prints the publish command: `SIM_COMMIT=<sha> pipeline.sh publish <every id>`.
-6. Then steps 3 to 5 below as for one run (check, commit, push master, `make dps-report-deploy`), then
-   `parallel.py clean <run>`. The cloud git proxy refuses branch deletes, so it may list the branches for the user
-   to delete instead.
+   It fetches every planned slot, refuses a slot that holds another run or another commit than the plan's, parts made
+   with other sim inputs, other binaries (STAMP.json inputHash and sha256s), another `DASH_SPLITS` or a Healing preset
+   set other than the plan's, and refuses to merge with binaries here that another input hash would build. For a full
+   DPS run it empties the outputs first; a partial DPS or Healing plan needs a hydrated `$DASH_DIR` (`pipeline.sh
+   hydrate`), whose packs keep the other builds and presets. It unpacks every DPS shard and prints the publish
+   command: `SIM_COMMIT=<sha> pipeline.sh publish <every id>`.
+6. Then steps 3 to 5 below as for one run (check, commit, push master, `make dps-report-deploy`). Nothing to clean up:
+   the slots stay for the next run (the cloud git proxy refuses branch deletes). `parallel.py slots` shows what each
+   holds. Old per-run branches `dash-raw/<run>/*` from before the slots can only be deleted by the user on GitHub.
 
-A worker that fails can be re-run alone with its same command in a new session; the others' branches stay.
+A worker that fails can be re-run alone with its same command in a new session; the others' slots stay. Two parallel
+runs must not overlap: they share the slots, and the merge refuses whatever the other run left there.
 
 ## 3. Check both outputs
 
