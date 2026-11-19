@@ -6201,6 +6201,10 @@
     {
      "commit": "4654ee8",
      "why": "the same skip also checks HPS and mana at the encounter damage, so no number moves"
+    },
+    {
+     "commit": "d73c175",
+     "why": "Tank race sims take twin races and racial rows from the pilot like healing does, and the least-HPS search restarts where it can: fewer fights and less time, the same numbers bit for bit"
     }
    ],
    "source": {
