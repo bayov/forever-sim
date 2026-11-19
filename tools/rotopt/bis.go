@@ -50,6 +50,9 @@ var (
 
 	gearRankOnly = flag.Bool("gear-rank-only", false, "gear search: skip the search and rank the starting gear as the set for -gear-rank-out, to redo a list's ranking from its picks (bis_phase0.sh RANK_ONLY=1)")
 
+	gearRankSlots = flag.String("gear-rank-slots", "", "with -gear-rank-only and -gear-rank-from: rank only these lists (head, ..., finger, trinket, mainhand, offhand, ranged, comma separated) and copy every other list and enchant list from the -gear-rank-from list")
+	gearRankFrom  = flag.String("gear-rank-from", "", "the list -gear-rank-slots copies the other slots from, usually the one whose picks are the starting gear")
+
 	gearRankTwoHandOnly = flag.Bool("gear-rank-two-hand-only", false, "gear search: when the -gear-rank-out main hand pick is a two hander, list only two handers in the main hand and leave the off hand list empty")
 )
 
@@ -314,6 +317,10 @@ func sameGear(spec *proto.ItemSpec, o gearOption) bool {
 // at a few hundred iterations. On 2026-11-14 the Phase 0 list kept Wildheart Bracers while
 // its own wrist ranking had Windtalker's Wristguards 2.5 DPS ahead.
 func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool, knobs Knobs) error {
+	from, err := loadRankFrom()
+	if err != nil {
+		return err
+	}
 	for pass := 1; ; pass++ {
 		enchants, base, slots, sources, challengers, err := s.rankBisPass(pool, best, names, unsourced, knobs)
 		if err != nil {
@@ -351,7 +358,7 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				fmt.Println()
 			}
 		}
-		return s.writeBis(path, base, slots, enchants)
+		return s.writeBis(path, base, slots, enchants, from)
 	}
 }
 
@@ -467,6 +474,9 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 		return out
 	}
 	single := func(slot int) {
+		if !rankListSelected(gearSlotNames[slot]) {
+			return
+		}
 		picks := pickOf(slot, nil)
 		options := others(slot, best[slot])
 		placements := func(o gearOption) [][]*proto.ItemSpec {
@@ -478,6 +488,9 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 		slots = append(slots, bisSlot{gearSlotNames[slot], trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
 	pair := func(name string, a, b int) {
+		if !rankListSelected(name) {
+			return
+		}
 		picks := append(pickOf(a, nil), pickOf(b, nil)...)
 		// Each slot takes any item but the one the other slot holds.
 		options := others(a, best[a], best[b])
@@ -502,8 +515,15 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	}
 	pair("finger", int(proto.ItemSlot_ItemSlotFinger1), int(proto.ItemSlot_ItemSlotFinger2))
 	pair("trinket", int(proto.ItemSlot_ItemSlotTrinket1), int(proto.ItemSlot_ItemSlotTrinket2))
-	main, off := s.rankWeapons(pool, best, wide, knobs, pickOf, entriesOf, base, ahead, source)
-	slots = append(slots, bisSlot{"mainhand", trimBis(main, keep)}, bisSlot{"offhand", trimBis(off, keep)})
+	// The two hands are ranked together, since each list is scored next to the other hand.
+	if rankListSelected("mainhand") || rankListSelected("offhand") {
+		main, off := s.rankWeapons(pool, best, wide, knobs, pickOf, entriesOf, base, ahead, source)
+		for _, list := range []bisSlot{{"mainhand", trimBis(main, keep)}, {"offhand", trimBis(off, keep)}} {
+			if rankListSelected(list.name) {
+				slots = append(slots, list)
+			}
+		}
+	}
 	single(int(proto.ItemSlot_ItemSlotRanged))
 	return
 }
@@ -801,7 +821,10 @@ func noOtherHand(rankedGear) *proto.ItemSpec { return nil }
 // writeBis writes the list file. The format is the contract BayovCore's bis.py reads, see
 // docs/bis_lists.md. Each entry goes on a line of its own, so a diff of two runs reads
 // item by item.
-func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants []bisEnchantSlot) error {
+//
+// from, when set (-gear-rank-slots), is the list whose other slots we copy, with its top-level
+// dps.
+func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants []bisEnchantSlot, from *rankFrom) error {
 	player := s.setup.player()
 	talents := player.TalentsString
 	if s.setup.talents != "" {
@@ -823,7 +846,7 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants 
 		{"level", player.Level},
 		{"talents", talents},
 		{"durations", s.durations},
-		{"dps", math.Round(base.dps*100) / 100},
+		{"dps", listDPS(base, from)},
 		{"made", time.Now().Format("2006-01-02")},
 		{"sim", *gearRankSim},
 	}
@@ -836,52 +859,31 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants 
 		}
 		fmt.Fprintf(&b, "  %q: %s,\n", h.key, data)
 	}
-	b.WriteString("  \"slots\": {\n")
-	for i, slot := range slots {
-		fmt.Fprintf(&b, "    %q: [", slot.name)
-		for j, e := range slot.entries {
-			data, err := json.Marshal(e)
-			if err != nil {
-				return err
-			}
-			if j > 0 {
-				b.WriteString(",")
-			}
-			fmt.Fprintf(&b, "\n      %s", data)
+	var slotLists, enchantLists []rawList
+	for _, slot := range slots {
+		list, err := rawListOf(slot.name, slot.entries)
+		if err != nil {
+			return err
 		}
-		if len(slot.entries) > 0 {
-			b.WriteString("\n    ")
-		}
-		b.WriteString("]")
-		if i < len(slots)-1 {
-			b.WriteString(",")
-		}
-		b.WriteString("\n")
+		slotLists = append(slotLists, list)
 	}
-	b.WriteString("  }")
-	if len(enchants) > 0 {
-		b.WriteString(",\n  \"enchants\": {\n")
-		for i, slot := range enchants {
-			fmt.Fprintf(&b, "    %q: [", slot.name)
-			for j, e := range slot.entries {
-				data, err := json.Marshal(e)
-				if err != nil {
-					return err
-				}
-				if j > 0 {
-					b.WriteString(",")
-				}
-				fmt.Fprintf(&b, "\n      %s", data)
-			}
-			if len(slot.entries) > 0 {
-				b.WriteString("\n    ")
-			}
-			b.WriteString("]")
-			if i < len(enchants)-1 {
-				b.WriteString(",")
-			}
-			b.WriteString("\n")
+	for _, slot := range enchants {
+		list, err := rawListOf(slot.name, slot.entries)
+		if err != nil {
+			return err
 		}
+		enchantLists = append(enchantLists, list)
+	}
+	if from != nil {
+		slotLists = mergeLists(bisListNames, slotLists, from.Slots)
+		enchantLists = mergeLists(gearSlotNames, enchantLists, from.Enchants)
+	}
+	b.WriteString("  \"slots\": {\n")
+	writeLists(&b, slotLists)
+	b.WriteString("  }")
+	if len(enchantLists) > 0 {
+		b.WriteString(",\n  \"enchants\": {\n")
+		writeLists(&b, enchantLists)
 		b.WriteString("  }")
 	}
 	b.WriteString("\n}\n")

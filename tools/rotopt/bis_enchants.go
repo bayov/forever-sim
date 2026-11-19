@@ -247,7 +247,8 @@ func (s *searcher) rankEnchants(best []*proto.ItemSpec, knobs Knobs) ([]bisEncha
 		last = nil
 		changed := false
 		for slot, spec := range best {
-			if spec == nil || itemsByID[spec.Id] == nil {
+			// With -gear-rank-slots the other slots keep their enchants and lists.
+			if spec == nil || itemsByID[spec.Id] == nil || !rankListSelected(gearSlotNames[slot]) {
 				continue
 			}
 			enchants := s.bisEnchantOptions(itemsByID[spec.Id], checks)

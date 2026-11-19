@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"slices"
 	"testing"
 
@@ -183,5 +184,34 @@ func TestBisRank(t *testing.T) {
 		if got := bisRank(entries, c.self, c.loss); got != c.want {
 			t.Errorf("bisRank(self %d, loss %g) = %d, want %d", c.self, c.loss, got, c.want)
 		}
+	}
+}
+
+// With -gear-rank-slots the ranked lists come from the new ranking and every other list from the
+// old file, in the file's order. A ring list covers both ring slots' enchant lists.
+func TestMergeLists(t *testing.T) {
+	defer func(old string) { *gearRankSlots = old }(*gearRankSlots)
+	*gearRankSlots = "trinket,finger"
+	old := map[string][]json.RawMessage{
+		"head":    {json.RawMessage(`{"id": 1}`)},
+		"finger":  {json.RawMessage(`{"id":2}`)},
+		"trinket": {json.RawMessage(`{"id":3}`)},
+		"offhand": {},
+	}
+	fresh := []rawList{{name: "trinket", entries: []json.RawMessage{json.RawMessage(`{"id":4}`)}}}
+	var got []string
+	for _, l := range mergeLists(bisListNames, fresh, old) {
+		got = append(got, l.name)
+		for _, e := range l.entries {
+			got = append(got, string(e))
+		}
+	}
+	// The finger list was ranked and came out empty, so the old one doesn't come back.
+	want := []string{"head", `{"id":1}`, "trinket", `{"id":4}`, "offhand"}
+	if !slices.Equal(got, want) {
+		t.Errorf("mergeLists = %q, want %q", got, want)
+	}
+	if !rankListSelected("finger2") || rankListSelected("head") {
+		t.Errorf("rankListSelected: finger2 %t, head %t", rankListSelected("finger2"), rankListSelected("head"))
 	}
 }

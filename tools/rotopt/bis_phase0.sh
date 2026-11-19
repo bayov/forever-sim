@@ -14,6 +14,12 @@
 #
 #   RANK_ONLY=1 OUT=/tmp/check.bis.json tools/rotopt/bis_phase0.sh -iters 300 -gear-rank-confirm-iters 2000 -gear-rank-enchant-iters 1000
 #
+# SLOTS (with RANK_ONLY) ranks only those lists, with their enchants, and copies every other list
+# from FROM as it is (-gear-rank-slots). The lists are head, neck, shoulder, back, chest, wrist,
+# hands, waist, legs, feet, finger, trinket, mainhand, offhand and ranged:
+#
+#   RANK_ONLY=1 SLOTS=trinket tools/rotopt/bis_phase0.sh
+#
 # Phase 0 is what Forever has before its raids open on 2026-12-09: dungeons, quests, crafting,
 # reputation, world drops and PvP reputation (tools/rotopt/phase0.go has the rules). The fight
 # is the DPS Report's default Enhancement build (tools/dps_report/req/shaman__enhancement-level60.json):
@@ -129,6 +135,12 @@ if [ -n "$RANK_ONLY" ]; then
 		"$tmp/enh.json" >"$tmp/picks.json"
 	mv "$tmp/picks.json" "$tmp/enh.json"
 	rank_only=-gear-rank-only
+	if [ -n "$SLOTS" ]; then
+		rank_only="$rank_only -gear-rank-slots $SLOTS -gear-rank-from $from"
+	fi
+elif [ -n "$SLOTS" ]; then
+	echo "SLOTS needs RANK_ONLY=1" >&2
+	exit 1
 fi
 
 go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs 180 -iters 2000 \

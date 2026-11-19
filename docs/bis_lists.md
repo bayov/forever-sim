@@ -252,6 +252,13 @@ a sim or item data change. The ranking still puts in an item that beats its pick
 list it takes the picks from (the list itself by default), `OUT` writes somewhere else, and any
 arguments go on to rotopt after the script's, so `-iters 300` makes a quick check.
 
+`RANK_ONLY=1 SLOTS=trinket,chest tools/rotopt/bis_phase0.sh` ranks only those lists, their
+conditional entries and their enchants (`-gear-rank-slots`), and copies every other list and
+enchant list from `FROM` as it is (`-gear-rank-from`). The mainhand and offhand lists are scored
+together, so naming either one scores both, but only the named one is written anew. The copied lists keep their numbers, so the list's
+top-level `dps` stays the old one. The ranked lists' losses are against the set's DPS as measured
+now, and the output prints both.
+
 ## Before release
 
 Level 30 was the beta's level cap, so the first lists (Enhancement and Elemental) used it as
