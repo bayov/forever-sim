@@ -475,3 +475,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-18 19:08 | tank_rotations | pass 19 | master a6677362f | quiet | only Warden rows moved
 2026-11-18 19:08 | tank_gear | pass 12 | master a6677362f | quiet | only rule 27 changed
 2026-11-18 19:08 | tank_fairness | pass 21 | master a6677362f | quiet | ranking unchanged
+2026-11-19 12:57 | mechanics | pass 91 | master 8f388c7f3 | quiet | swiftmendHot refactor only, behaviour unchanged
+2026-11-19 12:57 | healer_mechanics | pass 22 | master 8f388c7f3 | quiet | swiftmendHot refactor only; tests pass
+2026-11-19 12:57 | healer_rotations | pass 20 | master 8f388c7f3 | quiet | 63 baseline rows match
+2026-11-19 12:57 | healer_fairness | pass 22 | master 8f388c7f3 | quiet | 14 rows match, ranking unchanged
+2026-11-19 12:57 | tank_mechanics | pass 22 | master 8f388c7f3 | quiet | swiftmendHot refactor only; tank tests pass
+2026-11-19 12:57 | tank_rotations | pass 20 | master 8f388c7f3 | quiet | 104 baseline rows match
+2026-11-19 12:57 | tank_fairness | pass 22 | master 8f388c7f3 | quiet | 84 rows match, ranking unchanged
