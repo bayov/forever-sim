@@ -148,44 +148,74 @@ func (ts *tankScore) doneIteration(sim *Simulation) {
 	}
 }
 
-// lives replays the iteration at the HPS: whether the tank's health stays over 0.
-func (ts *tankScore) lives(hps float64) bool {
-	health := ts.startHealth
-	for _, e := range ts.events {
+// replayFrom replays the iteration at the HPS from event `from` at health h0: whether the tank's health
+// stays over 0, and the last point before any death where its health was set to the max health (the
+// event after it and the health then). Health at every event only grows with the HPS, so any higher
+// HPS is capped at that point too and its replay can start there with the same state, bit for bit.
+func (ts *tankScore) replayFrom(hps float64, from int, h0 float64) (bool, int, float64) {
+	health := h0
+	at, ah := from, h0
+	for i := from; i < len(ts.events); i++ {
+		e := &ts.events[i]
 		switch {
 		case e.damage > 0:
-			health = min(e.maxHealth, health) - e.damage
+			if health >= e.maxHealth {
+				health = e.maxHealth - e.damage
+				at, ah = i+1, health
+			} else {
+				health -= e.damage
+			}
 			if health <= 0 {
-				return false
+				return false, at, ah
 			}
 		case e.units > 0:
-			health = min(e.maxHealth, health+hps*e.units)
+			if v := health + hps*e.units; v >= e.maxHealth {
+				health = e.maxHealth
+				at, ah = i+1, health
+			} else {
+				health = v
+			}
 		case e.heal > 0:
-			health = min(e.maxHealth, health+e.heal)
+			if v := health + e.heal; v >= e.maxHealth {
+				health = e.maxHealth
+				at, ah = i+1, health
+			} else {
+				health = v
+			}
 		}
 	}
-	return true
+	return true, at, ah
+}
+
+func (ts *tankScore) lives(hps float64) bool {
+	ok, _, _ := ts.replayFrom(hps, 0, ts.startHealth)
+	return ok
 }
 
 // leastHps is the least stand-in HPS the iteration lives through, to a millionth, +Inf when every
 // heal topping the tank off still isn't enough.
 func (ts *tankScore) leastHps() float64 {
-	if ts.lives(0) {
+	ok, from, h0 := ts.replayFrom(0, 0, ts.startHealth)
+	if ok {
 		return 0
 	}
-	if !ts.lives(math.Inf(1)) {
+	if ok, _, _ := ts.replayFrom(math.Inf(1), from, h0); !ok {
 		return math.Inf(1)
 	}
 	lo, hi := 0.0, max(ts.hps, 1)
-	for !ts.lives(hi) {
-		lo, hi = hi, 2*hi
+	for {
+		ok, f, h := ts.replayFrom(hi, from, h0)
+		if ok {
+			break
+		}
+		lo, hi, from, h0 = hi, 2*hi, f, h
 	}
 	for hi-lo > 1e-6*hi {
 		mid := (lo + hi) / 2
-		if ts.lives(mid) {
+		if ok, f, h := ts.replayFrom(mid, from, h0); ok {
 			hi = mid
 		} else {
-			lo = mid
+			lo, from, h0 = mid, f, h
 		}
 	}
 	return hi

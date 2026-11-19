@@ -13,10 +13,12 @@ Every sim keeps its per-fight values (the benches' -vectors) in adaptive.py's ve
 streams, so fight i of every race and racial is the same fight and a comparison's error is the paired one. Fight counts
 follow adaptive.py's luck goals, put in each score's unit (GOALS, below): races get a pilot of RACE_PILOT fights, then all
 of them the N the widest paired spread between races next to each other asks for; a racial left out gets a pilot of
-PILOT fights against its race, then both the N its own spread asks for. Healing skips what the pilots show changes
-nothing: a racial whose fights at its race's own lattice scales come out exactly as the race's is the race (same), a race
+PILOT fights against its race, then both the N its own spread asks for. Both skip what the pilots show changes
+nothing. Healing: a racial whose fights at its race's own lattice scales come out exactly as the race's is the race (same), a race
 whose pilot comes out exactly as an earlier race's is that race, and a racial whose pilot comes out exactly as an earlier
-racial's against the same race takes that one's row (off:<part> when the race's other parts do nothing is off).
+racial's against the same race takes that one's row (off:<part> when the race's other parts do nothing is off). Tanking
+already stops an inert racial at its pilot (same() compares every fight), and takes twin races and racial rows the same
+way (Skyborne High Order and Windshaper, off:windblessed and off).
 
 The scores and their paired errors:
   tank   a preset's score at its own weight w: 2 x SafeDPS - w x 900 x healing needed / one healer's HPS, averaged over
@@ -278,7 +280,7 @@ def same_one(a, b, n):
 
 def twins(a, b, n):
     """Whether two healing sides' first n fights came out alike everywhere: on the lattice (same) and at scale 1."""
-    return same(a, b, n) and same_one(a, b, n)
+    return same(a, b, n) and (isinstance(a, TankSide) or same_one(a, b, n))  # a tank side is all in same()
 
 
 def inert(bench, stem, race, off, base, n):
@@ -353,14 +355,13 @@ def preset(mode, bench, stem, cls, own, races, bosses, w=None, each=None, role=N
     order = sorted(races, key=lambda rc: -(value(sides[rc]) if value(sides[rc]) is not None else -1e18))
     spread = max([(pse(sides[a], sides[b], adaptive.RACE_PILOT) or 0) * math.sqrt(adaptive.RACE_PILOT) for a, b in zip(order, order[1:])] or [0.0])
     n = adaptive.fights(spread, g['race'][0], adaptive.RACE_PILOT, ceil)
-    # healing: a race whose pilot came out exactly as the preset race's or an earlier one's (Skyborne High Order and
+    # a race whose pilot came out exactly as the preset race's or an earlier one's (Skyborne High Order and
     # Windshaper for a druid: the same base stats, and Leyline does nothing) is that race, so it is simmed once
     twin = {}
-    if mode != 'tank':
-        for rc in races:
-            if rc != own:
-                twin[rc] = next((o for o in [own] + [o for o in races if o in twin and twin[o] == o]
-                                 if twins(sides[o], sides[rc], adaptive.RACE_PILOT)), rc)
+    for rc in races:
+        if rc != own:
+            twin[rc] = next((o for o in [own] + [o for o in races if o in twin and twin[o] == o]
+                             if twins(sides[o], sides[rc], adaptive.RACE_PILOT)), rc)
     if n > adaptive.RACE_PILOT:
         sides[own], js = side(own, None, n, js)
         for rc in races:
@@ -389,7 +390,7 @@ def preset(mode, bench, stem, cls, own, races, bosses, w=None, each=None, role=N
                 alike = same(sides[rc], sv, p)
                 # a racial whose pilot came out exactly as an earlier one's against the same race (off:<part> when the
                 # race's other parts do nothing is off, a twin race's racials are its twin's) takes that one's row
-                like = next((r for b0, s0, r in pilots if b0 is sides[rc] and twins(s0, sv, p)), None) if mode != 'tank' else None
+                like = next((r for b0, s0, r in pilots if b0 is sides[rc] and twins(s0, sv, p)), None)
                 if like:
                     rows.append({**like, 'race': rc, 'variant': v})
                     continue
@@ -421,6 +422,6 @@ def preset(mode, bench, stem, cls, own, races, bosses, w=None, each=None, role=N
             row['diff'] = row.get('score' if mode == 'tank' else 'carry') - race_row['score' if mode == 'tank' else 'carry'] \
                 if row.get('score' if mode == 'tank' else 'carry') is not None and race_row['score' if mode == 'tank' else 'carry'] is not None else None
             rows.append(row)
-            if sv and mode != 'tank':
+            if sv:
                 pilots.append((sides[rc], pilot, row))
     return rows
