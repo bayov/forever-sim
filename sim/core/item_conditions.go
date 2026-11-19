@@ -34,6 +34,9 @@ var (
 	ConditionVsDinosaurs         = ItemCondition{Label: "vs Dinosaurs", MobFamily: proto.MobFamily_MobFamilyDinosaur}
 	ConditionInForestOrGrassland = ItemCondition{Label: "in forest or grassland", Terrain: proto.OutdoorTerrain_OutdoorTerrainForest}
 	ConditionInSnow              = ItemCondition{Label: "in snow", Terrain: proto.OutdoorTerrain_OutdoorTerrainSnow}
+	ConditionVsPlants            = ItemCondition{Label: "vs Plants", MobFamily: proto.MobFamily_MobFamilyPlant}
+	ConditionInMarshOrSwamp      = ItemCondition{Label: "in marsh or swamp", Terrain: proto.OutdoorTerrain_OutdoorTerrainSwamp}
+	ConditionInMountains         = ItemCondition{Label: "in mountains", Terrain: proto.OutdoorTerrain_OutdoorTerrainMountains}
 )
 
 var mobTypeLabels = map[proto.MobType]string{

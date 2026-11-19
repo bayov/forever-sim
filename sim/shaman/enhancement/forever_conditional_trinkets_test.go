@@ -330,7 +330,7 @@ func TestForeverEyeOfTheBeastAndWeaknessAnalyzer(t *testing.T) {
 }
 
 // Adaptive Combat Assistant's shield absorbs 450. When hits break it before its 15 sec are
-// up, it deals 100 Nature (150 on a crit) to every enemy. A shield that lasts its 15 sec does
+// up, it deals 90 to 110 Nature (half more on a crit) to every enemy. A shield that lasts its 15 sec does
 // nothing.
 func TestForeverAdaptiveCombatAssistant(t *testing.T) {
 	for _, tc := range []struct {
@@ -364,8 +364,9 @@ func TestForeverAdaptiveCombatAssistant(t *testing.T) {
 				continue
 			}
 			hitTargets++
-			if want := 100*float64(m.Hits) + 150*float64(m.Crits); math.Abs(m.TotalDamage-want) > 1e-6 {
-				t.Errorf("%s took %.1f from Sigmoid Revenge, want %.1f", target.Label, m.TotalDamage, want)
+			hits := float64(m.Hits) + 1.5*float64(m.Crits)
+			if m.TotalDamage < 90*hits-1e-6 || m.TotalDamage > 110*hits+1e-6 {
+				t.Errorf("%s took %.1f from Sigmoid Revenge, want 90 to 110 a hit (%.1f to %.1f)", target.Label, m.TotalDamage, 90*hits, 110*hits)
 			}
 		}
 		if tc.breaks && hitTargets != 3 {

@@ -237,11 +237,24 @@ func init() {
 	// Totem of Rage
 	// Equip: Increases damage done by Earth Shock, Flame Shock, and Frost Shock by up to 30.
 	// Acts as extra 30 spellpower for shocks.
+	//
+	// Forever: "Increases the damage of your Shock spells by 2%" (27859, client 1.60.1.70959).
+	// Its first effect is aura 108 (a percent modifier) on the damage of Earth, Flame and Frost
+	// Shock (class mask 0x90100000). Its second adds 2% to Flame Shock's damage over time (misc
+	// 22, mask 0x10000000). So every hit and tick of our shocks does 2% more. It adds to the other
+	// percent modifiers like Concussion, so it goes into DamageMultiplierAdditive as Concussion
+	// does. The flat 30 is gone.
 	core.NewItemEffect(TotemOfRage, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
+		forever := shaman.Env.IsForever()
 		affectedSpellCodes := []int32{SpellCode_ShamanEarthShock, SpellCode_ShamanFlameShock, SpellCode_ShamanFrostShock}
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
-			if slices.Contains(affectedSpellCodes, spell.SpellCode) {
+			if !slices.Contains(affectedSpellCodes, spell.SpellCode) {
+				return
+			}
+			if forever {
+				spell.DamageMultiplierAdditive += 0.02
+			} else {
 				spell.BonusDamage += 30
 			}
 		})

@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/common/guardians"
@@ -181,9 +182,15 @@ const (
 	JomGabbar                  = 23570
 
 	// Forever
+	BrainHacker               = 1263
+	BriarwoodReed             = 12930
+	SmokeysLighter            = 13171
+	TreantsBane               = 18538
+	RuneOfTheGuardCaptain     = 19120
 	DraconianAegisOfTheLegion = 22336
 	FrozenHeartOfTheMountain  = 249469
 	MoltenHeartOfTheMountain  = 249470
+	JewelOfTheGuardCaptain    = 270225
 	GoldenBanana              = 270226
 	AdaptiveCombatAssistant   = 272437
 	WeaknessAnalyzer          = 272438
@@ -879,6 +886,22 @@ func init() {
 			},
 		})
 	})
+
+	// https://www.wowhead.com/forever/item=1263/brain-hacker
+	// Forever: Chance on hit: Brain Hacker (17148) deals 250 Physical with variance 0.4 and makes
+	// the target's spells take 30% longer to cast for 9 sec (client 1.60.1.70959 SpellEffect: a
+	// school damage effect and aura 65). It is on the melee table (DefenseType 2). We roll it by
+	// the whole variance either side, 150 to 350, as we do for Gut Ripper's Wound. The rate is 1
+	// PPM, the one wowsims/forever fitted from one wearer's log (their EV-0132), since the
+	// client's proc chance reads the 101 placeholder.
+	//
+	// The slower casting is on the target, so it does nothing for our damage. Classic's
+	// Brain Hacker (200 damage and -25 Intellect) has no proc here.
+	itemhelpers.CreateWeaponCoHProcByRuleset(BrainHacker, "Brain Hacker", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 1, SpellID: 17148, DmgMin: 150, DmgRange: 200},
+		0, core.DefenseTypeMelee)
+
 	// https://www.wowhead.com/classic/item=13148/chillpike
 	// Chance on hit: Blasts a target for 160 to 250 Frost damage.
 	// TODO: Proc rate assumed and needs testing
@@ -1433,7 +1456,18 @@ func init() {
 	// https://www.wowhead.com/classic/item=13983/gravestone-war-axe
 	// Chance on hit: Diseases target enemy for 55 Nature damage every 3 sec for 15 sec.
 	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcSpell(GravestoneWarAxe, "Gravestone War Axe", 0.5, func(character *core.Character) *core.Spell {
+	//
+	// Forever: Creeping Mold (18289) deals 42 Nature every 3 sec for 12 sec (client 1.60.1.70959
+	// SpellEffect bp 42, SpellMisc DurationIndex 29). So that is 4 ticks of 42 in place of
+	// Classic's 55 every 3 sec. We proc it at 1.9 PPM, the rate wowsims/forever measured on 116
+	// procs in Forever dungeon logs (their EV-0003). The client has no proc row for it.
+	//
+	// Classic keeps its 15 ticks, though its tooltip says 15 sec (5 ticks).
+	itemhelpers.CreateWeaponProcSpellByRuleset(GravestoneWarAxe, "Gravestone War Axe", 0.5, 1.9, func(character *core.Character) *core.Spell {
+		tickDamage, numTicks := 55.0, int32(15)
+		if character.Env.IsForever() {
+			tickDamage, numTicks = 42, 4
+		}
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18289},
 			SpellSchool: core.SpellSchoolNature,
@@ -1442,13 +1476,13 @@ func init() {
 			Flags:       core.SpellFlagDisease | core.SpellFlagPureDot,
 
 			Dot: core.DotConfig{
-				NumberOfTicks: 15,
+				NumberOfTicks: numTicks,
 				TickLength:    time.Second * 3,
 				Aura: core.Aura{
 					Label: "Creeping Mold",
 				},
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-					dot.Snapshot(target, 55, isRollover)
+					dot.Snapshot(target, tickDamage, isRollover)
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -2283,7 +2317,18 @@ func init() {
 	// https://www.wowhead.com/classic/item=12969/seeping-willow
 	// Chance on hit: Lowers all stats by 20 and deals 20 Nature damage every 3 sec to all enemies within an 8 yard radius of the caster for 30 sec.
 	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcSpell(SeepingWillow, "Seeping Willow", 0.5, func(character *core.Character) *core.Spell {
+	//
+	// Forever: Seeping Willow (17196) deals 51 Nature every 2 sec for 10 sec to every enemy
+	// around us, and it no longer lowers their stats (client 1.60.1.70959 SpellEffect has only
+	// the periodic damage, bp 51, period 2000, DurationIndex 1). We proc it at 0.9 PPM, the rate
+	// wowsims/forever measured on 78 procs in Forever dungeon logs (their EV-0003). The client's
+	// proc chance reads the 101 placeholder.
+	itemhelpers.CreateWeaponProcSpellByRuleset(SeepingWillow, "Seeping Willow", 0.5, 0.9, func(character *core.Character) *core.Spell {
+		forever := character.Env.IsForever()
+		tickDamage, numTicks, tickLength := 20.0, int32(10), time.Second*3
+		if forever {
+			tickDamage, numTicks, tickLength = 51, 5, time.Second*2
+		}
 		stats := stats.Stats{
 			stats.Agility:   20,
 			stats.Intellect: 20,
@@ -2315,11 +2360,13 @@ func init() {
 				Aura: core.Aura{
 					Label: "Seeping Willow Poison",
 				},
-				NumberOfTicks: 10,
-				TickLength:    time.Second * 3,
+				NumberOfTicks: numTicks,
+				TickLength:    tickLength,
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-					dot.Snapshot(target, 20, isRollover)
-					debuffAuras.Get(target).Activate(sim)
+					dot.Snapshot(target, tickDamage, isRollover)
+					if !forever {
+						debuffAuras.Get(target).Activate(sim)
+					}
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -2876,6 +2923,35 @@ func init() {
 	// +60 Attack Power when fighting Beasts.
 	core.NewMobTypeAttackPowerEffect(TigulesHarpoon, []proto.MobType{proto.MobType_MobTypeBeast}, 60)
 
+	// https://www.wowhead.com/forever/item=18538/treants-bane
+	// Forever: Chance on hit: Treant Slayer (1302354) deals 175 Fire with variance 0.42, 138 to
+	// 212, and "Deals 3 times as much damage to Plants" (client 1.60.1.70959 SpellEffect: school
+	// damage bp 175, then a dummy effect bp 3). It has no spell power coefficient. A Plant is a
+	// target with mob_family Plant.
+	//
+	// Neither the client nor wowsims/forever has a rate for it, so we assume 1 PPM. Classic's
+	// Treant's Bane has no proc.
+	itemhelpers.CreateWeaponProcSpellByRuleset(TreantsBane, "Treant's Bane", 0, 1, func(character *core.Character) *core.Spell {
+		return character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 1302354},
+			SpellSchool: core.SpellSchoolFire,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				damage := sim.Roll(175*(1-0.21), 175*(1+0.21))
+				if target.MobFamily == proto.MobFamily_MobFamilyPlant {
+					damage *= 3
+				}
+				spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+			},
+		})
+	})
+	core.RegisterItemConditions(TreantsBane, core.ConditionVsPlants)
+
 	// https://www.wowhead.com/classic/item=13183/venomspitter
 	// Chance on hit: Poisons target for 7 Nature damage every 2 sec for 30 sec.
 	// TODO: Proc rate assumed and needs testing
@@ -3004,10 +3080,16 @@ func init() {
 	// https://www.wowhead.com/forever/item=272437/adaptive-combat-assistant
 	// Forever: Use: Damage Sigmoid (1291097) puts a shield on us that absorbs 450 damage of any
 	// school for 15 sec. When the shield runs out before the 15 sec are up, Sigmoid Revenge
-	// (1291099) deals 100 Nature damage to the enemies in front of us in melee range. 5 min
+	// (1291099) deals 100 Nature damage with variance 0.2, 90 to 110, to the enemies in front of
+	// us in melee range. 5 min
 	// cooldown, and 15 sec on category 1141 ("Item - Burst Trinket") that the other Forever burst
 	// trinkets share (client 1.60.1.70959 ItemEffect 232251, SpellEffect, SpellMisc and
 	// SpellTargetRestrictions). The cooldown is the 5 min of server hotfix push 113769.
+	//
+	// The 15 sec is SpellMisc's DurationIndex 8, which SpellDuration has as 15000 ms. It isn't 8
+	// sec. The tooltip reads "If this shield expires before $d", and $d is the shield's whole
+	// duration, so the damage comes when hits use up the shield early. A shield that lasts its
+	// full 15 sec does nothing.
 	//
 	// Sigmoid Revenge is a magic attack with no spell power coefficient, so it can miss and crit
 	// like a spell. Its cone has no target cap, and we take it that every enemy is in front of us,
@@ -3035,7 +3117,7 @@ func init() {
 
 			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 				for _, target := range sim.Encounter.ActiveTargetUnits {
-					spell.CalcAndDealDamage(sim, target, 100, spell.OutcomeMagicHitAndCrit)
+					spell.CalcAndDealDamage(sim, target, sim.Roll(90, 110), spell.OutcomeMagicHitAndCrit)
 				}
 			},
 		})
@@ -3227,6 +3309,17 @@ func init() {
 		}))
 	})
 
+	// https://www.wowhead.com/forever/item=12930/briarwood-reed
+	// Forever: Equip 1318326 gives 15 spell damage and healing, which the item's stats carry.
+	// "This effect is doubled in Marsh and Swamp areas." The client does that with a second
+	// equip (1318327), 15 more, that only works in area group 9162 (Dustwallow Marsh, Swamp of
+	// Sorrows, Wetlands and other wet zones, client 1.60.1.70959 SpellCastingRequirements). So we
+	// add 15 when the encounter's outdoor_terrain is Swamp.
+	core.NewItemEffect(BriarwoodReed, func(agent core.Agent) {
+		addTerrainStats(agent.GetCharacter(), stats.Stats{stats.SpellPower: 15}, proto.OutdoorTerrain_OutdoorTerrainSwamp)
+	})
+	core.RegisterItemConditions(BriarwoodReed, core.ConditionInMarshOrSwamp)
+
 	// https://www.wowhead.com/classic/item=11832/burst-of-knowledge
 	// Use: Reduces mana cost of all spells by 100 for 10 sec. (5 Min Cooldown)
 	core.NewItemEffect(BurstOfKnowledge, func(agent core.Agent) {
@@ -3367,7 +3460,76 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=22268/draconic-infused-emblem
 	// Use: Increases your spell damage by up to 100 and your healing by up to 190 for 15 sec. (1 Min, 30 Sec Cooldown)
-	core.NewSimpleStatOffensiveTrinketEffect(DraconicInfusedEmblem, stats.Stats{stats.SpellDamage: 100, stats.HealingPower: 190}, time.Second*15, time.Second*90)
+	//
+	// Forever has no use. Its equip (1318931) is "Chance on harmful spellcast to increase your
+	// spell damage and healing by up to 35 for 10 sec. This spell damage increase is doubled
+	// against Dragonkin." The buff (1318930) gives 35 spell damage and 35 healing, and 35 more
+	// spell damage against Dragonkin (aura 180 with creature type mask 2). It lasts 10 sec
+	// (DurationIndex 1) and the proc has no cooldown (client 1.60.1.70959).
+	//
+	// The client's proc chance reads 100, a placeholder the tooltip's "chance" contradicts. We use
+	// the 8% that wowsims/forever measured in Forever dungeon logs (their EV-0115). It rolls once
+	// for each target a harmful spell of ours lands on. Damage over time ticks and spells that
+	// come from a proc, like Flametongue Weapon's, don't roll.
+	core.NewItemEffect(DraconicInfusedEmblem, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			core.RegisterTemporaryStatsOnUseCD(character, fmt.Sprintf("ItemActive-%d", DraconicInfusedEmblem),
+				stats.Stats{stats.SpellDamage: 100, stats.HealingPower: 190}, time.Second*15, core.SpellConfig{
+					ActionID: core.ActionID{ItemID: DraconicInfusedEmblem},
+					Flags:    core.SpellFlagOffensiveEquipment,
+					Cast: core.CastConfig{
+						CD: core.Cooldown{
+							Timer:    character.NewTimer(),
+							Duration: time.Second * 90,
+						},
+						SharedCD: core.Cooldown{
+							Timer:    character.GetOffensiveTrinketCD(),
+							Duration: time.Second * 15,
+						},
+					},
+				})
+			return
+		}
+
+		dragonkin := core.FilterSlice(character.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeDragonkin
+		})
+		bonus := stats.Stats{stats.SpellPower: 35}
+		buff := character.RegisterAura(core.Aura{
+			ActionID: core.ActionID{SpellID: 1318930},
+			Label:    "Draconic Infused Emblem",
+			Duration: time.Second * 10,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				character.AddStatsDynamic(sim, bonus)
+				for _, target := range dragonkin {
+					for _, at := range character.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken += 35
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				character.AddStatsDynamic(sim, bonus.Multiply(-1))
+				for _, target := range dragonkin {
+					for _, at := range character.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken -= 35
+					}
+				}
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Draconic Infused Emblem Trigger",
+			Callback:   core.CallbackOnSpellHitDealt,
+			ProcMask:   core.ProcMaskSpellDamage,
+			Outcome:    core.OutcomeLanded,
+			ProcChance: 0.08,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				buff.Activate(sim)
+			},
+		})
+	})
+	core.RegisterItemConditions(DraconicInfusedEmblem, core.MobTypeCondition(proto.MobType_MobTypeDragonkin))
 
 	// https://www.wowhead.com/classic/item=19288/darkmoon-card-blue-dragon
 	// Equip: 2% chance on successful spellcast to allow 100% of your Mana regeneration to continue while casting for 15 sec.
@@ -3782,6 +3944,18 @@ func init() {
 		})
 	})
 
+	// https://www.wowhead.com/forever/item=270225/jewel-of-the-guard-captain
+	// Forever: Equip 1287561 gives 8 spell damage and healing, which the item's stats carry.
+	// "This effect is tripled in Forest and Grassland areas." The client does that with a second
+	// equip (1318002), 16 more, that only works in area group 9161 (client 1.60.1.70959
+	// SpellCastingRequirements). So we add 16 when the encounter's outdoor_terrain is Forest or
+	// Grassland.
+	core.NewItemEffect(JewelOfTheGuardCaptain, func(agent core.Agent) {
+		addTerrainStats(agent.GetCharacter(), stats.Stats{stats.SpellPower: 16},
+			proto.OutdoorTerrain_OutdoorTerrainForest, proto.OutdoorTerrain_OutdoorTerrainGrassland)
+	})
+	core.RegisterItemConditions(JewelOfTheGuardCaptain, core.ConditionInForestOrGrassland)
+
 	// https://www.wowhead.com/classic/item=23570/jom-gabbar
 	// Use: Increases attack power by 65 and an additional 65 every 2 sec.  Lasts 20 sec. (2 Min Cooldown)
 	core.NewItemEffect(JomGabbar, func(agent core.Agent) {
@@ -3895,6 +4069,18 @@ func init() {
 	// against Undead (SpellEffect #0, aura 180).
 	core.NewMobTypeSpellPowerEffectForever(RuneOfTheDawn, []proto.MobType{proto.MobType_MobTypeUndead}, 48, 46)
 
+	// https://www.wowhead.com/forever/item=19120/rune-of-the-guard-captain
+	// Forever: Equip 1318000 gives 14 attack power and 14 ranged attack power, which the item's
+	// stats carry. "This effect is tripled in Forest and Grassland areas." The client does that
+	// with a second equip (1287704), 28 more of each, that only works in area group 9161 (client
+	// 1.60.1.70959 SpellCastingRequirements). So we add 28 when the encounter's outdoor_terrain
+	// is Forest or Grassland.
+	core.NewItemEffect(RuneOfTheGuardCaptain, func(agent core.Agent) {
+		addTerrainStats(agent.GetCharacter(), stats.Stats{stats.AttackPower: 28, stats.RangedAttackPower: 28},
+			proto.OutdoorTerrain_OutdoorTerrainForest, proto.OutdoorTerrain_OutdoorTerrainGrassland)
+	})
+	core.RegisterItemConditions(RuneOfTheGuardCaptain, core.ConditionInForestOrGrassland)
+
 	// https://www.wowhead.com/classic/item=21625/scarab-brooch
 	core.NewItemEffect(ScarabBrooch, func(agent core.Agent) {
 		character := agent.GetCharacter()
@@ -3952,8 +4138,21 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=11819/second-wind
 	// Use: Restores 30 mana every 1 sec for 10 sec. (15 Min Cooldown)
+	//
+	// Forever: Second Wind (15604) restores 63 mana every sec for 10 sec. "This effect is doubled
+	// in Mountainous areas", so we give 126 when the encounter's outdoor_terrain is Mountains.
+	// The cooldown stays 15 min (client 1.60.1.70959 ItemEffect 102627 and SpellEffect bp 63).
+	// The item's 10 sec category cooldown (2554) is shared only with defensive items like
+	// Vigilance Charm, so we leave it out.
 	core.NewItemEffect(SecondWind, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		manaPerTick := 30.0
+		if character.Env.IsForever() {
+			manaPerTick = 63
+			if character.Env.Encounter.OutdoorTerrain == proto.OutdoorTerrain_OutdoorTerrainMountains {
+				manaPerTick *= 2
+			}
+		}
 		actionID := core.ActionID{SpellID: 15604}
 		manaMetrics := character.NewManaMetrics(actionID)
 		spell := character.RegisterSpell(core.SpellConfig{
@@ -3971,7 +4170,7 @@ func init() {
 					NumTicks: 10,
 					Priority: core.ActionPriorityAuto,
 					OnAction: func(sim *core.Simulation) {
-						character.AddMana(sim, 30, manaMetrics)
+						character.AddMana(sim, manaPerTick, manaMetrics)
 					},
 				})
 			},
@@ -3981,11 +4180,73 @@ func init() {
 			Spell: spell,
 		})
 	})
+	core.RegisterItemConditions(SecondWind, core.ConditionInMountains)
+
+	// https://www.wowhead.com/forever/item=13171/smokeys-lighter
+	// Forever: Use: Flick the lighter (17283) for 210 Fire damage to every enemy in a cone in
+	// front of us, and "2 times as much damage to Plants". 90 sec cooldown, and 10 sec on category
+	// 1141 that the other Forever burst trinkets share (client 1.60.1.70959 ItemEffect 98849,
+	// SpellEffect bp 210 with no variance or spell power coefficient, then a bp 2 effect for the
+	// Plants). The user's log of 2026-11-19 shows the 210, 315 on a crit, on several mobs at once.
+	//
+	// We take it that every enemy is in front of us, as we do for Adaptive Combat Assistant. A
+	// Plant is a target with mob_family Plant. Classic's lighter (125 Fire, 5 min) has no use here.
+	core.NewItemEffect(SmokeysLighter, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: SmokeysLighter},
+			SpellSchool: core.SpellSchoolFire,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Second * 90,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 10,
+				},
+			},
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				for _, target := range sim.Encounter.ActiveTargetUnits {
+					damage := 210.0
+					if target.MobFamily == proto.MobFamily_MobFamilyPlant {
+						damage *= 2
+					}
+					spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+				}
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+	core.RegisterItemConditions(SmokeysLighter, core.ConditionVsPlants)
 
 	// https://www.wowhead.com/classic/item=13213/smolderwebs-eye
 	// Use: Poisons target for 20 Nature damage every 2 sec for 20 sec. (2 Min Cooldown)
+	//
+	// Forever has no poison. Its only use is Mother's Watch (1308917), which removes a Disarm
+	// from an ally, on an 8 min cooldown (client 1.60.1.70959 ItemEffect 99680). That does
+	// nothing for our damage, so under Forever the trinket has no use here.
 	core.NewItemEffect(SmolderwebsEye, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		if character.Env.IsForever() {
+			return
+		}
 		spell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 17330},
 			SpellSchool: core.SpellSchoolNature,
@@ -4748,6 +5009,15 @@ func registerForeverStatTrinket(character *core.Character, itemID int32, bonus s
 			},
 		},
 	})
+}
+
+// addTerrainStats gives the character bonus for the whole fight under Forever when the
+// encounter's outdoor_terrain is one of terrains. It is for the trinkets whose equip grows in
+// some areas, like Rune of the Guard Captain in a forest.
+func addTerrainStats(character *core.Character, bonus stats.Stats, terrains ...proto.OutdoorTerrain) {
+	if character.Env.IsForever() && slices.Contains(terrains, character.Env.Encounter.OutdoorTerrain) {
+		character.AddStats(bonus)
+	}
 }
 
 // takesHits is whether anything in the encounter hits the character: the boss tanking it, or

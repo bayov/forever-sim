@@ -1025,6 +1025,9 @@ enum MobFamily {
 	MobFamilyOgre = 2;
 	MobFamilyTroll = 3;
 	MobFamilyDinosaur = 4;
+	// Treant's Bane's proc and Smokey's Lighter hit Plants harder. Plants aren't a creature type of
+	// their own (a Treant is an Elemental), so they are a family here.
+	MobFamilyPlant = 5;
 }
 
 // The kind of outdoor area the fight is in, for the item effects that grow there, like Golden
@@ -1034,6 +1037,11 @@ enum OutdoorTerrain {
 	OutdoorTerrainForest = 1;
 	OutdoorTerrainGrassland = 2;
 	OutdoorTerrainSnow = 3;
+	// Marsh and swamp areas, one area group in the client (9162: Dustwallow Marsh, Swamp of
+	// Sorrows, Wetlands and others), for Briarwood Reed.
+	OutdoorTerrainSwamp = 4;
+	// Mountainous areas, for Second Wind.
+	OutdoorTerrainMountains = 5;
 }
 
 enum InputType {

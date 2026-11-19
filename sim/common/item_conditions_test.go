@@ -23,6 +23,13 @@ func TestItemConditions(t *testing.T) {
 		{common.GoldenBanana, "in forest or grassland"},
 		{common.FrozenHeartOfTheMountain, "in snow"},
 		{common.ArgentAvenger, "vs Undead"},
+		{common.TreantsBane, "vs Plants"},
+		{common.SmokeysLighter, "vs Plants"},
+		{common.DraconicInfusedEmblem, "vs Dragonkin"},
+		{common.RuneOfTheGuardCaptain, "in forest or grassland"},
+		{common.JewelOfTheGuardCaptain, "in forest or grassland"},
+		{common.BriarwoodReed, "in marsh or swamp"},
+		{common.SecondWind, "in mountains"},
 		// The attack power and spell damage helpers declare their creature types.
 		{common.SealOfTheDawn, "vs Undead"},
 		{common.TigulesHarpoon, "vs Beasts"},
