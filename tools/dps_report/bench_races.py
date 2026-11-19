@@ -284,7 +284,12 @@ def twins(a, b, n):
 def inert(bench, stem, race, off, base, n):
     """Whether leaving `off` out moves none of a healing race's first n fights at the lattice scales the race settled
     on (same(), but simmed one scale at a time until one differs). A racial pilot walked from the preset race's scales
-    can settle on others, and same() then failed on a racial that does nothing, which ran to the ceiling."""
+    can settle on others, and same() then failed on a racial that does nothing, which ran to the ceiling. The fights at
+    the encounter's own damage must come out alike too (Night Elf dodge moves a raid healer's HPS and mana, not its
+    deaths), so they go first: the racial's pilot reads them back if it is simmed after all."""
+    for boss, a in base.one.items():
+        if not np.array_equal(bench.heal(stem, race, off, boss, base.role, 1.0, n), a[:n]):
+            return False
     for boss, pts in base.b.items():
         for k, v in pts.items():
             if not np.array_equal(bench.heal(stem, race, off, boss, base.role, k, n)[:, 0], v[:n]):
