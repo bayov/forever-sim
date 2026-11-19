@@ -2997,17 +2997,21 @@ func init() {
 	///////////////////////////////////////////////////////////////////////////
 
 	// https://www.wowhead.com/forever/item=280032/bolts-charged-eyeball
-	// Forever: Equip: Grounded Electroshocks (1311505). Dealing damage has a 15% chance, at most
-	// once every 3 sec, to deal 60 Nature damage (Grounded Electroshock, 1315996) to you or your
-	// current target (client 1.60.1.70938 SpellAuraOptions and SpellEffect).
+	// Forever: Equip: Grounded Electroshocks (1311505). Dealing damage has a chance, at most once
+	// every 3 sec, to deal 60 Nature damage (Grounded Electroshock, 1315996) to you or your current
+	// target (client 1.60.1.70938 SpellAuraOptions and SpellEffect).
+	//
+	// The client data says 15%, but the game procs it at half that. In the user's Enhancement log of
+	// 2026-11-19 (BRS, 1518 hits and ticks off cooldown), 117 of them procced, which is 7.7%. Swings,
+	// spells, imbue procs and Flame Shock ticks all procced at about the same rate. So we use 7.5%.
 	//
 	// The aura's proc flags count melee and ranged attacks, harmful spells and periodic damage, so
 	// we let every damaging hit and tick of ours roll, but not the item procs that suppress equip
 	// procs. The shock is a magic attack with no spell power coefficient, so it can miss and crit
 	// like a spell.
 	//
-	// Neither the client data nor the tooltip says how often the shock hits us instead of the
-	// target, so we take the tooltip's "you or your current target" as an even coin flip. A shock
+	// In the same log, 36 of the 117 shocks hit us and 81 hit the target, so we send 30% of the
+	// shocks at us (the log's 95% range is 22 to 39%). A shock
 	// that hits us only costs the 60 damage it would have dealt, because the DPS sim does not
 	// track our health against it, so we skip it. We also leave out the tripled damage to
 	// Dinosaurs, since our targets have no such type.
@@ -3039,10 +3043,10 @@ func init() {
 			Outcome:           core.OutcomeLanded,
 			ProcMask:          core.ProcMaskDirect | core.ProcMaskDamageProc,
 			SpellFlagsExclude: core.SpellFlagSuppressEquipProcs,
-			ProcChance:        0.15,
+			ProcChance:        0.075,
 			ICD:               time.Second * 3,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				if sim.Proc(0.5, "Grounded Electroshock hits the wielder") {
+				if sim.Proc(0.3, "Grounded Electroshock hits the wielder") {
 					return
 				}
 				shock.Cast(sim, character.CurrentTarget)

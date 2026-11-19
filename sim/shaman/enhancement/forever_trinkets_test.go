@@ -50,11 +50,11 @@ func landHit(sim *core.Simulation, spell *core.Spell, target *core.Unit, periodi
 	}
 }
 
-// Bolt's Charged Eyeball procs on 15% of our damaging hits and ticks, at most once every 3 sec,
-// and half of the procs shock the target for 60 Nature (the other half hit us).
+// Bolt's Charged Eyeball procs on 7.5% of our damaging hits and ticks, at most once every 3 sec,
+// and 70% of the procs shock the target for 60 Nature (the other 30% hit us).
 //
 // We land hits 3 sec apart, so the cooldown is always over and each hit procs on its own roll.
-// Then 7.5% of them shock the target. With 4000 hits we expect 300 shocks, and the bounds are
+// Then 5.25% of them shock the target. With 4000 hits we expect 210 shocks, and the bounds are
 // about 3 standard deviations wide.
 func TestForeverBoltsChargedEyeball(t *testing.T) {
 	sim, enh := newTrinketSim(t, 1, 100000, common.BoltsChargedEyeball)
@@ -79,8 +79,8 @@ func TestForeverBoltsChargedEyeball(t *testing.T) {
 			sim.CurrentTime += 3 * time.Second
 			landHit(sim, tc.spell, target, tc.periodic)
 		}
-		if got := casts() - before; got < 250 || got > 350 {
-			t.Errorf("%d shocks on the target from 4000 %s hits 3 sec apart, want about 300", got, tc.name)
+		if got := casts() - before; got < 168 || got > 252 {
+			t.Errorf("%d shocks on the target from 4000 %s hits 3 sec apart, want about 210", got, tc.name)
 		}
 	}
 
