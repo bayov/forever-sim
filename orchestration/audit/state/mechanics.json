@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "8f388c7f3cb6306a7f93a9e2a2eea2af2e3900e3"
+  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
  },
- "last_pass_at": "2026-11-19T12:50:34Z",
- "pass": 91,
+ "last_pass_at": "2026-11-19T18:52:20Z",
+ "pass": 92,
  "result": "quiet",
  "note": "Pass 91: eebd00b2b..8f388c7f3. Only 65f0ea9d6 sim/druid/healing.go: swiftmendHot loops Rejuvenation/Regrowth lists directly instead of balanceSpells (same nil filter, same order, same tie rule) - no behavior change. Client still 70959; no new dev-notes or hotfix posts.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-19T12:57:58Z",
+ "checked_at": "2026-11-19T18:52:20Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

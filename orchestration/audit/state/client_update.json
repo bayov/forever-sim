@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "8f388c7f3cb6306a7f93a9e2a2eea2af2e3900e3"
+  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
  },
  "last_pass_at": "2026-11-17T18:59:26Z",
  "client_build": "1.60.1.70959",
  "result": "findings",
  "note": "70959 = client copy of the 11-13/11-16 hotfixes. Windfury Totem proc now a weapon-damage strike (sim still extra swing + 2-charge AP buff); Flurry no longer spent by HS/Cleave per Blizzard 11-16 (sim still spends). Blue Dragon 3%, 11-13 item stats not in db.",
  "pass": 14,
- "checked_at": "2026-11-19T12:57:58Z"
+ "checked_at": "2026-11-19T18:52:20Z"
 }

@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "8f388c7f3cb6306a7f93a9e2a2eea2af2e3900e3"
+  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
  },
  "last_pass_at": "2026-11-19T12:57:27Z",
  "pass": 20,
@@ -8,5 +8,5 @@
  "note": "Pass 20 on 8f388c7f3. Only watched change 65f0ea9d6 (swiftmendHot loops rank lists without allocating; same semantics). All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-19T12:57:58Z"
+ "checked_at": "2026-11-19T18:52:20Z"
 }

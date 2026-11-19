@@ -1,20 +1,24 @@
-# tank_fairness pass 22: 2026-11-19, master 8f388c7f3
+# tank_fairness pass 23: 2026-11-19, master e671e881e
 
-Due: 1 watched file changed since eebd00b2b, `sim/druid/healing.go` (65f0ea9d6): `swiftmendHot` loops the
-Rejuvenation and Regrowth rank lists instead of allocating a filtered copy, skipping nil ranks. Behaviour-neutral by
-reading; Swiftmend is a Restoration spell no tank preset casts. No change to `tools/tankbench`, `tools/encounters`,
-the tank requests, `sim/core` or the other tank classes. Quiet: no new finding.
+Due: 1 watched file changed since 8f388c7f3, `sim/core/tank_score.go` (d73c17568): `leastHps` now restarts each
+replay from the last event where the lower-bound HPS left the tank at max health (`replayFrom`) instead of replaying
+from the start. Read for correctness: health at every event is non-decreasing in the HPS (damage, stand-in units and
+heals are monotone, capped at max health), so a point capped under a lower HPS is capped under any higher one with
+the same state; the damage branch's `health >= maxHealth` equals the old `min(maxHealth, health) - damage`, also when
+max health drops between events. Behaviour-neutral by reading and by measurement. No change to `tools/tankbench`,
+`tools/encounters`, the tank requests or the tank classes. Quiet: no new finding.
 
 ## Method
 
-Built tankbench at 8f388c7f3 (in the shared CLI worktree, protos generated, `--tags=with_db`), ran
+Built tankbench at e671e881e (protos and `make items` generated, `--tags=with_db`), ran
 `tools/audit/tank_fairness/bench.sh` on all 13 requests x six scoring bosses, 3,000 iterations, seed 1, and diffed
-`summary.py --tsv` against `ref/tank_fairness/summary.tsv`: all 84 baseline rows identical to the byte (the only extra
-rows are the legacy `warrior_protection.json`, which the baseline leaves out). Baseline not refreshed.
+`summary.py --tsv` against `ref/tank_fairness/summary.tsv`: all 84 baseline rows identical to the byte, healing
+needed (the number the changed search produces) included; the only extra rows are the legacy
+`warrior_protection.json`, which the baseline leaves out. Baseline not refreshed.
 
 ## Ranking (six-boss mean, own weight, seed 1)
 
-| weight | order | pass 22 (= pass 21) |
+| weight | order | pass 23 (= pass 22) |
 |---|---|---|
 | Max threat | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
 | Balanced | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |
