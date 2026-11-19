@@ -1,12 +1,31 @@
 {
- "run": "2026-11-18-87ce834",
- "commit": "87ce83487195625916119ad06b53a2d89d871a6a",
+ "run": "2026-11-19-d82ab73",
+ "commit": "d82ab73d8619ebc004cd1c7c71be91bd10dfe563",
  "modes": [
+  "dps",
   "tank",
   "heal"
  ],
  "healAll": true,
  "sessions": [
+  {
+   "session": "dps-0",
+   "mode": "dps",
+   "shard": [
+    0,
+    1
+   ],
+   "ids": [
+    "druid__balance",
+    "druid__balance-wrath",
+    "druid__feral-cat",
+    "druid__balance-duty-ff",
+    "druid__balance-wrath-duty-ff",
+    "druid__feral-cat-duty-ff"
+   ],
+   "estimate": 270,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 dps-0 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --shard 0/1 --ids druid__balance,druid__balance-duty-ff,druid__balance-wrath,druid__balance-wrath-duty-ff,druid__feral-cat,druid__feral-cat-duty-ff"
+  },
   {
    "session": "tank",
    "mode": "tank",
@@ -25,8 +44,8 @@
     "warrior_protection_max_threat"
    ],
    "main": true,
-   "estimate": 3013,
-   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-87ce834 tank --commit 87ce83487195625916119ad06b53a2d89d871a6a"
+   "estimate": 1140,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 tank --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563"
   },
   {
    "session": "heal-0",
@@ -37,13 +56,41 @@
    "main": true,
    "carriesFrom": null,
    "raceSeconds": {
-    "priest_holy_raid": 2090
+    "priest_holy_raid": 2058
    },
-   "estimate": 3180,
-   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-87ce834 heal-0 --commit 87ce83487195625916119ad06b53a2d89d871a6a --main --presets priest_holy_raid"
+   "estimate": 1466,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-0 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --main --presets priest_holy_raid"
   },
   {
    "session": "heal-1",
+   "mode": "heal",
+   "presets": [
+    "druid_restoration_raid"
+   ],
+   "main": false,
+   "carriesFrom": "heal-0",
+   "raceSeconds": {
+    "druid_restoration_raid": 1872
+   },
+   "estimate": 1354,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-1 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --presets druid_restoration_raid --carries-from heal-0"
+  },
+  {
+   "session": "heal-2",
+   "mode": "heal",
+   "presets": [
+    "shaman_restoration_raid"
+   ],
+   "main": false,
+   "carriesFrom": "heal-0",
+   "raceSeconds": {
+    "shaman_restoration_raid": 1362
+   },
+   "estimate": 1048,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-2 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --presets shaman_restoration_raid --carries-from heal-0"
+  },
+  {
+   "session": "heal-3",
    "mode": "heal",
    "presets": [
     "priest_discipline"
@@ -51,13 +98,27 @@
    "main": false,
    "carriesFrom": "heal-0",
    "raceSeconds": {
-    "priest_discipline": 1154
+    "priest_discipline": 1152
    },
-   "estimate": 2244,
-   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-87ce834 heal-1 --commit 87ce83487195625916119ad06b53a2d89d871a6a --presets priest_discipline --carries-from heal-0"
+   "estimate": 922,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-3 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --presets priest_discipline --carries-from heal-0"
   },
   {
-   "session": "heal-2",
+   "session": "heal-4",
+   "mode": "heal",
+   "presets": [
+    "paladin_holy_raid"
+   ],
+   "main": false,
+   "carriesFrom": "heal-0",
+   "raceSeconds": {
+    "paladin_holy_raid": 1120
+   },
+   "estimate": 903,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-4 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --presets paladin_holy_raid --carries-from heal-0"
+  },
+  {
+   "session": "heal-5",
    "mode": "heal",
    "presets": [
     "priest_holy"
@@ -65,34 +126,28 @@
    "main": false,
    "carriesFrom": "heal-0",
    "raceSeconds": {
-    "priest_holy": 1154
+    "priest_holy": 1117
    },
-   "estimate": 2244,
-   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-87ce834 heal-2 --commit 87ce83487195625916119ad06b53a2d89d871a6a --presets priest_holy --carries-from heal-0"
+   "estimate": 901,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-5 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --presets priest_holy --carries-from heal-0"
   },
   {
-   "session": "heal-3",
+   "session": "heal-6",
    "mode": "heal",
    "presets": [
     "druid_restoration",
-    "druid_restoration_raid",
     "paladin_holy",
-    "paladin_holy_raid",
-    "shaman_restoration",
-    "shaman_restoration_raid"
+    "shaman_restoration"
    ],
    "main": false,
    "carriesFrom": "heal-0",
    "raceSeconds": {
-    "druid_restoration": 577,
-    "druid_restoration_raid": 1045,
-    "paladin_holy": 355,
-    "paladin_holy_raid": 643,
-    "shaman_restoration": 444,
-    "shaman_restoration_raid": 804
+    "druid_restoration": 647,
+    "paladin_holy": 290,
+    "shaman_restoration": 375
    },
-   "estimate": 3067,
-   "command": "python3 tools/dps_report/parallel.py worker 2026-11-18-87ce834 heal-3 --commit 87ce83487195625916119ad06b53a2d89d871a6a --presets druid_restoration,druid_restoration_raid,paladin_holy,paladin_holy_raid,shaman_restoration,shaman_restoration_raid --carries-from heal-0"
+   "estimate": 896,
+   "command": "python3 tools/dps_report/parallel.py worker 2026-11-19-d82ab73 heal-6 --commit d82ab73d8619ebc004cd1c7c71be91bd10dfe563 --presets druid_restoration,paladin_holy,shaman_restoration --carries-from heal-0"
   }
  ]
 }
