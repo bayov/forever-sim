@@ -265,6 +265,7 @@ func init() {
 	// https://www.wowhead.com/classic/item=13246/argent-avenger
 	// Chance on hit: Increases Attack Power against Undead by 200 for 10 sec.
 	// 1 PPM from Armaments Discord
+	core.RegisterItemConditions(ArgentAvenger, core.MobTypeCondition(proto.MobType_MobTypeUndead))
 	itemhelpers.CreateWeaponProcAura(ArgentAvenger, "Argent Avenger", 1.0, func(character *core.Character) *core.Aura {
 		matchingTargets := core.FilterSlice(
 			character.Env.Encounter.TargetUnits,
@@ -3103,6 +3104,7 @@ func init() {
 	// tooltip's word that it doubles.
 	//
 	// Classic's Blackhand's Breadth (2% crit, no use) gets no use effect here.
+	core.RegisterItemConditions(BlackhandsBreadth, core.ConditionVsOrcsAndOgres)
 	core.NewItemEffect(BlackhandsBreadth, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.Env.IsForever() {
@@ -3181,6 +3183,7 @@ func init() {
 	// The shock deals 3 times as much (180) to a Dinosaur target (Target.mob_family). The client
 	// has the 3 as the second effect of Grounded Electroshocks (1311505), and the tooltip says
 	// "Deals 3 times as much damage to Dinosaurs".
+	core.RegisterItemConditions(BoltsChargedEyeball, core.ConditionVsDinosaurs)
 	core.NewItemEffect(BoltsChargedEyeball, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.Env.IsForever() {
@@ -3295,6 +3298,7 @@ func init() {
 	//
 	// Classic's version (Poison Cloud, 50 Nature every 5 sec for 45 sec, a 1 sec cast and a 15 min
 	// cooldown) is not modeled.
+	core.RegisterItemConditions(ChainedEssenceOfEranikus, core.ConditionVsTrolls)
 	core.NewItemEffect(ChainedEssenceOfEranikus, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.Env.IsForever() {
@@ -3713,6 +3717,7 @@ func init() {
 	//
 	// "This effect is doubled in Snowy areas" (the spell's tooltip, client 1.60.1.70959). So we
 	// give 58 when the encounter's outdoor_terrain is Snow.
+	core.RegisterItemConditions(FrozenHeartOfTheMountain, core.ConditionInSnow)
 	core.NewItemEffect(FrozenHeartOfTheMountain, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		bonus := 29.0
@@ -3731,6 +3736,7 @@ func init() {
 	// 1.60.1.70959). So when the encounter's outdoor_terrain is Forest or Grassland we give 32 to
 	// all stats for 30 sec. The other burst trinkets still wait only the category's 15 sec
 	// (ItemEffect 231489), since the doubling is on the buff and not on the item.
+	core.RegisterItemConditions(GoldenBanana, core.ConditionInForestOrGrassland)
 	core.NewItemEffect(GoldenBanana, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		bonus, duration := 16.0, time.Second*15

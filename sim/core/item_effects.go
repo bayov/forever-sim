@@ -161,6 +161,9 @@ func NewMobTypeAttackPowerEffect(itemID int32, mobTypes []proto.MobType, bonus f
 // NewMobTypeAttackPowerEffectForever is NewMobTypeAttackPowerEffect with its own value under
 // Forever, for an item whose client effect differs from Classic's.
 func NewMobTypeAttackPowerEffectForever(itemID int32, mobTypes []proto.MobType, classicBonus float64, foreverBonus float64) {
+	for _, mobType := range mobTypes {
+		RegisterItemConditions(itemID, MobTypeCondition(mobType))
+	}
 	NewItemEffect(itemID, func(agent Agent) {
 		character := agent.GetCharacter()
 		bonus := TernaryFloat64(character.Env.IsForever(), foreverBonus, classicBonus)
@@ -198,6 +201,9 @@ func NewMobTypeSpellPowerEffect(itemID int32, mobTypes []proto.MobType, bonus fl
 // NewMobTypeSpellPowerEffectForever is NewMobTypeSpellPowerEffect with its own value under
 // Forever, for an item whose client effect differs from Classic's.
 func NewMobTypeSpellPowerEffectForever(itemID int32, mobTypes []proto.MobType, classicBonus float64, foreverBonus float64) {
+	for _, mobType := range mobTypes {
+		RegisterItemConditions(itemID, MobTypeCondition(mobType))
+	}
 	NewItemEffect(itemID, func(agent Agent) {
 		character := agent.GetCharacter()
 		bonus := TernaryFloat64(character.Env.IsForever(), foreverBonus, classicBonus)

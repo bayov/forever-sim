@@ -40,6 +40,7 @@ func init() {
 	// Tenets of the Silver Hand's equip spell 1302545 is A_MOD_DAMAGE_DONE_VERSUS with base points 1
 	// on mask 32: 1% more damage of every kind against Undead. It raises damage alone, not crit
 	// damage, as wowsims/forever has it (item_librams.go).
+	core.RegisterItemConditions(TenetsOfTheSilverHand, core.MobTypeCondition(proto.MobType_MobTypeUndead))
 	core.NewItemEffect(TenetsOfTheSilverHand, func(agent core.Agent) {
 		c := agent.GetCharacter()
 		undead := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
