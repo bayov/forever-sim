@@ -1,7 +1,8 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-18, pass 21, master a6677362f (spell GCD
+preset weight, its reasons, and the open questions. Last pass: 2026-11-19, pass 22, master 8f388c7f3 (a Swiftmend
+refactor in `sim/druid/healing.go`; all 12 presets identical to pass 21). Pass 21: 2026-11-18, master a6677362f (spell GCD
 haste, standards 27, and the healer reaction-time wake fix: the Warden -16 / +1 / +30, within about 2 sigma, the others
 identical; ranking unchanged). Pass 19, master 2f7e255af: a Shieldsworn Holy Strike no longer rolls Windfury Totem
 (paladin -29 / -38 / -22, TPS -1%). Last

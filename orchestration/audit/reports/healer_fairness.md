@@ -1,20 +1,19 @@
-# Healer fairness pass 21 (2026-11-18, master a6677362f)
+# Healer fairness pass 22 (2026-11-19, master 8f388c7f3)
 
-Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth; now
+Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth;
 last at 1.385, 0.005 behind the shaman), -20261104-4 (low).
 
-Due because master changed 21 watched files since 8219f1083. What reaches a healer:
-- 7199c8f9c "Healers see a hit a reaction time late, so the idle skip wakes for it" (`sim/core/heal_comm.go`,
-  `apl_idle.go`): a healer whose rotation idled skipped checks past the moment a hit became visible to it, so it saw
-  hits up to several 50 ms wake-ups late, and its fight depended on the fights before it in the split. A fix toward
-  the no-skip result; it moves every healer that idles.
-- bbfd014e4 (healbench speedups: heal targets, health history, per-iteration spell metrics, `heal_sight.go`),
-  cc5a55f47 (labeled rolls), PGO profile: claimed output-neutral.
-- ee35da473 / c2efe4ae3: haste shortens a spell's GCD under Forever (standards 27, now 1.5 / (1 + spell haste), 1 s
-  floor). No healer request carries Warchief's Blessing or other haste buffs (grep of `tools/healbench/req/`); the
-  never-idle presets (tank paladin, tank priests) came out identical, so no healer gear haste is in play.
-- Wrath tuning knob, water_totems / priest / paladin metric accessor renames: no behaviour change for healers.
-- `tools/healbench/req/`, `tools/encounters/`: unchanged.
+Due because `sim/druid/healing.go` changed since eebd00b2b. The only sim change since pass 21's a6677362f:
+- 65f0ea9d6: `swiftmendHot` loops `druid.Rejuvenation` then `druid.Regrowth` directly, skipping nil ranks, instead of
+  `balanceSpells(...)` (FilterSlice(Flatten) on nil, `sim/druid/talents.go:82`). Same order, same nil skip, same
+  strict `<` earliest-expiry pick, so the same HoT is consumed. The rest of the commit is `tools/dps_report/bench_races.py`.
+- Check: both druid presets on all 7 files, seed 101, 1,000 it (`tools/audit/healer_fairness/screen.sh`): all 14 cells
+  identical to `ref/healer_fairness/bench_a667736.tsv` (tank 1.267, raid 1.385). Other healers untouched (no other
+  sim, `tools/healbench/req/` or `tools/encounters/` change since a6677362f), so sections 1-3 below stand from pass 21.
+- Tooling note: healbench must be built `--tags=with_db` (the synthetic set items, e.g. 990401, live in the DB);
+  without it every request panics "No item with id". Added to screen.sh's header.
+
+The rest is pass 21's (master a6677362f), still current:
 
 ## 1. Same terms
 
