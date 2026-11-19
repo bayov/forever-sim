@@ -6193,6 +6193,14 @@
     {
      "commit": "ad64ef0",
      "why": "a task note on Windfury Totem keeping its attack power, which the presets already had; no number moves"
+    },
+    {
+     "commit": "65f0ea9",
+     "why": "Healing race sims skip what their pilots show changes nothing (same numbers, fewer fights), and a faster Swiftmend check; the only move is Holy Priest Troll Shadowguard, 0.0002 +- 0.0023 before, now no effect"
+    },
+    {
+     "commit": "4654ee8",
+     "why": "the same skip also checks HPS and mana at the encounter damage, so no number moves"
     }
    ],
    "source": {

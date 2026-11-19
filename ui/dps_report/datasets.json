@@ -482,7 +482,7 @@
   "title": "Healing by race: racial parts",
   "description": "Per healing preset and race: its base stats (every racial left out) and what each racial part adds to the damage carried, with the part's paired error. The parts add up to the race's damage carried.",
   "updated": {
-   "at": "2026-11-18T17:00:34.292Z",
+   "at": "2026-11-19T11:39:56.765Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
