@@ -190,7 +190,27 @@ func (spell *Spell) PhysicalHitChance(attackTable *AttackTable) float64 {
 func (spell *Spell) PhysicalCritChance(attackTable *AttackTable) float64 {
 	critRating := spell.Unit.stats[stats.MeleeCrit] +
 		spell.BonusCritRating
-	return critRating/(CritRatingPerCritChance*100) - attackTable.MeleeCritSuppression
+	return critRating/(CritRatingPerCritChance*100) - attackTable.MeleeCritSuppression +
+		spell.Unit.critChanceAgainst(attackTable.Defender)
+}
+
+// critChanceAgainst is our extra chance to crit the target from a mark of ours on it.
+func (unit *Unit) critChanceAgainst(target *Unit) float64 {
+	if int(target.UnitIndex) >= len(unit.CritChanceAgainst) {
+		return 0
+	}
+	return unit.CritChanceAgainst[target.UnitIndex]
+}
+
+// AddCritChanceAgainst adds to our chance to crit the target, as a mark of ours on it goes up
+// (bonus is a chance, 0.05 for 5%), or takes it off again with a negative bonus.
+func (unit *Unit) AddCritChanceAgainst(target *Unit, bonus float64) {
+	if int(target.UnitIndex) >= len(unit.CritChanceAgainst) {
+		grown := make([]float64, max(len(unit.Env.AllUnits), int(target.UnitIndex)+1))
+		copy(grown, unit.CritChanceAgainst)
+		unit.CritChanceAgainst = grown
+	}
+	unit.CritChanceAgainst[target.UnitIndex] += bonus
 }
 func (spell *Spell) PhysicalCritCheck(sim *Simulation, attackTable *AttackTable) bool {
 	return sim.RandomFloat("Physical Crit Roll") < spell.PhysicalCritChance(attackTable)
@@ -292,7 +312,8 @@ func (spell *Spell) SpellCritChance(target *Unit) float64 {
 	// TODO: Classic verify crit suppression
 	return spell.spellCritRating(target)/(SpellCritRatingPerCritChance*100) +
 		target.GetSchoolCritTakenChance(spell) +
-		(spell.Unit.GetSchoolBonusCritChance(spell) / (SpellCritRatingPerCritChance * 100))
+		(spell.Unit.GetSchoolBonusCritChance(spell) / (SpellCritRatingPerCritChance * 100)) +
+		spell.Unit.critChanceAgainst(target)
 	// - spell.Unit.AttackTables[target.UnitIndex][spell.CastType].SpellCritSuppression
 }
 func (spell *Spell) MagicCritCheck(sim *Simulation, target *Unit) bool {

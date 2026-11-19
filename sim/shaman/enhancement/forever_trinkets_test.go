@@ -15,6 +15,12 @@ import (
 // newTrinketSim starts a Forever sim of a level 60 Orc shaman with the given trinkets and no
 // weapon, against the given number of level 63 targets with no armor.
 func newTrinketSim(t *testing.T, targets int, seconds float64, trinkets ...int32) (*core.Simulation, *EnhancementShaman) {
+	return newTrinketSimWith(t, nil, targets, seconds, trinkets...)
+}
+
+// newTrinketSimWith is newTrinketSim with a setup that changes the request before the sim is
+// built, like a target's mob_family, the encounter's outdoor_terrain or the ruleset.
+func newTrinketSimWith(t *testing.T, setup func(*proto.RaidSimRequest), targets int, seconds float64, trinkets ...int32) (*core.Simulation, *EnhancementShaman) {
 	player := newOrcShaman(60, stormstrike, &proto.EnhancementShaman_Options{})
 	for range proto.ItemSlot_ItemSlotRanged + 1 {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
@@ -28,11 +34,15 @@ func newTrinketSim(t *testing.T, targets int, seconds float64, trinkets ...int32
 		target.Stats[proto.Stat_StatArmor] = 0
 		encounterTargets[i] = target
 	}
-	sim := core.NewSim(&proto.RaidSimRequest{
+	request := &proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: seconds, Targets: encounterTargets},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
-	}, simsignals.CreateSignals())
+	}
+	if setup != nil {
+		setup(request)
+	}
+	sim := core.NewSim(request, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()
 	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)

@@ -43,6 +43,10 @@ type Encounter struct {
 	// The fight is in a zone where Forever's natural flasks give their bonus beyond Stamina.
 	NaturalFlaskZone bool
 
+	// The kind of outdoor area the fight is in, for the item effects that grow there (Golden
+	// Banana, Frozen Heart of the Mountain). None in a dungeon or raid.
+	OutdoorTerrain proto.OutdoorTerrain
+
 	// A healing fight: every player's health is tracked and a player can die (health.go,
 	// player_death.go). docs/healing_sim.md.
 	TrackHealth bool
@@ -67,6 +71,7 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		RaidDamageHitsPerMinute: max(options.RaidDamageHitsPerMinute, 0),
 		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
 		NaturalFlaskZone:        options.NaturalFlaskZone,
+		OutdoorTerrain:          options.OutdoorTerrain,
 		TrackHealth:             options.TrackHealth,
 		RaidDamage:              options.RaidDamage,
 	}
@@ -164,6 +169,7 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 			Label:       "Target " + strconv.Itoa(int(targetIndex)+1),
 			Level:       options.Level,
 			MobType:     options.MobType,
+			MobFamily:   options.MobFamily,
 			auraTracker: newAuraTracker(),
 			stats:       unitStats,
 			PseudoStats: stats.NewPseudoStats(),

@@ -63,6 +63,15 @@ type Unit struct {
 	Level int32 // Level of Unit, e.g. Bosses are 63.
 
 	MobType proto.MobType
+	// The target's race or creature family (Orc, Ogre, Troll, Dinosaur), for the item effects
+	// that only count against some of them, like Blackhand's Breadth's doubled mark on Orcs.
+	MobFamily proto.MobFamily
+
+	// CritChanceAgainst holds our extra chance to crit each unit, by its UnitIndex, from a mark
+	// we put on it (Blackhand's Breadth). It counts for our melee, ranged and spell hits. It
+	// stays empty until a mark goes up (AddCritChanceAgainst), so the crit rolls of everyone
+	// else only check its length.
+	CritChanceAgainst []float64
 
 	// Amount of time it takes for the human agent to react to in-game events.
 	// Used by certain APL values and actions.

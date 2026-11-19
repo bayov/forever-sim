@@ -77,6 +77,8 @@ const (
 	SerpentSlicer             = 13035
 	HeartseekingCrossbow      = 13040
 	Witchfury                 = 13051
+	BlackhandsBreadth         = 13965
+	EyeOfTheBeast             = 13968
 	Doombringer               = 13053
 	GrimReaper                = 13054
 	TheNeedler                = 13060
@@ -183,6 +185,8 @@ const (
 	FrozenHeartOfTheMountain  = 249469
 	MoltenHeartOfTheMountain  = 249470
 	GoldenBanana              = 270226
+	AdaptiveCombatAssistant   = 272437
+	WeaknessAnalyzer          = 272438
 	GraverobbersShovel        = 273817
 	EverlookPathcarver        = 274759
 	EverlookDeliveryBot       = 274760
@@ -2996,6 +3000,165 @@ func init() {
 	//                                 Trinkets
 	///////////////////////////////////////////////////////////////////////////
 
+	// https://www.wowhead.com/forever/item=272437/adaptive-combat-assistant
+	// Forever: Use: Damage Sigmoid (1291097) puts a shield on us that absorbs 450 damage of any
+	// school for 15 sec. When the shield runs out before the 15 sec are up, Sigmoid Revenge
+	// (1291099) deals 100 Nature damage to the enemies in front of us in melee range. 5 min
+	// cooldown, and 15 sec on category 1141 ("Item - Burst Trinket") that the other Forever burst
+	// trinkets share (client 1.60.1.70959 ItemEffect 232251, SpellEffect, SpellMisc and
+	// SpellTargetRestrictions). The cooldown is the 5 min of server hotfix push 113769.
+	//
+	// Sigmoid Revenge is a magic attack with no spell power coefficient, so it can miss and crit
+	// like a spell. Its cone has no target cap, and we take it that every enemy is in front of us,
+	// as we do for Chained Essence of Eranikus' cloud.
+	//
+	// The shield only breaks when we take damage. The DPS sim only hits us when the boss tanks us
+	// or the encounter sets raid damage (raid_damage_hits_per_minute and raid_damage_per_hit), so
+	// we only use it then. Without either it would do nothing but put the other burst trinkets on
+	// their 15 sec cooldown.
+	core.NewItemEffect(AdaptiveCombatAssistant, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		revenge := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 1291099},
+			SpellSchool: core.SpellSchoolNature,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				for _, target := range sim.Encounter.ActiveTargetUnits {
+					spell.CalcAndDealDamage(sim, target, 100, spell.OutcomeMagicHitAndCrit)
+				}
+			},
+		})
+
+		shieldDuration := time.Second * 15
+		shields := character.NewAbsorbArray(core.Aura{
+			Label:    "Damage Sigmoid",
+			ActionID: core.ActionID{SpellID: 1291097},
+			Duration: shieldDuration,
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				// The shield ran out early when it goes before its 15 sec are up. At the end of
+				// the fight every aura goes too, and that is not the shield breaking.
+				if sim.CurrentTime < aura.StartedAt()+shieldDuration && sim.CurrentTime < sim.Duration {
+					revenge.Cast(sim, character.CurrentTarget)
+				}
+			},
+		})
+		shield := shields.Get(&character.Unit)
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: AdaptiveCombatAssistant},
+			ProcMask: core.ProcMaskEmpty,
+			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 5,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 15,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				shield.Apply(sim, spell, 450)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return takesHits(character)
+			},
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=13965/blackhands-breadth
+	// Forever: Equip: 1% crit with melee and ranged attacks (1318954, the item's stats). Use: Marks
+	// the target (1318944), and our melee, ranged and spell hits on it crit 5% more often for 20
+	// sec. "This effect is doubled against Orcs and Ogres." 5 min cooldown, and 20 sec on category
+	// 1141 ("Item - Burst Trinket") that the other Forever burst trinkets share (client
+	// 1.60.1.70959 ItemEffect 231535, SpellEffect and SpellCategories, and the user's in-game
+	// tooltip of 2026-11-20).
+	//
+	// The mark is aura 306 (crit chance taken from the caster), with no school or attack type in
+	// its effect. The game adds that aura to the caster's melee, ranged and spell crit rolls alike,
+	// so our Lightning Bolts and Flame Shock ticks crit more on the marked target too. Only our
+	// own hits count, not those of the rest of the raid.
+	//
+	// The mark is a Shadow spell with the magic defense type (SpellCategories 188830), so it rolls
+	// spell hit and can miss. A missed mark still costs the cooldown. The 10% against Orcs and
+	// Ogres follows the target's mob_family. The client has no number for it, so we take the
+	// tooltip's word that it doubles.
+	//
+	// Classic's Blackhand's Breadth (2% crit, no use) gets no use effect here.
+	core.NewItemEffect(BlackhandsBreadth, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		marks := character.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+			bonus := 0.05
+			if target.MobFamily == proto.MobFamily_MobFamilyOrc || target.MobFamily == proto.MobFamily_MobFamilyOgre {
+				bonus *= 2
+			}
+			return target.GetOrRegisterAura(core.Aura{
+				Label:    fmt.Sprintf("Blackhand's Breadth-%d", character.UnitIndex),
+				ActionID: core.ActionID{SpellID: 1318944},
+				Duration: time.Second * 20,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					character.AddCritChanceAgainst(aura.Unit, bonus)
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					character.AddCritChanceAgainst(aura.Unit, -bonus)
+				},
+			})
+		})
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: BlackhandsBreadth},
+			SpellSchool: core.SpellSchoolShadow,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 5,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 20,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+				if result.Landed() {
+					marks.Get(target).Activate(sim)
+				}
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+
 	// https://www.wowhead.com/forever/item=280032/bolts-charged-eyeball
 	// Forever: Equip: Grounded Electroshocks (1311505). Dealing damage has a chance, at most once
 	// every 3 sec, to deal 60 Nature damage (Grounded Electroshock, 1315996) to you or your current
@@ -3013,8 +3176,11 @@ func init() {
 	// In the same log, 36 of the 117 shocks hit us and 81 hit the target, so we send 30% of the
 	// shocks at us (the log's 95% range is 22 to 39%). A shock
 	// that hits us only costs the 60 damage it would have dealt, because the DPS sim does not
-	// track our health against it, so we skip it. We also leave out the tripled damage to
-	// Dinosaurs, since our targets have no such type.
+	// track our health against it, so we skip it.
+	//
+	// The shock deals 3 times as much (180) to a Dinosaur target (Target.mob_family). The client
+	// has the 3 as the second effect of Grounded Electroshocks (1311505), and the tooltip says
+	// "Deals 3 times as much damage to Dinosaurs".
 	core.NewItemEffect(BoltsChargedEyeball, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.Env.IsForever() {
@@ -3032,7 +3198,11 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamage(sim, target, 60, spell.OutcomeMagicHitAndCrit)
+				damage := 60.0
+				if target.MobFamily == proto.MobFamily_MobFamilyDinosaur {
+					damage *= 3
+				}
+				spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -3117,8 +3287,11 @@ func init() {
 	// SpellCategories row), and in the Nov 13 log it landed on all 85 enemies it was cast on.
 	//
 	// The cloud has no target cap, so it hits every enemy. We take it that the boss stays in it
-	// for the whole 20 sec, and we leave out the doubled damage to Trolls, since our targets have
-	// no race.
+	// for the whole 20 sec.
+	//
+	// A Troll target (Target.mob_family) takes twice as much from each tick (280). The client has
+	// the 2 as the second effect of the tick spell (1300240), and the tooltip says "Deals 2 times
+	// as much damage to Trolls".
 	//
 	// Classic's version (Poison Cloud, 50 Nature every 5 sec for 45 sec, a 1 sec cast and a 15 min
 	// cooldown) is not modeled.
@@ -3145,7 +3318,11 @@ func init() {
 				NumberOfTicks: 9,
 				TickLength:    time.Second * 2,
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-					dot.Spell.CalcAndDealPeriodicDamage(sim, target, 140, dot.OutcomeTick)
+					damage := 140.0
+					if target.MobFamily == proto.MobFamily_MobFamilyTroll {
+						damage *= 2
+					}
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
 				},
 			},
 
@@ -3476,6 +3653,21 @@ func init() {
 	// Use: Increases damage done by magical spells and effects by up to 50, and decreases the magical resistances of your spell targets by 100 for 30 sec. (3 Min Cooldown)
 	core.NewSimpleStatOffensiveTrinketEffect(EyeOfMoam, stats.Stats{stats.SpellDamage: 50, stats.SpellPenetration: 100}, time.Second*30, time.Minute*3)
 
+	// https://www.wowhead.com/forever/item=13968/eye-of-the-beast
+	// Forever: Equip: 1% spell crit (1318956, the item's stats). Use: 7% spell hit for 20 sec
+	// (1287840, aura 55). 5 min cooldown, and 20 sec on category 1141 ("Item - Burst Trinket")
+	// that the other Forever burst trinkets share (client 1.60.1.70959 ItemEffect 231536 and
+	// SpellEffect). Our log of 2026-11-14 shows another player wearing the buff. Classic's Eye of
+	// the Beast (2% spell crit, no use) gets no use effect here.
+	core.NewItemEffect(EyeOfTheBeast, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+		registerForeverStatTrinket(character, EyeOfTheBeast, stats.Stats{stats.SpellHit: 7 * core.SpellHitRatingPerHitChance},
+			time.Second*20, time.Minute*5, time.Second*20)
+	})
+
 	// Hand of Justice procs on 1% of landed melee hits under Forever, and 2% in Classic.
 	//
 	// wowhead Forever's spell tooltip says "1% chance on Melee hit to gain 1 extra attack.
@@ -3518,20 +3710,42 @@ func init() {
 	// https://www.wowhead.com/forever/item=249469/frozen-heart-of-the-mountain
 	// Forever: Use: Chthonic Power (1249110), 29 Frost and Shadow damage (misc 48) for 15 sec. 5 min
 	// cooldown, 15 sec on the shared trinket category (wowsims/forever's client store and db.json).
-	// The doubling in snowy areas is left out.
-	core.NewSimpleStatOffensiveTrinketEffect(FrozenHeartOfTheMountain, stats.Stats{stats.FrostPower: 29, stats.ShadowPower: 29}, time.Second*15, time.Minute*5)
+	//
+	// "This effect is doubled in Snowy areas" (the spell's tooltip, client 1.60.1.70959). So we
+	// give 58 when the encounter's outdoor_terrain is Snow.
+	core.NewItemEffect(FrozenHeartOfTheMountain, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		bonus := 29.0
+		if character.Env.Encounter.OutdoorTerrain == proto.OutdoorTerrain_OutdoorTerrainSnow {
+			bonus *= 2
+		}
+		registerForeverStatTrinket(character, FrozenHeartOfTheMountain, stats.Stats{stats.FrostPower: bonus, stats.ShadowPower: bonus},
+			time.Second*15, time.Minute*5, time.Second*15)
+	})
 
 	// https://www.wowhead.com/forever/item=270226/golden-banana
 	// Forever: Use: Monkey Business (1287571), 16 to all stats for 15 sec. 5 min cooldown, 15 sec on
-	// the shared trinket category (wowsims/forever's client store and db.json). The doubling in
-	// forest and grassland areas is left out.
-	core.NewSimpleStatOffensiveTrinketEffect(GoldenBanana, stats.Stats{
-		stats.Strength:  16,
-		stats.Agility:   16,
-		stats.Stamina:   16,
-		stats.Intellect: 16,
-		stats.Spirit:    16,
-	}, time.Second*15, time.Minute*5)
+	// the shared trinket category (wowsims/forever's client store and db.json).
+	//
+	// "Effect and duration are doubled in Forest and Grassland areas" (the spell's tooltip, client
+	// 1.60.1.70959). So when the encounter's outdoor_terrain is Forest or Grassland we give 32 to
+	// all stats for 30 sec. The other burst trinkets still wait only the category's 15 sec
+	// (ItemEffect 231489), since the doubling is on the buff and not on the item.
+	core.NewItemEffect(GoldenBanana, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		bonus, duration := 16.0, time.Second*15
+		switch character.Env.Encounter.OutdoorTerrain {
+		case proto.OutdoorTerrain_OutdoorTerrainForest, proto.OutdoorTerrain_OutdoorTerrainGrassland:
+			bonus, duration = bonus*2, duration*2
+		}
+		registerForeverStatTrinket(character, GoldenBanana, stats.Stats{
+			stats.Strength:  bonus,
+			stats.Agility:   bonus,
+			stats.Stamina:   bonus,
+			stats.Intellect: bonus,
+			stats.Spirit:    bonus,
+		}, duration, time.Minute*5, time.Second*15)
+	})
 
 	// https://www.wowhead.com/classic/item=22321/heart-of-wyrmthalak
 	// Equip: Chance to bathe your melee target in flames for 120 to 180 Fire damage.
@@ -3870,6 +4084,75 @@ func init() {
 			Type:  core.CooldownTypeDPS,
 		})
 	})
+
+	// https://www.wowhead.com/forever/item=272438/weakness-analyzer
+	// Forever: Use: Analyzing Weaknesses (1291101) raises our crit chance with all spells and
+	// attacks by 5% for 20 sec, or until we deal a crit that isn't a periodic tick. 6 min cooldown
+	// (server hotfix push 113769), and 20 sec on category 1141 ("Item - Burst Trinket") that the
+	// other Forever burst trinkets share (client 1.60.1.70959 ItemEffect 232252, SpellEffect and
+	// SpellAuraOptions).
+	//
+	// The buff is aura 290 (crit chance with everything) with one charge. Its proc flags are
+	// every kind of hit we deal except periodic ones, so the first melee, ranged or spell crit of
+	// ours that isn't a tick takes it off. That crit still had the 5%.
+	core.NewItemEffect(WeaknessAnalyzer, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		aura := character.NewTemporaryStatsAuraWrapped("Analyzing Weaknesses", core.ActionID{SpellID: 1291101},
+			stats.Stats{stats.MeleeCrit: 5 * core.CritRatingPerCritChance, stats.SpellCrit: 5 * core.SpellCritRatingPerCritChance},
+			time.Second*20, func(aura *core.Aura) {
+				aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if result.DidCrit() {
+						aura.Deactivate(sim)
+					}
+				}
+			})
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: WeaknessAnalyzer},
+			ProcMask: core.ProcMaskEmpty,
+			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 6,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 20,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				aura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+
+	// Forever on-use trinkets whose use we leave out, so they give only their stats:
+	//
+	// - 276337 Thaelemaches' Talisman: Demonbane (1299440) fears the Demons around us for 6 sec.
+	//   Crowd control is outside the DPS sim.
+	// - 276744 Zarla's Snack Pouch: summons a Black Dragon Whelp (NPC 274297) for 15 sec, which
+	//   melees and casts Fireball (9053). The whelp's damage, attack speed and level scaling are
+	//   server data the client doesn't have. Our logs of 2026-11-11 to 2026-11-14 hold five
+	//   summons by another player, with one Fireball and two swings between them, and that is too
+	//   little to build a pet from.
+	// - 280060 Lucky Shovelnose Tuft: 5% dodge for 15 sec (1315844), a defensive use.
+	// - 280065 Behemoth Bones: heals us and the nearest ally for 505 (1315849).
+	// - 280074 Scalding Flamehoof: 14% more Fire damage taken and 14% movement speed for 20 sec
+	//   (1309551), on ourselves. It only costs us, and the DPS sim has no fire on us or movement.
+	//
+	// (client 1.60.1.70959 ItemEffect, SpellEffect and SpellTargetRestrictions)
 
 	// https://www.wowhead.com/classic/item=23078/gauntlets-of-undead-slaying
 	// +60 Attack Power when fighting Undead.
@@ -4437,4 +4720,42 @@ func ArmorShatterAuras(target *core.Unit) *core.Aura {
 	})
 
 	return aura
+}
+
+// registerForeverStatTrinket registers an on-use stat trinket on the shared burst trinket
+// category (1141), the way core.NewSimpleStatOffensiveTrinketEffect does. The difference is that
+// the stats and the duration come per character, for a trinket whose buff depends on the
+// encounter (Golden Banana in a forest) or that only has its use under Forever (Eye of the Beast).
+// categoryCooldown is how long the other burst trinkets wait after it.
+func registerForeverStatTrinket(character *core.Character, itemID int32, bonus stats.Stats, duration, cooldown, categoryCooldown time.Duration) {
+	core.RegisterTemporaryStatsOnUseCD(character, fmt.Sprintf("ItemActive-%d", itemID), bonus, duration, core.SpellConfig{
+		ActionID: core.ActionID{ItemID: itemID},
+		Flags:    core.SpellFlagOffensiveEquipment,
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: cooldown,
+			},
+			SharedCD: core.Cooldown{
+				Timer:    character.GetOffensiveTrinketCD(),
+				Duration: categoryCooldown,
+			},
+		},
+	})
+}
+
+// takesHits is whether anything in the encounter hits the character: the boss tanking it, or
+// the raid damage on the players it isn't tanking (Encounter.raid_damage_hits_per_minute, or a
+// healing fight's raid_damage).
+func takesHits(character *core.Character) bool {
+	encounter := &character.Env.Encounter
+	if (encounter.RaidDamageHitsPerMinute > 0 && encounter.RaidDamagePerHit > 0) || len(encounter.RaidDamage) > 0 {
+		return true
+	}
+	for _, target := range encounter.TargetUnits {
+		if target.CurrentTarget == &character.Unit {
+			return true
+		}
+	}
+	return false
 }

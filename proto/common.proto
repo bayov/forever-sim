@@ -1016,6 +1016,26 @@ enum MobType {
 	MobTypeUndead = 8;
 }
 
+// A target's race or creature family, for the item effects that only count against some of them,
+// like Blackhand's Breadth's mark (doubled on Orcs and Ogres). MobType is the wider creature type
+// (an Orc is a Humanoid, a Dinosaur is a Beast), so we keep this as its own field.
+enum MobFamily {
+	MobFamilyUnknown = 0;
+	MobFamilyOrc = 1;
+	MobFamilyOgre = 2;
+	MobFamilyTroll = 3;
+	MobFamilyDinosaur = 4;
+}
+
+// The kind of outdoor area the fight is in, for the item effects that grow there, like Golden
+// Banana's (doubled in forest and grassland) and Frozen Heart of the Mountain's (doubled in snow).
+enum OutdoorTerrain {
+	OutdoorTerrainNone = 0;
+	OutdoorTerrainForest = 1;
+	OutdoorTerrainGrassland = 2;
+	OutdoorTerrainSnow = 3;
+}
+
 enum InputType {
 	Bool = 0;
 	Number = 1;
@@ -1041,6 +1061,8 @@ message Target {
 
 	int32 level = 3;
 	MobType mob_type = 4;
+	// The target's race or creature family, when an item effect cares (MobFamily).
+	MobFamily mob_family = 17;
 	repeated double stats = 5;
 
 	// Auto attack parameters.
@@ -1123,6 +1145,10 @@ message Encounter {
 
 	// The boss's abilities on the raid, on top of its melee on its tank (sim/core/raid_damage.go).
 	repeated RaidDamageEvent raid_damage = 15;
+
+	// The kind of outdoor area the fight is in (OutdoorTerrain). None, the default, is a dungeon,
+	// a raid or any other place no item effect cares about.
+	OutdoorTerrain outdoor_terrain = 16;
 }
 
 // How a tank is scored (Player.tank_scoring, docs/tank_sim.md). SafeDPS is the steady DPS a
