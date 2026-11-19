@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
+  "master": "67e6860f78a7db5e9ebd87559daa5079d73012ac"
  },
  "last_pass_at": "2026-11-18T19:04:07Z",
  "pass": 21,
@@ -8,5 +8,5 @@
  "baseline": "a6677362f",
  "note": "Pass 21 on a6677362f: full 63-cell re-bench (seed 101, 1,000 it, ref/healer_fairness/bench_a667736.tsv). Moved by 7199c8f9c (healers' idle skip now wakes for a hit a reaction time late) and the healbench speedups; tank paladin and tank priests identical. Tank: shaman 1.280, Holy 1.278, Disc 1.272, druid 1.267, paladin 1.152. Raid: Holy 1.472, paladin 1.418, shaman 1.390, druid 1.385. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-18T19:08:34Z"
+ "checked_at": "2026-11-19T00:44:53Z"
 }

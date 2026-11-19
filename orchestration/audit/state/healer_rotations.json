@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "a6677362fc06353c2312fa1d2be34214d605fcbb"
+  "master": "67e6860f78a7db5e9ebd87559daa5079d73012ac"
  },
  "last_pass_at": "2026-11-18T19:08:04Z",
  "pass": 19,
@@ -8,5 +8,5 @@
  "note": "Pass 19 on a6677362f. 7199c8f9c (idle skip wakes for late-seen hits) moved 42 of 63 baseline rows; filed -20261118-1 (unconfirmed paired check). Ref replaced. -20261115-1 and -20261104-2 still open (Disc Chromaggus unchanged, OOM 101 s).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-18T19:08:34Z"
+ "checked_at": "2026-11-19T00:44:53Z"
 }
