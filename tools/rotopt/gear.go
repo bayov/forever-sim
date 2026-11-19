@@ -538,7 +538,8 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 	var heldOffHand *proto.ItemSpec
 	var heldOffHandName string
 
-	for round := 1; ; round++ {
+	// With -gear-rank-only the starting gear is the set, and we go straight to its ranking.
+	for round := 1; !*gearRankOnly; round++ {
 		improved := false
 		for slot, options := range pool {
 			if len(options) == 0 {

@@ -160,3 +160,28 @@ func TestDisjointChanges(t *testing.T) {
 		t.Errorf("gearChanges = %v, want [2 3]", got)
 	}
 }
+
+// A conditional rank puts the item among the list's other entries by its loss with the condition
+// met, so a rank no higher than the number of picks means BiS under the condition.
+func TestBisRank(t *testing.T) {
+	// Two trinket picks, then entries losing 1.3, 3.5 (the item itself) and 4.5.
+	entries := []bisEntry{{Loss: 0, BiS: true}, {Loss: 0, BiS: true}, {Loss: 1.3}, {Loss: 3.5}, {Loss: 4.5}}
+	cases := []struct {
+		self int
+		loss float64
+		want int
+	}{
+		{3, -0.4, 1}, // Beats a pick: BiS.
+		{3, 0, 3},    // Level with the picks: right after them.
+		{3, 1.0, 3},  // Between the picks and the 1.3.
+		{3, 1.3, 4},  // A tie goes after the entry it ties.
+		{3, 4.0, 4},  // Its own 3.5 doesn't count.
+		{-1, 4.0, 5}, // An unlisted item counts every entry.
+		{-1, 9.0, 6},
+	}
+	for _, c := range cases {
+		if got := bisRank(entries, c.self, c.loss); got != c.want {
+			t.Errorf("bisRank(self %d, loss %g) = %d, want %d", c.self, c.loss, got, c.want)
+		}
+	}
+}

@@ -72,6 +72,42 @@ kept Wildheart Bracers while its own wrist ranking had Windtalker's Wristguards 
 We used to ask for the `-confidence` margin at `-iters` too, but then Don Julio's Band stayed
 2.3 DPS ahead of the rings on the next run, and it was 2.4 ahead at 20000 iterations.
 
+## Conditional ranks
+
+Some items do more in some fights. Blackhand's Breadth's mark doubles on Orcs and Ogres, Seal of
+the Dawn gives attack power only against Undead, and Golden Banana doubles in forest or
+grassland. The list is ranked on a plain boss, where they get none of that. So with
+`-gear-rank-conditions` (`tools/rotopt/bis_conditions.go`) we rank each such item a second time
+with its condition met, and write where it would go on the same list in its `conditional` field.
+The normal ranks never change.
+
+The item effects declare their conditions in the sim (`core.RegisterItemConditions`, in
+`sim/core/item_conditions.go`), so we don't screen the whole pool under every condition. The
+creature type helpers (`core.NewMobTypeAttackPowerEffect` and its spell damage twin) declare
+theirs, and a custom effect adds one line next to it. A creature condition goes on every target
+of the encounter. A condition the fight already meets is skipped.
+
+For each condition we score the set with the condition met, once, and then each of its items in
+the set with the condition met too. The item's conditional `loss` is what it loses against that
+set. A ring or trinket goes in place of either pick, and the better of the two counts. These runs
+are at `-gear-rank-confirm-iters` and share their seed.
+
+Its conditional `rank` is its place among the list's other entries by that loss. A negative loss
+beats a pick, so it is rank 1. Otherwise it comes after every other entry whose normal loss is the
+same or less. The picks lose 0, so a rank no higher than the slot's number of picks always means
+BiS under the condition, and anything else is past the picks. A pick with a condition keeps its
+place: its rank is its own position and its loss 0.
+
+An item can make the list only with its condition met, like Seal of the Dawn on a trinket list. So
+we look at every conditional item of the slot's pool (the same filters as the search), not only
+the listed ones. When one's conditional rank is within `-gear-rank-keep`, it joins the list as a
+normal entry, with its normal `dps` and `loss` at `-iters`, at the place its normal DPS gives it.
+The list can then be longer than `-gear-rank-keep`.
+
+Item sets and enchants with a condition (the Undead slaying sets, Beastslaying, Elemental
+Slayer) aren't ranked this way. A set bonus needs the other pieces of the set, and the enchants
+have their own list.
+
 ## Enchants
 
 With `-gear-rank-enchants` the list also ranks the enchants (`tools/rotopt/bis_enchants.go`).
@@ -162,6 +198,11 @@ can be filled in.
   way of getting yet, worth a look by hand. `with` is the item in the other hand: on a one hand
   main hand the off hand it was scored with, on an off hand the main hand.
 - `enchant` on a pick is the enchant the set has on it, by its `id` in the slot's enchant list.
+- `conditional` (only with `-gear-rank-conditions`, and only on an item with a condition) says
+  where the item would go on this list with its condition met, one line for each condition:
+  `{"label":"vs Orcs and Ogres","rank":2,"loss":-0.42}`. `label` is what the player reads,
+  `rank` is its place (no higher than the number of picks means BiS), and `loss` is what it
+  loses against the set with the condition met. See Conditional ranks.
 - `enchants` (only with `-gear-rank-enchants`) has a list for each slot that takes an enchant,
   keyed like `slots` (`head`, `neck`, `back`, `chest`, `wrist`, `hands`, `legs`, `feet`,
   `mainhand`, ...), the pick first (`bis`) and then best first. `id` is the enchant's effect ID
@@ -202,7 +243,14 @@ Totem of Sustaining (Scholomance), the Defilers' Arathi Basin rewards (doubtful 
 Arathi Basin is open), and every other item the hand check keeps that our data puts after phase
 2, so a doubtful item is marked on the list rather than left out. The list keeps the off hand empty next to its two hander
 (`-gear-rank-two-hand-only`). Then it ranks the enchants on the set (see Enchants), with
-`phase0_enchants.json` as the hand check, and the items on the set with its best enchants.
+`phase0_enchants.json` as the hand check, and the items on the set with its best enchants, and
+the conditional items with their condition met (see Conditional ranks).
+
+`RANK_ONLY=1 tools/rotopt/bis_phase0.sh` skips the gear search (`-gear-rank-only`) and ranks the
+list's own picks again, enchants included. It is for a rerun after
+a sim or item data change. The ranking still puts in an item that beats its pick. `FROM` is the
+list it takes the picks from (the list itself by default), `OUT` writes somewhere else, and any
+arguments go on to rotopt after the script's, so `-iters 300` makes a quick check.
 
 ## Before release
 

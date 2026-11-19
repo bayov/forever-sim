@@ -4,6 +4,15 @@
 #
 #   tools/rotopt/bis_phase0.sh
 #   TALENTS=053303102-055030110051012151-03 tools/rotopt/bis_phase0.sh
+#   RANK_ONLY=1 tools/rotopt/bis_phase0.sh
+#
+# RANK_ONLY=1 skips the gear search and ranks the picks of the list we
+# have (FROM, the list itself by default) again, enchants included. It is for a rerun after a sim
+# or item data change that shouldn't move the picks much, since the ranking still follows an item
+# that beats its pick (docs/bis_lists.md). OUT writes the list somewhere else, and any arguments go
+# on to rotopt after ours, so they win: a quick check can run at fewer iterations with
+#
+#   RANK_ONLY=1 OUT=/tmp/check.bis.json tools/rotopt/bis_phase0.sh -iters 300 -gear-rank-confirm-iters 2000 -gear-rank-enchant-iters 1000
 #
 # Phase 0 is what Forever has before its raids open on 2026-12-09: dungeons, quests, crafting,
 # reputation, world drops and PvP reputation (tools/rotopt/phase0.go has the rules). The fight
@@ -70,6 +79,10 @@
 # hand check of what's open, by spell ID: "out" leaves an enchant out (raid formulas, Alliance
 # quests), and its avail and note go on the list's entries. Each slot keeps its 10 best enchants.
 #
+# Items whose effect grows under a condition (Blackhand's Breadth vs Orcs and Ogres, Seal of the Dawn
+# vs Undead, Golden Banana in forest or grassland) are ranked again with it met, and an item that
+# makes the list only that way joins it (-gear-rank-conditions, docs/bis_lists.md).
+#
 # Each slot keeps its 25 best items. After the search we copy `avail` and `note` from
 # phase0_content.json onto every entry of the list, so a rerun keeps them.
 #
@@ -88,7 +101,8 @@ trap 'rm -rf "$tmp"' EXIT
 talents="${TALENTS:-053303102-054030110051212141-03}"
 req=tools/dps_report/req/shaman__enhancement-level60.json
 content=tools/rotopt/phase0_content.json
-out=ui/enhancement_shaman/bis/level60_phase0.bis.json
+out="${OUT:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
+from="${FROM:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
 exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
 jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
@@ -101,6 +115,21 @@ jq --arg talents "$talents" '.raid.parties[0].players[0].talentsString = $talent
 	| .raid.parties[0].players[0].equipment.items = [range(17) as $i
 		| if $ids[$i] == null then {} else {id: $ids[$i]} + (if $old[$i].enchant and $i != 15 then {enchant: $old[$i].enchant} else {} end) end]' \
 	"$req" >"$tmp/enh.json"
+rank_only=""
+if [ -n "$RANK_ONLY" ]; then
+	# The list's picks, with their suffix and enchant, in the order of the equipment list. An
+	# empty slot (the off hand next to a two hander) has no pick.
+	jq --slurpfile list "$from" '$list[0].slots as $s
+		| def pick($k; $i): ([$s[$k][]? | select(.bis)][$i]) as $p
+			| if $p == null then {} else {id: $p.id} + (if $p.suffix then {randomSuffix: $p.suffix} else {} end)
+				+ (if $p.enchant then {enchant: $p.enchant} else {} end) end;
+		.raid.parties[0].players[0].equipment.items = [pick("head"; 0), pick("neck"; 0), pick("shoulder"; 0), pick("back"; 0),
+			pick("chest"; 0), pick("wrist"; 0), pick("hands"; 0), pick("waist"; 0), pick("legs"; 0), pick("feet"; 0),
+			pick("finger"; 0), pick("finger"; 1), pick("trinket"; 0), pick("trinket"; 1), pick("mainhand"; 0), pick("offhand"; 0), pick("ranged"; 0)]' \
+		"$tmp/enh.json" >"$tmp/picks.json"
+	mv "$tmp/picks.json" "$tmp/enh.json"
+	rank_only=-gear-rank-only
+fi
 
 go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs 180 -iters 2000 \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
@@ -109,7 +138,7 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim" \
 	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
-	-gear-rank-confirm-iters 20000
+	-gear-rank-confirm-iters 20000 -gear-rank-conditions $rank_only "$@"
 
 # The content check's status on every entry.
 jq --slurpfile content "$content" '.slots |= map_values(map(

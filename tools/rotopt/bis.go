@@ -48,6 +48,8 @@ var (
 
 	gearRankConfirmIters = flag.Int("gear-rank-confirm-iters", 0, "gear search: the iterations that confirm an item the -gear-rank-out ranking puts ahead of the set's pick before it takes the pick's place (0 is 10 times -iters)")
 
+	gearRankOnly = flag.Bool("gear-rank-only", false, "gear search: skip the search and rank the starting gear as the set for -gear-rank-out, to redo a list's ranking from its picks (bis_phase0.sh RANK_ONLY=1)")
+
 	gearRankTwoHandOnly = flag.Bool("gear-rank-two-hand-only", false, "gear search: when the -gear-rank-out main hand pick is a two hander, list only two handers in the main hand and leave the off hand list empty")
 )
 
@@ -65,6 +67,9 @@ type bisEntry struct {
 	BiS  bool  `json:"bis,omitempty"`
 	// Enchant is a pick's enchant, by its effect ID in the sim (the enchants list's id).
 	Enchant int32 `json:"enchant,omitempty"`
+	// Conditional is where the item would go on this list with a condition met that makes its
+	// effect bigger, one for each condition (-gear-rank-conditions, bis_conditions.go).
+	Conditional []bisConditional `json:"conditional,omitempty"`
 }
 
 type bisSlot struct {
@@ -310,7 +315,7 @@ func sameGear(spec *proto.ItemSpec, o gearOption) bool {
 // its own wrist ranking had Windtalker's Wristguards 2.5 DPS ahead.
 func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool, knobs Knobs) error {
 	for pass := 1; ; pass++ {
-		enchants, base, slots, challengers, err := s.rankBisPass(pool, best, names, unsourced, knobs)
+		enchants, base, slots, sources, challengers, err := s.rankBisPass(pool, best, names, unsourced, knobs)
 		if err != nil {
 			return err
 		}
@@ -324,6 +329,9 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				fmt.Printf("    %s: %s %s\n", c.slot, c.ranked.option.name, c.ranked.result)
 			}
 		}
+		if *gearRankConditions {
+			slots = s.rankConditions(slots, sources, best, base, knobs)
+		}
 		s.setGear(best)
 		for _, slot := range slots {
 			fmt.Printf("  %s:\n", slot.name)
@@ -336,6 +344,9 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				}
 				if e.Unsourced {
 					fmt.Print("  no source")
+				}
+				for _, c := range e.Conditional {
+					fmt.Printf("  %s: rank %d (%+.1f)", c.Label, c.Rank, 0-c.Loss)
 				}
 				fmt.Println()
 			}
@@ -358,9 +369,15 @@ type rankChallenger struct {
 // rankBisPass ranks every slot's options against the set best, with the best enchants first
 // when -gear-rank-enchants asks for them. challengers are the slots' best items that beat
 // the set at the ranking's iterations, by any margin.
+//
+// sources are the options each list ranked and how it placed them, for rankConditions.
 func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool, knobs Knobs) (
-	enchants []bisEnchantSlot, base result, slots []bisSlot, challengers []rankChallenger, err error) {
+	enchants []bisEnchantSlot, base result, slots []bisSlot, sources map[string][]rankSource, challengers []rankChallenger, err error) {
 	keep := *gearRankKeep
+	sources = map[string][]rankSource{}
+	source := func(list string, options []gearOption, placements func(gearOption) [][]*proto.ItemSpec, with func(rankedGear) *proto.ItemSpec) {
+		sources[list] = append(sources[list], rankSource{options, placements, with})
+	}
 	// With -gear-rank-enchants the set gets its best enchants first, so the items are
 	// ranked on them (bis_enchants.go).
 	if *gearRankEnchants != "" {
@@ -391,12 +408,6 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 		}
 	}
 
-	round2 := func(x float64) float64 {
-		if r := math.Round(x*100) / 100; r != 0 {
-			return r
-		}
-		return 0
-	}
 	entryOf := func(o gearOption, r result, with *proto.ItemSpec) bisEntry {
 		e := bisEntry{ID: o.spec.Id, Suffix: o.spec.RandomSuffix, Name: o.name, DPS: round2(r.dps), Loss: round2(base.dps - r.dps), Unsourced: o.unsourced}
 		if with != nil {
@@ -457,16 +468,20 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	}
 	single := func(slot int) {
 		picks := pickOf(slot, nil)
-		ranked := s.rankGear(gearSlotNames[slot], others(slot, best[slot]), func(o gearOption) [][]*proto.ItemSpec {
+		options := others(slot, best[slot])
+		placements := func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{swapped(slot, o.spec)}
-		}, emptied(slot), wide, knobs)
+		}
+		source(gearSlotNames[slot], options, placements, noOtherHand)
+		ranked := s.rankGear(gearSlotNames[slot], options, placements, emptied(slot), wide, knobs)
 		ahead(gearSlotNames[slot], ranked)
 		slots = append(slots, bisSlot{gearSlotNames[slot], trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
 	pair := func(name string, a, b int) {
 		picks := append(pickOf(a, nil), pickOf(b, nil)...)
 		// Each slot takes any item but the one the other slot holds.
-		ranked := s.rankGear(name, others(a, best[a], best[b]), func(o gearOption) [][]*proto.ItemSpec {
+		options := others(a, best[a], best[b])
+		placements := func(o gearOption) [][]*proto.ItemSpec {
 			var out [][]*proto.ItemSpec
 			if best[b] == nil || best[b].Id != o.spec.Id {
 				out = append(out, swapped(a, o.spec))
@@ -475,7 +490,9 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 				out = append(out, swapped(b, o.spec))
 			}
 			return out
-		}, emptied(a, b), wide, knobs)
+		}
+		source(name, options, placements, noOtherHand)
+		ranked := s.rankGear(name, options, placements, emptied(a, b), wide, knobs)
 		ahead(name, ranked)
 		slots = append(slots, bisSlot{name, trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
@@ -485,7 +502,7 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	}
 	pair("finger", int(proto.ItemSlot_ItemSlotFinger1), int(proto.ItemSlot_ItemSlotFinger2))
 	pair("trinket", int(proto.ItemSlot_ItemSlotTrinket1), int(proto.ItemSlot_ItemSlotTrinket2))
-	main, off := s.rankWeapons(pool, best, wide, knobs, pickOf, entriesOf, base, ahead)
+	main, off := s.rankWeapons(pool, best, wide, knobs, pickOf, entriesOf, base, ahead, source)
 	slots = append(slots, bisSlot{"mainhand", trimBis(main, keep)}, bisSlot{"offhand", trimBis(off, keep)})
 	single(int(proto.ItemSlot_ItemSlotRanged))
 	return
@@ -633,7 +650,7 @@ func disjointChanges(best []*proto.ItemSpec, gears [][]*proto.ItemSpec) []int {
 // hander is scored next to a two hander pick.
 func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep int, knobs Knobs,
 	pickOf func(int, *proto.ItemSpec) []bisEntry, entriesOf func([]rankedGear, func(rankedGear) *proto.ItemSpec) []bisEntry, base result,
-	ahead func(string, []rankedGear)) ([]bisEntry, []bisEntry) {
+	ahead func(string, []rankedGear), source func(string, []gearOption, func(gearOption) [][]*proto.ItemSpec, func(rankedGear) *proto.ItemSpec)) ([]bisEntry, []bisEntry) {
 	mh, oh := int(proto.ItemSlot_ItemSlotMainHand), int(proto.ItemSlot_ItemSlotOffHand)
 	// The set with o in the main hand and offHand in the off hand. A two hander leaves the
 	// off hand empty.
@@ -687,16 +704,21 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 		// A one hand pick: every other main hand next to the off hand the set holds, and
 		// every other off hand next to the set's main hand.
 		picks := pickOf(mh, best[oh])
-		ranked := s.rankGear("mainhand", append(oneHanders, twoHanders...), func(o gearOption) [][]*proto.ItemSpec {
+		mainOptions := append(oneHanders, twoHanders...)
+		mainPlacements := func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{withMainHand(o, best[oh])}
-		}, nil, keep-len(picks), knobs)
+		}
+		source("mainhand", mainOptions, mainPlacements, mainHandWith(best[oh]))
+		ranked := s.rankGear("mainhand", mainOptions, mainPlacements, nil, keep-len(picks), knobs)
 		ahead("mainhand", ranked)
 		mainList := append(picks, byDPS(entriesOf(ranked, mainHandWith(best[oh])))...)
 		offPicks := pickOf(oh, best[mh])
 		offOptions := slices.DeleteFunc(slices.Clone(pool[oh]), func(o gearOption) bool { return sameGear(best[oh], o) })
-		offRanked := s.rankGear("offhand", offOptions, func(o gearOption) [][]*proto.ItemSpec {
+		offPlacements := func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{withOffHand(o, best[mh])}
-		}, nil, keep-len(offPicks), knobs)
+		}
+		source("offhand", offOptions, offPlacements, func(rankedGear) *proto.ItemSpec { return best[mh] })
+		offRanked := s.rankGear("offhand", offOptions, offPlacements, nil, keep-len(offPicks), knobs)
 		ahead("offhand", offRanked)
 		return mainList, append(offPicks, entriesOf(offRanked, func(rankedGear) *proto.ItemSpec { return best[mh] })...)
 	}
@@ -704,9 +726,11 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	// A two hand pick. The best one hander with nothing in the off hand, then the best off
 	// hand next to it, then every one hander next to that off hand.
 	picks := pickOf(mh, nil)
-	twoRanked := s.rankGear("mainhand two handers", twoHanders, func(o gearOption) [][]*proto.ItemSpec {
+	twoPlacements := func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
-	}, nil, keep-len(picks), knobs)
+	}
+	source("mainhand", twoHanders, twoPlacements, noOtherHand)
+	twoRanked := s.rankGear("mainhand two handers", twoHanders, twoPlacements, nil, keep-len(picks), knobs)
 	ahead("mainhand", twoRanked)
 	mainList := append(picks, entriesOf(twoRanked, noOtherHand)...)
 	if *gearRankTwoHandOnly {
@@ -719,17 +743,21 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 		return mainList, nil
 	}
 	oneHand := s.withEnchantOf(mh, bare[0].option.spec, best[mh])
-	offRanked := s.rankGear("offhand", pool[oh], func(o gearOption) [][]*proto.ItemSpec {
+	offPlacements := func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withOffHand(o, oneHand)}
-	}, nil, keep, knobs)
+	}
+	source("offhand", pool[oh], offPlacements, func(rankedGear) *proto.ItemSpec { return oneHand })
+	offRanked := s.rankGear("offhand", pool[oh], offPlacements, nil, keep, knobs)
 	offList := entriesOf(offRanked, func(rankedGear) *proto.ItemSpec { return oneHand })
 	if len(offRanked) == 0 {
 		return mainList, offList
 	}
 	offHand := s.withEnchantOf(oh, offRanked[0].option.spec, best[oh])
-	oneRanked := s.rankGear("mainhand one handers", oneHanders, func(o gearOption) [][]*proto.ItemSpec {
+	onePlacements := func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, offHand)}
-	}, nil, keep-len(picks), knobs)
+	}
+	source("mainhand", oneHanders, onePlacements, mainHandWith(offHand))
+	oneRanked := s.rankGear("mainhand one handers", oneHanders, onePlacements, nil, keep-len(picks), knobs)
 	// A one hand setup that beats the two hander pick goes in the set like any other item
 	// that beats its pick. The search tries one handers next to the off hand it holds, and a
 	// two hander leaves none, so it may never have tried this setup.
