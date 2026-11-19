@@ -2075,150 +2075,150 @@
       {
         "id": 11815,
         "name": "Hand of Justice",
-        "dps": 1004.86,
-        "loss": 1.92
+        "dps": 1005.47,
+        "loss": 1.3
       },
       {
         "id": 10455,
         "name": "Chained Essence of Eranikus",
-        "dps": 1004.05,
-        "loss": 2.73
-      },
-      {
-        "id": 13965,
-        "name": "Blackhand's Breadth",
-        "dps": 1002.27,
-        "loss": 4.51
-      },
-      {
-        "id": 13968,
-        "name": "Eye of the Beast",
-        "dps": 1002.27,
-        "loss": 4.51
+        "dps": 1004.17,
+        "loss": 2.6
       },
       {
         "id": 13213,
         "name": "Smolderweb's Eye",
-        "dps": 1001.78,
-        "loss": 4.99
+        "dps": 1003.37,
+        "loss": 3.4
       },
       {
-        "id": 19120,
-        "name": "Rune of the Guard Captain",
-        "dps": 1000.95,
-        "loss": 5.82
+        "id": 13965,
+        "name": "Blackhand's Breadth",
+        "dps": 1003.27,
+        "loss": 3.5
+      },
+      {
+        "id": 13968,
+        "name": "Eye of the Beast",
+        "dps": 1003.27,
+        "loss": 3.5
       },
       {
         "id": 280065,
         "name": "Behemoth Bones",
-        "dps": 1000.89,
-        "loss": 5.89,
+        "dps": 1002.27,
+        "loss": 4.5,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Blackmaw Hold? · no source in db"
       },
       {
+        "id": 19120,
+        "name": "Rune of the Guard Captain",
+        "dps": 1002.07,
+        "loss": 4.7
+      },
+      {
         "id": 270225,
         "name": "Jewel of the Guard Captain",
-        "dps": 1000.51,
-        "loss": 6.27
+        "dps": 1001.97,
+        "loss": 4.8
       },
       {
         "id": 18537,
         "name": "Counterattack Lodestone",
-        "dps": 1000.04,
-        "loss": 6.74
-      },
-      {
-        "id": 280032,
-        "name": "Bolt's Charged Eyeball",
-        "dps": 999.96,
-        "loss": 6.82
+        "dps": 1001.37,
+        "loss": 5.4
       },
       {
         "id": 22268,
         "name": "Draconic Infused Emblem",
-        "dps": 999.87,
-        "loss": 6.91
-      },
-      {
-        "id": 274760,
-        "name": "Everlook Delivery Bot",
-        "dps": 999.83,
-        "loss": 6.95
+        "dps": 1001.27,
+        "loss": 5.5
       },
       {
         "id": 18471,
         "name": "Royal Seal of Eldre'Thalas",
-        "dps": 999.38,
-        "loss": 7.39
+        "dps": 1000.77,
+        "loss": 6.0
       },
       {
         "id": 272438,
         "name": "Weakness Analyzer",
-        "dps": 999.38,
-        "loss": 7.39,
+        "dps": 1000.77,
+        "loss": 6.0,
         "note": "Pix Xizzix · 125 Reals · unique with ACA"
       },
       {
         "id": 280060,
         "name": "Lucky Shovelnose Tuft",
-        "dps": 998.92,
-        "loss": 7.85,
+        "dps": 1000.27,
+        "loss": 6.5,
         "avail": "doubtful",
         "note": "Bonesnout the Unbroken · Blackmaw Hold · not in guides yet"
       },
       {
+        "id": 280032,
+        "name": "Bolt's Charged Eyeball",
+        "dps": 1000.07,
+        "loss": 6.7
+      },
+      {
         "id": 280074,
         "name": "Scalding Flamehoof",
-        "dps": 998.73,
-        "loss": 8.04
+        "dps": 1000.07,
+        "loss": 6.7
       },
       {
         "id": 12930,
         "name": "Briarwood Reed",
-        "dps": 998.43,
-        "loss": 8.35
-      },
-      {
-        "id": 270226,
-        "name": "Golden Banana",
-        "dps": 998.41,
-        "loss": 8.36
+        "dps": 999.77,
+        "loss": 7.0
       },
       {
         "id": 18370,
         "name": "Vigilance Charm",
-        "dps": 998.34,
-        "loss": 8.44
+        "dps": 999.67,
+        "loss": 7.1
       },
       {
-        "id": 19287,
-        "name": "Darkmoon Card: Heroism",
-        "dps": 997.76,
-        "loss": 9.02,
-        "avail": "doubtful",
-        "note": "Darkmoon Faire deck · Forever card drops unconfirmed"
-      },
-      {
-        "id": 11819,
-        "name": "Second Wind",
-        "dps": 997.74,
-        "loss": 9.03
+        "id": 274760,
+        "name": "Everlook Delivery Bot",
+        "dps": 999.27,
+        "loss": 7.5
       },
       {
         "id": 276337,
         "name": "Thaelemaches' Talisman",
-        "dps": 997.49,
-        "loss": 9.29,
+        "dps": 998.87,
+        "loss": 7.9,
         "avail": "doubtful",
         "note": "Quest: Blind Vengeance"
       },
       {
+        "id": 270226,
+        "name": "Golden Banana",
+        "dps": 998.57,
+        "loss": 8.2
+      },
+      {
         "id": 276744,
         "name": "Zarla's Snack Pouch",
-        "dps": 997.16,
-        "loss": 9.62
+        "dps": 998.47,
+        "loss": 8.3
+      },
+      {
+        "id": 11819,
+        "name": "Second Wind",
+        "dps": 997.47,
+        "loss": 9.3
+      },
+      {
+        "id": 19287,
+        "name": "Darkmoon Card: Heroism",
+        "dps": 996.77,
+        "loss": 10.0,
+        "avail": "doubtful",
+        "note": "Darkmoon Faire deck · Forever card drops unconfirmed"
       }
     ],
     "mainhand": [
