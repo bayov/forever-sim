@@ -288,12 +288,14 @@ class Planner(unittest.TestCase):
     def test_plan_commands(self):
         pl = parallel.plan('r1', 'abc', heal_groups=5)
         names = [s['session'] for s in pl['sessions']]
-        self.assertEqual(names, ['dps-0', 'dps-1', 'dps-2', 'dps-3', 'tank', 'heal-0', 'heal-1', 'heal-2', 'heal-3', 'heal-4'])
-        h0, h1 = pl['sessions'][5], pl['sessions'][6]
+        n = sum(x.startswith('dps-') for x in names)  # as many DPS shards as keep each within the longest other session
+        self.assertGreater(n, 1)
+        self.assertEqual(names, [f'dps-{k}' for k in range(n)] + ['tank', 'heal-0', 'heal-1', 'heal-2', 'heal-3', 'heal-4'])
+        h0, h1 = pl['sessions'][n + 1], pl['sessions'][n + 2]
         self.assertIn('--main', h0['command'])
         self.assertIn('--carries-from heal-0', h1['command'])
         self.assertNotIn('--main', h1['command'])
-        self.assertIn('dps-1 --commit abc --shard 1/4', pl['sessions'][1]['command'])
+        self.assertIn(f'dps-1 --commit abc --shard 1/{n}', pl['sessions'][1]['command'])
 
     def test_dps_shards_within_the_longest_other_session(self):
         pl = parallel.plan('r1', 'abc')

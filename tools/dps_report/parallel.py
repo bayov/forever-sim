@@ -56,20 +56,21 @@ PREFIX = 'dash-raw'
 # ---------------------------------------------------------------- costs and the plan
 #
 # A preset's cost is the seconds of its race sims in a full run, 2 presets at a time on 4 cores. HEAL_S holds the
-# 2026-11-18 run at 87ce834 (after the engine speedups): the log lines '<mode> races <stem>: <n> rows, <s> s' of
-# heal-3, and for the priests, which ran alone, their seconds over ALONE_X. A preset not in it costs its race rows (one
-# a race and racial variant) times a role's seconds a row, the same run's rates (raid: Druid 1872s for 13 rows, Shaman
-# 1362s for 10; tank: Druid 647s for 13, Shaman 375s for 10, Paladin 290s for 8), and Tanking the 2026-11-18 bench
-# probe (warrior_protection_balanced 80s for 29) times FULL_X. --log takes measured times instead, from a run's log.
-HEAL_S = {'druid_restoration_raid': 1872, 'shaman_restoration_raid': 1362, 'druid_restoration': 647,
-          'shaman_restoration': 375, 'paladin_holy': 290,
-          'priest_holy_raid': 1235 / 0.6, 'priest_discipline': 691 / 0.6, 'priest_holy': 670 / 0.6}
-ROW_S = {('heal', 'raid'): 140, ('heal', 'tank'): 42, ('tank', None): 80 / 29 * 3.7}
+# 2026-11-19 run at d82ab73 (after the race sims skip what their pilots show changes nothing): the log lines
+# '<mode> races <stem>: <n> rows, <s> s' of heal-6 for the tank healers, and for the presets that ran alone their
+# seconds over ALONE_X. A preset not in it costs its race rows (one a race and racial variant) times a role's seconds a
+# row, the same run's rates (raid: Druid 1203s for 13 rows, Shaman 842s for 10; tank: Druid 457s for 13, Shaman 293s
+# for 10, Paladin 272s for 8), and Tanking the 2026-11-18 bench probe (warrior_protection_balanced 80s for 29) times
+# FULL_X. --log takes measured times instead, from a run's log.
+HEAL_S = {'druid_restoration': 457, 'shaman_restoration': 293, 'paladin_holy': 272,
+          'priest_holy_raid': 913 / 0.6, 'druid_restoration_raid': 722 / 0.6, 'shaman_restoration_raid': 505 / 0.6,
+          'priest_discipline': 486 / 0.6, 'priest_holy': 427 / 0.6, 'paladin_holy_raid': 328 / 0.6}
+ROW_S = {('heal', 'raid'): 90, ('heal', 'tank'): 33, ('tank', None): 80 / 29 * 3.7}
 FULL_X = 1
 ALONE_X = 0.6  # a preset alone has all 4 cores: the priests, alone on 2026-11-18, took about 0.6 of the model
 MAIN_S = {'heal': 231, 'tank': 20}  # the main bench, the 2026-11-18 Healing run at 87ce834 and 2026-11-17 Tanking run.json
-MODE_S = {'dps': 80 * 60, 'tank': 1140}  # DPS: pipeline.sh plan's 310 core-minutes on 4 cores; Tanking: the
-# 2026-11-18 run at 87ce834 (its session took 20 min with the build)
+MODE_S = {'dps': 80 * 60, 'tank': 940}  # DPS: pipeline.sh plan's 310 core-minutes on 4 cores; Tanking: the
+# 2026-11-19 run at d82ab73 (its session took 17 min with the build)
 SLOTS = 2  # tankheal.race_sims runs 2 presets at a time
 
 
@@ -380,6 +381,8 @@ def worker(run, session, commit, main=False, presets=None, carries_from=None, sh
     if os.environ.get('DASH_ALLOW_BIN_MISMATCH'):
         sys.exit('a worker never sims with DASH_ALLOW_BIN_MISMATCH: its part would be refused at the merge')
     os.environ.setdefault('DASH_SPLITS', '4')
+    # the tree is this checkout, at the run's commit (checked above): a fresh cloud session has no ../w-dash
+    os.environ.setdefault('DASH_TREE', os.path.abspath(os.path.join(HERE, '..', '..')))
     out = os.path.join(D, 'parallel', run)
     os.makedirs(out, exist_ok=True)
     pl, th = os.path.join(HERE, 'pipeline.sh'), os.path.join(HERE, 'tankheal.py')

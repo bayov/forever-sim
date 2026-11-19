@@ -63,9 +63,9 @@
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
  },
  "reportData": {
-  "commit": "master 392503f55 (full regeneration at 87ce83487, split across sessions: the engine speedups, haste_gcd folded into the sim, the healer reaction-time fix)",
-  "simmedAt": "2026-11-18: at 87ce83487 the probe cleared 62 builds, 6 re-simmed in full (3 audit builds unchanged); Tanking (12 presets) and Healing (9 presets) re-simmed whole by parallel.py run 2026-11-18-87ce834 (tank, heal-0..3 sessions)",
-  "date": "2026-11-18",
+  "commit": "master d67d3eab7 (healing race sims at d82ab73: inert racials and twin races skip their fights, Swiftmend check no longer allocates)",
+  "simmedAt": "2026-11-19: at d82ab73 the probe re-simmed the 6 druid builds; Tanking (12 presets) and Healing (9 presets) re-simmed whole by parallel.py run 2026-11-19-d82ab73 (9 sessions: dps-0, tank, heal-0..6), about 21 min",
+  "date": "2026-11-19",
   "builds": 68,
   "rawPacks": "tools/dps_report/raw/ (68 packs, plus raw/bench/{tank,heal}.tgz)"
  },
@@ -73,9 +73,9 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master bbbf53243",
-  "date": "2026-11-18",
-  "deployId": "e02f0348",
+  "publishedFrom": "master d67d3eab7",
+  "date": "2026-11-19",
+  "deployId": "9d723974",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
  "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-11-10-hotfixes (game: Blizzard's November 10 hotfixes, Enhancement shaman tuning); 2026-11-02-build-70753 finished at c61845d with about 19 other sessions' commits uncovered"
