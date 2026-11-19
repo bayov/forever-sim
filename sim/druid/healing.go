@@ -665,10 +665,15 @@ func (druid *Druid) wildGrowthTimer() *core.Timer {
 // least time left (the 1.12 and later rule; the client leaves it to the server).
 func (druid *Druid) swiftmendHot(target *core.Unit) *core.Dot {
 	var best *core.Dot
-	for _, spell := range druid.balanceSpells(druid.Rejuvenation, druid.Regrowth) {
-		if hot := spell.Hot(target); hot != nil && hot.IsActive() {
-			if best == nil || hot.ExpiresAt() < best.ExpiresAt() {
-				best = hot
+	for _, list := range [2][]*DruidSpell{druid.Rejuvenation, druid.Regrowth} {
+		for _, spell := range list {
+			if spell == nil {
+				continue
+			}
+			if hot := spell.Hot(target); hot != nil && hot.IsActive() {
+				if best == nil || hot.ExpiresAt() < best.ExpiresAt() {
+					best = hot
+				}
 			}
 		}
 	}
