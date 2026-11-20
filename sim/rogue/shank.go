@@ -11,10 +11,13 @@ import (
 // 1329283 at level 24 and 1329549 at 44. 5 Energy, 10 sec cooldown, 1 sec GCD, an off-hand strike for
 // 50% weapon damage (effect 0) that gives 15 Energy, 25 at rank 2 (effect 1), and no combo point.
 // "Shank cannot Miss": its attributes are the client's Always Hit (Attributes[3] 0x40000, so no miss,
-// dodge or parry; it can still crit) and Requires Off-Hand Weapon (0x1000000), and it suppresses the
-// caster's procs (Attributes[3] 0x10000, Attributes[4] 0x800000 Suppress Weapon Procs): no poison,
-// weapon enchant or Hack and Slash proc from Shank. Venom and Boot Knife, which its own tooltip
-// names, still go off. Assumed (notes.md, Rogue): the 50% is of the off-hand's normalized weapon damage
+// dodge or parry; it can still crit) and Requires Off-Hand Weapon (0x1000000). Push 113483 also had it
+// suppress the caster's procs (Attributes[3] 0x10000, Attributes[4] 0x800000 Suppress Weapon Procs).
+// The November 19 server hotfix (push 114268, SpellMisc 874521 / 874773, build 70959; foreverchanges.pro
+// "Found in the game": "Shank can now apply your Poisons and trigger weapon enchantments and other
+// chance-on-hit effects") clears both bits (Attributes[3] 0x01070000 -> 0x01040000, Attributes[4]
+// 0x800000 -> 0), so Shank now procs poisons, weapon enchants, chance-on-hit and equip effects, and
+// Hack and Slash, which reads the same suppress flag. Venom and Boot Knife go off as before. Assumed (notes.md, Rogue): the 50% is of the off-hand's normalized weapon damage
 // after the usual off-hand halving, like the other off-hand strikes.
 var ShankActionID = core.ActionID{SpellID: 1329549}
 
@@ -39,7 +42,7 @@ func (rogue *Rogue) registerShank() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeOHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | core.SpellFlagSuppressWeaponProcs | core.SpellFlagSuppressEquipProcs,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: 5,
