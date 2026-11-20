@@ -649,6 +649,14 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 			os.Exit(1)
 		}
 	}
+	// With -gear-effects-out we also measure what each item's effects add on the set
+	// (bis_effects.go).
+	if *gearEffectsOut != "" {
+		if err := s.writeEffects(*gearEffectsOut, pool, best, names, knobs); err != nil {
+			fmt.Fprintf(os.Stderr, "writing %s: %v\n", *gearEffectsOut, err)
+			os.Exit(1)
+		}
+	}
 	return best, bestScore
 }
 

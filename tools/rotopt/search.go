@@ -59,6 +59,10 @@ type searcher struct {
 	// saveValues asks each run for every iteration's DPS, so gainNoise can pair two results.
 	// The BiS ranking turns it on (rankGear).
 	saveValues bool
+	// labeledRands gives each kind of roll its own random source (SimOptions.use_labeled_rands),
+	// so a proc in one run doesn't shift every roll after it. The effects pass turns it on, see
+	// writeEffects.
+	labeledRands bool
 
 	cache map[string]result
 	evals int
@@ -89,12 +93,13 @@ func (s *searcher) prepare(knobs Knobs) *pendingScore {
 	rot := s.template.Build(knobs)
 	p := &pendingScore{knobs: knobs, cache: s.cache}
 	for _, d := range s.durations {
-		key := fmt.Sprintf("%s%s|%g|%s|%d|%t", s.setup.talents, s.setup.hitKey(), d, knobs, s.iterations, s.saveValues)
+		key := fmt.Sprintf("%s%s|%g|%s|%d|%t|%t", s.setup.talents, s.setup.hitKey(), d, knobs, s.iterations, s.saveValues, s.labeledRands)
 		r, ok := s.cache[key]
 		var request *proto.RaidSimRequest
 		if !ok {
 			request = s.setup.runRequest(rot, d, s.iterations)
 			request.SimOptions.SaveAllValues = s.saveValues
+			request.SimOptions.UseLabeledRands = s.labeledRands
 		}
 		p.keys = append(p.keys, key)
 		p.requests = append(p.requests, request)

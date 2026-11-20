@@ -73,6 +73,9 @@ type bisEntry struct {
 	// Conditional is where the item would go on this list with a condition met that makes its
 	// effect bigger, one for each condition (-gear-rank-conditions, bis_conditions.go).
 	Conditional []bisConditional `json:"conditional,omitempty"`
+	// Cooldown is where an item with a use would go on this list with its use never pressed,
+	// as while it is on cooldown (-gear-rank-cooldowns, bis_cooldowns.go).
+	Cooldown *bisCooldown `json:"cooldown,omitempty"`
 }
 
 type bisSlot struct {
@@ -339,6 +342,9 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 		if *gearRankConditions {
 			slots = s.rankConditions(slots, sources, best, base, knobs)
 		}
+		if *gearRankCooldowns {
+			slots = s.rankCooldowns(slots, sources, best, knobs)
+		}
 		s.setGear(best)
 		for _, slot := range slots {
 			fmt.Printf("  %s:\n", slot.name)
@@ -354,6 +360,9 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				}
 				for _, c := range e.Conditional {
 					fmt.Printf("  %s: rank %d (%+.1f)", c.Label, c.Rank, 0-c.Loss)
+				}
+				if c := e.Cooldown; c != nil {
+					fmt.Printf("  on cooldown: rank %d (%+.1f)", c.Rank, 0-c.Loss)
 				}
 				fmt.Println()
 			}

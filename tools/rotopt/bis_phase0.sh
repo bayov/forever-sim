@@ -20,10 +20,31 @@
 #
 #   RANK_ONLY=1 SLOTS=trinket tools/rotopt/bis_phase0.sh
 #
+# EFFECTS_ONLY=1 skips the search and the ranking and only writes the effects file (EFFECTS_OUT,
+# ui/enhancement_shaman/bis/level60_phase0.effects.json by default) for the picks of FROM: what
+# each item's effects add on the set, for BayovCore's stat score (docs/bis_lists.md, Effect
+# values). A full run and a RANK_ONLY run write it too, after the list, and a SLOTS run only when
+# EFFECTS_OUT is set. EFFECTS_OUT=none skips it.
+#
+#   EFFECTS_ONLY=1 tools/rotopt/bis_phase0.sh
+#
 # Phase 0 is what Forever has before its raids open on 2026-12-09: dungeons, quests, crafting,
 # reputation, world drops and PvP reputation (tools/rotopt/phase0.go has the rules). The fight
 # is the DPS Report's default Enhancement build (tools/dps_report/req/shaman__enhancement-level60.json):
-# Orc, Engineering and Leatherworking, its rotation, enchants, buffs and consumes, at 180s.
+# Orc, Engineering and Leatherworking, its rotation, enchants, buffs and consumes.
+#
+# The fight is DUR seconds long, 45 by default (user, 2026-11-20). It comes from the user's level
+# 60 dungeon logs of 2026-11-20: trash fights over 20s had a median of 32 to 38s, bosses 42s, and
+# 7 to 13% of fights went over 60s. Every use is pressed at the pull, and an addon swaps trinkets
+# between fights, so a strong use can make an item BiS at that length. When the raids open
+# (2026-12-09) their bosses and trash may need a longer fight, measured again from raid logs.
+# Before 2026-11-20 the list was ranked at 180s.
+#
+# A short fight's DPS varies more from one iteration to the next, so the iterations scale with
+# 180/DUR: the same precision and run time as the old 180s list (8000 and 80000 at 45s).
+#
+# Each item with a use also gets an "on cooldown" rank, with its use never pressed
+# (-gear-rank-cooldowns): the swap addon takes it off while its use is on cooldown.
 #
 # The talents are the ones the user plays (2026-11-14), not the report's: TALENTS sets them, and
 # the default is 053303102-054030110051212141-03. Next to the report's build it takes Improved
@@ -105,6 +126,14 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
 talents="${TALENTS:-053303102-054030110051212141-03}"
+dur="${DUR:-45}"
+# The iterations at 180s, scaled to the fight length (see DUR above).
+iters() { awk -v n="$1" -v d="$dur" 'BEGIN { printf "%d", n * 180 / d }'; }
+effects_out="${EFFECTS_OUT:-ui/enhancement_shaman/bis/level60_phase0.effects.json}"
+# A SLOTS run is a quick rerun of a few lists, so it writes the effects file only when asked.
+if [ -n "$SLOTS" ] && [ -z "$EFFECTS_OUT" ]; then
+	effects_out=none
+fi
 req=tools/dps_report/req/shaman__enhancement-level60.json
 content=tools/rotopt/phase0_content.json
 out="${OUT:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
@@ -122,6 +151,13 @@ jq --arg talents "$talents" '.raid.parties[0].players[0].talentsString = $talent
 		| if $ids[$i] == null then {} else {id: $ids[$i]} + (if $old[$i].enchant and $i != 15 then {enchant: $old[$i].enchant} else {} end) end]' \
 	"$req" >"$tmp/enh.json"
 rank_only=""
+if [ -n "$EFFECTS_ONLY" ]; then
+	RANK_ONLY=1
+	if [ -n "$SLOTS" ]; then
+		echo "SLOTS doesn't go with EFFECTS_ONLY" >&2
+		exit 1
+	fi
+fi
 if [ -n "$RANK_ONLY" ]; then
 	# The list's picks, with their suffix and enchant, in the order of the equipment list. An
 	# empty slot (the off hand next to a two hander) has no pick.
@@ -143,14 +179,27 @@ elif [ -n "$SLOTS" ]; then
 	exit 1
 fi
 
-go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs 180 -iters 2000 \
+# What we write: the list (not with EFFECTS_ONLY) and the effects file (not with EFFECTS_OUT=none).
+outputs="-gear-rank-out $out"
+if [ -n "$EFFECTS_ONLY" ]; then
+	outputs=""
+fi
+if [ "$effects_out" != none ]; then
+	outputs="$outputs -gear-effects-out $effects_out"
+fi
+
+go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" -iters "$(iters 2000)" \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
 	-gear-exclude "$exclude" -gear-include "$include" \
-	-gear-screen-iters 300 -gear-screen-keep 40 \
-	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
+	-gear-screen-iters "$(iters 300)" -gear-screen-keep 40 \
+	-gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim" \
-	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
-	-gear-rank-confirm-iters 20000 -gear-rank-conditions $rank_only "$@"
+	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters "$(iters 10000)" \
+	-gear-rank-confirm-iters "$(iters 20000)" -gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters "$(iters 10000)" $outputs $rank_only "$@"
+
+if [ -n "$EFFECTS_ONLY" ]; then
+	exit 0
+fi
 
 # The content check's status on every entry.
 jq --slurpfile content "$content" '.slots |= map_values(map(

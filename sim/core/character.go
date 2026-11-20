@@ -81,6 +81,13 @@ type Character struct {
 	// The ranks the level has reached but we haven't trained (Player.untrained_spells).
 	untrained map[int32]bool
 
+	// The items whose use we never press, and the items whose effects we leave out, by item
+	// ID (Player.item_uses_off and Player.item_effects_off).
+	itemUsesOff, itemEffectsOff map[int32]bool
+	// applyingItem is the item whose effect we're applying, or 0. A major cooldown registered
+	// meanwhile is that item's use (AddMajorCooldown).
+	applyingItem int32
+
 	// Base stats for this Character.
 	baseStats stats.Stats
 
@@ -182,6 +189,9 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		},
 
 		untrained: untrainedSpells(player.UntrainedSpells),
+
+		itemUsesOff:    idSet(player.ItemUsesOff),
+		itemEffectsOff: idSet(player.ItemEffectsOff),
 	}
 
 	// We drop an off-hand weapon from a class that can't hold one, so it adds no stats, swings
@@ -436,8 +446,10 @@ func (character *Character) clearBuildPhaseAuras(phase CharacterBuildPhase) {
 // Apply effects from all equipped core.
 func (character *Character) applyItemEffects(agent Agent) {
 	for slot, eq := range character.Equipment {
-		if applyItemEffect, ok := itemEffects[eq.ID]; ok {
+		if applyItemEffect, ok := itemEffects[eq.ID]; ok && !character.itemEffectsOff[eq.ID] {
+			character.applyingItem = eq.ID
 			applyItemEffect(agent)
+			character.applyingItem = 0
 		}
 
 		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.EffectID]; ok {
@@ -594,6 +606,18 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 
 func (character *Character) HasProfession(prof proto.Profession) bool {
 	return prof == character.professions[0] || prof == character.professions[1]
+}
+
+// idSet is the IDs as a set, or nil when there are none.
+func idSet(ids []int32) map[int32]bool {
+	if len(ids) == 0 {
+		return nil
+	}
+	set := make(map[int32]bool, len(ids))
+	for _, id := range ids {
+		set[id] = true
+	}
+	return set
 }
 
 func (character *Character) HasTrinketEquipped(itemID int32) bool {

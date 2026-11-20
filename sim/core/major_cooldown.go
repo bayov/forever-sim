@@ -2,6 +2,7 @@ package core
 
 import (
 	"slices"
+	"sync"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -263,6 +264,14 @@ func (mcdm *majorCooldownManager) AddMajorCooldown(mcd MajorCooldown) {
 	if mcd.Spell == nil {
 		panic("Major cooldown must have a Spell!")
 	}
+	// A cooldown registered while an item's effect is applied is that item's use.
+	if item := mcdm.character.applyingItem; item != 0 {
+		itemsWithUse.Store(item, true)
+		if mcdm.character.itemUsesOff[item] {
+			neverCast(mcd.Spell)
+			return
+		}
+	}
 	mcd.Spell.Flags |= SpellFlagAPL | SpellFlagMCD
 
 	if mcd.ShouldActivate == nil {
@@ -272,6 +281,27 @@ func (mcdm *majorCooldownManager) AddMajorCooldown(mcd MajorCooldown) {
 	}
 
 	mcdm.initialMajorCooldowns = append(mcdm.initialMajorCooldowns, mcd)
+}
+
+// itemsWithUse are the items whose effect registered a major cooldown (their use) in a sim
+// built so far, see ItemHasUse.
+var itemsWithUse sync.Map
+
+// ItemHasUse says whether the item has a use the sim models: its effect registers a major
+// cooldown. We only learn it by building a character that wears the item, so it is false
+// until a sim with the item has run (rotopt asks after it scored the item).
+func ItemHasUse(itemID int32) bool {
+	_, ok := itemsWithUse.Load(itemID)
+	return ok
+}
+
+// neverCast keeps the spell from ever being cast, for the use of an item in
+// Player.item_uses_off. We don't register it as a major cooldown, so the cooldown autocast
+// never sees it, and an APL that names the spell finds it never castable.
+func neverCast(spell *Spell) {
+	spell.ExtraCastCondition = func(*Simulation, *Unit) bool { return false }
+	spell.extraCastConditionNeedsEvent = true
+	spell.castFn = func(*Simulation, *Unit) bool { return false }
 }
 
 func (mcdm *majorCooldownManager) GetInitialMajorCooldown(actionID ActionID) MajorCooldown {

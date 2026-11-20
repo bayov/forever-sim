@@ -62,6 +62,13 @@ message Player {
 	// and glanced more, glances for less and crits less.
 	int32 main_hand_skill_gap = 51;
 	int32 off_hand_skill_gap = 52;
+	// Items whose use is never pressed, by item ID. Their stats, equip effects and procs stay.
+	// rotopt's BiS list ranks a trinket this way to say what it's worth while its use is on
+	// cooldown (docs/bis_lists.md, "On cooldown ranks").
+	repeated int32 item_uses_off = 59;
+	// Items whose effects are all left out (equip effects, procs and use), by item ID, so only
+	// their stats count. rotopt measures what an item's effects add with it.
+	repeated int32 item_effects_off = 60;
 	Profession profession1 = 10;
 	Profession profession2 = 11;
 	Cooldowns cooldowns = 12;

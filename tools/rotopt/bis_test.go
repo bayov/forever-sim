@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"os"
 	"slices"
 	"testing"
 
@@ -213,5 +214,43 @@ func TestMergeLists(t *testing.T) {
 	}
 	if !rankListSelected("finger2") || rankListSelected("head") {
 		t.Errorf("rankListSelected: finger2 %t, head %t", rankListSelected("finger2"), rankListSelected("head"))
+	}
+}
+
+// The effects file is BayovCore's contract (docs/bis_lists.md, Effect values): valid JSON, the
+// items keyed by ID, and cooldown and conditional only where the item has them.
+func TestWriteEffectsFile(t *testing.T) {
+	path := t.TempDir() + "/effects.json"
+	zero := 0.0
+	items := map[int32]effectsItem{
+		11815: {Name: "Hand of Justice", DPS: 8.2},
+		10455: {Name: "Chained Essence of Eranikus", DPS: 29.5, Cooldown: &zero,
+			Conditional: []effectsConditional{{Label: "vs Trolls", DPS: 59.3}}},
+	}
+	if err := writeEffectsFile(path, 45, 1120.184, 40000, items); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var got struct {
+		Dur   float64                    `json:"dur"`
+		DPS   float64                    `json:"dps"`
+		Items map[string]json.RawMessage `json:"items"`
+	}
+	if err := json.Unmarshal(data, &got); err != nil {
+		t.Fatalf("%v:\n%s", err, data)
+	}
+	if got.Dur != 45 || got.DPS != 1120.18 || len(got.Items) != 2 {
+		t.Errorf("dur %v, dps %v, %d items, want 45, 1120.18 and 2", got.Dur, got.DPS, len(got.Items))
+	}
+	for id, want := range map[string]string{
+		"11815": `{"name":"Hand of Justice","dps":8.2}`,
+		"10455": `{"name":"Chained Essence of Eranikus","dps":29.5,"cooldown":0,"conditional":[{"label":"vs Trolls","dps":59.3}]}`,
+	} {
+		if string(got.Items[id]) != want {
+			t.Errorf("item %s: %s, want %s", id, got.Items[id], want)
+		}
 	}
 }
