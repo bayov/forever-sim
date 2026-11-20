@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "813f2b1e95b98c3c747d964e3f2f659b47ac4c9d"
+  "master": "e6eaa94706e6eb73c24b4f51d8ca9d6fdabdaf61"
  },
- "last_pass_at": "2026-11-20T12:51:33Z",
- "pass": 95,
- "result": "quiet",
- "note": "Pass 95: 4be96efef..813f2b1e9. Hand of Justice 3% vs Dwarves (4c3ac0026) matches 15600 on 70959 (ProcChance 3, ICD 2s). Client still 70959; no new Blizzard posts. Quiet.",
- "client_build": "1.60.1.70959",
- "checked_at": "2026-11-20T12:51:44Z",
+ "last_pass_at": "2026-11-20T18:53:32Z",
+ "pass": 96,
+ "result": "findings",
+ "note": "Pass 96: 813f2b1e9..e6eaa9470, no sim commits. Client 70959 -> 71037 diffed (mostly hotfix bakes); rogue T1 5P now covers Death Mark (mechanics-20261120-2). No new Blizzard mechanics posts (weekly news 2026-11-20 18:00Z only).",
+ "client_build": "1.60.1.71037",
+ "checked_at": "2026-11-20T18:55:26Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -22,12 +22,13 @@
    "70630",
    "70707",
    "70938",
-   "70959"
+   "70959",
+   "71037"
   ],
   "newest_push": 114157,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-20T04:00:55Z",
+ "blue_tracker_seen": "2026-11-20T18:00:10Z",
  "hotfix_post_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040/13",
   "date": "2026-11-20T04:00:55Z",

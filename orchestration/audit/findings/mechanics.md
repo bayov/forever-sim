@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261120-2: Client 1.60.1.71037 extends the rogue Tier 1 5-piece cost cut to Death Mark; the sim cuts only Eviscerate
+- severity: low (estimate, not measured: Subtlety, the only Level 60 rogue preset that casts Death Mark, casts it about 9.5 times in 180 s, so 5 Energy each is about 48 Energy, about 1.4 Hemorrhages, roughly +0.3% to +0.4% DPS; the other five rogue presets never cast it)
+- affects: rogue (Subtlety; any build wearing 5 pieces of Grimstitch Armor or the synthetic Phase 1 sets that casts Death Mark)
+- found: 2026-11-20, master e6eaa9470
+- evidence: tier 1, client 1.60.1.71037 SpellEffect 1326934 (spell 1301708 "1.60.0 - Item - Tier 1 - Rogue 5P Bonus - Eviscerate and Death Mark", aura 107, MiscValue 14 (cost), base -5): EffectSpellClassMask_1 8 -> 0, EffectSpellClassMask_2 0 -> 4. On 71037, in SpellClassOptions set 8, mask_0 131072 is Eviscerate (2098) and mask_2 4 is Death Mark (1316709 ranks); mask_1 8 matched no rogue spell, so on 70959 the bonus was Eviscerate only. `sim/rogue/items_sets_pve.go:442-450` (5-piece) cuts only `SpellCode_RogueEviscerate`. Subtlety report request (tools/dps_report/req/rogue__subtlety.json, CLI e6eaa94706e6): Death Mark 1325758 17.4% of damage, 9507 hits over 1000 iterations. Diff: `python3 -I tools/sources/wago.py diff 1.60.1.70959 1.60.1.71037 --by-spell`.
+- proposed fix: in the 5-piece bonus, `if spell.SpellCode == SpellCode_RogueEviscerate || spell.SpellCode == SpellCode_RogueDeathMark { spell.Cost.FlatModifier -= 5 }` (use whatever code death_mark.go gives the spell), comment "Eviscerate and Death Mark (client 1.60.1.71037 class mask)", then re-sim the Subtlety preset.
+- needs: worker fix
+
 ### mechanics-20261120-1: Blizzard's November 19 hotfix makes Two-Handed Weapon Specialization raise all Holy damage; the sim still leaves out the ranged judgements, Hammer of Wrath, Holy Shock and Exorcism
 - severity: high (estimate, not measured: 6% at 3/3 on the Holy damage the sim leaves out. Hammer of Wrath 24239 and ranged Judgement of Righteousness 20286 are 8.5% of `paladin__level_60` and 8.8% of `paladin__level_60_sub_holy` damage, about +0.5% / +5 DPS; Holy Shock 20930 plus Hammer of Wrath are 16.6% of `paladin__level_60_shock_ret`, about +1.0% / +10 DPS; shares from the shared run in `$AUDIT_WORK/runs/master`, `tools/audit/mechanics/brk.py`)
 - affects: paladin, every Retribution build with a two-hander (the three Level 60 Ret presets and their duty variants)
@@ -28,6 +36,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: skip the totem's attacks in both consume triggers (patch: /tmp/audit-work/mechanics/flurry_wf_totem.patch, scratch):
   `if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && !warrior.AutoAttacks.IsWindfuryTotemAttack() && icd.IsReady(sim) {` (the same with `shaman.` in sim/shaman/talents.go). Windfury Weapon's own extra attacks are unchanged (the hotfix names the totem only). A unit test: a Bloodthirst that rolls the totem leaves Flurry's stacks as they were.
 - 2026-11-18 (pass 90, a6677362fc): TASKS.md (a6677362f) holds the fix until it is live: foreverchanges.pro lists the Nov 17 note as "Announced, not in the game yet". Port it once a build or log shows it live; still open, no sim change in range.
+- 2026-11-20 (pass 96, e6eaa9470): client 1.60.1.71037 still leaves the shaman Flurry buff 16257 at ProcTypeMask 4 with a 500 ms proc cooldown, so the Nov 17 fix is not in the client tables (it may be server side). Windfury Totem strikes 8516 / 10608 / 10610 gain SpellCategories 2619 with a 100 ms category recovery, which the sim already models as the 100 ms proc cooldown (`sim/core/buffs.go:2211`). Still open.
 - needs: worker fix
 
 ### mechanics-20261113-2: Weakening Disease (Frightskull Shaft) lowers the target's Strength by 50 in the sim; the Forever client lowers its attack power by 92

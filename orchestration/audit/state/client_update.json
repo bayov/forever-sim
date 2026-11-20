@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "813f2b1e95b98c3c747d964e3f2f659b47ac4c9d"
+  "master": "e6eaa94706e6eb73c24b4f51d8ca9d6fdabdaf61"
  },
- "last_pass_at": "2026-11-17T18:59:26Z",
- "client_build": "1.60.1.70959",
+ "last_pass_at": "2026-11-20T18:55:13Z",
+ "client_build": "1.60.1.71037",
  "result": "findings",
- "note": "70959 = client copy of the 11-13/11-16 hotfixes. Windfury Totem proc now a weapon-damage strike (sim still extra swing + 2-charge AP buff); Flurry no longer spent by HS/Cleave per Blizzard 11-16 (sim still spends). Blue Dragon 3%, 11-13 item stats not in db.",
- "pass": 14,
- "checked_at": "2026-11-20T12:51:44Z"
+ "note": "71037 = client copy of the 11-17 hotfixes + push 114097/114065. New: Execute dummy Always Hit (low, verify). Ret 2H spec all Holy (11-19), rogue T1 5P Death Mark, Flurry vs WF totem already filed by mechanics. Blue Dragon resolved.",
+ "pass": 15,
+ "checked_at": "2026-11-20T18:55:26Z"
 }

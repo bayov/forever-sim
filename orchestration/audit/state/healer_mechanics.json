@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "813f2b1e95b98c3c747d964e3f2f659b47ac4c9d"
+  "master": "e6eaa94706e6eb73c24b4f51d8ca9d6fdabdaf61"
  },
- "last_pass_at": "2026-11-20T00:53:34Z",
- "pass": 23,
+ "last_pass_at": "2026-11-20T18:50:46Z",
+ "pass": 24,
  "result": "quiet",
- "note": "Pass 23: per-target crit (critChanceAgainst), Tenets condition, Totem of Rage 2%: no healer effect; tests pass. Findings 10, 11 open.",
- "client_build": "1.60.1.70959",
+ "note": "Pass 24: client 71037 puts the VE 10%/caster +100% hotfix and Blue Dragon 3% into the client (sim matches); Genesis mask +Pounce Bleed; no sim code in range. Findings 10, 11 open.",
+ "client_build": "1.60.1.71037",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-17T02:18:14Z"
  },
- "checked_at": "2026-11-20T12:51:44Z"
+ "checked_at": "2026-11-20T18:55:26Z"
 }

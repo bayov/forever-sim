@@ -4,12 +4,21 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261120-1: Execute's cast spell becomes Always Hit and suppresses procs in 71037; the sim's "avoided Execute keeps its extra rage" may no longer hold
+- severity: low until verified (an estimate: if the extra rage is now spent on every Execute, Fury and Arms in execute phase lose a little rage on the 5-8% of Executes that are dodged or missed; well under 0.5%)
+- affects: every warrior request (execute phase)
+- found: 2026-11-20, master e6eaa94706
+- evidence: client 71037 (`db2diff.py 70959 71037`, Warrior): Execute 5308/20658/20660/20661/20662, the dummy (effect 0 Effect 3) that triggers 26651 (effect 1 Effect 64), SpellMisc Attributes_3 1024 -> 459776 (adds 0x10000 Suppress Caster Procs, 0x20000 Suppress Target Procs, 0x40000 Always Hit; rank 20662 had the two suppress bits already) and Attributes_2 +0x100. Not in any Blizzard note. `sim/warrior/execute.go:41-60` models one hit-rolling special and, under Forever, keeps the extra rage when it is avoided (2ebdc14d6, from 36 avoided Executes in 70862 logs). An always-hitting dummy whose script spends the rage would end that; the client can't show which. Ledger WAR-U-16. Confidence: low that anything changed in game; the bits look like a fix for procs firing twice (dummy and damage spell).
+- proposed fix: none until a warrior log after 2026-11-20 shows avoided Executes (log-audit: rage before and after a dodged or missed Execute 20647/26651); if they now spend it all, drop the Forever branch in execute.go.
+- needs: worker fix (verify first)
+
 ### client_update-20261117-1: Windfury Totem's proc is a weapon-damage strike in 70959, not an extra white swing with a 2-charge attack power buff
 - severity: medium (estimate, not measured; probably 0.5-2% on melee requests with Windfury Totem, sign unclear: a special strike can't glance, which raises it, and the lost second AP charge on the next white swing lowers it)
 - affects: every melee request with Windfury Totem (warriors, rogues, Retribution, enhancement, feral); `sim/core/buffs.go`
 - found: 2026-11-17, master 5f20dfdf4c
 - evidence: client 70959 (`db2diff.py 70938 70959`, Shaman section): proc spells 8516/10608/10610 effect 0 aura 99 (+95/179/246 AP, ImplicitTarget 1) -> Effect 58 (weapon damage), ImplicitTarget 6 (the enemy); effect 1 (Effect 19, 1 extra attack) removed; SpellAuraOptions 246431/124422/124477 (2 charges) removed; DurationIndex 36 -> 0. The totem auras 8515/10609/10612 gain effect 1 (dummy, 95/179/246) and the tooltip "${$10612m2} extra melee attack power". Blizzard 11-16 (t/2403040 post 11): "Fixed an issue where Windfury Totem attacks were ignoring armor and had no internal cooldown" and "extra attacks to not generate Rage". The sim (`buffs.go:2195-2209`, CreateExtraAttackAuraCommon) still grants an extra white swing and a 1 s, 2-charge AP buff whose second charge can reach the next white swing. Ledger SHR-HF-01. Confidence: the client structure is clear; how the server rolls the strike (special table, procs, Flurry, rage formula) is not shown.
 - proposed fix: under Forever, make the proc a main hand weapon-damage special with the rank's AP added to that strike only (no lingering buff), keeping rage and on-hit procs as Blizzard's notes say; check a post-11-17 log first (log-audit: are the totem hits SPELL_DAMAGE 10610 rather than swings, and do they glance?), then size with `dps_beforeafter.sh` on the Windfury Totem requests.
+- update 2026-11-20 (pass 15, master e6eaa94706): not fixed. Client 71037 puts the proc spells 8516/10608/10610 in a new category 2619 "Windfury Totem Attack" with a 100 ms category cooldown (the 100 ms the sim has, SHR-HF-04). Blizzard's 11-17 hotfix (post 12) adds that Windfury Totem attacks no longer cost the shaman a Flurry stack, filed as mechanics-20261118-1.
 - needs: worker fix
 
 ### client_update-20261117-2: Heroic Strike and Cleave still spend Flurry stacks; Blizzard's 11-16 hotfix says they no longer do
@@ -18,14 +27,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-11-17, master 5f20dfdf4c
 - evidence: Blizzard 11-16 (t/2403040/11, posted 2026-11-17 02:17 UTC): "Fury: Fixed an issue where Flurry stacks were consumed by Cleave or Heroic Strike." `sim/warrior/talents.go:412-418` (makeFlurryConsumptionTrigger) removes a stack on any ProcMaskMeleeWhiteHit, which includes Heroic Strike and Cleave; ad1d7f469 kept that on wowsims/forever's EV-0138 log, build 70938, recorded 2026-11-16, before the hotfix was posted. Push 114097's ProcTypeMask 20 on Flurry 12966 does not settle it either way. Ledger WAR-HF-02.
 - proposed fix: under Forever, only true white swings spend a Flurry stack; confirm with a warrior log after 2026-11-17 if one exists, then size with `dps_beforeafter.sh` on the warrior requests.
-- needs: worker fix
-
-### client_update-20261117-3: Darkmoon Card: Blue Dragon procs on 3% of spellcasts since 11-16; the sim uses 2%
-- severity: low (no request or preset wears it)
-- affects: casters wearing Darkmoon Card: Blue Dragon (gear search)
-- found: 2026-11-17, master 5f20dfdf4c
-- evidence: Blizzard 11-16 hotfix (foreverchanges, t/2403040/11 "Items"): "triggers on 3% of successful spellcasts instead of 2%"; `sim/common/item_effects.go:3198` ProcChance .02. Not in client 70959 (server side). Ledger SHR-HF-05.
-- proposed fix: ProcChance 0.03 under Forever.
+- update 2026-11-20 (pass 15): client 71037 carries push 114097 (Flurry 12966 ProcTypeMask_0 4 -> 20); no new evidence on which abilities spend a stack. Not fixed on master.
 - needs: worker fix
 
 ### client_update-20261117-4: The 11-13 item stat corrections are in client 70959 but not in the db
@@ -34,6 +36,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-11-17, master 5f20dfdf4c
 - evidence: `items_diff.py 70938 70959`: Darkspear Signet StatPercentEditor_1 4316 -> 2000/1764/2142 (Mp5); `assets/database/db.json` still has 272068 at 9 Mp5 (expect about 4). Bad Hat bonusStat_4 88 removed, Channeler's Ring bonusStat_2 6 -> 45, Blessed Band bonusStat_4 31 removed. Blizzard 11-13 items section names the same corrections. Ledger SHR-U-24.
 - proposed fix: re-pull the client items for 70959 (`update-sources`) and regenerate the db (together with client_update-20261110-2).
+- update 2026-11-20 (pass 15, master e6eaa94706): still not in the db. Client 71037 adds more (`items_diff.py 70959 71037`, Blizzard 11-17 items): Whiteout Staff 19101 and Crackling Staff 19102 now the same stats (Crackling bonusStat_2 45 -> 7), Onyxia Blood Talisman 18406, Old Guard Retaliator 208222 (quality 2 -> 3), Spiritcaller Kilt/Gloves/Mantle/Boots 276538-41 gain stats, and 74 new ilvl 55-66 dungeon set pieces (Feralheart 226815-22, Darkmantle, Heroism, Beastmaster's, Deathmist, Soulforge, The Five Thunders). No request wears any of them. Ledger SHR-U-25.
 - needs: orchestrator fix
 
 ### client_update-20261110-2: Three ilvl 65 trinkets lose stats and Flamebreak Talisman's use weakens in 70888; the db still has the old values
@@ -71,6 +74,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: verify (in game)
 
 ## Resolved
+
+### client_update-20261117-3: Darkmoon Card: Blue Dragon procs on 3% of spellcasts since 11-16; the sim uses 2%
+- severity: low (no request or preset wears it)
+- affects: casters wearing Darkmoon Card: Blue Dragon (gear search)
+- found: 2026-11-17, master 5f20dfdf4c
+- evidence: Blizzard 11-16 hotfix (foreverchanges, t/2403040/11 "Items"): "triggers on 3% of successful spellcasts instead of 2%"; `sim/common/item_effects.go:3198` ProcChance .02. Not in client 70959 (server side). Ledger SHR-HF-05.
+- proposed fix: ProcChance 0.03 under Forever.
+- needs: worker fix
+- resolved: 2026-11-20, 3ec610c40 (ProcChance .03 under Forever, `sim/common/item_effects.go:3566`); client 71037 also has it (SpellAuraOptions 132982 ProcChance 2 -> 3).
 
 ### client_update-20261110-1: Arcane Concentration still rolls its full 10% on every Arcane Missiles missile; the 11-09 hotfix splits it across the channel
 - severity: medium (measured -0.73% on mage__arcane, below 1%; other mage presets 0)

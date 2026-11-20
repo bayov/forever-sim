@@ -498,3 +498,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-20 06:53 | mechanics | pass 94 | master 4be96efef | 1 new finding | Two-Handed Weapon Spec now covers all Holy damage (Nov 19 hotfix); needs user ruling
 2026-11-20 12:51 | consumables | pass 95 | master 813f2b1e9 | quiet | Hand of Justice proc 3% vs Dwarves only; no consumable values changed
 2026-11-20 12:51 | mechanics | pass 95 | master 813f2b1e9 | quiet | Hand of Justice 3%/1% matches client; no report DPS change
+2026-11-20 18:55 | consumables | pass 96 | master e6eaa9470 | quiet | Client 71037: 3 consumable spell changes, none used by L60 presets
+2026-11-20 18:55 | client_update | pass 15 | master e6eaa9470 | 1 new finding | Execute dummy spell now Always Hit; avoided-Execute rage rule needs a log; ledger build 71037
+2026-11-20 18:55 | mechanics | pass 96 | master e6eaa9470 | 1 new finding | Rogue T1 5P also cuts Death Mark energy by 5 (Subtlety, ~+0.3-0.4%, low)
+2026-11-20 18:55 | healer_mechanics | pass 24 | master e6eaa9470 | quiet | VE hotfix and Blue Dragon 3% already modeled
+2026-11-20 18:55 | tank_mechanics | pass 25 | master e6eaa9470 | quiet | No tank rows changed; new evidence on tank_mechanics-20261117-1

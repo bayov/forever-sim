@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "813f2b1e95b98c3c747d964e3f2f659b47ac4c9d"
+  "master": "e6eaa94706e6eb73c24b4f51d8ca9d6fdabdaf61"
  },
  "last_pass_at": "2026-11-18T14:00:00Z",
  "pass": 69,
  "result": "quiet",
  "note": "Pass 69: only gear-adjacent change is standards 27 (haste shortens spell GCD), not a gear rule; shaman enhancement forever_trinkets_test.go is a SpellMetrics() API refactor. No synthetic item, set, trinket or enchant changed.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-20T12:51:44Z"
+ "checked_at": "2026-11-20T18:55:26Z"
 }

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "813f2b1e95b98c3c747d964e3f2f659b47ac4c9d"
+  "master": "e6eaa94706e6eb73c24b4f51d8ca9d6fdabdaf61"
  },
- "last_pass_at": "2026-11-20T00:52:42Z",
- "pass": 24,
+ "last_pass_at": "2026-11-20T18:51:17Z",
+ "pass": 25,
  "result": "quiet",
- "client_build": "1.60.1.70959",
- "checked_at": "2026-11-20T12:51:44Z",
+ "client_build": "1.60.1.71037",
+ "checked_at": "2026-11-20T18:55:26Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 24 (e07e8fdb8): watched changes are item plumbing (Encounter.OutdoorTerrain, Target.MobFamily, Tenets item condition) and Forever Totem of Rage (+2% shocks, additive); no tank preset equips Totem of Rage (Warden uses 272432). Tank tests pass. Open findings unchanged."
+ "note": "Pass 25 (e6eaa9470): no sim change; client 71037 bakes push 114097 (Unbridled Wrath/Flurry/Reckless Swings mask 4->20) the sim already models; no tank ability/talent/threat row changed. Open findings unchanged."
 }

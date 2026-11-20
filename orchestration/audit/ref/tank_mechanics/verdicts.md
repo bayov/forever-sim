@@ -28,6 +28,8 @@ Setup note (pass 2): the local `wago/<build>+hf` tables can be the bare build's 
 - Pass 19 (master 2f7e255af8, client 1.60.1.70959): Shieldsworn Holy Strike carries SpellFlagNoWindfuryTotem (Nov 16 hotfix t/2403040/11, tier 1 notes; TestShieldswornHolyStrikeNoWindfuryTotem), so the prot paladin presets' Holy Strike no longer rolls the raid totem; its Holy Shield damage is a spell. Warrior Shield Slam was already an off-hand special (no totem). Druid Idol of Rejuvenation and Totem of Tides: healing only.
 - Pass 21 (master a6677362fc, client 1.60.1.70959): report knobs leave Rage from damage taken and white-hit scaling at standards 21 by default; `healthAt`'s binary search matches the old walk. Hasted spell GCD (standards 27, settled by the user's log): reaches Warden shocks, Holy Shield, Consecration, Faerie Fire (Feral); physical abilities and Judgement keep 1.5 s; no tank preset carries Warchief's Blessing.
 
+- Pass 25 (master e6eaa9470, client 1.60.1.71037, tier 1): 71037 vs 70959 (+hf, mechanics set) bakes push 114097 into the bare build (Unbridled Wrath 12322, Flurry 12966, Reckless Swings 1329555 ProcTypeMask 4 -> 20), which the sim already models; Windfury Totem 8516/10608/10610 gain totem category 2619 (100 ms category recovery, no effect on the raid buff); Execute attribute bits and Krol'dok Resolve 1324298 (block-proc heal, used by no preset, not in the sim) change; no tank ability, talent, stance, form or threat row changes.
+
 ## Open
 - Unbridled Wrath on Sunder Armor (non-damaging melee special) under push 114097: 20261117-1.
 - Windfury Totem 70959 reshape and Nov 16 hotfix (totem attacks give Rage, ICD): user ruling pending in TASKS.md; reaches every tank preset.

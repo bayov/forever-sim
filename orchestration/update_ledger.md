@@ -41,17 +41,17 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 
 | Class / system | Rows | Landed | In flight | Missing | Partial | Wrong | Not simulated on purpose | Ambiguous | n/a | Other |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Warrior | 88 | 54 | 0 | 2 | 0 | 3 | 0 | 4 | 25 | 0 |
-| Paladin | 69 | 40 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 97 | 53 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
-| Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
+| Warrior | 89 | 54 | 0 | 2 | 0 | 3 | 0 | 5 | 25 | 0 |
+| Paladin | 70 | 40 | 5 | 2 | 0 | 3 | 1 | 3 | 14 | 2 superseded |
+| Hunter | 98 | 54 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
+| Rogue | 70 | 39 | 0 | 1 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 113 | 67 | 12 | 4 | 0 | 2 | 2 | 2 | 24 | 0 |
+| Shaman | 114 | 67 | 12 | 4 | 0 | 3 | 2 | 2 | 24 | 0 |
 | Mage | 69 | 19 | 9 | 9 | 0 | 2 | 5 | 7 | 18 | 0 |
 | Warlock | 95 | 50 | 4 | 0 | 0 | 3 | 3 | 1 | 33 | 1 covered by another row |
 | Druid | 76 | 33 | 0 | 2 | 3 | 2 | 2 | 0 | 34 | 0 |
-| Shared (races, mechanics, items) | 82 | 31 | 1 | 5 | 3 | 4 | 4 | 9 | 25 | 0 |
-| **Total** | **813** | **406** | **47** | **34** | **9** | **25** | **22** | **33** | **233** | **4** |
+| Shared (races, mechanics, items) | 83 | 32 | 1 | 5 | 3 | 4 | 4 | 9 | 25 | 0 |
+| **Total** | **819** | **408** | **47** | **35** | **9** | **27** | **22** | **34** | **233** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -108,6 +108,7 @@ The counts are as audited, before this audit's own PRs. A row that touches two s
 5. ~~**The 10-26 racial pass (dev notes post /7, rows SHR-P7-01..05).**~~ Settled 2026-10-27: the user asked for the sim to follow the notes; landed in 500e3a1.
 6. ~~**Missile Barrage from Arcane Missiles hits (MAGE-U-15).**~~ Settled 2026-10-27 by the user: no proc; one-value assumption.
 7. ~~**Trueshot Aura rank 5 (HUN-HF-02).**~~ Settled 2026-10-28 by the user ("Adopt both"): rank 5 at 50 on the hotfixed curve, Aspect of the Hawk rank 6 at 55 (HUN-HF-01); hunter_tsa_hm_rank is one value.
+8. **Two-Handed Weapon Specialization on all Holy damage (PAL-HF-07).** Blizzard's 11-19 hotfix says it now increases all Holy damage with a two-handed weapon; the 2026-11-15 ruling (from logs before the fix) gives it only to melee-defense Holy hits and Consecration. Follow the hotfix? About +0.5% on the Command presets, +1% on Shock Retribution (estimate; mechanics-20261120-1).
 
 ### Report assumptions and Need to Verify items this ledger settles
 
@@ -355,7 +356,7 @@ Text, cosmetic or out of scope, no rows: Attributes_2 bit 0x100 added on about 9
 | SHR-HF-02 | Blizzard 11-16 | Windfury Totem extra attacks generate Rage | yes (warriors with the totem) | server | landed | `sim/core/rage.go` gives white-hit rage on extra attacks; it never left them out |
 | SHR-HF-03 | Blizzard 11-13 and 11-16 | Windfury Totem rolls on every main hand melee ability (off-hand strikes never); Mutilate and Execute lose their extra attempt; Shield Slam, Shield Bash and Shieldworn Holy Strikes cannot roll it | yes (melee with the totem) | server | landed | `buffs.go` windfuryTotemRollsOnForever: one roll per main hand hit; shield abilities and Shieldworn not simulated; `sim/warrior/dps_warrior/windfury_totem_test.go` |
 | SHR-HF-04 | client 70959 | Windfury Totem's 100 ms proc cooldown is now in the client | yes | SpellAuraOptions 121576 / 124212 / 124158 ProcCategoryRecovery 100, 20% | landed | `buffs.go:2208` 100 ms |
-| SHR-HF-05 | Blizzard 11-16 (FC) | Darkmoon Card: Blue Dragon triggers on 3% of spellcasts (was 2%); the four Darkmoon Cards are ilvl 65 | minor (no request wears it) | server | missing | `sim/common/item_effects.go:3198` ProcChance .02; finding client_update-20261117-3 |
+| SHR-HF-05 | Blizzard 11-16 (FC); client 71037 | Darkmoon Card: Blue Dragon triggers on 3% of spellcasts (was 2%); the four Darkmoon Cards are ilvl 65 | minor (no request wears it) | server; client 71037 SpellAuraOptions 132982 ProcChance 2 -> 3 | landed | `sim/common/item_effects.go:3566` .03 under Forever (3ec610c40) |
 | SHR-HF-06 | Blizzard 11-16 (FC) | Darkmoon Card: Heroism heals 198; Darkmoon Card: Maelstrom's Lightning Strike x2 against Aquatic | n/a (healing; no Aquatic target) | server | n/a | |
 | SHR-U-24 | Blizzard 11-13 items; client 70959 | Stat corrections: Darkspear Signet Mp5 (4316 -> 1764-2142 allocation), Bad Hat loses its fifth stat, Channeler's Ring Spirit -> Spell Power, Blessed Band of Light loses Hit, Souvenir Sea Shell, Militant's Band, Pristine Scorpid Leggings, and the Premier PvP mail sets reallocated | minor (gear search only; no request or preset wears them) | `items_diff.py 70938 70959` StatPercentEditor / StatModifier_bonusStat | missing | `assets/database/db.json` still has Darkspear Signet 272068 9 Mp5 (expect about 4); finding client_update-20261117-4 |
 | PAL-HF-05 | Blizzard 11-13 (post 10) | Judgement of Command activates on-hit effects and counts as a melee attack; the other judgements stay ranged | yes (Command presets) | client 70959 SpellCategories DefenseType 2 -> 3 on every other judgement rank | landed | `sim/paladin/soc.go:97-112` (user ruling 2026-11-15), `judgement.go:78-93` rangedJudgement |
@@ -367,6 +368,21 @@ Text, cosmetic or out of scope, no rows: Attributes_2 bit 0x100 added on about 9
 | WAR-HF-02 | Blizzard 11-16 | Flurry stacks no longer consumed by Cleave or Heroic Strike | **yes** (every Fury and Arms preset that queues Heroic Strike or Cleave) | server; push 114097 sets Flurry 12966's ProcTypeMask 4 -> 20 | wrong | `sim/warrior/talents.go:412-418` still spends a stack on Heroic Strike and Cleave (EV-0138 log, build 70938, before the hotfix); finding client_update-20261117-2 |
 | WAR-HF-03 | Blizzard 11-16 | Reckless Swings activated by Cleave and Heroic Strike | yes (Fury) | server (SpellAuraOptions 249144) | landed | `sim/warrior/reckless_swings.go` |
 | WAR-HF-04 | Blizzard 11-13; client 70959 | Berserker Rage removes Sap | n/a | SpellEffect 1372182 added (aura 77, mechanic 30) | n/a | |
+
+## Build 1.60.1.71037 (first seen 2026-11-20)
+
+71037 writes Blizzard's hotfixes of November 17 (t/2403040 post 12, created 2026-11-18 03:24 UTC) into the client, and some of server push 114097. Post 13 (November 19, created 2026-11-20 04:00 UTC) was read too; its one class line is server side so far. The development-notes thread (2360696) has nothing after post 10 (2026-11-04); foreverchanges.pro does not list 71037 yet. `table_summary.py 70959 71037`: Spell 11 added / 9 changed, SpellEffect +16 / -2 / 25 changed, SpellMisc 74 changed, ItemSparse 74 added / 17 changed; no Trait*, SpellPower, SpellClassOptions (one removal, Filcher's Cowl) or ChrRaces change.
+
+Text, cosmetic or out of scope, no rows: Reagent Economy loses its proc and 5 min cooldown on every class ("should no longer randomly stop working"); Camping (sleeping bag, Resting aura, campfire and workstation Attributes_5, Camper's Lure and its Fishing Lure enchant 8773, Seed Hybridizer); Might of Stormwind, Warchief's Blessing and Rallying Cry Attributes_3 0x100000 -> 0x100 (cancel on death, players only); Vampiric Embrace heals 10% and the priest 100% more (healing); Filcher's Cowl stealth only; Sap Attributes_6; Darkmoon Card: Heroism heals 198 and Maelstrom x2 against Aquatic (both in SHR-HF-06); Howler's Cry and Lash of the Dark Rider (new item procs, no request wears them); Genesis's mask adds Pounce Bleed (n/a, Pounce not simulated); Haunt 1269554, Fixate, Shriek, Poison Shock, Vicious Bite, Writhing Agony and other NPC spells; Master Swordsmith/Axesmith/Hammersmith UI flag; Windfury Totem procs 8516/10608/10610 get category 2619 "Windfury Totem Attack" with a 100 ms category cooldown (the 100 ms of SHR-HF-04, landed). Flurry 12966, Unbridled Wrath 12322 and Reckless Swings 1329555 ProcTypeMask_0 4 -> 20 is push 114097 in the bare client (WAR-HF-01..03; no change to their status).
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| PAL-HF-07 | Blizzard 11-19 (t/2403040 post 13) | Retribution: "Two-Handed Weapon Specialization now correctly increases all Holy Damage you deal while a two-handed weapon is equipped" | **yes** (every Retribution request) | server (not in 71037: 20111 effect 0 unchanged) | wrong (user ruling 2026-11-15 limits the Holy part to melee-defense Holy hits and Consecration) | `sim/paladin/talents.go:269-299`; Hammer of Wrath, Judgement of Righteousness, Holy Shock, Exorcism, Holy Wrath, Retribution Aura take none; finding mechanics-20261120-1 (filed by the mechanics auditor) |
+| ROG-U-02 | client 71037 | Grimstitch Armor 5P (1301708): 5 Energy off Eviscerate and Death Mark (was Envenom and Eviscerate) | **yes** (Subtlety, on the synthetic set with the same bonuses) | SpellEffect 1326934 mask word 1 8 -> 0, word 2 0 -> 4 (Death Mark 1316709/1325756-8 word 2 = 4) | missing | `sim/rogue/items_sets_pve.go:442-450` discounts Eviscerate only; finding mechanics-20261120-2 |
+| SHA-HF-10 | Blizzard 11-17 (post 12) | Flurry no longer loses stacks when Windfury Totem attacks land | **yes** (enhancement requests with Windfury Totem) | server | wrong | `sim/shaman/talents.go:491` spends a stack on any white hit, the totem's extra swing included (`AutoAttacks.IsWindfuryTotemAttack` not checked); finding mechanics-20261118-1 |
+| WAR-U-16 | client 71037 | Execute 5308 and 20658/20660/20661/20662 (the dummy that triggers 26651): Attributes_3 adds Suppress Caster Procs, Suppress Target Procs and Always Hit; Attributes_2 +0x100 | yes (every warrior in execute phase) | SpellMisc 317179, 328653, 330569, 330769, 330772 | ambiguous (needs verify) | `sim/warrior/execute.go` models one hit-rolling special that keeps its extra rage when avoided (2ebdc14d6, 70862 logs); whether an always-hitting dummy now spends the rage before the damage roll is server side; finding client_update-20261120-1 |
+| HUN-U-14 | client 71037 | Wildstalker Armor 5P (1301252) reaches Multi-Shot as well as Aimed Shot | yes (hunters on the synthetic set) | SpellEffect 1326293 mask word 0 131072 -> 135168 (push 114065 in the client) | landed | `sim/hunter/item_sets_pve.go:332-344` |
+| SHR-U-25 | Blizzard 11-17 items; client 71037 | Item stats: Whiteout Staff and Crackling Staff the same (25 Sta, 25 Int, 74 spell power); Onyxia Blood Talisman, Old Guard Retaliator (green -> blue), Spiritcaller Kilt/Gloves/Mantle/Boots get stats; Soulforge Armor spell power; 74 new ilvl 55-66 dungeon set pieces (Feralheart, Darkmantle, Heroism, Beastmaster's, Deathmist, Five Thunders, Soulforge...) | minor (no request wears them) | `items_diff.py 70959 71037` | missing (db not re-pulled) | finding client_update-20261117-4 (update) |
 
 ## Per-class ledgers
 

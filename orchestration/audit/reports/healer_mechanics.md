@@ -1,26 +1,26 @@
-# healer_mechanics pass 23 (2026-11-20, master e07e8fdb8)
+# healer_mechanics pass 24 (2026-11-20, master e6eaa9470)
 
-Range e671e881e..e07e8fdb8, 3 watched files, 3 commits touching them (c04e51c13, 617a63635, 449bff490). Client
-1.60.1.70959 (wago latest, unchanged). Update ledger unchanged in range. Blizzard posts not rechecked (last seen
-t/2403040, 2026-11-17T02:18Z).
+Range 813f2b1e9..e6eaa9470 (9 commits): no file under `sim/`, `docs/healing_*`, `tools/healbench` or the healer presets
+changed (BiS lists, rotopt, TASKS, audit files only). Client 1.60.1.70959 -> 1.60.1.71037 (wago latest). Update ledger
+unchanged; Blizzard's Nov 19 post (t/2403040 post 13, via TASKS.md) is Retribution only.
 
-## What changed
+## Client 71037 diff (`python3 tools/sources/wago.py diff 1.60.1.70959 1.60.1.71037 --set mechanics`)
 
-| Source | Change | Healer effect | Verdict |
+| Row | Change | Healer effect | Verdict |
 |---|---|---|---|
-| sim/core/spell_result.go `critChanceAgainst` / `AddCritChanceAgainst` (c04e51c13) | per-target crit bonus (a caster's mark on a unit, by global `UnitIndex`), added to `PhysicalCritChance` and `SpellCritChance` | direct heals roll `HealingCritChance()`, which has no target term: unchanged. HoT snapshots (`SnapshotHeal`, :723) call `SpellCritChance(friendly)`, but the only writer (Blackhand's Breadth, `sim/common/item_effects.go:3206`) marks enemies via `NewEnemyAuraArray`, and `UnitIndex` is one index space over targets + raid (`environment.go:98-103`), so a friendly's entry stays 0. No collision of enemy and friendly indexes. | no healer effect |
-| sim/paladin/items.go (617a63635) | `RegisterItemConditions(TenetsOfTheSilverHand, Undead)` | damage libram condition only; Holy presets don't use it for healing | no healer effect |
-| sim/shaman/items.go Totem of Rage (449bff490) | Forever: +2% additive damage on Earth/Flame/Frost Shock instead of +30 bonus damage | shock damage only; no Restoration heal touched | no healer effect (DPS mechanic, for `mechanics`) |
+| Vampiric Embrace 15286 SpellEffect 694156 (#0) | bp 20 -> 10; new #1 bp 100 ("You receive $s2% increased healing on yourself"); tooltip text | the Nov 16 hotfix, now in the client; sim `vampiricEmbraceHealing` gives 10% party, 20% caster | match, tier 1 |
+| Aura of the Blue Dragon 23688 / 23684 ProcChance | 2 -> 3 / 100 -> 2 | already modeled from hotfix push 114044 (`sim/common/item_effects.go:3542-3546`) | match, tier 1 |
+| Genesis 1223081 #0 (1210794) mask word 3 | +0x80 | only druid spell with that bit is Pounce Bleed: damage, no heal | no healer effect |
+| Heroism 23682 (item heal proc), Lightning Strike, Windfury Totem categories, Reagent Economy, new NPC spells | various | no healer preset spell or engine path | none |
+| SpellPower, SpellCastTimes, SpellDuration | no change | heal costs, cast times, HoT durations unchanged | - |
 
-Nothing in `ref/healer_mechanics/verdicts.md` reopened.
+No heal rank, healing talent or set bonus row was added, removed or changed. Riptide (finding 11) still 150/180/230 in
+the client.
 
 ## Tests
 
-`go test -tags=with_db ./sim/core/... ./sim/shaman/... ./sim/paladin/...` and
-`go test -tags=with_db ./sim/ -run 'Heal|Shaman|Paladin|Priest|Druid'`: all pass.
+Not rerun: no sim code changed since pass 23, which ran the healer suites green.
 
 ## Findings
 
 None new. Open: 10 (untested paths, low), 11 (Riptide cost 147/180/231 vs client 150/180/230, low), unchanged.
-Low-weight note, not a finding: `SpellCritChance(target)` in HoT snapshots would pick up a future friendly-target
-mark; a test pinning heal crit to `HealingCritChance` would guard it (fits finding 10's list).
