@@ -4,7 +4,7 @@
   "dps": 1002.55,
   "iters": 10000,
   "made": "2026-11-20",
-  "sim": "0d2c24fd597c+",
+  "sim": "4c3ac0026235+",
   "items": {
     "810": {"name":"Hammer of the Northern Wind","dps":7.8},
     "1263": {"name":"Brain Hacker","dps":19.3},
@@ -20,7 +20,7 @@
     "11669": {"name":"Naglering","dps":0},
     "11684": {"name":"Ironfoe","dps":39.3},
     "11744": {"name":"Bloodfist","dps":13.2},
-    "11815": {"name":"Hand of Justice","dps":7.1},
+    "11815": {"name":"Hand of Justice","dps":7.1,"conditional":[{"label":"vs Dwarves","dps":20.7}]},
     "11819": {"name":"Second Wind","dps":0,"cooldown":0,"conditional":[{"label":"in mountains","dps":0}]},
     "11832": {"name":"Burst of Knowledge","dps":0,"cooldown":0},
     "11920": {"name":"Wraith Scythe","dps":8.7},

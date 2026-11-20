@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 1003.15,
   "made": "2026-11-20",
-  "sim": "0d2c24fd597c+",
+  "sim": "4c3ac0026235",
   "slots": {
     "head": [
       {
@@ -2107,7 +2107,14 @@
         "id": 11815,
         "name": "Hand of Justice",
         "dps": 996.27,
-        "loss": 6.88
+        "loss": 6.88,
+        "conditional": [
+          {
+            "label": "vs Dwarves",
+            "rank": 1,
+            "loss": -4.6
+          }
+        ]
       },
       {
         "id": 274759,
