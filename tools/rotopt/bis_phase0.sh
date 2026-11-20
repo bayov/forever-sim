@@ -65,8 +65,8 @@
 #     the bosses summoned with the Brazier of Beckoning and the Banner of Provocation drop
 #     (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren). They are "out"
 #     in phase0_content.json. Forever turned the chain into Mokvar's Five Thunders upgrades
-#     (2026-11-17), so its steps without a summon are open: Beads of Ogre Might from Falrin's
-#     Vendetta is "grind". The head and chest upgrades come at the end, after the Valthalak
+#     (2026-11-17), so its steps without a summon are open, like Beads of Ogre Might from
+#     Falrin's Vendetta. The head and chest upgrades come at the end, after the Valthalak
 #     summons, so they are doubtful until we know the summons work.
 #   - -gear-min-ilvl 50: nothing under item level 50 competes at 60, and the random suffix rolls
 #     of those greens make the pool three times as big. An "include" item joins anyway, like
@@ -78,7 +78,7 @@
 #     (Exalted). So they're candidates now, doubtful the way the Warden's Signets are.
 #   - Every item tools/rotopt/phase0_content.json marks "out". That file is the hand check of
 #     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
-#     we don't know of a way yet, and "grind" means open but slow. Items not in it are open now.
+#     we don't know of a way yet. Everything else is open, and its note says what it takes.
 #
 # What it lets in anyway: the items phase0_content.json marks "include", whatever -gear-phase
 # and -gear-no-raids say (-gear-include). Our item data takes its phases from Classic, where

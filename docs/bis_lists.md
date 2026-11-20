@@ -221,11 +221,12 @@ does nothing in the sim (Stamina, resistances, Minor Speed), so it isn't listed.
 keeps `-gear-rank-enchant-keep` (10) enchants, the pick included.
 
 The value of `-gear-rank-enchants` is the hand check of what the game has open, keyed by the
-enchant's spell ID (`tools/rotopt/phase0_enchants.json`, 2026-11-14). `avail` is `now`,
-`grind`, `doubtful` or `out`, as for items, `note` says why for the player, and `source` is
+enchant's spell ID (`tools/rotopt/phase0_enchants.json`, 2026-11-14). `avail` is
+`doubtful` or `out`, as for items, `note` says why for the player, and `source` is
 where the formula comes from, for us. `out` leaves the enchant out of the search (Molten Core's
 Weapon Spell Power, the Alliance quest's Fiery Blaze). A formula with no known source or a drop
-under about 0.5% is `doubtful`, and Honored reputation or a 0.5% to 5% drop is `grind`. An
+under about 0.5% is `doubtful`. Anything else is open, and its `note` says what it takes
+(Honored reputation, a formula drop rate). An
 enchant the search lists with no line in the file gets a warning in the output, so the check
 can be filled in.
 
@@ -268,7 +269,7 @@ can be filled in.
       {"id":2543,"spell":22840,"item":18329,"name":"Arcanum of Rapidity","effect":"+1% attack speed","dps":89.01,"loss":0.11,"avail":"doubtful","note":"Needs Pristine Black Diamond, source unknown"}
     ],
     "hands": [
-      {"id":1248640,"game":2563,"spell":1248640,"name":"Enchant Gloves - Superior Strength","effect":"+15 Strength","dps":89.12,"loss":0,"bis":true,"avail":"grind","note":"Merchant's Favor Honored"}
+      {"id":1248640,"game":2563,"spell":1248640,"name":"Enchant Gloves - Superior Strength","effect":"+15 Strength","dps":89.12,"loss":0,"bis":true,"note":"Merchant's Favor Honored"}
     ]
   }
 }
@@ -308,10 +309,11 @@ can be filled in.
   Weapon). `dps` and `loss` are at `-gear-rank-enchant-iters`, so the pick's `dps` can differ
   a little from the list's. `avail` and `note` are from `phase0_enchants.json` (see Enchants).
 - `avail` and `note` come from checking by hand what the game has open
-  (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `grind` (open but slow) or
-  `doubtful` (we don't know of a way yet), and an entry we can get now has none. `note` says
-  why, or what's still in the way. `bis_phase0.sh` leaves out every item the check marks `out`
-  (not before the raids) and copies `avail` and `note` onto the entries after the search.
+  (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `doubtful` (we don't know of
+  a way yet), and an open entry has none (user, 2026-11-20: the note tells the effort, so open
+  but slow has no tag of its own). `note` says what it takes, or what's still in the way.
+  `bis_phase0.sh` leaves out every item the check marks `out` (not before the raids) and copies
+  `avail` and `note` onto the entries after the search.
 
 ## Regenerating
 

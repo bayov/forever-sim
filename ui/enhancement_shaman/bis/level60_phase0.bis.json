@@ -45,7 +45,6 @@
         "name": "Skyfury Helm",
         "dps": 996.12,
         "loss": 7.03,
-        "avail": "grind",
         "note": "Shaman quests: Material Assistance + The Darkreaver Menace (Orgrimmar) · Azerothian Diamond (~1g) + Pristine Black Diamond (~75g on AH) · Darkreaver summon in Scholo"
       },
       {
@@ -144,7 +143,6 @@
         "name": "Adventurer's Bandana of the Gorilla",
         "dps": 987.89,
         "loss": 15.25,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~9.9g"
       },
       {
@@ -203,7 +201,6 @@
         "name": "Beads of Ogre Might",
         "dps": 1001.78,
         "loss": 1.36,
-        "avail": "grind",
         "note": "Quest: Falrin's Vendetta (Dire Maul) · 25 Ogre Warbeads from Dire Maul or Blackrock Spire ogres · step of Mokvar's Five Thunders chain"
       },
       {
@@ -259,7 +256,6 @@
         "name": "Amulet of the Darkmoon",
         "dps": 994.47,
         "loss": 8.68,
-        "avail": "grind",
         "note": "Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
       },
       {
@@ -283,7 +279,6 @@
         "dps": 992.71,
         "loss": 10.44,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -293,7 +288,6 @@
         "dps": 992.29,
         "loss": 10.86,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~5.8g"
       },
       {
@@ -327,7 +321,6 @@
         "dps": 991.79,
         "loss": 11.35,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -337,7 +330,6 @@
         "dps": 991.62,
         "loss": 11.53,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -378,7 +370,6 @@
         "dps": 991.36,
         "loss": 11.78,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~5.8g"
       },
       {
@@ -397,7 +388,6 @@
         "dps": 1003.15,
         "loss": 0,
         "bis": true,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Enhancement pick · or 23.5g at Mokvar after"
       },
       {
@@ -405,7 +395,6 @@
         "name": "Pauldrons of The Five Thunders",
         "dps": 996.33,
         "loss": 6.82,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Elemental pick · or 23.5g at Mokvar after"
       },
       {
@@ -427,7 +416,6 @@
         "name": "Darkspear Shoulderguards",
         "dps": 993.81,
         "loss": 9.34,
-        "avail": "grind",
         "note": "Darkspear Raiders rep"
       },
       {
@@ -453,7 +441,6 @@
         "name": "Darkspear Shoulderpads",
         "dps": 992.55,
         "loss": 10.6,
-        "avail": "grind",
         "note": "Darkspear Raiders rep"
       },
       {
@@ -461,7 +448,6 @@
         "name": "Darkspear Shoulders",
         "dps": 992.55,
         "loss": 10.6,
-        "avail": "grind",
         "note": "Darkspear Raiders rep"
       },
       {
@@ -485,7 +471,6 @@
         "name": "Mantle of The Five Thunders",
         "dps": 990.68,
         "loss": 12.47,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Restoration pick · or 23.5g at Mokvar after"
       },
       {
@@ -631,7 +616,6 @@
         "name": "Adventurer's Cape of the Gorilla",
         "dps": 990.11,
         "loss": 13.04,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~2.6g"
       },
       {
@@ -859,7 +843,6 @@
         "name": "Adventurer's Tunic of the Gorilla",
         "dps": 985.08,
         "loss": 18.07,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~10g"
       },
       {
@@ -947,7 +930,6 @@
         "loss": 0,
         "bis": true,
         "enchant": 1220624,
-        "avail": "grind",
         "note": "Quest at Mokvar · Bindings of Elements (BoE ~45g) + 15 Silithus Venom Samples + 20g · or ~9g at Mokvar after"
       },
       {
@@ -955,7 +937,6 @@
         "name": "Bindings of The Five Thunders",
         "dps": 1001.74,
         "loss": 1.4,
-        "avail": "grind",
         "note": "Quest at Mokvar · Bindings of Elements (BoE ~45g) + 15 Silithus Venom Samples + 20g · or ~9g at Mokvar after"
       },
       {
@@ -963,7 +944,6 @@
         "name": "Bracers of The Five Thunders",
         "dps": 997.78,
         "loss": 5.37,
-        "avail": "grind",
         "note": "Quest at Mokvar · Bindings of Elements (BoE ~45g) + 15 Silithus Venom Samples + 20g · or ~10g at Mokvar after"
       },
       {
@@ -971,7 +951,6 @@
         "name": "Windtalker's Wristguards",
         "dps": 996.98,
         "loss": 6.17,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -979,7 +958,6 @@
         "name": "Forest Stalker's Bracers",
         "dps": 996.25,
         "loss": 6.89,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -987,7 +965,6 @@
         "name": "Dryad's Wrist Bindings",
         "dps": 995.74,
         "loss": 7.4,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -995,7 +972,6 @@
         "name": "Windtalker's Wristguards",
         "dps": 995.39,
         "loss": 7.76,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -1015,7 +991,6 @@
         "name": "Dryad's Wrist Bindings",
         "dps": 994.37,
         "loss": 8.77,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -1094,7 +1069,6 @@
         "name": "Skirmisher's Mail Bracers",
         "dps": 993.76,
         "loss": 9.39,
-        "avail": "grind",
         "note": "Leatherworking (BoP) · 90 Merchant's Favor"
       },
       {
@@ -1155,7 +1129,6 @@
         "name": "Gauntlets of The Five Thunders",
         "dps": 993.94,
         "loss": 9.21,
-        "avail": "grind",
         "note": "Quest at Mokvar · Gauntlets of Elements (Emberseer, UBRS) + Cord of Elements (BoE ~6g) · after the 20g bracer quest · Elemental pick, with Cord · or 47g at Mokvar after"
       },
       {
@@ -1170,7 +1143,6 @@
         "name": "Fists of The Five Thunders",
         "dps": 990.79,
         "loss": 12.35,
-        "avail": "grind",
         "note": "Quest at Mokvar · Gauntlets of Elements (Emberseer, UBRS) + Cord of Elements (BoE ~6g) · after the 20g bracer quest · Enhancement pick, with Girdle · or 47g at Mokvar after"
       },
       {
@@ -1242,7 +1214,6 @@
         "name": "Raider Handguards",
         "dps": 986.37,
         "loss": 16.77,
-        "avail": "grind",
         "note": "Darkspear Raiders Exalted · breaks Devilsaur set"
       },
       {
@@ -1256,7 +1227,6 @@
         "name": "Raider Handwraps",
         "dps": 985.96,
         "loss": 17.19,
-        "avail": "grind",
         "note": "Darkspear Raiders Exalted · breaks Devilsaur set"
       },
       {
@@ -1313,7 +1283,6 @@
         "name": "Ferocity of the Timbermaw",
         "dps": 999.68,
         "loss": 3.47,
-        "avail": "grind",
         "note": "Meilosh · Might of the Timbermaw (LW) + Cured Rugged Hide + 20 Winterfall Spirit Beads"
       },
       {
@@ -1321,7 +1290,6 @@
         "name": "Cord of The Five Thunders",
         "dps": 999.41,
         "loss": 3.74,
-        "avail": "grind",
         "note": "Quest at Mokvar · Gauntlets of Elements (Emberseer, UBRS) + Cord of Elements (BoE ~6g) · after the 20g bracer quest · Elemental pick, with Gauntlets · or 23.5g at Mokvar after"
       },
       {
@@ -1336,7 +1304,6 @@
         "name": "Girdle of The Five Thunders",
         "dps": 998,
         "loss": 5.15,
-        "avail": "grind",
         "note": "Quest at Mokvar · Gauntlets of Elements (Emberseer, UBRS) + Cord of Elements (BoE ~6g) · after the 20g bracer quest · Enhancement pick, with Fists · or 23.5g at Mokvar after"
       },
       {
@@ -1499,7 +1466,6 @@
         "name": "Outrider's Chain Leggings",
         "dps": 1000.2,
         "loss": 2.94,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -1521,7 +1487,6 @@
         "name": "Kilt of The Five Thunders",
         "dps": 994.22,
         "loss": 8.93,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Elemental pick · or 47g at Mokvar after"
       },
       {
@@ -1529,7 +1494,6 @@
         "name": "Outrider's Lizardhide Pants",
         "dps": 994.17,
         "loss": 8.98,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -1537,7 +1501,6 @@
         "name": "Outrider's Mail Leggings",
         "dps": 993.05,
         "loss": 10.1,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -1563,7 +1526,6 @@
         "name": "Legplates of The Five Thunders",
         "dps": 988.68,
         "loss": 14.47,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Enhancement pick · or 47g at Mokvar after"
       },
       {
@@ -1615,7 +1577,6 @@
         "name": "Outrider's Silk Leggings",
         "dps": 985.56,
         "loss": 17.58,
-        "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
@@ -1682,7 +1643,6 @@
         "loss": 0,
         "bis": true,
         "enchant": 1887,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Enhancement pick · or 47g at Mokvar after"
       },
       {
@@ -1690,7 +1650,6 @@
         "name": "Slippers of The Five Thunders",
         "dps": 1002,
         "loss": 1.15,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Elemental pick · or 47g at Mokvar after"
       },
       {
@@ -1704,7 +1663,6 @@
         "name": "Greaves of The Five Thunders",
         "dps": 996.19,
         "loss": 6.96,
-        "avail": "grind",
         "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Restoration pick · or 47g at Mokvar after"
       },
       {
@@ -1740,7 +1698,6 @@
         "name": "Adventurer's Boots of the Gorilla",
         "dps": 993.48,
         "loss": 9.66,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~5.5g"
       },
       {
@@ -1779,7 +1736,6 @@
         "dps": 992.66,
         "loss": 10.49,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop · other suffixes on AH ~3.5g"
       },
       {
@@ -1870,7 +1826,6 @@
         "dps": 1003.15,
         "loss": 0,
         "bis": true,
-        "avail": "grind",
         "note": "Frostwolf Exalted · AV queue unconfirmed"
       },
       {
@@ -2031,7 +1986,6 @@
         "dps": 999.55,
         "loss": 3.59,
         "unsourced": true,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -2046,7 +2000,6 @@
         "name": "Prismatic Band of the Gorilla",
         "dps": 999.3,
         "loss": 3.85,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -2363,7 +2316,6 @@
         "loss": 0,
         "bis": true,
         "enchant": 1900,
-        "avail": "grind",
         "note": "Frostwolf Exalted · mace · AV queue unconfirmed"
       },
       {
@@ -2437,7 +2389,6 @@
         "name": "Brutehammer of Magic",
         "dps": 983.42,
         "loss": 19.72,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -2460,7 +2411,6 @@
         "name": "Brutehammer of the Sorcerer",
         "dps": 980.38,
         "loss": 22.77,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -2475,7 +2425,6 @@
         "name": "Brutehammer of the Elder",
         "dps": 979.36,
         "loss": 23.79,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -2510,7 +2459,6 @@
         "name": "Brutehammer of Healing",
         "dps": 976.62,
         "loss": 26.53,
-        "avail": "grind",
         "note": "Random world drop"
       },
       {
@@ -2685,7 +2633,6 @@
         "dps": 1003.98,
         "loss": 0,
         "bis": true,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {
@@ -2751,7 +2698,6 @@
         "effect": "+6 spell power, +40 armor",
         "dps": 1000.9,
         "loss": 3.09,
-        "avail": "grind",
         "note": "90 Merchant's Favor, Honored"
       },
       {
@@ -2810,7 +2756,6 @@
         "dps": 1003.98,
         "loss": 0,
         "bis": true,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {
@@ -2830,7 +2775,6 @@
         "effect": "+9 Intellect",
         "dps": 1003.2,
         "loss": 0.79,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {
@@ -2907,7 +2851,6 @@
         "dps": 1003.98,
         "loss": 0,
         "bis": true,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {
@@ -2945,7 +2888,6 @@
         "effect": "+20 Nature damage",
         "dps": 999.82,
         "loss": 4.17,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {
@@ -2984,7 +2926,6 @@
         "effect": "+6 spell power, +40 armor",
         "dps": 998.96,
         "loss": 5.02,
-        "avail": "grind",
         "note": "90 Merchant's Favor, Honored"
       },
       {
@@ -3064,7 +3005,6 @@
         "effect": "+6 spell power, +40 armor",
         "dps": 1001.99,
         "loss": 2,
-        "avail": "grind",
         "note": "90 Merchant's Favor, Honored"
       },
       {
@@ -3124,7 +3064,6 @@
         "effect": "+6 spell power, +40 armor",
         "dps": 1003.78,
         "loss": 0.2,
-        "avail": "grind",
         "note": "90 Merchant's Favor, Honored"
       },
       {
@@ -3209,7 +3148,6 @@
         "effect": "+65 spell power",
         "dps": 1002.08,
         "loss": 1.9,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {
@@ -3228,7 +3166,6 @@
         "effect": "+55 spell power",
         "dps": 998.93,
         "loss": 5.06,
-        "avail": "grind",
         "note": "Merchant's Favor Honored"
       },
       {

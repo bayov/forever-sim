@@ -26,7 +26,7 @@ import (
 // -gear-phase also holds for enchants, so a Zul'Gurub or Naxxramas one never comes up.
 // What's left out on top of that is in the -gear-rank-enchants file, a hand check of what
 // the game has open, keyed by the enchant's spell ID: "out" leaves an enchant out, and
-// "avail" and "note" go on its entry the way phase0_content.json's do on items.
+// "avail" ("doubtful") and "note" go on its entry the way phase0_content.json's do on items.
 //
 // Each slot holds one enchant, so things that share it can't stack: Iron Counterweight
 // (a blacksmith's attachment) and Crusader are two options of the same weapon slot.
@@ -322,9 +322,7 @@ func (s *searcher) rankEnchants(best []*proto.ItemSpec, knobs Knobs) ([]bisEncha
 				entry.Game = game
 			}
 			if c, ok := checks[e.SpellId]; ok {
-				if c.Avail != "now" {
-					entry.Avail = c.Avail
-				}
+				entry.Avail = c.Avail
 				entry.Note = c.Note
 			} else {
 				fmt.Printf("  %s (spell %d) has no hand check in %s\n", e.Name, e.SpellId, *gearRankEnchants)
