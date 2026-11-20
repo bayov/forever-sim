@@ -72,6 +72,18 @@ kept Wildheart Bracers while its own wrist ranking had Windtalker's Wristguards 
 We used to ask for the `-confidence` margin at `-iters` too, but then Don Julio's Band stayed
 2.3 DPS ahead of the rings on the next run, and it was 2.4 ahead at 20000 iterations.
 
+### Items we rank but never pick
+
+`-gear-no-pick` takes item IDs the search never picks, but every list still ranks. The Phase 0
+list uses it for the items that need Exalted reputation (`avail` `infeasible` in
+`phase0_content.json`, user 2026-11-20), like The Unstoppable Force from Frostwolf. That grind
+is very long, so the set doesn't count on it, and each slot's pick is the best item we can get.
+But a player who has the reputation still sees where the item goes on the set. Such an item is
+ranked like any other, on the set with its real loss, but it never takes a pick's place
+(see above). When it beats the pick, it comes right after the picks with a negative loss, since the
+picks always come first. A starting item that is on it comes off before the search, like an
+excluded one.
+
 ## Conditional ranks
 
 Some items do more in some fights. Blackhand's Breadth's mark doubles on Orcs and Ogres, Seal of
@@ -342,10 +354,12 @@ can be filled in.
   a little from the list's. `avail` and `note` are from `phase0_enchants.json` (see Enchants).
 - `avail` and `note` come from checking by hand what the game has open
   (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `doubtful` (we don't know of
-  a way yet), and an open entry has none (user, 2026-11-20: the note tells the effort, so open
-  but slow has no tag of its own). `note` says what it takes, or what's still in the way.
-  `bis_phase0.sh` leaves out every item the check marks `out` (not before the raids) and copies
-  `avail` and `note` onto the entries after the search.
+  a way yet) or `infeasible` (it needs Exalted reputation, user 2026-11-20), and an open entry
+  has none (user, 2026-11-20: the note tells the effort, so open but slow has no tag of its
+  own). `note` says what it takes, or what's still in the way. `bis_phase0.sh` leaves out every
+  item the check marks `out` (not before the raids) and copies `avail` and `note` onto the
+  entries after the search. An `infeasible` item is never a pick, but it is still ranked, so
+  its `loss` can be negative (see Items we rank but never pick).
 
 ## Regenerating
 
@@ -370,7 +384,8 @@ the user plays, from a real pre-raid set. `TALENTS` sets the talents, and the de
 `053303102-054030110051212141-03` (2026-11-14). The search uses `-gear-no-raids` and
 `-gear-phase 2`, so only what Forever has before its raids open can come up
 (`tools/rotopt/phase0.go`). It also leaves out the items `tools/rotopt/phase0_content.json`
-marks `out`, and keeps 25 items a slot. Our item data puts Classic patch 1.10's Dungeon Set 2
+marks `out`, and ranks the ones marked `infeasible` without ever picking them (`-gear-no-pick`,
+see Items we rank but never pick). It keeps 25 items a slot. Our item data puts Classic patch 1.10's Dungeon Set 2
 chain in phase 1 or 2, so its summoned bosses' drops (Sothos and Jarien, Lord Valthalak, Kormok,
 Isalien, Mor Grayhoof, Theldren) are `out` there by hand. Forever made the chain Mokvar's Five
 Thunders upgrades, so Beads of Ogre Might (Falrin's Vendetta, a step without a summon) is open. The other way round, the items marked `include` there join whatever their phase

@@ -82,10 +82,22 @@
 #     Leafre's Ring of Precise Spell Power (276765) and Band of the Better Half (284716).
 #     The Tracker's Signets (275972 to 275975) used to be on this list too, but their tooltips
 #     say "Requires The Watchers - Honored", the same reputation as the Warden's Signets
-#     (Exalted). So they're candidates now, doubtful the way the Warden's Signets are.
+#     (Exalted). So they're candidates now, doubtful because we know of no reputation source
+#     yet. The Warden's Signets need Exalted, so they're infeasible (below).
 #   - Every item tools/rotopt/phase0_content.json marks "out". That file is the hand check of
 #     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
-#     we don't know of a way yet. Everything else is open, and its note says what it takes.
+#     we don't know of a way yet, and "infeasible" is below. Everything else is open, and its
+#     note says what it takes.
+#
+# What it ranks but never picks: the items phase0_content.json marks "infeasible" (user,
+# 2026-11-20, -gear-no-pick). Those need Exalted reputation, which is a very long grind: the
+# Frostwolf rewards (The Unstoppable Force, Don Julio's Band), Warsong Gulch, the Defilers, the
+# Darkspear Raiders, the Watchers (the Warden's Signets) and Timbermaw (the Stormcarver plans).
+# The search never puts one in the set, so each slot's pick is the best item we can get. But
+# each slot's list still ranks them on that set, so a player who has the reputation sees where
+# the item goes. One that beats the pick comes right after the picks with a negative loss.
+# An item that needs Exalted and also isn't known to be open yet (the Defilers' rewards) is
+# "infeasible", not "doubtful".
 #
 # What it lets in anyway: the items phase0_content.json marks "include", whatever -gear-phase
 # and -gear-no-raids say (-gear-include). Our item data takes its phases from Classic, where
@@ -153,6 +165,7 @@ out="${OUT:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
 from="${FROM:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
 exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
+nopick="$(jq -r '[to_entries[] | select(.value.avail == "infeasible") | .key] | join(",")' "$content")"
 jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
 # Head, neck, shoulder, back, chest, wrist, hands, waist, legs, feet, two rings, two trinkets,
 # main hand, off hand and the relic, in the order of the equipment list. The report's enchant
@@ -212,7 +225,7 @@ fi
 
 go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" -iters 2000 \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
-	-gear-exclude "$exclude" -gear-include "$include" \
+	-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
 	-gear-screen-iters 300 -gear-screen-keep 40 \
 	-gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim" \
