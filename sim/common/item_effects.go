@@ -3099,6 +3099,11 @@ func init() {
 	// or the encounter sets raid damage (raid_damage_hits_per_minute and raid_damage_per_hit), so
 	// we only use it then. Without either it would do nothing but put the other burst trinkets on
 	// their 15 sec cooldown.
+	//
+	// It goes after the other burst trinkets. At the pull we press the damage one first (Chained
+	// Essence of Eranikus, Blackhand's Breadth) and the shield once the shared 15 sec are up, as a
+	// player would. Pressed first, the shield cost about 4 DPS next to Chained Essence in a 45 sec
+	// fight, because it held the cloud back for 15 sec.
 	core.NewItemEffect(AdaptiveCombatAssistant, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.Env.IsForever() {
@@ -3159,8 +3164,9 @@ func init() {
 		})
 
 		character.AddMajorCooldown(core.MajorCooldown{
-			Type:  core.CooldownTypeDPS,
-			Spell: spell,
+			Type:     core.CooldownTypeDPS,
+			Spell:    spell,
+			Priority: core.CooldownPriorityLow,
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 				return takesHits(character)
 			},
