@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
+  "master": "e07e8fdb812df5b3c2a557393c1ba498e2c83b34"
  },
- "last_pass_at": "2026-11-19T18:52:20Z",
- "pass": 23,
+ "last_pass_at": "2026-11-20T00:52:42Z",
+ "pass": 24,
  "result": "quiet",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-19T18:52:20Z",
+ "checked_at": "2026-11-20T01:00:44Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 22 (8f388c7f3c): only watched change is swiftmendHot's inline loop in sim/druid/healing.go (equivalent to balanceSpells, Restoration only). Tank tests pass with -tags=with_db. Open findings unchanged."
+ "note": "Pass 24 (e07e8fdb8): watched changes are item plumbing (Encounter.OutdoorTerrain, Target.MobFamily, Tenets item condition) and Forever Totem of Rage (+2% shocks, additive); no tank preset equips Totem of Rage (Warden uses 272432). Tank tests pass. Open findings unchanged."
 }

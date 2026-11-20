@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
+  "master": "e07e8fdb812df5b3c2a557393c1ba498e2c83b34"
  },
- "last_pass_at": "2026-11-19T12:57:27Z",
- "pass": 20,
+ "last_pass_at": "2026-11-20T01:00:30Z",
+ "pass": 21,
  "result": "quiet",
- "note": "Pass 20 on 8f388c7f3. Only watched change 65f0ea9d6 (swiftmendHot loops rank lists without allocating; same semantics). All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
+ "note": "Pass 21 on e07e8fdb8. Watched changes (critChanceAgainst in spell_result.go, Tenets condition, Totem of Rage Forever) do not reach healers. All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-19T18:52:20Z"
+ "checked_at": "2026-11-20T01:00:44Z"
 }

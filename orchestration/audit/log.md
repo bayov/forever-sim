@@ -486,3 +486,11 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-19 18:52 | tank_mechanics | pass 23 | master e671e881e | quiet | leastHps replayFrom bit-identical on 20000 random lists; tank tests pass
 2026-11-19 18:52 | tank_rotations | pass 21 | master e671e881e | quiet | 104 baseline rows match
 2026-11-19 18:52 | tank_fairness | pass 23 | master e671e881e | quiet | 84 rows match, ranking unchanged
+2026-11-20 01:00 | consumables | pass 93 | master e07e8fdb8 | quiet | weapon proc rulesets only; no consumable/buff values changed
+2026-11-20 01:00 | mechanics | pass 93 | master e07e8fdb8 | quiet | 4 item-effect commits match client 70959
+2026-11-20 01:00 | healer_mechanics | pass 23 | master e07e8fdb8 | quiet | per-target crit bonus doesn't touch heals; tests pass
+2026-11-20 01:00 | healer_rotations | pass 21 | master e07e8fdb8 | quiet | 63 baseline rows match
+2026-11-20 01:00 | healer_fairness | pass 23 | master e07e8fdb8 | quiet | 63 cells match, ranking unchanged
+2026-11-20 01:00 | tank_mechanics | pass 24 | master e07e8fdb8 | quiet | new target fields unused by tank path; tests pass
+2026-11-20 01:00 | tank_rotations | pass 22 | master e07e8fdb8 | quiet | 104 baseline rows match
+2026-11-20 01:00 | tank_fairness | pass 24 | master e07e8fdb8 | quiet | 84 rows match, ranking unchanged

@@ -1,21 +1,25 @@
-# Healer rotations pass 20 (quiet)
+# Healer rotations pass 21 (quiet)
 
-- Master: 8f388c7f3 (`last.master` was eebd00b2b). Audited 2026-11-19.
-- Bench: `tools/healbench` built in the audit checkout (protos generated with `protoc -I=./proto --go_out=./sim/core
-  ./proto/*.proto`; setup.sh still doesn't do it), default seed 101, `-carry`, 1,000 iterations, via
+- Master: e07e8fdb8 (`last.master` was e671e881e). Audited 2026-11-20.
+- Bench: `tools/healbench` built in the audit checkout (protos generated with `make sim/core/proto/api.pb.go`;
+  setup.sh still doesn't do it), default seed, `-carry`, 1,000 iterations, via
   `tools/audit/healer_rotations/baseline.sh`.
 
-## What changed since eebd00b2b
+## What changed since e671e881e
 
-- 65f0ea9d6: `swiftmendHot` (sim/druid/healing.go) loops the Rejuvenation and Regrowth rank lists directly,
-  skipping nil ranks, instead of building a filtered copy with `balanceSpells` on each call. Same ranks, same
-  order, same tie rule (strict `<` on expiry), so the same HoT is consumed. A speedup, no behaviour change.
-- No healer APL, request, encounter file or healbench main.go change.
+- c04e51c13 / 617a63635 / 449bff490 (Forever trinket uses, item conditions registry, Forever BiS items):
+  - `sim/core/spell_result.go`: `critChanceAgainst(target)` added to physical and spell crit chance, a per-target
+    bonus from a mark of the caster's on that target. Zero unless something calls `AddCritChanceAgainst`, which
+    only the new DPS trinket effects do on enemy targets; heals on friendly units get 0.
+  - `sim/paladin/items.go`: Tenets of the Silver Hand registers an Undead mob-type condition (metadata only).
+  - `sim/shaman/items.go`: Totem of Rage on Forever is +2% shock damage instead of +30 bonus damage. Not in any
+    healer request.
+- No healer APL, request, encounter file, `sim/druid`/`sim/priest` or healbench main.go change.
 
 ## Baseline (1,000 it) vs ref
 
-All 63 rows (9 requests x 7 boss files, each in its role) byte-identical to `ref/healer_bench/summary.tsv`,
-which confirms the refactor is a no-op. Ref kept as is.
+All 63 rows (9 requests x 7 boss files, each in its role) byte-identical to `ref/healer_bench/summary.tsv`, which
+confirms none of the changes reaches the healers. Ref kept as is.
 
 Rows behind the open findings:
 
@@ -27,7 +31,7 @@ Rows behind the open findings:
 
 ## Rotation lines
 
-No line changed, and the baseline is identical, so the line-by-line findings of earlier passes stand; no new
+No line changed and the baseline is identical, so the line-by-line findings of earlier passes stand; no new
 one-line variants were tried this pass.
 
 ## Findings

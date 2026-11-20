@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
+  "master": "e07e8fdb812df5b3c2a557393c1ba498e2c83b34"
  },
- "last_pass_at": "2026-11-19T18:52:20Z",
- "pass": 92,
+ "last_pass_at": "2026-11-20T00:52:28Z",
+ "pass": 93,
  "result": "quiet",
- "note": "Pass 91: eebd00b2b..8f388c7f3. Only 65f0ea9d6 sim/druid/healing.go: swiftmendHot loops Rejuvenation/Regrowth lists directly instead of balanceSpells (same nil filter, same order, same tie rule) - no behavior change. Client still 70959; no new dev-notes or hotfix posts.",
+ "note": "Pass 93: e671e881e..e07e8fdb8. Item-effect commits (Blackhand's Breadth mark via core CritChanceAgainst, Totem of Rage 2%, Bolt's Eyeball 7.5%/30% from log, BiS item values) all match 70959 or a tier 1 log. Client still 70959; no new dev-notes or hotfix posts; blue tracker only a podcast video.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-19T18:52:20Z",
+ "checked_at": "2026-11-20T01:00:44Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -27,7 +27,7 @@
   "newest_push": 114157,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-17T18:38:11Z",
+ "blue_tracker_seen": "2026-11-19T17:35:02Z",
  "hotfix_post_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040/12",
   "date": "2026-11-18T03:24:08Z",

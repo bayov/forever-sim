@@ -1,32 +1,31 @@
-# tank_fairness pass 23: 2026-11-19, master e671e881e
+# tank_fairness pass 24: 2026-11-20, master e07e8fdb8
 
-Due: 1 watched file changed since 8f388c7f3, `sim/core/tank_score.go` (d73c17568): `leastHps` now restarts each
-replay from the last event where the lower-bound HPS left the tank at max health (`replayFrom`) instead of replaying
-from the start. Read for correctness: health at every event is non-decreasing in the HPS (damage, stand-in units and
-heals are monotone, capped at max health), so a point capped under a lower HPS is capped under any higher one with
-the same state; the damage branch's `health >= maxHealth` equals the old `min(maxHealth, health) - damage`, also when
-max health drops between events. Behaviour-neutral by reading and by measurement. No change to `tools/tankbench`,
-`tools/encounters`, the tank requests or the tank classes. Quiet: no new finding.
+Due: 3 watched files changed since e671e881e: `sim/core/target.go` (Encounter.OutdoorTerrain and Target.MobFamily
+copied from the request, for item conditions), `sim/paladin/items.go` (Tenets of the Silver Hand registers an Undead
+item condition; its effect unchanged) and `sim/shaman/items.go` (Totem of Rage under Forever: +2% additive shock
+damage instead of +30 bonus damage). Also in range: `sim/core/spell_result.go` adds `critChanceAgainst` (0 unless a
+mark such as Blackhand's Breadth is up), new item effects in `sim/common/item_effects.go`, the item-conditions
+registry. No tank request wears Tenets (249397) or Totem of Rage (22395); no change to `tools/tankbench`,
+`tools/encounters` or the tank requests. Quiet: no new finding.
 
 ## Method
 
-Built tankbench at e671e881e (protos and `make items` generated, `--tags=with_db`), ran
-`tools/audit/tank_fairness/bench.sh` on all 13 requests x six scoring bosses, 3,000 iterations, seed 1, and diffed
-`summary.py --tsv` against `ref/tank_fairness/summary.tsv`: all 84 baseline rows identical to the byte, healing
-needed (the number the changed search produces) included; the only extra rows are the legacy
-`warrior_protection.json`, which the baseline leaves out. Baseline not refreshed.
+Built tankbench at e07e8fdb8 (protos, `make items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on
+all 13 requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against
+`ref/tank_fairness/summary.tsv`: all 84 baseline rows identical to the byte; the only extra rows are the legacy
+`warrior_protection.json`. Baseline not refreshed.
 
 ## Ranking (six-boss mean, own weight, seed 1)
 
-| weight | order | pass 23 (= pass 22) |
+| weight | order | pass 24 (= pass 23) |
 |---|---|---|
 | Max threat | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
 | Balanced | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |
 | Max survival | Warrior, Paladin, Bear, Warden | 1837 / 1776 / 364 / -2211 |
 
-Unchanged in order. Open findings re-checked against the requests (unchanged since pass 20): paladin Major Mana Potion
-with no potion action (-20261105-1), Warden Night Elf / Night Elf / Undead (-20261105-2), paladin damage taken waiting on
-the user's calls (-20261104-2), legacy `warrior_protection.json` still read (-20261104-5). None fixed.
+Open findings re-checked against the requests (unchanged): paladin Major Mana Potion with no potion action
+(-20261105-1), Warden Night Elf / Night Elf / Undead (-20261105-2), paladin damage taken waiting on the user's calls
+(-20261104-2), legacy `warrior_protection.json` still read (-20261104-5). None fixed.
 
 ---
 

@@ -1,17 +1,20 @@
-# Healer fairness pass 22 (2026-11-19, master 8f388c7f3)
+# Healer fairness pass 23 (2026-11-20, master e07e8fdb8)
 
 Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth;
 last at 1.385, 0.005 behind the shaman), -20261104-4 (low).
 
-Due because `sim/druid/healing.go` changed since eebd00b2b. The only sim change since pass 21's a6677362f:
-- 65f0ea9d6: `swiftmendHot` loops `druid.Rejuvenation` then `druid.Regrowth` directly, skipping nil ranks, instead of
-  `balanceSpells(...)` (FilterSlice(Flatten) on nil, `sim/druid/talents.go:82`). Same order, same nil skip, same
-  strict `<` earliest-expiry pick, so the same HoT is consumed. The rest of the commit is `tools/dps_report/bench_races.py`.
-- Check: both druid presets on all 7 files, seed 101, 1,000 it (`tools/audit/healer_fairness/screen.sh`): all 14 cells
-  identical to `ref/healer_fairness/bench_a667736.tsv` (tank 1.267, raid 1.385). Other healers untouched (no other
-  sim, `tools/healbench/req/` or `tools/encounters/` change since a6677362f), so sections 1-3 below stand from pass 21.
-- Tooling note: healbench must be built `--tags=with_db` (the synthetic set items, e.g. 990401, live in the DB);
-  without it every request panics "No item with id". Added to screen.sh's header.
+Due because `sim/core/spell_result.go`, `sim/paladin/items.go` and `sim/shaman/items.go` changed since e671e881e
+(db684c04a..e07e8fdb8, the Forever BiS item work):
+- `spell_result.go`: physical and spell crit chance add `critChanceAgainst(target)`, a per-target mark bonus
+  (Blackhand's Breadth). The slice stays empty until a mark goes up, so it returns 0 for every heal's target.
+- `paladin/items.go`: Tenets of the Silver Hand registers an Undead item condition only (BiS ranking metadata).
+- `shaman/items.go`: Totem of Rage under Forever is +2% shock damage instead of +30 bonus damage; no healer wears it.
+- Also `core/item_effects.go`, `unit.go`, `target.go` (MobFamily, OutdoorTerrain), `common/item_effects.go`:
+  item conditions and DPS trinkets; no healer preset, `tools/healbench/req/` or `tools/encounters/` change.
+- Check: all 63 cells, both roles, seed 101, 1,000 it (`screen.sh`): identical to
+  `ref/healer_fairness/bench_a667736.tsv`, so sections 1-3 below stand.
+- Tooling note: `proto/common.proto` changed, so healbench needs regenerated protos. Built it in the worktree
+  `tools/audit/build_cli.sh e07e8fdb8` makes (`cd $(dirname <cli>)/tree && go build -tags with_db ./tools/healbench`).
 
 The rest is pass 21's (master a6677362f), still current:
 

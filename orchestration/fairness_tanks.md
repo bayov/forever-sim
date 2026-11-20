@@ -1,7 +1,9 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-19, pass 23, master e671e881e (the least-HPS
+preset weight, its reasons, and the open questions. Last pass: 2026-11-20, pass 24, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
+Undead condition, Totem of Rage's Forever 2%, a crit-against-target mark; no tank preset wears an affected item; all 12
+presets identical to pass 23). Pass 23: 2026-11-19, master e671e881e (the least-HPS
 search in `sim/core/tank_score.go` restarts replays from the last capped point; all 12 presets identical to pass 22).
 Pass 22: master 8f388c7f3 (a Swiftmend refactor in `sim/druid/healing.go`; all 12 presets identical to pass 21). Pass 21: 2026-11-18, master a6677362f (spell GCD
 haste, standards 27, and the healer reaction-time wake fix: the Warden -16 / +1 / +30, within about 2 sigma, the others

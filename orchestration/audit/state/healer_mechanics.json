@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "e671e881eae7c2512adaa055cbdaab2ac7bb30ec"
+  "master": "e07e8fdb812df5b3c2a557393c1ba498e2c83b34"
  },
- "last_pass_at": "2026-11-19T12:52:25Z",
- "pass": 22,
+ "last_pass_at": "2026-11-20T00:53:34Z",
+ "pass": 23,
  "result": "quiet",
- "note": "Pass 22: swiftmendHot loop rewrite (65f0ea9d6) equivalent, druid and healing tests pass. Findings 10, 11 open.",
+ "note": "Pass 23: per-target crit (critChanceAgainst), Tenets condition, Totem of Rage 2%: no healer effect; tests pass. Findings 10, 11 open.",
  "client_build": "1.60.1.70959",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-17T02:18:14Z"
  },
- "checked_at": "2026-11-19T18:52:20Z"
+ "checked_at": "2026-11-20T01:00:44Z"
 }
