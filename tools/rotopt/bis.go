@@ -428,12 +428,16 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	// iterations. On 2026-11-14 a margin of two standard errors at the ranking's iterations
 	// let Don Julio's Band stay 2.3 DPS ahead of the Phase 0 ring picks, and it was 2.4 ahead
 	// at 20000 iterations.
+	//
+	// A -gear-no-pick item keeps its place on the list, even ahead of the pick, but it never
+	// challenges it. The best item we may pick does.
 	ahead := func(slot string, ranked []rankedGear) {
-		if len(ranked) == 0 || ranked[0].gear == nil {
+		top := firstPickable(ranked)
+		if top == nil || top.gear == nil {
 			return
 		}
-		if ranked[0].result.dps > base.dps {
-			challengers = append(challengers, rankChallenger{slot, ranked[0]})
+		if top.result.dps > base.dps {
+			challengers = append(challengers, rankChallenger{slot, *top})
 		}
 	}
 
@@ -778,7 +782,8 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	if *gearRankTwoHandOnly {
 		return mainList, nil
 	}
-	bare := s.rankGear("", oneHanders, func(o gearOption) [][]*proto.ItemSpec {
+	// The one hand setup is one we could pick, so it leaves out the -gear-no-pick items.
+	bare := s.rankGear("", pickable(oneHanders), func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
 	}, nil, 1, knobs)
 	if len(bare) == 0 {
@@ -791,10 +796,11 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	source("offhand", pool[oh], offPlacements, func(rankedGear) *proto.ItemSpec { return oneHand })
 	offRanked := s.rankGear("offhand", pool[oh], offPlacements, nil, keep, knobs)
 	offList := entriesOf(offRanked, func(rankedGear) *proto.ItemSpec { return oneHand })
-	if len(offRanked) == 0 {
+	offPick := firstPickable(offRanked)
+	if offPick == nil {
 		return mainList, offList
 	}
-	offHand := s.withEnchantOf(oh, offRanked[0].option.spec, best[oh])
+	offHand := s.withEnchantOf(oh, offPick.option.spec, best[oh])
 	onePlacements := func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, offHand)}
 	}

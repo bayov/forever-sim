@@ -47,6 +47,37 @@ type gearOption struct {
 	// suffixStats is what the random suffix adds, nil for an item without one. The BiS list
 	// uses it to drop the weaker rolls of a suffix (bestRolls).
 	suffixStats []float64
+	// noPick marks an item the search never picks, but the BiS list still ranks
+	// (-gear-no-pick). The Phase 0 list uses it for the items that need Exalted reputation:
+	// a player reading down a slot's list sees where they'd rank, but the set doesn't count
+	// on a grind that long.
+	noPick bool
+}
+
+// markNoPick sets noPick on every option of the pool whose item is in ids.
+func markNoPick(pool [][]gearOption, ids []int32) {
+	for _, options := range pool {
+		for i := range options {
+			if slices.Contains(ids, options[i].spec.Id) {
+				options[i].noPick = true
+			}
+		}
+	}
+}
+
+// pickable is the options the search may pick: all but the noPick ones.
+func pickable(options []gearOption) []gearOption {
+	return slices.DeleteFunc(slices.Clone(options), func(o gearOption) bool { return o.noPick })
+}
+
+// firstPickable is the best of ranked (best first) that the search may pick, or nil.
+func firstPickable(ranked []rankedGear) *rankedGear {
+	for i := range ranked {
+		if !ranked[i].option.noPick {
+			return &ranked[i]
+		}
+	}
+	return nil
 }
 
 var gearSlotNames = []string{"head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2", "mainhand", "offhand", "ranged"}
@@ -538,10 +569,17 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 	var heldOffHand *proto.ItemSpec
 	var heldOffHandName string
 
+	// The search tries only what it may pick. The ranking and the effects file below get the
+	// whole pool, so a -gear-no-pick item is still on the list.
+	searchPool := make([][]gearOption, len(pool))
+	for slot, options := range pool {
+		searchPool[slot] = pickable(options)
+	}
+
 	// With -gear-rank-only the starting gear is the set, and we go straight to its ranking.
 	for round := 1; !*gearRankOnly; round++ {
 		improved := false
-		for slot, options := range pool {
+		for slot, options := range searchPool {
 			if len(options) == 0 {
 				continue
 			}
@@ -614,7 +652,7 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				fmt.Printf("round %d: %s = %s (%+.1f), now %s\n", round, gearSlotNames[slot], bestOption.name, bestGain, bestScore)
 			}
 		}
-		if s.searchSets(pool, best, names, unsourced, &bestScore, knobs, round) {
+		if s.searchSets(searchPool, best, names, unsourced, &bestScore, knobs, round) {
 			improved = true
 		}
 		if s.enchantSearch && s.searchEnchants(best, &bestScore, knobs, s.enchantExclude, round) {

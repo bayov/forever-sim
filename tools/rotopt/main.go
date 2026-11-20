@@ -64,6 +64,7 @@ func main() {
 	gearScreenKeep := flag.Int("gear-screen-keep", 20, "gear search: how many items per slot survive the screen")
 	gearInclude := flag.String("gear-include", "", "item IDs the gear search keeps whatever -gear-phase and -gear-no-raids say, comma separated (the Darkmoon cards, open in Forever though our data puts them in phase 3)")
 	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
+	gearNoPick := flag.String("gear-no-pick", "", "item IDs the gear search never picks, comma separated, but the -gear-rank-out list still ranks with their real loss (the Phase 0 list's Exalted reputation items)")
 	minHealth := flag.Float64("min-health", 0, "gear search: the least health the set must have without buffs or consumes, for a PvP set")
 	minArmor := flag.Float64("min-armor", 0, "gear search: the least armor the set must have without buffs or consumes")
 	survivalPenalty := flag.Float64("survival-penalty", 1, "gear search: DPS a set loses for each point of health below -min-health (a fifth of it for each point of armor below -min-armor)")
@@ -355,12 +356,13 @@ func main() {
 			}
 			return out
 		}
-		exclude, include := ids(*gearExclude), ids(*gearInclude)
+		exclude, include, noPick := ids(*gearExclude), ids(*gearInclude), ids(*gearNoPick)
 		// An excluded item the player is wearing comes off first, or the search would
-		// keep it since nothing in the pool is compared against it.
+		// keep it since nothing in the pool is compared against it. So does an item the
+		// search may not pick, like a pick of the list a RANK_ONLY run starts from.
 		if equipment := setup.player().Equipment; equipment != nil {
 			for _, item := range equipment.Items {
-				if item != nil && slices.Contains(exclude, item.Id) {
+				if item != nil && (slices.Contains(exclude, item.Id) || slices.Contains(noPick, item.Id)) {
 					item.Reset()
 				}
 			}
@@ -376,6 +378,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
 			os.Exit(2)
 		}
+		markNoPick(pool, noPick)
 		// With -enchants-only each slot keeps only the item it starts with, so the search
 		// has nothing to swap and only tries the enchants. We run it last, once the items
 		// are settled.

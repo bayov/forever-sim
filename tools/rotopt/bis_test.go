@@ -255,3 +255,30 @@ func TestWriteEffectsFile(t *testing.T) {
 		}
 	}
 }
+
+// A -gear-no-pick item stays in the ranking but never challenges the pick: the best item we
+// may pick does. The Unstoppable Force needs Exalted with Frostwolf, so the Phase 0 list
+// ranks it but picks the best two hander behind it.
+func TestNoPick(t *testing.T) {
+	pool := [][]gearOption{{
+		{spec: &proto.ItemSpec{Id: 19323}, name: "The Unstoppable Force"},
+		{spec: &proto.ItemSpec{Id: 1}, name: "Feasible Axe"},
+	}}
+	markNoPick(pool, []int32{19323})
+	if !pool[0][0].noPick || pool[0][1].noPick {
+		t.Fatalf("markNoPick = %v, %v, want true, false", pool[0][0].noPick, pool[0][1].noPick)
+	}
+	if got := namesOf(pickable(pool[0])); !slices.Equal(got, []string{"Feasible Axe"}) {
+		t.Errorf("pickable = %v, want [Feasible Axe]", got)
+	}
+	if len(pool[0]) != 2 {
+		t.Errorf("pickable changed the pool, now %d options", len(pool[0]))
+	}
+	ranked := []rankedGear{{option: pool[0][0], result: result{dps: 1010}}, {option: pool[0][1], result: result{dps: 1000}}}
+	if top := firstPickable(ranked); top == nil || top.option.name != "Feasible Axe" {
+		t.Errorf("firstPickable = %v, want Feasible Axe", top)
+	}
+	if top := firstPickable(ranked[:1]); top != nil {
+		t.Errorf("firstPickable with only a no pick item = %v, want nil", top.option.name)
+	}
+}
