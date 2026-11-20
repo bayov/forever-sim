@@ -54,7 +54,8 @@ func TestForeverPoisedAtThePull(t *testing.T) {
 }
 
 // Shank (server hotfix push 113483, 1329549 at level 60): 5 Energy, gives back 25, 10 sec cooldown,
-// always hits (no miss, dodge or parry) and procs no poison or weapon effect.
+// always hits (no miss, dodge or parry). Since the November 19 hotfix (push 114268) it procs poisons and
+// weapon effects.
 func TestForeverShank(t *testing.T) {
 	sim, rogue := newForeverRogueSim(t, "", 18832, 18805, 1)
 	if rogue.Shank == nil {
@@ -63,8 +64,8 @@ func TestForeverShank(t *testing.T) {
 	if rogue.Shank.SpellID != 1329549 {
 		t.Errorf("Shank's spell ID is %d, want 1329549", rogue.Shank.SpellID)
 	}
-	if !rogue.Shank.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
-		t.Error("Shank doesn't suppress weapon procs")
+	if rogue.Shank.Flags.Matches(core.SpellFlagSuppressWeaponProcs | core.SpellFlagSuppressEquipProcs) {
+		t.Error("Shank still suppresses weapon or equip procs (cleared by hotfix push 114268)")
 	}
 	target := rogue.CurrentTarget
 	rogue.PoisedAura.Deactivate(sim)
