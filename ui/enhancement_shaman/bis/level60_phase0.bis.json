@@ -1816,6 +1816,23 @@
     ],
     "finger": [
       {
+        "id": 19325,
+        "name": "Don Julio's Band",
+        "dps": 1002.11,
+        "loss": -1.85,
+        "avail": "infeasible",
+        "note": "Frostwolf Exalted · AV queue unconfirmed"
+      },
+      {
+        "id": 275982,
+        "name": "Warden's Signet of Brilliance",
+        "dps": 1000.9,
+        "loss": -0.64,
+        "unsourced": true,
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet"
+      },
+      {
         "id": 275977,
         "name": "Watcher's Signet of Brilliance",
         "dps": 1000.26,
@@ -1832,23 +1849,6 @@
         "loss": 0,
         "bis": true,
         "note": "Pix Xizzix · 75 Reals · owned"
-      },
-      {
-        "id": 19325,
-        "name": "Don Julio's Band",
-        "dps": 1002.11,
-        "loss": -1.85,
-        "avail": "infeasible",
-        "note": "Frostwolf Exalted · AV queue unconfirmed"
-      },
-      {
-        "id": 275982,
-        "name": "Warden's Signet of Brilliance",
-        "dps": 1000.9,
-        "loss": -0.64,
-        "unsourced": true,
-        "avail": "infeasible",
-        "note": "Watchers Exalted · no rep source found yet"
       },
       {
         "id": 22433,
@@ -2020,12 +2020,14 @@
           {
             "label": "vs Trolls",
             "rank": 1,
-            "loss": 0
+            "loss": 0,
+            "bis": true
           },
           {
             "label": "vs 4 mobs",
             "rank": 1,
-            "loss": 0
+            "loss": 0,
+            "bis": true
           }
         ],
         "cooldown": {
@@ -2043,7 +2045,8 @@
           {
             "label": "vs 4 mobs",
             "rank": 2,
-            "loss": 0
+            "loss": 0,
+            "bis": true
           }
         ],
         "cooldown": {
@@ -2060,7 +2063,8 @@
           {
             "label": "vs Orcs and Ogres",
             "rank": 1,
-            "loss": -10.04
+            "loss": -10.04,
+            "bis": true
           }
         ],
         "cooldown": {
@@ -2103,7 +2107,8 @@
           {
             "label": "vs Dwarves",
             "rank": 1,
-            "loss": -8.82
+            "loss": -8.82,
+            "bis": true
           }
         ]
       },
@@ -2356,7 +2361,8 @@
           {
             "label": "vs Undead",
             "rank": 1,
-            "loss": -1.15
+            "loss": -1.15,
+            "bis": true
           }
         ]
       }
@@ -2397,7 +2403,8 @@
           {
             "label": "vs Plants",
             "rank": 1,
-            "loss": -9.94
+            "loss": -9.94,
+            "bis": true
           }
         ]
       },
@@ -2995,16 +3002,6 @@
     ],
     "legs": [
       {
-        "id": 1506,
-        "spell": 15397,
-        "item": 11645,
-        "name": "Lesser Arcanum of Voracity",
-        "effect": "+8 Strength",
-        "dps": 998.58,
-        "loss": 0,
-        "bis": true
-      },
-      {
         "id": 2543,
         "spell": 22840,
         "item": 18329,
@@ -3013,6 +3010,16 @@
         "dps": 999.71,
         "loss": -1.13,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
+      },
+      {
+        "id": 1506,
+        "spell": 15397,
+        "item": 11645,
+        "name": "Lesser Arcanum of Voracity",
+        "effect": "+8 Strength",
+        "dps": 998.58,
+        "loss": 0,
+        "bis": true
       },
       {
         "id": 1509,

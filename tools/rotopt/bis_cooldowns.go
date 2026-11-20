@@ -24,6 +24,8 @@ var gearRankCooldowns = flag.Bool("gear-rank-cooldowns", false, "gear search: wi
 type bisCooldown struct {
 	Rank int     `json:"rank"`
 	Loss float64 `json:"loss"`
+	// BiS says the item would still be the pick with its use on cooldown (bisWins).
+	BiS bool `json:"bis,omitempty"`
 }
 
 // setItemSwitches sets the item switches of the runs we prepare next, see Player.item_uses_off
@@ -44,7 +46,7 @@ func rankCooldowns(slots []bisSlot) []bisSlot {
 				continue
 			}
 			loss := round2(e.Loss + e.use)
-			e.Cooldown = &bisCooldown{Rank: bisRank(slot.entries, j, loss), Loss: loss}
+			e.Cooldown = &bisCooldown{Rank: bisRank(slot.entries, j, loss), Loss: loss, BiS: bisWins(*e, loss)}
 			fmt.Printf("  %s: %s on cooldown: rank %d (%+.1f, its use is worth %+.1f)\n", slot.name, e.Name, e.Cooldown.Rank, 0-loss, e.use)
 		}
 	}

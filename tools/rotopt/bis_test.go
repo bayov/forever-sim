@@ -163,28 +163,101 @@ func TestDisjointChanges(t *testing.T) {
 	}
 }
 
-// A conditional rank puts the item among the list's other entries by its loss with the condition
-// met, so a rank no higher than the number of picks means BiS under the condition.
+// A conditional rank is the item's place among the list's other entries by its loss with the
+// condition met. It doesn't say BiS: a -gear-no-pick item can sit above the picks.
 func TestBisRank(t *testing.T) {
-	// Two trinket picks, then entries losing 1.3, 3.5 (the item itself) and 4.5.
-	entries := []bisEntry{{Loss: 0, BiS: true}, {Loss: 0, BiS: true}, {Loss: 1.3}, {Loss: 3.5}, {Loss: 4.5}}
+	// A no pick item 1.85 ahead, two ring picks, then entries losing 1.3, 3.5 (the item itself)
+	// and 4.5.
+	entries := []bisEntry{{Loss: -1.85, noPick: true}, {Loss: 0, BiS: true}, {Loss: 0, BiS: true}, {Loss: 1.3}, {Loss: 3.5}, {Loss: 4.5}}
 	cases := []struct {
 		self int
 		loss float64
 		want int
 	}{
-		{3, -0.4, 1}, // Beats a pick: BiS.
-		{3, 0, 3},    // Level with the picks: right after them.
-		{3, 1.0, 3},  // Between the picks and the 1.3.
-		{3, 1.3, 4},  // A tie goes after the entry it ties.
-		{3, 4.0, 4},  // Its own 3.5 doesn't count.
-		{-1, 4.0, 5}, // An unlisted item counts every entry.
-		{-1, 9.0, 6},
+		{4, -2.0, 1}, // Beats everything.
+		{4, -0.4, 2}, // Beats the picks, but not the no pick item.
+		{4, 0, 4},    // Level with the picks: right after them.
+		{4, 1.0, 4},  // Between the picks and the 1.3.
+		{4, 1.3, 5},  // A tie goes after the entry it ties.
+		{4, 4.0, 5},  // Its own 3.5 doesn't count.
+		{-1, 4.0, 6}, // An unlisted item counts every entry.
+		{-1, 9.0, 7},
 	}
 	for _, c := range cases {
 		if got := bisRank(entries, c.self, c.loss); got != c.want {
 			t.Errorf("bisRank(self %d, loss %g) = %d, want %d", c.self, c.loss, got, c.want)
 		}
+	}
+}
+
+// An item is BiS under a condition or on cooldown when it would be the pick: a pick that loses
+// nothing, or an item we may pick that beats the set. A no pick item never is.
+func TestBisWins(t *testing.T) {
+	cases := []struct {
+		entry bisEntry
+		loss  float64
+		want  bool
+	}{
+		{bisEntry{BiS: true}, 0, true},
+		{bisEntry{BiS: true}, 16.96, false}, // A pick with its use on cooldown.
+		{bisEntry{}, -0.4, true},
+		{bisEntry{}, 0, false},
+		{bisEntry{noPick: true}, -10, false},
+	}
+	for _, c := range cases {
+		if got := bisWins(c.entry, c.loss); got != c.want {
+			t.Errorf("bisWins(%+v, %g) = %t, want %t", c.entry, c.loss, got, c.want)
+		}
+	}
+}
+
+// A list is in order of loss, so a no pick item that beats the picks sits above them (user,
+// 2026-11-20). The Phase 0 rings: Don Julio's Band and Warden's Signet need Exalted, so the picks
+// are the next two. The picks stay even when the list is full, and a weaker or stronger roll of a
+// pick's name goes.
+func TestTrimBis(t *testing.T) {
+	entries := []bisEntry{
+		{ID: 1, Name: "Watcher's Signet of Brilliance", BiS: true},
+		{ID: 2, Name: "Channeler's Ring", BiS: true},
+		{ID: 3, Name: "Don Julio's Band", Loss: -1.85, noPick: true},
+		{ID: 4, Name: "Warden's Signet of Brilliance", Loss: -0.64, noPick: true},
+		{ID: 1, Name: "Watcher's Signet of Brilliance", Loss: -0.1},
+		{ID: 5, Name: "Level Ring", Loss: 0},
+		{ID: 6, Name: "Don Mauricio's Band of Domination", Loss: 1.28},
+	}
+	names := func(list []bisEntry) []string {
+		var out []string
+		for _, e := range list {
+			out = append(out, e.Name)
+		}
+		return out
+	}
+	want := []string{"Don Julio's Band", "Warden's Signet of Brilliance", "Watcher's Signet of Brilliance", "Channeler's Ring", "Level Ring", "Don Mauricio's Band of Domination"}
+	if got := names(trimBis(entries, 25)); !slices.Equal(got, want) {
+		t.Errorf("trimBis = %v, want %v", got, want)
+	}
+	want = []string{"Don Julio's Band", "Watcher's Signet of Brilliance", "Channeler's Ring"}
+	if got := names(trimBis(entries, 3)); !slices.Equal(got, want) {
+		t.Errorf("trimBis keep 3 = %v, want %v", got, want)
+	}
+	if entries[0].Name != "Watcher's Signet of Brilliance" {
+		t.Errorf("trimBis changed its input, now %s first", entries[0].Name)
+	}
+}
+
+// The enchant lists are in order of loss too, with the pick kept.
+func TestTrimEnchants(t *testing.T) {
+	entries := []bisEnchant{
+		{Name: "Lesser Arcanum of Voracity", BiS: true},
+		{Name: "Arcanum of Rapidity", Loss: -1.13},
+		{Name: "Lesser Arcanum of Focus", Loss: 2},
+	}
+	var got []string
+	for _, e := range trimEnchants(entries, 2) {
+		got = append(got, e.Name)
+	}
+	if want := []string{"Arcanum of Rapidity", "Lesser Arcanum of Voracity"}; !slices.Equal(got, want) {
+		t.Errorf("trimEnchants = %v, want %v", got, want)
 	}
 }
 

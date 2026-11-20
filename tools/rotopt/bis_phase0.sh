@@ -95,7 +95,8 @@
 # Darkspear Raiders, the Watchers (the Warden's Signets) and Timbermaw (the Stormcarver plans).
 # The search never puts one in the set, so each slot's pick is the best item we can get. But
 # each slot's list still ranks them on that set, so a player who has the reputation sees where
-# the item goes. One that beats the pick comes right after the picks with a negative loss.
+# the item goes. Each list is in order of loss, so one that beats the pick sits above it, with a
+# negative loss. Only the "bis" flag marks the picks (user, 2026-11-20).
 # An item that needs Exalted and also isn't known to be open yet (the Defilers' rewards) is
 # "infeasible", not "doubtful".
 #

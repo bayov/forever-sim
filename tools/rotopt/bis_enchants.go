@@ -1,6 +1,7 @@
 package main
 
 import (
+	cmpstd "cmp"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -329,19 +330,9 @@ func (s *searcher) rankEnchants(best []*proto.ItemSpec, knobs Knobs) ([]bisEncha
 			}
 			entries = append(entries, entry)
 		}
-		// The pick first, then best first.
-		slices.SortStableFunc(entries, func(a, b bisEnchant) int {
-			switch {
-			case a.BiS && !b.BiS:
-				return -1
-			case b.BiS && !a.BiS:
-				return 1
-			}
-			return 0
-		})
-		if len(entries) > keep {
-			entries = entries[:keep]
-		}
+		// In order of loss, best first, like the item lists (sortBis). An enchant within the noise
+		// of the pick can sit above it, and only the bis flag marks the pick.
+		entries = trimEnchants(entries, keep)
 		if len(entries) == 0 {
 			continue
 		}
@@ -355,4 +346,32 @@ func (s *searcher) rankEnchants(best []*proto.ItemSpec, knobs Knobs) ([]bisEncha
 		}
 	}
 	return out, nil
+}
+
+// trimEnchants puts a slot's enchant list in order of loss, best first, and keeps keep entries,
+// the pick always among them. On a tie the pick goes first.
+func trimEnchants(entries []bisEnchant, keep int) []bisEnchant {
+	slices.SortStableFunc(entries, func(a, b bisEnchant) int {
+		if a.Loss != b.Loss {
+			return cmpstd.Compare(a.Loss, b.Loss)
+		}
+		return cmpstd.Compare(boolRank(a.BiS), boolRank(b.BiS))
+	})
+	room := keep
+	for _, e := range entries {
+		if e.BiS {
+			room--
+		}
+	}
+	var out []bisEnchant
+	for _, e := range entries {
+		if !e.BiS {
+			if room <= 0 {
+				continue
+			}
+			room--
+		}
+		out = append(out, e)
+	}
+	return out
 }

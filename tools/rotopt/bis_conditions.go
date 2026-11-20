@@ -43,6 +43,10 @@ type bisConditional struct {
 	Label string  `json:"label"`
 	Rank  int     `json:"rank"`
 	Loss  float64 `json:"loss"`
+	// BiS says the item would be the pick with the condition met: a pick, or an item we may pick
+	// that beats the set (bisWins). The rank alone doesn't say it, since a -gear-no-pick item can
+	// sit above the picks.
+	BiS bool `json:"bis,omitempty"`
 }
 
 // The options a list ranked, how it placed each one in the set, and the item it names in the
@@ -57,13 +61,11 @@ type rankSource struct {
 // entries is its list, and self is the item's own entry there (-1 when it isn't listed), which
 // doesn't count.
 //
-// A negative loss beats a pick, so the item is rank 1: BiS under the condition. Otherwise it comes
-// after every other entry that loses as little or less. The picks lose 0, so that rank is past
-// the picks, and a rank no higher than the slot's number of picks always means BiS.
+// It is the item's place on the list by that loss: after every other entry that loses as little
+// or less. The picks lose 0, so an item that loses 0 or more comes after them. A negative loss
+// can still come after a -gear-no-pick item that beats the pick by more, so the rank doesn't say
+// whether the item is BiS. bisWins does.
 func bisRank(entries []bisEntry, self int, loss float64) int {
-	if loss < 0 {
-		return 1
-	}
 	rank := 1
 	for i, e := range entries {
 		if i != self && e.Loss <= loss {
@@ -71,6 +73,15 @@ func bisRank(entries []bisEntry, self int, loss float64) int {
 		}
 	}
 	return rank
+}
+
+// bisWins says an entry would be the pick when it loses loss to the set: a pick that loses
+// nothing, or an item we may pick that beats the set.
+func bisWins(e bisEntry, loss float64) bool {
+	if e.BiS {
+		return loss <= 0
+	}
+	return !e.noPick && loss < 0
 }
 
 // rankConditions adds the conditional ranks to the lists, and the conditional items that make a
@@ -206,6 +217,7 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 	// against the boss. A "vs 4 mobs" line is left out when the use gains too little on the mobs
 	// (aoeGains).
 	conditionalOf := func(c *candidate, entries []bisEntry, self int, single float64) []bisConditional {
+		item := bisEntry{noPick: c.option.noPick}
 		var out []bisConditional
 		id := c.option.spec.Id
 		for j, condition := range c.conditions {
@@ -221,12 +233,12 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 				fmt.Printf("  %s %s: its use is worth %+.1f, %+.1f against the boss\n", c.option.name, condition.label(), r.uses[id], single)
 			}
 			loss := round2(bases[slices.Index(conditions, condition)].dps - r.dps)
-			out = append(out, bisConditional{Label: condition.label(), Rank: bisRank(entries, self, loss), Loss: loss})
+			out = append(out, bisConditional{Label: condition.label(), Rank: bisRank(entries, self, loss), Loss: loss, BiS: bisWins(item, loss)})
 		}
 		return out
 	}
 	// First the items the list doesn't have, ranked on the list without them. One that makes the
-	// list under any of its conditions goes in at the place its normal DPS gives it.
+	// list under any of its conditions goes in at the place its normal loss gives it.
 	for _, c := range candidates {
 		if c.listed || c.normal == nil {
 			continue
@@ -240,18 +252,11 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 			continue
 		}
 		entry := bisEntry{ID: c.option.spec.Id, Suffix: c.option.spec.RandomSuffix, Name: c.option.name,
-			DPS: round2(c.normal.dps), Loss: round2(base.dps - c.normal.dps), Unsourced: c.option.unsourced, use: c.normal.uses[c.option.spec.Id]}
+			DPS: round2(c.normal.dps), Loss: round2(base.dps - c.normal.dps), Unsourced: c.option.unsourced, use: c.normal.uses[c.option.spec.Id], noPick: c.option.noPick}
 		if with := c.source.with(rankedGear{c.option, *c.normal, c.gear}); with != nil {
 			entry.With = with.Id
 		}
-		at := len(slot.entries)
-		for i, e := range slot.entries {
-			if !e.BiS && e.DPS < entry.DPS {
-				at = i
-				break
-			}
-		}
-		slot.entries = slices.Insert(slot.entries, at, entry)
+		slot.entries = sortBis(append(slot.entries, entry))
 		c.listed = true
 	}
 	// Then every listed one, on the list as it now is.
@@ -264,7 +269,8 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 		slot.entries[self].Conditional = conditionalOf(c, slot.entries, self, slot.entries[self].use)
 	}
 	// A pick with a condition stays where it is, and loses nothing, since the set already holds
-	// it. It gets a "vs 4 mobs" line only when its use gains on the mobs, as the others do.
+	// it. So its rank is its own place on the list, and it is BiS. It gets a "vs 4 mobs" line
+	// only when its use gains on the mobs, as the others do.
 	for i := range slots {
 		for j, e := range slots[i].entries {
 			if !e.BiS {
@@ -279,7 +285,7 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 						continue
 					}
 				}
-				slots[i].entries[j].Conditional = append(slots[i].entries[j].Conditional, bisConditional{Label: condition.label(), Rank: j + 1})
+				slots[i].entries[j].Conditional = append(slots[i].entries[j].Conditional, bisConditional{Label: condition.label(), Rank: j + 1, BiS: true})
 			}
 		}
 	}

@@ -36,7 +36,7 @@ and came out with 19 of its 25 entries.
 
 A few slots work differently:
 
-- Rings and trinkets are one list each. The two picks come first. Every other item is scored
+- Rings and trinkets are one list each, with both picks on it. Every other item is scored
   in both slots and listed with the better of the two, since we'd put it in place of the pick
   it loses less to. The two slots never hold the same item.
 - When the main hand pick is a two hander, a one hander needs an off hand to be fair. We find
@@ -46,7 +46,7 @@ A few slots work differently:
 - The off hand list then says what we'd hold if we went one hand. It is scored next to that
   one hander, its `with` names it, and none of its entries is a pick. When the pick is a one
   hander, the off hand list is scored next to the main hand pick instead, and the off hand pick
-  comes first.
+  is on the list with the others.
 - With `-gear-rank-two-hand-only` we skip the one hand setup. When the pick is a two hander, the
   main hand list has only two handers and the off hand list is empty, since the off hand stays
   empty next to it. BayovCore shows that off hand as empty.
@@ -80,8 +80,8 @@ list uses it for the items that need Exalted reputation (`avail` `infeasible` in
 is very long, so the set doesn't count on it, and each slot's pick is the best item we can get.
 But a player who has the reputation still sees where the item goes on the set. Such an item is
 ranked like any other, on the set with its real loss, but it never takes a pick's place
-(see above). When it beats the pick, it comes right after the picks with a negative loss, since the
-picks always come first. A starting item that is on it comes off before the search, like an
+(see above). When it beats the pick, it sits above the pick with a negative loss, since each list
+is in order of loss. A starting item that is on it comes off before the search, like an
 excluded one.
 
 ## Conditional ranks
@@ -104,16 +104,17 @@ the set with the condition met too. The item's conditional `loss` is what it los
 set. A ring or trinket goes in place of either pick, and the better of the two counts. These runs
 are at `-gear-rank-confirm-iters` and share their seed.
 
-Its conditional `rank` is its place among the list's other entries by that loss. A negative loss
-beats a pick, so it is rank 1. Otherwise it comes after every other entry whose normal loss is the
-same or less. The picks lose 0, so a rank no higher than the slot's number of picks always means
-BiS under the condition, and anything else is past the picks. A pick with a condition keeps its
-place: its rank is its own position and its loss 0.
+Its conditional `rank` is its place among the list's other entries by that loss: after every other
+entry whose normal loss is the same or less. The picks lose 0, so an item that loses 0 or more
+comes after them. The rank doesn't say whether the item is BiS under the condition, since an item
+we never pick can sit above the picks. Its `bis` flag does: it is set when the item beats the set
+with the condition met (a negative loss) and isn't one we never pick. A pick with a condition
+keeps its place: its rank is its own position, its loss 0, and it is `bis`.
 
 An item can make the list only with its condition met, like Seal of the Dawn on a trinket list. So
 we look at every conditional item of the slot's pool (the same filters as the search), not only
 the listed ones. When one's conditional rank is within `-gear-rank-keep`, it joins the list as a
-normal entry, with its normal `dps` and `loss` at `-iters`, at the place its normal DPS gives it.
+normal entry, with its normal `dps` and `loss` at `-iters`, at the place its normal loss gives it.
 The list can then be longer than `-gear-rank-keep`.
 
 Item sets and enchants with a condition (the Undead slaying sets, Beastslaying, Elemental
@@ -158,8 +159,8 @@ next fight. So with `-gear-rank-cooldowns` (`tools/rotopt/bis_cooldowns.go`) eve
 a use gets a second rank, from its score without its own use value. The other items' uses still
 count. Its cooldown loss is its loss plus its use value, so this needs no runs of its own. The
 picks get it too. It is written in the entry's `cooldown` field, with the rank rule of the
-conditional ranks: a negative loss is rank 1, and otherwise it comes after every other entry that
-loses as little or less.
+conditional ranks: it comes after every other entry that loses as little or less, and `bis` says
+it would still be the pick.
 
 The use values and the effect values below give each kind of roll its own random source
 (`SimOptions.use_labeled_rands`). Without it, one Hand of Justice proc shifts every roll after it
@@ -325,25 +326,30 @@ can be filled in.
 - `made` is the date and `sim` the forever-sim commit it ran on, with a `+` when the working
   copy had changes on top.
 - `slots` has `head`, `neck`, `shoulder`, `back`, `chest`, `wrist`, `hands`, `waist`, `legs`,
-  `feet`, `finger`, `trinket`, `mainhand`, `offhand` and `ranged`, picks first and then best
-  first. A slot the set leaves empty has no pick, only the items that do something there.
+  `feet`, `finger`, `trinket`, `mainhand`, `offhand` and `ranged`. Each list is in order of
+  `loss`, best first, and on a tie a pick goes first (user, 2026-11-20). An item we never pick
+  (`infeasible`) can sit above the picks, so only `bis` says which entries are the picks, never
+  their place. A slot the set leaves empty has no pick, only the items that do something there.
 - An entry has the item's `id`, its random `suffix` when it has one, its `name` (with the
-  suffix), `dps` and `loss`. `bis` marks the picks. `unsourced` marks an item wowhead knows no
+  suffix), `dps` and `loss`. `loss` is against the set, so a negative loss beats the slot's
+  pick. `bis` marks the picks. `unsourced` marks an item wowhead knows no
   way of getting yet, worth a look by hand. `with` is the item in the other hand: on a one hand
   main hand the off hand it was scored with, on an off hand the main hand.
 - `enchant` on a pick is the enchant the set has on it, by its `id` in the slot's enchant list.
 - `conditional` (only with `-gear-rank-conditions`, and only on an item with a condition) says
   where the item would go on this list with its condition met, one line for each condition:
-  `{"label":"vs Orcs and Ogres","rank":2,"loss":-0.42}`. `label` is what the player reads,
-  `rank` is its place (no higher than the number of picks means BiS), and `loss` is what it
-  loses against the set with the condition met. See Conditional ranks. `vs 4 mobs` is the same
+  `{"label":"vs Orcs and Ogres","rank":2,"loss":-0.42,"bis":true}`. `label` is what the player
+  reads, `rank` is its place on the list, `loss` is what it loses against the set with the
+  condition met, and `bis` says it would be the pick then. See Conditional ranks. `vs 4 mobs` is the same
   for an item whose use gains on several mobs, see Uses against several mobs.
 - `cooldown` (only with `-gear-rank-cooldowns`, and only on an item with a use) says where the
   item would go on this list without its use value, as while its use is on cooldown:
-  `{"rank":9,"loss":13.7}`, with the same rule as `conditional`. See On cooldown ranks.
+  `{"rank":9,"loss":13.7}`, with the same rule as `conditional` (`bis` when it would still be
+  the pick). See On cooldown ranks.
 - `enchants` (only with `-gear-rank-enchants`) has a list for each slot that takes an enchant,
   keyed like `slots` (`head`, `neck`, `back`, `chest`, `wrist`, `hands`, `legs`, `feet`,
-  `mainhand`, ...), the pick first (`bis`) and then best first. `id` is the enchant's effect ID
+  `mainhand`, ...), in order of `loss` like the item lists, with `bis` on the pick. An enchant
+  within the noise of the pick can sit above it. `id` is the enchant's effect ID
   in the sim, what a set's `enchant` holds. `game` is the enchant ID the game puts on an item
   link, when it isn't `id`: Forever's own enchants have their spell ID as effect ID in the sim
   (`tools/database/forever_enchants.go`), and the client's (`assets/db_inputs/forever_enchants.json`)

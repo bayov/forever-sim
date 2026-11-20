@@ -1,6 +1,7 @@
 package main
 
 import (
+	cmpstd "cmp"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -24,9 +25,12 @@ import (
 // the two rings and the two trinkets never hold the same item, a two hander empties the
 // off hand, and an item a character can only hold one of never goes in both hands.
 //
-// Rings and trinkets are one list each. The two picks come first, and every other item is
-// scored in both slots and listed with the better of the two, since a player would put it
-// in place of the pick it loses less to.
+// Each list is in order of loss, best first. The picks are marked bis and lose 0, so an item
+// that beats a pick sits above it (a -gear-no-pick item, or one within the noise of the pick).
+//
+// Rings and trinkets are one list each, with both picks on it. Every other item is scored in
+// both slots and listed with the better of the two, since a player would put it in place of
+// the pick it loses less to.
 //
 // A one hander in place of a two hander needs an off hand, or it loses the off hand's
 // stats and looks far worse than it is. So when the pick is a two hander, we first find the
@@ -79,6 +83,8 @@ type bisEntry struct {
 
 	// use is the item's use value in the set it was scored in, with -use-dur (use_values.go).
 	use float64
+	// noPick is a -gear-no-pick item, which is never BiS under a condition or on cooldown either.
+	noPick bool
 }
 
 type bisSlot struct {
@@ -442,13 +448,13 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	}
 
 	entryOf := func(o gearOption, r result, with *proto.ItemSpec) bisEntry {
-		e := bisEntry{ID: o.spec.Id, Suffix: o.spec.RandomSuffix, Name: o.name, DPS: round2(r.dps), Loss: round2(base.dps - r.dps), Unsourced: o.unsourced, use: r.uses[o.spec.Id]}
+		e := bisEntry{ID: o.spec.Id, Suffix: o.spec.RandomSuffix, Name: o.name, DPS: round2(r.dps), Loss: round2(base.dps - r.dps), Unsourced: o.unsourced, use: r.uses[o.spec.Id], noPick: o.noPick}
 		if with != nil {
 			e.With = with.Id
 		}
 		return e
 	}
-	// The set's own item in a slot, as the first entries of its list.
+	// The set's own item in a slot, as its list's pick.
 	pickOf := func(slot int, with *proto.ItemSpec) []bisEntry {
 		item := best[slot]
 		if item == nil {
@@ -818,29 +824,61 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	return mainList, offList
 }
 
-// trimBis keeps the first keep entries of a slot's list, best first.
+// trimBis puts a slot's list in order of loss (sortBis) and keeps keep entries, the picks
+// always among them.
 //
 // A random suffix item comes in several rolls of the same name ("of the Tiger" with more or
 // less of each stat), and they'd crowd the list with one item. So only the best roll of
-// each name stays, and a weaker roll of a pick's name goes too.
+// each name stays, and any other roll of a pick's name goes too, even one that scores a
+// little above the pick.
 func trimBis(entries []bisEntry, keep int) []bisEntry {
 	type named struct {
 		id   int32
 		name string
 	}
+	entries = sortBis(slices.Clone(entries))
 	seen := map[named]bool{}
+	room := keep
+	for _, e := range entries {
+		if e.BiS {
+			seen[named{e.ID, e.Name}] = true
+			room--
+		}
+	}
 	var out []bisEntry
 	for _, e := range entries {
-		if len(out) == keep {
-			break
+		if !e.BiS {
+			if room <= 0 || seen[named{e.ID, e.Name}] {
+				continue
+			}
+			seen[named{e.ID, e.Name}] = true
+			room--
 		}
-		if seen[named{e.ID, e.Name}] {
-			continue
-		}
-		seen[named{e.ID, e.Name}] = true
 		out = append(out, e)
 	}
 	return out
+}
+
+// sortBis puts a slot's list in order of loss, best first (user, 2026-11-20). An item that
+// beats a pick goes above it, like a -gear-no-pick item with a negative loss. Only the bis
+// flag says which entries are the picks. On a tie a pick goes first, and the others keep
+// their order.
+func sortBis(entries []bisEntry) []bisEntry {
+	slices.SortStableFunc(entries, func(a, b bisEntry) int {
+		if a.Loss != b.Loss {
+			return cmpstd.Compare(a.Loss, b.Loss)
+		}
+		return cmpstd.Compare(boolRank(a.BiS), boolRank(b.BiS))
+	})
+	return entries
+}
+
+// boolRank sorts true before false.
+func boolRank(b bool) int {
+	if b {
+		return 0
+	}
+	return 1
 }
 
 // For the entries that name no item in the other hand.
