@@ -29,16 +29,14 @@
         "name": "Face of The Five Thunders",
         "dps": 1000.02,
         "loss": 3.12,
-        "avail": "doubtful",
-        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, its summons not confirmed, step gold unknown · Enhancement pick · or 95g at Mokvar after"
+        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · Enhancement pick · or 95g at Mokvar after"
       },
       {
         "id": 227002,
         "name": "Coif of The Five Thunders",
         "dps": 999.93,
         "loss": 3.22,
-        "avail": "doubtful",
-        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, its summons not confirmed, step gold unknown · Elemental pick · or 95g at Mokvar after"
+        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · Elemental pick · or 95g at Mokvar after"
       },
       {
         "id": 20134,
@@ -86,8 +84,7 @@
         "name": "Crown of The Five Thunders",
         "dps": 990.85,
         "loss": 12.29,
-        "avail": "doubtful",
-        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, its summons not confirmed, step gold unknown · Restoration pick · or 95g at Mokvar after"
+        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · Restoration pick · or 95g at Mokvar after"
       },
       {
         "id": 279253,
@@ -746,8 +743,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1891,
-        "avail": "doubtful",
-        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, its summons not confirmed, step gold unknown · Enhancement pick · or 95g at Mokvar after"
+        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · Enhancement pick · or 95g at Mokvar after"
       },
       {
         "id": 252484,
@@ -761,8 +757,7 @@
         "name": "Vest of The Five Thunders",
         "dps": 995.34,
         "loss": 7.81,
-        "avail": "doubtful",
-        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, its summons not confirmed, step gold unknown · Elemental pick · or 95g at Mokvar after"
+        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · Elemental pick · or 95g at Mokvar after"
       },
       {
         "id": 15141,
@@ -777,8 +772,7 @@
         "name": "Tunic of The Five Thunders",
         "dps": 993.23,
         "loss": 9.91,
-        "avail": "doubtful",
-        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, its summons not confirmed, step gold unknown · Restoration pick · or 95g at Mokvar after"
+        "note": "Quest at Mokvar · Coif (Gandling, Scholo) + Vest of Elements (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · Restoration pick · or 95g at Mokvar after"
       },
       {
         "id": 252483,
