@@ -17,7 +17,8 @@ sections 2 and 6 have the format).
 - **Nov 16 update**: the Nov 15 and 16 logs (`111526_162618`, `111626_123605`, client tables 70938) keep fitting: Stormstrike raw is 1.00x the sim in 15 windows (90 hits) and 1.03x in 4 (25 hits) at mob levels up to 60. The 100% weapon damage is the live value.
 - **Nov 17 update**: `111626_123605` Nov 16 evening (49 windows run, 18:32 to 23:04, levels 54 to 60): Stormstrike raw 383.0 vs the sim's 361.5 (4 hits, `22:44:55`) and 378.5 vs 362.1 (4 hits, `23:00:21`), +5%, the same size as `Melee: raw` there. Still no 1.5x.
 - **Nov 18 update**: `111726_171435` Nov 17 18:20 to 22:34 (61 windows run, 70 skipped under 50 attacks): Stormstrike raw is 0.95 to 0.99x the sim at levels 55 to 59 (16 hits), 1.07x at 60 (15 hits), 1.06x at 61 (10) and 1.11x at 62 (33 hits, 433.6 vs 391.5). Still no 1.5x. The rise with mob level matches `Melee: raw` and the level finding under "Collect more data".
-- **Status**: open, first seen 2026-11-12, updated 2026-11-18 (log fits, ready for Done).
+- **Nov 20 update**: `111926_175614` and `112026_111427` (Nov 19 22:13 to Nov 20 16:23): Stormstrike raw is 1.03x the sim at level 60 (15 hits, 376.6 vs 367.1) and 1.08x at 62 (28 hits, 447.8 vs 414.5), the same size as `Melee: raw` (1.07 to 1.09x at 60 to 62). Still no 1.5x.
+- **Status**: open, first seen 2026-11-12, updated 2026-11-20 (log fits, ready for Done).
 
 ## Collect more data
 
@@ -29,7 +30,8 @@ sections 2 and 6 have the format).
 - **Next step**: collect level 58 to 63 hits of Fiery Weapon (flat 40) and the Chained Essence cloud (flat 140) against the same fight, then fit a per level factor and ask the user before changing `sim/core` damage. Check whether the ledger's older windows at levels above 60 show it too.
 - **Nov 17 update**: `111626_123605` Nov 16 18:32 to 23:04 (49 windows) has the drift on the low side too, at levels 53 to 60. Level 54 in `22:46:40`: Magma Totem 88.1 vs 89.2 (51 hits, 0.99), Fiery Weapon 38 vs 40 (8 hits, 0.95), Cloud of Chained Essence 138 vs 140 (9 hits), Flame Shock ticks 86.3 vs 88.3 at 54 in `22:21:59`. At 55 to 60 the log is 1 to 2 above (Magma Totem 90 vs 89 in about 30 windows, Flame Shock ticks 93 vs 91 in about 25, Fire Nova 311 to 318 vs 308 to 310 in 11), the same size as the sheet's 16 Nature power gap would give on spells. It supports a per level factor, but doesn't settle it, and no level 62 mobs in these windows.
 - **Nov 18 update**: `111726_171435` Nov 17 17:42 to 23:40 (61 windows run, mob levels 50 to 62) settles the shape, summed hits log vs sim by mob level. Magma Totem: 1.00 at 51 to 55, 1.01 at 59 and 60 (691 hits at 60), 1.022 at 61 (110 hits), 1.066 at 62 (36 hits, 96.7 vs 90.7). Flame Shock ticks: 1.02 at 52 to 60 (170 hits at 60), 1.03 at 61 (70), 1.06 at 62 (72 hits, 98.3 vs 92.6). Fire Nova: 1.01 at 55 and 60, 1.04 at 61, 1.06 at 62 (11 hits). Earth Shock: 1.014 at 59 and 60, 1.04 at 61, 1.06 at 62 (20 hits, 630.8 vs 594.4). Fiery Weapon 42.0 vs 40 on all 65 hits at 62, 38.0 at 56 (5 hits). Shadow Bolt 1.04 to 1.06 at 53 to 62 (no clear step, the oil's known gap). Windfury Weapon and Melee/Stormstrike climb the same way (1.01 at 60, 1.09 at 61 and 62), see the sheet finding. So fixed-damage hits step up about 2% a level from 60 to 62 on top of a flat 1 to 2% the spell power gap gives, and fall below the sim at 56 and under. Cloud of Chained Essence is 138 at 56, 139 at 57 and 143 at 61 (13 hits). `18:40:08` has 183.1 vs 140 at level 55 (13 hits, 140 to 280), two clouds at once like the 280 of Nov 16.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-18.
+- **Nov 20 update**: `111926_175614` and `112026_111427` (36 windows run, 17 skipped under 50 attacks, levels 57 to 62), summed hits log vs sim by mob level. Magma Totem: 1.011 at 58 to 60 (1522 hits), 1.033 at 61 (232), 1.055 at 62 (192, 94.9 vs 90.0). Flame Shock ticks: 1.02 at 58 to 60, 1.041 at 61 (69), 1.061 at 62 (67, 99.3 vs 93.6). Fire Nova 1.015 at 60, 1.031 at 61, 1.075 at 62 (22 hits). Earth Shock 1.013 at 59 and 60, 1.077 at 62 (19 hits, 642.4 vs 596.6). Fiery Weapon 41 vs 40 at 61 and 62 (113 hits, 1.025). Windfury Weapon 1.024 at 59, 1.047 at 60, 1.094 at 61. Same shape as Nov 18: flat to 60, rising about 2% a level above it. `Grounded Electroshock (1315996)` (NEW, our proc) is 62 vs 60 at level 62 (5 hits), the same drift.
+- **Status**: open, first seen 2026-11-16, last updated 2026-11-20.
 
 ### Fiery Weapon partial resists and rounding
 
@@ -77,7 +79,8 @@ sections 2 and 6 have the format).
 - **Windows**: Nov 5-8 on Nature-resistant mobs. Earth Shock had 77 whole hits, 0 partial and 31 RESIST, while Lightning Shield orbs on the same mobs were partly resisted 60 of 63. Druid of the Fang alone: 57 whole, 0 partial, 27 RESIST, orbs 31 of 31 partial.
 - **What we think**: the sim gives a landed binary spell a partial roll (`sim/core/spell_resistances.go`, `sim/shaman/earth_shock.go`). The October beta serpents (6 landed, all partial) disagree, so live may have changed.
 - **Next step**: the user's ruling (2026-11-08) is to keep monitoring. Count Earth Shock partials on resistant mobs in each new log.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+- **Nov 20 update**: Blackwing Lair Chromatic mobs show it again, now with a high Nature resist. `111926_175614 23:23:28-23:25:09`: Earth Shock `miss` (RESIST) 5 of 7 on Chromatic Elite Guards at level 59 (the sim gives 0.7%), and `Grounded Electroshock (1315996)` partial 7 of 7 landed on the same mobs. `112026_111427 15:53:34-16:01:48`: Earth Shock RESIST 3 of 7 at level 62 (sim 1.5%): Chromatic Whelp, Dragonspawn and Gyth. These are Nature-resistant mobs, logcheck's mob has no resist, so the rates don't tell us whether landed hits can be partial. Nothing to change.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-20.
 
 ## logcheck issues
 
@@ -102,7 +105,8 @@ sections 2 and 6 have the format).
 - **Nov 16 update**: 71 of the 84 windows of `111526_162618` and `111626_123605` say "the character changed" (trinkets Vigilance Charm, Chained Essence of Eranikus, Rune and Jewel of the Guard Captain, Smokey's Lighter; Argent Dawn Commission), 17 say "weapon skill went up" (Two-Handed Axes 274 to 299 of 300). Two real swaps: Malicious Axe to Bonechill Hammer with a shield at `19:54:33`, and Totem of Sustaining to Egan's Blaster at `20:28:02`. The ledger line now leaves out 369 windows because of this, so the flag counts there are thin.
 - **Nov 17 update**: the Nov 16 evening windows of `111626_123605` say the same: 48 "the character changed" (trinket swaps) and 3 "weapon skill went up" in 49 windows.
 - **Nov 18 update**: `111726_171435` Nov 17: 49 of the 61 windows run say "the character changed" (the same trinket swaps, Smokey's Lighter, Vigilance Charm, Chained Essence of Eranikus, Rune and Jewel of the Guard Captain).
-- **Status**: open, first seen 2026-11-13, updated 2026-11-18.
+- **Nov 20 update**: `111926_175614` and `112026_111427`: 32 of 36 windows run say "the character changed" (the same trinket swaps: Smokey's Lighter, Chained Essence of Eranikus, Rune and Jewel of the Guard Captain, Vigilance Charm, Bolt's Charged Eyeball, Blackhand's Breadth).
+- **Status**: open, first seen 2026-11-13, updated 2026-11-20.
 
 ### Mindless Undead take a third less Fire damage
 
@@ -174,7 +178,8 @@ sections 2 and 6 have the format).
 - **Nov 17 update**: `111626_123605` Nov 16 18:32 to 23:04, same kinds: `Windfury Totem (10610): never` in 8 windows and `procs` in 5 (24 to 56 per 100 white swings, a party member's totem). `Smokey's Lighter (17283): never` in 4 windows (`18:39`, `22:39`, `22:50`, `22:51`, our on-use trinket, which the sim doesn't use). `Attack (10436): procs` in 4 windows (`18:39:24` 66.7 vs 195.4, `22:21:59` 900 vs 104.8, `22:51:58` 150 vs 826.7 and 80 vs 392.4), the Searing Totem rotation gap of `known.json`'s other ranks. `Magma Totem (10581): partial` 6 of 23 and 2 of 9 and `Fiery Weapon (13897): partial` 4 of 7 in `22:25:09` (resistant mobs). `Cloud of Chained Essence (1300240) ticks: raw` 280.0 vs 140 in 16 hits at `22:23:55`, exactly double, so two clouds at once. Nothing new.
 - **Nov 18 update**: `111726_171435` Nov 17 (61 windows): `Windfury Totem (10610): never` in 19 windows and `procs` in 13 (22.7 to 46.2 per 100 white swings, avg 32), `Smokey's Lighter (17283): never` in 7, `Attack (10436): procs` in 5 (20.8 to 57.4 vs the sim's 105 to 151, one 350.0 vs 49.7), all the same causes (a party member's totem, our on-use trinket, the totem rotation gap). `Melee: miss` 3 of 31 and 3 of 25 at level 60 (the sim gives 0) is noise. All kinds were seen before (no NEW flags).
 - **Next step**: none unless they come back. At the next `/log-audit` add `Attack (10436): procs` and `Smokey's Lighter (17283): never` to `known.json`.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-18.
+- **Nov 20 update**: `111926_175614` and `112026_111427` (36 windows): `Windfury Totem (10610): never` in many windows (a party member's totem, 24 windows in the ledger), `Smokey's Lighter (17283): never`, `Attack (10436): procs` (17.0 to 17.1 per 100 white swings vs the sim's 81 to 95 at levels 59 and 60 in `22:13:58`), and partial resists on fire-resistant mobs (`Magma Totem`, `Fire Nova`, `Fiery Weapon`, `Flame Shock` ticks, `Attack (10436)`), plus `Fiery Weapon (13897): immune` 3 of 27 at level 60. Same causes as above, no NEW flags beyond Grounded Electroshock and Earth Shock (see their findings).
+- **Status**: open, first seen 2026-11-16, last updated 2026-11-20.
 
 ## Done
 
