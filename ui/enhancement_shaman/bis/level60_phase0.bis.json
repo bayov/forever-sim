@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 1003.15,
   "made": "2026-11-20",
-  "sim": "a9339de42a5a",
+  "sim": "0d2c24fd597c+",
   "slots": {
     "head": [
       {
@@ -409,7 +409,8 @@
         "id": 18720,
         "name": "Shroud of the Nathrezim",
         "dps": 993.93,
-        "loss": 9.22
+        "loss": 9.22,
+        "note": "Hel'nurath (Dire Maul East, summoned)"
       },
       {
         "id": 272958,
@@ -2047,6 +2048,11 @@
             "label": "vs Trolls",
             "rank": 2,
             "loss": 0
+          },
+          {
+            "label": "vs 4 mobs",
+            "rank": 2,
+            "loss": 0
           }
         ],
         "cooldown": {
@@ -2059,6 +2065,13 @@
         "name": "Eye of the Beast",
         "dps": 1001.05,
         "loss": 2.1,
+        "conditional": [
+          {
+            "label": "vs 4 mobs",
+            "rank": 1,
+            "loss": -6.55
+          }
+        ],
         "cooldown": {
           "rank": 6,
           "loss": 10.53
@@ -2077,11 +2090,18 @@
         "name": "Adaptive Combat Assistant",
         "dps": 997.06,
         "loss": 6.08,
+        "conditional": [
+          {
+            "label": "vs 4 mobs",
+            "rank": 5,
+            "loss": 5.4
+          }
+        ],
         "cooldown": {
           "rank": 5,
           "loss": 6.69
         },
-        "note": "Pix Xizzix · 125 Reals · use not simmed"
+        "note": "Pix Xizzix · 125 Reals"
       },
       {
         "id": 11815,
@@ -2242,13 +2262,18 @@
             "label": "vs Plants",
             "rank": 7,
             "loss": 10.58
+          },
+          {
+            "label": "vs 4 mobs",
+            "rank": 4,
+            "loss": 3.42
           }
         ],
         "cooldown": {
           "rank": 25,
           "loss": 18.04
         },
-        "note": "Quest: The Great Ezra Grimm (Strat) · on-use (125 Fire in a cone, 5 min) not simmed · AoE pick"
+        "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
       },
       {
         "id": 22321,
