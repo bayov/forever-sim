@@ -1,9 +1,10 @@
-# Consumables pass 94, master 4be96efef
+# Consumables pass 95 (master 813f2b1e9)
 
-Result: quiet, no new findings.
+Trigger: sim/common/item_effects.go changed (4be96efef..813f2b1e9).
 
-- Moved watched file: sim/common/item_effects.go (Adaptive Combat Assistant gets CooldownPriorityLow and a comment; a trinket cooldown ordering change). No enchant, oil, consumable or buff value changed. No preset or level60 gear set changes in the range.
-- scan.sh on master: banned, Revelation, non-synthetic trinket and crit-elixir sections empty. Counts as before (minor-armor exclusive count 3 because of Dust Cloud; the scan's expectation of 2 is stale, see pass 93).
-- wago latest: 1.60.1.70959, same as last pass; no new build.
-- Class branches are stale copies, not audited.
-- Open items: consumables-20261110-1, consumables-20261105-1 (unchanged).
+- Diff: Hand of Justice proc chance is now 3% against Dwarf-family targets, 1% otherwise (Forever), 2% on Era;
+  adds ConditionVsDwarves (defined in sim/core/item_conditions.go). No consumable, buff, debuff or enchant value changed.
+- Hand of Justice (11815) appears in no Level 60 presets.ts or level60 gear set, so the standing trinket check is unaffected.
+- No other watched file moved on master. Class branches not re-scanned beyond changes.sh output (all stale copies, gotcha 1).
+
+Result: no new findings. Two low findings stay open (enchant 41 name, feral mksettings Sapper).

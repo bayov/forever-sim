@@ -1,37 +1,28 @@
-# Mechanics pass 94 (2026-11-20, master 4be96efef)
+# Mechanics pass 95 (2026-11-20, master 813f2b1e9)
 
-Range e07e8fdb8..4be96efef (two sim commits, item-use tooling and a trinket priority). Client unchanged at
-1.60.1.70959. One new finding, from Blizzard's November 19 hotfix post: mechanics-20261120-1 (high, needs a user
-ruling). Open findings mechanics-20261118-2, 20261118-1, 20261113-2 and 20261104-1 stay open (not touched).
+Range 4be96efef..813f2b1e9: one sim commit (4c3ac0026, Hand of Justice against Dwarves) and one TASKS.md
+item (Enhancement Phase 0 BiS in-game checks, nothing mechanical). Client unchanged at 1.60.1.70959. No new
+Blizzard posts. Quiet: no new findings. Open findings mechanics-20261120-1, 20261118-2, 20261118-1, 20261113-2
+and 20261104-1 stay open (nothing in the range touches them).
 
 ## Get current
 
-| Source | Newest | New since pass 93 |
+| Source | Seen | Newer? |
 |---|---|---|
-| Client build | 1.60.1.70959 (`wago.py latest --probe 300`) | none |
-| Dev notes t/2360696 | post 10, 2026-11-04 19:35Z | none, no edits |
-| Hotfix post t/2403040 | post 13, 2026-11-20 04:00Z; post 1 edited 04:01Z | November 19 hotfixes (below) |
-| Blue posters (Aggrend, Linxy user actions) | Linxy, anniversary post 2026-11-17 | nothing mechanical |
-| Daily update / TASKS | no TASKS.md, update_ledger.md or forever-update merges in range | none (TASKS.md:480, from 11-19, already asks for the 2H Spec ruling) |
+| Client (wago.py latest --probe 300) | 1.60.1.70959 | no |
+| Hotfix thread t/2403040 | post 13, 2026-11-20 04:00:55Z (post 1 edited 04:01:18Z) | no |
+| Dev notes t/2360696 | post 10, 2026-11-04 19:35Z (post 1 edited 2026-11-03 03:20Z) | no |
+| Daily update (TASKS.md / update_ledger.md, forever-update merges) | b47c1d55e only (BiS in-game checks) | nothing mechanical |
 
-November 19 hotfixes, by sim relevance:
+## Commit triage
 
-| Line | Sim | Verdict |
-|---|---|---|
-| Retribution: Two-Handed Weapon Specialization "now correctly increases all Holy Damage you deal while a two-handed weapon is equipped" | Holy part only on seals, Holy Strike, Judgement of Command, Consecration (`pal_2h_spec_holy`) | **finding mechanics-20261120-1** |
-| Shaper's Terrace, Vitrix's Poison Shock less damage | not simmed | none |
-| Camping, quests, Skyborne riding discount, Tauren Cultivation, Motes soulbound | no combat effect | none |
+| Commit | Change | Check | Verdict |
+|---|---|---|---|
+| 4c3ac0026 | Hand of Justice procs 3% against targets with the new Dwarf mob family, 1% otherwise under Forever (2% Era); new `ConditionVsDwarves` item condition for the BiS list | sp.py 15600 on 70959: ProcChance 3, ICD 2000 ms, #0 aura 42 -> 15601 (extra attack), #1 dummy aura bp 3 | Matches tier 1 plus the 2026-10-10 user ruling (a third of the procs off Dwarves). Default targets are MobFamilyUnknown and no preset sets Dwarf, so no report DPS moves. Dark Iron Dwarves counting is unconfirmed, as the code comment says. |
 
-## Commits
+Knock-on: `MobFamily_MobFamilyDwarf` is used only by the HoJ proc chance and the item condition (git grep);
+`result.Target` is the hit's target, so a multi-target fight rolls each target's own chance.
 
-| Commit | Change | Verdict |
-|---|---|---|
-| bb5c326b6 | `Player.item_uses_off` / `item_effects_off` (core `character.go`, `major_cooldown.go`): skip an item's effects, or register its use as never castable; `ItemHasUse` for rotopt | Tooling only. Both maps are nil unless the request sets them, so every report preset sims as before. No client value claimed. |
-| 2c6005e2b | Adaptive Combat Assistant (272437) cooldown priority Low, so it goes after Chained Essence / Blackhand's Breadth on the shared 15 s | Ordering only, no client value; worn only in the Enhancement Phase 0 BiS list, no report preset. |
+## Updated
 
-## Size of the new finding (estimate)
-
-Damage shares from the shared run (`$AUDIT_WORK/runs/master`, `brk.py`) of the Holy spells the sim keeps out of
-the 6%: `paladin__level_60` Hammer of Wrath 5.1% + ranged Judgement of Righteousness 3.4% (about +0.5%);
-`paladin__level_60_sub_holy` 5.0% + 3.8% (about +0.5%); `paladin__level_60_shock_ret` Holy Shock 11.8% + Hammer
-of Wrath 4.8% (about +1.0%). Not measured: the fix needs a code change.
+- `ref/mechanics/verdicts.md`: Hand of Justice row, "as of" moved to master 813f2b1e9.

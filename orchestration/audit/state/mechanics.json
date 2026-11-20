@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "4be96efefc4beee8fd63beba8092dc999ba495b9"
+  "master": "813f2b1e95b98c3c747d964e3f2f659b47ac4c9d"
  },
- "last_pass_at": "2026-11-20T06:53:17Z",
- "pass": 94,
- "result": "findings",
- "note": "Pass 94: e07e8fdb8..4be96efef. Item-use tooling (item_uses_off / item_effects_off) and ACA priority: no client values. Client still 70959. Blizzard Nov 19 hotfix: 2H Weapon Spec raises all Holy damage -> mechanics-20261120-1 (high, needs user ruling).",
+ "last_pass_at": "2026-11-20T12:51:33Z",
+ "pass": 95,
+ "result": "quiet",
+ "note": "Pass 95: 4be96efef..813f2b1e9. Hand of Justice 3% vs Dwarves (4c3ac0026) matches 15600 on 70959 (ProcChance 3, ICD 2s). Client still 70959; no new Blizzard posts. Quiet.",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-20T06:53:26Z",
+ "checked_at": "2026-11-20T12:51:44Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

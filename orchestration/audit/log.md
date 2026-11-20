@@ -496,3 +496,5 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-20 01:00 | tank_fairness | pass 24 | master e07e8fdb8 | quiet | 84 rows match, ranking unchanged
 2026-11-20 06:53 | consumables | pass 94 | master 4be96efef | quiet | item_effects.go trinket priority only; no consumable values changed
 2026-11-20 06:53 | mechanics | pass 94 | master 4be96efef | 1 new finding | Two-Handed Weapon Spec now covers all Holy damage (Nov 19 hotfix); needs user ruling
+2026-11-20 12:51 | consumables | pass 95 | master 813f2b1e9 | quiet | Hand of Justice proc 3% vs Dwarves only; no consumable values changed
+2026-11-20 12:51 | mechanics | pass 95 | master 813f2b1e9 | quiet | Hand of Justice 3%/1% matches client; no report DPS change
