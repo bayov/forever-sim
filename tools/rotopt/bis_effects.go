@@ -20,13 +20,14 @@ import (
 // tooltip. With -gear-effects-out we measure, for every item with an effect the sim models,
 // the DPS its effects add on the BiS set, and BayovCore adds that to the item's stat score.
 //
-// An item's dps is the set with the item in its slot, less the same set with all of the
-// item's effects left out (Player.item_effects_off), so only its stats count. A ring or
-// trinket goes in place of the weaker pick, the one the set loses less without. An item with a
-// use also gets its cooldown value, what its effects add while the use is on cooldown: the set
-// with only the use never pressed (Player.item_uses_off), less the set with all its effects
-// off. So BayovCore can swap the item's dps for it then. An item with a condition
-// (core.RegisterItemConditions) gets its dps with the condition met too.
+// It follows the set's score with -use-dur (use_values.go): the fight at -durs with every use
+// off, plus each use's value on the -use-dur fight. An item's dps is the set with the item in
+// its slot, less the same set with all of the item's effects left out (Player.item_effects_off),
+// both at -durs, plus its use value. A ring or trinket goes in place of the weaker pick, the one
+// the set loses less without. An item with a use also gets its cooldown value, what its effects
+// add while the use is on cooldown: the same without the use value. So BayovCore can swap the
+// item's dps for it then. An item with a condition (core.RegisterItemConditions) gets its dps
+// with the condition met too.
 //
 // The items are every one of the gear pool (the search's own filters) that has an item effect
 // in the sim, and the set's picks. The list's other items come from the same pool.
@@ -59,8 +60,8 @@ type effectsConditional struct {
 // writeEffects measures the effect values of the pool's items on the set best and writes them
 // to path.
 func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.ItemSpec, names []string, knobs Knobs) error {
-	if len(s.durations) != 1 {
-		return fmt.Errorf("-gear-effects-out needs one fight length, not %v", s.durations)
+	if !s.useScores {
+		return fmt.Errorf("-gear-effects-out needs -use-dur")
 	}
 	started := time.Now()
 	iterations := int32(*gearEffectsIters)
@@ -73,6 +74,7 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 	full := s.iterations
 	encounter := s.setup.request.Encounter
 	s.iterations, s.saveValues, s.labeledRands = iterations, true, true
+	s.resetUseValues()
 	defer func() {
 		s.iterations, s.saveValues, s.labeledRands = full, false, false
 		s.setup.request.Encounter = encounter
@@ -105,7 +107,6 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 		conditions []core.ItemCondition
 		normal     result
 		off        result
-		useOff     *result
 		cond       []result // normal and all off for each condition, in pairs
 		pick       bool
 	}
@@ -194,7 +195,6 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 	// The set itself, for the file's dps, then every item with its effects on and off.
 	var base result
 	run(best, nil, nil, encounter, func(r result) { base = r })
-	conditionRuns := 0
 	for _, c := range candidates {
 		run(c.gear, nil, nil, encounter, func(r result) { c.normal = r })
 		run(c.gear, nil, []int32{c.id}, encounter, func(r result) { c.off = r })
@@ -203,38 +203,33 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 			met := condition.Apply(encounter)
 			run(c.gear, nil, nil, met, func(r result) { c.cond[2*i] = r })
 			run(c.gear, nil, []int32{c.id}, met, func(r result) { c.cond[2*i+1] = r })
-			conditionRuns += 2
 		}
 	}
-	fmt.Printf("effects: %d items with an effect at %gs, %d runs at %d iterations\n", len(candidates), s.durations[0], len(pending), iterations)
-	score()
-	// The items with a use, which we know now that each was in a sim.
-	uses := 0
-	for _, c := range candidates {
-		if core.ItemHasUse(c.id) {
-			run(c.gear, []int32{c.id}, nil, encounter, func(r result) { c.useOff = &r })
-			uses++
-		}
-	}
-	fmt.Printf("effects: %d items with a use, %d runs\n", uses, len(pending))
+	fmt.Printf("effects: %d items with an effect at %gs, %d runs at %d iterations, %d use runs at %gs\n",
+		len(candidates), s.durations[0], len(pending), iterations, len(s.useRuns), *useDur)
 	score()
 
+	// The part at -durs: on less off, both with every use off.
+	effects := func(on, off result) float64 { return (on.dps - on.useSum) - (off.dps - off.useSum) }
 	items := map[int32]effectsItem{}
-	var noise []float64
+	var noise, useNoise []float64
 	for _, c := range candidates {
-		item := effectsItem{Name: c.name, DPS: round1(c.normal.dps - c.off.dps)}
+		equip, use := effects(c.normal, c.off), c.normal.uses[c.id]
+		item := effectsItem{Name: c.name, DPS: round1(equip + use)}
 		n := gainNoise(c.off, c.normal)
 		noise = append(noise, n)
-		line := fmt.Sprintf("  %-40s %+6.1f ± %.1f", c.name, c.normal.dps-c.off.dps, n)
-		if c.useOff != nil {
-			v := round1(c.useOff.dps - c.off.dps)
+		line := fmt.Sprintf("  %-40s %+6.1f  equip and procs %+.1f ± %.1f", c.name, equip+use, equip, n)
+		if core.ItemHasUse(c.id) {
+			v := round1(equip)
 			item.Cooldown = &v
-			line += fmt.Sprintf("  on cooldown %+.1f ± %.1f", c.useOff.dps-c.off.dps, gainNoise(c.off, *c.useOff))
+			useNoise = append(useNoise, c.normal.useErrs[c.id])
+			line += fmt.Sprintf("  use %+.1f ± %.1f", use, c.normal.useErrs[c.id])
 		}
 		for i, condition := range c.conditions {
 			on, off := c.cond[2*i], c.cond[2*i+1]
-			item.Conditional = append(item.Conditional, effectsConditional{Label: condition.Label, DPS: round1(on.dps - off.dps)})
-			line += fmt.Sprintf("  %s %+.1f ± %.1f", condition.Label, on.dps-off.dps, gainNoise(off, on))
+			v := effects(on, off) + on.uses[c.id]
+			item.Conditional = append(item.Conditional, effectsConditional{Label: condition.Label, DPS: round1(v)})
+			line += fmt.Sprintf("  %s %+.1f ± %.1f", condition.Label, v, gainNoise(off, on))
 		}
 		fmt.Println(line)
 		items[c.id] = item
@@ -242,11 +237,16 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 	for _, name := range skipped {
 		fmt.Printf("effects: %s is an off hand only item, left out next to the two hander\n", name)
 	}
-	slices.Sort(noise)
-	if len(noise) > 0 {
-		fmt.Printf("effects: paired noise (1 standard error) median %.2f, max %.2f DPS\n", noise[len(noise)/2], noise[len(noise)-1])
+	for _, list := range []struct {
+		name  string
+		noise []float64
+	}{{"equip and procs", noise}, {"use values", useNoise}} {
+		if n := list.noise; len(n) > 0 {
+			slices.Sort(n)
+			fmt.Printf("effects: paired noise of the %s (1 standard error) median %.2f, max %.2f DPS\n", list.name, n[len(n)/2], n[len(n)-1])
+		}
 	}
-	if err := writeEffectsFile(path, s.durations[0], base.dps, iterations, items); err != nil {
+	if err := writeEffectsFile(path, s.durations[0], *useDur, base.dps, iterations, items); err != nil {
 		return err
 	}
 	fmt.Printf("effects: wrote %s, %d items in %s\n", path, len(items), time.Since(started).Round(time.Second))
@@ -255,10 +255,10 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 
 // writeEffectsFile writes the effects file, one item a line in ID order, so a diff of two
 // runs reads item by item.
-func writeEffectsFile(path string, dur, dps float64, iterations int32, items map[int32]effectsItem) error {
+func writeEffectsFile(path string, dur, useDur, dps float64, iterations int32, items map[int32]effectsItem) error {
 	var b strings.Builder
-	fmt.Fprintf(&b, "{\n  \"dur\": %g,\n  \"dps\": %g,\n  \"iters\": %d,\n  \"made\": %q,\n  \"sim\": %q,\n  \"items\": {",
-		dur, round2(dps), iterations, time.Now().Format("2006-01-02"), *gearRankSim)
+	fmt.Fprintf(&b, "{\n  \"dur\": %g,\n  \"use_dur\": %g,\n  \"dps\": %g,\n  \"iters\": %d,\n  \"made\": %q,\n  \"sim\": %q,\n  \"items\": {",
+		dur, useDur, round2(dps), iterations, time.Now().Format("2006-01-02"), *gearRankSim)
 	ids := make([]int32, 0, len(items))
 	for id := range items {
 		ids = append(ids, id)

@@ -221,7 +221,7 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 			continue
 		}
 		entry := bisEntry{ID: c.option.spec.Id, Suffix: c.option.spec.RandomSuffix, Name: c.option.name,
-			DPS: round2(c.normal.dps), Loss: round2(base.dps - c.normal.dps), Unsourced: c.option.unsourced}
+			DPS: round2(c.normal.dps), Loss: round2(base.dps - c.normal.dps), Unsourced: c.option.unsourced, use: c.normal.uses[c.option.spec.Id]}
 		if with := c.source.with(rankedGear{c.option, *c.normal, c.gear}); with != nil {
 			entry.With = with.Id
 		}

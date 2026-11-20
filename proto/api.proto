@@ -63,8 +63,8 @@ message Player {
 	int32 main_hand_skill_gap = 51;
 	int32 off_hand_skill_gap = 52;
 	// Items whose use is never pressed, by item ID. Their stats, equip effects and procs stay.
-	// rotopt's BiS list ranks a trinket this way to say what it's worth while its use is on
-	// cooldown (docs/bis_lists.md, "On cooldown ranks").
+	// rotopt's gear search scores a set this way, and adds what each use is worth on its own
+	// (docs/bis_lists.md, "How uses count").
 	repeated int32 item_uses_off = 59;
 	// Items whose effects are all left out (equip effects, procs and use), by item ID, so only
 	// their stats count. rotopt measures what an item's effects add with it.

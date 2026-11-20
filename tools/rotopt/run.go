@@ -99,6 +99,13 @@ type result struct {
 	// iteration's net mana spend (capped at an hour).
 	tto float64
 
+	// With -use-dur, the use value of each use the score counts (use_values.go), and their sum,
+	// which dps includes.
+	uses   map[int32]float64
+	useSum float64
+	// useErrs is each use value's paired standard error.
+	useErrs map[int32]float64
+
 	// Health and armor without buffs or consumes, as the character sheet shows them.
 	// Only the gear search fills them in, when it is asked to.
 	health, armor float64

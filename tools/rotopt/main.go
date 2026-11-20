@@ -398,6 +398,11 @@ func main() {
 			enchantSearch: *enchantSearch, enchantExclude: excludeEnchants, level: level,
 			minHealth: *minHealth, minArmor: *minArmor, survivalPenalty: *survivalPenalty, survival: *survival,
 			healthWeight: *healthWeight, armorWeight: *armorWeight,
+			useScores: *useDur > 0,
+		}
+		if s.useScores && len(durations) != 1 {
+			fmt.Fprintln(os.Stderr, "-use-dur needs one fight length in -durs")
+			os.Exit(2)
 		}
 		if *slotTradeoffs {
 			s.survival = true

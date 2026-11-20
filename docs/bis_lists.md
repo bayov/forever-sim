@@ -108,35 +108,51 @@ Item sets and enchants with a condition (the Undead slaying sets, Beastslaying, 
 Slayer) aren't ranked this way. A set bonus needs the other pieces of the set, and the enchants
 have their own list.
 
+## How uses count
+
+With `-use-dur` (`tools/rotopt/use_values.go`) a set is scored in two parts (user, 2026-11-20):
+
+    score(S) = DPS at -durs of S with every use off + the sum of useValue(i, S) over S's uses
+    useValue(i, S) = DPS at -use-dur of S - the same with only i's use off
+
+The Phase 0 list scores at 180s with a 90s `-use-dur`. Everything but the uses counts on 180s,
+because there's little or no time to regen mana between the user's fights. The uses count on 90s,
+pressed at the pull as the APL's `autocastOtherCooldowns` does. The user's level 60 dungeon fights
+are short, an addon swaps trinkets between them, and swapping a usable item in puts it on a 30s
+equip cooldown, so sometimes its use never gets pressed. 90s takes that into account roughly.
+
+Every score of the gear search works this way: the search, the list's ranks, picks and losses, the
+conditional ranks (with the condition met in both parts) and the enchants. An item has a use when
+its effect registers a major cooldown in the sim, which covers every trinket use and other usable
+gear like Manual Crowd Pummeler. The sim switch is `Player.item_uses_off`: the use isn't
+registered as a cooldown, so the autocast never presses it, and an APL that names it finds it
+never castable.
+
+The use values of a set depend mostly on which uses it holds, so we measure them once for each
+group of uses and reuse them for every set with the same uses. An option without a use then costs
+only its run at 180s, and an option with a use adds the 90s runs of its group (one with every use
+pressed, and one for each use with it off). Each ranking measures its base set's values on the
+base itself. The 90s runs are at `-use-iters` (20000) with labeled random numbers (below).
+
+A use can be worth little on a set. On the 2026-11-20 set, Adaptive Combat Assistant's use goes
+first at the pull and puts the Forever burst trinkets' shared category on cooldown for 15s, so
+Chained Essence of Eranikus goes off 15s later. Its use is worth +0.4 DPS there.
+
 ## On cooldown ranks
 
-The list is ranked with every use pressed at the pull (the APL's `autocastOtherCooldowns`). The
-user's addon swaps trinkets between fights, so it also needs to know what an item is worth while
-its use is on cooldown: a strong use can make a trinket BiS for the pull, and filler for the next
-fight. So with `-gear-rank-cooldowns` (`tools/rotopt/bis_cooldowns.go`) every listed item with a
-use gets a second rank, with its use never pressed, so only its stats, equip effects and procs
-count. The picks get it too. It is written in the entry's `cooldown` field.
+The user's addon swaps trinkets between fights, so it also needs to know what an item is worth
+while its use is on cooldown: a strong use can make a trinket BiS for the pull, and filler for the
+next fight. So with `-gear-rank-cooldowns` (`tools/rotopt/bis_cooldowns.go`) every listed item with
+a use gets a second rank, from its score without its own use value. The other items' uses still
+count. Its cooldown loss is its loss plus its use value, so this needs no runs of its own. The
+picks get it too. It is written in the entry's `cooldown` field, with the rank rule of the
+conditional ranks: a negative loss is rank 1, and otherwise it comes after every other entry that
+loses as little or less.
 
-An item has a use when its effect registers a major cooldown in the sim, which covers every
-trinket use and other usable gear like Manual Crowd Pummeler. The sim switch is
-`Player.item_uses_off`: the use isn't registered as a cooldown, so the autocast never presses it,
-and an APL that names it finds it never castable.
-
-These runs are at `-gear-rank-confirm-iters` and share their seed. The base is the set itself,
-with its uses pressed, scored the same way once. An item that isn't a pick goes in the places its
-list scored it in, a ring or trinket in place of either pick, and the better of the two counts.
-The rank is the conditional ranks' rule: a negative loss is rank 1, and otherwise it comes after
-every other entry that loses as little or less.
-
-These runs (and the effect values below) give each kind of roll its own random source
+The use values and the effect values below give each kind of roll its own random source
 (`SimOptions.use_labeled_rands`). Without it, one Hand of Justice proc shifts every roll after it
 in the iteration, and the two runs of a pair are about as noisy as two unrelated runs. On
 2026-11-20 it took the paired noise of the effect values from 2.5 to 0.6 DPS at 2000 iterations.
-
-A trinket with a use can lose less with the use off than with it pressed. On the 2026-11-20 set,
-Adaptive Combat Assistant's use goes first at the pull and puts the Forever burst trinkets' shared
-category on cooldown for 15s, so Chained Essence of Eranikus goes off 15s later. Its use is worth
--4 DPS there.
 
 ## Effect values
 
@@ -145,37 +161,41 @@ mark) and says so in the tooltip. With `-gear-effects-out` (`tools/rotopt/bis_ef
 measure what each item's effects add on the BiS set, and BayovCore adds that to the item's stat
 score.
 
-- `dps` is the set with the item in its slot, less the same set with all of the item's effects
-  left out (`Player.item_effects_off`), so only its stats count there. A ring or trinket goes in
-  place of the weaker pick, the one the set loses less without. A pick is the set as it is.
-- `cooldown`, for an item with a use, is what its effects add while the use is on cooldown: the set
-  with only the use never pressed, less the set with all its effects off. It is 0 for an item whose
-  only effect is its use.
+- `dps` is what the item's effects add to the set's score: the set with the item in its slot, less
+  the same set with all of the item's effects left out (`Player.item_effects_off`), both at `dur`
+  with every use off, plus the item's use value at `use_dur`. A ring or trinket goes in place of
+  the weaker pick, the one the set loses less without. A pick is the set as it is.
+- `cooldown`, for an item with a use, is what its effects add while the use is on cooldown: `dps`
+  without the use value. It is 0 for an item whose only effect is its use.
 - `conditional` is `dps` with each of the item's conditions met.
 
 The items are every item of the gear pool (the search's own filters: phase, no raids, faction,
 class, minimum item level, the includes and excludes) that has an item effect in the sim, and the
 set's picks. A one hander goes in the main hand with the off hand empty. An off hand only item
-(Force Reactive Disk) is left out next to a two hand pick, since nothing places it. Each run is
-at `-gear-effects-iters` (40000 at 45s in `bis_phase0.sh`), where the paired noise is about 0.15
-DPS for most items and 0.4 at most.
+(Force Reactive Disk) is left out next to a two hand pick, since nothing places it. The runs at
+`dur` are at `-gear-effects-iters` (10000 in `bis_phase0.sh`), and the use values at `-use-iters`.
+On 2026-11-20 the paired noise was 0.1 DPS for most items and 0.3 at most, at both lengths. The
+whole effects pass takes about 1.5 min.
 
 ```json
 {
-  "dur": 45,
-  "dps": 1120.18,
-  "iters": 40000,
+  "dur": 180,
+  "use_dur": 90,
+  "dps": 1003.28,
+  "iters": 10000,
   "made": "2026-11-20",
-  "sim": "e07e8fdb812d+",
+  "sim": "3c9401f7b436+",
   "items": {
-    "10455": {"name":"Chained Essence of Eranikus","dps":29.5,"cooldown":0,"conditional":[{"label":"vs Trolls","dps":59.3}]},
-    "11815": {"name":"Hand of Justice","dps":8.2}
+    "9449": {"name":"Manual Crowd Pummeler","dps":76.1,"cooldown":0},
+    "10455": {"name":"Chained Essence of Eranikus","dps":16.8,"cooldown":0,"conditional":[{"label":"vs Trolls","dps":35.1}]},
+    "11815": {"name":"Hand of Justice","dps":7.5}
   }
 }
 ```
 
-`dur` is the fight length, `dps` the set's DPS there, and `iters` the iterations of each run.
-`made` and `sim` are as in the list file.
+`dur` is the fight length of everything but the uses, `use_dur` the uses' fight length, `dps` the
+set's score, and `iters` the iterations of each run at `dur`. `made` and `sim` are as in the list
+file.
 
 ## Enchants
 
@@ -256,7 +276,8 @@ can be filled in.
 
 - `name` is the list's label and `spec` the spec's name in mksettings (`enh`, `ele`, ...).
   `class`, `race`, `faction`, `level`, `talents` and `durations` are the fight it was simmed
-  on, and `dps` is the set's DPS there.
+  on, and `dps` is the set's DPS there. `use_dur`, when there is one, is the fight length the
+  uses count on (see How uses count), and `dps` is then the set's score.
 - `made` is the date and `sim` the forever-sim commit it ran on, with a `+` when the working
   copy had changes on top.
 - `slots` has `head`, `neck`, `shoulder`, `back`, `chest`, `wrist`, `hands`, `waist`, `legs`,
@@ -273,7 +294,7 @@ can be filled in.
   `rank` is its place (no higher than the number of picks means BiS), and `loss` is what it
   loses against the set with the condition met. See Conditional ranks.
 - `cooldown` (only with `-gear-rank-cooldowns`, and only on an item with a use) says where the
-  item would go on this list with its use never pressed, as while it is on cooldown:
+  item would go on this list without its use value, as while its use is on cooldown:
   `{"rank":9,"loss":13.7}`, with the same rule as `conditional`. See On cooldown ranks.
 - `enchants` (only with `-gear-rank-enchants`) has a list for each slot that takes an enchant,
   keyed like `slots` (`head`, `neck`, `back`, `chest`, `wrist`, `hands`, `legs`, `feet`,
@@ -300,8 +321,17 @@ says how long), because the level 30 pools are big. A new spec is a few more lin
 
 `tools/rotopt/bis_phase0.sh` writes the level 60 Phase 0 Enhancement list
 (`ui/enhancement_shaman/bis/level60_phase0.bis.json`) and its effect values
-(`level60_phase0.effects.json` next to it). It runs the DPS Report's default
-Enhancement fight (Orc, Engineering and Leatherworking, level 63 boss) at `DUR` seconds with the talents
+(`level60_phase0.effects.json` next to it).
+
+It uses two fight lengths (user, 2026-11-20, see How uses count). Everything but the uses counts
+on `DUR` (180s), because there's little or no time to regen mana between fights. Each use counts
+for what it adds on `USE_DUR` (90s), for the short dungeon fights and the 30s equip cooldown a
+swapped in usable item gets. When the raids open (2026-12-09) both may need measuring again from
+raid logs. The list records them as `durations` and `use_dur`, and the effects file as `dur` and
+`use_dur`. From 2026-11-20 to the rework the same day, the list was ranked on 45s with the uses in.
+
+It runs the DPS Report's default
+Enhancement fight (Orc, Engineering and Leatherworking, level 63 boss) with the talents
 the user plays, from a real pre-raid set. `TALENTS` sets the talents, and the default is
 `053303102-054030110051212141-03` (2026-11-14). The search uses `-gear-no-raids` and
 `-gear-phase 2`, so only what Forever has before its raids open can come up
@@ -320,19 +350,15 @@ Arathi Basin is open), and every other item the hand check keeps that our data p
 the conditional items with their condition met (see Conditional ranks), and the items with a use
 with their use on cooldown (see On cooldown ranks). Last it writes the effect values.
 
-`DUR` is 45 by default (user, 2026-11-20). It comes from the user's level 60 dungeon logs of
-2026-11-20: trash fights over 20s had a median of 32 to 38s, bosses 42s, and 7 to 13% of fights
-went over 60s. Every use is pressed at the pull and an addon swaps trinkets between fights, so a
-strong use can make an item BiS at that length. When the raids open (2026-12-09) their bosses and
-trash may need a longer fight, measured again from raid logs. The list was ranked at 180s before.
-A short fight's DPS varies more from one iteration to the next, so the script scales every
-iteration count by 180/`DUR`, for the same precision and run time as the 180s list had.
-
 `RANK_ONLY=1 tools/rotopt/bis_phase0.sh` skips the gear search (`-gear-rank-only`) and ranks the
 list's own picks again, enchants included. It is for a rerun after
 a sim or item data change. The ranking still puts in an item that beats its pick. `FROM` is the
 list it takes the picks from (the list itself by default), `OUT` writes somewhere else, and any
 arguments go on to rotopt after the script's, so `-iters 300` makes a quick check.
+
+A rerun (`RANK_ONLY`, `SLOTS`, `EFFECTS_ONLY`) reads `FROM`, so it stops when `FROM` was ranked on
+other lengths than `DUR` and `USE_DUR`: a few slots ranked on 180s next to lists copied from a 45s
+list would read as one list. `MIX_DURS=1` goes on anyway.
 
 `EFFECTS_ONLY=1 tools/rotopt/bis_phase0.sh` only writes the effect values, for the picks of
 `FROM` (about 1.5 min). `EFFECTS_OUT` writes them somewhere else, and `EFFECTS_OUT=none` leaves

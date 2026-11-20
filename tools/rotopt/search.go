@@ -64,6 +64,14 @@ type searcher struct {
 	// writeEffects.
 	labeledRands bool
 
+	// useScores scores every set the -use-dur way (use_values.go): at the fight lengths with
+	// every use off, plus each use's value on a -use-dur fight. useSets are the use values we
+	// measured, probed the items whose uses we know, and useRuns the use runs still to run.
+	useScores bool
+	useSets   map[string]*useSet
+	probed    map[int32]bool
+	useRuns   []*useRun
+
 	cache map[string]result
 	evals int
 }
@@ -87,6 +95,10 @@ type pendingScore struct {
 	results  []result
 
 	health, armor float64
+
+	// With useScores, the use values to add, of the useItems.
+	uses     *useSet
+	useItems []int32
 }
 
 func (s *searcher) prepare(knobs Knobs) *pendingScore {
@@ -104,6 +116,12 @@ func (s *searcher) prepare(knobs Knobs) *pendingScore {
 		p.keys = append(p.keys, key)
 		p.requests = append(p.requests, request)
 		p.results = append(p.results, r)
+	}
+	if s.useScores {
+		if s.useSets == nil {
+			s.resetUseValues()
+		}
+		s.prepareUses(p, rot, knobs)
 	}
 	if s.survival || s.minHealth > 0 || s.minArmor > 0 || s.healthWeight != 0 || s.armorWeight != 0 {
 		p.health, p.armor = s.setup.unbuffedStats()
@@ -132,6 +150,8 @@ func (s *searcher) scoreAll(pending []*pendingScore) []result {
 			}
 		}
 	}
+	useRuns := s.takeUseRuns()
+	useErrs := make([]error, len(useRuns))
 	var wg sync.WaitGroup
 	slots := make(chan struct{}, scoreParallel)
 	for _, r := range runs {
@@ -143,7 +163,22 @@ func (s *searcher) scoreAll(pending []*pendingScore) []result {
 			<-slots
 		}()
 	}
+	for i, u := range useRuns {
+		wg.Add(1)
+		slots <- struct{}{}
+		go func() {
+			defer wg.Done()
+			u.result, useErrs[i] = simulate(u.request, nil)
+			<-slots
+		}()
+	}
 	wg.Wait()
+	for _, err := range useErrs {
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "use value sim failed: %v\n", err)
+			os.Exit(1)
+		}
+	}
 	for _, r := range runs {
 		if r.err != nil {
 			fmt.Fprintf(os.Stderr, "sim failed for %s at %gs: %v\n", r.p.knobs, s.durations[r.i], r.err)
@@ -186,6 +221,7 @@ func (s *searcher) combine(p *pendingScore) result {
 		// tank_rotations-20261104-13). gainNoise's paired error doesn't need it.
 		r.stderr *= tankscore.SharedSeedSD
 	}
+	addUses(&r, p)
 	if len(s.durations) == 1 {
 		r.values = p.results[0].values
 		r.leveling = p.results[0].leveling

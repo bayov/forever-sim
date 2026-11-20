@@ -227,7 +227,7 @@ func TestWriteEffectsFile(t *testing.T) {
 		10455: {Name: "Chained Essence of Eranikus", DPS: 29.5, Cooldown: &zero,
 			Conditional: []effectsConditional{{Label: "vs Trolls", DPS: 59.3}}},
 	}
-	if err := writeEffectsFile(path, 45, 1120.184, 40000, items); err != nil {
+	if err := writeEffectsFile(path, 180, 90, 1120.184, 10000, items); err != nil {
 		t.Fatal(err)
 	}
 	data, err := os.ReadFile(path)
@@ -235,15 +235,16 @@ func TestWriteEffectsFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	var got struct {
-		Dur   float64                    `json:"dur"`
-		DPS   float64                    `json:"dps"`
-		Items map[string]json.RawMessage `json:"items"`
+		Dur    float64                    `json:"dur"`
+		UseDur float64                    `json:"use_dur"`
+		DPS    float64                    `json:"dps"`
+		Items  map[string]json.RawMessage `json:"items"`
 	}
 	if err := json.Unmarshal(data, &got); err != nil {
 		t.Fatalf("%v:\n%s", err, data)
 	}
-	if got.Dur != 45 || got.DPS != 1120.18 || len(got.Items) != 2 {
-		t.Errorf("dur %v, dps %v, %d items, want 45, 1120.18 and 2", got.Dur, got.DPS, len(got.Items))
+	if got.Dur != 180 || got.UseDur != 90 || got.DPS != 1120.18 || len(got.Items) != 2 {
+		t.Errorf("dur %v, use_dur %v, dps %v, %d items, want 180, 90, 1120.18 and 2", got.Dur, got.UseDur, got.DPS, len(got.Items))
 	}
 	for id, want := range map[string]string{
 		"11815": `{"name":"Hand of Justice","dps":8.2}`,

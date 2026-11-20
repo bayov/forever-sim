@@ -76,6 +76,9 @@ type bisEntry struct {
 	// Cooldown is where an item with a use would go on this list with its use never pressed,
 	// as while it is on cooldown (-gear-rank-cooldowns, bis_cooldowns.go).
 	Cooldown *bisCooldown `json:"cooldown,omitempty"`
+
+	// use is the item's use value in the set it was scored in, with -use-dur (use_values.go).
+	use float64
 }
 
 type bisSlot struct {
@@ -324,6 +327,9 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 	if err != nil {
 		return err
 	}
+	if *gearRankCooldowns && !s.useScores {
+		return fmt.Errorf("-gear-rank-cooldowns needs -use-dur")
+	}
 	for pass := 1; ; pass++ {
 		enchants, base, slots, sources, challengers, err := s.rankBisPass(pool, best, names, unsourced, knobs)
 		if err != nil {
@@ -343,7 +349,7 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 			slots = s.rankConditions(slots, sources, best, base, knobs)
 		}
 		if *gearRankCooldowns {
-			slots = s.rankCooldowns(slots, sources, best, knobs)
+			slots = rankCooldowns(slots)
 		}
 		s.setGear(best)
 		for _, slot := range slots {
@@ -404,6 +410,10 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	}
 	// The base keeps each iteration's DPS, so a challenger's gain has its paired error. The
 	// last step of rankGear's race runs at the same iterations.
+	//
+	// With -use-dur the use values are measured again on this base, so the base's own uses are
+	// valued on the set itself.
+	s.resetUseValues()
 	s.setGear(best)
 	s.saveValues = true
 	base = s.score(knobs)
@@ -425,7 +435,7 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 	}
 
 	entryOf := func(o gearOption, r result, with *proto.ItemSpec) bisEntry {
-		e := bisEntry{ID: o.spec.Id, Suffix: o.spec.RandomSuffix, Name: o.name, DPS: round2(r.dps), Loss: round2(base.dps - r.dps), Unsourced: o.unsourced}
+		e := bisEntry{ID: o.spec.Id, Suffix: o.spec.RandomSuffix, Name: o.name, DPS: round2(r.dps), Loss: round2(base.dps - r.dps), Unsourced: o.unsourced, use: r.uses[o.spec.Id]}
 		if with != nil {
 			e.With = with.Id
 		}
@@ -443,7 +453,7 @@ func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, name
 				name = it.Name
 			}
 		}
-		e := bisEntry{ID: item.Id, Suffix: item.RandomSuffix, Name: name, DPS: round2(base.dps), Unsourced: unsourced[slot], BiS: true, Enchant: item.Enchant}
+		e := bisEntry{ID: item.Id, Suffix: item.RandomSuffix, Name: name, DPS: round2(base.dps), Unsourced: unsourced[slot], BiS: true, Enchant: item.Enchant, use: base.uses[item.Id]}
 		if with != nil {
 			e.With = with.Id
 		}
@@ -827,6 +837,15 @@ func trimBis(entries []bisEntry, keep int) []bisEntry {
 // For the entries that name no item in the other hand.
 func noOtherHand(rankedGear) *proto.ItemSpec { return nil }
 
+// useDurOf is the list's use_dur, the fight length its uses count on (-use-dur), or nil when
+// they count on the list's own fight.
+func useDurOf(s *searcher) any {
+	if !s.useScores {
+		return nil
+	}
+	return *useDur
+}
+
 // writeBis writes the list file. The format is the contract BayovCore's bis.py reads, see
 // docs/bis_lists.md. Each entry goes on a line of its own, so a diff of two runs reads
 // item by item.
@@ -855,6 +874,7 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants 
 		{"level", player.Level},
 		{"talents", talents},
 		{"durations", s.durations},
+		{"use_dur", useDurOf(s)},
 		{"dps", listDPS(base, from)},
 		{"made", time.Now().Format("2006-01-02")},
 		{"sim", *gearRankSim},
@@ -862,6 +882,9 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants 
 	var b strings.Builder
 	b.WriteString("{\n")
 	for _, h := range header {
+		if h.value == nil {
+			continue
+		}
 		data, err := json.Marshal(h.value)
 		if err != nil {
 			return err

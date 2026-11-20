@@ -33,17 +33,16 @@
 # is the DPS Report's default Enhancement build (tools/dps_report/req/shaman__enhancement-level60.json):
 # Orc, Engineering and Leatherworking, its rotation, enchants, buffs and consumes.
 #
-# The fight is DUR seconds long, 45 by default (user, 2026-11-20). It comes from the user's level
-# 60 dungeon logs of 2026-11-20: trash fights over 20s had a median of 32 to 38s, bosses 42s, and
-# 7 to 13% of fights went over 60s. Every use is pressed at the pull, and an addon swaps trinkets
-# between fights, so a strong use can make an item BiS at that length. When the raids open
-# (2026-12-09) their bosses and trash may need a longer fight, measured again from raid logs.
-# Before 2026-11-20 the list was ranked at 180s.
+# A set is scored in two parts (user, 2026-11-20, -use-dur in use_values.go). Everything but
+# the uses counts on a DUR second fight (180 by default) with every use off, because between
+# fights there's little or no time to regen mana. Each use counts for what it adds on a USE_DUR
+# second fight (90 by default), pressed at the pull. The user's level 60 dungeon fights are short
+# (the logs of 2026-11-20: trash fights over 20s had a median of 32 to 38s, bosses 42s), an addon
+# swaps trinkets between fights, and swapping a usable item in puts it on a 30s equip cooldown,
+# so sometimes its use never gets pressed. 90s takes that into account roughly. When the raids
+# open (2026-12-09) their bosses and trash may need both lengths measured again from raid logs.
 #
-# A short fight's DPS varies more from one iteration to the next, so the iterations scale with
-# 180/DUR: the same precision and run time as the old 180s list (8000 and 80000 at 45s).
-#
-# Each item with a use also gets an "on cooldown" rank, with its use never pressed
+# Each item with a use also gets an "on cooldown" rank, without its use value
 # (-gear-rank-cooldowns): the swap addon takes it off while its use is on cooldown.
 #
 # The talents are the ones the user plays (2026-11-14), not the report's: TALENTS sets them, and
@@ -119,6 +118,8 @@
 # iteration screen is several DPS off, so the better gloves never got past it.
 #
 # On 2026-11-13 the whole script took 16 min on 16 cores (two rounds, then the ranking of 25 a slot).
+# The use values at 90s (2026-11-20) add their runs to it, so expect about 20 to 25 min. A
+# RANK_ONLY SLOTS=trinket run took 2 min, and EFFECTS_ONLY 1.5 min.
 set -e
 
 sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -T 'if(empty, "", "+")')"
@@ -126,9 +127,11 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
 talents="${TALENTS:-053303102-054030110051212141-03}"
-dur="${DUR:-45}"
-# The iterations at 180s, scaled to the fight length (see DUR above).
-iters() { awk -v n="$1" -v d="$dur" 'BEGIN { printf "%d", n * 180 / d }'; }
+# The two fight lengths (user, 2026-11-20, see above). Everything but the uses counts on 180s,
+# because there's little or no time to regen mana between fights. The uses count on 90s, for the
+# short fights and the 30s equip cooldown a swapped in usable item gets. Revisit both for raids.
+dur="${DUR:-180}"
+use_dur="${USE_DUR:-90}"
 effects_out="${EFFECTS_OUT:-ui/enhancement_shaman/bis/level60_phase0.effects.json}"
 # A SLOTS run is a quick rerun of a few lists, so it writes the effects file only when asked.
 if [ -n "$SLOTS" ] && [ -z "$EFFECTS_OUT" ]; then
@@ -159,6 +162,15 @@ if [ -n "$EFFECTS_ONLY" ]; then
 	fi
 fi
 if [ -n "$RANK_ONLY" ]; then
+	# A rerun copies lists from FROM or ranks against its numbers, so FROM must have been ranked
+	# on the same fight lengths. A 45s list with 180s ranks in a few slots reads as one list but
+	# isn't. MIX_DURS=1 goes on anyway.
+	from_durs="$(jq -r '"\(.durations[0] // "none")/\(.use_dur // "none")"' "$from")"
+	if [ "$from_durs" != "$dur/$use_dur" ] && [ -z "$MIX_DURS" ]; then
+		echo "$from was ranked at durations[0]/use_dur $from_durs, not DUR/USE_DUR $dur/$use_dur." >&2
+		echo "Rebuild it in full, or set MIX_DURS=1 to rerun on it anyway." >&2
+		exit 1
+	fi
 	# The list's picks, with their suffix and enchant, in the order of the equipment list. An
 	# empty slot (the off hand next to a two hander) has no pick.
 	jq --slurpfile list "$from" '$list[0].slots as $s
@@ -188,14 +200,15 @@ if [ "$effects_out" != none ]; then
 	outputs="$outputs -gear-effects-out $effects_out"
 fi
 
-go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" -iters "$(iters 2000)" \
+go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" -iters 2000 \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
 	-gear-exclude "$exclude" -gear-include "$include" \
-	-gear-screen-iters "$(iters 300)" -gear-screen-keep 40 \
+	-gear-screen-iters 300 -gear-screen-keep 40 \
 	-gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim" \
-	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters "$(iters 10000)" \
-	-gear-rank-confirm-iters "$(iters 20000)" -gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters "$(iters 10000)" $outputs $rank_only "$@"
+	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
+	-gear-rank-confirm-iters 20000 -gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters 10000 \
+	-use-dur "$use_dur" -use-iters 20000 $outputs $rank_only "$@"
 
 if [ -n "$EFFECTS_ONLY" ]; then
 	exit 0
