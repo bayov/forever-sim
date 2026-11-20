@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "e07e8fdb812df5b3c2a557393c1ba498e2c83b34"
+  "master": "4be96efefc4beee8fd63beba8092dc999ba495b9"
  },
  "last_pass_at": "2026-11-20T01:00:30Z",
  "pass": 21,
@@ -8,5 +8,5 @@
  "note": "Pass 21 on e07e8fdb8. Watched changes (critChanceAgainst in spell_result.go, Tenets condition, Totem of Rage Forever) do not reach healers. All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-20T01:00:44Z"
+ "checked_at": "2026-11-20T06:53:26Z"
 }

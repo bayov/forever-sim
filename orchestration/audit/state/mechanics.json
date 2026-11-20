@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "e07e8fdb812df5b3c2a557393c1ba498e2c83b34"
+  "master": "4be96efefc4beee8fd63beba8092dc999ba495b9"
  },
- "last_pass_at": "2026-11-20T00:52:28Z",
- "pass": 93,
- "result": "quiet",
- "note": "Pass 93: e671e881e..e07e8fdb8. Item-effect commits (Blackhand's Breadth mark via core CritChanceAgainst, Totem of Rage 2%, Bolt's Eyeball 7.5%/30% from log, BiS item values) all match 70959 or a tier 1 log. Client still 70959; no new dev-notes or hotfix posts; blue tracker only a podcast video.",
+ "last_pass_at": "2026-11-20T06:53:17Z",
+ "pass": 94,
+ "result": "findings",
+ "note": "Pass 94: e07e8fdb8..4be96efef. Item-use tooling (item_uses_off / item_effects_off) and ACA priority: no client values. Client still 70959. Blizzard Nov 19 hotfix: 2H Weapon Spec raises all Holy damage -> mechanics-20261120-1 (high, needs user ruling).",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-20T01:00:44Z",
+ "checked_at": "2026-11-20T06:53:26Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -27,11 +27,11 @@
   "newest_push": 114157,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-19T17:35:02Z",
+ "blue_tracker_seen": "2026-11-20T04:00:55Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/12",
-  "date": "2026-11-18T03:24:08Z",
-  "post1_edited": "2026-11-18T03:24:32Z",
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/13",
+  "date": "2026-11-20T04:00:55Z",
+  "post1_edited": "2026-11-20T04:01:18Z",
   "post6_edited": "2026-11-12T00:46:56Z"
  }
 }
