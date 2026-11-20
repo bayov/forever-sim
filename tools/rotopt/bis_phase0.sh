@@ -45,6 +45,13 @@
 # Each item with a use also gets an "on cooldown" rank, without its use value
 # (-gear-rank-cooldowns): the swap addon takes it off while its use is on cooldown.
 #
+# And a "vs 4 mobs" conditional rank (user, 2026-11-20, -use-aoe-targets in bis_aoe.go), because
+# a dungeon pull is often several mobs and some uses hit them all, like Smokey's Lighter's fire
+# cone. Only the use counts against the mobs: its value on USE_DUR is measured against AOE_TARGETS
+# copies of the boss (4 by default), while the DUR part stays on the one boss. An item gets the
+# line, and its effect value with it, only when its use is worth more than 1 DPS more against the
+# mobs. AOE_TARGETS=0 leaves it out.
+#
 # The talents are the ones the user plays (2026-11-14), not the report's: TALENTS sets them, and
 # the default is 053303102-054030110051212141-03. Next to the report's build it takes Improved
 # Ghost Wolf 2 for one point out of Ancestral Knowledge (4) and one out of Maelstrom Weapon (4).
@@ -119,7 +126,8 @@
 #
 # On 2026-11-13 the whole script took 16 min on 16 cores (two rounds, then the ranking of 25 a slot).
 # The use values at 90s (2026-11-20) add their runs to it, so expect about 20 to 25 min. A
-# RANK_ONLY SLOTS=trinket run took 2 min, and EFFECTS_ONLY 1.5 min.
+# RANK_ONLY SLOTS=trinket run took 2 min, and EFFECTS_ONLY 1.5 min. The uses against 4 mobs
+# (2026-11-20) made a RANK_ONLY SLOTS=trinket,mainhand run 3 min, and EFFECTS_ONLY 2.5 min.
 set -e
 
 sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -T 'if(empty, "", "+")')"
@@ -132,6 +140,8 @@ talents="${TALENTS:-053303102-054030110051212141-03}"
 # short fights and the 30s equip cooldown a swapped in usable item gets. Revisit both for raids.
 dur="${DUR:-180}"
 use_dur="${USE_DUR:-90}"
+# How many mobs the uses are also valued against, for the "vs 4 mobs" lines (see above).
+aoe_targets="${AOE_TARGETS:-4}"
 effects_out="${EFFECTS_OUT:-ui/enhancement_shaman/bis/level60_phase0.effects.json}"
 # A SLOTS run is a quick rerun of a few lists, so it writes the effects file only when asked.
 if [ -n "$SLOTS" ] && [ -z "$EFFECTS_OUT" ]; then
@@ -208,7 +218,7 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-rank-spec enh -gear-rank-sim "$sim" \
 	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
 	-gear-rank-confirm-iters 20000 -gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters 10000 \
-	-use-dur "$use_dur" -use-iters 20000 $outputs $rank_only "$@"
+	-use-dur "$use_dur" -use-iters 20000 -use-aoe-targets "$aoe_targets" $outputs $rank_only "$@"
 
 if [ -n "$EFFECTS_ONLY" ]; then
 	exit 0

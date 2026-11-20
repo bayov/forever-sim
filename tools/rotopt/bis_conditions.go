@@ -18,7 +18,9 @@ import (
 //
 // So with -gear-rank-conditions we rank each such item a second time with its condition met, and
 // write where it would go on the same list. The item effects declare their conditions in the sim
-// (core.RegisterItemConditions), so we never screen the whole pool under every condition.
+// (core.RegisterItemConditions), so we never screen the whole pool under every condition. With
+// -use-aoe-targets, every item with a use is ranked "vs 4 mobs" too, with only its use valued
+// against the mobs (bis_aoe.go).
 //
 // For each condition we score the set with the condition met, and then each of its items in the
 // set the way the list places it, with the condition met too. The item's conditional loss is what
@@ -77,11 +79,10 @@ func bisRank(entries []bisEntry, self int, loss float64) int {
 func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSource, best []*proto.ItemSpec, base result, knobs Knobs) []bisSlot {
 	keep := *gearRankKeep
 	encounter := s.setup.request.Encounter
-	defer func() { s.setup.request.Encounter = encounter }()
-	// The conditions the fight doesn't already meet. Against a plain boss that is all of them.
-	conditionsOf := func(id int32) []core.ItemCondition {
-		return slices.DeleteFunc(slices.Clone(core.ItemConditions(id)), func(c core.ItemCondition) bool { return c.MetBy(encounter) })
-	}
+	defer s.meet(bisCondition{}, encounter)
+	// The conditions the fight doesn't already meet. Against a plain boss that is all of them,
+	// and "vs 4 mobs" for an item with a use (bis_aoe.go).
+	conditionsOf := func(id int32) []bisCondition { return itemBisConditions(id, encounter) }
 
 	// A conditional item of a list, and its scores.
 	type candidate struct {
@@ -90,7 +91,7 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 		option gearOption
 		// conditions are the item's, and conditional[i] is its best score with conditions[i]
 		// met.
-		conditions  []core.ItemCondition
+		conditions  []bisCondition
 		conditional []*result
 		// normal is its best score against a plain boss and gear the set it was scored in, for
 		// an item the list doesn't have yet.
@@ -145,8 +146,9 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 			}
 		}
 	}
-	// The set with each condition met, measured once for all its items.
-	var conditions []core.ItemCondition
+	// The set with each condition met, measured once for all its items. A pick with a use needs
+	// it for "vs 4 mobs" too, to tell whether its use gains on the mobs.
+	var conditions []bisCondition
 	for _, c := range candidates {
 		for _, condition := range c.conditions {
 			if !slices.Contains(conditions, condition) {
@@ -154,10 +156,16 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 			}
 		}
 	}
+	if aoe, ok := aoeCondition(); ok && !slices.Contains(conditions, aoe) &&
+		slices.ContainsFunc(slots, func(slot bisSlot) bool {
+			return slices.ContainsFunc(slot.entries, func(e bisEntry) bool { return e.BiS && core.ItemHasUse(e.ID) })
+		}) {
+		conditions = append(conditions, aoe)
+	}
 	bases := make([]result, len(conditions))
 	s.iterations = iterations
 	for i, condition := range conditions {
-		s.setup.request.Encounter = condition.Apply(encounter)
+		s.meet(condition, encounter)
 		run(best, func(r result) { bases[i] = r })
 		for _, c := range candidates {
 			if j := slices.Index(c.conditions, condition); j >= 0 {
@@ -171,7 +179,7 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 	}
 	// An item the list doesn't have needs its normal score too, at the list's iterations, next
 	// to the base the list was ranked on.
-	s.setup.request.Encounter = encounter
+	s.meet(bisCondition{}, encounter)
 	s.iterations = full
 	for _, c := range candidates {
 		if !c.listed {
@@ -194,15 +202,26 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 		done[i](r)
 	}
 
-	// The conditional entries of an item, ranked on the list as it is.
-	conditionalOf := func(c *candidate, entries []bisEntry, self int) []bisConditional {
+	// The conditional entries of an item, ranked on the list as it is. single is its use value
+	// against the boss. A "vs 4 mobs" line is left out when the use gains too little on the mobs
+	// (aoeGains).
+	conditionalOf := func(c *candidate, entries []bisEntry, self int, single float64) []bisConditional {
 		var out []bisConditional
+		id := c.option.spec.Id
 		for j, condition := range c.conditions {
-			if c.conditional[j] == nil {
+			r := c.conditional[j]
+			if r == nil {
 				continue
 			}
-			loss := round2(bases[slices.Index(conditions, condition)].dps - c.conditional[j].dps)
-			out = append(out, bisConditional{Label: condition.Label, Rank: bisRank(entries, self, loss), Loss: loss})
+			if condition.useTargets > 0 {
+				if !aoeGains(single, r.uses[id]) {
+					fmt.Printf("  %s %s: its use is worth %+.1f, %+.1f against the boss, no line\n", c.option.name, condition.label(), r.uses[id], single)
+					continue
+				}
+				fmt.Printf("  %s %s: its use is worth %+.1f, %+.1f against the boss\n", c.option.name, condition.label(), r.uses[id], single)
+			}
+			loss := round2(bases[slices.Index(conditions, condition)].dps - r.dps)
+			out = append(out, bisConditional{Label: condition.label(), Rank: bisRank(entries, self, loss), Loss: loss})
 		}
 		return out
 	}
@@ -213,7 +232,7 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 			continue
 		}
 		slot := &slots[c.list]
-		conditional := conditionalOf(c, slot.entries, -1)
+		conditional := conditionalOf(c, slot.entries, -1, c.normal.uses[c.option.spec.Id])
 		for _, e := range conditional {
 			fmt.Printf("  %s: %s %s: rank %d (%+.1f), %s normally\n", slot.name, c.option.name, e.Label, e.Rank, 0-e.Loss, *c.normal)
 		}
@@ -242,17 +261,25 @@ func (s *searcher) rankConditions(slots []bisSlot, sources map[string][]rankSour
 		}
 		slot := &slots[c.list]
 		self := slices.IndexFunc(slot.entries, func(e bisEntry) bool { return e.ID == c.option.spec.Id && e.Name == c.option.name })
-		slot.entries[self].Conditional = conditionalOf(c, slot.entries, self)
+		slot.entries[self].Conditional = conditionalOf(c, slot.entries, self, slot.entries[self].use)
 	}
 	// A pick with a condition stays where it is, and loses nothing, since the set already holds
-	// it.
+	// it. It gets a "vs 4 mobs" line only when its use gains on the mobs, as the others do.
 	for i := range slots {
 		for j, e := range slots[i].entries {
 			if !e.BiS {
 				continue
 			}
 			for _, condition := range conditionsOf(e.ID) {
-				slots[i].entries[j].Conditional = append(slots[i].entries[j].Conditional, bisConditional{Label: condition.Label, Rank: j + 1})
+				if condition.useTargets > 0 {
+					aoe := bases[slices.Index(conditions, condition)].uses[e.ID]
+					gains := aoeGains(e.use, aoe)
+					fmt.Printf("  %s %s: its use is worth %+.1f, %+.1f against the boss, line %t\n", e.Name, condition.label(), aoe, e.use, gains)
+					if !gains {
+						continue
+					}
+				}
+				slots[i].entries[j].Conditional = append(slots[i].entries[j].Conditional, bisConditional{Label: condition.label(), Rank: j + 1})
 			}
 		}
 	}

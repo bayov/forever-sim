@@ -27,7 +27,8 @@ import (
 // the set loses less without. An item with a use also gets its cooldown value, what its effects
 // add while the use is on cooldown: the same without the use value. So BayovCore can swap the
 // item's dps for it then. An item with a condition (core.RegisterItemConditions) gets its dps
-// with the condition met too.
+// with the condition met too. With -use-aoe-targets, an item whose use gains on several mobs gets
+// its dps with the use valued against them, "vs 4 mobs" (bis_aoe.go).
 //
 // The items are every one of the gear pool (the search's own filters) that has an item effect
 // in the sim, and the set's picks. The list's other items come from the same pool.
@@ -77,7 +78,7 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 	s.resetUseValues()
 	defer func() {
 		s.iterations, s.saveValues, s.labeledRands = full, false, false
-		s.setup.request.Encounter = encounter
+		s.meet(bisCondition{}, encounter)
 		s.setItemSwitches(nil, nil)
 		s.setGear(best)
 	}()
@@ -108,7 +109,9 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 		normal     result
 		off        result
 		cond       []result // normal and all off for each condition, in pairs
-		pick       bool
+		// aoe is its score with the use runs against several mobs, for an item with a use.
+		aoe  *result
+		pick bool
 	}
 	isPick := func(id int32) int {
 		return slices.IndexFunc(best, func(p *proto.ItemSpec) bool { return p != nil && p.Id == id })
@@ -209,6 +212,22 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 		len(candidates), s.durations[0], len(pending), iterations, len(s.useRuns), *useDur)
 	score()
 
+	// The use values against several mobs (bis_aoe.go), of the items with a use. We only know
+	// which items have one now that they ran. The part at -durs stays on the boss, so all we
+	// read from these runs is the use value.
+	aoe, aoeOn := aoeCondition()
+	if aoeOn {
+		s.useTargets = aoe.useTargets
+		for _, c := range candidates {
+			if core.ItemHasUse(c.id) {
+				run(c.gear, nil, nil, encounter, func(r result) { c.aoe = &r })
+			}
+		}
+		s.useTargets = 0
+		fmt.Printf("effects: the uses %s, %d use runs\n", aoe.label(), len(s.useRuns))
+		score()
+	}
+
 	// The part at -durs: on less off, both with every use off.
 	effects := func(on, off result) float64 { return (on.dps - on.useSum) - (off.dps - off.useSum) }
 	items := map[int32]effectsItem{}
@@ -230,6 +249,13 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 			v := effects(on, off) + on.uses[c.id]
 			item.Conditional = append(item.Conditional, effectsConditional{Label: condition.Label, DPS: round1(v)})
 			line += fmt.Sprintf("  %s %+.1f ± %.1f", condition.Label, v, gainNoise(off, on))
+		}
+		if c.aoe != nil {
+			v := c.aoe.uses[c.id]
+			line += fmt.Sprintf("  %s use %+.1f ± %.1f", aoe.label(), v, c.aoe.useErrs[c.id])
+			if aoeGains(use, v) {
+				item.Conditional = append(item.Conditional, effectsConditional{Label: aoe.label(), DPS: round1(equip + v)})
+			}
 		}
 		fmt.Println(line)
 		items[c.id] = item

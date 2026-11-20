@@ -330,6 +330,9 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 	if *gearRankCooldowns && !s.useScores {
 		return fmt.Errorf("-gear-rank-cooldowns needs -use-dur")
 	}
+	if *useAoeTargets > 0 && !s.useScores {
+		return fmt.Errorf("-use-aoe-targets needs -use-dur")
+	}
 	for pass := 1; ; pass++ {
 		enchants, base, slots, sources, challengers, err := s.rankBisPass(pool, best, names, unsourced, knobs)
 		if err != nil {

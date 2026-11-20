@@ -34,6 +34,8 @@ import (
 var (
 	useDur   = flag.Float64("use-dur", 0, "gear search: score each item's use on a fight this many seconds long, and everything else at -durs with every use off (docs/bis_lists.md, How uses count). 0 scores the uses at -durs like the rest")
 	useIters = flag.Int("use-iters", 20000, "the iterations of each -use-dur run")
+	// -use-aoe-targets is the "vs 4 mobs" conditional of bis_aoe.go.
+	useAoeTargets = flag.Int("use-aoe-targets", 0, "gear search: with -gear-rank-conditions or -gear-effects-out, also value each item's use against this many mobs, and list the items whose use gains on them (docs/bis_lists.md, Uses against several mobs). 0 leaves it out")
 )
 
 // A sim run at -use-dur, and its result once it ran.
@@ -125,13 +127,16 @@ func (s *searcher) prepareUses(p *pendingScore, rot *proto.APLRotation, knobs Kn
 	for _, t := range enc.GetTargets() {
 		targets = append(targets, fmt.Sprintf("%d/%d", t.MobType, t.MobFamily))
 	}
-	key := fmt.Sprintf("%s%s|%s|%s|%d|%v", s.setup.talents, s.setup.hitKey(), knobs, strings.Join(targets, ","), enc.GetOutdoorTerrain(), sorted)
+	key := fmt.Sprintf("%s%s|%s|%s|%d|%d|%v", s.setup.talents, s.setup.hitKey(), knobs, strings.Join(targets, ","), enc.GetOutdoorTerrain(), s.useTargets, sorted)
 	set := s.useSets[key]
 	if set == nil {
 		set = &useSet{offs: map[int32]*useRun{}}
 		s.useSets[key] = set
 		run := func(off int32) *useRun {
 			request := s.setup.runRequest(rot, *useDur, int32(*useIters))
+			if s.useTargets > 0 {
+				setTargetCount(request.Encounter, s.useTargets)
+			}
 			pl := request.Raid.Parties[0].Players[0]
 			pl.ItemUsesOff, pl.ItemEffectsOff = nil, nil
 			if off != 0 {

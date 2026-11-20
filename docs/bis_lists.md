@@ -154,6 +154,36 @@ The use values and the effect values below give each kind of roll its own random
 in the iteration, and the two runs of a pair are about as noisy as two unrelated runs. On
 2026-11-20 it took the paired noise of the effect values from 2.5 to 0.6 DPS at 2000 iterations.
 
+## Uses against several mobs
+
+A dungeon pull is often several mobs, and some uses hit them all: Smokey's Lighter breathes fire
+in a cone, and Chained Essence of Eranikus leaves a poison cloud. The list is ranked on one boss, where they hit only the boss. So with
+`-use-aoe-targets 4` (`tools/rotopt/bis_aoe.go`, user, 2026-11-20) an item with a use gets one more
+conditional rank, `vs 4 mobs`, with the rank rule of the other conditionals.
+
+Only the use counts against the mobs. Its use value is measured on the `-use-dur` fight against 4
+copies of the boss, all alive for the whole fight and all in reach of a cone or a cloud. The rest of
+the score stays on the one boss at `-durs`. That is what the use adds on a pull, without switching
+the rotation or the gear to an AoE build. The rotation is the same against 4 mobs (it has no target
+count conditions), and its Magma Totem and Fire Nova hit all of them, but a use value is the run
+with the use less the run without it, both against the 4 mobs, so that part cancels out. What stays
+is what the use adds to the AoE damage. Manual Crowd Pummeler's haste gains a few DPS that way
+(+67.1 to +72.1 on a test set), because more swings give more Dragonbreath Chili procs, and the
+chili's fire hits all 4 mobs.
+
+Most uses gain little or nothing on the mobs, and a line for them would only repeat the normal
+rank. So an item gets the line only when its use is worth more than 1 DPS more against the 4 mobs
+than against the boss. The use values are 0.1 to 0.3 DPS apart from one run to the next at 20000
+iterations, so that gain is real. The effects file gets the same line in its `conditional`.
+
+On 2026-11-20 the use values went from the boss to 4 mobs like this: Chained Essence of Eranikus
++17.8 to +71.8, Smokey's Lighter +2.7 to +10.9, Eye of the Beast +7.6 to +15.2 (its spell hit
+helps the Magma Totem, Fire Nova and chili damage on all 4), Adaptive Combat Assistant +0.5 to +1.7
+and Manual Crowd Pummeler +78.3 to +83.3. Everlook Pathcarver hits up to 4 mobs too, but it splits
+the same damage among them, so it gains nothing. Eye of the Beast then goes ahead of the picks on
+4 mobs, and Smokey's Lighter goes from 22nd to rank 4. The pass adds about a minute to the ranking
+of the trinkets and to the effects pass.
+
 ## Effect values
 
 BayovCore scores an item by stat weights, so it can't score an item's effects (a proc, a use, a
@@ -167,7 +197,8 @@ score.
   the weaker pick, the one the set loses less without. A pick is the set as it is.
 - `cooldown`, for an item with a use, is what its effects add while the use is on cooldown: `dps`
   without the use value. It is 0 for an item whose only effect is its use.
-- `conditional` is `dps` with each of the item's conditions met.
+- `conditional` is `dps` with each of the item's conditions met. For `vs 4 mobs` (see Uses against
+  several mobs) that is the part at `dur` as in `dps`, plus the use value against the 4 mobs.
 
 The items are every item of the gear pool (the search's own filters: phase, no raids, faction,
 class, minimum item level, the includes and excludes) that has an item effect in the sim, and the
@@ -175,7 +206,7 @@ set's picks. A one hander goes in the main hand with the off hand empty. An off 
 (Force Reactive Disk) is left out next to a two hand pick, since nothing places it. The runs at
 `dur` are at `-gear-effects-iters` (10000 in `bis_phase0.sh`), and the use values at `-use-iters`.
 On 2026-11-20 the paired noise was 0.1 DPS for most items and 0.3 at most, at both lengths. The
-whole effects pass takes about 1.5 min.
+whole effects pass takes about 2.5 min, the uses against several mobs included.
 
 ```json
 {
@@ -293,7 +324,8 @@ can be filled in.
   where the item would go on this list with its condition met, one line for each condition:
   `{"label":"vs Orcs and Ogres","rank":2,"loss":-0.42}`. `label` is what the player reads,
   `rank` is its place (no higher than the number of picks means BiS), and `loss` is what it
-  loses against the set with the condition met. See Conditional ranks.
+  loses against the set with the condition met. See Conditional ranks. `vs 4 mobs` is the same
+  for an item whose use gains on several mobs, see Uses against several mobs.
 - `cooldown` (only with `-gear-rank-cooldowns`, and only on an item with a use) says where the
   item would go on this list without its use value, as while its use is on cooldown:
   `{"rank":9,"loss":13.7}`, with the same rule as `conditional`. See On cooldown ranks.
@@ -350,7 +382,12 @@ Arathi Basin is open), and every other item the hand check keeps that our data p
 (`-gear-rank-two-hand-only`). Then it ranks the enchants on the set (see Enchants), with
 `phase0_enchants.json` as the hand check, and the items on the set with its best enchants, and
 the conditional items with their condition met (see Conditional ranks), and the items with a use
-with their use on cooldown (see On cooldown ranks). Last it writes the effect values.
+with their use on cooldown (see On cooldown ranks) and against several mobs. Last it writes the
+effect values.
+
+`AOE_TARGETS` is how many mobs the uses are also valued against (4 by default, 0 leaves it out),
+for the `vs 4 mobs` lines (see Uses against several mobs). The user's dungeon pulls are often
+several mobs, and 4 is a typical pack.
 
 `RANK_ONLY=1 tools/rotopt/bis_phase0.sh` skips the gear search (`-gear-rank-only`) and ranks the
 list's own picks again, enchants included. It is for a rerun after
@@ -363,7 +400,7 @@ other lengths than `DUR` and `USE_DUR`: a few slots ranked on 180s next to lists
 list would read as one list. `MIX_DURS=1` goes on anyway.
 
 `EFFECTS_ONLY=1 tools/rotopt/bis_phase0.sh` only writes the effect values, for the picks of
-`FROM` (about 1.5 min). `EFFECTS_OUT` writes them somewhere else, and `EFFECTS_OUT=none` leaves
+`FROM` (about 2.5 min). `EFFECTS_OUT` writes them somewhere else, and `EFFECTS_OUT=none` leaves
 them out of a full or `RANK_ONLY` run.
 
 `RANK_ONLY=1 SLOTS=trinket,chest tools/rotopt/bis_phase0.sh` ranks only those lists, their

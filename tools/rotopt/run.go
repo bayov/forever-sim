@@ -64,10 +64,15 @@ func loadSetup(path string) (*setup, error) {
 // Replace the encounter with n copies of its first target, so an AoE rotation is scored
 // on a pack of the same mob. Every copy attacks the tank like the original does.
 func (s *setup) setTargets(n int) {
-	first := s.request.Encounter.Targets[0]
-	s.request.Encounter.Targets = nil
+	setTargetCount(s.request.Encounter, n)
+}
+
+// setTargetCount makes the encounter's targets n copies of its first target.
+func setTargetCount(encounter *proto.Encounter, n int) {
+	first := encounter.Targets[0]
+	encounter.Targets = nil
 	for i := 0; i < n; i++ {
-		s.request.Encounter.Targets = append(s.request.Encounter.Targets, goproto.Clone(first).(*proto.Target))
+		encounter.Targets = append(encounter.Targets, goproto.Clone(first).(*proto.Target))
 	}
 }
 

@@ -71,6 +71,9 @@ type searcher struct {
 	useSets   map[string]*useSet
 	probed    map[int32]bool
 	useRuns   []*useRun
+	// useTargets, when it isn't 0, is how many mobs the use runs fight, for the "vs 4 mobs"
+	// conditional (bis_aoe.go). The runs at the fight lengths keep the encounter's own targets.
+	useTargets int
 
 	cache map[string]result
 	evals int
