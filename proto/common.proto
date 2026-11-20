@@ -1028,6 +1028,9 @@ enum MobFamily {
 	// Treant's Bane's proc and Smokey's Lighter hit Plants harder. Plants aren't a creature type of
 	// their own (a Treant is an Elemental), so they are a family here.
 	MobFamilyPlant = 5;
+	// Hand of Justice procs three times as often on Dwarves, like the Dark Iron Dwarves in
+	// Blackrock Depths.
+	MobFamilyDwarf = 6;
 }
 
 // The kind of outdoor area the fight is in, for the item effects that grow there, like Golden

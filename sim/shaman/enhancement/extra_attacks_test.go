@@ -15,7 +15,8 @@ import (
 // attack power lasts.
 func TestOrcShamanExtraAttacks(t *testing.T) {
 	t.Run("swing timer", testExtraAttackSwingTimer)
-	t.Run("Hand of Justice", testHandOfJustice)
+	t.Run("Hand of Justice", func(t *testing.T) { testHandOfJustice(t, proto.MobFamily_MobFamilyUnknown, 0.01) })
+	t.Run("Hand of Justice vs Dwarves", func(t *testing.T) { testHandOfJustice(t, proto.MobFamily_MobFamilyDwarf, 0.03) })
 
 	// The Forever client (70291) gives it 1 sec, where Era has 1.5 sec.
 	t.Run("Windfury Totem attack power", func(t *testing.T) {
@@ -80,9 +81,13 @@ func testExtraAttackSwingTimer(t *testing.T) {
 // the user's go on 2026-10-10), with a 2 sec cooldown. We count the white swings on the timer
 // over a long fight. They come every 3.6 sec, so the cooldown never stops one. The extra
 // swing comes 10 ms after the proc, during the cooldown, so we leave it out.
-func testHandOfJustice(t *testing.T) {
-	const chance = 0.01
+//
+// Against Dwarves it procs three times as often, on 3% of landed hits.
+func testHandOfJustice(t *testing.T, family proto.MobFamily, chance float64) {
 	sim, enh := weaponSim{level: 30, weapon: &proto.ItemSpec{Id: whirlwind}, trinket: common.HandOfJustice, seconds: 36000}.start()
+	for _, target := range sim.Encounter.TargetUnits {
+		target.MobFamily = family
+	}
 	sim.PrePull()
 	hoj := enh.GetAura("Hand of Justice")
 	if hoj == nil {

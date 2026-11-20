@@ -30,6 +30,7 @@ func TestItemConditions(t *testing.T) {
 		{common.JewelOfTheGuardCaptain, "in forest or grassland"},
 		{common.BriarwoodReed, "in marsh or swamp"},
 		{common.SecondWind, "in mountains"},
+		{common.HandOfJustice, "vs Dwarves"},
 		// The attack power and spell damage helpers declare their creature types.
 		{common.SealOfTheDawn, "vs Undead"},
 		{common.TigulesHarpoon, "vs Beasts"},
@@ -43,9 +44,6 @@ func TestItemConditions(t *testing.T) {
 		if !slices.Contains(labels, c.label) {
 			t.Errorf("item %d has conditions %q, want %q", c.id, labels, c.label)
 		}
-	}
-	if got := core.ItemConditions(common.HandOfJustice); got != nil {
-		t.Errorf("Hand of Justice has conditions %v, want none", got)
 	}
 }
 

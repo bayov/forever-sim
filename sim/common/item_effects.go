@@ -3846,10 +3846,19 @@ func init() {
 	// Attacks against Dwarves are 3 times as likely to activate this effect." The Forever
 	// client (70291) gives the proc 3% with the 2 sec cooldown, so we take it that the
 	// server keeps a third of the procs against anyone but Dwarves (the user, 2026-10-10).
-	// Our targets have no race, so they all get 1%.
-	handOfJusticeChance := func(sim *core.Simulation) float64 {
-		return core.TernaryFloat64(sim.IsForever(), 0.01, 0.02)
+	//
+	// A target with the Dwarf family gets the full 3%. We take it that Dark Iron Dwarves count,
+	// as in Blackrock Depths, but that is not confirmed (notes.md, Need to Verify).
+	handOfJusticeChance := func(sim *core.Simulation, target *core.Unit) float64 {
+		if !sim.IsForever() {
+			return 0.02
+		}
+		if target.MobFamily == proto.MobFamily_MobFamilyDwarf {
+			return 0.03
+		}
+		return 0.01
 	}
+	core.RegisterItemConditions(HandOfJustice, core.ConditionVsDwarves)
 	core.NewItemEffect(HandOfJustice, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.AutoAttacks.AutoSwingMelee {
@@ -3871,7 +3880,7 @@ func init() {
 				if spell.Flags.Matches(core.SpellFlagSuppressEquipProcs) {
 					return
 				}
-				if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) && icd.IsReady(sim) && sim.Proc(handOfJusticeChance(sim), "HandOfJustice") {
+				if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) && icd.IsReady(sim) && sim.Proc(handOfJusticeChance(sim, result.Target), "HandOfJustice") {
 					icd.Use(sim)
 					aura.Unit.AutoAttacks.ExtraMHAttackProc(sim, 1, core.ActionID{SpellID: 15600}, spell)
 				}
