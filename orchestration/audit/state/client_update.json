@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "e6eaa94706e6eb73c24b4f51d8ca9d6fdabdaf61"
+  "master": "94eef111001a752a0df0f1e28b83bb719c48d964"
  },
  "last_pass_at": "2026-11-20T18:55:13Z",
  "client_build": "1.60.1.71037",
  "result": "findings",
  "note": "71037 = client copy of the 11-17 hotfixes + push 114097/114065. New: Execute dummy Always Hit (low, verify). Ret 2H spec all Holy (11-19), rogue T1 5P Death Mark, Flurry vs WF totem already filed by mechanics. Blue Dragon resolved.",
  "pass": 15,
- "checked_at": "2026-11-20T18:55:26Z"
+ "checked_at": "2026-11-21T00:44:17Z"
 }
