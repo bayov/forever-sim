@@ -503,3 +503,4 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-20 18:55 | mechanics | pass 96 | master e6eaa9470 | 1 new finding | Rogue T1 5P also cuts Death Mark energy by 5 (Subtlety, ~+0.3-0.4%, low)
 2026-11-20 18:55 | healer_mechanics | pass 24 | master e6eaa9470 | quiet | VE hotfix and Blue Dragon 3% already modeled
 2026-11-20 18:55 | tank_mechanics | pass 25 | master e6eaa9470 | quiet | No tank rows changed; new evidence on tank_mechanics-20261117-1
+2026-11-21 06:48 | results | pass 96 | master 93e568c50 | quiet | Wowhead scrape only adds items; shared-run drift same as results-20261104-2
