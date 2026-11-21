@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "93e568c5002df498768ce95f57ad67cc2f42aa7f"
+  "master": "6f7c30c720619dd9cd11b2e14e24a7a4ff89b2bc"
  },
  "last_pass_at": "2026-11-20T00:59:56Z",
  "pass": 23,
@@ -8,5 +8,5 @@
  "baseline": "a6677362f",
  "note": "Pass 23 on e07e8fdb8: spell_result.go's critChanceAgainst (per-target crit mark, empty unless a mark goes up), item conditions, Tenets' Undead condition and Forever Totem of Rage (shocks +2%) reach no healer: all 63 cells (seed 101, 1,000 it) identical to bench_a667736.tsv. Healbench now needs generated protos (proto/common.proto changed): build it in build_cli.sh's worktree. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-21T06:48:59Z"
+ "checked_at": "2026-11-21T12:44:28Z"
 }
