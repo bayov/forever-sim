@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "6f7c30c720619dd9cd11b2e14e24a7a4ff89b2bc"
+  "master": "7efdb04489449af0f38294aba8825eebdb581533"
  },
  "last_pass_at": "2026-11-18T18:54:43Z",
  "pass": 70,
  "result": "quiet",
  "note": "Pass 70: no APL/req change. Hasted spell GCD (ee35da473/c2efe4ae3) moved casters +0.2..0.9%, paladins -0.1..0.4% (open re-timing item). Melee/rogue/hunter unchanged. vs_published gaps (Affliction +4%, rogues -2%, LW -1.7%) are report switches, not rotations.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-21T12:44:28Z",
+ "checked_at": "2026-11-21T18:44:40Z",
  "baseline": "baseline_a667736_3000it_seed424242.tsv"
 }

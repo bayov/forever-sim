@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "6f7c30c720619dd9cd11b2e14e24a7a4ff89b2bc"
+  "master": "7efdb04489449af0f38294aba8825eebdb581533"
  },
  "last_pass_at": "2026-11-18T19:06:42Z",
  "pass": 47,
  "result": "findings",
  "baseline": "a6677362fc06353c2312fa1d2be34214d605fcbb",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-21T12:44:28Z",
+ "checked_at": "2026-11-21T18:44:40Z",
  "baseline_note": "a6677362f full re-sweep (5k, seed 1, every race) after the hasted spell GCD"
 }
