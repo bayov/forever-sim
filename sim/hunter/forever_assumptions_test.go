@@ -413,6 +413,35 @@ func TestForeverPetStats(t *testing.T) {
 	}
 }
 
+// Under Forever the pet keeps the attack power it took at the summon: the hunter's attack power
+// changing while it is out, from Aspect of the Hawk, a gear swap or a proc, doesn't move it, while its
+// crit and hit still follow (wowsims/forever 8223020463, EV-0072). Summoned again, it takes the
+// hunter's attack power of then.
+func TestForeverPetKeepsItsSummonAttackPower(t *testing.T) {
+	sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetForever)
+	pet := hunter.pet
+	ap, crit := pet.GetStat(stats.AttackPower), pet.GetStat(stats.MeleeCrit)
+
+	hunter.AddStatDynamic(sim, stats.RangedAttackPower, 500)
+	hunter.AddStatDynamic(sim, stats.MeleeCrit, 5*core.CritRatingPerCritChance)
+	if got := pet.GetStat(stats.AttackPower); got != ap {
+		t.Errorf("500 hunter ranged attack power moves the summoned pet's from %.2f to %.2f, want no change", ap, got)
+	}
+	if got := pet.GetStat(stats.MeleeCrit) - crit; math.Abs(got-5*core.CritRatingPerCritChance) > 1e-9 {
+		t.Errorf("5%% hunter crit gives the pet %.4f crit, want 5%%", got)
+	}
+
+	pet.Disable(sim)
+	pet.Enable(sim, pet)
+	if got := pet.GetStat(stats.AttackPower) - ap; math.Abs(got-50) > 1e-6 {
+		t.Errorf("summoned again, the pet's attack power is up %.2f, want the 50 of the hunter's 500", got)
+	}
+	hunter.AddStatDynamic(sim, stats.RangedAttackPower, -500)
+	if got := pet.GetStat(stats.AttackPower) - ap; math.Abs(got-50) > 1e-6 {
+		t.Errorf("the hunter losing 500 ranged attack power moves the pet's by %.2f, want it kept", got-50)
+	}
+}
+
 // Lone Wolf with a pet out gives the hunter nothing and divides the pet's damage by 1.2
 // (wowsims/forever 56e9bc08e0).
 func TestLoneWolfWithAPet(t *testing.T) {
