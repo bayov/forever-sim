@@ -37,12 +37,12 @@ The top 3 open or doubtful items per slot (doubtful marked `?`). Out and infeasi
 | fury_dw | mainhand | Ironfoe, Krol Blade, Dal'Rend's Sacred Charge |
 | fury_dw | offhand | Felstriker, Thrash Blade, Greenhammer? |
 | fury_dw | ranged | Satyr's Bow, Blackcrow, Deep Jungle Rifle |
-| hunter_bm | mainhand | Huntsman's Harpoon, Arcanite Reaper, Lok'delar (out) |
+| hunter_bm | mainhand | Arcanite Reaper, Huntsman's Harpoon (out), Lok'delar (out) |
 | hunter_bm | offhand | Tooth of the Matriarch, King Mosh's Tooth, Kanai's Knife? |
-| hunter_bm | ranged | Rhok'delar (out), Ankle Slicers, Assassin's Throwing Axe |
+| hunter_bm | ranged | Rhok'delar (out), Ankle Slicers?, Assassin's Throwing Axe |
 | hunter_mm | mainhand | Lok'delar (out), Massacre Sword of the Falcon |
-| hunter_mm | offhand | Tooth of the Matriarch, King Mosh's Tooth, Bagh Nakh |
-| hunter_mm | ranged | Ankle Slicers, Rhok'delar (out), Eaglehorn Long Bow |
+| hunter_mm | offhand | Tooth of the Matriarch, King Mosh's Tooth, Bagh Nakh (infeasible, Timbermaw Exalted) |
+| hunter_mm | ranged | Ankle Slicers?, Rhok'delar (out), Eaglehorn Long Bow |
 | hunter_sv | mainhand | Sword of Zeal, Axe of the Deep Woods, Thrash Blade |
 | hunter_sv | offhand | Distracting Dagger, Felstriker, Alcor's Sunrazor? |
 | hunter_sv | ranged | Rhok'delar (out), Deep Jungle Rifle, Satyr's Bow |
@@ -59,7 +59,7 @@ The top 3 open or doubtful items per slot (doubtful marked `?`). Out and infeasi
 | mage_frostfire | offhand | Obsidian Bauble, Tome of the Lost, Spirit of Aquementas |
 | mage_frostfire | ranged | Ritssyn's Wand of Bad Mojo, Dragon Finger of Fiery Wrath, Dragon Finger of Magic |
 | ret | mainhand | Brain Hacker, Destiny, Blackblade of Shahram |
-| ret | ranged | Libram of Hope, Libram of Law |
+| ret | ranged | Libram of Law (Libram of Hope is out: Isalien needs the Dungeon Set 2 chain) |
 | rogue_assassination | mainhand | Felstriker, Tooth of the Matriarch, Glacial Blade? |
 | rogue_assassination | offhand | Distracting Dagger, Felstriker, Alcor's Sunrazor? |
 | rogue_assassination | ranged | Ancient Bone Bow, Assassin's Throwing Axe, Escape Plan |
@@ -113,11 +113,19 @@ There's a comment for each in `item_effects.go`:
   - Lesser Spirit (2H) is doubtful. Its formula is a 0.3% world drop.
   - Winter's Might is doubtful. Its formula has no known source.
   - Off-Hand Wisdom is open, for 240 of currency 3402.
-- **Final check:** with the current files, no spec's rank list has an unlisted item or enchant in these slots. The specs checked are every one above, plus arms and fury after the Flame Wrath fix.
+- **Hunter additions:**
+  - The four engineering scopes are open.
+  - Rhok'delar and Lok'delar are out, since they need Molten Core items.
+  - Ankle Slicers and Hyper Deluxe Sniper Rifle Mk XVII are doubtful, with no known source.
+  - Demonbane Knife is doubtful, as a Horde quest in Hyjal.
+- **Final check:** with the current files, no spec's rank list (all 23, hunters included) has an unlisted item or enchant in these slots.
 
 ## For the user
 
 - **Hand of Edward the Odd** is a top caster main hand. It's an epic BoE world drop at about 166g on the Classic AH. Krol Blade (about 265g) and Crystal Slugthrower (about 150g) are similar. All three are open for now, but a Forever AH price could make them infeasible.
+- **Ankle Slicers** is the top marksmanship ranged pick, but it has no known source. Where does it drop?
+- **Axe of the Deep Woods** is an epic BoE world drop with no AH price checked.
+- **The scope recipes** are assumed to be taught by the engineering trainer. That isn't verified.
 - **Alcor's Sunrazor** is doubtful at about 299g, right on the 300g line.
 - **Four blacksmith crafts** are infeasible by an estimate of their reagents, with no total: Arcanite Champion, Annihilator, Heartseeker and Frostguard.
 - **Two Forever-only items** are sold for currency 3402 by unnamed vendors: Enchant Off-Hand - Wisdom and Idol of the Dream. Is 240 of that currency affordable?
