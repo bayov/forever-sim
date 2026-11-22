@@ -3856,7 +3856,8 @@ func init() {
 	// Forever: Use: Cloak of Fire (18364) burns every enemy near you for 25 Fire damage every 5 sec
 	// for 15 sec (18374, 3 ticks). 2 min cooldown, no shared category (client 1.60.1.71037
 	// ItemEffect, SpellEffect). 18374 has no SpellCategories row, so no defense type: the ticks
-	// can't miss or crit. We burn every target, as for the other area uses.
+	// can't miss or crit. We give it the magic one anyway, since a tick's crit check needs one
+	// whenever an effect lets ticks crit. We burn every target, as for the other area uses.
 	core.NewItemEffect(CloakOfFire, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.Env.IsForever() {
@@ -3866,7 +3867,7 @@ func init() {
 		burn := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18374},
 			SpellSchool: core.SpellSchoolFire,
-			DefenseType: core.DefenseTypeNone,
+			DefenseType: core.DefenseTypeMagic,
 			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagPureDot,
 
