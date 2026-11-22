@@ -166,7 +166,12 @@ out="${OUT:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
 from="${FROM:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
 exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
-nopick="$(jq -r '[to_entries[] | select(.value.avail == "infeasible") | .key] | join(",")' "$content")"
+# The most gold an item may cost for each DPS it adds (user, 2026-11-22). An item over it is
+# infeasible like an Exalted reputation item: ranked, but never a pick. tools/rotopt/phase0_prices.py
+# writes each item's goldPerDps into the content check from our auction house scans, and
+# should run again after a rerun moves the picks.
+max_gpd="${MAX_GOLD_PER_DPS:-30}"
+nopick="$(jq -r --argjson max "$max_gpd" '[to_entries[] | select(.value.avail == "infeasible" or (.value.goldPerDps // 0) > $max) | .key] | join(",")' "$content")"
 jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
 # Head, neck, shoulder, back, chest, wrist, hands, waist, legs, feet, two rings, two trinkets,
 # main hand, off hand and the relic, in the order of the equipment list. The report's enchant
@@ -179,8 +184,21 @@ jq --arg talents "$talents" '.raid.parties[0].players[0].talentsString = $talent
 	"$req" >"$tmp/enh.json"
 # The list's picks, with their suffix and enchant, in the order of the equipment list, as a jq
 # expression on $list[0]. An empty slot (the off hand next to a two hander) has no pick.
+#
+# A pick that is a no-pick item now ($nopick, say one that crossed the gold line since the list was
+# made) gives its place to the best entry of its list that isn't one, and isn't the slot's other
+# pick for rings and trinkets. It keeps the pick's enchant when it has none of its own. rotopt
+# takes a no-pick item off the starting set, so without this a RANK_ONLY run started with the
+# slot empty. On 2026-11-22 Treant's Bane went over the line and the run started at 563 DPS with
+# no weapon.
 picks='$list[0].slots as $s
-	| def pick($k; $i): ([$s[$k][]? | select(.bis)][$i]) as $p
+	| ($nopick | split(",") | map(select(. != "") | tonumber)) as $np
+	| def start($k): [$s[$k][]? | select(.bis)] as $p
+		| reduce ($p[] | select(.id as $i | $np | index($i))) as $gone ([$p[] | select(.id as $i | $np | index($i) | not)];
+			[.[].id] as $have
+			| . + [first($s[$k][] | select(.id as $i | ($np | index($i) | not) and ($have | index($i) | not)))
+				| if .enchant == null and $gone.enchant then .enchant = $gone.enchant else . end]);
+	def pick($k; $i): (start($k)[$i]) as $p
 		| if $p == null then {} else {id: $p.id} + (if $p.suffix then {randomSuffix: $p.suffix} else {} end)
 			+ (if $p.enchant then {enchant: $p.enchant} else {} end) end;
 	[pick("head"; 0), pick("neck"; 0), pick("shoulder"; 0), pick("back"; 0),
@@ -204,7 +222,7 @@ if [ -n "$RANK_ONLY" ]; then
 		echo "Rebuild it in full, or set MIX_DURS=1 to rerun on it anyway." >&2
 		exit 1
 	fi
-	jq --slurpfile list "$from" "$picks"' as $items | .raid.parties[0].players[0].equipment.items = $items' \
+	jq --slurpfile list "$from" --arg nopick "$nopick" "$picks"' as $items | .raid.parties[0].players[0].equipment.items = $items' \
 		"$tmp/enh.json" >"$tmp/picks.json"
 	mv "$tmp/picks.json" "$tmp/enh.json"
 	rank_only=-gear-rank-only
@@ -239,10 +257,14 @@ if [ -n "$EFFECTS_ONLY" ]; then
 	exit 0
 fi
 
-# The content check's status on every entry.
-jq --slurpfile content "$content" '.slots |= map_values(map(
+# The content check's status on every entry. An item over the gold line is infeasible, and
+# its note says what a DPS costs on it.
+jq --slurpfile content "$content" --argjson max "$max_gpd" '.slots |= map_values(map(
 	. as $e | ($content[0][$e.id | tostring] // {}) as $c
-	| $e + (if $c.avail then {avail: $c.avail} else {} end) + (if $c.note then {note: $c.note} else {} end)))' \
+	| (($c.goldPerDps // 0) > $max) as $costly
+	| ([$c.note // empty] + (if $c.goldPerDps then ["\($c.goldPerDps | round)g per DPS"] else [] end) | join(" · ")) as $note
+	| $e + (if $c.avail then {avail: $c.avail} elif $costly then {avail: "infeasible"} else {} end)
+		+ (if $note != "" then {note: $note} else {} end)))' \
 	"$out" >"$tmp/list.json"
 mv "$tmp/list.json" "$out"
 
@@ -250,5 +272,5 @@ mv "$tmp/list.json" "$out"
 # wrote the real list. GEAR_OUT=none skips it.
 gear_out="${GEAR_OUT:-ui/enhancement_shaman/gear_sets/level60_phase0.gear.json}"
 if [ -z "$OUT" ] && [ "$gear_out" != none ]; then
-	jq -n --slurpfile list "$out" "$picks"' | {items: .}' >"$gear_out"
+	jq -n --slurpfile list "$out" --arg nopick "$nopick" "$picks"' | {items: .}' >"$gear_out"
 fi
