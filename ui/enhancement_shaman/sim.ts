@@ -132,6 +132,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 
 	presets: {
 		builds: [
+			Presets.PresetBuildLevel60Phase0,
 			Presets.PresetBuildLevel60,
 			Presets.PresetBuildLevel60ImpGW,
 			Presets.PresetBuildLevel60WaterShield,

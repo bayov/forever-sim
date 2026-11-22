@@ -177,6 +177,15 @@ jq --arg talents "$talents" '.raid.parties[0].players[0].talentsString = $talent
 	| .raid.parties[0].players[0].equipment.items = [range(17) as $i
 		| if $ids[$i] == null then {} else {id: $ids[$i]} + (if $old[$i].enchant and $i != 15 then {enchant: $old[$i].enchant} else {} end) end]' \
 	"$req" >"$tmp/enh.json"
+# The list's picks, with their suffix and enchant, in the order of the equipment list, as a jq
+# expression on $list[0]. An empty slot (the off hand next to a two hander) has no pick.
+picks='$list[0].slots as $s
+	| def pick($k; $i): ([$s[$k][]? | select(.bis)][$i]) as $p
+		| if $p == null then {} else {id: $p.id} + (if $p.suffix then {randomSuffix: $p.suffix} else {} end)
+			+ (if $p.enchant then {enchant: $p.enchant} else {} end) end;
+	[pick("head"; 0), pick("neck"; 0), pick("shoulder"; 0), pick("back"; 0),
+		pick("chest"; 0), pick("wrist"; 0), pick("hands"; 0), pick("waist"; 0), pick("legs"; 0), pick("feet"; 0),
+		pick("finger"; 0), pick("finger"; 1), pick("trinket"; 0), pick("trinket"; 1), pick("mainhand"; 0), pick("offhand"; 0), pick("ranged"; 0)]'
 rank_only=""
 if [ -n "$EFFECTS_ONLY" ]; then
 	RANK_ONLY=1
@@ -195,15 +204,7 @@ if [ -n "$RANK_ONLY" ]; then
 		echo "Rebuild it in full, or set MIX_DURS=1 to rerun on it anyway." >&2
 		exit 1
 	fi
-	# The list's picks, with their suffix and enchant, in the order of the equipment list. An
-	# empty slot (the off hand next to a two hander) has no pick.
-	jq --slurpfile list "$from" '$list[0].slots as $s
-		| def pick($k; $i): ([$s[$k][]? | select(.bis)][$i]) as $p
-			| if $p == null then {} else {id: $p.id} + (if $p.suffix then {randomSuffix: $p.suffix} else {} end)
-				+ (if $p.enchant then {enchant: $p.enchant} else {} end) end;
-		.raid.parties[0].players[0].equipment.items = [pick("head"; 0), pick("neck"; 0), pick("shoulder"; 0), pick("back"; 0),
-			pick("chest"; 0), pick("wrist"; 0), pick("hands"; 0), pick("waist"; 0), pick("legs"; 0), pick("feet"; 0),
-			pick("finger"; 0), pick("finger"; 1), pick("trinket"; 0), pick("trinket"; 1), pick("mainhand"; 0), pick("offhand"; 0), pick("ranged"; 0)]' \
+	jq --slurpfile list "$from" "$picks"' as $items | .raid.parties[0].players[0].equipment.items = $items' \
 		"$tmp/enh.json" >"$tmp/picks.json"
 	mv "$tmp/picks.json" "$tmp/enh.json"
 	rank_only=-gear-rank-only
@@ -244,3 +245,10 @@ jq --slurpfile content "$content" '.slots |= map_values(map(
 	| $e + (if $c.avail then {avail: $c.avail} else {} end) + (if $c.note then {note: $c.note} else {} end)))' \
 	"$out" >"$tmp/list.json"
 mv "$tmp/list.json" "$out"
+
+# The picks as the sim UI's "Phase 0" gear preset (ui/enhancement_shaman/presets.ts), when we
+# wrote the real list. GEAR_OUT=none skips it.
+gear_out="${GEAR_OUT:-ui/enhancement_shaman/gear_sets/level60_phase0.gear.json}"
+if [ -z "$OUT" ] && [ "$gear_out" != none ]; then
+	jq -n --slurpfile list "$out" "$picks"' | {items: .}' >"$gear_out"
+fi

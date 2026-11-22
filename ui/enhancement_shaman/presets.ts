@@ -63,6 +63,7 @@ import LevelingTrainingShieldJSON from './leveling_training_shield.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
+import Level60Phase0GearJSON from './gear_sets/level60_phase0.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticBurningTotemGearJSON from './gear_sets/level60_phase1_synthetic_burning_totem.gear.json';
 import Level60Phase1SyntheticBurningTotemHitMinus4GearJSON from './gear_sets/level60_phase1_synthetic_burning_totem_hit-4.gear.json';
@@ -172,7 +173,16 @@ export const GearLevel60Phase1SyntheticBurningTotemHitMinus4 = PresetUtils.makeP
 	group: 'Synthetic',
 });
 
+// The Phase 0 BiS list's picks with their enchants (ui/enhancement_shaman/bis/level60_phase0.bis.json,
+// docs/bis_lists.md): what we can get before the raids open on 2026-12-09, without the infeasible
+// Exalted rewards. tools/rotopt/bis_phase0.sh writes the gear set when it writes the list.
+export const GearLevel60Phase0 = PresetUtils.makePresetGear('Phase 0', Level60Phase0GearJSON, {
+	tooltip: 'The Phase 0 BiS picks: dungeons, quests, crafts and rep before the raids.',
+	group: 'Phase 0',
+});
+
 export const GearPresets = [
+	GearLevel60Phase0,
 	GearLevel60Phase1Synthetic,
 	GearLevel60Phase1SyntheticHitMinus1,
 	GearLevel60Phase1SyntheticHitMinus3,
@@ -558,7 +568,15 @@ export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Le
 	group: 'Leveling',
 });
 
-export const TalentPresets = [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel60WaterShield, TalentsLevel60ManaTide, TalentsLevel30Leveling];
+// The talents the Phase 0 BiS list was ranked on: the ones the user plays (2026-11-14). Next to
+// the Enhancement build it takes Improved Ghost Wolf 2, one point out of Ancestral Knowledge and one
+// out of Maelstrom Weapon.
+export const TalentsLevel60Phase0 = PresetUtils.makePresetTalents('Phase 0', SavedTalents.create({ talentsString: '053303102-054030110051212141-03' }), {
+	tooltip: 'The talents the Phase 0 BiS list was ranked on, with Improved Ghost Wolf 2.',
+	group: 'Phase 0',
+});
+
+export const TalentPresets = [TalentsLevel60Phase0, TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel60WaterShield, TalentsLevel60ManaTide, TalentsLevel30Leveling];
 
 export const DefaultTalents = TalentsLevel60;
 
@@ -853,6 +871,23 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Enhancement', {
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Enhancement rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticHitMinus3,
 	talents: TalentsLevel60,
+	rotation: APLOptimized,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptions,
+});
+// The fight the Phase 0 BiS list was ranked in (tools/rotopt/bis_phase0.sh): the Enhancement
+// build's race, professions, rotation and encounter, on the list's picks and the user's talents.
+// The list's score also counts each use effect on a 90s fight, so this 180s sim reads a little
+// differently from the list's number.
+export const PresetBuildLevel60Phase0 = PresetUtils.makePresetBuild('Phase 0', {
+	group: 'Phase 0',
+	tooltip: 'Level 60 Orc on the Phase 0 BiS gear and talents, in a 3 minute fight.',
+	gear: GearLevel60Phase0,
+	talents: TalentsLevel60Phase0,
 	rotation: APLOptimized,
 	encounter: EncounterLevel60,
 	race: Race.RaceOrc,
