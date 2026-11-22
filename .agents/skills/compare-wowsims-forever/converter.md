@@ -42,7 +42,14 @@ gives a wrong result. A new class or rotation may need more of the same kind.
   `greaterBlessingOfMight`, `greaterBlessingOfWisdom`); `battleShout` 1 is rank 6, 2 rank 7.
   Our raid Flametongue Totem is `flametongueTotem`. Mana Spring Totem is a party buff there.
   Their Battle Shout lands just after the pull's sheet, so `align.py` adds its 115 attack power.
-  Our Improved Battle Shout, Blessing of Might and Gift of the Wild match their plain ones.
+  Our Improved Battle Shout and Gift of the Wild match their plain ones. Greater Blessing of
+  Might and Wisdom don't: ours is rank 2's 133 attack power and 40 MP5, theirs rank 1's 112 and 36
+  (standards 8a), so `align.py` adds attack power 21 and MP5 4 (the ALIGN line of most runs;
+  warrior_arms, 2026-11-22).
+- **Judgement of the Crusader:** theirs made it a TristateEffect (d09b43130c, 2026-11-20), with
+  Improved as Libram of Fervor's 194. Ours gives 161 for Regular and Improved alike under Forever
+  (`sim/core/debuffs.go:38-46`; our requests say Improved), so `convert.py` (:189-190) sends theirs
+  `TristateEffectRegular`, or `TristateEffectMissing` when ours has none.
 - **Sunder Armor:** both ramp the raid's copy to 5 stacks at 6 s, so ours keeps its ramp.
 - **Raid damage taken:** theirs has none. `--no-raid-damage` turns ours off. For shamans their
   `shieldProcrate` is set to the same hits a minute, spending Lightning and Water Shield charges
@@ -128,3 +135,6 @@ Theirs registers only some ranks; `remap()` moves ours.
 - Their idle pets (the warlock's four demons) have no average in their results: `run.py` and
   `breakdown.py` read it as 0. Theirs files a cast on the caster (a potion) under the caster's
   own target, so `breakdown.py` counts casts on every target.
+- `breakdown.py`'s hit counts leave glances out, and it lists no parries: count those from the
+  raw results.
+- `align.py` prints the ALIGN line first on stdout (`head -1`) and the residual on stderr.
