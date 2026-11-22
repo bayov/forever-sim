@@ -57,21 +57,26 @@ func windfuryProcs(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell
 // activate Windfury. The main-hand strike from those abilities still does." Under Forever every
 // main hand warrior ability (Heroic Strike, Cleave, Sunder Armor, Revenge, Execute, Rend and
 // Whirlwind's main hand strike; this tank holds a shield) rolls Windfury Totem at 20%; off-hand
-// strikes never do (sim/core/windfury_totem_rolls_forever_test.go). Classic keeps every main hand
-// hit. White swings still proc it (sim/shaman/enhancement/proc_matrix_test.go).
+// strikes never do (sim/core/windfury_totem_rolls_forever_test.go). Execute's cast rolls it once
+// more before its damage (wowsims/forever EV-0155, after push 114313; sim/warrior/execute.go), so
+// about a third of its casts proc it. Classic keeps every main hand hit. White swings still proc
+// it (sim/shaman/enhancement/proc_matrix_test.go).
 func TestForeverWindfuryTotemMainHandAbilities(t *testing.T) {
 	const n = 400
 	sim, war := newWindfuryTank(t, proto.Ruleset_RulesetForever)
 	if war.RaidTotemWeaponBuff == nil || war.GetAura("Windfury Attack") == nil {
 		t.Fatal("no Windfury Totem on the Forever warrior")
 	}
-	for _, s := range []*warrior.WarriorSpell{war.HeroicStrike, war.Cleave, war.SunderArmor, war.Revenge, war.Execute, war.Rend} {
+	for _, s := range []*warrior.WarriorSpell{war.HeroicStrike, war.Cleave, war.SunderArmor, war.Revenge, war.Rend} {
 		if s == nil {
 			t.Fatal("a warrior ability isn't registered")
 		}
 		if got := windfuryProcs(sim, war, s.Spell, n); got < n/10 || got > n/3 {
 			t.Errorf("Forever %s procs Windfury Totem %d times in %d, want about a fifth", s.ActionID, got, n)
 		}
+	}
+	if got := windfuryProcs(sim, war, war.Execute.Spell, n); got < n/4 || got > 2*n/5 {
+		t.Errorf("Forever Execute procs Windfury Totem %d times in %d, want about a third (two rolls)", got, n)
 	}
 	if got := windfuryProcs(sim, war, war.Whirlwind.Spell, n); got < n/10 || got > n/3 {
 		t.Errorf("Forever Whirlwind's main hand strike procs Windfury Totem %d times in %d, want about a fifth", got, n)

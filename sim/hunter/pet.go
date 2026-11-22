@@ -29,6 +29,9 @@ type HunterPet struct {
 
 	uptimePercent    float64
 	hasOwnerCooldown bool
+
+	// Under Forever, the attack power inherited at the summon, kept while the pet is out.
+	summonAttackPower float64
 }
 
 func (hunter *Hunter) NewHunterPet() *HunterPet {
@@ -86,12 +89,15 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	}
 
 	hp := &HunterPet{
-		Pet:         core.NewPet(petConfig.Name, &hunter.Character, hunterPetBaseStats, hunter.makeStatInheritance(), true, false),
 		config:      petConfig,
 		hunterOwner: hunter,
 
 		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl,
 	}
+	inherit := hunter.makeStatInheritance()
+	hp.Pet = core.NewPet(petConfig.Name, &hunter.Character, hunterPetBaseStats, func(ownerStats stats.Stats) stats.Stats {
+		return hp.keepSummonStats(inherit(ownerStats))
+	}, true, false)
 
 	hp.Pet.MobType = petConfig.MobType
 	// Blizzard's hunter deep dive: under Forever pets no longer take player buffs that raise their
@@ -374,9 +380,7 @@ func (hp *HunterPet) moveToward(sim *core.Simulation, distance float64) {
 // testing on the forever-hunter wiki: 10% of the hunter's highest attack power and all of the
 // hunter's crit chance (and 2 health a Stamina point and 30% of armor, which change no damage). The
 // hunter's ranged attack power is the highest at the pull in every build here (Survival's 1619
-// against 1537 melee), so the pet takes 10% of that. The inheritance also runs on every stat change
-// in the fight, so it has to stay linear: a max() of the two would keep each proc's gain and
-// drop its loss.
+// against 1537 melee), so the pet takes 10% of that, kept from the summon (keepSummonStats).
 // The crit is the higher of the hunter's melee and ranged crit (wowsims/forever 684209eb0a, after
 // e56aaeb1a9's Ragefire Chasm logs). Here both are the hunter's MeleeCrit: the only ranged-only crit
 // is a per-spell bonus, and the only one a hunter can have is Elemental Sharpening Stone's -2%, which
@@ -402,6 +406,24 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 			stats.Expertise: ownerStats[stats.Expertise],
 		}
 	}
+}
+
+// Under Forever the attack power the pet inherits at the summon stays until it is dismissed; the rest
+// follows the owner. In wowsims/forever's combat logs of 7 and 8 November (EV-0072, 8223020463; pets
+// at levels 5 to 48) the pet's attack power holds through 20 Aspect of the Hawk toggles and a gear
+// swap in one summon, so the owner's procs and buffs in the fight don't reach it either. The same logs
+// hold the pet's health through the owner's Stamina changes while its armor follows each gear swap;
+// the pet inherits neither here (makeStatInheritance).
+// The summon is Enable, which snapshots the owner before it marks the pet enabled. The pet is enabled
+// at the reset, as theirs is: the owner's permanent buffs (raid buffs, consumables, Trueshot Aura) are
+// up, and what the APL casts before the pull, Aspect of the Hawk among it, is not. A pet the sim
+// dismisses and summons again takes a new snapshot.
+func (hp *HunterPet) keepSummonStats(inherited stats.Stats) stats.Stats {
+	if !hp.IsEnabled() {
+		hp.summonAttackPower = inherited[stats.AttackPower]
+	}
+	inherited[stats.AttackPower] = hp.summonAttackPower
+	return inherited
 }
 
 type PetConfig struct {

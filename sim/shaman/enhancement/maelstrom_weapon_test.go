@@ -143,3 +143,73 @@ func TestOrcShamanMaelstromWeaponProcRate(t *testing.T) {
 		})
 	}
 }
+
+// TestOrcShamanMaelstromWeaponSkipsWindfuryTotem checks that Windfury Totem's extra swing gives no
+// Maelstrom Weapon stack under Forever, while another proc's extra swing (Hand of Justice) still
+// does at the white swing's rate.
+//
+// Combat logs of 2026-11-13 and 14 (5/5, after push 114060): 0 of 140 landed totem swings at
+// totem ranks 1 and 2 and 0 of 121 at rank 3 gave a stack, against 0.59 a landed white swing
+// (wowsims/forever EV-0009, 434723c516).
+//
+// We give 400 extra swings from each proc one at a time with a 3.6 speed staff at 5/5 (60% a
+// landed swing), and count the stacks from the ones that landed, leaving out any that a normal
+// swing came close to.
+func TestOrcShamanMaelstromWeaponSkipsWindfuryTotem(t *testing.T) {
+	const thaumaturgistStaff = 15275
+	sim, enh := weaponSim{level: 60, talents: "-00000000000000005", weapon: &proto.ItemSpec{Id: thaumaturgistStaff}, seconds: 3600}.start()
+	sim.PrePull()
+	mw := enh.MaelstromWeaponAura
+	for sim.CurrentTime < time.Second && !sim.Step() {
+	}
+	mh := enh.AutoAttacks.MHAuto()
+
+	for _, c := range []struct {
+		name   string
+		source int32
+		want   float64
+	}{
+		{"Windfury Totem rank 3", core.WindfuryBuffSpellId[3], 0},
+		{"Windfury Totem rank 1", core.WindfuryBuffSpellId[1], 0},
+		{"Hand of Justice", 15601, .6},
+	} {
+		landed, stacks := 0, 0
+		// A normal swing lands a batch after its cast, so it can give a stack in the next round too.
+		nearNormal := false
+		for range 400 {
+			mw.Deactivate(sim)
+			normal := mh.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts
+			enh.AutoAttacks.ExtraMHAttack(sim, 1, core.ActionID{SpellID: c.source}, core.ActionID{})
+			// The extra swings' metrics (split 1), which the call above switched to.
+			metrics := &mh.SpellMetrics()[enh.CurrentTarget.UnitIndex]
+			before := *metrics
+			// The swing comes at once and lands a batch later.
+			for end := sim.CurrentTime + core.SpellBatchWindow; sim.CurrentTime <= end && !sim.Step(); {
+			}
+			if metrics.Casts != before.Casts+1 {
+				t.Fatalf("%s: %d extra swings, want 1", c.name, metrics.Casts-before.Casts)
+			}
+			mh.SetMetricsSplit(0)
+			wasNear := nearNormal
+			nearNormal = mh.SpellMetrics()[enh.CurrentTarget.UnitIndex].Casts != normal
+			if wasNear || nearNormal {
+				continue
+			}
+			if metrics.Misses != before.Misses || metrics.Dodges != before.Dodges || metrics.Parries != before.Parries {
+				continue
+			}
+			landed++
+			if mw.IsActive() {
+				stacks++
+			}
+		}
+		if landed < 200 {
+			t.Fatalf("%s: %d of 400 extra swings landed clear of a normal swing, want at least 200", c.name, landed)
+		}
+		rate := float64(stacks) / float64(landed)
+		t.Logf("%s: %d of %d landed extra swings gave a stack", c.name, stacks, landed)
+		if se := math.Sqrt(.6 * .4 / float64(landed)); c.want == 0 && stacks != 0 || math.Abs(rate-c.want) > 4*se {
+			t.Errorf("%s: %d of %d landed extra swings gave a stack (%.3f), want %.2f", c.name, stacks, landed, rate, c.want)
+		}
+	}
+}

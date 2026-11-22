@@ -70,6 +70,9 @@ type Character struct {
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
 
+	// The Windfury Totem buffs' rolls for a cast's own strike (RollWindfuryTotemOnCast), Forever only.
+	windfuryTotemCastRolls []windfuryTotemCastRoll
+
 	// ISB External configuration
 	IsbConfig IsbConfig
 	// Stormstrike External Configuration

@@ -301,16 +301,22 @@ func (warlock *Warlock) applyShadowMastery() {
 // how long they last"), so they get extra ticks. The developers' note sets the timing: "the time it
 // skips is kept after Wrack's channel ends or is interrupted. ... if you channel Wrack for 1 second
 // during a 3-second Corruption tick, Corruption advances 2 seconds instead of 1, so its next tick
-// lands 1 second later instead of 2."
+// lands 1 second later instead of 2." The logs do not bear that out.
 //
-// Our model (to check against a log):
-//   - The tick timer runs at double speed for exactly as long as Wrack's channel aura is up, from
-//     the cast to the last tick, an early stop or interruption, a clip or a pushback that shortens
-//     it. The share of the current tick that has passed is kept at each change (Dot.SetTickPeriod).
-//   - A dot cast or refreshed on the target mid-channel starts at the fast speed. A refresh starts
-//     a new tick timer, as it does without Wrack.
-//   - The dot still ends at its usual time. Progress towards a tick it has not reached then is lost
-//     (no partial tick), so a short overlap gains a tick only when it carries one over the line.
+// The ticks follow the dot's own grid, set by when it landed (wowsims/forever 6de4dee7b9, dc66ebf6f3 and
+// 999c93cb77, from combat logs in their EV-0085: 36 effects and 329 ticks in one sample, 270 effects timed
+// to 0.05 s in another, where this grid matched 1,689 ticks with 9 missing and 10 extra):
+//   - While the channel's aura is up the half points of the grid tick too, and the normal ticks stay
+//     (Dot.SetTickPeriod). Starting or ending the channel moves no tick: after it the dot ticks on
+//     the grid it had before.
+//   - A channel that starts on or before a half point ticks it, at once when it lands on it (logged:
+//     40 of 40 when the channel landed 0.05 s or more before). The logs also tick 6 of 10 landing under
+//     0.05 s after one; we tick none past it, as theirs.
+//   - The dot still ends at its usual time, on a full tick at its expiry: no tick is dropped or cut
+//     short (all 4 logged effects that ran out after a channel did so on a full tick, 35 ticks).
+//   - Not measured, kept as is: a channel that ends on a half point ticks it (the logs' 0.05 s steps
+//     cannot split it, EV-0085), and a dot cast or refreshed mid-channel starts on the half-point
+//     grid from its application.
 //   - Wrack's own ticks are unaffected, and the ticks deal their usual damage.
 //   - Bane of Agony's damage still steps up every 4 ticks but stops at the last step (150%); ticks
 //     past its 12th stay there.

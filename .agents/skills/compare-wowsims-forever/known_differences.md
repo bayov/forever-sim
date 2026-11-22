@@ -36,7 +36,8 @@ Raw gaps 2026-11-22 (theirs - ours) and the rows that make them:
 - **Warrior:** Fury +14.7, Fury 2H +16.6, Arms -14.8 (Dragonkin -16.8). For theirs Windfury Totem's
   strike as a special (Fury 55.5, Fury 2H 41.0, Arms 25.3) and Execute's double roll (Fury 12.7,
   Arms 25.2); for ours raid damage, Bloodthrill on the totem's swing (Arms 16.3), Unbridled Wrath
-  on abilities and Flurry.
+  on abilities and Flurry. Execute's double roll, Bloodthrill and Flurry on the totem's swing are
+  Settled since (2026-11-22), so the next run moves these.
 - **Hunter:** Beast Mastery -7.4 to -8.9, Marksmanship +1.7 to +2.2 (Lone Wolf +1.7). Survival -64.6
   (pet variants -63.6 to -64.4), -23.7 against a Giant: Improved Tracking 41.0, Lacerate 24.5, Quick
   Strikes 16.2 for ours, the totem's strike 37.2 for theirs.
@@ -67,8 +68,7 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
 | Which hits roll Windfury Totem | Since 2026-11-14 (Blizzard's Nov 13 hotfixes, t/2403040): every landed main-hand melee hit, white or special (Bloodthirst, Whirlwind's main-hand strike, Stormstrike, Holy Strike, Judgement of Command, Windfury Weapon's main-hand attacks), never off-hand strikes, extra attacks or seal procs (`windfuryTotemRollsOnForever`, `sim/core/buffs.go`); from 2026-11-12 to 11-14 a client flag table (Attributes_3 0x400 / Attributes_0 0x4), now gone | White swings plus abilities flagged `SpellFlagRequiresMainHand` or `SpellFlagOnNextSwing` (`sim/core/buffs/drivers.go:~314`), landed hits with no damage too | Blizzard: "Windfury Totem is now correctly activated by all melee abilities ... The main-hand strike from those abilities still does" (standards 17). Before it our log audit of 2026-11-12 (`tools/logcheck/findings.md`) matched their flag rule. Left: they need damage dealt (`wf_totem_nodamage`) |
-| Windfury Totem's attack, after the Nov 13-14 hotfixes | A white extra swing: glances, spends Flurry, procs Unbridled Wrath, Reckless Swings and Omen of Clarity | A main-hand special: never glances, spends no Flurry, procs none of those but Unbridled Wrath (their 91aeeeebb3, push 114060; Unbridled Wrath hears it as a swing, EV-0136, `talents_fury.go:75-89`) | Kept, to verify against a log (user ruling 2026-11-15, TASKS.md). For theirs (2026-11-22): Fury 55.5, Fury 2H 41.0, Survival 37.2, Arms 25.3, Seal Fate Swords 17.8, Subtlety 15.7 (with the +246 row), Mutilate 14.2, Seal Fate Daggers 12.7, Combat Daggers 11.7, Sub Holy 8.7 (Undead 8.3), Retribution 8.5, Holy Shock Ret 7.6; Feral's whole bundle (no glance, Flurry, Omen, +246) nets 3.7 |
-| Execute and the totem | Rolls once | Rolls twice (0e8c4a7699, 31.6% of landed Executes) | Probably a game bug: ours rolls once by default, with the double roll as a report assumption tagged "probably a bug" (user ruling 2026-11-15, TASKS.md). For theirs: Arms 25.2, Fury 12.7 (2026-11-22), Fury 2H 24 |
+| Windfury Totem's attack, after the Nov 13-14 hotfixes | A white extra swing: glances, procs Unbridled Wrath, Reckless Swings and Omen of Clarity; since 2026-11-22 it spends no Flurry and opens no Bloodthrill (Settled) | A main-hand special: never glances, spends no Flurry, procs none of those but Unbridled Wrath (their 91aeeeebb3, push 114060; Unbridled Wrath hears it as a swing, EV-0136, `talents_fury.go:75-89`) | Kept, to verify against a log (user ruling 2026-11-15, TASKS.md). For theirs (2026-11-22): Fury 55.5, Fury 2H 41.0, Survival 37.2, Arms 25.3, Seal Fate Swords 17.8, Subtlety 15.7 (with the +246 row), Mutilate 14.2, Seal Fate Daggers 12.7, Combat Daggers 11.7, Sub Holy 8.7 (Undead 8.3), Retribution 8.5, Holy Shock Ret 7.6; Feral's whole bundle (no glance, Flurry, Omen, +246) nets 3.7 |
 | Seal of Command, Judgement of Command and the totem | Judgement rolls it, the seal proc never (`SpellFlagNoWindfuryTotem`, `sim/core/buffs.go:~2150-2200`) | Both roll it: triggered hits flagged Not a Proc roll as abilities do (`sim/core/buffs/drivers.go:~307`; their counts before the hotfix were 0/117 and 0/105) | Judgement of Command matched since the Nov 13 rule landed (2026-11-15). The seal proc (20424 and its echo 1311703) is Open. For theirs (2026-11-22, first sizes): Retribution 21.2, Sub Holy 21.1 (Undead 16.5), Holy Shock Ret 11.0 to 11.7 |
 | Holy Strike and the totem | Rolls it (since 2026-11-15) | Rolls it (their EV-0008 after the hotfix: 58 of 277) | Matched |
 | Windfury Totem's +246 attack power | A buff with 2 charges, so the next swing or ability after the extra attack takes it too (`sim/core/buffs.go:2112-2117`) | On the extra strike only (`sim/core/buffs/drivers.go:253-320`) | Open, needs a log; kept with the user's 2026-11-15 totem ruling. 2026-11-22: Holy Shock Ret 1.8 for ours, Retribution about 1.7, Arms 2.7; rogues 1.0 to 2.1, Survival 2.9, Feral 2.4 (2026-11-15) |
@@ -82,7 +82,7 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 |---|---|---|---|
 | Improved Tracking vs the generic boss | Counts the typeless boss as tracked (standards 19) | Only types a Track spell names | Choice. `--their-mob-type MobTypeGiant` aligns it. Survival 41.0 (2026-11-22) |
 | Cobra Reflexes | Hits shrink with the speed (`hunter_pet_speed`) | Same speed normalization since 8223020463 | Ruling. No preset trains it; not remeasured |
-| The pet's attack power after the summon | Follows the hunter's live, buffs included (`sim/hunter/pet.go:389-398`) | Fixed at the summon (`pets.go:144-155`, keepSummonStats, 8223020463: in the Nov 7 and 8 logs it holds through 20 Aspect of the Hawk toggles and a gear swap in one summon); armor still follows the owner | Open, likely ours: theirs has the logs, ours no log and no ruling (notes.md:462 only asks whether the 10% share holds at 60). Ask the user. For ours (2026-11-22): Beast Mastery pet 3.3 to 4.0, Marksmanship 2.0 |
+| The pet's attack power after the summon | Fixed at the summon since fix-petap (`sim/hunter/pet.go`, keepSummonStats): the pet is summoned at the reset, so the owner's permanent buffs count and the APL's prepull Aspect of the Hawk does not, as in theirs | Fixed at the summon (`pets.go:144-155`, keepSummonStats, 8223020463, EV-0072: in the Nov 7 and 8 logs it holds through 20 Aspect of the Hawk toggles and a gear swap in one summon); health held too, armor follows the owner | Settled (fix-petap, after the user's 2026-11-22 ruling on log-confirmed rules). Ours inherits no health or armor, so only the attack power changes. Golden: Beast Mastery about -5, Marksmanship -2.5, Survival -2 |
 | Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling. Survival 5.2 for ours (2026-11-22) |
 | AQ book ranks | Off under Forever | Top ranks only | `ours_aq_cli` aligns it. Worth 30 to 36 to ranged hunters |
 | Quick Strikes on an avoided swing | Every main-hand white swing rolls it, misses and dodges too (`sim/hunter/aspects.go:~150`; 19.5 procs from 195 swings) | Landed swings only: their decode takes a landed hit for any mask that names no outcome (`sim/core/proc_types.go`, `ProcTrigger` in `sim/hunter/aspects.go:85-125`) | Open. The client rows (1.60.1.70938) are silent: Aspect of the Beast's SpellAuraOptions has ProcTypeMask_0 4 (deal melee swing) and nothing else, and the client data has no hit mask (that is server side). Survival 16.2 for ours (2026-11-22, `sim/hunter/aspects.go:~160`) |
@@ -110,9 +110,8 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Flurry charges | Two white swings within 500 ms spend one | Every white swing, and a missed Heroic Strike or Cleave | Assumption `flurry_batch`. Fury 9.0 (2026-11-22), Fury 2H 5.4. Their shaman Flurry (b30e3fb1d5, two logs) keeps 0.5 s for Windfury Weapon strikes. Push 114097 (2026-11-17) gave Flurry (SpellAuraOptions 126501) proc type 20, melee abilities too; both sims spend it on Heroic Strike and Cleave only of the abilities (their EV-0138). Windfury Totem's attack spends a charge in ours (a white swing, the 2026-11-15 totem ruling), none in theirs (20093d47de) |
+| Flurry charges | Two white swings within 500 ms spend one | Every white swing, and a missed Heroic Strike or Cleave | Assumption `flurry_batch`. Fury 9.0 (2026-11-22), Fury 2H 5.4. Their shaman Flurry (b30e3fb1d5, two logs) keeps 0.5 s for Windfury Weapon strikes. Push 114097 (2026-11-17) gave Flurry (SpellAuraOptions 126501) proc type 20, melee abilities too; both sims spend it on Heroic Strike and Cleave only of the abilities (their EV-0138). Windfury Totem's attack spends none in either since 2026-11-22 (Settled) |
 | Unbridled Wrath on abilities | Every landed damaging melee ability but Whirlwind, since push 114097 (`applyUnbridledWrath`, `sim/warrior/talents.go:~213-262`, 2026-11-17; SpellAuraOptions 124699, proc type 4 to 20) | White swings, the totem's strike, Heroic Strike and Cleave only (their 91c37d72cf, 2026-11-18, EV-0148: Shield Slam 0 of 977, Revenge 0 of 601, Thunder Clap 0 of 2238, Whirlwind 2 of 425; no Bloodthirst or Arms ability log) | Open. For ours (2026-11-22): Fury 5.8, Arms 4.9 to 6.8 |
-| Bloodthrill and the totem's swing | Windfury Totem's white swing opens it (`sim/warrior/talents.go:178-210`; follows from the 2026-11-15 totem ruling) | Not (`talents_arms.go:~268-273`) | Open, with the totem ruling. Arms 16.3 for ours (2026-11-22, new) |
 | A queued Heroic Strike and the totem's extra attack | The extra attack takes the queued Heroic Strike (`sim/core/attack.go:~397`, replaceSwing) | Not | Engine. Nets about 0 on Fury and Arms, moves DPS between rows (2026-11-22, new) |
 | Anger Management | 1 rage every 3 s (tooltip) | 1.5 every 5 s (aura amount) | Open: a log of its rage ticks. Arms 1.6, Fury noise (2026-11-22) |
 | Rotation re-checks, Heroic Strike during a cast | Re-checks at once on Rage gain; queued Heroic Strike goes off on a swing during Slam's cast | Re-checks 200 ms after Rage gain or swing; drops it during a cast (`hardcastRuns`); holds major cooldowns during a sequence step | Choice. Moves casts, nets 0 |
@@ -124,7 +123,6 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Maelstrom Weapon from Windfury Totem's strikes | Any landed melee hit gives a stack, the totem's strikes too (`sim/shaman/talents.go:~609`) | Not from 10610, the totem's strike (434723c516, 2026-11-14: 0 of 140 and 0 of 121 landed totem strikes in logs) | Open, the evidence conflicts: our notes.md:24 audit of 2026-11-09 (before the Nov 10 tuning) had 428 of 430 Windfury extra swings give a stack, totem or weapon unclear; the Nov 13 audit lists white swings, Stormstrike and Windfury Weapon only. Our logs can settle it (stacks after 10610 hits). Ask the user. Enhancement 9.0 for ours (2026-11-22, new) |
 | Windfury Weapon beside Windfury Totem | Both proc, separate ICDs (`wf_weapon_totem_icd`, Nov 10 notes) | Windfury Weapon shuts the totem out | Open. Ours about 12 totem procs, 51 DPS (before 2026-11-17, not remeasured; the 2026-11-22 Enhancement gap leaves little room for it) |
 | Flametongue Totem beside Windfury Weapon | Works (`sham_ftt_stack`) | Nothing while any Windfury Totem stands | Open, notes.md To Verify. Enhancement 16.2 (not remeasured) |
 | Stormstrike's weapon speed | Normalized + 0.3 (3.6 two-hander), fitted to beta (shaman_audit.md 4.1) | Normalized | Evidence. Enhancement 4.6 (2026-11-22); Holy Strike the same, Holy Shock Ret 2.8 (2026-11-22), Retribution 2.7 |
@@ -147,7 +145,6 @@ Mental Dexterity) are Settled.
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Ice Lance's spell power | 0.429, SoD's (`mage_ice_lance_coef`, `sim/mage/ice_lance.go:31`) | 0.11 since 543cc309aa (2026-11-21, `tools/database/overrides/spell_overrides.go:464`): their EV-0171 logs, 28 casts at 0 and 255 spell power, fit 0.11 ± 0.007 and rule out 1/7, their value before | Ruling (2026-10-15: the client has none), now against their log: the user decides. Their logs also show Draconic Infused Emblem's +35 spell power not raising Ice Lance; neither sim models it. For ours (2026-11-22): Frost 111.1, Frostfire 58.5 |
 | Frostbolt rank 10 | Base x1.04 (`mage_frostbolt10`) | Client's | Ruling. Frost 10.3 (2026-11-22) |
 | Evocation | Rotation line only; the Arcane rotation has none (`orchestration/apl_intent_audit.md:79`: loses at every length) | Autocast below 10% mana (`sim/mage/evocation.go:~31`), 0.7 casts | Choice. Arcane 22.3 for ours (2026-11-22) |
 | Presence of Mind opener | Instant Arcane Wrath at 0 | The prepull Blast ends at 0, the GCD frees 1 ns later, Blast queued at 1 ns eats Presence of Mind; first Wrath at 7.45 s | Engine timing. Arcane about 8 for ours (2026-11-22) |
@@ -167,7 +164,6 @@ Arcane's sheet at the talent layer shows spell crit 3.1 in ours to 6.1; crit per
 | Raid damage taken | Pushes casts back (about 1.5 fewer Shadow Bolts or Incinerates) | None | Choice. 2026-11-22: Affliction Shadow Bolt 16.5, Destruction Fire 16.3, Destruction 13.4, Demonology 13.4, Affliction 4.1 |
 | Bane of Agony's ramp under Wrack | Steps by tick number; ticks past the 12th stay at 150% (`sim/warlock/curses.go:~85`, the Nov 10 notes' "advances 2 seconds") | Steps by elapsed thirds of the duration (`sim/warlock/agony.go` `baneOfAgonyRamp`, TODO "tick number or time") | Open: an Agony-under-Wrack log. Theirs 14.1 lower than with ours (2026-11-22) |
 | Soul Siphon on Wrack | Counts the target's afflictions once, when the channel lands (`sim/warlock/wrack.go:69`) | Recounts them each tick (`talents_affliction.go:237-261`, TODO in 23b739be95) | Open (notes.md:249 lists it; a Drain Life log settles it). Affliction 7.7 for ours (2026-11-22, new) |
-| Last tick of a Wrack-retimed dot | Dropped (`sim/warlock/talents.go:~311`, f20d5938) | Ticks on the half points of the dot's own grid, no truncated tick (6de4dee7b9, dc66ebf6f3, 999c93cb77; the start measured in EV-0085, the end a TODO). Their truncated partial tick at expiry of 2026-11-17 is gone | Open, no log of ours. Theirs about 7.7 higher (2026-11-22, from tick counts, not flipped) |
 | Haste and the GCD on Destruction | Spellstone's 2% cast speed (`sim/warlock/talents.go:152`) shortens the GCD; turning ours' hastedGCD off costs ours 5.6 | The same formula and 1 s floor, but turning it off costs theirs 0.3 | Open, driver not found: does theirs' Spellstone haste reach the GCD? Dropping theirs' activeImmolate check raised Conflagrate casts (ours 14.6, theirs 13.2) but not DPS. About 5.3 for ours (2026-11-22, new); off in both, Destruction -1.2 |
 | Conflagrate right after Immolate | Next GCD | With haste, theirs picks before Immolate lands, Conflagrate's check fails, Shadow Bolt goes first | Choice. Destruction Fire 1.9 (2026-11-22); on Destruction the haste row above holds it. A rotation translation can't reach it |
 | Bane of Doom's tick and 2 min cooldowns | Second Doom ticks about 121 s, after Blood Fury and trinket | Recast about 60.2 s, ticks before them | Engine timing. Destruction 3.4, others under 1% of Doom |
@@ -253,10 +249,29 @@ A gap on one of these is a regression.
 - Mutilate rolls Windfury Totem once, as the user's 2026-11-15 ruling had ours (Blizzard's Nov 13
   note). Theirs since bd717cfa80 (2026-11-21, EV-0155, push 114313: the cast's mask is
   ProcMaskEmpty); before, 8.4 on Mutilate for theirs.
+- Execute rolls Windfury Totem twice under Forever: the cast on its own, whatever the damage does,
+  then the landed damage (`RollWindfuryTotemOnCast`, sim/warrior/execute.go; report assumption
+  `warr_exec_wf2`, Low once). Ours since 2026-11-22 (their 0e8c4a7699; EV-0155 after push 114313,
+  1.68 and 2.09 on 89 warriors where two rolls give 1.81; EV-0002 31.6% of landed Executes). It
+  flips with pushes: one roll on 2026-11-20 before 114313 (1.01 to 1.05 on 112 warriors). Before,
+  for theirs Arms 25.2, Fury 12.7, Fury 2H 24.
+- Windfury Totem's attack opens no Bloodthrill. Ours since 2026-11-22, though ours still swings it
+  white (their `talents_arms.go:~268-273`; EV-0056, EV-0136: 10 of 1,633 totem hits, 0.61%, no more
+  than the 0.74% the ability before gives alone, against 3.5% a white swing). Before, Arms 16.3 for
+  ours.
+- Windfury Totem's attack spends no warrior Flurry charge; its crit applies or refreshes Flurry.
+  Ours since 2026-11-22 (their 20093d47de; EV-0138 and EV-0140, build 70938 to push 114115: 68 of
+  74 totem hits with Flurry up removed none, the other 6 explained; 22 of 22 crits gave Flurry).
 - Two-hand white crit rage: twice the whole swing.
 - Orc shaman base stats 97 Sta, 87 Int, 103 Spi; Undead 79 Str, 128 Agi, priest Spirit 130.
 - Ice Lance: every rank 8 s on category 19, shared with Fire Blast (`mage_ice_lance_cd`). Both
   key Fingers of Frost by the buff's id, 400669.
+- Ice Lance's spell power coefficient 0.11 on every rank (`mage_ice_lance_coef`). Ours since
+  2026-11-22 (user ruling: log-confirmed rules from theirs override ours; their 543cc309aa, EV-0171,
+  one level 60 mage's logs on 70959 and 71037: 28 hits at 0 spell power, 255 geared, 0.115 ± 0.007);
+  before, ours 0.429 (SoD's server value, the 2026-10-15 ruling): Frost 111.1, Frostfire 58.5 for ours.
+  The same logs show Draconic Infused Emblem's +35 spell damage not raising Ice Lance; neither sim
+  models that.
 - Lightning Overload's copies proc, but Judgement of Wisdom, Elemental Devastation and Water
   Shield don't hear them.
 - Stormstrike 100% weapon damage on an 8 s cooldown, and Maelstrom Weapon at 6 to 10 PPM by rank:
@@ -265,6 +280,13 @@ A gap on one of these is a regression.
   attack power is the Blessing rank's 21 alone); ours keeps the Nov 10 notes' 33/66/100%, theirs
   reads client 415140, whose value isn't traced. These three rows were Enhancement 119, 45 and 29
   for theirs before.
+- Maelstrom Weapon: Windfury Totem's strike gives no stack, while white swings, Stormstrike and
+  Windfury Weapon's strikes do. Ours since 2026-11-22 under Forever (`applyMaelstromWeapon` in
+  `sim/shaman/talents.go` skips a main-hand swing that `IsWindfuryTotemAttack`), from their
+  434723c516 (EV-0009: 0 of 140 landed totem strikes at ranks 1 and 2, 0 of 121 at rank 3,
+  2026-11-13 and 14 after push 114060, against 0.59 a landed white swing; a Warcraft Logs census
+  after the Nov 14 hotfix agrees). Our notes.md 2026-11-09 audit (428 of 430 Windfury extra swings
+  gave a stack) predates the strike rework. Before, Enhancement 9.0 for ours.
 - Faerie Fire in Cat Form: 1.0 s GCD, 6 s cooldown.
 - Ferocious Bite on a miss, dodge or parry: 80% of its 35 Energy back, extra Energy and combo
   points kept. Ours since 2026-11-15 (their 0384d8f98c, 70862 log).
@@ -318,3 +340,11 @@ A gap on one of these is a regression.
   out the shorter channel. Every other DoT and channel ticks at its base length in both. Ours since
   2026-11-18, to verify against a log (user ruling; their `dot.go` CalcTickPeriod, `hurricane.go:41`,
   `volley.go:38-39`, b83fe9df5f).
+- Wrack's tick timing: while Wrack is channelled, Corruption, Siphon Life and Bane of Agony tick the
+  half points of their own grid (set by when they landed) as well as their normal ticks, from the
+  channel's start to its end, both included; the channel moves no tick, and the dot ends on a full
+  tick at its expiry with nothing dropped or cut short. Ours since 2026-11-22 (`sim/core/dot.go`
+  SetTickPeriod, `sim/warlock/talents.go` applyWrack; their 6de4dee7b9, dc66ebf6f3, 999c93cb77 from
+  EV-0085's logs). Before, ours scaled the time to the next tick and dropped the last tick: Affliction
+  +1.8 to +24 (mean +10.4) on its golden file. Still unmeasured in both: a channel ending on a half
+  point, and a dot applied mid-channel.

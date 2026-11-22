@@ -59,10 +59,10 @@ func tickCheck(t *testing.T, sim *core.Simulation, dot *core.Dot, seconds float6
 }
 
 // TestWarlockWrackSpeedsDots checks Wrack's second effect (SpellEffect 1349557, aura 4 value 100):
-// Corruption ticks twice as fast while Wrack is channelled and still ends 18 sec after it was cast,
-// and the time skipped is kept after the channel ends. Corruption from 1 s ticks at 3 (2 s left at
-// Wrack's start halves to 1), 4.5, 6 and 7.5; at 8 the channel ends 1 s (fast) from the next tick,
-// which is 2 s at the normal speed, so 10, 13, 16 and 19: 8 ticks by the time it fades at 19, not 6.
+// while Wrack is channelled Corruption ticks the half points of its own grid too, and still ends 18 sec
+// after it was cast, on a full tick (wowsims/forever's EV-0085). Corruption from 1 s ticks every 3 s
+// from 4; Wrack from 2 to 8 adds its half points 2.5 and 5.5, so 2.5, 4, 5.5 and 7 in the channel,
+// then 10, 13, 16 and 19: 8 ticks by the time it fades at 19, not 6.
 func TestWarlockWrackSpeedsDots(t *testing.T) {
 	sim, lock := newWarlockSim(t, wrackTalents, &proto.WarlockOptions{})
 	target := lock.CurrentTarget
@@ -70,9 +70,9 @@ func TestWarlockWrackSpeedsDots(t *testing.T) {
 
 	at(sim, 1, func(sim *core.Simulation) { corruption.Apply(sim) })
 	at(sim, 2, func(sim *core.Simulation) { lock.Wrack.Dot(target).Apply(sim) })
-	tickCheck(t, sim, corruption, 2.9, 0)
-	tickCheck(t, sim, corruption, 3.1, 1)
-	tickCheck(t, sim, corruption, 7.6, 4)
+	tickCheck(t, sim, corruption, 2.4, 0)
+	tickCheck(t, sim, corruption, 2.6, 1)
+	tickCheck(t, sim, corruption, 7.1, 4)
 	tickCheck(t, sim, corruption, 9.9, 4)
 	tickCheck(t, sim, corruption, 10.1, 5)
 	tickCheck(t, sim, corruption, 18.9, 7)
@@ -87,9 +87,10 @@ func TestWarlockWrackSpeedsDots(t *testing.T) {
 	runSim(sim)
 }
 
-// TestWarlockWrackStoppedEarly checks a channel cut short: Wrack from 2 to 3.5 s. Corruption from
-// 1 s ticks at 3 and has run 1 s of its next 3 s tick by 3.5, so ticks at 5.5, 8.5, 11.5, 14.5 and
-// 17.5. The progress past 17.5 is lost when it fades at 19: 6 ticks, as without Wrack.
+// TestWarlockWrackStoppedEarly checks a channel cut short, and that a dot Wrack sped up still ticks
+// in full at its expiry (EV-0085: all 4 logged effects that ran out after a channel ended on a full
+// tick). Wrack from 2 to 3.5 s: Corruption from 1 s ticks its half point at 2.5, then its normal grid
+// 4, 7, ..., 19, the last as it fades: 7 ticks, one more than without Wrack.
 func TestWarlockWrackStoppedEarly(t *testing.T) {
 	sim, lock := newWarlockSim(t, wrackTalents, &proto.WarlockOptions{})
 	target := lock.CurrentTarget
@@ -98,22 +99,49 @@ func TestWarlockWrackStoppedEarly(t *testing.T) {
 	at(sim, 1, func(sim *core.Simulation) { corruption.Apply(sim) })
 	at(sim, 2, func(sim *core.Simulation) { lock.Wrack.Dot(target).Apply(sim) })
 	at(sim, 3.5, func(sim *core.Simulation) { lock.Wrack.Dot(target).Cancel(sim) })
-	tickCheck(t, sim, corruption, 3.1, 1)
-	tickCheck(t, sim, corruption, 5.4, 1)
-	tickCheck(t, sim, corruption, 5.6, 2)
-	tickCheck(t, sim, corruption, 17.6, 6)
+	tickCheck(t, sim, corruption, 2.6, 1)
+	tickCheck(t, sim, corruption, 3.9, 1)
+	tickCheck(t, sim, corruption, 4.1, 2)
+	tickCheck(t, sim, corruption, 18.9, 6)
 	at(sim, 19.1, func(sim *core.Simulation) {
-		if corruption.IsActive() || corruption.TickCount != 6 {
-			t.Errorf("Corruption at 19.1 s: up %v, %d ticks, want gone after 6", corruption.IsActive(), corruption.TickCount)
+		if corruption.IsActive() || corruption.TickCount != 7 {
+			t.Errorf("Corruption at 19.1 s: up %v, %d ticks, want gone after 7", corruption.IsActive(), corruption.TickCount)
+		}
+	})
+	runSim(sim)
+}
+
+// TestWarlockWrackHalfPoints checks a channel that lands on a half point and one that ends on one.
+// Corruption from 1 s has its half points at 2.5, 5.5, 8.5 and so on. Wrack cast at 2.5 ticks that
+// half point at once (EV-0085: Wrack one global cooldown after Siphon Life ticked its 1.5 s half point
+// in 13 of 16 openers). The channel ends at 8.5, on a half point, which ticks too: not measured (the
+// logs' 0.05 s steps cannot split it), kept from our earlier model. So 2.5, 4, 5.5, 7, 8.5, then 10,
+// 13, 16 and 19: 9 ticks.
+func TestWarlockWrackHalfPoints(t *testing.T) {
+	sim, lock := newWarlockSim(t, wrackTalents, &proto.WarlockOptions{})
+	target := lock.CurrentTarget
+	corruption := last(lock.Corruption).Dot(target)
+
+	at(sim, 1, func(sim *core.Simulation) { corruption.Apply(sim) })
+	at(sim, 2.5, func(sim *core.Simulation) { lock.Wrack.Dot(target).Apply(sim) })
+	tickCheck(t, sim, corruption, 2.51, 1)
+	tickCheck(t, sim, corruption, 8.4, 4)
+	tickCheck(t, sim, corruption, 8.6, 5)
+	tickCheck(t, sim, corruption, 9.9, 5)
+	tickCheck(t, sim, corruption, 10.1, 6)
+	at(sim, 19.1, func(sim *core.Simulation) {
+		if corruption.IsActive() || corruption.TickCount != 9 {
+			t.Errorf("Corruption at 19.1 s: up %v, %d ticks, want gone after 9", corruption.IsActive(), corruption.TickCount)
 		}
 	})
 	runSim(sim)
 }
 
 // TestWarlockWrackAgonyMidChannel checks a dot applied while Wrack is channelled, and Bane of
-// Agony's steps past its 12th tick. Wrack from 1 to 7 s; Bane of Agony at 2.25 ticks every second
-// (3.25 to 6.25), is a quarter of the way at 7, so ticks at 7.5 and every 2 s to 25.5 before it
-// fades at 26.25: 14 ticks. Ticks 13 and 14 stay at the last step, 150%.
+// Agony's steps past its 12th tick. Wrack from 1 to 7 s; Bane of Agony at 2.25 ticks the half points
+// of its 2 s grid from its application (not measured, EV-0085 leaves it open): 3.25 to 6.25, then
+// 8.25 and every 2 s to 26.25, the last as it fades: 14 ticks. Ticks 13 and 14 stay at the last
+// step, 150%.
 func TestWarlockWrackAgonyMidChannel(t *testing.T) {
 	sim, lock := newWarlockSim(t, wrackTalents, &proto.WarlockOptions{})
 	target := lock.CurrentTarget
@@ -124,11 +152,11 @@ func TestWarlockWrackAgonyMidChannel(t *testing.T) {
 	at(sim, 2.25, func(sim *core.Simulation) { agony.Apply(sim) })
 	tickCheck(t, sim, agony, 3.3, 1)
 	tickCheck(t, sim, agony, 6.3, 4)
-	tickCheck(t, sim, agony, 7.4, 4)
-	tickCheck(t, sim, agony, 7.6, 5)
-	at(sim, 21.6, func(sim *core.Simulation) {
+	tickCheck(t, sim, agony, 8.2, 4)
+	tickCheck(t, sim, agony, 8.3, 5)
+	at(sim, 22.3, func(sim *core.Simulation) {
 		if agony.TickCount != 12 {
-			t.Errorf("Bane of Agony at 21.6 s: %d ticks, want 12", agony.TickCount)
+			t.Errorf("Bane of Agony at 22.3 s: %d ticks, want 12", agony.TickCount)
 		}
 		afterTwelve = agony.SnapshotBaseDamage
 	})

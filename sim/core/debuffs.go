@@ -583,8 +583,10 @@ func newJudgementOfWisdomAura(target *Unit, jowMana *float64) *Aura {
 				return
 			}
 
-			// melee auto attacks don't even need to land
-			if !result.Landed() && !spell.ProcMask.Matches(ProcMaskMeleeWhiteHit) {
+			// In Classic a melee auto attack doesn't even need to land. Under Forever it does: a
+			// missed, dodged or parried swing paid 1 time in 52 against 164 of 336 landed ones
+			// (wowsims/forever 9f254e8d87, EV-0018: a level 41 paladin's log, 2026-11-09).
+			if !result.Landed() && (target.Env.IsForever() || !spell.ProcMask.Matches(ProcMaskMeleeWhiteHit)) {
 				return
 			}
 

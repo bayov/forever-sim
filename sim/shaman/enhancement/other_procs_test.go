@@ -19,8 +19,8 @@ const (
 // TestOrcShamanOtherProcs checks which of our attacks trigger Judgement of Wisdom on the
 // target and the melee item procs (Crusader and Hand of Justice).
 //
-// Judgement of Wisdom gives us mana on half of our white hits, even the misses, and on half
-// of our landed Stormstrikes, Windfury Weapon attacks and spells. The melee item procs
+// Judgement of Wisdom gives us mana on half of our landed white hits, Stormstrikes, Windfury
+// Weapon attacks and spells; under Forever a white miss gives none (wowsims/forever EV-0018). The melee item procs
 // trigger on landed white hits, Stormstrikes and Windfury Weapon attacks. None of them come
 // from proc damage (Fire Nova's hits among it), totem attacks or Lightning Shield orbs.
 //
@@ -42,7 +42,7 @@ func TestOrcShamanOtherProcs(t *testing.T) {
 		white := enh.AutoAttacks.MHAuto()
 		list := []attack{
 			{"white hit", white, core.OutcomeHit, all},
-			{"white miss", white, core.OutcomeMiss, []string{judgementOfWisdom}},
+			{"white miss", white, core.OutcomeMiss, nil},
 			{"Stormstrike", enh.Stormstrike, core.OutcomeHit, all},
 			{"missed Stormstrike", enh.Stormstrike, core.OutcomeMiss, nil},
 			{"Windfury Weapon attack", enh.WindfuryWeaponMH, core.OutcomeHit, all},

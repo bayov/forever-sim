@@ -100,210 +100,210 @@ dps_results: {
  key: "TestRetribution-Phase5-AllItems-Avenger'sBattlegear"
  value: {
   dps: 530.679
-  tps: 562.77837
+  tps: 562.37376
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-BattlegearofEternalJustice"
  value: {
   dps: 508.4075
-  tps: 534.6423
+  tps: 534.0247
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Champion'sAegis"
  value: {
   dps: 412.233
-  tps: 444.27865
+  tps: 443.87224
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Champion'sVindication"
  value: {
   dps: 434.50533
-  tps: 467.34207
+  tps: 466.94526
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-FieldMarshal'sAegis"
  value: {
   dps: 432.234
-  tps: 463.9147
+  tps: 463.50695
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-FieldMarshal'sVindication"
  value: {
   dps: 461.02217
-  tps: 493.86132
+  tps: 493.46451
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Freethinker'sArmor"
  value: {
   dps: 411.41383
-  tps: 443.98549
+  tps: 443.57998
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-HolySynthetic(Phase1)"
  value: {
   dps: 387.62967
-  tps: 420.47141
+  tps: 420.0746
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-JudgementArmor"
  value: {
   dps: 537.21183
-  tps: 568.76442
+  tps: 568.35444
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-JusticeArmor"
  value: {
   dps: 373.53817
-  tps: 406.38084
+  tps: 405.98402
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-JusticeBattlegear"
  value: {
   dps: 377.735
-  tps: 411.45739
+  tps: 411.08895
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-JusticeBattleplate"
  value: {
   dps: 374.2065
-  tps: 407.0937
+  tps: 406.76827
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Knight-Lieutenant'sLamellarGauntlets-16410"
  value: {
   dps: 374.7585
-  tps: 407.60348
+  tps: 407.20666
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Knight-Lieutenant'sLamellarGauntlets-23274"
  value: {
   dps: 376.90567
-  tps: 409.75255
+  tps: 409.35573
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-LawbringerArmor"
  value: {
   dps: 445.81867
-  tps: 477.79541
+  tps: 477.38779
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-LieutenantCommander'sAegis"
  value: {
   dps: 412.233
-  tps: 444.27865
+  tps: 443.87224
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-LieutenantCommander'sRedoubt"
  value: {
   dps: 480.23233
-  tps: 513.07604
+  tps: 512.67922
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-LieutenantCommander'sVindication"
  value: {
   dps: 434.50533
-  tps: 467.34207
+  tps: 466.94526
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Marshal'sLamellarGloves-16471"
  value: {
   dps: 384.68067
-  tps: 417.52118
+  tps: 417.12436
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-ProtectionPaladinSynthetic(Phase1)"
  value: {
   dps: 380.96267
-  tps: 413.8053
+  tps: 413.40849
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-ProtectionPaladinSyntheticStrengthOn-UseTrinket(Phase1)-990716"
  value: {
   dps: 369.7515
-  tps: 402.59431
+  tps: 402.19749
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-RedemptionArmor"
  value: {
   dps: 461.77867
-  tps: 491.38183
+  tps: 490.83336
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-RetributionSynthetic(Phase1)"
  value: {
   dps: 422.376
-  tps: 455.51995
+  tps: 455.19149
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-RetributionSyntheticSpellPowerOn-UseTrinket(Phase1)-992015"
  value: {
   dps: 369.7515
-  tps: 402.59431
+  tps: 402.19749
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-SanctifiedOrb-20512"
  value: {
   dps: 376.06517
-  tps: 408.90519
+  tps: 408.50838
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-SoulforgeArmor"
  value: {
   dps: 507.20333
-  tps: 539.24694
+  tps: 538.84053
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-TenetsoftheSilverHand-249397"
  value: {
   dps: 369.7515
-  tps: 402.59431
+  tps: 402.19749
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Warlord'sAegis"
  value: {
   dps: 432.234
-  tps: 463.9147
+  tps: 463.50695
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-Warlord'sVindication"
  value: {
   dps: 461.02217
-  tps: 493.86132
+  tps: 493.46451
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-Average-Default"
  value: {
   dps: 368.66229
-  tps: 401.53893
+  tps: 401.15186
  }
 }
 dps_results: {
@@ -436,6 +436,6 @@ dps_results: {
  key: "TestRetribution-Phase5-SwitchInFrontOfTarget-Default"
  value: {
   dps: 319.7705
-  tps: 351.99085
+  tps: 350.85934
  }
 }

@@ -100,210 +100,210 @@ dps_results: {
  key: "TestProtection-Phase4-AllItems-Avenger'sBattlegear"
  value: {
   dps: 350.25283
-  tps: 697.33285
+  tps: 696.46661
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-BattlegearofEternalJustice"
  value: {
-  dps: 326.50417
-  tps: 597.45669
+  dps: 325.8455
+  tps: 594.25433
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Champion'sAegis"
  value: {
   dps: 281.75217
-  tps: 571.82343
+  tps: 571.00847
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Champion'sVindication"
  value: {
   dps: 300.60783
-  tps: 599.59543
+  tps: 598.79338
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-FieldMarshal'sAegis"
  value: {
   dps: 288.39233
-  tps: 585.86897
+  tps: 585.04587
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-FieldMarshal'sVindication"
  value: {
   dps: 316.6975
-  tps: 631.06074
+  tps: 630.25869
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Freethinker'sArmor"
  value: {
   dps: 282.60267
-  tps: 559.84773
+  tps: 559.02202
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-HolySynthetic(Phase1)"
  value: {
   dps: 267.38233
-  tps: 538.9568
+  tps: 538.11617
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-JudgementArmor"
  value: {
   dps: 344.32283
-  tps: 693.89167
+  tps: 692.98867
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-JusticeArmor"
  value: {
   dps: 268.05817
-  tps: 541.18421
+  tps: 540.37016
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-JusticeBattlegear"
  value: {
   dps: 267.664
-  tps: 538.04401
+  tps: 537.21327
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-JusticeBattleplate"
  value: {
   dps: 268.629
-  tps: 540.35908
+  tps: 539.69311
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Knight-Lieutenant'sLamellarGauntlets-16410"
  value: {
   dps: 268.88617
-  tps: 539.94523
+  tps: 539.14318
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Knight-Lieutenant'sLamellarGauntlets-23274"
  value: {
   dps: 270.10783
-  tps: 542.61304
+  tps: 541.81099
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LawbringerArmor"
  value: {
   dps: 285.257
-  tps: 562.52744
+  tps: 561.58516
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LieutenantCommander'sAegis"
  value: {
   dps: 281.75217
-  tps: 571.82343
+  tps: 571.00847
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LieutenantCommander'sRedoubt"
  value: {
   dps: 326.72867
-  tps: 654.59803
+  tps: 653.79598
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LieutenantCommander'sVindication"
  value: {
   dps: 300.60783
-  tps: 599.59543
+  tps: 598.79338
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Marshal'sLamellarGloves-16471"
  value: {
   dps: 271.63033
-  tps: 544.72904
+  tps: 543.92699
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-ProtectionPaladinSynthetic(Phase1)"
  value: {
   dps: 273.139
-  tps: 545.32531
+  tps: 544.47423
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-ProtectionPaladinSyntheticStrengthOn-UseTrinket(Phase1)-990716"
  value: {
   dps: 265.5025
-  tps: 535.45142
+  tps: 534.64937
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RedemptionArmor"
  value: {
   dps: 277.93367
-  tps: 555.82358
+  tps: 555.02874
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RetributionSynthetic(Phase1)"
  value: {
   dps: 291.1905
-  tps: 587.65101
+  tps: 586.80407
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RetributionSyntheticSpellPowerOn-UseTrinket(Phase1)-992015"
  value: {
   dps: 265.5025
-  tps: 535.45142
+  tps: 534.64937
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-SanctifiedOrb-20512"
  value: {
   dps: 269.757
-  tps: 545.12664
+  tps: 544.32459
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-SoulforgeArmor"
  value: {
   dps: 333.99567
-  tps: 662.77572
+  tps: 661.90613
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-TenetsoftheSilverHand-249397"
  value: {
   dps: 265.5025
-  tps: 535.45142
+  tps: 534.64937
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Warlord'sAegis"
  value: {
   dps: 288.39233
-  tps: 585.86897
+  tps: 585.04587
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Warlord'sVindication"
  value: {
   dps: 316.6975
-  tps: 631.06074
+  tps: 630.25869
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Average-Default"
  value: {
   dps: 267.02109
-  tps: 537.50803
+  tps: 536.76433
  }
 }
 dps_results: {
@@ -394,6 +394,6 @@ dps_results: {
  key: "TestProtection-Phase4-SwitchInFrontOfTarget-Default"
  value: {
   dps: 240.08283
-  tps: 490.84366
+  tps: 488.77766
  }
 }

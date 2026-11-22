@@ -197,16 +197,12 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase1-StatWeights-Default"
  value: {
-  weights: 0.85888
-  weights: 0.51921
+  weights: 0.86076
+  weights: 0.5881
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.31483
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.3053
   weights: 0
   weights: 0
   weights: 0
@@ -214,9 +210,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.34355
-  weights: 18.23427
-  weights: 11.63529
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.3443
+  weights: 18.78988
+  weights: 11.32814
   weights: 0
   weights: 0
   weights: 0
@@ -246,16 +246,12 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase2-StatWeights-Default"
  value: {
-  weights: 0.86982
-  weights: 0.49907
+  weights: 0.87098
+  weights: 0.47251
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.33104
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.32144
   weights: 0
   weights: 0
   weights: 0
@@ -263,9 +259,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.34793
-  weights: 9.72482
-  weights: 10.60492
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.34839
+  weights: 11.05577
+  weights: 10.54866
   weights: 0
   weights: 0
   weights: 0
@@ -295,16 +295,12 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase3-StatWeights-Default"
  value: {
-  weights: 0.84953
-  weights: 0.70734
+  weights: 0.84925
+  weights: 0.70769
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.31645
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.30523
   weights: 0
   weights: 0
   weights: 0
@@ -312,9 +308,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.33981
-  weights: 25.56331
-  weights: 12.84817
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.3397
+  weights: 26.56635
+  weights: 13.04453
   weights: 0
   weights: 0
   weights: 0
@@ -344,16 +344,12 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase5-StatWeights-Default"
  value: {
-  weights: 0.85515
-  weights: 0.41008
+  weights: 0.85385
+  weights: 0.38111
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.30955
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.29853
   weights: 0
   weights: 0
   weights: 0
@@ -361,9 +357,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.33551
-  weights: 28.76179
-  weights: 7.41817
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.33497
+  weights: 29.55437
+  weights: 7.88575
   weights: 0
   weights: 0
   weights: 0
@@ -393,204 +393,204 @@ stat_weights_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1383.73267
-  tps: 1046.39727
+  dps: 1371.21433
+  tps: 1036.82104
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1433.81567
-  tps: 1088.24942
+  dps: 1434.2715
+  tps: 1089.65915
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1358.87317
-  tps: 1034.71928
+  dps: 1346.44833
+  tps: 1026.21997
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 1338.9785
-  tps: 1020.18648
+  dps: 1328.29133
+  tps: 1009.95725
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1520.386
-  tps: 1148.28914
+  dps: 1509.608
+  tps: 1145.56183
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1509.4765
-  tps: 1137.11723
+  dps: 1496.341
+  tps: 1129.01328
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1534.576
-  tps: 1157.2001
+  dps: 1513.34367
+  tps: 1141.73472
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1521.67783
-  tps: 1145.23802
+  dps: 1515.80567
+  tps: 1140.28554
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1509.4765
-  tps: 1137.11723
+  dps: 1496.341
+  tps: 1129.01328
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1426.63867
-  tps: 1079.21598
+  dps: 1422.18217
+  tps: 1077.34922
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1393.9765
-  tps: 1062.87505
+  dps: 1387.639
+  tps: 1059.02336
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1372.22867
-  tps: 1048.02201
+  dps: 1349.139
+  tps: 1029.53126
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1183.672
-  tps: 920.92814
+  dps: 1167.04067
+  tps: 905.17646
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1383.73267
-  tps: 1046.39727
+  dps: 1371.21433
+  tps: 1036.82104
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1358.87317
-  tps: 1034.71928
+  dps: 1346.44833
+  tps: 1026.21997
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1338.9785
-  tps: 1020.18648
+  dps: 1328.29133
+  tps: 1009.95725
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1453.186
-  tps: 1096.36946
+  dps: 1458.27917
+  tps: 1102.76091
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1499.09233
-  tps: 1136.16207
+  dps: 1493.50017
+  tps: 1133.40463
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 1345.8525
-  tps: 1020.35167
+  dps: 1343.94833
+  tps: 1022.45652
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheEarthshatterer"
  value: {
-  dps: 1302.59783
-  tps: 988.14452
+  dps: 1294.4215
+  tps: 982.3608
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 1403.70517
-  tps: 1064.65227
+  dps: 1392.33983
+  tps: 1057.30199
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1406.54
-  tps: 1065.91218
+  dps: 1402.81067
+  tps: 1068.12034
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheTenStorms"
  value: {
-  dps: 1395.85683
-  tps: 1061.22199
+  dps: 1385.72433
+  tps: 1053.92771
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1522.15733
-  tps: 1145.14659
+  dps: 1523.36033
+  tps: 1147.72934
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1500.3765
-  tps: 1129.51011
+  dps: 1487.49767
+  tps: 1121.60666
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1426.63867
-  tps: 1079.21598
+  dps: 1422.18217
+  tps: 1077.34922
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1393.9765
-  tps: 1062.87505
+  dps: 1387.639
+  tps: 1059.02336
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sWartide"
  value: {
-  dps: 1372.22867
-  tps: 1048.02201
+  dps: 1349.139
+  tps: 1029.53126
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Average-Default"
  value: {
-  dps: 1528.18199
-  tps: 1149.44652
+  dps: 1519.25093
+  tps: 1143.50856
  }
 }
 dps_results: {
@@ -1100,211 +1100,211 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1176.86817
-  tps: 901.04483
+  dps: 1162.57233
+  tps: 889.04413
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1425.717
-  tps: 1081.11551
+  dps: 1426.6085
+  tps: 1082.90662
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1483.3585
-  tps: 1126.45373
+  dps: 1484.0145
+  tps: 1127.41609
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1406.07533
-  tps: 1072.43956
+  dps: 1391.23317
+  tps: 1059.2406
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sWartide"
  value: {
-  dps: 1384.105
-  tps: 1054.82626
+  dps: 1371.30633
+  tps: 1043.40376
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1546.2365
-  tps: 1174.75969
+  dps: 1532.685
+  tps: 1163.1218
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1554.23183
-  tps: 1173.81492
+  dps: 1545.80067
+  tps: 1167.48361
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1548.7745
-  tps: 1173.841
+  dps: 1541.58717
+  tps: 1168.27223
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1565.232
-  tps: 1179.81004
+  dps: 1562.7885
+  tps: 1176.46767
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1554.23183
-  tps: 1173.81492
+  dps: 1545.80067
+  tps: 1167.48361
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1479.9195
-  tps: 1123.58143
+  dps: 1466.335
+  tps: 1107.04999
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1446.94883
-  tps: 1104.72297
+  dps: 1438.8375
+  tps: 1097.37447
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1417.41117
-  tps: 1080.83301
+  dps: 1405.82983
+  tps: 1073.3605
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1205.10783
-  tps: 939.47809
+  dps: 1195.39633
+  tps: 934.94165
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1425.717
-  tps: 1081.11551
+  dps: 1426.6085
+  tps: 1082.90662
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1406.07533
-  tps: 1072.43956
+  dps: 1391.23317
+  tps: 1059.2406
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1384.105
-  tps: 1054.82626
+  dps: 1371.30633
+  tps: 1043.40376
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1508.55083
-  tps: 1142.81881
+  dps: 1500.63233
+  tps: 1137.39037
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1561.73367
-  tps: 1183.75298
+  dps: 1558.81267
+  tps: 1183.65073
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheEarthfury"
  value: {
-  dps: 1380.74133
-  tps: 1049.05954
+  dps: 1370.38583
+  tps: 1044.51502
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheEarthshatterer"
  value: {
-  dps: 1335.85783
-  tps: 1015.07449
+  dps: 1335.3175
+  tps: 1017.72062
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheFiveThunders"
  value: {
-  dps: 1440.51183
-  tps: 1095.52168
+  dps: 1423.98317
+  tps: 1085.85762
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1446.61083
-  tps: 1099.66788
+  dps: 1432.33683
+  tps: 1092.42266
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheTenStorms"
  value: {
-  dps: 1434.82833
-  tps: 1091.32744
+  dps: 1422.766
+  tps: 1083.54767
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1542.78817
-  tps: 1165.67117
+  dps: 1547.306
+  tps: 1171.38834
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1544.94667
-  tps: 1166.17117
+  dps: 1536.809
+  tps: 1159.99382
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1479.9195
-  tps: 1123.58143
+  dps: 1466.335
+  tps: 1107.04999
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1446.94883
-  tps: 1104.72297
+  dps: 1438.8375
+  tps: 1097.37447
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sWartide"
  value: {
-  dps: 1417.41117
-  tps: 1080.83301
+  dps: 1405.82983
+  tps: 1073.3605
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Average-Default"
  value: {
-  dps: 1579.03177
-  tps: 1190.48216
+  dps: 1569.36446
+  tps: 1184.11265
  }
 }
 dps_results: {
@@ -1478,211 +1478,211 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase2-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1216.30067
-  tps: 933.48412
+  dps: 1206.48383
+  tps: 926.25845
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1441.7745
-  tps: 1087.64177
+  dps: 1426.9215
+  tps: 1076.01796
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1504.88467
-  tps: 1138.15703
+  dps: 1500.83967
+  tps: 1137.17786
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1423.72817
-  tps: 1079.21748
+  dps: 1412.87217
+  tps: 1075.15271
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sWartide"
  value: {
-  dps: 1403.46817
-  tps: 1065.49143
+  dps: 1387.30117
+  tps: 1053.2648
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1623.92467
-  tps: 1225.28015
+  dps: 1622.26067
+  tps: 1224.97886
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1623.75883
-  tps: 1221.76531
+  dps: 1590.0495
+  tps: 1196.68694
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1649.68233
-  tps: 1241.16049
+  dps: 1625.00583
+  tps: 1223.36978
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1634.2965
-  tps: 1226.43948
+  dps: 1608.2235
+  tps: 1206.52481
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1623.75883
-  tps: 1221.76531
+  dps: 1590.0495
+  tps: 1196.68694
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1490.946
-  tps: 1127.05411
+  dps: 1475.69233
+  tps: 1115.14324
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1472.2975
-  tps: 1117.01789
+  dps: 1463.20183
+  tps: 1113.76921
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1433.26767
-  tps: 1088.66702
+  dps: 1430.1335
+  tps: 1088.44534
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1244.09183
-  tps: 962.98577
+  dps: 1244.55817
+  tps: 965.31894
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1441.7745
-  tps: 1087.64177
+  dps: 1426.9215
+  tps: 1076.01796
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1423.72817
-  tps: 1079.21748
+  dps: 1412.87217
+  tps: 1075.15271
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1403.46817
-  tps: 1065.49143
+  dps: 1387.30117
+  tps: 1053.2648
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1565.93667
-  tps: 1181.83431
+  dps: 1557.6685
+  tps: 1175.04825
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1590.48
-  tps: 1202.77831
+  dps: 1573.6805
+  tps: 1189.58137
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheEarthfury"
  value: {
-  dps: 1407.53067
-  tps: 1067.86226
+  dps: 1397.57983
+  tps: 1059.18442
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheEarthshatterer"
  value: {
-  dps: 1385.312
-  tps: 1050.77926
+  dps: 1375.93833
+  tps: 1043.35737
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheFiveThunders"
  value: {
-  dps: 1463.35433
-  tps: 1110.3141
+  dps: 1456.8355
+  tps: 1104.03733
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1468.39467
-  tps: 1113.8792
+  dps: 1461.06667
+  tps: 1107.52805
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheTenStorms"
  value: {
-  dps: 1470.54917
-  tps: 1115.826
+  dps: 1454.1025
+  tps: 1103.36173
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1652.79867
-  tps: 1241.96042
+  dps: 1627.193
+  tps: 1220.25325
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1614.36183
-  tps: 1213.92906
+  dps: 1581.5825
+  tps: 1189.53878
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1490.946
-  tps: 1127.05411
+  dps: 1475.69233
+  tps: 1115.14324
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1472.2975
-  tps: 1117.01789
+  dps: 1463.20183
+  tps: 1113.76921
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sWartide"
  value: {
-  dps: 1433.26767
-  tps: 1088.66702
+  dps: 1430.1335
+  tps: 1088.44534
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Average-Default"
  value: {
-  dps: 1639.76298
-  tps: 1231.05257
+  dps: 1628.40739
+  tps: 1222.89537
  }
 }
 dps_results: {
@@ -1856,211 +1856,211 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase3-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1265.04583
-  tps: 968.45448
+  dps: 1245.33433
+  tps: 951.84288
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1491.70017
-  tps: 1124.51654
+  dps: 1491.97617
+  tps: 1126.38504
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1559.62333
-  tps: 1179.3534
+  dps: 1554.7875
+  tps: 1175.09627
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1473.68483
-  tps: 1116.44271
+  dps: 1469.27267
+  tps: 1115.11258
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sWartide"
  value: {
-  dps: 1464.6665
-  tps: 1110.61843
+  dps: 1448.76983
+  tps: 1096.69894
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1696.09917
-  tps: 1278.39986
+  dps: 1685.23033
+  tps: 1267.9464
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1610.91717
-  tps: 1211.48613
+  dps: 1614.9
+  tps: 1214.87739
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1698.33567
-  tps: 1275.92826
+  dps: 1692.62183
+  tps: 1271.25881
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1623.04117
-  tps: 1218.24951
+  dps: 1623.05533
+  tps: 1215.92687
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1610.91717
-  tps: 1211.48613
+  dps: 1614.9
+  tps: 1214.87739
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1540.64467
-  tps: 1164.17065
+  dps: 1544.0475
+  tps: 1166.44871
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1513.58533
-  tps: 1149.19042
+  dps: 1513.49
+  tps: 1148.58466
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1483.34017
-  tps: 1124.39856
+  dps: 1482.21917
+  tps: 1124.30024
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1219.77717
-  tps: 945.1314
+  dps: 1212.93233
+  tps: 940.43483
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1491.70017
-  tps: 1124.51654
+  dps: 1491.97617
+  tps: 1126.38504
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1473.68483
-  tps: 1116.44271
+  dps: 1469.27267
+  tps: 1115.11258
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1464.6665
-  tps: 1110.61843
+  dps: 1448.76983
+  tps: 1096.69894
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1579.68817
-  tps: 1189.20831
+  dps: 1570.24983
+  tps: 1180.09974
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1652.6735
-  tps: 1249.76184
+  dps: 1636.3115
+  tps: 1235.76615
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheEarthfury"
  value: {
-  dps: 1433.46333
-  tps: 1086.28724
+  dps: 1425.14017
+  tps: 1080.84504
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheEarthshatterer"
  value: {
-  dps: 1405.74883
-  tps: 1067.20439
+  dps: 1400.03367
+  tps: 1059.8344
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheFiveThunders"
  value: {
-  dps: 1490.2905
-  tps: 1130.18868
+  dps: 1480.32883
+  tps: 1121.97911
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1492.7175
-  tps: 1131.6286
+  dps: 1480.32183
+  tps: 1123.23562
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheTenStorms"
  value: {
-  dps: 1481.63467
-  tps: 1124.27132
+  dps: 1471.96733
+  tps: 1115.99819
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1677.939
-  tps: 1258.61142
+  dps: 1661.31017
+  tps: 1245.73016
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1601.94433
-  tps: 1204.04141
+  dps: 1606.1625
+  tps: 1207.5553
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1540.64467
-  tps: 1164.17065
+  dps: 1544.0475
+  tps: 1166.44871
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1513.58533
-  tps: 1149.19042
+  dps: 1513.49
+  tps: 1148.58466
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sWartide"
  value: {
-  dps: 1483.34017
-  tps: 1124.39856
+  dps: 1482.21917
+  tps: 1124.30024
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Average-Default"
  value: {
-  dps: 1639.80079
-  tps: 1229.51924
+  dps: 1630.34729
+  tps: 1222.69195
  }
 }
 dps_results: {
@@ -2234,7 +2234,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1222.28367
-  tps: 935.56633
+  dps: 1209.95333
+  tps: 922.40809
  }
 }
