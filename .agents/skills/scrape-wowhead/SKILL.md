@@ -37,11 +37,15 @@ Wowhead sits behind AWS WAF, with two separate checks:
 
 Every page is kept, gzipped, in `~/.cache/wow-data/wowhead/pages`, so a stopped run picks
 up where it left off. A page younger than `WOWHEAD_CACHE_DAYS` (7 by default) isn't
-fetched again. Use `WOWHEAD_CACHE_DAYS=0` when you need something Wowhead changed today,
-and for `recipes.py` after the game patched (about 2,900 pages, so about 10 hours at this
-pace). To only find new recipes, delete the cached `forever%2Fitems%2Frecipes*` and
-`forever%2Fspells%2F{professions,secondary-skills}*` listing pages and run it without the
-variable: it fetches the listings and each new recipe's pages. Its meta block's `oldestPage` gives the age
+fetched again. Use `WOWHEAD_CACHE_DAYS=0` when you need something Wowhead changed today.
+
+`recipes.py` keeps its pages longer. A normal run fetches its 24 listings fresh, then
+an item's page again only when the item is new or its listing row (kinds of source, what
+Forever changed) differs from our last output. It keeps the other item pages for 60
+days, vendors' locations for a year, and trainer and reagent pages for 60 days (the
+`*_DAYS` constants). That's a few hundred pages, under two hours, where a full scrape is
+about 3,000 pages and 10 to 17 hours. Run `recipes.py --full` when a patch changed drops
+or vendors without changing the listing, or about every two months. Its meta block's `oldestPage` gives the age
 of the oldest page it used, and BayovCore lets that data replace what it saw at a vendor
 or trainer only when the scrape is newer than its look, so cached pages from before the
 patch can't.
@@ -54,12 +58,13 @@ check, and plain urllib works for it. `scrape.py` uses it for binding.
 Run everything from `/home/bayov/projects/forever-sim`. The scripts declare their own
 dependencies, so `uv run` them.
 
-1. **Scrape.** They are long, so run them in the background:
+1. **Scrape.** They are long, so run them in the background, one after the other, in
+   this order. The quick ones go first, so gear and spells land before the recipes:
 
    ```bash
-   uv run tools/database/forever_wowhead/recipes.py   # ~2,900 pages, a couple of hours fresh
-   uv run tools/database/forever_wowhead/class_spells.py   # nine pages, a minute
-   uv run tools/database/forever_wowhead/scrape.py    # a few hundred pages
+   uv run tools/database/forever_wowhead/class_spells.py   # nine pages, a few minutes
+   uv run tools/database/forever_wowhead/scrape.py    # a few hundred pages, about an hour
+   uv run tools/database/forever_wowhead/recipes.py   # a few hundred pages, --full ~3,000
    ```
 
    `scrape.py` takes an optional highest required level, by default the one the current

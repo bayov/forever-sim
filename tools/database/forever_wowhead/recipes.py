@@ -28,14 +28,22 @@
 # and whether in limited stock, so the planner knows which reagents a vendor restocks,
 # like Coarse Thread, and where, before a character has opened that vendor.
 #
-#   uv run tools/database/forever_wowhead/recipes.py
+#   uv run tools/database/forever_wowhead/recipes.py [--full]
 #
-# It's about 2,900 pages. wowhead.py asks for one every few seconds, so a full scrape
-# takes a couple of hours. It keeps every page, so a run that stops picks up where it
-# left off, and a run within a week only fetches what's new. A recipe wowhead lists
-# with no source at all has nothing on its page either, so we don't open those.
+# A full scrape is about 3,000 pages. wowhead.py asks for one every 12 seconds, so it
+# takes about 10 hours (17 at 20 seconds, on 2026-11-20). Most of those pages hardly
+# ever change, so a normal run fetches only the 24 listings fresh and keeps the rest
+# longer (the *_DAYS below): an item's page while its listing row (its kinds of source,
+# what Forever changed about it) stays the same as in our last output, a vendor's
+# location for a year, and who teaches a recipe or sells a reagent for two months. A
+# new or changed recipe item gets its page fetched again. That's a few hundred pages,
+# under two hours. --full fetches every page older than WOWHEAD_CACHE_DAYS (7) again,
+# like a drop list that grew while the listing row stayed the same.
+#
+# Every page is kept, so a run that stops picks up where it left off. A recipe wowhead
+# lists with no source at all has nothing on its page either, so we don't open those.
 # wowhead.py also says how we get past wowhead's bot check.
-import datetime, json, os, re, sys, time
+import argparse, datetime, json, os, re, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wowhead import Wowhead, listview, listview_items, listview_spells, mapper
@@ -58,6 +66,15 @@ SPELL_PROFESSIONS = {
     'professions/tailoring': 197, 'professions/herbalism': 182, 'professions/skinning': 393,
     'secondary-skills/cooking': 185, 'secondary-skills/first-aid': 129, 'secondary-skills/fishing': 356,
 }
+# How old a cached page may be, in days, in a normal run (not --full). The listings
+# are the ones we compare against, so they're always fresh. Half a day lets a run that
+# stopped pick up again the same day.
+LISTING_DAYS = 0.5
+# An item page whose listing row didn't change since our last output, and an item
+# page whose row did (or is new).
+ITEM_DAYS, CHANGED_ITEM_DAYS = 60, 0.5
+# A vendor's location, who teaches a recipe, and who sells a reagent.
+NPC_DAYS, TRAINER_DAYS, REAGENT_DAYS = 365, 60, 60
 # A world drop is on hundreds of mobs. We keep the ones it drops from most often.
 TOP_DROPS = 12
 # The standings an item's tooltip can ask for, 0 hated to 7 exalted, the way the
@@ -119,11 +136,27 @@ def item_sources(html, npcs, objects, quests):
     return out
 
 
+def last_items():
+    """The recipe items of our last output, by id, or {} when there's none."""
+    try:
+        with open(OUT) as f:
+            return {i['id']: i for i in json.load(f)['items']}
+    except (OSError, ValueError, KeyError):
+        return {}
+
+
 def main():
+    ap = argparse.ArgumentParser(description='Scrape where every Forever recipe item comes from.')
+    ap.add_argument('--full', action='store_true',
+                    help='fetch every page older than WOWHEAD_CACHE_DAYS again, not only what changed')
+    full = ap.parse_args().full
+    def days(d):
+        return None if full else d
     wh = Wowhead()
+    last = last_items()
     items = {}
     for prof in PROFESSIONS:
-        rows = listview_items(wh.page(f'forever/items/recipes/{prof}') or '')
+        rows = listview_items(wh.page(f'forever/items/recipes/{prof}', days(LISTING_DAYS)) or '')
         if rows is None:
             sys.exit(f'no recipe listing for {prof}, did wowhead change its URLs?')
         if len(rows) >= 1000:
@@ -142,17 +175,22 @@ def main():
 
     npcs, objects, quests = {}, {}, {}
     sourced = [i for i in sorted(items) if items[i].get('source')]
+    changed = 0
     for n, item_id in enumerate(sourced, 1):
-        html = wh.page(f'forever/item={item_id}')
+        old = last.get(item_id) or {}
+        same = all(items[item_id].get(k) == old.get(k) for k in ('source', 'changed')) and old
+        changed += not same
+        html = wh.page(f'forever/item={item_id}', days(ITEM_DAYS if same else CHANGED_ITEM_DAYS))
         if html:
             items[item_id].update(item_sources(html, npcs, objects, quests))
         if n % 100 == 0:
             print(f'{n} of {len(sourced)} item pages ({wh.fetched} fetched, {wh.cached} from the cache)',
                   file=sys.stderr)
+    print(f'{changed} of {len(sourced)} recipe items are new or changed since our last scrape', file=sys.stderr)
 
     vendors = sorted({v['id'] for i in items.values() for v in i.get('vendors', [])})
     for npc_id in vendors:
-        html = wh.page(f'forever/npc={npc_id}')
+        html = wh.page(f'forever/npc={npc_id}', days(NPC_DAYS))
         pins = mapper(html) if html else {}
         # {zone: [[x, y], ...]}, one zone for most vendors.
         coords = {z: [c for p in ps for c in p.get('coords', [])] for z, ps in pins.items()}
@@ -165,7 +203,7 @@ def main():
     # `specializations` is the spell a recipe asks the crafter to know, by recipe.
     trainers, specializations, reagents = {}, {}, {}
     for prof, skill in SPELL_PROFESSIONS.items():
-        rows = listview_spells(wh.page(f'forever/spells/{prof}') or '')
+        rows = listview_spells(wh.page(f'forever/spells/{prof}', days(LISTING_DAYS)) or '')
         rows = [r for r in rows or [] if skill in (r.get('skill') or [])]
         if not rows:
             sys.exit(f'no spell listing for {prof}, did wowhead change its URLs?')
@@ -190,7 +228,7 @@ def main():
 
     # Which trainers teach each recipe. The NPCs go in `npcs`, like the vendors.
     for n, spell in enumerate(sorted(trainers), 1):
-        html = wh.page(f'forever/spell={spell}')
+        html = wh.page(f'forever/spell={spell}', days(TRAINER_DAYS))
         taught = listview(html, 'taught-by-npc') if html else []
         trainers[spell]['npcs'] = sorted(keep_npc(npcs, r) for r in taught)
         if n % 100 == 0:
@@ -201,7 +239,7 @@ def main():
     # is [[copper, [[currency, n]], [[item, n]]]], since some vendors ask for currency
     # or items, like Lokhtos' Essences for Firelands Embers.
     for n, item_id in enumerate(sorted(reagents), 1):
-        html = wh.page(f'forever/item={item_id}')
+        html = wh.page(f'forever/item={item_id}', days(REAGENT_DAYS))
         sold = listview(html, 'sold-by') if html else []
         if sold:
             reagents[item_id]['vendors'] = [{'id': keep_npc(npcs, r), 'stock': r.get('stock'), 'cost': r.get('cost')}
@@ -217,8 +255,8 @@ def main():
     def block(d):
         return ',\n'.join('%s:%s' % (json.dumps(str(k)), json.dumps(v, sort_keys=True, separators=(',', ':'))) for k, v in sorted(d.items()))
     with open(OUT, 'w') as f:
-        # `oldestPage` is when the oldest page we used was fetched. A page comes from the
-        # cache for a week, so it can be older than `fetched`. bayovui weighs what BayovCore
+        # `oldestPage` is when the oldest page we used was fetched. A page can come from
+        # the cache for up to a year (the *_DAYS above), so it can be much older than `fetched`. bayovui weighs what BayovCore
         # saw in game against it.
         oldest = datetime.datetime.fromtimestamp(wh.oldest or time.time(), datetime.timezone.utc)
         f.write('{' + line(meta('www.wowhead.com/forever', 'tools/database/forever_wowhead/recipes.py', dataEnv=16,
