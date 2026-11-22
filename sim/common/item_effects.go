@@ -22,6 +22,7 @@ const (
 	FieryWarAxe               = 870
 	Bloodrazor                = 809
 	HammerOfTheNorthernWind   = 810
+	AxeOfTheDeepWoods         = 811
 	FlurryAxe                 = 871
 	SkullflameShield          = 1168
 	TeebusBlazingLongsword    = 1728
@@ -304,6 +305,15 @@ func init() {
 			},
 		})
 	})
+
+	// https://www.wowhead.com/forever/item=811/axe-of-the-deep-woods
+	// Forever: Chance on hit: Blasts a target for 105 to 147 Nature damage. 18104 deals 126 with
+	// variance 0.333 (client 1.60.1.71037), at the 1.7 PPM the item's entry carries (wowsims/forever's
+	// client store). Not simulated under Classic.
+	itemhelpers.CreateWeaponCoHProcByRuleset(AxeOfTheDeepWoods, "Axe of the Deep Woods", core.SpellSchoolNature,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 1.7, SpellID: 18104, DmgMin: 105, DmgRange: 42},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=12791/barman-shanker
 	// Chance on hit: Wounds the target causing them to bleed for 100 damage over 30 sec.
@@ -3770,6 +3780,14 @@ func init() {
 		})
 	})
 
+	// Weapon effects we leave unmodelled (Phase 0 check, client 1.60.1.71037):
+	//   - Book of the Dead (13353) summons a Skeleton (17490, creature 11200) for 60s. The client
+	//     has no stats or attacks for it, and the Forever equip aura (1298517) is a dummy whose
+	//     effect the client doesn't say.
+	//   - Demonfork (12621) drains 10 health a second for 5s (16603): 50 damage a proc at an
+	//     unknown rate.
+	//   - Julie's Dagger (6660) heals, and Hammer of the Titans (12796) and The Unstoppable Force
+	//     (19323) only stun, so they deal nothing to a boss.
 	// Jewelry uses we leave unmodelled (Phase 0 check, client 1.60.1.71037):
 	//   - Cannonball Runner (13382) summons a cannon for 10s that casts Cannon Fire (17501, 85 to 139
 	//     Holy to nearby enemies), and Arcanite Dragonling (16022) a dragonling for 60s. The client

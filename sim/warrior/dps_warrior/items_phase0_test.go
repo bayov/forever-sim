@@ -72,3 +72,21 @@ func TestHeadmastersChargeUse(t *testing.T) {
 		t.Fatalf("aura %v, want a 15m aura", aura)
 	}
 }
+
+// Axe of the Deep Woods' Wrath (18104) deals 105 to 147 Nature under Forever (126, variance
+// 0.333, client 1.60.1.71037), and isn't simulated under Classic.
+func TestAxeOfTheDeepWoodsProc(t *testing.T) {
+	sim, war := newWarriorWithMainHand(t, proto.Ruleset_RulesetForever, common.AxeOfTheDeepWoods)
+	wrath := war.GetSpell(core.ActionID{SpellID: 18104})
+	if wrath == nil {
+		t.Fatal("no Wrath proc with Axe of the Deep Woods")
+	}
+	lo, hi := procRange(sim, war, wrath, 2000)
+	if lo < 105-1e-6 || hi > 147+1e-6 || lo > 105.5 || hi < 146.5 {
+		t.Errorf("Wrath %.1f to %.1f, want 105 to 147", lo, hi)
+	}
+	_, era := newWarriorWithMainHand(t, proto.Ruleset_RulesetClassic, common.AxeOfTheDeepWoods)
+	if era.GetSpell(core.ActionID{SpellID: 18104}) != nil {
+		t.Error("Classic has a Wrath proc, want none")
+	}
+}
