@@ -1,24 +1,27 @@
-# Tank mechanics, pass 26
+# Tank mechanics, pass 27
 
-- Master: 8b5137c6d (from b4b68c52e). Client: 1.60.1.71037 (unchanged since pass 25).
-- Result: quiet. Open findings unchanged (20261117-1, 20261108-1, 20261107-1; the last gets new evidence).
+- Master: 7a6d1beb9d (from 8b5137c6d). Client: 1.60.1.71037 (unchanged since pass 25; no ledger entries since pass 26).
+- Result: quiet. Open findings unchanged (20261117-1, 20261108-1, 20261107-1).
 
-## What changed on master (10 watched files)
+## What changed on master (8 watched files)
 
 | file / change | source | tank effect |
 |---|---|---|
-| paladin talents.go: Two-Handed Weapon Specialization's Holy part now on the Holy school (all Holy damage) under Forever; spells' own multiplier 1; item swap reapplies damage and threat cut | Blizzard Nov 19 hotfix, t/2403040 post 13 (tier 1 notes); retires the 2026-11-15 ruling (standards 41) | none: prot paladin presets hold a shield; `TestProtection.results` unchanged |
-| consecration.go, judgement.go, seal_of_fury.go, soc.go, sor.go | follow the above (comments, Consecration multiplier 1) | none (no 2H) |
-| warrior talents.go: Flurry not spent by Heroic Strike / Cleave under Forever | Nov 16 hotfix, t/2403040 post 11 (tier 1 notes) | none: tank warrior talents `35--251533120331221351` take no Fury, no Flurry |
-| shaman stormstrike.go, talents.go: comments cite client 70959 for Stormstrike 100% / 8 s and Maelstrom PPM | client 70959 (tier 1) | values unchanged (100%, 8 s, as before); Warden takes no Maelstrom |
-| shaman item_sets_pve.go: Dungeon Set 1 in set 1679 (comment) | reveal 2026-11-17 | no Warden preset equips it |
+| core debuffs.go: Judgement of Wisdom pays only on landed swings under Forever (bd7029410) | wowsims/forever 9f254e8d87, EV-0018 (Forever log, tier 1 logs) | small: fewer mana returns, so less mana-gain threat (0.5 a mana, unmultiplied). TestProtection TPS -0.1 to -0.5%, TestWardenShaman moves with it (219829b3a); no avoidance, mitigation or health effect |
+| warrior deep_wounds.go: critting hand's weapon, no attacker damage bonus, no bleed from Thunder Clap crits (990cade4e) | wowsims/forever EV-0139 (tier 1 logs) | none: no tank warrior preset takes Deep Wounds (`35--251533120331221351`, `05-05050005-25053...`, `05-05050005-25033...`). `SpellFlagIgnoreAttackerModifiers` skips damage multipliers only, not threat (spell_result.go:796) |
+| warrior execute.go: no base-cost refund when avoided; Execute rolls Windfury Totem twice (aa394d3be, b7edf19bb) | wowsims/forever 7025f28b98, EV-0155 (tier 1 logs) | none: tank APLs stay in Defensive Stance, cast no Execute |
+| warrior talents.go: Bloodthrill and Flurry ignore Windfury Totem's swing | wowsims/forever EV-0056/0136/0138/0140 (tier 1 logs) | none: tank presets take neither talent; Unbridled Wrath (5/5 on Level 60 Protection) unchanged |
+| shaman talents.go: Maelstrom Weapon skips Windfury Totem's swing (840029bd8) | wowsims/forever EV-0009 (tier 1 logs) | none: no Warden preset takes Maelstrom Weapon |
+| shaman flame_shock.go: hasted GCD under Forever (56e5f070d) | standards 27, wowsims/forever | none: Warden tank APLs cast no Flame Shock |
+| paladin item_sets_pve.go: Soulforge and Forever Soulforge (1673) share Crusader's Wrath (7876cfdd3) | client 71037 sets | none in presets; the tank warrior golden gains one AllItems row (Battlegear of Heroism 1778) |
+| core attack.go: `SetExtraAttackSourceForTest` | test helper | none |
 
-Read in full: `applyWeaponSpecialization` (reset effect restores the start multipliers before the swap-back, so no drift) and the Flurry consumption trigger.
+Read in full: `applyDeepWounds`/`procDeepWounds`, `registerExecuteSpell`, `applyBloodthrill`, the Flurry consumption trigger, `newJudgementOfWisdomAura`, `applyMaelstromWeapon`'s trigger.
 
 ## Tests
 
-`go test -tags=with_db ./sim/paladin/... ./sim/warrior/... ./sim/shaman/warden/...`: all pass (protection, tank_warrior, warden included). Without `-tags=with_db` they panic on missing items, which is expected.
+`go test -tags=with_db ./sim/warrior/tank_warrior/ ./sim/paladin/protection/ ./sim/shaman/warden/ ./sim/druid/feral/...`: all pass. Without `-tags=with_db` they panic on missing items, as expected.
 
 ## Findings
 
-No new finding. 20261107-1 gets more evidence: docs/tank_shaman.md:430 and :464 still call Stormstrike 100% / 8 s and Maelstrom PPM notes-only, though client 70959 carries them (the code comments were relabelled this round).
+No new finding. The JoW change is a logged Forever rule (tier 1 logs) whose only tank effect is mana-gain threat, itself still open in verdicts (unmultiplied, Classic tier 3).

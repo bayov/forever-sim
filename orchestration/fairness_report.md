@@ -4,7 +4,51 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 8b5137c6d: Flurry no longer spent by Heroic Strike or Cleave (Nov 16 hotfix, #133); Shank procs poisons, enchants and on-hit effects (6de6861c5); Stormshroud Armor 3P 18 energy at 3% (c7bab3c7d); Two-Handed Weapon Specialization raises all Holy damage (1c80dafff, standards 41); Barov Peasant Caller (abefd2f86); DPS Report re-sim of 22 builds (facfbbf3f); pass 48, 2026-11-22)
+## 1. Cross-spec table (master 7a6d1beb9: Ice Lance 0.11 of spell power (4192d6e49, user ruling 2026-11-22); Windfury Totem: Execute rolls twice, no Flurry charge or Bloodthrill off its swing (b7edf19bb); Wrack half-point ticks (3960dd1f6); no Maelstrom stack from the totem (840029bd8); Judgement of Wisdom on landed swings (bd7029410); hunter pet keeps its summon AP (051a21cd3); DPS Report re-sim of shaman and warrior (30314ad60, before the later fixes); pass 49, 2026-11-22)
+
+Economy pass: the loop's shared run (20,000 iterations, report requests at the report race, 7a6d1beb9 CLI), no full race re-sweep; Frost and Frostfire re-swept at every race (5k, seed 1). "Published" is builds.json (last re-sim 30314ad60). "Baseline" is the 8b5137c6d sweep at the report race (5k, seed 1). Rank in brackets is the 8b5137c6d table's.
+
+| # (before) | Spec | Report race | DPS now | Published (builds.json) | Gap | Baseline 8b5137c6d |
+|---|---|---|---|---|---|---|
+| 1 (1) | Lone Wolf (hunter) | Night Elf | 1291.3 | 1291.2 | +0.1 | 1291.8 (-0.0%) |
+| 2 (2) | Marksmanship | Orc | 1199.2 | 1201.3 | -2.1 | 1201.7 (-0.2%) |
+| 3 (3) | Feral | Night Elf | 1186.2 | 1185.9 | +0.3 | 1186.0 (+0.0%) |
+| 4 (5) | Fury (two-hand) | Orc | 1131.6 | 1104.2 | +27.4 | 1113.4 (+1.6%) |
+| 5 (6) | Fury (dual wield) | Orc | 1115.7 | 1099.2 | +16.5 | 1104.6 (+1.0%) |
+| 6 (4) | Beast Mastery | Orc | 1111.4 | 1115.4 | -4.0 | 1115.5 (-0.4%) |
+| 7 (9) | Affliction | Undead | 1089.2 | 1076.4 | +12.8 | 1076.8 (+1.2%) |
+| 8 (8) | Arms | Orc | 1080.3 | 1072.2 | +8.1 | 1079.0 (+0.1%) |
+| 9 (7) | Enhancement | Orc | 1070.9 | 1080.0 | -9.1 | 1080.0 (-0.8%) |
+| 10 (10) | Destruction | Orc | 1069.2 | 1068.7 | +0.5 | 1069.1 (+0.0%) |
+| 11 (12) | Demonology | Orc | 1056.1 | 1056.1 | +0.0 | 1056.6 (-0.0%) |
+| 12 (13) | Fire | Human | 1053.0 | 1052.8 | +0.2 | 1053.8 (-0.1%) |
+| 13 (14) | Retribution | Undead | 1026.5 | 1026.4 | +0.1 | 1027.0 (-0.0%) |
+| 14 (15) | Survival | Orc | 1007.5 | 1012.1 | -4.6 | 1012.9 (-0.5%) |
+| 15 (11) | Frostfire | Human | 1006.0 | 1064.3 | -58.3 | 1065.7 (-5.6%) |
+| 16 (16) | Destruction Fire | Undead | 997.8 | 997.3 | +0.5 | 997.9 (-0.0%) |
+| 17 (17) | Elemental | Windshaper | 981.9 | 981.8 | +0.1 | 981.2 (+0.1%) |
+| 18 (18) | Arcane | Gnome | 962.7 | 962.1 | +0.6 | 963.6 (-0.1%) |
+| 19 (19) | Balance | Night Elf | 956.1 | 955.6 | +0.5 | 956.3 (-0.0%) |
+| 20 (20) | Shadow | Undead | 948.7 | 948.5 | +0.2 | 948.6 (+0.0%) |
+| 21 (21) | Rogue Combat Swords | Undead | 948.4 | 948.5 | -0.1 | 948.5 (-0.0%) |
+| 22 (23) | Rogue Seal Fate Swords | Undead | 943.0 | 942.9 | +0.1 | 942.6 (+0.0%) |
+| 23 (24) | Rogue Combat Daggers | Undead | 940.7 | 940.9 | -0.2 | 941.2 (-0.1%) |
+| 24 (25) | Rogue Seal Fate Daggers | Undead | 908.0 | 907.6 | +0.4 | 907.9 (+0.0%) |
+| 25 (26) | Rogue Subtlety | Night Elf | 875.4 | 875.5 | -0.1 | 875.6 (-0.0%) |
+| 26 (27) | Rogue Mutilate | Undead | 870.3 | 870.1 | +0.2 | 870.0 (+0.0%) |
+| 27 (22) | Frost | High Order | 834.6 | 945.4 | -110.8 | 945.0 (-11.7%) |
+| 28 (28) | Smite | Undead | 781.0 | 780.9 | +0.1 | 781.0 (+0.0%) |
+
+Top over bottom: 1.65x
+
+- Pass 49 (7a6d1beb9, 2026-11-22). Moved, each in a class whose code changed: Frost -11.7% and Frostfire -5.6% (Ice Lance 0.11); Fury 2H +1.6%, Fury +1.0%, Arms +0.1% (Windfury Totem rules for warrior); Affliction +1.2% (Wrack); Enhancement -0.8 to -1.2% (Maelstrom, JoW); hunter pet builds -0.1 to -0.5% (summon AP). Every other row within 0.9 of the baseline: no shared leak.
+- Findings: fairness-20261122-1 (high): builds.json lags these five classes on 28 of 68 builds; six specs change place (Fury 2H and Fury pass BM, Affliction passes Arms and Enhancement, Frostfire 11 -> 15, Frost 22 -> 27).
+- Race: Frost High Order 834.0 still best; Frostfire Human 1007.1 now best (High Order 1005.5). Balance: fairness-20261118-1 open, unchanged.
+- Gear: audit1b 19/19 PASS.
+
+<details><summary>Previous §1 (8b5137c6d, 2026-11-22)</summary>
+
+### 1 (superseded 2026-11-22, 7a6d1beb9) Cross-spec table (master 8b5137c6d: Flurry no longer spent by Heroic Strike or Cleave (Nov 16 hotfix, #133); Shank procs poisons, enchants and on-hit effects (6de6861c5); Stormshroud Armor 3P 18 energy at 3% (c7bab3c7d); Two-Handed Weapon Specialization raises all Holy damage (1c80dafff, standards 41); Barov Peasant Caller (abefd2f86); DPS Report re-sim of 22 builds (facfbbf3f); pass 48, 2026-11-22)
 
 5000 iterations, seed 1, preset rotation and gear at every race (race-tuned rotations not applied), full re-sweep on the loop's 8b5137c6d CLI. "Before" is the a6677362f table. "Report's published" is the req meta's published.dps; builds.json (the published report) is within 1.3 of the loop's 20k run on 68 of 68 builds, so the meta gaps below are meta-only lags (results-20261104-1/-2).
 
@@ -63,6 +107,8 @@ Top over bottom: 1.65x
 - Ranking: unchanged order; top over bottom 1.65x.
 - Race: Balance still favours High Order with its race-tuned rotation in the report's race table (+3.8 to +6.1): fairness-20261118-1, open. Elsewhere the report race is best within 0.7 in the sweep (Shadow Troll +0.7, Frostfire High Order +0.4, Fire Gnome +0.4); MM wolf / tallstrider Night Elf +1.2 / +1.8 over Orc, unchanged since pass 45, a tie on base MM.
 - Gear: audit1b 19/19 PASS.
+
+</details>
 
 <details><summary>Previous §1 (a6677362f, 2026-11-18)</summary>
 

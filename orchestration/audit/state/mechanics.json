@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
+  "master": "7a6d1beb9d03196d2c9e3840af566c191ce7c717"
  },
- "last_pass_at": "2026-11-22T12:59:00Z",
- "pass": 97,
+ "last_pass_at": "2026-11-22T18:51:56Z",
+ "pass": 98,
  "result": "quiet",
- "note": "Pass 97: b4b68c52e..8b5137c6d, 18 sim files (2H spec Holy school, Flurry HS/Cleave, Shank procs, Vilerend 225, Stormshroud 3%/18, Barov Peasant Caller). All match tier 1; no new finding. Hotfix post 14 (Nov 20) read. Client 71037 still newest.",
+ "note": "Pass 98: 8b5137c6d..7a6d1beb9, 18 sim files (Execute WF double roll, WF Totem vs Flurry/Bloodthrill/Maelstrom, Deep Wounds, JoW landed-only, Linken's/Cloak of Fire, Dungeon Set 1 reveal sets). All match tier 1 or log rulings; no new finding; warrior half of 20261118-1 fixed, shaman open. No new Blizzard post. Client 71037 still newest.",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-22T13:10:53Z",
+ "checked_at": "2026-11-22T19:02:11Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -25,8 +25,9 @@
    "70959",
    "71037"
   ],
-  "newest_push": 114157,
-  "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
+  "newest_push": 114326,
+  "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)",
+  "note": "114138-114326 read through the daily update's TASKS.md entries (region 93 rows)"
  },
  "blue_tracker_seen": "2026-11-21T00:18:29Z",
  "hotfix_post_seen": {

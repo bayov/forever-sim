@@ -1,50 +1,55 @@
-# Fairness pass 48 (2026-11-22, master 8b5137c6d)
+# Fairness pass 49 (2026-11-22, master 7a6d1beb9)
 
-Result: quiet (no new finding; fairness-20261118-1 still open). Range b4b68c52e..8b5137c6d. Full re-sweep (5k, seed 1,
-every race) on the 8b5137c6d CLI against the a6677362f baseline; baseline replaced.
+Result: findings (1 new: fairness-20261122-1, high). Range 8b5137c6d..7a6d1beb9 (47 commits, 20 watched files).
+Economy pass (machine loaded): no full race re-sweep. Movement taken from the loop's shared 20k run (report race) against
+the 8b5137c6d sweep baseline; only Frost and Frostfire re-swept at every race (5k, seed 1), since Ice Lance's cut is the
+only change here that could move a race pick. Baseline left at 8b5137c6d.
 
 ## What changed in the watched paths
 
-| Change | Commit | Effect on the comparison |
+| Change | Commit | Effect at the report race (20k shared run vs 5k baseline) |
 |---|---|---|
-| Two-Handed Weapon Specialization raises all Holy damage (Nov 19 hotfix, standards 41) | 1c80dafff | Ret +4.8 (+0.5%), Shock Ret +9.3, sub-Holy +5.0 |
-| Shank procs poisons, enchants and on-hit effects; Stormshroud 3P 18 energy at 3% | 6de6861c5, c7bab3c7d | all six rogues +3.5 to +4.6 (+0.4 to +0.5%) |
-| Flurry no longer spent by Heroic Strike / Cleave under Forever (Nov 16 hotfix) | #133 (sim/warrior/talents.go) | Fury and Fury 2H +2.0 (+0.2%); Arms takes no Flurry, unchanged |
-| Barov Peasant Caller trinket; Enhancement Phase 0 build | abefd2f86, 5320d5b5b | no report request wears it (Phase 0 is a UI-only preset; report trinkets stay synthetic, 1b) |
-| sim/core/buffs.go | (Windfury Totem comment) | comment only |
-| Ret sub-Holy vs Undead rotation; standards 41 | 1b4a74f33, e411cbf1e | Undead variant re-simmed (builds.json 1151.0 vs 1151.5 now) |
-| DPS Report re-sim of 22 builds | facfbbf3f | builds.json current |
+| Ice Lance 0.11 of spell power (user ruling 2026-11-22, retires 0.429) | 4192d6e49 | Frost -110.4 (-11.7%), Frostfire -59.7 (-5.6%) |
+| Windfury Totem: Execute rolls twice, no Flurry charge / Bloodthrill off the totem swing (warrior) | b7edf19bb | Fury 2H +18.2 (+1.6%), Fury +11.1 (+1.0%), Arms +1.3 |
+| Wrack half-point ticks (sim/core/dot.go SetTickPeriod) | 3960dd1f6 | Affliction +12.4 (+1.2%); other warlocks within 0.5 |
+| No Maelstrom stack from the totem; JoW pays only on landed swings | 840029bd8, bd7029410 | Enhancement -7.7 to -12.2 (-0.8 to -1.2%) |
+| Hunter pet keeps the AP of its summon | 051a21cd3 | BM / Survival -3.5 to -5.4, MM -1.3 to -2.5, Lone Wolf -0.5 (noise) |
+| Linken's Boomerang, Cloak of Fire, Dungeon Set 1 reveal sets, Enh Phase 0 gear | 303023018, 7876cfdd3 | no report request wears them (trinkets synthetic, 1b) |
+| Flame Shock, Deep Wounds, Execute fixes | (before 30314ad60) | re-simmed in 30314ad60 |
 
-11 of 43 sweep rows moved, each in a class whose code changed. Every caster, hunter, druid, shaman and Arms row is
-identical to a6677362f, so no shared change leaked.
+Every other row (druid, paladin, priest, rogue, Arcane, Fire, Elemental, Demonology, Destruction) is within 0.9 of the
+baseline, so no shared change leaked: the sim/core edits (dot.go, attack.go, buffs.go, debuffs.go) show only where the
+class commits say.
 
 ## Checks
 
-- Published vs current: builds.json within 1.3 of the loop's 20k run on 68 of 68 (largest Destruction +1.3, MM wolf
-  -1.0); no ranking flip. The meta published.dps lags (Affliction +42.5, Lone Wolf -22.4, rogues -5.9 to -15.1,
-  Destruction +6.6, Ret Shock +7.2, Fire -4.9) do not reach builds.json; independent confirmation of
-  results-20261104-1 / -2, not refiled.
-- Race: Balance's report race table still names High Order best on all four Balance builds (+3.8 to +6.1):
-  fairness-20261118-1 open, no change. Sweep: report race best within 0.7 elsewhere (Shadow Troll +0.7, Frostfire
-  High Order +0.4, Fire Gnome +0.4); MM wolf / tallstrider Night Elf +1.2 / +1.8 over Orc (base MM a tie), unchanged
-  since pass 45.
-- Gear: `audit1b.py` on 8b5137c6d, 19 of 19 "5a PASS | 1b PASS".
-- Client 1.60.1.71037 (ledger 2026-11-20): no ChrRaces or raid-buff change, so no shared re-sweep need beyond this one.
+- Published vs current: builds.json (last re-sim 30314ad60) is within 1.5 of the shared run on 40 of 68 builds; the
+  28 off are the five classes above. Six specs change place: **fairness-20261122-1** (new, high). The results
+  auditor's 2026-11-22 update (results-20261104-2) covers only the mage and hunter rows; independent confirmation of
+  those, plus the warrior, Affliction and Enhancement rows it missed.
+- Race: Frost re-swept, High Order 834.0 best (Undead 829.2); Frostfire Human 1007.1, High Order 1005.5 (was High
+  Order +0.4, now Human +1.6, the report race). Balance unchanged: fairness-20261118-1 open.
+- Gear: `audit1b.py` on 7a6d1beb9, 19 of 19 "5a PASS | 1b PASS".
+- Shared assumptions: the Windfury Totem rules land for warrior (Flurry, Bloodthrill, Execute) and shaman (Maelstrom);
+  the shaman Flurry half stays open as mechanics-20261118-1, not refiled. The hunter pet snapshot leaves out the
+  prepull Aspect of the Hawk; the pet takes 10% of 120 RAP, about 1 DPS, below a finding.
 
-## Ranking
+## Ranking (shared 20k run, report race; builds.json in brackets)
 
-Order unchanged (top Lone Wolf 1291.8, bottom Smite 781.0, 1.65x). Full table: `ref/fairness/table_baseline.md`,
-copied into `orchestration/fairness_report.md` §1.
-
-## Baseline
-
-Replaced with the 8b5137c6d sweep (`ref/fairness/sweep_baseline.log`, `table_baseline.md`).
+Top Lone Wolf 1291.3, bottom Smite 781.0, 1.65x. Moves: Fury 2H 5 -> 4, Fury 6 -> 5, Affliction 9 -> 7, Enhancement
+7 -> 9, Frostfire 11 -> 15, Frost 22 -> 27. Full table in `orchestration/fairness_report.md` §1.
 
 ## Notes for the next pass
 
-- `table.py` needs `AUDIT_TREE` exported in the same shell (it raises KeyError otherwise).
+- Do a full re-sweep (`sweep.py`, ~20 min) once the five classes are re-simmed and replace the baseline then.
+- Helpers used this pass (scratch, worth keeping in mind): shared-run vs baseline at the report race reads
+  `tools/dps_report/req/<id>.json` race and `sweep_baseline.log`; sweep.py works with
+  `AUDIT_WORK=<dir>` holding a `wowsimcli` symlink to the shared CLI.
 
-## Open items (unchanged)
+## Open items
 
-Hunter end-of-fight test, Ice Lance Low range, FTT + WF imbue stacking, boss partial resist log, Warrior Rage k and
-demon/pet scaling ranges (see passes/fairness.md).
+- Ice Lance: the Low-range item is retired by the 2026-11-22 ruling (0.11). Frost now sits 27th; whether its
+  talents and rotation still suit a 0.11 Ice Lance is the rotations auditor's call (results notes the no-Ice-Lance
+  APL is stale at 681.8).
+- Unchanged: hunter end-of-fight test, FTT + WF imbue stacking, boss partial resist log, Warrior Rage k and demon/pet
+  scaling ranges (see passes/fairness.md).

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
+  "master": "7a6d1beb9d03196d2c9e3840af566c191ce7c717"
  },
- "last_pass_at": "2026-11-22T12:56:27Z",
- "pass": 26,
+ "last_pass_at": "2026-11-22T18:52:29Z",
+ "pass": 27,
  "result": "quiet",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-22T13:10:53Z",
+ "checked_at": "2026-11-22T19:02:11Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 26 (8b5137c6d): 10 watched files changed (paladin 2H spec now Holy school-wide per Nov 19 hotfix, Flurry no longer spent by HS/Cleave under Forever, shaman comment-only relabels); none reaches a tank preset (prot paladins hold a shield, tank warrior takes no Flurry); tank tests pass, goldens unchanged. Open findings unchanged; 20261107-1 gets docs/tank_shaman.md stale Stormstrike/Maelstrom labels."
+ "note": "Pass 27 (7a6d1beb9d): 8 watched files changed (JoW landed swings only, Deep Wounds/Execute/Bloodthrill/Flurry/Maelstrom Windfury Totem rules, Flame Shock hasted GCD, Soulforge set share); only JoW reaches tanks (mana-gain threat, TestProtection TPS -0.1 to -0.5%). Tank tests pass. Open findings unchanged."
 }

@@ -1,19 +1,19 @@
-# Healer rotations pass 22 (quiet)
+# Healer rotations pass 23 (quiet)
 
-- Master: 8b5137c6d (`last.master` was b4b68c52e). Audited 2026-11-22.
-- Bench: `tools/healbench` built in the audit checkout (protos generated with
-  `protoc -I=./proto --go_out=./sim/core ./proto/*.proto`; setup.sh still doesn't do it), default seed, `-carry`,
-  1,000 iterations, via `tools/audit/healer_rotations/baseline.sh`.
+- Master: 7a6d1beb9 (`last.master` was 8b5137c6d). Audited 2026-11-22. Client build 1.60.1.71037 (gate).
+- Bench: `tools/healbench` built in the audit checkout, default seed, `-carry`, 1,000 iterations, via
+  `tools/audit/healer_rotations/baseline.sh`. setup.sh's `protoc-gen-go` install had not landed in this session;
+  `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest` then `make sim/core/proto/api.pb.go` fixed it.
 
-## What changed since b4b68c52e
+## What changed since 8b5137c6d (the 4 watched files)
 
-- `sim/paladin/talents.go` (1c80dafff, Nov 19 hotfix): Two-Handed Weapon Specialization now multiplies all Holy
-  school damage (`SchoolDamageDealtMultiplier[Holy]`). Damage only, and a Retribution talent; heals don't take it.
-- `sim/paladin/{consecration,judgement,seal_of_fury,soc,sor}.go`: the matching removal of the per-spell Holy
-  multiplier. Damage spells, none in a Holy paladin healer APL's healing.
-- `sim/shaman/talents.go`: Maelstrom Weapon PPM from client 1.60.1.70959 (Enhancement). `sim/shaman/stormstrike.go`
-  (Enhancement). `sim/shaman/item_sets_pve.go`: comment only (Dungeon Set 1 in set 1679).
-- No healer APL, request, encounter file, `sim/druid`/`sim/priest` or healbench main.go change.
+- `sim/core/dot.go`: `SetTickPeriod` now retimes a dot on the grid of its own expiry (Wrack, warlock). Only
+  Wrack calls it; no heal-over-time changes its period, so healer HoTs are untouched.
+- `sim/paladin/item_sets_pve.go`: Soulforge Armor 4-piece reuses an existing Crusader's Wrath aura (Forever set
+  1673 stacking with Lightforge). No healer preset wears either set.
+- `sim/shaman/flame_shock.go`: Flame Shock's GCD takes haste under Forever. Not in any Restoration shaman APL.
+- `sim/shaman/talents.go`: comment only (Maelstrom Weapon and Windfury Totem, Enhancement).
+- No healer APL, request, encounter file, `sim/druid`/`sim/priest` heal or healbench main.go change.
 
 ## Baseline (1,000 it) vs ref
 
