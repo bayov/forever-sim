@@ -146,5 +146,12 @@ func TestOrcShamanGCD(t *testing.T) {
 		checkGCD(sim, "Stormstrike at 100% haste", 1500*time.Millisecond)
 		enh.MultiplyCastSpeed(0.5)
 	})
+	// Flame Shock too, though Season of Discovery's ignored haste (flame_shock.go).
+	at(sim, 86, func(sim *core.Simulation) {
+		enh.MultiplyCastSpeed(1.15)
+		cast(sim, topRank(t, "Flame Shock", enh.FlameShock))
+		checkGCD(sim, "Flame Shock at 15% haste", 1304*time.Millisecond)
+		enh.MultiplyCastSpeed(1 / 1.15)
+	})
 	runSim(sim)
 }

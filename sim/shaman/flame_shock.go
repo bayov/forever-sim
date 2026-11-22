@@ -64,7 +64,11 @@ func (shaman *Shaman) newFlameShockSpell(rank int, shockTimer *core.Timer) core.
 	spell.RequiredLevel = level
 	spell.Rank = rank
 
-	spell.Cast.IgnoreHaste = true
+	// A Season of Discovery carryover (8973b0973). Under Forever, Flame Shock is a magic spell
+	// whose GCD haste shortens like every other (core/cast.go hastedGCD), as wowsims/forever has it.
+	if !shaman.Env.IsForever() {
+		spell.Cast.IgnoreHaste = true
+	}
 
 	spell.BonusCoefficient = baseSpellCoeff
 
