@@ -2058,6 +2058,13 @@ func BattleSquawkAura(character *Unit, stackcount int32) *Aura {
 // match procMask roll for a proc. The aura reports its metrics under actionID (none when
 // empty), and each proc's short attack power buff is buffLabel, under buffActionID.
 func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffActionID ActionID, auraLabel string, buffLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, rollsOn func(spell *Spell) bool) *Aura {
+	aura, _ := createExtraAttackAura(character, actionID, buffActionID, auraLabel, buffLabel, rank, getBonusAP, blocked, rollsOn)
+	return aura
+}
+
+// createExtraAttackAura is CreateExtraAttackAuraCommon, and also returns the proc's roll for a
+// spell's hit that counts, which the aura calls on each landed hit it hears.
+func createExtraAttackAura(character *Character, actionID ActionID, buffActionID ActionID, auraLabel string, buffLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, rollsOn func(spell *Spell) bool) (*Aura, func(sim *Simulation, spell *Spell)) {
 	var bonusAP float64
 
 	apBuffAura := character.GetOrRegisterAura(Aura{
@@ -2091,6 +2098,29 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
 
 	apBuffAura.Icd = &icd
 
+	// roll is the proc's chance for a hit that counts: landed, and one the proc hears.
+	roll := func(sim *Simulation, spell *Spell) {
+		if !rollsOn(spell) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
+			return
+		}
+		if blocked != nil && blocked() {
+			return
+		}
+
+		if icd.IsReady(sim) && sim.RandomFloat(auraLabel) < 0.2 {
+			icd.Use(sim)
+			apBuffAura.Activate(sim)
+			// aura is up _before_ the triggering swing lands, so if triggered by an auto attack, the aura fades right after the extra attack lands.
+			if spell.ProcMask == ProcMaskMeleeMHAuto || spell.ProcMask == ProcMaskMeleeOHAuto {
+				apBuffAura.SetStacks(sim, 1)
+			} else {
+				apBuffAura.SetStacks(sim, 2)
+			}
+
+			character.AutoAttacks.ExtraMHAttackProc(sim, 1, buffActionID, spell)
+		}
+	}
+
 	return character.GetOrRegisterAura(Aura{
 		Label:    auraLabel,
 		ActionID: actionID,
@@ -2103,27 +2133,11 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
 				apBuffAura.RemoveStack(sim)
 			}
 
-			if !result.Landed() || !rollsOn(spell) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
-				return
-			}
-			if blocked != nil && blocked() {
-				return
-			}
-
-			if icd.IsReady(sim) && sim.RandomFloat(auraLabel) < 0.2 {
-				icd.Use(sim)
-				apBuffAura.Activate(sim)
-				// aura is up _before_ the triggering swing lands, so if triggered by an auto attack, the aura fades right after the extra attack lands.
-				if spell.ProcMask == ProcMaskMeleeMHAuto || spell.ProcMask == ProcMaskMeleeOHAuto {
-					apBuffAura.SetStacks(sim, 1)
-				} else {
-					apBuffAura.SetStacks(sim, 2)
-				}
-
-				aura.Unit.AutoAttacks.ExtraMHAttackProc(sim, 1, buffActionID, spell)
+			if result.Landed() {
+				roll(sim, spell)
 			}
 		},
-	})
+	}), roll
 }
 
 func GetWildStrikesAP(aura *Aura, rank int32) float64 {
@@ -2195,8 +2209,9 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string, actio
 			return !character.AutoAttacks.IsExtraAttack() && windfuryTotemRollsOnForever(spell)
 		}
 	}
-	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rollsOn)
+	aura, roll := createExtraAttackAura(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rollsOn)
 	if character.Env.IsForever() {
+		character.addWindfuryTotemCastRoll(aura, roll)
 		// The attack power lasts 1 sec under Forever.
 		//
 		// The Forever client (70291) gives the buff spells 8516, 10608 and 10610 a 1 sec
@@ -2220,6 +2235,35 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string, actio
 		buff.Icd.Duration = time.Millisecond * 100
 	}
 	return aura
+}
+
+// addWindfuryTotemCastRoll keeps a Windfury Totem buff's roll for RollWindfuryTotemOnCast, once
+// for each buff aura (a shaman's totem asks for its receivers' buffs again on each cast).
+func (character *Character) addWindfuryTotemCastRoll(aura *Aura, roll func(sim *Simulation, spell *Spell)) {
+	for _, r := range character.windfuryTotemCastRolls {
+		if r.aura == aura {
+			return
+		}
+	}
+	character.windfuryTotemCastRolls = append(character.windfuryTotemCastRolls, windfuryTotemCastRoll{aura, roll})
+}
+
+type windfuryTotemCastRoll struct {
+	aura *Aura
+	roll func(sim *Simulation, spell *Spell)
+}
+
+// RollWindfuryTotemOnCast rolls each Windfury Totem buff the character has up once for spell's
+// cast, apart from the roll its landed damage makes. It is for a cast that strikes on its own
+// before its damage (Forever's Execute, sim/warrior/execute.go), so a landed cast rolls the totem
+// twice. Both rolls come within the proc's 100 ms cooldown, so the second one counts only when
+// the first misses: 36% of casts proc it, 1.8 times one roll's 20%.
+func (character *Character) RollWindfuryTotemOnCast(sim *Simulation, spell *Spell) {
+	for _, r := range character.windfuryTotemCastRolls {
+		if r.aura.IsActive() {
+			r.roll(sim, spell)
+		}
+	}
 }
 
 // windfuryTotemRollsOnForever says whether a landed hit rolls Windfury Totem under Forever: any

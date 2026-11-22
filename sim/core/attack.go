@@ -957,6 +957,14 @@ func (aa *AutoAttacks) ExtraAttackSource() ActionID {
 	return aa.mh.extraSource
 }
 
+// SetExtraAttackSourceForTest makes the main hand hits dealt until restore is called land as
+// extra attacks from source, as ExtraAttackSource reads it. Tests only.
+func (aa *AutoAttacks) SetExtraAttackSourceForTest(source ActionID) (restore func()) {
+	outer := aa.mh.extraSource
+	aa.mh.extraSource = source
+	return func() { aa.mh.extraSource = outer }
+}
+
 // IsExtraAttack says whether the main hand attack being cast or landing now is an extra attack,
 // from any proc (Windfury, Hand of Justice, Sword Specialization, Thrash, Reckoning, ...).
 func (aa *AutoAttacks) IsExtraAttack() bool {

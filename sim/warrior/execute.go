@@ -11,6 +11,22 @@ func (warrior *Warrior) registerExecuteSpell() {
 	spellID := int32(20662)
 
 	forever := warrior.Env.IsForever()
+
+	// Under Forever the cast strikes on its own before the damage, and that strike rolls Windfury
+	// Totem too, so a landed Execute rolls it twice. wowsims/forever's EV-0155 (their 56473177e7)
+	// counts Windfury Totem hits off Execute against the same warriors' other abilities, where two
+	// rolls read about 1.81: after hotfix push 114313 (build 1.60.1.71037, 2026-11-20 23:47 UTC to
+	// 11-21 08:05 UTC) 1.68 [1.38, 1.98] on 39 warriors with Execute ranks 1-4 and 2.09 [1.89, 2.31]
+	// on 50 with rank 5; EV-0002 (2026-11-14) read 31.6% of 846 landed Executes, where one roll
+	// gives 20%. It flips with Blizzard's pushes: their reports of 2026-11-20 before the push read
+	// one roll (1.01 and 1.05 on 112 warriors), after Blizzard's Nov 16 post had called the second
+	// roll a bug ("Mutilate and Execute would have an extra attempt to activate Windfury Totem",
+	// fixed). Push 114313 sets Suppress Weapon Procs on the cast rows, so the strike rolls the
+	// totem and no weapon proc; client 71037 also makes those rows Always Hit, so the strike rolls
+	// it whatever the damage does (their avoided Executes drew a Windfury hit 28 of 171 times after
+	// the push, against none of 188 before it). DPS Report assumption warr_exec_wf2 (0: one roll).
+	castRollsTotem := forever && core.Assume("warr_exec_wf2", 1) != 0 // DPS Report assumption knob
+
 	var rageMetrics *core.ResourceMetrics
 	warrior.Execute = warrior.RegisterSpell(BattleStance|BerserkerStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorExecute,
@@ -40,6 +56,10 @@ func (warrior *Warrior) registerExecuteSpell() {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if castRollsTotem {
+				warrior.RollWindfuryTotemOnCast(sim, spell)
+			}
+
 			extraRage := spell.Unit.CurrentRage()
 			baseDamage := flatDamage + convertedRageDamage*(extraRage)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
