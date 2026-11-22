@@ -165,7 +165,6 @@ Arcane's sheet at the talent layer shows spell crit 3.1 in ours to 6.1; crit per
 | Raid damage taken | Pushes casts back (about 1.5 fewer Shadow Bolts or Incinerates) | None | Choice. 2026-11-22: Affliction Shadow Bolt 16.5, Destruction Fire 16.3, Destruction 13.4, Demonology 13.4, Affliction 4.1 |
 | Bane of Agony's ramp under Wrack | Steps by tick number; ticks past the 12th stay at 150% (`sim/warlock/curses.go:~85`, the Nov 10 notes' "advances 2 seconds") | Steps by elapsed thirds of the duration (`sim/warlock/agony.go` `baneOfAgonyRamp`, TODO "tick number or time") | Open: an Agony-under-Wrack log. Theirs 14.1 lower than with ours (2026-11-22) |
 | Soul Siphon on Wrack | Counts the target's afflictions once, when the channel lands (`sim/warlock/wrack.go:69`) | Recounts them each tick (`talents_affliction.go:237-261`, TODO in 23b739be95) | Open (notes.md:249 lists it; a Drain Life log settles it). Affliction 7.7 for ours (2026-11-22, new) |
-| Last tick of a Wrack-retimed dot | Dropped (`sim/warlock/talents.go:~311`, f20d5938) | Ticks on the half points of the dot's own grid, no truncated tick (6de4dee7b9, dc66ebf6f3, 999c93cb77; the start measured in EV-0085, the end a TODO). Their truncated partial tick at expiry of 2026-11-17 is gone | Open, no log of ours. Theirs about 7.7 higher (2026-11-22, from tick counts, not flipped) |
 | Haste and the GCD on Destruction | Spellstone's 2% cast speed (`sim/warlock/talents.go:152`) shortens the GCD; turning ours' hastedGCD off costs ours 5.6 | The same formula and 1 s floor, but turning it off costs theirs 0.3 | Open, driver not found: does theirs' Spellstone haste reach the GCD? Dropping theirs' activeImmolate check raised Conflagrate casts (ours 14.6, theirs 13.2) but not DPS. About 5.3 for ours (2026-11-22, new); off in both, Destruction -1.2 |
 | Conflagrate right after Immolate | Next GCD | With haste, theirs picks before Immolate lands, Conflagrate's check fails, Shadow Bolt goes first | Choice. Destruction Fire 1.9 (2026-11-22); on Destruction the haste row above holds it. A rotation translation can't reach it |
 | Bane of Doom's tick and 2 min cooldowns | Second Doom ticks about 121 s, after Blood Fury and trinket | Recast about 60.2 s, ticks before them | Engine timing. Destruction 3.4, others under 1% of Doom |
@@ -329,3 +328,11 @@ A gap on one of these is a regression.
   out the shorter channel. Every other DoT and channel ticks at its base length in both. Ours since
   2026-11-18, to verify against a log (user ruling; their `dot.go` CalcTickPeriod, `hurricane.go:41`,
   `volley.go:38-39`, b83fe9df5f).
+- Wrack's tick timing: while Wrack is channelled, Corruption, Siphon Life and Bane of Agony tick the
+  half points of their own grid (set by when they landed) as well as their normal ticks, from the
+  channel's start to its end, both included; the channel moves no tick, and the dot ends on a full
+  tick at its expiry with nothing dropped or cut short. Ours since 2026-11-22 (`sim/core/dot.go`
+  SetTickPeriod, `sim/warlock/talents.go` applyWrack; their 6de4dee7b9, dc66ebf6f3, 999c93cb77 from
+  EV-0085's logs). Before, ours scaled the time to the next tick and dropped the last tick: Affliction
+  +1.8 to +24 (mean +10.4) on its golden file. Still unmeasured in both: a channel ending on a half
+  point, and a dot applied mid-channel.

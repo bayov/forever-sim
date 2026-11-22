@@ -147,20 +147,31 @@ func (dot *Dot) RescheduleNextTick(sim *Simulation) {
 	sim.AddPendingAction(dot.tickAction)
 }
 
-// SetTickPeriod changes how often a running dot ticks without changing when it ends. The share of
-// the current tick that has passed is kept: half way to the next tick stays half way, at the new
-// speed. Ticks still due when the aura runs out are lost. Wrack's speed-up uses it (sim/warlock).
+// SetTickPeriod changes how often a running dot ticks without changing when it ends, on the grid of
+// its own expiry: from now on it ticks at the expiry less whole periods, so its last tick lands on the
+// expiry in full. An application puts the expiry on the dot's normal ticks, so a period that divides
+// the normal one keeps them and adds the points between, and the normal period again puts the dot
+// back on them; starting or ending the change moves no tick. A tick due now that has not dealt deals
+// here, once, as does a point only the new period has that falls now. A point already passed does
+// not tick. Wrack's speed-up uses it (sim/warlock applyWrack, wowsims/forever's retimeOnGrid in
+// 6de4dee7b9 and dc66ebf6f3, EV-0085). It must not be called from inside the dot's own tick.
 func (dot *Dot) SetTickPeriod(sim *Simulation, period time.Duration) {
 	if period == dot.tickPeriod {
 		return
 	}
-	if !dot.IsActive() || dot.tickAction == nil {
+	untilExpiry := dot.ExpiresAt() - sim.CurrentTime
+	if !dot.IsActive() || dot.tickAction == nil || untilExpiry <= 0 {
 		dot.tickPeriod = period
 		return
 	}
 
-	remaining := max(0, dot.tickAction.NextActionAt-sim.CurrentTime)
-	scaled := time.Duration(float64(remaining) * float64(period) / float64(dot.tickPeriod))
+	oldPeriod := dot.tickPeriod
+	untilNext := untilExpiry % period
+	tickNow := dot.lastTickTime != sim.CurrentTime &&
+		(dot.tickAction.NextActionAt == sim.CurrentTime || (untilNext == 0 && untilExpiry%oldPeriod != 0))
+	if untilNext == 0 {
+		untilNext = period
+	}
 	dot.tickPeriod = period
 
 	oldTickAction := dot.tickAction
@@ -170,8 +181,14 @@ func (dot *Dot) SetTickPeriod(sim *Simulation, period time.Duration) {
 	periodicOptions := dot.basePeriodicOptions()
 	periodicOptions.Period = period
 	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
-	dot.tickAction.NextActionAt = sim.CurrentTime + scaled
+	dot.tickAction.NextActionAt = sim.CurrentTime + untilNext
 	sim.AddPendingAction(dot.tickAction)
+
+	if tickNow {
+		// The next tick is already queued after now, so an expiry this tick brings about finds none due.
+		dot.TickCount++
+		dot.TickOnce(sim)
+	}
 }
 
 func (dot *Dot) Apply(sim *Simulation) {
@@ -328,8 +345,8 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 		CleanUp: func(sim *Simulation) {
 			// In certain cases, the last tick and the dot aura expiration can happen in
 			// different orders, so we might need to apply the last tick. Not a tick due after
-			// the aura ran out (Wrack's SetTickPeriod, or a refresh, moved it off the end): auras expire lazily, at
-			// the next pending action, which can be that very tick.
+			// the aura ran out (a refresh moved it off the end): auras expire lazily, at the next
+			// pending action, which can be that very tick.
 			if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime &&
 				(dot.Aura.IsActive() || dot.tickAction.NextActionAt <= dot.Aura.endedAt) {
 				if dot.lastTickTime != sim.CurrentTime {
