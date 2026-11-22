@@ -46,6 +46,8 @@ spell. The sim takes the notes' values (standards 37), gated under Forever, and 
   goes to Booming Voice (`30313113032-350500150122100231`). Arms keeps its talents, Reckless Swings included. At 120 /
   180 / 300 sec (Orc, 20,000 iterations, seed 1): Fury 1179.5 / 1136.0 / 1111.6, two-hand Fury 1192.5 / 1151.0 /
   1117.1, Arms 1101.0 / 1088.0 / 1062.3, Arms vs Dragonkin 1160.8 / 1147.0 / 1120.6. Orc stays best on all three.
+- Blizzard's November 16 hotfix: Heroic Strike and Cleave no longer spend a Flurry charge. Fury +0.2% at 180s,
+  two-hand Fury +0.1%.
 - 2026-11-15 (Windfury Totem rolls on every main-hand hit, Bloodthirst, Mortal Strike and Whirlwind's main-hand strike
   included): the rotation search moved nothing on Fury, two-hand Fury or Arms. Arms and its Sunder and Battle Shout duty
   presets now hold Mortal Strike, Overpower, Rend, Execute and Hamstring out of the 0.1 sec after a main-hand swing, so a

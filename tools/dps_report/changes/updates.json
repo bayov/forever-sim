@@ -5795,6 +5795,93 @@
      "commits": [
       "7199c8f"
      ]
+    },
+    {
+     "title": "Two-Handed Weapon Specialization raises all Holy damage you deal with a two-hander",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "It now also covers Judgement of Righteousness, Exorcism, Hammer of Wrath and Holy Wrath, which the earlier line left out. Retribution gains about 0.5%, Ret Shock 0.9% and vs Undead 1.2%. The two assumptions about which Holy hits it raises are gone.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 19",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/13"
+     },
+     "commits": [
+      "1c80daf"
+     ]
+    },
+    {
+     "title": "Retribution vs Undead: Holy Strike goes ahead of the seal and twist steps",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "With more Holy damage behind it, Holy Strike on cooldown is worth a little more than the next seal step: +0.2 to +0.6 at every fight length.",
+     "commits": [
+      "1b4a74f"
+     ]
+    },
+    {
+     "title": "Shank triggers poisons, weapon enchants and chance on hit effects",
+     "kind": "game",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety"
+     ],
+     "note": "Every rogue build gains 0.4 to 0.6%.",
+     "source": {
+      "label": "wago.tools, SpellMisc (hotfix of November 19)",
+      "url": "https://wago.tools/db2/SpellMisc?filter[SpellID]=exact:1329549"
+     },
+     "commits": [
+      "6de6861"
+     ]
+    },
+    {
+     "title": "Heroic Strike and Cleave no longer use up a Flurry charge",
+     "kind": "game",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Fury gains about 0.2%, two-hand Fury about 0.1%. Arms takes no Flurry.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 16",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/11"
+     },
+     "commits": [
+      "30a6450"
+     ]
     }
    ],
    "internal": [
@@ -6333,6 +6420,10 @@
     {
      "commit": "74e01bf",
      "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "abefd2f",
+     "why": "Barov Peasant Caller's use; no report preset wears it"
     }
    ],
    "source": {
