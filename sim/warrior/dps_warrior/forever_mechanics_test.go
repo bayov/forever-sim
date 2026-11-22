@@ -786,3 +786,32 @@ func TestForeverRecklessSwingsCleaveOnce(t *testing.T) {
 		}
 	}
 }
+
+// TestForeverFlurryNotSpentByHeroicStrikeOrCleave checks Blizzard's November 16 hotfix ("Fixed an
+// issue where Flurry stacks were consumed by Cleave or Heroic Strike", t/2403040 post 11): under
+// Forever a Heroic Strike or Cleave leaves Flurry's charges alone, and a white swing still spends one.
+func TestForeverFlurryNotSpentByHeroicStrikeOrCleave(t *testing.T) {
+	sim, war := newForeverWarriorArmed(t, P1Talents, 991014, 991015)
+	flurry := war.GetAura("Flurry Proc (12972)")
+	if flurry == nil {
+		t.Fatal("the talents should give 3 points of Flurry")
+	}
+	hit := func(spell *core.Spell) {
+		result := spell.NewResult(war.CurrentTarget)
+		result.Outcome = core.OutcomeHit
+		result.Damage = 500
+		result.PreOutcomeDamage = 500
+		spell.DealDamage(sim, result)
+	}
+	flurry.Activate(sim)
+	flurry.SetStacks(sim, 3)
+	hit(war.HeroicStrike.Spell)
+	hit(war.Cleave.Spell)
+	if got := flurry.GetStacks(); got != 3 {
+		t.Errorf("Heroic Strike and Cleave left Flurry at %d charges, want 3", got)
+	}
+	hit(war.AutoAttacks.MHAuto())
+	if got := flurry.GetStacks(); got != 2 {
+		t.Errorf("a white swing left Flurry at %d charges, want 2", got)
+	}
+}

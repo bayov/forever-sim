@@ -548,9 +548,14 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	// Under Forever it procs 6 / 7 / 8 / 9 / 10 times a minute by rank, and each stack takes 20% off
 	// Lightning Bolt's cast time and mana at every rank (Blizzard's class tuning of 2026-11-10).
 	// The tooltip's example: 60% a swing with a 3.6 speed main hand at 5/5, 33% at 2.0, which is
-	// the usual PPM by main hand speed. No server row carries it yet (SpellAuraOptions 223898
-	// still ProcChance 100 with no PPM row at push 113380), so these are notes-only values
-	// (standards 37).
+	// the usual PPM by main hand speed. Client 1.60.1.70959 carries it: 408498's second effect
+	// (SpellEffect 1137418, 50 -> 2) is the PPM, set by rank through TraitDefinitionEffectPoints
+	// 25235 (talent definition 134202) from curve 128299, 6 / 7 / 8 / 9 / 10 at ranks 1-5, and the
+	// tooltip's chance is ($mws * $s2 / 60) * 100%. Before it no server row did (SpellAuraOptions
+	// 223898 still ProcChance 100 with no PPM row at push 113380), and these were notes-only.
+	// A stack's 20% is 408498's first effect (1072664, 20). The stacks all go on the one Lightning
+	// Bolt they speed up, as Blizzard's November 16 hotfix has it ("Maelstrom Weapon could benefit
+	// two casts", fixed; t/2403040 post 11).
 	//
 	// Before that every landed melee hit gave a stack (our logs of 2026-11-08 and 09: 2756 of
 	// 2760 white swings, bcc5d6cd4), and each stack took 4% a rank. Misses, dodges and parries
