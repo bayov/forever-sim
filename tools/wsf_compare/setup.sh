@@ -54,7 +54,7 @@ done
 # --- ours ---
 (
   cd "$ROOT"
-  [ -e sim/core/proto/common.pb.go ] || protoc -I=./proto --go_out=./sim/core ./proto/*.proto  # a fresh clone has none
+  protoc -I=./proto --go_out=./sim/core ./proto/*.proto  # always: a stale one fails the build
   go build -tags=with_db -o "$BIN/ours_cli" ./cmd/wowsimcli
   go build -tags=with_db -o "$BIN/ours_stats" ./tools/wsf_compare/ours_stats
 )
@@ -74,7 +74,7 @@ trap 'git -C "$ROOT" worktree remove --force "$AQ" 2>/dev/null || true' EXIT
   sed -i 's/if !hunter.Env.IncludeAQRanks() {/if false {/' sim/hunter/serpent_sting.go
   # The stats tool from this checkout, which may be newer than HEAD.
   mkdir -p tools/wsf_compare && rm -rf tools/wsf_compare/ours_stats && cp -r "$HERE/ours_stats" tools/wsf_compare/
-  [ -e sim/core/proto/common.pb.go ] || protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+  protoc -I=./proto --go_out=./sim/core ./proto/*.proto
   go build -tags=with_db -o "$BIN/ours_aq_cli" ./cmd/wowsimcli
   go build -tags=with_db -o "$BIN/ours_aq_stats" ./tools/wsf_compare/ours_stats
 )
