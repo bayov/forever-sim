@@ -255,7 +255,7 @@ func TestForeverWarriorRefundsPaidRage(t *testing.T) {
 }
 
 // TestForeverWarriorAvoidedExecuteKeepsRage checks that under Forever an avoided Execute keeps the
-// rage above its base cost and refunds 80% of the base cost, while a landed one spends it all
+// rage above its base cost and refunds none of the base cost, while a landed one spends it all
 // (36 avoided Executes in 1.60.1.70862 logs, wowsims/forever 7025f28b98).
 func TestForeverWarriorAvoidedExecuteKeepsRage(t *testing.T) {
 	sim, war := newForeverWarrior(t, "000000000000002-50000000002")
@@ -277,8 +277,8 @@ func TestForeverWarriorAvoidedExecuteKeepsRage(t *testing.T) {
 			continue
 		}
 		avoided++
-		if got := war.CurrentRage(); math.Abs(got-48) > 1e-9 {
-			t.Fatalf("an avoided Execute on 40 extra Rage left %.3f Rage, want 48 (40 kept + 8 refunded)", got)
+		if got := war.CurrentRage(); math.Abs(got-40) > 1e-9 {
+			t.Fatalf("an avoided Execute on 40 extra Rage left %.3f Rage, want the 40 kept and no refund", got)
 		}
 	}
 	if avoided == 0 || landed == 0 {

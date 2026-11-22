@@ -45,8 +45,9 @@ func (warrior *Warrior) registerExecuteSpell() {
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			// Under Forever the extra rage goes only when the Execute lands: a miss, dodge or parry
-			// keeps it and refunds 80% of the base cost (36 avoided Executes in 1.60.1.70862 logs,
-			// wowsims/forever 7025f28b98).
+			// keeps it and refunds none of the base cost (36 avoided Executes in 1.60.1.70862 logs,
+			// wowsims/forever 7025f28b98: 46.9 Rage to 37.9 after a parry and one Bloodrage tick, at
+			// a base cost of 10).
 			if result.Landed() || !forever {
 				warrior.SpendRage(sim, extraRage, rageMetrics)
 				// We must count this rage event if the spell itself cost 0,
@@ -55,7 +56,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 					rageMetrics.Events--
 				}
 			}
-			if !result.Landed() {
+			if !result.Landed() && !forever {
 				spell.IssueRefund(sim)
 			}
 			spell.DealDamage(sim, result)
