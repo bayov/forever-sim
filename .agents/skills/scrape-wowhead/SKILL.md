@@ -63,7 +63,7 @@ dependencies, so `uv run` them.
 
    ```bash
    uv run tools/database/forever_wowhead/class_spells.py   # nine pages, a few minutes
-   uv run tools/database/forever_wowhead/scrape.py    # a few hundred pages, about an hour
+   uv run tools/database/forever_wowhead/scrape.py    # about 110 pages, under half an hour
    uv run tools/database/forever_wowhead/recipes.py   # a few hundred pages, --full ~3,000
    ```
 
@@ -75,7 +75,8 @@ dependencies, so `uv run` them.
    the totals with the last run. Far fewer items, or a profession listing with 0 recipes,
    means Wowhead changed its pages, not that Forever removed things. Fix the parser in
    `wowhead.py` and run again (the page cache makes that quick). A listing at 1,000 rows
-   is cut short, and `scrape.py` splits those by level by itself.
+   is cut short, and `scrape.py` splits those by level by itself, starting from last run's
+   splits (`~/.cache/wow-data/wowhead/ranges.json`).
 
 3. **Regenerate the item database** after `scrape.py`. Never hand-merge
    `assets/database/db.*`.

@@ -21,14 +21,47 @@
 # The argument is the highest required level to scrape, by default the one the current
 # file was scraped with. Items with no required level (Forever quest rewards) come along
 # whatever their item level.
+#
+# wowhead cuts a listing at 1,000 rows, so a slot's listing that comes back that big is
+# split by required level and fetched again, half by half. Working those splits out
+# again each run threw away about half the pages we fetched (225 pages for 110 kept on
+# 2026-11-20). So we remember each listing's final level ranges in RANGES and start the
+# next run from them. A range that has grown to 1,000 rows still splits.
 import concurrent.futures, json, os, sys, time, urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from wowhead import Wowhead, gatherer, listview_items, listview_template
+from wowhead import CACHE, Wowhead, gatherer, listview_items, listview_template
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
 from meta import line, meta
 
 OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever_wowhead_items.json')
+# The level ranges each listing ended up split into last run, like {"slot:13": [[0, 30],
+# [31, 45], [46, 60]], "quests": ...}. It only saves pages, so it lives in the cache.
+RANGES = os.path.join(CACHE, 'ranges.json')
+
+
+def last_ranges():
+    try:
+        with open(RANGES) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def start_ranges(saved, key, hi):
+    """Last run's ranges for this listing when they still cover 0 to hi exactly, or
+    else the whole range in one."""
+    r = sorted(tuple(x) for x in saved.get(key) or [])
+    if r and r[0][0] == 0 and r[-1][1] == hi and all(a[1] + 1 == b[0] for a, b in zip(r, r[1:])):
+        return r
+    return [(0, hi)]
+
+
+def save_ranges(ranges):
+    os.makedirs(CACHE, exist_ok=True)
+    with open(RANGES, 'w') as f:
+        f.write('{\n' + ',\n'.join(f'{json.dumps(k)}: {json.dumps(sorted(v))}' for k, v in sorted(ranges.items())) + '\n}\n')
+
 
 def scraped_level():
     try:
@@ -68,14 +101,14 @@ def mark_bind_on_pickup(items):
                 item['bop'] = True
     print(f"{sum(1 for i in crafted if i.get('bop'))} of {len(crafted)} crafted items bind on pickup", file=sys.stderr)
 
-def scrape_quests(wh):
+def scrape_quests(wh, saved, used):
     """Every quest wowhead knows, by id.
 
     A quest row says which classes and which side can take the quest, and that is the
     only place the restriction is written down when the reward carries none of its own.
     """
     quests = {}
-    ranges = [(0, 60)]
+    ranges = start_ranges(saved, 'quests', 60)
     while ranges:
         lo, hi = ranges.pop()
         url = f'https://www.wowhead.com/forever/quests/min-req-level:{lo}/max-req-level:{hi}'
@@ -90,6 +123,7 @@ def scrape_quests(wh):
             mid = (lo + hi) // 2
             ranges += [(lo, mid), (mid + 1, hi)]
             continue
+        used.setdefault('quests', []).append([lo, hi])
         for r in rows:
             quests[r['id']] = r
         print(f'quests {lo}-{hi}: {len(rows)}', file=sys.stderr)
@@ -156,10 +190,11 @@ def keep_delisted(items):
 def main():
     wh = Wowhead()
     items = {}
+    saved, used = last_ranges(), {}
     for slot in SLOTS:
         # wowhead stops a listing somewhere above 1000 rows, so a range that comes back
         # that big is split by required level and fetched again.
-        ranges = [(0, MAX_REQ_LEVEL)]
+        ranges = start_ranges(saved, f'slot:{slot}', MAX_REQ_LEVEL)
         while ranges:
             lo, hi = ranges.pop()
             url = f'https://www.wowhead.com/forever/items/slot:{slot}/min-req-level:{lo}/max-req-level:{hi}'
@@ -171,6 +206,7 @@ def main():
                 mid = (lo + hi) // 2
                 ranges += [(lo, mid), (mid + 1, hi)]
                 continue
+            used.setdefault(f'slot:{slot}', []).append([lo, hi])
             n = 0
             g = gatherer(html, 3)
             for r in rows:
@@ -189,7 +225,8 @@ def main():
                 n += 1
             print(f'slot {slot} levels {lo}-{hi}: {n} items', file=sys.stderr)
     mark_bind_on_pickup(items)
-    mark_quest_restrictions(items, scrape_quests(wh))
+    mark_quest_restrictions(items, scrape_quests(wh, saved, used))
+    save_ranges(used)
     keep_delisted(items)
     out = sorted(items.values(), key=lambda x: x['id'])
     # One item per line, so a rescrape diffs item by item.
