@@ -1,6 +1,7 @@
 {
   "6296": {"name": "Fiery Blaze Enchantment", "avail": "out", "note": "Alliance quest only", "source": "Quest 706 reward (item 5421), Alliance side only"},
   "7218": {"name": "Iron Counterweight", "note": "Iron Counterweight on AH ~0.2g", "source": "Plans: Iron Counterweight, 0.4% from many mobs (blacksmith craft)"},
+  "7779": {"name": "Enchant Bracer - Minor Agility", "source": "Trainer: Godan (Orgrimmar) and others, skill 80"},
   "7867": {"name": "Enchant Boots - Minor Agility", "source": "Vendor: Nata Dawnstrider (Thunder Bluff), 10s"},
   "13419": {"name": "Enchant Cloak - Minor Agility", "source": "Vendor: Kulwia (Stonetalon), 8s"},
   "13626": {"name": "Enchant Chest - Minor Stats", "source": "Trainer: Hgarth (Stonetalon) and others, skill 150"},
@@ -15,6 +16,7 @@
   "13846": {"name": "Enchant Bracer - Greater Spirit", "note": "Formula on AH ~0.4g", "source": "0.7% Ancient Treasure (Uldaman), 0.1% mobs"},
   "13882": {"name": "Enchant Cloak - Lesser Agility", "note": "Formula on AH ~0.4g", "source": "1.8% Syndicate Assassin (Alterac), 1.7% Wastewander (Tanaris)"},
   "13887": {"name": "Enchant Gloves - Strength", "source": "Trainer: Hgarth (Stonetalon) and others"},
+  "13890": {"name": "Enchant Boots - Minor Speed", "source": "Trainer: Hgarth (Stonetalon) and others, skill 225"},
   "13898": {"name": "Enchant Weapon - Fiery Weapon", "note": "41% formula drop", "source": "41.5% Pyromancer Loregrain (BRD)"},
   "13915": {"name": "Enchant Weapon - Demonslaying", "note": "Formula on AH ~0.2g", "source": "1.22% Gahz'rilla (Zul'Farrak)"},
   "13917": {"name": "Enchant Chest - Superior Mana", "source": "Trainer: Annora (Uldaman), skill 230"},
@@ -59,6 +61,7 @@
   "1219580": {"name": "Enchant 2H Weapon - Spellblasting", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1219587": {"name": "Enchant Cloak - Agility", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1220624": {"name": "Enchant Bracer - Greater Spellpower", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
+  "1248459": {"name": "Enchant Bracer - Minor Healing Power", "avail": "doubtful", "note": "One drop sample only", "source": "Formula (249475) 1.4% from Dark Strand Cultist (Darkshore), skill 90"},
   "1248497": {"name": "Enchant Bracer - Agility", "avail": "doubtful", "note": "No known source", "source": "Formula 249488 has no source in data"},
   "1248498": {"name": "Enchant Bracer - Lesser Healing Power", "source": "Quest 'Mysterious Mysticism' / Gelkis, Magram quartermasters (Desolace)"},
   "1248510": {"name": "Enchant 2H Weapon - Lesser Agility", "avail": "doubtful", "note": "No known source", "source": "Formula 249511 has no source in data"},
