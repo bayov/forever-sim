@@ -5882,6 +5882,71 @@
      "commits": [
       "30a6450"
      ]
+    },
+    {
+     "title": "Haste shortens Flame Shock's global cooldown, as it does every other spell's",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "Elemental gains about 0.1%. Enhancement moves by less than 0.05%.",
+     "commits": [
+      "56e5f07"
+     ]
+    },
+    {
+     "title": "Deep Wounds: an off-hand critical strike sizes the bleed from the off-hand weapon, Death Wish and Enrage no longer raise its ticks, and Thunder Clap critical strikes don't start it",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Together with the Execute line below, Arms loses about 0.6%, Fury about 0.45% and two-hand Fury about 0.8%.",
+     "commits": [
+      "990cade"
+     ]
+    },
+    {
+     "title": "A missed, dodged or parried Execute refunds none of its base Rage cost (was 80%)",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "It still keeps the extra Rage it would have spent.",
+     "commits": [
+      "aa394d3"
+     ]
     }
    ],
    "internal": [
