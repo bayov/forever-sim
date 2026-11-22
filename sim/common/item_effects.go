@@ -4580,6 +4580,11 @@ func init() {
 	//
 	// (client 1.60.1.70959 ItemEffect, SpellEffect and SpellTargetRestrictions)
 
+	// Mail and plate armor whose use we leave out, so it gives only its stats:
+	//
+	// - 8367 Dragonscale Breastplate: absorbs 600 magical damage for 2 min (1 hour cooldown), a
+	//   defensive use.
+
 	// https://www.wowhead.com/classic/item=23078/gauntlets-of-undead-slaying
 	// +60 Attack Power when fighting Undead.
 	core.NewMobTypeAttackPowerEffect(GauntletsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60)
