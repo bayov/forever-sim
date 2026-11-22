@@ -2,10 +2,12 @@ package dpswarrior
 
 import (
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/common"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // hitSpell registers a spell on caster that deals 10 Fire to its target.
@@ -46,5 +48,27 @@ func TestFlameWrathShieldIgnoresSelfDamage(t *testing.T) {
 	}
 	if casts != 1 {
 		t.Fatalf("the shield hit back %d times on the target's hit, want 1", casts)
+	}
+}
+
+// Headmaster's Charge's Use gives +20 Intellect for 15 min on a 10 min cooldown (spell 18264,
+// client 1.60.1.71037).
+func TestHeadmastersChargeUse(t *testing.T) {
+	sim, war := newWarriorWithMainHand(t, proto.Ruleset_RulesetForever, common.HeadmastersCharge)
+	use := war.GetSpell(core.ActionID{ItemID: common.HeadmastersCharge})
+	if use == nil {
+		t.Fatal("no Headmaster's Charge use spell")
+	}
+	before := war.GetStat(stats.Intellect)
+	use.Cast(sim, &war.Unit)
+	if got := war.GetStat(stats.Intellect) - before; got != 20 {
+		t.Fatalf("Intellect rose by %v, want 20", got)
+	}
+	if got := use.CD.Duration; got != 10*time.Minute {
+		t.Fatalf("cooldown %v, want 10m", got)
+	}
+	aura := war.GetAuraByID(core.ActionID{ItemID: common.HeadmastersCharge})
+	if aura == nil || aura.Duration != 15*time.Minute {
+		t.Fatalf("aura %v, want a 15m aura", aura)
 	}
 }

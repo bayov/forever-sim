@@ -12,6 +12,9 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// HeadmastersCharge sits apart so the block below keeps its alignment.
+const HeadmastersCharge = 13937
+
 // Ordered by ID
 const (
 	Destiny                   = 647
@@ -96,7 +99,7 @@ const (
 	SkullforgeReaver          = 13361
 	TheCruelHandOfTimmy       = 13401
 	RunebladeOfBaronRivendare = 13505
-	// HeadmastersCharge      = 13937
+	// HeadmastersCharge is declared apart, above.
 	GravestoneWarAxe           = 13983
 	Darrowspike                = 13984
 	Frightalon                 = 14024
@@ -1708,43 +1711,9 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=13937/headmasters-charge
 	// Use: Gives 20 additional intellect to party members within 30 yards. (10 Min Cooldown)
-	// Originally did not stack with Arcane Intellect, but is reported to stack in SoD
-	/* core.NewItemEffect(HeadmastersCharge, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		actionID := core.ActionID{SpellID: 18264}
-
-		buffAura := character.RegisterAura(core.Aura{
-			ActionID: actionID,
-			Label:    "Headmaster's Charge",
-			Duration: time.Minute * 15,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatDynamic(sim, stats.Intellect, 25)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatDynamic(sim, stats.Intellect, -25)
-			},
-		})
-		spell := character.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
-			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
-
-			Cast: core.CastConfig{
-				CD: core.Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: time.Minute * 10,
-				},
-			},
-
-			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				buffAura.Activate(sim)
-			},
-		})
-
-		character.AddMajorCooldown(core.MajorCooldown{
-			Type:  core.CooldownTypeDPS,
-			Spell: spell,
-		})
-	}) */
+	// Client 1.60.1.71037: spell 18264, +20 Intellect for 900000 ms, 600000 ms cooldown. The sim
+	// gives it to the wearer only. It lasts longer than its cooldown, so it stays up all fight.
+	core.NewSimpleStatItemEffect(HeadmastersCharge, stats.Stats{stats.Intellect: 20}, time.Minute*15, time.Minute*10, 0)
 
 	// https://www.wowhead.com/forever/item=13040/heartseeking-crossbow
 	// Forever: Equip: Chance to strike your ranged target with a Shadowbolt for 13 to 19 Shadow
