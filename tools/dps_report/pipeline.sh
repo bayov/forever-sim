@@ -188,15 +188,16 @@ EOF
 		    print(f"{bid}: {new:.1f} against the report's {old:.1f}" if old is not None else f"{bid}: {new:.1f} (new to the report)")
 	PY
 	mark weights
-	echo $BASE | tr ' ' '\n' | xargs -P$P -n1 python3 $T/weights.py
+	# a run of duty or pet variants alone has no base ids, and these steps given none would run every request
+	[ -n "$BASE" ] && echo $BASE | tr ' ' '\n' | xargs -P$P -n1 python3 $T/weights.py
 	mark races
-	python3 $T/run_races.py $BASE | tail -3
+	[ -n "$BASE" ] && python3 $T/run_races.py $BASE | tail -3
 	mark mana
 	[ -n "$MANA" ] && PAR=$P python3 $T/mana_curves.py $MANA_FORCE $MANA | tail -3
 	mark ablate
 	[ -n "$ABL" ] && ABL_MERGE=1 PAR=$P python3 $T/ablate.py $ABL | tail -1
 	mark assumptions
-	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
+	[ -n "$BASE" ] && PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
 	mark probe  # these sims at a tenth of their iterations, kept in the packs for the next probe check
 	PROBE_P=$P python3 $T/probe.py run $ALL
 	if tankheal_on "$@"; then  # a full run (or TANKHEAL=1): the Tanking and Healing modes too

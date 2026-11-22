@@ -5947,6 +5947,132 @@
      "commits": [
       "aa394d3"
      ]
+    },
+    {
+     "title": "Judgement of Wisdom gives mana only on a melee swing that lands",
+     "kind": "sim",
+     "classes": [
+      "Paladin",
+      "Druid",
+      "Warlock",
+      "Shaman",
+      "Hunter"
+     ],
+     "note": "A missed, dodged or parried swing no longer pays. The builds that read it rarely run short of mana, so no result moves by more than 0.05%.",
+     "moves": false,
+     "commits": [
+      "bd70294"
+     ]
+    },
+    {
+     "title": "Ice Lance gains 11% of spell power (was 42.9%)",
+     "kind": "sim",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frost",
+      "mage__frostfire"
+     ],
+     "note": "Combat logs of a level 60 mage measured it. Frost loses about 12% and Frostfire about 5%; Arcane and Fire don't cast Ice Lance.",
+     "commits": [
+      "4192d6e"
+     ]
+    },
+    {
+     "title": "Windfury Totem's extra swing no longer gives a Maelstrom Weapon stack",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "White swings, Stormstrike and Windfury Weapon still do. Enhancement loses about 0.9%.",
+     "commits": [
+      "840029b"
+     ]
+    },
+    {
+     "title": "Wrack: your damage over time effects also tick at the half points of their own timing while you channel, and their last tick is no longer lost",
+     "kind": "sim",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__affliction_shadow_bolt"
+     ],
+     "note": "Starting or ending the channel moves no tick, and each effect ends on a full tick when it runs out. Affliction gains about 1.2%; Affliction with Shadow Bolt and the other warlocks move by less than 0.05%.",
+     "commits": [
+      "3960dd1"
+     ]
+    },
+    {
+     "title": "Windfury Totem's extra swing no longer procs Bloodthrill or uses up a Flurry charge, and Execute rolls Windfury Totem twice again",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Execute's cast and its landed damage each roll the totem, as combat logs since the November 20 hotfix show; a critical strike from the totem's swing still gives Flurry. Fury gains about 1.4%, two-hand Fury about 2.5%, Arms 0.5 to 0.9%.",
+     "commits": [
+      "b7edf19"
+     ]
+    },
+    {
+     "title": "Hunter pets keep the attack power they had when summoned",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-wolf",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__marksmanship",
+      "hunter__marksmanship-wolf",
+      "hunter__marksmanship-tallstrider",
+      "hunter__survival",
+      "hunter__survival-wolf",
+      "hunter__survival-tallstrider"
+     ],
+     "note": "Aspect of the Hawk, trinkets and other procs on the hunter no longer raise the pet's attack power during the fight. Survival loses about 0.4%, Beast Mastery 0.3%, Marksmanship 0.15%; Lone Wolf has no pet.",
+     "commits": [
+      "051a21c"
+     ]
+    },
+    {
+     "title": "Tanking: the Paladin, bear and Warden Shaman after these fixes",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Shaman",
+      "Paladin"
+     ],
+     "note": "Each preset moves by a little at its own goal: Protection Paladin Max threat 3,249 to 3,244, Balanced 2,809 to 2,809, Max survival 1,780 to 1,787; bear Max threat 3,121 to 3,132, Balanced 2,145 to 2,130, Max survival 351 to 321; Warden Max threat 2,621 to 2,625, Balanced 1,288 to 1,285, Max survival -2,193 to -2,246. The order is unchanged at every goal. Protection Warriors and every healer are unchanged.",
+     "commits": [
+      "bd70294",
+      "3960dd1",
+      "b7edf19"
+     ],
+     "moves": false
     }
    ],
    "internal": [
@@ -6493,6 +6619,10 @@
     {
      "commit": "0c818ed",
      "why": "the Changes lines above, notes and a preset's recorded number; no sim result changes"
+    },
+    {
+     "commit": "219829b",
+     "why": "test goldens and report hashes for the fixes above; no sim result changes of its own"
     }
    ],
    "source": {
