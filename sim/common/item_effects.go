@@ -1308,8 +1308,10 @@ func init() {
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.AddStatDynamic(sim, stats.FireResistance, -30)
 			},
-			OnSpellHitTaken: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if result.Landed() {
+			// Damage the wearer deals to itself (a warrior's self-damage, say) doesn't reflect, or
+			// the shield would hit the wearer and set itself off again without end.
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Landed() && spell.Unit != aura.Unit && spell != shieldSpell {
 					shieldSpell.Cast(sim, spell.Unit)
 				}
 			},
