@@ -181,6 +181,7 @@ Shoot and the miss floor are in the Mage table.
 | Judgement of the Crusader on weapon strikes | 161 Holy taken through the coefficient (Holy Strike via weapon percent 0.429 x 50%, Seal of Righteousness inside its base) | Full coefficient, added before the done multipliers (unit tests only) | Open, notes.md To Verify. For theirs (2026-11-15): paladins 10.1 to 10.9, Smite 5.3 |
 | Dragonbreath Chili from Seal of Righteousness | Any landed melee hit rolls it | Seal hits are procs; 15852 lacks Can Proc From Procs | Open, notes.md To Verify. For ours: Retribution and Sub Holy 7.2, Holy Shock Ret 0.8 |
 | Omen of Clarity on Windfury Totem's attack | Procs (a white swing, the 2026-11-15 totem ruling) | None, though their EV-0136 counts it | Open, kept with the totem ruling. Feral 3.8 for ours |
+| Two-Handed Weapon Specialization on Holy | All Holy damage with a two-hander, through the Holy school (`sim/paladin/talents.go` `applyWeaponSpecialization`), since Blizzard's Nov 19 hotfix ("now correctly increases all Holy damage", t/2403040 post 13) | Only the melee-defense Holy hits and Consecration (their fca3d825d9, from EV-0064/EV-0022 logs before the hotfix) | Hotfix (ours since 2026-11-22). For ours at 180s: Retribution +4.9, Sub Holy +5.0, Holy Shock Ret +9.3 |
 | Hammer of Wrath's 0.4 s cast | A swing due during the cast waits | The cast resets the swing | Engine. About 2 for ours on Holy Shock Ret |
 
 Sheets before alignment (`layers.py`, explained 2026-11-15): theirs' +21 AP at the gear layer was
@@ -258,10 +259,6 @@ A gap on one of these is a regression.
 - Arcane Concentration split across an Arcane Missiles channel; Wrack and Soul Siphon (hotfix
   113766).
 - Searing Totem's damage per hit and rate within 3%.
-- Two-Handed Weapon Specialization's Holy part follows the defense type: the melee-defense Holy hits
-  (seal hits, Holy Strike, Judgement of Command) and Consecration take it; the ranged judgements,
-  Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock don't. Ours since 2026-11-15 (their fca3d825d9,
-  EV-0064/EV-0022 logs).
 - Judgement of Command is a melee special on the main hand's table, never dodged, parried or
   blocked; Righteousness and Fury are ranged since the Nov 11 hotfix. Ours since 2026-11-15 (their
   `seal_of_command.go:36`, client SpellCategories; their post-hotfix log, 1.062 n=109 under Two-Handed

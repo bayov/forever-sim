@@ -295,10 +295,10 @@ func TestHolyShieldAndShieldsworn(t *testing.T) {
 // 2026-11-03 18:29Z, with the rogue push 113483; orchestration/round_70753/hotfix_113483_paladin.md),
 // the November 2 development notes' values that client 1.60.1.70755 still lacks: Vengeance stacks
 // up to 5 times (SpellAuraOptions 247421 CumulativeAura 5), and Two-Handed Weapon Specialization
-// raises Holy damage too by 2% a rank with a two-hander (SpellEffect 697263 school mask 3). In game
-// that Holy part follows the defense type, not the school (user ruling 2026-11-15,
-// TestTwoHandedSpecializationHolyReach), so it sits on the seal hits' own multipliers, 6% at 3/3
-// with a two-hander and none with a one-hander, and the Holy school is untouched.
+// raises Holy damage too by 2% a rank with a two-hander (SpellEffect 697263 school mask 3). Since
+// Blizzard's November 19 hotfix that is all Holy damage (TestTwoHandedSpecializationHolyReach): the
+// Holy school takes 6% at 3/3 with a two-hander and none with a one-hander, and the seal hits' own
+// multipliers don't take it a second time.
 func TestHotfix113542(t *testing.T) {
 	_, veng := retSim(t, "--000000000000003", arcaniteReaper)
 	if got := veng.GetAura("Vengeance Proc").MaxStacks; got != 5 {
@@ -312,21 +312,21 @@ func TestHotfix113542(t *testing.T) {
 	holy := func(ret *RetributionPaladin) float64 {
 		return ret.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly]
 	}
-	if got := holy(twoHand) / holy(base); got != 1 {
-		t.Errorf("Holy school with 3/3 and a two-hander = %.4f, want 1 (the spells carry it)", got)
-	}
-	for _, id := range []int32{20424, 25742} { // Seal of Command's proc, Seal of Righteousness rank 9's
-		for _, c := range []struct {
-			name      string
-			ret, base *RetributionPaladin
-			want      float64
-		}{{"two-hander", twoHand, base, 1.06}, {"one-hander", oneHand, oneHandBase, 1}} {
+	for _, c := range []struct {
+		name      string
+		ret, base *RetributionPaladin
+		want      float64
+	}{{"two-hander", twoHand, base, 1.06}, {"one-hander", oneHand, oneHandBase, 1}} {
+		if got := holy(c.ret) / holy(c.base); got < c.want-0.0001 || got > c.want+0.0001 {
+			t.Errorf("Holy school with 3/3 and a %s = %.4f, want %.2f", c.name, got, c.want)
+		}
+		for _, id := range []int32{20424, 25742} { // Seal of Command's proc, Seal of Righteousness rank 9's
 			b, s := c.base.GetSpell(core.ActionID{SpellID: id}), c.ret.GetSpell(core.ActionID{SpellID: id})
 			if b == nil || s == nil {
 				continue
 			}
-			if got := s.DamageMultiplier / b.DamageMultiplier; got < c.want-0.0001 || got > c.want+0.0001 {
-				t.Errorf("spell %d's own multiplier with 3/3 and a %s = %.4f, want %.2f", id, c.name, got, c.want)
+			if s.DamageMultiplier != b.DamageMultiplier {
+				t.Errorf("spell %d's own multiplier with 3/3 and a %s = %.4f, want %.4f (the school carries it)", id, c.name, s.DamageMultiplier, b.DamageMultiplier)
 			}
 		}
 	}

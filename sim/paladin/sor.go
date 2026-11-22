@@ -107,8 +107,8 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			// 2, No Active Defense), so it rolls physical hit and crit, crits for double and can't
 			// be dodged, parried or blocked. Since the November 11 hotfixes it is a ranged attack: a
 			// ranged special to the listeners, on the ranged table (rangedJudgement). Two-Handed
-			// Weapon Specialization no longer reaches it: 1.003 (n = 93) after the hotfix, 1.050
-			// (n = 192) while it rolled as melee (wowsims/forever EV-0064; user ruling 2026-11-15).
+			// Weapon Specialization reaches it through the Holy school since the November 19 hotfix
+			// (talents.go, applyWeaponSpecialization).
 			paladin.rangedJudgement(&judgeConfig)
 			judgeConfig.Flags = core.SpellFlagMeleeMetrics | core.SpellFlagBinary
 			judgeConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

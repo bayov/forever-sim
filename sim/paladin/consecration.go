@@ -109,9 +109,9 @@ func (paladin *Paladin) registerConsecration() {
 				},
 				CD: cd,
 			},
-			// Under Forever Two-Handed Weapon Specialization's Holy part reaches Consecration, though it
-			// is magic-defense (wowsims/forever EV-0022; user ruling 2026-11-15; talents.go).
-			DamageMultiplier: core.TernaryFloat64(paladin.Env.IsForever(), paladin.twoHandedSpecializationMultiplier(), 1),
+			// Under Forever Two-Handed Weapon Specialization reaches it through the Holy school
+			// (talents.go, applyWeaponSpecialization).
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
 			// The ticks crit under Forever (core's periodic crit; wowsims/forever 2f953756bd and

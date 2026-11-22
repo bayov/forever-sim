@@ -87,9 +87,8 @@ func (paladin *Paladin) registerSealOfCommand() {
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 			BonusCritRating: paladin.holyPowerCrit(),
-			// Two-Handed Weapon Specialization reaches it in game after the November 11 hotfix (1.062,
-			// n = 109, 2026-11-13; wowsims/forever EV-0064; user ruling 2026-11-15), as a melee-defense
-			// Holy hit.
+			// Two-Handed Weapon Specialization: the Holy school under Forever, this multiplier in Era
+			// (talents.go, getWeaponSpecializationModifier).
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,

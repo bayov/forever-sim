@@ -104,8 +104,8 @@ func (paladin *Paladin) registerSealOfFury() {
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagBinary,
 
 			// Libram of Law's 4% names Judgement of Fury too (items.go). Two-Handed Weapon
-			// Specialization doesn't reach it: a ranged judgement, as Judgement of Righteousness
-			// (talents.go, applyWeaponSpecialization; user ruling 2026-11-15).
+			// Specialization reaches it through the Holy school (talents.go,
+			// applyWeaponSpecialization).
 			DamageMultiplier: paladin.improvedSeals() * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,

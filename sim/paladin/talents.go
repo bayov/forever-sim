@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -278,37 +277,59 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 // and the Spell 20111 tooltip "Increases the Physical and Holy damage you deal by $s1%". Client
 // 1.60.1.70755 still has misc 1.
 //
-// The Holy part follows the defense type in game, not the school (user ruling 2026-11-15, taking
-// wowsims/forever's fca3d825d9 and its logs EV-0064 and EV-0022): the Holy hits that roll on melee
-// defense take it, the seal hits, Holy Strike and Judgement of Command (1.062, n = 109, on
-// 2026-11-13), and so does Consecration, the one magic-defense exception. The ranged judgements
-// take none since the November 11 hotfix (Judgement of Righteousness 1.003, n = 93, after; 1.050,
-// n = 192, while it was melee), nor do Hammer of Wrath (0.991, n = 77), Exorcism, Retribution Aura
-// or Holy Forgefire; Holy Wrath and Holy Shock, which no log has measured, follow the same rule
-// (report assumption pal_2h_spec_holy). So the Holy part is the spells' own multiplier
-// (getWeaponSpecializationModifier, consecration.go) and the school takes only the Physical part.
+// Under Forever the Holy part is school-wide since Blizzard's November 19 hotfix (t/2403040 post 13,
+// tier 1): "Two-Handed Weapon Specialization now correctly increases all Holy damage you deal while
+// a two-handed weapon is equipped." That retires the 2026-11-15 ruling, from logs before the fix,
+// that gave it only to the melee-defense Holy hits and Consecration (standards 41). So the Holy
+// school takes it as a whole, the ranged judgements, Exorcism, Hammer of Wrath, Holy Wrath, Holy
+// Shock, Retribution Aura and Holy Forgefire included, and the spells' own multipliers don't take
+// it a second time.
 func (paladin *Paladin) twoHandedSpecializationMultiplier() float64 {
-	if paladin.MainHand().HandType == proto.HandType_HandTypeTwoHand {
+	if paladin.has2hEquipped() {
 		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
 	}
 	return 1
 }
 
 // getWeaponSpecializationModifier is the specialization's share on a Holy spell's own damage
-// multiplier, for the seal hits, Holy Strike and Judgement of Command (and in Era the judgements
-// that roll as melee). Under Forever Consecration takes it too (consecration.go).
+// multiplier: in Era the seal hits, Holy Strike and Judgement of Command, and none under Forever,
+// where the Holy school carries it.
 func (paladin *Paladin) getWeaponSpecializationModifier() float64 {
+	if paladin.Env.IsForever() {
+		return 1
+	}
 	return paladin.twoHandedSpecializationMultiplier()
 }
 
-// Affects all physical damage; the Holy part is on the spells (above). The threat cut is the
-// hotfix's new effect 1 (aura 10, all schools, -20 at 3 ranks; the trait ranks 7 / 14 / 20%), a
-// percent row of its own, so it multiplies with Righteous Fury's.
+// Affects all physical damage, and under Forever all Holy damage. The threat cut is the hotfix's
+// new effect 1 (aura 10, all schools, -20 at 3 ranks; the trait ranks 7 / 14 / 20%), a percent row
+// of its own, so it multiplies with Righteous Fury's. An item swap that changes the main hand
+// applies or drops both, as the talent reads "while a two-handed melee weapon is equipped".
 func (paladin *Paladin) applyWeaponSpecialization() {
-	paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= paladin.twoHandedSpecializationMultiplier()
-	if paladin.has2hEquipped() && paladin.Talents.TwoHandedWeaponSpecialization > 0 {
-		paladin.PseudoStats.ThreatMultiplier *= 1 - []float64{0, 0.07, 0.14, 0.20}[paladin.Talents.TwoHandedWeaponSpecialization]
+	damage, threat := 1.0, 1.0
+	update := func() {
+		newDamage, newThreat := paladin.twoHandedSpecializationMultiplier(), 1.0
+		if paladin.has2hEquipped() && paladin.Talents.TwoHandedWeaponSpecialization > 0 {
+			newThreat = 1 - []float64{0, 0.07, 0.14, 0.20}[paladin.Talents.TwoHandedWeaponSpecialization]
+		}
+		paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= newDamage / damage
+		if paladin.Env.IsForever() {
+			paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= newDamage / damage
+		}
+		paladin.PseudoStats.ThreatMultiplier *= newThreat / threat
+		damage, threat = newDamage, newThreat
 	}
+	update()
+	if !paladin.ItemSwap.IsEnabled() {
+		return
+	}
+	// A reset puts back the pseudo stats of the start, the starting weapon's, before it swaps the
+	// items back (core's Character.reset), so the swap that follows is measured from them.
+	startDamage, startThreat := damage, threat
+	paladin.RegisterResetEffect(func(_ *core.Simulation) {
+		damage, threat = startDamage, startThreat
+	})
+	paladin.RegisterOnItemSwap(func(_ *core.Simulation) { update() })
 }
 
 // Vengeance stacks 1% per point of Physical and Holy damage for every crit, up to 5
