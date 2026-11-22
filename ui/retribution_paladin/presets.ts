@@ -215,6 +215,8 @@ export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Ret sub-Holy
 // Wrath above Holy Strike). Since the November 11 hotfix Seal of Righteousness stays up and Seal of
 // Command goes up on 3 copies, back once it has stored 3: +6.3 / +4.6 / +5.3 at 120 / 180 / 300 sec.
 // Since Judgement of Command is a melee attack again it goes up on 2 copies: +1.6 / +1.0 / +1.4.
+// Since the November 19 hotfix (Two-Handed Weapon Specialization on all Holy damage) Holy Strike goes
+// ahead of the seal and twist lines: +0.4 / +0.6 / +0.2 at 120 / 180 / 300 sec.
 export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Ret sub-Holy · vs Undead', Level60UndeadAPLJSON, {
 	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation on 2 copies, with Exorcism.',
 	group: 'Synthetic',

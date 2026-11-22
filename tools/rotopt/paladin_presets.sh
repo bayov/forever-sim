@@ -87,7 +87,14 @@ gen level60_wisdom_duty "seal=1,jotc=2,consecration=1,consecrationFirst=1,consec
 # first and Hammer of Wrath in the execute phase at the top (consecrationFirst 0 -> 1, hammerOfWrathFirst
 # 3 -> 1), +8.4 / +7.0 / +4.0 at 120 / 180 / 300 sec (seed 1, 20000 iterations; +8.5 / +7.2 / +5.0 on
 # seed 1000003).
-gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,exorcism=1,holyWrathMana=100,swiftJudgement=0" -level 60
+# November 19 hotfix (Two-Handed Weapon Specialization raises all Holy damage, 2026-11-22): 29 knob
+# candidates, each against these knobs at 20000 iterations on seeds 1 and 1000003. Holy Strike ahead of the
+# seal and twist lines (holyStrikeFirst 0 -> 1) won every cell: +0.4 / +0.6 / +0.2 (seed 1), +0.4 / +0.6 /
+# +0.4 (seed 1000003). The rest lost or tied: 1 or 3 copies -1.0 to -5.9, twistBack 1 or 2 -4 to -30,
+# twistWindow 0.5 to 2.5 sec -2.7 to -11.3, Holy Wrath at any mana -25 to -52, Seal of Command up -7.6
+# to -9.4, Exorcism first -0.8 to -1.4, Consecration at any mana +0.0 to +0.2 (a tie). The sub Holy
+# Crusader duty loses with Holy Strike first (-2.2 to -7.4); sub Holy and its Wisdom duty already have it.
+gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,exorcism=1,holyWrathMana=100,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Ret Shock (level60_shock_ret, 20 Holy for Holy Shock, so no Unsealed Wrath): the knob search kept
 # its knobs. Seal of Command up, Consecration first at any mana, Judgement, Holy Strike and Holy Shock
 # on cooldown, Hammer of Wrath above Holy Strike. Its duties put the seal back up ahead of
