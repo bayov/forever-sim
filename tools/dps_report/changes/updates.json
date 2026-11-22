@@ -6424,6 +6424,10 @@
     {
      "commit": "abefd2f",
      "why": "Barov Peasant Caller's use; no report preset wears it"
+    },
+    {
+     "commit": "0c818ed",
+     "why": "the Changes lines above, notes and a preset's recorded number; no sim result changes"
     }
    ],
    "source": {
