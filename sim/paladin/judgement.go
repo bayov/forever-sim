@@ -86,7 +86,8 @@ func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
 // mace skill doesn't reach it) and which a weapon-only crit (Elemental Sharpening Stone) doesn't
 // reach. The hotfix names no other change, so it still has No Active Defense (never dodged,
 // parried or blocked) and keeps its damage and threat. Two-Handed Weapon Specialization's Holy part
-// no longer reaches it (talents.go, applyWeaponSpecialization).
+// reaches it through the Holy school since the November 19 hotfix (talents.go,
+// applyWeaponSpecialization).
 //
 // Judgement of Righteousness and of Fury take it. Judgement of Command doesn't: the client has it
 // Melee in SpellCategories, and a log after the hotfix backs that (soc.go; user ruling 2026-11-15).

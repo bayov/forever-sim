@@ -89,9 +89,9 @@ func TestConsecrationFirstFourTargets(t *testing.T) {
 
 // TestJudgementOfRighteousnessPhysical checks that Forever's Judgement of Righteousness (client
 // 20286, DefenseType 2) is a physical attack, ranged since the November 11 hotfixes
-// (TestJudgementsAreRanged): it crits for double, and as a ranged-defense Holy hit Two-Handed
-// Weapon Specialization no longer reaches it (1.003, n = 93, after the hotfix; wowsims/forever
-// EV-0064; user ruling 2026-11-15).
+// (TestJudgementsAreRanged): it crits for double, and Two-Handed Weapon Specialization (3/3: 6%)
+// reaches it through the Holy school since Blizzard's November 19 hotfix ("now correctly increases
+// all Holy damage you deal while a two-handed weapon is equipped").
 func TestJudgementOfRighteousnessPhysical(t *testing.T) {
 	_, with := retSim(t, "--000000000003", arcaniteReaper)
 	_, without := retSim(t, "", arcaniteReaper)
@@ -105,8 +105,8 @@ func TestJudgementOfRighteousnessPhysical(t *testing.T) {
 	holy := stats.SchoolIndexHoly
 	ratio := jor.DamageMultiplier * with.PseudoStats.SchoolDamageDealtMultiplier[holy] /
 		(without.GetSpell(core.ActionID{SpellID: 20286}).DamageMultiplier * without.PseudoStats.SchoolDamageDealtMultiplier[holy])
-	if ratio < 0.9999 || ratio > 1.0001 {
-		t.Errorf("Two-Handed Weapon Specialization 3/3 on Judgement of Righteousness = %.4f, want 1", ratio)
+	if ratio < 1.0599 || ratio > 1.0601 {
+		t.Errorf("Two-Handed Weapon Specialization 3/3 on Judgement of Righteousness = %.4f, want 1.06", ratio)
 	}
 }
 
