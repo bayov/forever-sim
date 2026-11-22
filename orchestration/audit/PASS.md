@@ -48,6 +48,8 @@ Add each new one at the top of `## Open` in `findings/<id>.md`:
 - needs: user ruling | orchestrator fix | worker fix
 ```
 
+A Blizzard patch note or hotfix that settles a mechanic needs no user ruling, even when it overturns an earlier one (standards 41): mark it `worker fix` or `orchestrator fix` and name the ruling it retires.
+
 Say how sure you are. Measure before you claim DPS ("+3.2 DPS, paired seeds, 20k iterations"),
 and estimate only where measuring isn't possible, saying so.
 
