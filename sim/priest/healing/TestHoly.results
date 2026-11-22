@@ -184,6 +184,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-Phase1-AllItems-VestmentsoftheVirtuous-1675"
+ value: {
+  tps: 62.76042
+  dtps: 117.69333
+  hps: 233.90304
+ }
+}
+dps_results: {
  key: "TestHoly-Phase1-AllItems-Warlord'sInvestiture"
  value: {
   tps: 62.61821

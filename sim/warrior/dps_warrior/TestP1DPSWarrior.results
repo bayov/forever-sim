@@ -104,6 +104,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1DPSWarrior-Phase1-AllItems-BattlegearofHeroism-1778"
+ value: {
+  dps: 1382.745
+  tps: 1200.67981
+ }
+}
+dps_results: {
  key: "TestP1DPSWarrior-Phase1-AllItems-BattlegearofMight"
  value: {
   dps: 1291.67617

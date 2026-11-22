@@ -195,6 +195,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Mage-Phase1-AllItems-Sorcerer'sRegalia-1671"
+ value: {
+  dps: 1213.76433
+  tps: 755.41564
+ }
+}
+dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Warlord'sRegalia"
  value: {
   dps: 1237.55517

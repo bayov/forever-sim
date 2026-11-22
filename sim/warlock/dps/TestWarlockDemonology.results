@@ -121,6 +121,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWarlockDemonology-Phase1-AllItems-DeathmistRaiment-1681"
+ value: {
+  dps: 1223.74033
+  tps: 957.96558
+  hps: 3.38317
+ }
+}
+dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Demoniac'sThreads"
  value: {
   dps: 1330.96383

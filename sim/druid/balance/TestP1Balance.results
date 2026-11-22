@@ -167,6 +167,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-FeralheartRaiment-1667"
+ value: {
+  dps: 994.44417
+  tps: 716.57611
+ }
+}
+dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FieldMarshal'sRefuge"
  value: {
   dps: 1053.85467

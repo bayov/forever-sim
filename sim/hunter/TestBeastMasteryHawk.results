@@ -105,6 +105,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBeastMasteryHawk-Phase1-AllItems-BeastmasterArmor-1669"
+ value: {
+  dps: 1499.0975
+  tps: 1158.05764
+  dtps: 1.94217
+ }
+}
+dps_results: {
  key: "TestBeastMasteryHawk-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
   dps: 1627.36617

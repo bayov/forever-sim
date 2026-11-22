@@ -233,6 +233,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Shadow-Phase1-AllItems-VestmentsoftheVirtuous-1675"
+ value: {
+  dps: 1055.632
+  tps: 757.1249
+  dtps: 1.80017
+ }
+}
+dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-Warlord'sInvestiture"
  value: {
   dps: 1077.38767

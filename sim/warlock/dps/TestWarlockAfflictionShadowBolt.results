@@ -121,6 +121,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-DeathmistRaiment-1681"
+ value: {
+  dps: 1195.10867
+  tps: 950.24265
+  hps: 2.96667
+ }
+}
+dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Demoniac'sThreads"
  value: {
   dps: 1314.576
