@@ -353,10 +353,10 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 			equipment.EquipItem(setItem)
 		}
 		label = strings.ReplaceAll(testSet.Name, " ", "")
-		// Forever gave some PvP sets a second set under a Classic set's name; the later one takes
-		// its set ID in the label.
-		for _, other := range generator.sets[:testIdx-len(generator.items)] {
-			if other.Name == testSet.Name {
+		// Forever gave some sets a second set under a Classic set's name; the one with the higher
+		// set ID takes its ID in the label, whichever package registered it first.
+		for _, other := range generator.sets {
+			if other != testSet && other.Name == testSet.Name && other.ID < testSet.ID {
 				label = fmt.Sprintf("%s-%d", label, testSet.ID)
 				break
 			}

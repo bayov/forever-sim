@@ -1,0 +1,38 @@
+{
+  "_doc": "One Phase 0 gear search per DPS spec of the DPS Report, for tools/rotopt/bis_phase0.sh. req is the report build the fight comes from (tools/dps_report/req), talents override its talents, start is the starting gear in equipment order (head to ranged, null for an empty slot, \"req\" for the report's item) and startEnchants keeps the report's enchant on each filled slot but the off hand. weapons is the setup (two-hand, dual-wield, one-hand or any, see applyWeaponRules in gear.go), and mhTypes and ohTypes limit the weapon types in each hand. dir is the sim UI folder the lists go in, as ui/<dir>/bis/level60_phase0_<spec>.bis.json unless out names the file.",
+  "specs": {
+    "enh": {
+      "req": "shaman__enhancement-level60",
+      "talents": "053303102-054030110051212141-03",
+      "start": [252605, 22150, 15067, 19121, 16666, 16714, 15063, 18504, 15062, 16670, 281635, 18402, 19120, 249469, 18538, null, "req"],
+      "startEnchants": true,
+      "weapons": "two-hand",
+      "dir": "enhancement_shaman",
+      "out": "ui/enhancement_shaman/bis/level60_phase0.bis.json",
+      "effectsOut": "ui/enhancement_shaman/bis/level60_phase0.effects.json",
+      "gearOut": "ui/enhancement_shaman/gear_sets/level60_phase0.gear.json"
+    },
+    "ele": {"req": "shaman__elemental-level60", "weapons": "any", "dir": "elemental_shaman"},
+    "ret": {"req": "paladin__level_60", "weapons": "two-hand", "dir": "retribution_paladin"},
+    "balance": {"req": "druid__balance", "weapons": "any", "dir": "balance_druid"},
+    "feral": {"req": "druid__feral-cat", "weapons": "any", "dir": "feral_druid"},
+    "hunter_bm": {"req": "hunter__beast-mastery", "weapons": "any", "dir": "hunter"},
+    "hunter_mm": {"req": "hunter__marksmanship", "weapons": "any", "dir": "hunter"},
+    "hunter_sv": {"req": "hunter__survival", "weapons": "any", "dir": "hunter"},
+    "mage_arcane": {"req": "mage__arcane", "weapons": "any", "dir": "mage"},
+    "mage_fire": {"req": "mage__fire", "weapons": "any", "dir": "mage"},
+    "mage_frost": {"req": "mage__frost", "weapons": "any", "dir": "mage"},
+    "mage_frostfire": {"req": "mage__frostfire", "weapons": "any", "dir": "mage"},
+    "shadow": {"req": "priest__shadow", "weapons": "any", "dir": "shadow_priest"},
+    "smite": {"req": "priest__smite", "weapons": "any", "dir": "shadow_priest"},
+    "rogue_combat_swords": {"req": "rogue__combat-swords", "weapons": "dual-wield", "dir": "rogue"},
+    "rogue_assassination": {"req": "rogue__mutilate", "weapons": "dual-wield", "mhTypes": "Dagger", "ohTypes": "Dagger", "dir": "rogue"},
+    "rogue_subtlety": {"req": "rogue__subtlety", "weapons": "dual-wield", "mhTypes": "Dagger", "dir": "rogue"},
+    "affliction": {"req": "warlock__affliction", "weapons": "any", "dir": "warlock"},
+    "demonology": {"req": "warlock__demonology", "weapons": "any", "dir": "warlock"},
+    "destruction": {"req": "warlock__destruction", "weapons": "any", "dir": "warlock"},
+    "arms": {"req": "warrior__arms", "weapons": "two-hand", "dir": "warrior"},
+    "fury": {"req": "warrior__fury_2h", "weapons": "two-hand", "dir": "warrior"},
+    "fury_dw": {"req": "warrior__fury", "weapons": "dual-wield", "rankSpec": "fury", "dir": "warrior"}
+  }
+}

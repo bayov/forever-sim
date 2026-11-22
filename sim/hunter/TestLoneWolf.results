@@ -105,6 +105,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestLoneWolf-Phase1-AllItems-BeastmasterArmor-1669"
+ value: {
+  dps: 1838.81567
+  tps: 1867.45759
+  dtps: 2.2845
+ }
+}
+dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
   dps: 1984.0125

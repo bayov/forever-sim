@@ -108,13 +108,23 @@ var weaponTypesFor = map[proto.Class][]proto.WeaponType{
 	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
 	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
 	proto.Class_ClassPaladin: {proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
+	proto.Class_ClassHunter:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
+	proto.Class_ClassDruid:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeOffHand},
+	proto.Class_ClassMage:    {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeOffHand},
+	proto.Class_ClassPriest:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeOffHand},
+	proto.Class_ClassWarlock: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeOffHand},
 }
 
 var rangedTypesFor = map[proto.Class][]proto.RangedWeaponType{
 	proto.Class_ClassRogue:   {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
 	proto.Class_ClassWarrior: {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
+	proto.Class_ClassHunter:  {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
 	proto.Class_ClassShaman:  {proto.RangedWeaponType_RangedWeaponTypeTotem},
 	proto.Class_ClassPaladin: {proto.RangedWeaponType_RangedWeaponTypeLibram},
+	proto.Class_ClassDruid:   {proto.RangedWeaponType_RangedWeaponTypeIdol},
+	proto.Class_ClassMage:    {proto.RangedWeaponType_RangedWeaponTypeWand},
+	proto.Class_ClassPriest:  {proto.RangedWeaponType_RangedWeaponTypeWand},
+	proto.Class_ClassWarlock: {proto.RangedWeaponType_RangedWeaponTypeWand},
 }
 
 func contains[T comparable](list []T, v T) bool {
@@ -184,15 +194,40 @@ func readPvpRanks(path string, ranked map[int32]bool) error {
 	return nil
 }
 
-// Whether a random suffix does anything for the class: a physical stat for a melee, and
-// for a shaman also the caster stats that feed shocks, Lightning Shield and the mana pool.
+// Whether a random suffix does anything for the class. A melee or a hunter wants a physical
+// stat, a caster (mage, warlock, priest) a caster stat, and a hybrid either: a shaman's shocks,
+// Lightning Shield and mana pool, a paladin's mana, a druid's forms and spells. A caster counts
+// only the schools it casts (spellSchoolsFor), so a mage's pool skips "of Shadow Wrath".
 func usefulSuffix(class proto.Class, s *proto.ItemRandomSuffix) bool {
 	st := stats.FromFloatArray(s.Stats)
-	useful := st[stats.Agility] + st[stats.Strength] + st[stats.AttackPower] + st[stats.MeleeCrit] + st[stats.MeleeHit] + st[stats.Stamina]
-	if class == proto.Class_ClassShaman || class == proto.Class_ClassPaladin {
-		useful += st[stats.Intellect] + st[stats.Spirit] + st[stats.MP5] + st[stats.SpellPower] + st[stats.NaturePower] + st[stats.FirePower] + st[stats.SpellCrit] + st[stats.SpellHit]
+	physical := st[stats.Agility] + st[stats.Strength] + st[stats.AttackPower] + st[stats.MeleeCrit] + st[stats.MeleeHit] + st[stats.Stamina]
+	if class == proto.Class_ClassHunter {
+		physical += st[stats.RangedAttackPower]
 	}
-	return useful > 0
+	caster := st[stats.Intellect] + st[stats.Spirit] + st[stats.MP5] + st[stats.SpellPower] + st[stats.SpellCrit] + st[stats.SpellHit]
+	for _, school := range spellSchoolsFor[class] {
+		caster += st[school]
+	}
+	switch class {
+	case proto.Class_ClassMage, proto.Class_ClassWarlock, proto.Class_ClassPriest:
+		return caster > 0
+	case proto.Class_ClassShaman, proto.Class_ClassPaladin, proto.Class_ClassDruid:
+		return physical+caster > 0
+	default:
+		return physical > 0
+	}
+}
+
+// The school spell power stats a class's damage spells use, for usefulSuffix. The shaman and
+// paladin lists are what usefulSuffix counted before the casters joined (2026-11-22), so their
+// pools stay as they were. SpellDamage is "+X damage and healing", which every caster uses.
+var spellSchoolsFor = map[proto.Class][]stats.Stat{
+	proto.Class_ClassShaman:  {stats.NaturePower, stats.FirePower},
+	proto.Class_ClassPaladin: {stats.NaturePower, stats.FirePower},
+	proto.Class_ClassDruid:   {stats.SpellDamage, stats.NaturePower, stats.ArcanePower},
+	proto.Class_ClassMage:    {stats.SpellDamage, stats.FirePower, stats.FrostPower, stats.ArcanePower},
+	proto.Class_ClassWarlock: {stats.SpellDamage, stats.ShadowPower, stats.FirePower},
+	proto.Class_ClassPriest:  {stats.SpellDamage, stats.ShadowPower, stats.HolyPower},
 }
 
 // The Forever items wowhead lists no way of getting: not a drop, a quest, a vendor or a
@@ -707,4 +742,60 @@ func craftedProfession(item *proto.UIItem) proto.Profession {
 		}
 	}
 	return proto.Profession_ProfessionUnknown
+}
+
+// The weapon setups -gear-weapons can hold the search to, from tools/rotopt/phase0_specs.json:
+//   - two-hand: a two hander, the off hand empty (Enhancement, Retribution, Arms).
+//   - dual-wield: a one hander in each hand, no shield or off hand item (rogues, Fury dual wield).
+//   - one-hand: a one hander and a shield or off hand item, no two hander.
+//   - any: whatever the class can hold, so a caster weighs a staff against a one hander and
+//     an off hand item.
+var weaponRules = []string{"two-hand", "dual-wield", "one-hand", "any"}
+
+// applyWeaponRules drops the main and off hand options a weapon setup leaves out, and the
+// weapons that aren't of mhTypes in the main hand or ohTypes in the off hand when those are
+// given (Mutilate wants a dagger in each hand).
+func applyWeaponRules(pool [][]gearOption, rule string, mhTypes, ohTypes []proto.WeaponType) error {
+	if !slices.Contains(weaponRules, rule) {
+		return fmt.Errorf("weapon rule %q isn't one of %v", rule, weaponRules)
+	}
+	held := func(o gearOption) bool {
+		t := itemsByID[o.spec.Id].GetWeaponType()
+		return t == proto.WeaponType_WeaponTypeShield || t == proto.WeaponType_WeaponTypeOffHand
+	}
+	ofTypes := func(o gearOption, types []proto.WeaponType) bool {
+		return len(types) == 0 || held(o) || slices.Contains(types, itemsByID[o.spec.Id].GetWeaponType())
+	}
+	mh, oh := proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand
+	pool[mh] = slices.DeleteFunc(pool[mh], func(o gearOption) bool {
+		switch {
+		case rule == "two-hand" && !o.twoHand, (rule == "dual-wield" || rule == "one-hand") && o.twoHand:
+			return true
+		}
+		return !ofTypes(o, mhTypes)
+	})
+	pool[oh] = slices.DeleteFunc(pool[oh], func(o gearOption) bool {
+		switch {
+		case rule == "two-hand", rule == "dual-wield" && held(o), rule == "one-hand" && !held(o):
+			return true
+		}
+		return !ofTypes(o, ohTypes)
+	})
+	return nil
+}
+
+// parseWeaponTypes reads a comma separated list of weapon type names (Dagger, Sword, ...).
+func parseWeaponTypes(list string) ([]proto.WeaponType, error) {
+	var out []proto.WeaponType
+	for _, name := range strings.Split(list, ",") {
+		if name = strings.TrimSpace(name); name == "" {
+			continue
+		}
+		v, ok := proto.WeaponType_value["WeaponType"+name]
+		if !ok {
+			return nil, fmt.Errorf("unknown weapon type %q", name)
+		}
+		out = append(out, proto.WeaponType(v))
+	}
+	return out, nil
 }

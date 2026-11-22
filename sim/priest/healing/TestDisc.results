@@ -184,6 +184,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestDisc-Phase1-AllItems-VestmentsoftheVirtuous-1675"
+ value: {
+  tps: 50.8339
+  dtps: 109.364
+  hps: 109.23024
+ }
+}
+dps_results: {
  key: "TestDisc-Phase1-AllItems-Warlord'sInvestiture"
  value: {
   tps: 50.67394

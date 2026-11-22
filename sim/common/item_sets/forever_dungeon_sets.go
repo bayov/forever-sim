@@ -60,11 +60,15 @@ func foreverSpellCastMana(procID int32, manaID int32, name string) core.ApplyEff
 // Furious Storm 27775): +65 spell damage and healing for 10 sec, on melee swings and magic spell
 // casts (proc flags 0x14004). The rows state 100% and no rate, so the server sets one. We keep the
 // Classic rates of the same buffs as literals: 3 per minute on swings (our Classic Lightforge) and
-// 4% of spell casts (Classic's The Furious Storm row, 27774).
+// 4% of spell casts (Classic's The Furious Storm row, 27774). Soulforge's 4-piece (set 1673) uses
+// the Lightforge row too. Two sets that proc the same buff share it, since 4 + 4 pieces fit.
 func foreverSpellPowerProc(procID int32, buffID int32, buffName string) core.ApplyEffect {
 	return func(agent core.Agent) {
 		c := agent.GetCharacter()
-		buff := c.NewTemporaryStatsAura(buffName, core.ActionID{SpellID: buffID}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+		buff := c.GetAura(buffName)
+		if buff == nil {
+			buff = c.NewTemporaryStatsAura(buffName, core.ActionID{SpellID: buffID}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+		}
 		handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			buff.Activate(sim)
 		}
@@ -91,24 +95,77 @@ func foreverSpellPowerProc(procID int32, buffID int32, buffName string) core.App
 // Rogue Armor Energize (27787 → 27788), Shadowcraft's 5-piece bonus under Forever (and Darkmantle's
 // 4-piece, in sim/rogue): a melee swing restores 20 Energy (Classic: 35). The row states 100% on
 // every swing (proc flags 0x4) and no rate, so we keep 1 per minute as a literal, as
-// wowsims/forever does.
-func foreverRogueArmorEnergize(agent core.Agent) {
-	c := agent.GetCharacter()
-	if !c.HasEnergyBar() {
-		return
+// wowsims/forever does. Each set names its own proc aura, since Darkmantle's 4-piece (set 512) and
+// Forever Darkmantle's 4-piece (set 1676) fit together.
+func foreverRogueArmorEnergize(name string) core.ApplyEffect {
+	return func(agent core.Agent) {
+		c := agent.GetCharacter()
+		if !c.HasEnergyBar() {
+			return
+		}
+		energyMetrics := c.NewEnergyMetrics(core.ActionID{SpellID: 27788})
+		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+			ActionID: core.ActionID{SpellID: 27787},
+			Name:     name,
+			Callback: core.CallbackOnSpellHitDealt,
+			Outcome:  core.OutcomeLanded,
+			ProcMask: core.ProcMaskMeleeWhiteHit,
+			PPM:      1,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				c.AddEnergy(sim, 20, energyMetrics)
+			},
+		})
 	}
-	energyMetrics := c.NewEnergyMetrics(core.ActionID{SpellID: 27788})
-	core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-		ActionID: core.ActionID{SpellID: 27787},
-		Name:     "Rogue Armor Energize",
-		Callback: core.CallbackOnSpellHitDealt,
-		Outcome:  core.OutcomeLanded,
-		ProcMask: core.ProcMaskMeleeWhiteHit,
-		PPM:      1,
-		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-			c.AddEnergy(sim, 20, energyMetrics)
-		},
-	})
+}
+
+// 450577: a 5% chance on a melee or ranged auto attack (proc flags 0x44) to restore 200 mana
+// (Sudden Insight, 450554). Beaststalker's 5-piece and Beastmaster's 4-piece.
+func foreverAutoAttackMana(name string) core.ApplyEffect {
+	return func(agent core.Agent) {
+		c := agent.GetCharacter()
+		if !c.HasManaBar() {
+			return
+		}
+		manaMetrics := c.NewManaMetrics(core.ActionID{SpellID: 450554})
+		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+			ActionID:   core.ActionID{SpellID: 450577},
+			Name:       name,
+			Callback:   core.CallbackOnSpellHitDealt,
+			Outcome:    core.OutcomeLanded,
+			ProcMask:   core.ProcMaskWhiteHit,
+			ProcChance: 0.05,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				c.AddMana(sim, 200, manaMetrics)
+			},
+		})
+	}
+}
+
+// 450587: a melee swing (proc flags 0x4) heals for 88 to 132 (110 with 0.4 variance) and gives 10
+// Rage (Warrior's Resolve, 450589). Valor's 5-piece and Heroism's 4-piece. The row states 100% and
+// no rate, so we keep our Classic Valor's 1 per minute. Each set names its own proc aura, since
+// Classic Heroism's 4-piece (set 511) and Forever Heroism's 4-piece (set 1778) fit together.
+func foreverWarriorsResolve(name string) core.ApplyEffect {
+	return func(agent core.Agent) {
+		c := agent.GetCharacter()
+		actionID := core.ActionID{SpellID: 450589}
+		healthMetrics := c.NewHealthMetrics(actionID)
+		rageMetrics := c.NewRageMetrics(actionID)
+		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+			ActionID: core.ActionID{SpellID: 450587},
+			Name:     name,
+			Callback: core.CallbackOnSpellHitDealt,
+			Outcome:  core.OutcomeLanded,
+			ProcMask: core.ProcMaskMeleeWhiteHit,
+			PPM:      1,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				c.GainHealth(sim, sim.Roll(88, 132), healthMetrics)
+				if c.HasRageBar() {
+					c.AddRage(sim, 10, rageMetrics)
+				}
+			},
+		})
+	}
 }
 
 // https://www.wowhead.com/forever/item-set=185/wildheart-raiment
@@ -133,24 +190,7 @@ var foreverWildheartRaiment = map[int32]core.ApplyEffect{
 var foreverBeaststalkerArmor = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: foreverDungeonAttackPower,
-	5: func(agent core.Agent) {
-		c := agent.GetCharacter()
-		if !c.HasManaBar() {
-			return
-		}
-		manaMetrics := c.NewManaMetrics(core.ActionID{SpellID: 450554})
-		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-			ActionID:   core.ActionID{SpellID: 450577},
-			Name:       "Beaststalker Armor - 5pc",
-			Callback:   core.CallbackOnSpellHitDealt,
-			Outcome:    core.OutcomeLanded,
-			ProcMask:   core.ProcMaskWhiteHit,
-			ProcChance: 0.05,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				c.AddMana(sim, 200, manaMetrics)
-			},
-		})
-	},
+	5: foreverAutoAttackMana("Beaststalker Armor - 5pc"),
 	6: foreverDungeonManaRegen,
 }
 
@@ -191,7 +231,7 @@ var foreverVestmentsOfTheDevout = map[int32]core.ApplyEffect{
 var foreverShadowcraftArmor = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: foreverDungeonAttackPower,
-	5: foreverRogueArmorEnergize,
+	5: foreverRogueArmorEnergize("Rogue Armor Energize"),
 }
 
 // https://www.wowhead.com/forever/item-set=187/the-elements
@@ -223,26 +263,5 @@ var foreverBattlegearOfValor = map[int32]core.ApplyEffect{
 	3: func(agent core.Agent) {
 		agent.GetCharacter().AddStat(stats.Strength, 15)
 	},
-	// 450587: a melee swing (proc flags 0x4) heals for 88 to 132 and gives 10 Rage (Warrior's
-	// Resolve, 450589). The row states 100% and no rate; we keep our Classic set's 1 per minute.
-	5: func(agent core.Agent) {
-		c := agent.GetCharacter()
-		actionID := core.ActionID{SpellID: 450589}
-		healthMetrics := c.NewHealthMetrics(actionID)
-		rageMetrics := c.NewRageMetrics(actionID)
-		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-			ActionID: core.ActionID{SpellID: 450587},
-			Name:     "Warrior's Resolve",
-			Callback: core.CallbackOnSpellHitDealt,
-			Outcome:  core.OutcomeLanded,
-			ProcMask: core.ProcMaskMeleeWhiteHit,
-			PPM:      1,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				c.GainHealth(sim, sim.Roll(88, 132), healthMetrics)
-				if c.HasRageBar() {
-					c.AddRage(sim, 10, rageMetrics)
-				}
-			},
-		})
-	},
+	5: foreverWarriorsResolve("Warrior's Resolve"),
 }

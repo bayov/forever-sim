@@ -60,6 +60,8 @@ const (
 	BurstOfKnowledge          = 11832
 	WraithScythe              = 11920
 	LinkensSwordOfMastery     = 11902
+	LinkensBoomerang          = 11905
+	CloakOfFire               = 14134
 	SearingNeedle             = 12531
 	KerisOfZulSerak           = 12582
 	BlackhandDoomsaw          = 12583
@@ -3797,6 +3799,123 @@ func init() {
 		})
 	})
 
+	// Jewelry uses we leave unmodelled (Phase 0 check, client 1.60.1.71037):
+	//   - Cannonball Runner (13382) summons a cannon for 10s that casts Cannon Fire (17501, 85 to 139
+	//     Holy to nearby enemies), and Arcanite Dragonling (16022) a dragonling for 60s. The client
+	//     has neither creature's spells or cast rate, so we can't say what they deal.
+	//   - Six Demon Bag (7734) picks its spell on the server. The client has only a dummy effect.
+	//   - Ramstein's Lightning Bolts (13515) is a 2s stun in Forever (1299443), no damage.
+	//   - The rest are defensive or out of combat: absorbs, heals, reflectors, resistances,
+	//     dispels, teleports, speed, roots and fishing.
+	// https://www.wowhead.com/classic/item=11905/linkens-boomerang
+	// Forever: Use: Linken's Boomerang (15712) deals 150 Physical damage, varying by 49% (113 to
+	// 187), and disarms the target for 10 sec and knocks it down for 2 sec. 3 min cooldown, and 10
+	// sec on category 1141 ("Item - Burst Trinket"), which the other on-use trinkets share (client
+	// 1.60.1.71037 ItemEffect, SpellEffect). The spell has no SpellCategories row, so no defense
+	// type: it can't miss or crit. Armor still reduces it. The disarm and knockdown do nothing
+	// to a boss in the sim, so we leave them out.
+	core.NewItemEffect(LinkensBoomerang, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: LinkensBoomerang},
+			SpellSchool: core.SpellSchoolPhysical,
+			DefenseType: core.DefenseTypeNone,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 3,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 10,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamage(sim, target, sim.Roll(113, 187), spell.OutcomeAlwaysHit)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+
+	// https://www.wowhead.com/classic/item=14134/cloak-of-fire
+	// Forever: Use: Cloak of Fire (18364) burns every enemy near you for 25 Fire damage every 5 sec
+	// for 15 sec (18374, 3 ticks). 2 min cooldown, no shared category (client 1.60.1.71037
+	// ItemEffect, SpellEffect). 18374 has no SpellCategories row, so no defense type: the ticks
+	// can't miss or crit. We give it the magic one anyway, since a tick's crit check needs one
+	// whenever an effect lets ticks crit. We burn every target, as for the other area uses.
+	core.NewItemEffect(CloakOfFire, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		burn := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 18374},
+			SpellSchool: core.SpellSchoolFire,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagPureDot,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Dot: core.DotConfig{
+				Aura: core.Aura{
+					Label: "Cloak of Fire",
+				},
+				NumberOfTicks: 3,
+				TickLength:    time.Second * 5,
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, 25, dot.OutcomeTick)
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+				spell.Dot(target).Apply(sim)
+			},
+		})
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: CloakOfFire},
+			ProcMask: core.ProcMaskEmpty,
+			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 2,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				for _, target := range sim.Encounter.ActiveTargetUnits {
+					burn.Cast(sim, target)
+				}
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+
 	// https://www.wowhead.com/forever/item=274759/everlook-pathcarver
 	// Forever: Use: Prototype Pathcarver (1295270) deals 607 Physical damage split between up to 4
 	// enemies within 4 yards of the target, from up to 8 yards away. 5 min cooldown, and 15 sec on
@@ -4469,6 +4588,11 @@ func init() {
 	//   (1309551), on ourselves. It only costs us, and the DPS sim has no fire on us or movement.
 	//
 	// (client 1.60.1.70959 ItemEffect, SpellEffect and SpellTargetRestrictions)
+
+	// Mail and plate armor whose use we leave out, so it gives only its stats:
+	//
+	// - 8367 Dragonscale Breastplate: absorbs 600 magical damage for 2 min (1 hour cooldown), a
+	//   defensive use.
 
 	// https://www.wowhead.com/classic/item=23078/gauntlets-of-undead-slaying
 	// +60 Attack Power when fighting Undead.

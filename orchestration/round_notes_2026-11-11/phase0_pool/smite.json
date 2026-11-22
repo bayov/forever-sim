@@ -1,0 +1,539 @@
+{
+  "spec": "smite",
+  "options": {
+    "back": 925,
+    "chest": 834,
+    "feet": 364,
+    "finger1": 615,
+    "finger2": 615,
+    "hands": 364,
+    "head": 378,
+    "legs": 389,
+    "mainhand": 542,
+    "neck": 375,
+    "offhand": 527,
+    "ranged": 174,
+    "shoulder": 349,
+    "trinket1": 104,
+    "trinket2": 104,
+    "waist": 311,
+    "wrist": 305
+  },
+  "items": 1323,
+  "unmodelled": [
+    {
+      "id": 833,
+      "name": "Lifestone",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 1315,
+      "name": "Lei of Lilies",
+      "slot": "neck",
+      "kind": "Use"
+    },
+    {
+      "id": 1973,
+      "name": "Orb of Deception",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 2820,
+      "name": "Nifty Stopwatch",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 2915,
+      "name": "Taran Icebreaker",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 4696,
+      "name": "Lapidis Tankard of Tidesippe",
+      "slot": "offhand",
+      "kind": "Use"
+    },
+    {
+      "id": 6660,
+      "name": "Julie's Dagger",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 7734,
+      "name": "Six Demon Bag",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 10697,
+      "name": "Enchanted Azsharite Felbane Dagger",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 10698,
+      "name": "Enchanted Azsharite Felbane Staff",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 10804,
+      "name": "Fist of the Damned",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 11608,
+      "name": "Dark Iron Pulverizer",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 11803,
+      "name": "Force of Magma",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 11808,
+      "name": "Circle of Flame",
+      "slot": "head",
+      "kind": "Use"
+    },
+    {
+      "id": 11905,
+      "name": "Linken's Boomerang",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 12185,
+      "name": "Bloodsail Admiral's Hat",
+      "slot": "head",
+      "kind": "Use"
+    },
+    {
+      "id": 12528,
+      "name": "The Judge's Gavel",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 12532,
+      "name": "Spire of the Stoneshaper",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 12781,
+      "name": "Serenity",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 12796,
+      "name": "Hammer of the Titans",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 13143,
+      "name": "Mark of the Dragon Lord",
+      "slot": "finger1",
+      "kind": "Use"
+    },
+    {
+      "id": 13164,
+      "name": "Heart of the Scale",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13353,
+      "name": "Book of the Dead",
+      "slot": "offhand",
+      "kind": "Use"
+    },
+    {
+      "id": 13379,
+      "name": "Piccolo of the Flaming Fire",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13382,
+      "name": "Cannonball Runner",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13393,
+      "name": "Malown's Slam",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 13515,
+      "name": "Ramstein's Lightning Bolts",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13937,
+      "name": "Headmaster's Charge",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 14134,
+      "name": "Cloak of Fire",
+      "slot": "back",
+      "kind": "Use"
+    },
+    {
+      "id": 15418,
+      "name": "Shimmering Platinum Warhammer",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 15867,
+      "name": "Prismcharm",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 15873,
+      "name": "Ragged John's Neverending Cup",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 16022,
+      "name": "Arcanite Dragonling",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 16768,
+      "name": "Furbolg Medicine Pouch",
+      "slot": "offhand",
+      "kind": "Use"
+    },
+    {
+      "id": 17690,
+      "name": "Frostwolf Insignia Rank 1",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17733,
+      "name": "Fist of Stone",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 17744,
+      "name": "Heart of Noxxion",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17759,
+      "name": "Mark of Resolution",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17766,
+      "name": "Princess Theradras' Scepter",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 17905,
+      "name": "Frostwolf Insignia Rank 2",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17906,
+      "name": "Frostwolf Insignia Rank 3",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17907,
+      "name": "Frostwolf Insignia Rank 4",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17908,
+      "name": "Frostwolf Insignia Rank 5",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17909,
+      "name": "Frostwolf Insignia Rank 6",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17943,
+      "name": "Fist of Stone",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 18608,
+      "name": "Benediction",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 18609,
+      "name": "Anathema",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 18634,
+      "name": "Gyrofreeze Ice Reflector",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18637,
+      "name": "Major Recombobulator",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18638,
+      "name": "Hyper-Radiant Flame Reflector",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18639,
+      "name": "Ultra-Flash Shadow Reflector",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18984,
+      "name": "Dimensional Ripper - Everlook",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18986,
+      "name": "Ultrasafe Transporter: Gadgetzan",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 19024,
+      "name": "Arena Grand Master",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 19141,
+      "name": "Luffa",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 19323,
+      "name": "The Unstoppable Force",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 19979,
+      "name": "Hook of the Master Angler",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 20072,
+      "name": "Defiler's Talisman",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 20084,
+      "name": "Hunting Net",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 20525,
+      "name": "Earthen Sigil",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 21115,
+      "name": "Defiler's Talisman",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 21326,
+      "name": "Defender of the Timbermaw",
+      "slot": "trinket1",
+      "kind": "Use"
+    }
+  ],
+  "hiddenStats": [
+    {
+      "id": 4990,
+      "name": "Scorched Bands",
+      "slot": "wrist",
+      "kind": "classic"
+    },
+    {
+      "id": 11768,
+      "name": "Incendic Bracers",
+      "slot": "wrist",
+      "kind": "classic"
+    },
+    {
+      "id": 12752,
+      "name": "Cap of the Scarlet Savant",
+      "slot": "head",
+      "kind": "classic"
+    },
+    {
+      "id": 14543,
+      "name": "Darkshade Gloves",
+      "slot": "hands",
+      "kind": "classic"
+    },
+    {
+      "id": 17982,
+      "name": "Ragnaros Core",
+      "slot": "finger1",
+      "kind": "classic"
+    },
+    {
+      "id": 19105,
+      "name": "Frost Runed Headdress",
+      "slot": "head",
+      "kind": "classic"
+    },
+    {
+      "id": 20693,
+      "name": "Weighted Cloak",
+      "slot": "back",
+      "kind": "classic"
+    },
+    {
+      "id": 20694,
+      "name": "Glowing Black Orb",
+      "slot": "offhand",
+      "kind": "classic"
+    },
+    {
+      "id": 20696,
+      "name": "Crystal Spiked Maul",
+      "slot": "mainhand",
+      "kind": "classic"
+    },
+    {
+      "id": 20697,
+      "name": "Crystalline Threaded Cape",
+      "slot": "back",
+      "kind": "classic"
+    },
+    {
+      "id": 20720,
+      "name": "Dark Whisper Blade",
+      "slot": "mainhand",
+      "kind": "classic"
+    },
+    {
+      "id": 280912,
+      "name": "Robes of Conviction",
+      "slot": "chest",
+      "kind": "partial"
+    },
+    {
+      "id": 280913,
+      "name": "Handguards of Conviction",
+      "slot": "hands",
+      "kind": "partial"
+    },
+    {
+      "id": 280914,
+      "name": "Boots of Conviction",
+      "slot": "feet",
+      "kind": "partial"
+    },
+    {
+      "id": 280915,
+      "name": "Leggings of Conviction",
+      "slot": "legs",
+      "kind": "partial"
+    },
+    {
+      "id": 280917,
+      "name": "Pauldrons of Conviction",
+      "slot": "shoulder",
+      "kind": "partial"
+    },
+    {
+      "id": 280918,
+      "name": "Halo of Conviction",
+      "slot": "head",
+      "kind": "partial"
+    },
+    {
+      "id": 280919,
+      "name": "Garb of Conviction",
+      "slot": "chest",
+      "kind": "partial"
+    },
+    {
+      "id": 280920,
+      "name": "Gloves of Conviction",
+      "slot": "hands",
+      "kind": "partial"
+    },
+    {
+      "id": 280921,
+      "name": "Treads of Conviction",
+      "slot": "feet",
+      "kind": "partial"
+    },
+    {
+      "id": 280922,
+      "name": "Pants of Conviction",
+      "slot": "legs",
+      "kind": "partial"
+    },
+    {
+      "id": 280923,
+      "name": "Mantle of Conviction",
+      "slot": "shoulder",
+      "kind": "partial"
+    },
+    {
+      "id": 280924,
+      "name": "Crown of Conviction",
+      "slot": "head",
+      "kind": "partial"
+    }
+  ],
+  "foreverNoTooltip": 369,
+  "unlisted": 1113
+}

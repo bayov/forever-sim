@@ -327,7 +327,11 @@ var ItemSetSoulforgeArmor = core.NewItemSet(core.ItemSet{
 		// rate, so we keep the 3 per minute our Classic Lightforge Armor gives the same buff.
 		4: func(agent core.Agent) {
 			c := agent.GetCharacter()
-			buff := c.NewTemporaryStatsAura("Crusader's Wrath", core.ActionID{SpellID: 27499}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+			// Forever's Soulforge (set 1673) procs the same buff, and 4 + 4 pieces fit.
+			buff := c.GetAura("Crusader's Wrath")
+			if buff == nil {
+				buff = c.NewTemporaryStatsAura("Crusader's Wrath", core.ActionID{SpellID: 27499}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+			}
 			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
 				ActionID: core.ActionID{SpellID: 27498},
 				Name:     "Item - Crusader's Wrath Proc - Soulforge Armor",

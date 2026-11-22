@@ -64,6 +64,9 @@ func main() {
 	gearScreenKeep := flag.Int("gear-screen-keep", 20, "gear search: how many items per slot survive the screen")
 	gearInclude := flag.String("gear-include", "", "item IDs the gear search keeps whatever -gear-phase and -gear-no-raids say, comma separated (the Darkmoon cards, open in Forever though our data puts them in phase 3)")
 	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
+	gearWeapons := flag.String("gear-weapons", "any", "gear search: the weapon setup, two-hand, dual-wield, one-hand (and a shield or off hand item) or any (applyWeaponRules in gear.go)")
+	gearMainHandTypes := flag.String("gear-mh-types", "", "gear search: the weapon types the main hand may hold, comma separated (Dagger for Mutilate), empty for all")
+	gearOffHandTypes := flag.String("gear-oh-types", "", "gear search: the weapon types the off hand may hold, comma separated, empty for all")
 	gearNoPick := flag.String("gear-no-pick", "", "item IDs the gear search never picks, comma separated, but the -gear-rank-out list still ranks with their real loss (the Phase 0 list's Exalted reputation items)")
 	minHealth := flag.Float64("min-health", 0, "gear search: the least health the set must have without buffs or consumes, for a PvP set")
 	minArmor := flag.Float64("min-armor", 0, "gear search: the least armor the set must have without buffs or consumes")
@@ -379,6 +382,27 @@ func main() {
 			os.Exit(2)
 		}
 		markNoPick(pool, noPick)
+		mhTypes, err := parseWeaponTypes(*gearMainHandTypes)
+		if err == nil {
+			var ohTypes []proto.WeaponType
+			if ohTypes, err = parseWeaponTypes(*gearOffHandTypes); err == nil {
+				err = applyWeaponRules(pool, *gearWeapons, mhTypes, ohTypes)
+			}
+		}
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "-gear-weapons: %v\n", err)
+			os.Exit(2)
+		}
+		if *gearPoolReport != "" {
+			if err := writePoolReport(*gearPoolReport, *gearPoolSpec, pool); err != nil {
+				fmt.Fprintf(os.Stderr, "-gear-pool-report: %v\n", err)
+				os.Exit(2)
+			}
+			for slot, options := range pool {
+				fmt.Printf("%s: %d options\n", gearSlotNames[slot], len(options))
+			}
+			return
+		}
 		// With -enchants-only each slot keeps only the item it starts with, so the search
 		// has nothing to swap and only tries the enchants. We run it last, once the items
 		// are settled.

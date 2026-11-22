@@ -105,6 +105,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSurvival-Phase1-AllItems-BeastmasterArmor-1669"
+ value: {
+  dps: 1387.70067
+  tps: 1241.43658
+  dtps: 2.16067
+ }
+}
+dps_results: {
  key: "TestSurvival-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
   dps: 1466.322

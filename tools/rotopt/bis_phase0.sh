@@ -1,8 +1,9 @@
 #!/bin/sh
-# Regenerates the level 60 Phase 0 Enhancement BiS list, ui/enhancement_shaman/bis/level60_phase0.bis.json
-# (docs/bis_lists.md). Run from the repo root:
+# Regenerates a level 60 Phase 0 BiS list (docs/bis_lists.md), Enhancement's
+# (ui/enhancement_shaman/bis/level60_phase0.bis.json) by default. Run from the repo root:
 #
 #   tools/rotopt/bis_phase0.sh
+#   SPEC=rogue_combat_swords tools/rotopt/bis_phase0.sh
 #   TALENTS=053303102-055030110051012151-03 tools/rotopt/bis_phase0.sh
 #   RANK_ONLY=1 tools/rotopt/bis_phase0.sh
 #
@@ -28,9 +29,23 @@
 #
 #   EFFECTS_ONLY=1 tools/rotopt/bis_phase0.sh
 #
+# SPEC picks the spec from tools/rotopt/phase0_specs.json, one entry per DPS spec of the DPS
+# Report: the report build the fight comes from, the talents, the starting gear, the weapon
+# setup and where the lists go. Every spec but Enhancement starts with no gear, and the search
+# fills each slot. What follows on talents, starting gear and weapons is Enhancement's entry.
+#
+# DRY_RUN=1 sims nothing. For each spec of SPEC (every spec in the table by default, or a comma
+# separated list) it writes what the search's pool would hold (-gear-pool-report) to
+# DRY_RUN_DIR (orchestration/round_notes_2026-11-11/phase0_pool by default): the pool's size,
+# the items with use or proc effects the sim doesn't model, the items whose stats Forever still
+# hides, and the items the content check doesn't list. That is the hand check's input before a
+# spec's first search.
+#
+#   DRY_RUN=1 tools/rotopt/bis_phase0.sh
+#
 # Phase 0 is what Forever has before its raids open on 2026-12-09: dungeons, quests, crafting,
 # reputation, world drops and PvP reputation (tools/rotopt/phase0.go has the rules). The fight
-# is the DPS Report's default Enhancement build (tools/dps_report/req/shaman__enhancement-level60.json):
+# is the spec's DPS Report build, for Enhancement the default one (tools/dps_report/req/shaman__enhancement-level60.json):
 # Orc, Engineering and Leatherworking, its rotation, enchants, buffs and consumes.
 #
 # A set is scored in two parts (user, 2026-11-20, -use-dur in use_values.go). Everything but
@@ -86,8 +101,9 @@
 #     yet. The Warden's Signets need Exalted, so they're infeasible (below).
 #   - Every item tools/rotopt/phase0_content.json marks "out". That file is the hand check of
 #     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
-#     we don't know of a way yet, and "infeasible" is below. Everything else is open, and its
-#     note says what it takes.
+#     we don't know of a way yet, and "infeasible" is below. Every other item it lists is open,
+#     and its note says what it takes. An item it doesn't list hasn't been checked: when a pick
+#     or one of a list's top 5 is one, the run prints them all and fails (below).
 #
 # What it ranks but never picks: the items phase0_content.json marks "infeasible" (user,
 # 2026-11-20, -gear-no-pick). Those need Exalted reputation, which is a very long grind: the
@@ -117,7 +133,12 @@
 #     doubtful one is marked rather than left out without a word.
 #
 # The pick is a two hander, so the main hand list has only two handers and the off hand list
-# is empty (-gear-rank-two-hand-only). We don't list a one hand setup next to it.
+# is empty (-gear-rank-two-hand-only). We don't list a one hand setup next to it. That is the
+# table's "two-hand" weapons. It leaves the search's pool as it was (one handers and off hands
+# in), so Enhancement's search is the same as before the table. The other setups hold the pool
+# to them (-gear-weapons, applyWeaponRules in gear.go): "dual-wield" for the rogues and Fury
+# dual wield, with daggers only where the rotation needs them (mhTypes, ohTypes), and "any" for
+# the casters and hunters, which weigh a staff or a two hander against one hand and off hand.
 #
 # Then every enchant goes on the set, slot by slot, and the best one stays (bis_enchants.go). The
 # items are ranked on the set with those enchants, so the list's DPS has them. The enchants are a
@@ -131,6 +152,13 @@
 #
 # Each slot keeps its 25 best items. After the search we copy `avail` and `note` from
 # phase0_content.json onto every entry of the list, so a rerun keeps them.
+#
+# Then the unchecked items: every pick and every item in the top 5 of a slot's list that
+# phase0_content.json doesn't list, and every pick and top 5 enchant phase0_enchants.json
+# doesn't list. The run prints them and fails, after writing the list, so the hand check knows
+# what to look at. ALLOW_UNLISTED=1 prints them and goes on. The Enhancement list's items and
+# enchants that the 2026-11-12 check left open by not listing them are listed now, with only
+# their name (2026-11-22).
 #
 # Each round of the search screens a slot's items at 300 iterations and keeps the best 40 for the
 # full sims. It used to be 100 and 20, but on 2026-11-14 that kept Devilsaur Gauntlets (the
@@ -147,7 +175,21 @@ sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-talents="${TALENTS:-053303102-054030110051212141-03}"
+specs=tools/rotopt/phase0_specs.json
+spec="${SPEC:-enh}"
+if [ -n "$DRY_RUN" ]; then
+	spec="${SPEC:-$(jq -r '.specs | keys_unsorted | join(",")' "$specs")}"
+fi
+# One field of a spec's entry, empty when it has none.
+field() {
+	jq -r --arg spec "$1" --arg f "$2" '.specs[$spec][$f] // empty' "$specs"
+}
+for s in $(echo "$spec" | tr , ' '); do
+	if [ "$(jq --arg spec "$s" '.specs | has($spec)' "$specs")" != true ]; then
+		echo "SPEC $s isn't in $specs: $(jq -r '.specs | keys_unsorted | join(", ")' "$specs")" >&2
+		exit 1
+	fi
+done
 # The two fight lengths (user, 2026-11-20, see above). Everything but the uses counts on 180s,
 # because there's little or no time to regen mana between fights. The uses count on 90s, for the
 # short fights and the 30s equip cooldown a swapped in usable item gets. Revisit both for raids.
@@ -155,15 +197,58 @@ dur="${DUR:-180}"
 use_dur="${USE_DUR:-90}"
 # How many mobs the uses are also valued against, for the "vs 4 mobs" lines (see above).
 aoe_targets="${AOE_TARGETS:-4}"
-effects_out="${EFFECTS_OUT:-ui/enhancement_shaman/bis/level60_phase0.effects.json}"
+# The weapon flags of a spec (see above).
+weapon_flags() {
+	weapons="$(field "$1" weapons)"
+	if [ "$weapons" = two-hand ]; then
+		echo -gear-rank-two-hand-only
+	else
+		echo -gear-weapons "$weapons"
+	fi
+	mh="$(field "$1" mhTypes)"
+	oh="$(field "$1" ohTypes)"
+	if [ -n "$mh" ]; then
+		echo -gear-mh-types "$mh"
+	fi
+	if [ -n "$oh" ]; then
+		echo -gear-oh-types "$oh"
+	fi
+}
+# The list's spec field: the table's rankSpec, or the spec's key.
+rank_spec() {
+	r="$(field "$1" rankSpec)"
+	echo "${r:-$1}"
+}
+# The settings a spec starts from: its report build with the table's talents and starting gear.
+# A "req" slot keeps the report's item, and startEnchants keeps the report's enchant on every
+# filled slot but the off hand. TALENTS wins over the table.
+settings() {
+	t="${TALENTS:-$(field "$1" talents)}"
+	jq --arg talents "$t" --argjson start "$(jq -c --arg spec "$1" '.specs[$spec].start // [range(17) | null]' "$specs")" \
+		--argjson ench "$(jq --arg spec "$1" '.specs[$spec].startEnchants // false' "$specs")" \
+		'(if $talents != "" then .raid.parties[0].players[0].talentsString = $talents else . end)
+	| .raid.parties[0].players[0].equipment.items as $old
+	| [range(17) as $i | if $start[$i] == "req" then $old[$i].id else $start[$i] end] as $ids
+	| .raid.parties[0].players[0].equipment.items = [range(17) as $i
+		| if $ids[$i] == null then {} else {id: $ids[$i]} + (if $ench and $old[$i].enchant and $i != 15 then {enchant: $old[$i].enchant} else {} end) end]' \
+		"tools/dps_report/req/$(field "$1" req).json"
+}
+
+req=tools/dps_report/req/$(field "$spec" req).json
+dir="$(field "$spec" dir)"
+def_out="$(field "$spec" out)"
+def_out="${def_out:-ui/$dir/bis/level60_phase0_$spec.bis.json}"
+def_effects="$(field "$spec" effectsOut)"
+def_effects="${def_effects:-ui/$dir/bis/level60_phase0_$spec.effects.json}"
+effects_out="${EFFECTS_OUT:-$def_effects}"
 # A SLOTS run is a quick rerun of a few lists, so it writes the effects file only when asked.
 if [ -n "$SLOTS" ] && [ -z "$EFFECTS_OUT" ]; then
 	effects_out=none
 fi
-req=tools/dps_report/req/shaman__enhancement-level60.json
 content=tools/rotopt/phase0_content.json
-out="${OUT:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
-from="${FROM:-ui/enhancement_shaman/bis/level60_phase0.bis.json}"
+enchants=tools/rotopt/phase0_enchants.json
+out="${OUT:-$def_out}"
+from="${FROM:-$def_out}"
 exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
 # The most gold an item may cost for each DPS it adds (user, 2026-11-22). An item over it is
@@ -172,16 +257,27 @@ include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$
 # should run again after a rerun moves the picks.
 max_gpd="${MAX_GOLD_PER_DPS:-30}"
 nopick="$(jq -r --argjson max "$max_gpd" '[to_entries[] | select(.value.avail == "infeasible" or (.value.goldPerDps // 0) > $max) | .key] | join(",")' "$content")"
+# The gear search's pool, without the search: DRY_RUN=1 (see above).
+if [ -n "$DRY_RUN" ]; then
+	dry_dir="${DRY_RUN_DIR:-orchestration/round_notes_2026-11-11/phase0_pool}"
+	mkdir -p "$dry_dir"
+	go build --tags=with_db -o "$tmp/rotopt" ./tools/rotopt
+	for s in $(echo "$spec" | tr , ' '); do
+		jq '.raid.parties[0].players[0].rotation' "tools/dps_report/req/$(field "$s" req).json" >"$tmp/$s.apl.json"
+		settings "$s" >"$tmp/$s.json"
+		# shellcheck disable=SC2046
+		"$tmp/rotopt" -apl "$tmp/$s.apl.json" -settings "$tmp/$s.json" -durs "$dur" \
+			-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
+			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
+			$(weapon_flags "$s") -gear-pool-spec "$s" \
+			-gear-content "$content" -gear-pool-report "$dry_dir/$s.json" "$@" >/dev/null
+		jq -r '"\(.spec): \(.items) items, \(.unmodelled | length) unmodelled, \(.hiddenStats | length) hidden stats, \(.unlisted) unlisted"' "$dry_dir/$s.json"
+	done
+	exit 0
+fi
+
 jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
-# Head, neck, shoulder, back, chest, wrist, hands, waist, legs, feet, two rings, two trinkets,
-# main hand, off hand and the relic, in the order of the equipment list. The report's enchant
-# stays on each slot, and the relic is the report's (Totem of the Storm).
-jq --arg talents "$talents" '.raid.parties[0].players[0].talentsString = $talents
-	| .raid.parties[0].players[0].equipment.items as $old
-	| ([252605, 22150, 15067, 19121, 16666, 16714, 15063, 18504, 15062, 16670, 281635, 18402, 19120, 249469, 18538, null, $old[16].id]) as $ids
-	| .raid.parties[0].players[0].equipment.items = [range(17) as $i
-		| if $ids[$i] == null then {} else {id: $ids[$i]} + (if $old[$i].enchant and $i != 15 then {enchant: $old[$i].enchant} else {} end) end]' \
-	"$req" >"$tmp/enh.json"
+settings "$spec" >"$tmp/enh.json"
 # The list's picks, with their suffix and enchant, in the order of the equipment list, as a jq
 # expression on $list[0]. An empty slot (the off hand next to a two hander) has no pick.
 #
@@ -247,8 +343,8 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
 	-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
 	-gear-screen-iters 300 -gear-screen-keep 40 \
-	-gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
-	-gear-rank-spec enh -gear-rank-sim "$sim" \
+	-gear-rank-name "Phase 0" -gear-rank-keep 25 $(weapon_flags "$spec") \
+	-gear-rank-spec "$(rank_spec "$spec")" -gear-rank-sim "$sim" \
 	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
 	-gear-rank-confirm-iters 20000 -gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters 10000 \
 	-use-dur "$use_dur" -use-iters 20000 -use-aoe-targets "$aoe_targets" $outputs $rank_only "$@"
@@ -268,9 +364,28 @@ jq --slurpfile content "$content" --argjson max "$max_gpd" '.slots |= map_values
 	"$out" >"$tmp/list.json"
 mv "$tmp/list.json" "$out"
 
+# The unchecked items and enchants: picks and top 5s the content checks don't list (see above).
+unlisted="$(jq -r --slurpfile content "$content" --slurpfile enchants "$enchants" '
+	[.slots | to_entries[] | .key as $slot | .value | to_entries[]
+		| select(.key < 5 or .value.bis) | .value | select($content[0][.id | tostring] == null)
+		| "item \(.id) \(.name) (\($slot)\(if .bis then ", pick" else "" end))"]
+	+ [(.enchants // {}) | to_entries[] | .key as $slot | .value | to_entries[]
+		| select(.key < 5 or .value.bis) | .value | select($enchants[0][.spell | tostring] == null)
+		| "enchant \(.spell) \(.name) (\($slot)\(if .bis then ", pick" else "" end))"]
+	| unique[]' "$out")"
+if [ -n "$unlisted" ]; then
+	echo "Not in $content or $enchants, so not checked for Phase 0:" >&2
+	echo "$unlisted" >&2
+	if [ -z "$ALLOW_UNLISTED" ]; then
+		echo "Check them and add them, or set ALLOW_UNLISTED=1. $out is written." >&2
+		exit 1
+	fi
+fi
+
 # The picks as the sim UI's "Phase 0" gear preset (ui/enhancement_shaman/presets.ts), when we
 # wrote the real list. GEAR_OUT=none skips it.
-gear_out="${GEAR_OUT:-ui/enhancement_shaman/gear_sets/level60_phase0.gear.json}"
+gear_out="${GEAR_OUT:-$(field "$spec" gearOut)}"
+gear_out="${gear_out:-none}"
 if [ -z "$OUT" ] && [ "$gear_out" != none ]; then
 	jq -n --slurpfile list "$out" --arg nopick "$nopick" "$picks"' | {items: .}' >"$gear_out"
 fi
