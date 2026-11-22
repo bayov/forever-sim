@@ -308,43 +308,54 @@ func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
 
 // TestForeverWarriorDeepWoundsRolls checks the 8 October development notes: under Forever, Deep
 // Wounds doesn't scale with attack power, and it is a rolling DoT, so a crit while it is up adds
-// the damage not yet ticked to the new one. Either hand's crit takes the main hand's average weapon
-// damage, and the damage modifiers come once, at the tick (wowsims/forever 3281b13bbe, 36cfc58328).
+// the damage not yet ticked to the new one. It also checks wowsims/forever's EV-0139, from Forever
+// combat logs: the critting hand's average weapon damage sizes the bleed (an off-hand crit's
+// without the off-hand penalty), the warrior's damage bonuses don't scale the ticks, and a Thunder
+// Clap crit starts none.
 func TestForeverWarriorDeepWoundsRolls(t *testing.T) {
 	sim, war := newForeverWarriorArmed(t, "00305003", 991014, 991015)
 	war.AutoAttacks.CancelAutoSwing(sim)
 	target := war.CurrentTarget
 	dot := war.DeepWounds.Dot(target)
-	crit := func(auto *core.Spell) float64 {
-		result := auto.NewResult(target)
+	crit := func(spell *core.Spell) float64 {
+		result := spell.NewResult(target)
 		result.Outcome = core.OutcomeCrit
 		result.Damage = 300
-		auto.DealDamage(sim, result)
+		spell.DealDamage(sim, result)
 		return dot.SnapshotBaseDamage
 	}
 
-	want := war.AutoAttacks.MH().AverageDamage() * 0.6 / 4
-	war.PseudoStats.DamageDealtMultiplier *= 1.2
-	if got := crit(war.AutoAttacks.MHAuto()); math.Abs(got-want) > 1e-6 {
-		t.Errorf("a main hand crit stored a %.3f tick, want the main hand's weapon damage only: %.3f", got, want)
+	mh := war.AutoAttacks.MH().AverageDamage() * 0.6 / 4
+	oh := war.AutoAttacks.OH().AverageDamage() * 0.6 / 4
+	if oh == mh {
+		t.Fatalf("the test needs two weapons of different damage")
 	}
-	if got := crit(war.AutoAttacks.OHAuto()); math.Abs(got-2*want) > 1e-6 {
-		t.Errorf("an off hand crit before any tick gave a %.3f tick, want the first's 4 ticks and the main hand's share: %.3f", got, 2*want)
+	war.PseudoStats.DamageDealtMultiplier *= 1.2
+	if got := crit(war.AutoAttacks.MHAuto()); math.Abs(got-mh) > 1e-6 {
+		t.Errorf("a main hand crit stored a %.3f tick, want the main hand's weapon damage only: %.3f", got, mh)
+	}
+	if got := crit(war.AutoAttacks.OHAuto()); math.Abs(got-(mh+oh)) > 1e-6 {
+		t.Errorf("an off hand crit before any tick gave a %.3f tick, want the first's 4 ticks and the off hand's share: %.3f", got, mh+oh)
 	}
 
 	metrics := &war.DeepWounds.SpellMetrics()[target.UnitIndex]
 	before := metrics.TotalDamage
 	dot.TickOnce(sim)
-	multiplier := war.DeepWounds.AttackerDamageMultiplier(war.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
 	// Forever rounds damage to whole numbers.
-	if got := metrics.TotalDamage - before; math.Abs(got-2*want*multiplier) > 0.5 {
-		t.Errorf("a tick dealt %.3f, want the stored %.3f times the modifiers once (%.3f): %.3f", got, 2*want, multiplier, 2*want*multiplier)
+	if got := metrics.TotalDamage - before; math.Abs(got-(mh+oh)) > 0.5 {
+		t.Errorf("a tick dealt %.3f under a 20%% damage bonus, want the stored %.3f", got, mh+oh)
 	}
 
 	dot.Cancel(sim)
 	war.AddStatDynamic(sim, stats.AttackPower, 1000)
-	if got := crit(war.AutoAttacks.MHAuto()); math.Abs(got-want) > 1e-6 {
-		t.Errorf("with 1000 more attack power a crit gave a %.3f tick, want %.3f", got, want)
+	if got := crit(war.AutoAttacks.MHAuto()); math.Abs(got-mh) > 1e-6 {
+		t.Errorf("with 1000 more attack power a crit gave a %.3f tick, want %.3f", got, mh)
+	}
+
+	dot.Cancel(sim)
+	crit(war.ThunderClap.Spell)
+	if dot.IsActive() {
+		t.Errorf("a Thunder Clap crit started Deep Wounds")
 	}
 }
 
