@@ -11,13 +11,15 @@ import (
 )
 
 // TestOrcShamanJudgementOfWisdom checks Judgement of Wisdom on the boss: 59 mana on a 50%
-// roll from each white swing, and a swing that misses or is dodged rolls too (Classic).
+// roll from each white swing that lands. Under Forever a swing that misses or is dodged rolls
+// nothing (wowsims/forever 9f254e8d87, EV-0018: 1 of 52 avoided swings against 164 of 336 landed
+// ones in a level 41 paladin's log); in Classic it rolls too.
 //
 // The user keeps it at rank 3 (2026-10-08), because we only sim a raid at level 60.
 //
 // A naked level 60 shaman swings unarmed for 15 min. About 15% of the swings miss or are
-// dodged by the level 63 boss. If those didn't roll, Judgement of Wisdom would give mana on
-// about 43% of the swings and not 50%.
+// dodged by the level 63 boss. If those rolled, Judgement of Wisdom would give mana on about
+// 50% of the landed swings plus about 7.5% more.
 func TestOrcShamanJudgementOfWisdom(t *testing.T) {
 	sim, enh := newShamanSim(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{JudgementOfWisdom: true}, 900)
 	// We start low, so no proc is lost to a full mana bar.
@@ -36,8 +38,9 @@ func TestOrcShamanJudgementOfWisdom(t *testing.T) {
 	if jow.Gain != 59*float64(jow.Events) {
 		t.Errorf("got %.1f mana from %d procs, want 59 each", jow.Gain, jow.Events)
 	}
-	if rate := float64(jow.Events) / float64(swings.Casts); rate < 0.465 || rate > 0.535 {
-		t.Errorf("Judgement of Wisdom gave mana on %.1f%% of %d swings, want 50%%", rate*100, swings.Casts)
+	landed := swings.Casts - missed
+	if rate := float64(jow.Events) / float64(landed); rate < 0.465 || rate > 0.535 {
+		t.Errorf("Judgement of Wisdom gave mana on %.1f%% of %d landed swings, want 50%%", rate*100, landed)
 	}
 }
 
