@@ -124,7 +124,6 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Maelstrom Weapon from Windfury Totem's strikes | Any landed melee hit gives a stack, the totem's strikes too (`sim/shaman/talents.go:~609`) | Not from 10610, the totem's strike (434723c516, 2026-11-14: 0 of 140 and 0 of 121 landed totem strikes in logs) | Open, the evidence conflicts: our notes.md:24 audit of 2026-11-09 (before the Nov 10 tuning) had 428 of 430 Windfury extra swings give a stack, totem or weapon unclear; the Nov 13 audit lists white swings, Stormstrike and Windfury Weapon only. Our logs can settle it (stacks after 10610 hits). Ask the user. Enhancement 9.0 for ours (2026-11-22, new) |
 | Windfury Weapon beside Windfury Totem | Both proc, separate ICDs (`wf_weapon_totem_icd`, Nov 10 notes) | Windfury Weapon shuts the totem out | Open. Ours about 12 totem procs, 51 DPS (before 2026-11-17, not remeasured; the 2026-11-22 Enhancement gap leaves little room for it) |
 | Flametongue Totem beside Windfury Weapon | Works (`sham_ftt_stack`) | Nothing while any Windfury Totem stands | Open, notes.md To Verify. Enhancement 16.2 (not remeasured) |
 | Stormstrike's weapon speed | Normalized + 0.3 (3.6 two-hander), fitted to beta (shaman_audit.md 4.1) | Normalized | Evidence. Enhancement 4.6 (2026-11-22); Holy Strike the same, Holy Shock Ret 2.8 (2026-11-22), Retribution 2.7 |
@@ -265,6 +264,13 @@ A gap on one of these is a regression.
   attack power is the Blessing rank's 21 alone); ours keeps the Nov 10 notes' 33/66/100%, theirs
   reads client 415140, whose value isn't traced. These three rows were Enhancement 119, 45 and 29
   for theirs before.
+- Maelstrom Weapon: Windfury Totem's strike gives no stack, while white swings, Stormstrike and
+  Windfury Weapon's strikes do. Ours since 2026-11-22 under Forever (`applyMaelstromWeapon` in
+  `sim/shaman/talents.go` skips a main-hand swing that `IsWindfuryTotemAttack`), from their
+  434723c516 (EV-0009: 0 of 140 landed totem strikes at ranks 1 and 2, 0 of 121 at rank 3,
+  2026-11-13 and 14 after push 114060, against 0.59 a landed white swing; a Warcraft Logs census
+  after the Nov 14 hotfix agrees). Our notes.md 2026-11-09 audit (428 of 430 Windfury extra swings
+  gave a stack) predates the strike rework. Before, Enhancement 9.0 for ours.
 - Faerie Fire in Cat Form: 1.0 s GCD, 6 s cooldown.
 - Ferocious Bite on a miss, dodge or parry: 80% of its 35 Energy back, extra Energy and combo
   points kept. Ours since 2026-11-15 (their 0384d8f98c, 70862 log).

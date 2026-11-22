@@ -561,6 +561,14 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	// 2760 white swings, bcc5d6cd4), and each stack took 4% a rank. Misses, dodges and parries
 	// gave none, and still roll nothing here.
 	//
+	// Under Forever Windfury Totem's extra swing gives no stack, while white swings, Stormstrike
+	// and Windfury Weapon's strikes still do. Combat logs of 2026-11-13 and 14 (after push 114060,
+	// 5/5) had 0 of 140 landed totem swings at totem ranks 1 and 2 and 0 of 121 at rank 3 give one,
+	// against 0.59 a landed white swing, and a Warcraft Logs census after the 2026-11-14 hotfix
+	// agrees (wowsims/forever EV-0009, 434723c516). Our audit of 2026-11-09 (428 of 430 Windfury
+	// extra swings gave a stack) predates that. Only the totem's own swing is skipped: a hit it
+	// sets off, like Windfury Weapon's strike, still rolls.
+	//
 	// Classic has no Maelstrom Weapon. Outside Forever it keeps the sim's 2 PPM a point.
 	points := float64(shaman.Talents.MaelstromWeapon)
 	ppm := 2 * points
@@ -604,6 +612,9 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		Label: "Maelstrom Weapon Trigger",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.Landed() {
+				return
+			}
+			if shaman.Env.IsForever() && spell.ProcMask == core.ProcMaskMeleeMHAuto && shaman.AutoAttacks.IsWindfuryTotemAttack() {
 				return
 			}
 			procced := ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
