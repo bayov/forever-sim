@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "b4b68c52e9a9da5af391f74d88f7cdfb4a0d7217"
+  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
  },
- "last_pass_at": "2026-11-20T18:50:46Z",
- "pass": 24,
+ "last_pass_at": "2026-11-22T12:56:00Z",
+ "pass": 25,
  "result": "quiet",
- "note": "Pass 24: client 71037 puts the VE 10%/caster +100% hotfix and Blue Dragon 3% into the client (sim matches); Genesis mask +Pounce Bleed; no sim code in range. Findings 10, 11 open.",
+ "note": "Pass 25: paladin 2H Spec Holy school-wide (Nov 19 hotfix) reaches no heal (heals read HealingDealtMultiplier); shaman changes comments only; Nov 20 post has no healer line; client 71037. Findings 10, 11 open.",
  "client_build": "1.60.1.71037",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
-  "date": "2026-11-17T02:18:14Z"
+  "date": "2026-11-21T00:18:29Z"
  },
- "checked_at": "2026-11-22T06:44:22Z"
+ "checked_at": "2026-11-22T13:10:53Z"
 }

@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "b4b68c52e9a9da5af391f74d88f7cdfb4a0d7217"
+  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
  },
- "last_pass_at": "2026-11-18T14:00:00Z",
- "pass": 69,
+ "last_pass_at": "2026-11-22T07:10:00Z",
+ "pass": 70,
  "result": "quiet",
- "note": "Pass 69: only gear-adjacent change is standards 27 (haste shortens spell GCD), not a gear rule; shaman enhancement forever_trinkets_test.go is a SpellMetrics() API refactor. No synthetic item, set, trinket or enchant changed.",
- "client_build": "1.60.1.70959",
- "checked_at": "2026-11-22T06:44:22Z"
+ "note": "Pass 70: standards 41 (Blizzard word overrides earlier rulings) is not a gear rule; forever_items.go only added items (none in a Phase 1 set); Enhancement level60_phase0.gear.json is a new Phase 0 BiS set, outside the synthetic Phase 1 audit. No synthetic item, set, trinket or enchant changed.",
+ "client_build": "1.60.1.71037",
+ "checked_at": "2026-11-22T13:10:53Z"
 }

@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "b4b68c52e9a9da5af391f74d88f7cdfb4a0d7217"
+  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
  },
- "last_pass_at": "2026-11-20T18:53:32Z",
- "pass": 96,
- "result": "findings",
- "note": "Pass 96: 813f2b1e9..e6eaa9470, no sim commits. Client 70959 -> 71037 diffed (mostly hotfix bakes); rogue T1 5P now covers Death Mark (mechanics-20261120-2). No new Blizzard mechanics posts (weekly news 2026-11-20 18:00Z only).",
+ "last_pass_at": "2026-11-22T12:59:00Z",
+ "pass": 97,
+ "result": "quiet",
+ "note": "Pass 97: b4b68c52e..8b5137c6d, 18 sim files (2H spec Holy school, Flurry HS/Cleave, Shank procs, Vilerend 225, Stormshroud 3%/18, Barov Peasant Caller). All match tier 1; no new finding. Hotfix post 14 (Nov 20) read. Client 71037 still newest.",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-22T06:44:22Z",
+ "checked_at": "2026-11-22T13:10:53Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -28,11 +28,11 @@
   "newest_push": 114157,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-20T18:00:10Z",
+ "blue_tracker_seen": "2026-11-21T00:18:29Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/13",
-  "date": "2026-11-20T04:00:55Z",
-  "post1_edited": "2026-11-20T04:01:18Z",
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/14",
+  "date": "2026-11-21T00:18:29Z",
+  "post1_edited": "2026-11-21T00:19:18Z",
   "post6_edited": "2026-11-12T00:46:56Z"
  }
 }

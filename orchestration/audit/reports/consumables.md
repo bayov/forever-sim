@@ -1,13 +1,12 @@
-# Consumables pass 96 (master e6eaa9470)
+# Consumables pass 97 (master 8b5137c6d6, client 1.60.1.71037)
 
-Trigger: client build 1.60.1.70959 -> 1.60.1.71037. No watched file moved on master (813f2b1e9..e6eaa9470, 9 commits, none in watched paths).
+Result: quiet, no new findings. Wago has no build newer than 71037.
 
-- builddiff 70959 -> 71037: 3 consumable spell changes, none used by a Level 60 preset or level60 gear set:
-  Poison Mushroom 6727 (effect misc 3 -> 226), Camper's Lure 1331725 (new), Fishing Skill +60 1331727 (new).
-  forever_enchants.go: 58 enchants checked, 0 changed.
-- scan.sh on master: everything above "== counts" empty. Totem counts unchanged. Minor-armor exclusive effects count is 3
-  (Faerie Fire, Curse of Recklessness, ForeverDustCloudAura at debuffs.go:1170); the "expect 2" note in the pass doc
-  predates the Dust Cloud aura, debuffs.go did not move this pass. Not a finding.
-- Class branches: stale copies (gotcha 1), not re-scanned.
+Checked (diff b4b68c52e..8b5137c6d):
+- Enhancement Phase 0 gear set (new, level60_phase0.gear.json): enchants 2543, 1249019, 1219587, 1891, 1220624, 1248640, 1506, 1887, 1900 all exist in the enchant tables and match the Phase 0 BiS list. Real (non-synthetic) trinkets 10455 and 13968 trip scan.sh NONSYN; expected, since Phase 0 is real pre-raid gear, not a Phase 1 synthetic set (standards 1b applies to Phase 1). Arcanum of Rapidity (item 18329) shows NO SOURCE in the db2 tables, so its Phase 0 availability is unverified (not guessed).
+- Enhancement presets.ts: only the Phase 0 gear, talents and build added; consumes, buffs unchanged.
+- Ret presets.ts: comment only. buffs.go: Windfury Totem comment only. assumptions_def.py: paladin assumptions removed, not buff related. item_effects.go (Barov Peasant Caller, Vilerend Slicer 225) and crafted.go (Stormshroud 3% / 18 energy): item effects, not consumables; match the cited hotfixes.
+- scan.sh: banned, Revelation, crit-elixir checks empty. Minor-armor exclusive effect count reads 3 (Faerie Fire, CoR and the Dust Cloud aura); debuffs.go unchanged since the last pass, so not new.
+- Air/weapon totem counts as the standing rules.
 
-Result: no new findings. Two low findings stay open (enchant 41 name, feral mksettings Sapper).
+No open items beyond the two low findings already in findings/consumables.md.

@@ -1,29 +1,24 @@
-# Tank mechanics, pass 25
+# Tank mechanics, pass 26
 
-- Master: e6eaa9470 (from 813f2b1e9). Client: 1.60.1.70959 -> 1.60.1.71037 (wago latest, 2026-11-20).
-- Result: quiet. Open findings unchanged (20261117-1 gets new evidence, 20261108-1, 20261107-1).
+- Master: 8b5137c6d (from b4b68c52e). Client: 1.60.1.71037 (unchanged since pass 25).
+- Result: quiet. Open findings unchanged (20261117-1, 20261108-1, 20261107-1; the last gets new evidence).
 
-## What changed on master
+## What changed on master (10 watched files)
 
-No sim, tank doc or tankbench file changed: the 9 commits are rotopt/BiS (Enhancement phase 0), TASKS.md, log-audit findings and the audit loop's own commit. TASKS.md's new items (Shank push 114268, unplaced Nov 20 pushes, Onyxia Blood Talisman 18406 test) touch no tank preset: no tank gear set equips 18406.
-
-## Client 71037 vs 70959 (+hf, `wago.py diff --set mechanics` and default `--by-spell`)
-
-| spell | change | tank effect |
+| file / change | source | tank effect |
 |---|---|---|
-| 12322 Unbridled Wrath | SpellAuraOptions ProcTypeMask_0 4 -> 20 | push 114097 now in the bare build; sim already mask 20 (talents.go). Sunder question stays open (20261117-1) |
-| 12966 Flurry, 1329555 Reckless Swings | ProcTypeMask_0 4 -> 20 | same push; Flurry consumption is client_update-20261117-2's (DPS); Reckless Swings test in tank_warrior unchanged |
-| 8516/10608/10610 Windfury Totem | SpellCategories 0 -> 2619, category recovery 100 ms | totem cast only; the raid Windfury buff the tanks take is unchanged |
-| Execute 5308/20658-20662 | Attributes_2 +0x100, Attributes_3 -> 0x70400 | no tank preset casts Execute; the DPS mechanics pass's |
-| 1324298 Krol'dok Resolve | ProcCategoryRecovery 0 -> 1000 | "chance on block to heal", not in the sim or any tank preset |
-| Heroism 23682/23689, Aura of the Blue Dragon, Vampiric Embrace, Sap, Mount Speed, Traveler's Sign, NPC spells | various | not tank mechanics |
+| paladin talents.go: Two-Handed Weapon Specialization's Holy part now on the Holy school (all Holy damage) under Forever; spells' own multiplier 1; item swap reapplies damage and threat cut | Blizzard Nov 19 hotfix, t/2403040 post 13 (tier 1 notes); retires the 2026-11-15 ruling (standards 41) | none: prot paladin presets hold a shield; `TestProtection.results` unchanged |
+| consecration.go, judgement.go, seal_of_fury.go, soc.go, sor.go | follow the above (comments, Consecration multiplier 1) | none (no 2H) |
+| warrior talents.go: Flurry not spent by Heroic Strike / Cleave under Forever | Nov 16 hotfix, t/2403040 post 11 (tier 1 notes) | none: tank warrior talents `35--251533120331221351` take no Fury, no Flurry |
+| shaman stormstrike.go, talents.go: comments cite client 70959 for Stormstrike 100% / 8 s and Maelstrom PPM | client 70959 (tier 1) | values unchanged (100%, 8 s, as before); Warden takes no Maelstrom |
+| shaman item_sets_pve.go: Dungeon Set 1 in set 1679 (comment) | reveal 2026-11-17 | no Warden preset equips it |
 
-No change to Defensive Stance, Bear/Dire Bear Form, Righteous Fury, Shield Block, Holy Shield, Revenge, Shield Slam, Sunder, Maul, Swipe, Stormstrike, Rockbiter, Earth Shock, any tank talent row, SpellShapeshiftForm or threat aura.
+Read in full: `applyWeaponSpecialization` (reset effect restores the start multipliers before the swap-back, so no drift) and the Flurry consumption trigger.
 
 ## Tests
 
-Not rerun: no sim code changed since pass 24 (813f2b1e9), when all tank tests passed.
+`go test -tags=with_db ./sim/paladin/... ./sim/warrior/... ./sim/shaman/warden/...`: all pass (protection, tank_warrior, warden included). Without `-tags=with_db` they panic on missing items, which is expected.
 
-## Note for the next pass
+## Findings
 
-`wago.py diff --set mechanics --by-spell` fails (KeyError 'SpellID' on a table without SpellID); use `--set mechanics` plain plus default `--by-spell`. `python3 -I` breaks wago.py's sibling `hotfixes` import, so run it without `-I`.
+No new finding. 20261107-1 gets more evidence: docs/tank_shaman.md:430 and :464 still call Stormstrike 100% / 8 s and Maelstrom PPM notes-only, though client 70959 carries them (the code comments were relabelled this round).

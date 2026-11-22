@@ -1,48 +1,47 @@
-# Rotations pass 70 (2026-11-18, master a6677362f)
+# Rotations pass 71 (2026-11-22, master 8b5137c6d)
 
-Last audited master: 8219f1083. Result: quiet (no new finding). One finding still open
-(rotations-20261112-1, rogue poison swap; no req changed in this range).
+Not quiet: one rotation changed and the sim changed for paladins, rogues, warriors and shamans.
 
-## What changed (8219f1083..a6677362f, 46 commits)
+## What changed (b4b68c52e..8b5137c6d)
 
-`apl_logic_diff.py`: 0 APL files touched. No `tools/dps_report/req/*.json` change.
-`standards.md`: rule 27 rewritten (haste shortens a spell's GCD, 1s floor).
+- APL logic (`apl_logic_diff.py`): only `ui/retribution_paladin/apls/level60_undead.apl.json` (1b4a74f33, Holy Strike
+  moved ahead of Judgement and the seal lines after the Nov 19 Two-Handed Weapon Specialization hotfix).
+- Sim: 2H Weapon Specialization raises all Holy damage (1c80dafff), Shank procs poisons/enchants (6de6861c5), Flurry
+  hotfix in warrior talents, Stormshroud 3P, shaman Stormstrike/talents and item sets, Barov Peasant Caller (abefd2f86).
 
-| commit | change | reaches presets? |
-|---|---|---|
-| ee35da473, c2efe4ae3 | Spell haste shortens a spell's GCD to 1.5/(1+haste), floor 1s | casters and paladins (see baseline) |
-| c8b5275b1, cc5a55f47 | report patches folded into the code as switches; faster start-up | no (melee/hunter/rogue unchanged at 3000 it) |
-| 7199c8f9c, bbfd014e4 | healer idle-skip wake, healbench speedups | healers only |
+## Baseline (3000 it, seed 424242), new file `ref/rotations/baseline_8b5137c_3000it_seed424242.tsv`
 
-## Baseline (3000 it, seed 424242)
+Rows that moved by 0.05% or more against baseline_a667736:
 
-`baseline.py` on a6677362f vs `baseline_2f7e255`: 31 of 68 moved past 0.05 DPS, every move
-fits the hasted GCD. Warlocks +0.3 to +0.9%, Balance +0.3 to +0.6%, Elemental +0.4%, Frost +0.2%,
-paladins -0.1 to -0.4% (the open paladin re-timing item, user ruling 2026-11-18). Warriors,
-rogues, hunters, feral, Enhancement (within 0.8), Fire, priests: unchanged.
-
-| preset | 2f7e255 | a667736 | delta |
+| preset | old | new | move |
 |---|---|---|---|
-| warlock__destruction-duty-curse | 1051.6 | 1060.9 | +9.3 |
-| warlock__affliction | 1071.0 | 1076.8 | +5.8 |
-| druid__balance-duty-ff | 916.1 | 921.3 | +5.1 |
-| shaman__elemental-level60 | 976.9 | 980.7 | +3.8 |
-| paladin__level_60_sub_holy | 1012.4 | 1007.9 | -4.5 |
-| paladin__level_60_shock_ret-duty-crusader | 1009.6 | 1006.4 | -3.2 |
+| paladin level_60 / -crusader / -wisdom | 1021.9 / 1014.3 / 1005.6 | 1026.8 / 1019.0 / 1010.5 | +0.48% |
+| paladin shock_ret (+ duties) | 1007.6 | 1016.9 | +0.92% |
+| paladin sub_holy (+ duties) | 1007.9 | 1012.9 | +0.5% |
+| paladin sub_holy_undead | 1137.8 | 1150.7 | +1.14% |
+| rogue combat-daggers / combat-swords | 936.3 / 943.6 | 940.7 / 949.1 | +0.47 / +0.58% |
+| rogue mutilate / sf-daggers / sf-swords / subtlety | 865.8 / 903.1 / 940.1 / 872.1 | 869.9 / 908.0 / 941.7 / 875.8 | +0.16 to +0.55% |
+| warrior fury, fury-bs, fury-sunder, fury_2h, 2h-sunder | | | +0.05 to +0.32% |
 
-New baseline: `ref/rotations/baseline_a667736_3000it_seed424242.tsv` (old one removed).
-No `regress.py` / `ab.py` needed: no APL change, and the only sim change reaching presets is the ruled GCD rule.
+No shaman, hunter, druid, mage, priest or warlock row moved. All moves are the sim changes above.
 
-## Note for the dps-report pass (not a rotations finding)
+## Checks
 
-`runs/vs_published.txt` shows Affliction +4.1%, rogues -1.1 to -2.1%, Lone Wolf -1.7% against the
-published report, but the rotation baseline shows none of those presets moved in this range beyond
-the GCD effect (Affliction +0.5%, rogues/Lone Wolf 0). The gap is the report's switches/assumptions
-vs the plain CLI, not a rotation change.
+- **Undead Ret reorder (1b4a74f33) verified.** Paired ab.py, B = the old order, B-A at 120/180/300 s:
+  set 1e6 -0.26 / -0.47 / -0.72, set 2e8 -0.55 / -0.92 / -0.87. The new order wins on every cell (small, as the commit says).
+- **Shock Ret Holy Strike placement** (the only Ret build still running Holy Strike late): filed
+  rotations-20261122-1 (HoW then HS right after Consecration, pooled +1.46 / +2.25 / -0.23). Holy Strike alone moved up is a
+  fight-length trade-off (+3.6 at 180, -2.3 at 300); mana gates on it make 300 s worse (-4.5 at 30%, -12.4 at 50%).
+- Open finding rotations-20261112-1 (rogue poison swap) has not landed: every rogue req still has Deadly Poison on the main hand.
+  Shank now procs poisons, so the gain may have shifted a little for builds that use Shank; not re-measured.
+
+## Optional
+
+- None new.
 
 ## Not done this pass
 
-- Caster rotations (warlock, Balance, Elemental, mage) weren't re-searched for the hasted GCD; no
-  ruling asks for it yet (only paladins have an open re-timing item).
-- Windfury ability-timing item: unchanged since pass 69 (Fury BT, Combat SS, Arms MS null); remaining
-  abilities still to test.
+- Shock Ret duty variants (crusader, wisdom) not A/B'd for the finding's reorder; they share the order.
+- Paladin hasted-GCD re-timing item: its trigger ("any paladin rotation changes") fired with 1b4a74f33; the re-timing
+  itself is a worker search, not done here.
+- Warrior HS/Cleave threshold re-search and Windfury ability-timing items: unchanged.

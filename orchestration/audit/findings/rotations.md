@@ -4,6 +4,26 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261122-1: Shock Ret: Hammer of Wrath and Holy Strike ahead of Judgement and Seal of Command
+- severity: low (+2.2 at 180 s, 0.22%)
+- affects: paladin__level_60_shock_ret (its duty-crusader and duty-wisdom variants share the order; not measured)
+- found: 2026-11-22, master 8b5137c6d
+- evidence: `ui/retribution_paladin/apls/level60_shock_ret.apl.json` runs Judgement (line 10), Seal of Command, Holy Shock,
+  then `{"action":{"castSpell":{"spellId":{"spellId":24239}}}` (Hammer of Wrath, line 13) and
+  `{"action":{"castSpell":{"spellId":{"spellId":10333}}}` (Holy Strike, line 14). After the Nov 19 Two-Handed Weapon
+  Specialization hotfix (1c80dafff) Holy Strike gained the most; the sister Ret builds already run it ahead of the seal
+  lines (1b4a74f33 did so for Undead). B moves those two lines, in that order, to just after Consecration.
+  Paired `ab.py` (20k it, 8 blocks, CLI 8b5137c6d), B-A at 120 / 180 / 300 s:
+  | variant | S0 1e6 | S0 2e8 | pooled |
+  |---|---|---|---|
+  | HoW, HS ahead of Judgement | +1.28 / +2.13 / -0.53 | +1.63 / +2.36 / +0.07 | **+1.46 / +2.25 / -0.23** |
+  | HS alone ahead of Judgement (HoW stays) | +2.28 / +3.39 / -2.54 | +2.32 / +3.73 / -1.97 | +2.30 / +3.56 / -2.26 (trade-off) |
+  | same, HS gated on mana >= 30% / 50% | | | +3.6 / -4.5 and +1.8 / -12.4 at 180 / 300 (worse) |
+  SE 0.25-0.6 a set. A at 180 s: 1017.0. The 300 s cell of the filed variant is flat within noise; medium confidence.
+- proposed fix: in level60_shock_ret.apl.json (and the two duty copies, after an A/B on each) move Hammer of Wrath then
+  Holy Strike to right after Consecration. Fits the open "re-time the paladin rotations" item, which 1b4a74f33 triggered.
+- needs: orchestrator fix
+
 ### rotations-20261112-1: Dagger and Seal Fate rogues: Instant Poison on the main hand, Deadly Poison on the off hand
 - severity: high (Seal Fate Daggers +16.3 at 180 s, 1.8%; Mutilate +14.3, 1.65%; Seal Fate Swords +9.8, 1.05%; Subtlety +2.4, 0.28%)
 - affects: rogue__mutilate, rogue__seal-fate-daggers, rogue__seal-fate-swords, rogue__subtlety. Not the two Combat builds (swap loses 2.3-3.2).

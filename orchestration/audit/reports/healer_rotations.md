@@ -1,19 +1,18 @@
-# Healer rotations pass 21 (quiet)
+# Healer rotations pass 22 (quiet)
 
-- Master: e07e8fdb8 (`last.master` was e671e881e). Audited 2026-11-20.
-- Bench: `tools/healbench` built in the audit checkout (protos generated with `make sim/core/proto/api.pb.go`;
-  setup.sh still doesn't do it), default seed, `-carry`, 1,000 iterations, via
-  `tools/audit/healer_rotations/baseline.sh`.
+- Master: 8b5137c6d (`last.master` was b4b68c52e). Audited 2026-11-22.
+- Bench: `tools/healbench` built in the audit checkout (protos generated with
+  `protoc -I=./proto --go_out=./sim/core ./proto/*.proto`; setup.sh still doesn't do it), default seed, `-carry`,
+  1,000 iterations, via `tools/audit/healer_rotations/baseline.sh`.
 
-## What changed since e671e881e
+## What changed since b4b68c52e
 
-- c04e51c13 / 617a63635 / 449bff490 (Forever trinket uses, item conditions registry, Forever BiS items):
-  - `sim/core/spell_result.go`: `critChanceAgainst(target)` added to physical and spell crit chance, a per-target
-    bonus from a mark of the caster's on that target. Zero unless something calls `AddCritChanceAgainst`, which
-    only the new DPS trinket effects do on enemy targets; heals on friendly units get 0.
-  - `sim/paladin/items.go`: Tenets of the Silver Hand registers an Undead mob-type condition (metadata only).
-  - `sim/shaman/items.go`: Totem of Rage on Forever is +2% shock damage instead of +30 bonus damage. Not in any
-    healer request.
+- `sim/paladin/talents.go` (1c80dafff, Nov 19 hotfix): Two-Handed Weapon Specialization now multiplies all Holy
+  school damage (`SchoolDamageDealtMultiplier[Holy]`). Damage only, and a Retribution talent; heals don't take it.
+- `sim/paladin/{consecration,judgement,seal_of_fury,soc,sor}.go`: the matching removal of the per-spell Holy
+  multiplier. Damage spells, none in a Holy paladin healer APL's healing.
+- `sim/shaman/talents.go`: Maelstrom Weapon PPM from client 1.60.1.70959 (Enhancement). `sim/shaman/stormstrike.go`
+  (Enhancement). `sim/shaman/item_sets_pve.go`: comment only (Dungeon Set 1 in set 1679).
 - No healer APL, request, encounter file, `sim/druid`/`sim/priest` or healbench main.go change.
 
 ## Baseline (1,000 it) vs ref

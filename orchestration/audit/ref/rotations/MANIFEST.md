@@ -1,10 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_5f20dfd_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  5f20dfdf4 (pass 68), all 68 rows re-simmed (shared CLI `/tmp/audit-cache/cli/5f20dfdf4cc7/wowsimcli`). Moves since
-  1a85df1d7: warriors +3 to +11 (push 114097, Unbridled Wrath on abilities), hunters -20 to -76 (pet white swings
-  without the hunter's crit), Subtlety +5.9 (Death Mark always hits).
-
+- `baseline_8b5137c_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  8b5137c6d (pass 71), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/8b5137c6d6a2/wowsimcli`). Moves since
+  a6677362f: paladins +0.5 to +1.1% (Nov 19 Two-Handed Weapon Specialization hotfix; Undead also its Holy Strike reorder),
+  rogues +0.2 to +0.6% (Shank procs poisons), warriors +0.05 to +0.3% (Nov 16 Flurry hotfix).
 ## Not committed (kept locally, re-create as needed)
 
 - Built CLIs. Re-create with

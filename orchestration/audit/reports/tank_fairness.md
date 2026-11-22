@@ -1,23 +1,25 @@
-# tank_fairness pass 24: 2026-11-20, master e07e8fdb8
+# tank_fairness pass 25: 2026-11-22, master 8b5137c6d
 
-Due: 3 watched files changed since e671e881e: `sim/core/target.go` (Encounter.OutdoorTerrain and Target.MobFamily
-copied from the request, for item conditions), `sim/paladin/items.go` (Tenets of the Silver Hand registers an Undead
-item condition; its effect unchanged) and `sim/shaman/items.go` (Totem of Rage under Forever: +2% additive shock
-damage instead of +30 bonus damage). Also in range: `sim/core/spell_result.go` adds `critChanceAgainst` (0 unless a
-mark such as Blackhand's Breadth is up), new item effects in `sim/common/item_effects.go`, the item-conditions
-registry. No tank request wears Tenets (249397) or Totem of Rage (22395); no change to `tools/tankbench`,
-`tools/encounters` or the tank requests. Quiet: no new finding.
+Due: 11 watched files changed since b4b68c52e: `orchestration/standards.md` (standards 41, Blizzard's notes override
+earlier rulings), `sim/paladin/{consecration,judgement,seal_of_fury,soc,sor,talents}.go` (Two-Handed Weapon
+Specialization raises all Holy damage, Nov 19 hotfix, 1c80dafff), `sim/shaman/{item_sets_pve,stormstrike,talents}.go`
+(Five Thunders set, Stormstrike), `sim/warrior/talents.go` (push 114097, Unbridled Wrath on Heroic Strike and Cleave).
+No change to `tools/tankbench`, `tools/encounters`, the tank requests, the tank UIs or `docs/tank_*.md`. Quiet: no new finding.
 
 ## Method
 
-Built tankbench at e07e8fdb8 (protos, `make items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on
-all 13 requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against
+Built tankbench at 8b5137c6d (`make items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on all 13
+requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against
 `ref/tank_fairness/summary.tsv`: all 84 baseline rows identical to the byte; the only extra rows are the legacy
 `warrior_protection.json`. Baseline not refreshed.
 
+Fairness of the changes: 2H Weapon Specialization needs a two-hander, so no shield-wearing paladin preset moves (rows
+identical); the warrior's push 114097 was already in the pass 18 numbers; the shaman changes don't touch the Warden's
+gear or rotation. Standards 41 retires no open tank_fairness finding (none waits on a ruling a Blizzard note settles).
+
 ## Ranking (six-boss mean, own weight, seed 1)
 
-| weight | order | pass 24 (= pass 23) |
+| weight | order | pass 25 (= pass 24) |
 |---|---|---|
 | Max threat | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
 | Balanced | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |

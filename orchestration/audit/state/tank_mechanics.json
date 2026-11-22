@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "b4b68c52e9a9da5af391f74d88f7cdfb4a0d7217"
+  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
  },
- "last_pass_at": "2026-11-20T18:51:17Z",
- "pass": 25,
+ "last_pass_at": "2026-11-22T12:56:27Z",
+ "pass": 26,
  "result": "quiet",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-22T06:44:22Z",
+ "checked_at": "2026-11-22T13:10:53Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 25 (e6eaa9470): no sim change; client 71037 bakes push 114097 (Unbridled Wrath/Flurry/Reckless Swings mask 4->20) the sim already models; no tank ability/talent/threat row changed. Open findings unchanged."
+ "note": "Pass 26 (8b5137c6d): 10 watched files changed (paladin 2H spec now Holy school-wide per Nov 19 hotfix, Flurry no longer spent by HS/Cleave under Forever, shaman comment-only relabels); none reaches a tank preset (prot paladins hold a shield, tank warrior takes no Flurry); tank tests pass, goldens unchanged. Open findings unchanged; 20261107-1 gets docs/tank_shaman.md stale Stormstrike/Maelstrom labels."
 }

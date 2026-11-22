@@ -1,20 +1,18 @@
-# Healer fairness pass 23 (2026-11-20, master e07e8fdb8)
+# Healer fairness pass 24 (2026-11-22, master 8b5137c6d)
 
 Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth;
 last at 1.385, 0.005 behind the shaman), -20261104-4 (low).
 
-Due because `sim/core/spell_result.go`, `sim/paladin/items.go` and `sim/shaman/items.go` changed since e671e881e
-(db684c04a..e07e8fdb8, the Forever BiS item work):
-- `spell_result.go`: physical and spell crit chance add `critChanceAgainst(target)`, a per-target mark bonus
-  (Blackhand's Breadth). The slice stays empty until a mark goes up, so it returns 0 for every heal's target.
-- `paladin/items.go`: Tenets of the Silver Hand registers an Undead item condition only (BiS ranking metadata).
-- `shaman/items.go`: Totem of Rage under Forever is +2% shock damage instead of +30 bonus damage; no healer wears it.
-- Also `core/item_effects.go`, `unit.go`, `target.go` (MobFamily, OutdoorTerrain), `common/item_effects.go`:
-  item conditions and DPS trinkets; no healer preset, `tools/healbench/req/` or `tools/encounters/` change.
-- Check: all 63 cells, both roles, seed 101, 1,000 it (`screen.sh`): identical to
-  `ref/healer_fairness/bench_a667736.tsv`, so sections 1-3 below stand.
-- Tooling note: `proto/common.proto` changed, so healbench needs regenerated protos. Built it in the worktree
-  `tools/audit/build_cli.sh e07e8fdb8` makes (`cd $(dirname <cli>)/tree && go build -tags with_db ./tools/healbench`).
+Due because 10 watched files changed since b4b68c52e (net diff to 8b5137c6d):
+- `sim/paladin/talents.go`, `judgement.go`, `consecration.go`, `soc.go`, `sor.go`, `seal_of_fury.go`: Two-Handed Weapon
+  Specialization's Holy part moves to the Holy school under Forever (Nov 19 hotfix) and follows item swaps. It applies only
+  with a two-handed main hand; neither Holy paladin preset carries one, and it is a damage multiplier, not healing.
+- `sim/shaman/talents.go`, `stormstrike.go`, `item_sets_pve.go`, `sim/core/buffs.go`: comments only (Maelstrom Weapon PPM
+  source, Dungeon Set 1 in set 1679, Windfury Totem client rows).
+- `orchestration/standards.md` 41 (Blizzard's word overrides an earlier ruling): no open healer finding rests on a ruling it retires.
+- No `tools/healbench/req/` or `tools/encounters/` change.
+- Check: all 63 cells, both roles, seed 101, 1,000 it (`screen.sh`, healbench built on 8b5137c6d with `-tags with_db`
+  in the repo, no worktree needed): identical to `ref/healer_fairness/bench_a667736.tsv`, so sections 1-3 below stand.
 
 The rest is pass 21's (master a6677362f), still current:
 

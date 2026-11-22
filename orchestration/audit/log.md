@@ -504,3 +504,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-20 18:55 | healer_mechanics | pass 24 | master e6eaa9470 | quiet | VE hotfix and Blue Dragon 3% already modeled
 2026-11-20 18:55 | tank_mechanics | pass 25 | master e6eaa9470 | quiet | No tank rows changed; new evidence on tank_mechanics-20261117-1
 2026-11-21 06:48 | results | pass 96 | master 93e568c50 | quiet | Wowhead scrape only adds items; shared-run drift same as results-20261104-2
+2026-11-22 13:10 | results | pass 97 | master 8b5137c6d | quiet | builds.json matches shared run; metas still lag (results-20261104-2 updated)
+2026-11-22 13:10 | rotations | pass 71 | master 8b5137c6d | 1 new findings | Shock Ret Hammer of Wrath/Holy Strike earlier: +1.5/+2.3/-0.2 DPS (low)
+2026-11-22 13:10 | gear | pass 70 | master 8b5137c6d | quiet | Only new items and Enhancement Phase 0 set; no synthetic gear changed
+2026-11-22 13:10 | consumables | pass 97 | master 8b5137c6d | quiet | Phase 0 Enhancement set enchants verified
+2026-11-22 13:10 | mechanics | pass 97 | master 8b5137c6d | quiet | 18 sim changes all match Blizzard posts/client data
+2026-11-22 13:10 | fairness | pass 48 | master 8b5137c6d | quiet | 11 of 43 rows moved, all in classes whose code changed
+2026-11-22 13:10 | healer_mechanics | pass 25 | master 8b5137c6d | quiet | Paladin 2H spec change is damage-only
+2026-11-22 13:10 | healer_rotations | pass 22 | master 8b5137c6d | quiet | 63 baseline rows identical
+2026-11-22 13:10 | healer_gear | pass 12 | master 8b5137c6d | quiet | Only standards rule 41 changed; no gear effect
+2026-11-22 13:10 | healer_fairness | pass 24 | master 8b5137c6d | quiet | 63 cells identical to reference
+2026-11-22 13:10 | tank_mechanics | pass 26 | master 8b5137c6d | quiet | No change reaches a tank preset
+2026-11-22 13:10 | tank_rotations | pass 23 | master 8b5137c6d | quiet | 104 rows identical to pass 22
+2026-11-22 13:10 | tank_gear | pass 13 | master 8b5137c6d | quiet | Tank gear within tolerance
+2026-11-22 13:10 | tank_fairness | pass 25 | master 8b5137c6d | quiet | 84 rows identical; ranking unchanged

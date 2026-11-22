@@ -24,6 +24,7 @@
 - pass 16: still open (user call); 5f20dfdf4 changes no tank request or APL (Unbridled Wrath on abilities moved Max survival +52 at w = 3, trinket lines untouched); not re-tested.
 - pass 17: still open (user call); 2f7e255af changes no warrior code or preset, warrior baseline bit-identical; not re-tested.
 - pass 22: still open (user call); e07e8fdb8 changes no warrior code or preset, warrior baseline bit-identical; not re-tested.
+- pass 23: still open (user call); 8b5137c6d's Flurry change (Heroic Strike no longer spends a charge under Forever) leaves the warrior baseline bit-identical; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -48,6 +49,7 @@
 - pass 16: still open (user ruling); 5f20dfdf4 touches no paladin code or preset, paladin baseline bit-identical; not re-tested.
 - pass 17: still open (user ruling); 2f7e255af's Shieldsworn Holy Strike no longer rolls Windfury Totem (paladin TPS about -0.8%), Bulwark line untouched; not re-tested.
 - pass 22: still open (user ruling); e07e8fdb8 adds only an Undead item condition to Tenets of the Silver Hand (no effect change), paladin baseline bit-identical; not re-tested.
+- pass 23: still open (user ruling); 8b5137c6d's Two-Handed Weapon Specialization Holy damage fix applies only with a two-hander, paladin baseline bit-identical; not re-tested.
 
 ## Resolved
 

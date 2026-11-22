@@ -1,26 +1,26 @@
-# healer_mechanics pass 24 (2026-11-20, master e6eaa9470)
+# healer_mechanics pass 25 (2026-11-22, master 8b5137c6d)
 
-Range 813f2b1e9..e6eaa9470 (9 commits): no file under `sim/`, `docs/healing_*`, `tools/healbench` or the healer presets
-changed (BiS lists, rotopt, TASKS, audit files only). Client 1.60.1.70959 -> 1.60.1.71037 (wago latest). Update ledger
-unchanged; Blizzard's Nov 19 post (t/2403040 post 13, via TASKS.md) is Retribution only.
+Range b4b68c52e9..8b5137c6d6. Gate: 9 watched files (paladin consecration, judgement, seal_of_fury, soc, sor, talents;
+shaman item_sets_pve, stormstrike, talents). Client still 1.60.1.71037 (wago latest). Update ledger: no new healer row
+(PAL-HF-07 is Retribution). Blizzard t/2403040 post 14 (2026-11-21, "November 20") is rogue, warlock, dungeons,
+Stormshroud Armor, quests and UI: no healer line.
 
-## Client 71037 diff (`python3 tools/sources/wago.py diff 1.60.1.70959 1.60.1.71037 --set mechanics`)
+## Changed files
 
-| Row | Change | Healer effect | Verdict |
+| File | Change | Healer effect | Verdict |
 |---|---|---|---|
-| Vampiric Embrace 15286 SpellEffect 694156 (#0) | bp 20 -> 10; new #1 bp 100 ("You receive $s2% increased healing on yourself"); tooltip text | the Nov 16 hotfix, now in the client; sim `vampiricEmbraceHealing` gives 10% party, 20% caster | match, tier 1 |
-| Aura of the Blue Dragon 23688 / 23684 ProcChance | 2 -> 3 / 100 -> 2 | already modeled from hotfix push 114044 (`sim/common/item_effects.go:3542-3546`) | match, tier 1 |
-| Genesis 1223081 #0 (1210794) mask word 3 | +0x80 | only druid spell with that bit is Pounce Bleed: damage, no heal | no healer effect |
-| Heroism 23682 (item heal proc), Lightning Strike, Windfury Totem categories, Reagent Economy, new NPC spells | various | no healer preset spell or engine path | none |
-| SpellPower, SpellCastTimes, SpellDuration | no change | heal costs, cast times, HoT durations unchanged | - |
-
-No heal rank, healing talent or set bonus row was added, removed or changed. Riptide (finding 11) still 150/180/230 in
-the client.
+| sim/paladin/talents.go | 2H Weapon Specialization Holy part school-wide under Forever (Nov 19 hotfix), item-swap aware | `SchoolDamageDealtMultiplier[Holy]` only; heals read `HealingDealtMultiplier` (`sim/core/spell_result.go` CasterHealingMultiplier), so Holy Shock's heal, Holy Light, Flash of Light untouched; no Holy preset wields a 2H with the talent | no healer effect |
+| consecration.go, judgement.go, seal_of_fury.go, soc.go, sor.go | spell-side 2H multiplier dropped under Forever | damage spells only | none |
+| sim/shaman/talents.go, stormstrike.go | Maelstrom Weapon / Stormstrike comments now cite client 70959 | Enhancement only | none |
+| sim/shaman/item_sets_pve.go | comment: Dungeon Set 1 pieces in set 1679 | no healer preset wears 1679 | none |
+| sim/core/buffs.go (unwatched) | Windfury Totem ICD comment only | none | none |
 
 ## Tests
 
-Not rerun: no sim code changed since pass 23, which ran the healer suites green.
+`go test -tags=with_db ./sim/paladin/... ./sim/shaman/...` green (holy, protection, retribution, elemental,
+enhancement, warden).
 
 ## Findings
 
-None new. Open: 10 (untested paths, low), 11 (Riptide cost 147/180/231 vs client 150/180/230, low), unchanged.
+None new. Open: 10 (untested paths, low), 11 (Riptide cost 147/180/231 vs client 150/180/230, low), unchanged (no
+restoration code in range).

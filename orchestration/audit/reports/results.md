@@ -1,7 +1,12 @@
-# Results pass 96 (master 93e568c50, 2026-11-21)
+# Results pass 97 (master 8b5137c6d6, client 1.60.1.71037)
 
-Trigger: Wowhead scrape commit changed assets/database (db.bin, db.json, leftover_db.*).
-- Scrape adds items (new Five Thunders set pieces, Idol of the Huntress source) and refreshes recipes and class spells. No sim, proto, request or preset change.
-- Shared run (68 builds, 20k, seed 1) vs metas: 45 of 68 moved more than 0.5, the same families and sizes as results-20261104-2 (Affliction +38 to +43, Lone Wolf -22.4, rogues -10 to -20, rest <= 6.6). Nothing new.
-- Only test AllItems results changed (shaman Five Thunders set, not used by any request).
-- No finding opened or resolved. Open findings unchanged.
+Method: shared run (68 builds, 20k, seed 1, master binary) against builds.json, the metas (vs_published.txt) and the drift check.
+
+| Check | Result |
+|---|---|
+| builds.json vs run | 68 of 68 within 1.5 (none off) |
+| metas vs run | 49 of 68 off by more than 0.5 (known, results-20261104-2) |
+| drift (regen.py vs reference) | only the known feral sapper line (results-20261105-1) |
+
+Largest meta gaps: Affliction +38 to +43, Lone Wolf -22.4, rogue swords/daggers -6 to -15, Shock Ret +6 to +7, Destruction +6.
+No new findings.

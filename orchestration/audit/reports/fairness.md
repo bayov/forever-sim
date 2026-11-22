@@ -1,33 +1,35 @@
-# Fairness pass 47 (2026-11-18, master a6677362f)
+# Fairness pass 48 (2026-11-22, master 8b5137c6d)
 
-Result: findings (1 new). Range 8219f1083..a6677362f (46 commits). Full re-sweep (5k, seed 1, every race) on the
-loop's a6677362f CLI; baseline replaced.
+Result: quiet (no new finding; fairness-20261118-1 still open). Range b4b68c52e..8b5137c6d. Full re-sweep (5k, seed 1,
+every race) on the 8b5137c6d CLI against the a6677362f baseline; baseline replaced.
 
 ## What changed in the watched paths
 
 | Change | Commit | Effect on the comparison |
 |---|---|---|
-| Haste shortens a spell's GCD, floor 1s (standards 27) | ee35da473, c2efe4ae3 | casters only: Destruction +5.9, Affliction +5.7, Balance +4.2, Elemental +3.8, Frost +1.4, Demonology +1.3, Shadow +0.7; Ret -2.0 (rotations timed for 1.5s, re-time deferred by user ruling, rotations.md) |
-| Report switches folded into code, faster start-up, healbench speedups | c8b5275b1, cc5a55f47, bbfd014e4 | no DPS build moved beyond 5k noise |
-| Healers' idle skip wakes for a hit | 7199c8f9c | healing only |
-| DPS Report full regeneration | 392503f55 | builds.json current |
+| Two-Handed Weapon Specialization raises all Holy damage (Nov 19 hotfix, standards 41) | 1c80dafff | Ret +4.8 (+0.5%), Shock Ret +9.3, sub-Holy +5.0 |
+| Shank procs poisons, enchants and on-hit effects; Stormshroud 3P 18 energy at 3% | 6de6861c5, c7bab3c7d | all six rogues +3.5 to +4.6 (+0.4 to +0.5%) |
+| Flurry no longer spent by Heroic Strike / Cleave under Forever (Nov 16 hotfix) | #133 (sim/warrior/talents.go) | Fury and Fury 2H +2.0 (+0.2%); Arms takes no Flurry, unchanged |
+| Barov Peasant Caller trinket; Enhancement Phase 0 build | abefd2f86, 5320d5b5b | no report request wears it (Phase 0 is a UI-only preset; report trinkets stay synthetic, 1b) |
+| sim/core/buffs.go | (Windfury Totem comment) | comment only |
+| Ret sub-Holy vs Undead rotation; standards 41 | 1b4a74f33, e411cbf1e | Undead variant re-simmed (builds.json 1151.0 vs 1151.5 now) |
+| DPS Report re-sim of 22 builds | facfbbf3f | builds.json current |
 
-Every melee, hunter and rogue row is identical to the 5f20dfdf4 baseline: the GCD change did not leak to physical abilities.
+11 of 43 sweep rows moved, each in a class whose code changed. Every caster, hunter, druid, shaman and Arms row is
+identical to a6677362f, so no shared change leaked.
 
 ## Checks
 
-- Published vs current: builds.json within 1.3 of the shared 20k run on 68 of 68 (no ranking flip). The meta
-  published.dps lags (Affliction +42.5, Lone Wolf -22.4, rogues -10.5 to -20.1, Destruction +6.6, Balance +3.9,
-  Elemental +4.0, Fire -4.9) do not reach builds.json; independent confirmation of results-20261104-1 / -2, not refiled.
-- Race: **Balance** (fairness-20261118-1). The report's race table now names High Order best on all four Balance builds
-  (+3.8 to +6.1). Paired 20k seeds 1 / 1000003: Balance NE 956.1 / 956.2 vs High Order with its race rotation
-  959.8 / 959.8; Wrath NE 866.0 / 866.1 vs High Order 871.9 / 871.9. Cause: the hasted GCD raises the Skyborne
-  haste racial. Elsewhere the report race is best within 0.7 (Shadow Troll +0.7, Combat Daggers Gnome +0.6, Frostfire
-  High Order +0.4, Fire Gnome +0.4); MM wolf / tallstrider Night Elf +1.3 / +1.5 over Orc in the report's 10k table,
-  unchanged since pass 45 and a tie on the base MM build.
-- Gear: `audit1b.py` on a6677362f, 19 of 19 "5a PASS | 1b PASS".
-- Note: `sweep.py` swaps only the race, so for Balance it misses the race-tuned rotation (its table shows Night Elf best);
-  the report's race table and the paired check above use it.
+- Published vs current: builds.json within 1.3 of the loop's 20k run on 68 of 68 (largest Destruction +1.3, MM wolf
+  -1.0); no ranking flip. The meta published.dps lags (Affliction +42.5, Lone Wolf -22.4, rogues -5.9 to -15.1,
+  Destruction +6.6, Ret Shock +7.2, Fire -4.9) do not reach builds.json; independent confirmation of
+  results-20261104-1 / -2, not refiled.
+- Race: Balance's report race table still names High Order best on all four Balance builds (+3.8 to +6.1):
+  fairness-20261118-1 open, no change. Sweep: report race best within 0.7 elsewhere (Shadow Troll +0.7, Frostfire
+  High Order +0.4, Fire Gnome +0.4); MM wolf / tallstrider Night Elf +1.2 / +1.8 over Orc (base MM a tie), unchanged
+  since pass 45.
+- Gear: `audit1b.py` on 8b5137c6d, 19 of 19 "5a PASS | 1b PASS".
+- Client 1.60.1.71037 (ledger 2026-11-20): no ChrRaces or raid-buff change, so no shared re-sweep need beyond this one.
 
 ## Ranking
 
@@ -36,7 +38,11 @@ copied into `orchestration/fairness_report.md` §1.
 
 ## Baseline
 
-Replaced with the a6677362f sweep (`ref/fairness/sweep_baseline.log`, `table_baseline.md`).
+Replaced with the 8b5137c6d sweep (`ref/fairness/sweep_baseline.log`, `table_baseline.md`).
+
+## Notes for the next pass
+
+- `table.py` needs `AUDIT_TREE` exported in the same shell (it raises KeyError otherwise).
 
 ## Open items (unchanged)
 

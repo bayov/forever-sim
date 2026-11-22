@@ -1,7 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-20, pass 24, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
+preset weight, its reasons, and the open questions. Last pass: 2026-11-22, pass 25, master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
 Undead condition, Totem of Rage's Forever 2%, a crit-against-target mark; no tank preset wears an affected item; all 12
 presets identical to pass 23). Pass 23: 2026-11-19, master e671e881e (the least-HPS
 search in `sim/core/tank_score.go` restarts replays from the last capped point; all 12 presets identical to pass 22).
