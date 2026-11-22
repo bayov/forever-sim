@@ -55,6 +55,7 @@
   "23803": {"name": "Enchant Weapon - Mighty Spirit", "avail": "doubtful", "note": "Thorium Brotherhood rep, tier unknown", "source": "Vendor: Lokhtos Darkbargainer (BRD, Thorium Brotherhood rep, tier not in data)"},
   "23804": {"name": "Enchant Weapon - Mighty Intellect", "avail": "doubtful", "note": "Thorium Brotherhood rep, tier unknown", "source": "Vendor: Lokhtos Darkbargainer (BRD, Thorium Brotherhood rep, tier not in data)"},
   "27837": {"name": "Enchant 2H Weapon - Agility", "note": "Timbermaw rep, tier unknown", "source": "Vendor: Meilosh, Felwood (2g50s, Timbermaw rep tier not in data)"},
+  "1213622": {"name": "Enchant Gloves - Holy Power", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1219580": {"name": "Enchant 2H Weapon - Spellblasting", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1219587": {"name": "Enchant Cloak - Agility", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1220624": {"name": "Enchant Bracer - Greater Spellpower", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
