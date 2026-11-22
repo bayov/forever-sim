@@ -175,6 +175,15 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 // and the on-next-swing Heroic Strike and Cleave. The row's proc types also name melee abilities,
 // but in game the instant specials never proc it (wowsims/forever 788f62ce0f, combat logs:
 // Hamstring 0/99, Overpower 0/9, Execute 0/7, off hand 0/200, Thunder Clap 0/13).
+//
+// Under Forever Windfury Totem's attack doesn't proc it, though the sim swings it as a white
+// extra attack (user ruling 2026-11-15). wowsims/forever's logs (their 56473177e7): EV-0056's
+// bystander warriors' 24 gains came from white swings 19, Heroic Strike 4 and Cleave 1, none from
+// a totem hit, and EV-0136's Warcraft Logs sweep (to 2026-11-16) counts 10 of 1,633 totem hits from
+// 9 wearers followed by a Bloodthrill gain (0.61%, 0.33-1.12), no more than the 0.74% the ability
+// before the totem hit gives alone, against 3.5% a white swing. So those 10 are the ability's or
+// swing's before it, not the totem hit's, and it rolls none. Their sim (talents_arms.go
+// registerBloodthrill) strikes the totem's attack as a special, which the condition leaves out.
 func (warrior *Warrior) applyBloodthrill() {
 	if warrior.Talents.Bloodthrill == 0 {
 		return
@@ -193,11 +202,17 @@ func (warrior *Warrior) applyBloodthrill() {
 		Duration: time.Second * 5,
 	})
 
+	forever := warrior.Env.IsForever()
 	core.MakePermanent(warrior.RegisterAura(core.Aura{
 		Label: "Bloodthrill Trigger",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Heroic Strike and Cleave carry the main hand auto mask as well.
 			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
+				return
+			}
+			// Windfury Totem's white swing (a queued Heroic Strike in its place still procs it: in
+			// game the strike goes off on the next swing).
+			if forever && spell.ProcMask == core.ProcMaskMeleeMHAuto && warrior.AutoAttacks.IsWindfuryTotemAttack() {
 				return
 			}
 
@@ -419,6 +434,17 @@ func (warrior *Warrior) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *cor
 			// stacks were consumed by Cleave or Heroic Strike", t/2403040 post 11). Outside Forever
 			// a Heroic Strike or Cleave in the swing's place still spends one.
 			if forever && spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				return
+			}
+			// Nor does Windfury Totem's attack, though the sim swings it as a white extra attack
+			// (user ruling 2026-11-15); its crit still starts or refreshes Flurry (applyFlurry).
+			// wowsims/forever's EV-0138 and EV-0140 (their 56473177e7; a Fury and a Protection
+			// warrior in Upper Blackrock Spire with rank 3 totem, 2026-11-16, build 70938 with
+			// hotfixes to push 114115): of 74 totem hits with Flurry up, 68 remove no charge and the
+			// other 6 have a white swing, Heroic Strike, Cleave or a crit's refresh beside them;
+			// 22 of 22 totem crits apply or refresh Flurry. Their EV-0136 sweep of earlier reports
+			// (to 2026-11-16) had the totem hit spend a charge 99% of the time; push 114115 ended that.
+			if forever && warrior.AutoAttacks.IsWindfuryTotemAttack() {
 				return
 			}
 			if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && icd.IsReady(sim) {
