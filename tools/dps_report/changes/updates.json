@@ -6205,6 +6205,134 @@
     {
      "commit": "d73c175",
      "why": "Tank race sims take twin races and racial rows from the pilot like healing does, and the least-HPS search restarts where it can: fewer fights and less time, the same numbers bit for bit"
+    },
+    {
+     "commit": "22bd5e0",
+     "why": "new Dungeon Set 1 items and stat hotfixes for gear no report preset wears"
+    },
+    {
+     "commit": "c7bab3c",
+     "why": "Stormshroud Armor's set bonus; no report preset wears it"
+    },
+    {
+     "commit": "1cd2c75",
+     "why": "Vilerend Slicer's proc; no report preset wields it"
+    },
+    {
+     "commit": "db684c0",
+     "why": "Bolt's Charged Eyeball's proc rate; no report preset wears it"
+    },
+    {
+     "commit": "4c3ac00",
+     "why": "Hand of Justice's Dwarf condition; no report preset wears it and the boss has no creature family"
+    },
+    {
+     "commit": "2c6005e",
+     "why": "a pre-raid trinket's use order; no report preset wears it"
+    },
+    {
+     "commit": "c04e51c",
+     "why": "Forever trinket effects and creature conditions for items no report preset wears"
+    },
+    {
+     "commit": "449bff4",
+     "why": "Forever effects of Level 60 items and trinkets that no report preset wears"
+    },
+    {
+     "commit": "617a636",
+     "why": "an item condition registry; no sim result changes"
+    },
+    {
+     "commit": "bb5c326",
+     "why": "optimizer switches to turn an item's use or effects off, off by default"
+    },
+    {
+     "commit": "93e568c",
+     "why": "a Wowhead scrape of items, recipes and spells for gear no report preset wears"
+    },
+    {
+     "commit": "0eab016",
+     "why": "a faster Wowhead item scrape; no report input changes"
+    },
+    {
+     "commit": "1484500",
+     "why": "a faster Wowhead recipe scrape; no report input changes"
+    },
+    {
+     "commit": "f039d1b",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "926bc19",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "0b4de43",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "cd652c7",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "0196aa5",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "04f4ef5",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "813f2b1",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "9090f5b",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "caf5ad2",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "0d2c24f",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "c1c0dc6",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "39882a2",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "ec61308",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "a9339de",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "4be96ef",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "e07e8fd",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "37f636e",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "0fc2ef4",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
+    },
+    {
+     "commit": "74e01bf",
+     "why": "the pre-raid Enhancement gear list and its tooling; no report preset changes"
     }
    ],
    "source": {
