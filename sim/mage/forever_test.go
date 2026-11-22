@@ -321,8 +321,9 @@ func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
 	}
 }
 
-// The report assumptions the user ruled on 2026-10-15: Ice Lance takes SoD's 42.9% of spell power
-// on every rank, and Frostbolt rank 10 deals 4% more than the client (rank 9 is unchanged).
+// Ice Lance takes 0.11 of spell power on every rank (wowsims/forever's EV-0171 logs, user ruling
+// 2026-11-22, replacing SoD's 0.429), and Frostbolt rank 10 deals 4% more than the client (rank 9 is
+// unchanged; user ruling 2026-10-15).
 func TestMageRankTuning(t *testing.T) {
 	_, mage := newMageSim(t, "--05350003010130122")
 	for rank, spell := range mage.IceLance {
@@ -331,7 +332,7 @@ func TestMageRankTuning(t *testing.T) {
 		}
 		// Forever's downranking penalty (sim/core/downrank.go) hits heals only, so every rank
 		// keeps the full coefficient.
-		want := 0.429
+		want := 0.11
 		if got := spell.BonusCoefficient; math.Abs(got-want) > 1e-9 {
 			t.Errorf("Ice Lance rank %d coefficient %v, want %v", rank, got, want)
 		}

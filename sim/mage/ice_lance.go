@@ -26,9 +26,16 @@ var IceLanceLevel = [IceLanceRanks + 1]int{0, 20, 28, 34, 42, 48, 56}
 // hotfix). 70425's client and the 2026-10-20 hotfix had 200%, and 300% before that. The other two dummies (20 and 5) look like SoD's Glaciate (20% a stack, 5 stacks),
 // which no Forever tooltip mentions, so they are left out.
 //
-// Report assumption mage_ice_lance_coef, user ruling 2026-10-15: 0.429, SoD's server value,
-// since SoD's client showed the same 0 and the server added the coefficient.
-const IceLanceSpellCoeff = 0.429
+// Under Forever Ice Lance takes 0.11 of spell power on every rank (report assumption
+// mage_ice_lance_coef; user ruling 2026-11-22: log-confirmed rules from wowsims/forever override
+// the ruling of 2026-10-15, which took 0.429, SoD's server value). Their EV-0171 (543cc309aa), one
+// level 60 mage on builds 70959 and 71037, 2026-11-20/21: 28 rank 6 hits at 0 spell power read
+// 147.1 ± 1.4 before modifiers, 255 at 228.5 mean spell power 173.3, so 0.115 ± 0.007 (0.108 against
+// the game files' mean); 1/7 and 0.429 are ruled out. Other rulesets keep SoD's 0.429.
+// The same log has Draconic Infused Emblem's +35 spell damage not raising Ice Lance (+0.2 ± 1.0 on
+// 53 hits); the sim applies it, as theirs does.
+const IceLanceSpellCoeff = 0.11
+const IceLanceSoDSpellCoeff = 0.429
 const IceLanceFrozenMultiplier = 4
 
 func (mage *Mage) registerIceLanceSpell() {
@@ -100,7 +107,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int, cdTimer *core.Timer) core.Spe
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: core.Assume("mage_ice_lance_coef", IceLanceSpellCoeff), // DPS Report assumption knob
+		BonusCoefficient: core.Assume("mage_ice_lance_coef", core.TernaryFloat64(mage.Env.IsForever(), IceLanceSpellCoeff, IceLanceSoDSpellCoeff)), // DPS Report assumption knob
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)

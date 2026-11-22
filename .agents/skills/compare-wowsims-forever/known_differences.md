@@ -147,7 +147,6 @@ Mental Dexterity) are Settled.
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Ice Lance's spell power | 0.429, SoD's (`mage_ice_lance_coef`, `sim/mage/ice_lance.go:31`) | 0.11 since 543cc309aa (2026-11-21, `tools/database/overrides/spell_overrides.go:464`): their EV-0171 logs, 28 casts at 0 and 255 spell power, fit 0.11 ± 0.007 and rule out 1/7, their value before | Ruling (2026-10-15: the client has none), now against their log: the user decides. Their logs also show Draconic Infused Emblem's +35 spell power not raising Ice Lance; neither sim models it. For ours (2026-11-22): Frost 111.1, Frostfire 58.5 |
 | Frostbolt rank 10 | Base x1.04 (`mage_frostbolt10`) | Client's | Ruling. Frost 10.3 (2026-11-22) |
 | Evocation | Rotation line only; the Arcane rotation has none (`orchestration/apl_intent_audit.md:79`: loses at every length) | Autocast below 10% mana (`sim/mage/evocation.go:~31`), 0.7 casts | Choice. Arcane 22.3 for ours (2026-11-22) |
 | Presence of Mind opener | Instant Arcane Wrath at 0 | The prepull Blast ends at 0, the GCD frees 1 ns later, Blast queued at 1 ns eats Presence of Mind; first Wrath at 7.45 s | Engine timing. Arcane about 8 for ours (2026-11-22) |
@@ -257,6 +256,12 @@ A gap on one of these is a regression.
 - Orc shaman base stats 97 Sta, 87 Int, 103 Spi; Undead 79 Str, 128 Agi, priest Spirit 130.
 - Ice Lance: every rank 8 s on category 19, shared with Fire Blast (`mage_ice_lance_cd`). Both
   key Fingers of Frost by the buff's id, 400669.
+- Ice Lance's spell power coefficient 0.11 on every rank (`mage_ice_lance_coef`). Ours since
+  2026-11-22 (user ruling: log-confirmed rules from theirs override ours; their 543cc309aa, EV-0171,
+  one level 60 mage's logs on 70959 and 71037: 28 hits at 0 spell power, 255 geared, 0.115 ± 0.007);
+  before, ours 0.429 (SoD's server value, the 2026-10-15 ruling): Frost 111.1, Frostfire 58.5 for ours.
+  The same logs show Draconic Infused Emblem's +35 spell damage not raising Ice Lance; neither sim
+  models that.
 - Lightning Overload's copies proc, but Judgement of Wisdom, Elemental Devastation and Water
   Shield don't hear them.
 - Stormstrike 100% weapon damage on an 8 s cooldown, and Maelstrom Weapon at 6 to 10 PPM by rank:
