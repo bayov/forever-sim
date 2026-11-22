@@ -100,7 +100,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-AllItems-BeastmasterArmor"
  value: {
   dps: 1499.0975
-  tps: 1158.89049
+  tps: 1158.88558
   dtps: 1.94217
  }
 }
@@ -292,7 +292,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-Average-Default"
  value: {
   dps: 1665.79087
-  tps: 1290.01493
+  tps: 1290.0168
   dtps: 2.06963
  }
 }
@@ -384,7 +384,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-SwitchInFrontOfTarget-Default"
  value: {
   dps: 1672.13817
-  tps: 1297.78371
+  tps: 1297.7774
   dtps: 1.98183
  }
 }
