@@ -35,10 +35,13 @@ var (
 	drainSpells = []int32{SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul, SpellCode_WarlockWrack}
 	// Fel Concentration's pushback protection: the drains and Wrack by the client's mask.
 	felConcentrationSpells = drainSpells
-	// Intensity's pushback protection by the client's mask (0x3E5): Shadow Bolt, Immolate, Searing
-	// Pain, Soul Fire, Shadowburn, Conflagrate, Hellfire and Rain of Fire, not Incinerate.
+	// Intensity's pushback protection by the client's mask (0x3E5, plus 0x40 in word 1): Shadow Bolt,
+	// Immolate, Searing Pain, Soul Fire, Shadowburn, Conflagrate, Hellfire, Rain of Fire and
+	// Incinerate. Incinerate came in with the Blizzard hotfixes of November 20, 2026: server hotfix
+	// push 114320 (wago.tools, build 71037) sets SpellEffect 695261's EffectSpellClassMask_1 0 -> 64.
 	intensitySpells = []int32{SpellCode_WarlockShadowBolt, SpellCode_WarlockImmolate, SpellCode_WarlockSearingPain,
-		SpellCode_WarlockSoulFire, SpellCode_WarlockShadowburn, SpellCode_WarlockConflagrate, SpellCode_WarlockRainOfFire}
+		SpellCode_WarlockSoulFire, SpellCode_WarlockShadowburn, SpellCode_WarlockConflagrate, SpellCode_WarlockRainOfFire,
+		SpellCode_WarlockIncinerate}
 	// Fel Concentration and Intensity: 23 / 47 / 70% to ignore a hit's pushback (client curves).
 	pushbackProtection = []float64{0, 0.23, 0.47, 0.70}
 )

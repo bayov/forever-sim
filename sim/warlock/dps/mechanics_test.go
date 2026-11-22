@@ -162,7 +162,8 @@ func TestWarlockShadowMastery(t *testing.T) {
 }
 
 // TestWarlockPushbackProtection checks Intensity and Fel Concentration at 3/3: a 70% chance to
-// ignore a hit's pushback on the spells in their client masks, Incinerate not among Intensity's.
+// ignore a hit's pushback on the spells in their client masks, Incinerate among Intensity's since
+// push 114320 (Blizzard hotfixes of November 20, 2026).
 func TestWarlockPushbackProtection(t *testing.T) {
 	_, intensity := newWarlockSim(t, "--0000000030000001", &proto.WarlockOptions{})
 	_, felConcentration := newWarlockSim(t, "00000003", &proto.WarlockOptions{})
@@ -175,7 +176,7 @@ func TestWarlockPushbackProtection(t *testing.T) {
 	}{
 		{"Intensity: Shadow Bolt", last(intensity.ShadowBolt), 0.70},
 		{"Intensity: Immolate", last(intensity.Immolate), 0.70},
-		{"Intensity: Incinerate", last(intensity.Incinerate), 0},
+		{"Intensity: Incinerate", last(intensity.Incinerate), 0.70},
 		{"Fel Concentration: Drain Life", last(felConcentration.DrainLife), 0.70},
 		{"Fel Concentration: Shadow Bolt", last(felConcentration.ShadowBolt), 0},
 	} {

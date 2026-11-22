@@ -344,8 +344,8 @@ func TestDarkInspirationNeedsHit(t *testing.T) {
 	}
 }
 
-// TestChastiseShadowform checks that Chastise cannot be cast in Shadowform (StanceExclude
-// 0x8000000 on 1277335).
+// TestChastiseShadowform checks that Chastise can be cast in Shadowform (Blizzard hotfixes of
+// November 20, 2026; push 114309 removed rank 5's StanceExclude 0x8000000).
 func TestChastiseShadowform(t *testing.T) {
 	sim, sp := newShadowPriestSimRace(t, "00503523103--50052101231302051", proto.Race_RaceDwarf)
 	target := sim.GetTargetUnit(0)
@@ -355,8 +355,8 @@ func TestChastiseShadowform(t *testing.T) {
 		t.Fatal("Chastise cannot be cast in caster form")
 	}
 	sp.ShadowformAura.Activate(sim)
-	if chastise.CanCast(sim, target) {
-		t.Error("Chastise can be cast in Shadowform")
+	if !chastise.CanCast(sim, target) {
+		t.Error("Chastise cannot be cast in Shadowform")
 	}
 	sp.ShadowformAura.Deactivate(sim)
 	if !chastise.CanCast(sim, target) {
