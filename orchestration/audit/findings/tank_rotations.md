@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_rotations-20261122-1: Paladin Balanced's Consecration mana floor (60%) now costs about 4; any mana wins since Judgement of Wisdom pays only on landed swings
+- severity: low
+- affects: Protection paladin Balanced
+- found: 2026-11-22, master 7a6d1beb9d
+- evidence: tools/tankbench/req/paladin_protection_balanced.json priority line 7 (Consecration, `currentManaPercent >= 0.6`). Paired abtest at w = 1, Balanced minus the line without its condition, 10,000 iterations: +4.9 ± 1.0 (seed 1), +3.9 ± 0.9 (seed 2) on the scoring mean, nearly all Chromaggus (+18.4 ± 4.5, +18.8 ± 3.9, SafeDPS +8), the rest within noise; Ragnaros -10 / -7 ± 32. Floors 0.2, 0.3 and 0.4 give the same +3.5 to +4.6 ± 1.7 at 3,000 iterations, 0.7 -8.7 and 0.8 -15.0. docs/tank_paladin.md (Holy Strike rolls Windfury Totem, 2026-11-15) measured the same change at +0.9 / +0.7, noise, so the gain is new: bd7029410 (sim/core/debuffs.go, Judgement of Wisdom no longer pays on missed, dodged or parried white swings under Forever) cuts the paladin's mana. Max threat already casts it at any mana; Max survival's floor (also 0.6) is noise at w = 3 (any: -3.2 ± 5.4 / +10.5 ± 4.8; 0.4 alike; 0.8 -21.5 / -18.8). About 0.15% of the score. Sure: high that it's real, it's small. Repro: `abtest -preset balanced -iters 10000 -seed 1 tools/tankbench/req/paladin_protection_balanced.json B.json` with B made by `tools/audit/tank_rotations/mk_warrior.py A B nocond 7`.
+- proposed fix: drop the mana condition on Balanced's Consecration line (as Max threat), in the request, the UI apl `ui/protection_paladin/apls/level60_balanced.apl.json` and the rotopt template knob; update the note ("Consecration on cooldown").
+- needs: worker fix
+
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
 - affects: Protection warrior Max survival

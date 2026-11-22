@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
+  "master": "7a6d1beb9d03196d2c9e3840af566c191ce7c717"
  },
- "last_pass_at": "2026-11-22T12:56:00Z",
- "pass": 25,
+ "last_pass_at": "2026-11-22T19:00:00Z",
+ "pass": 26,
  "result": "quiet",
- "note": "Pass 25: paladin 2H Spec Holy school-wide (Nov 19 hotfix) reaches no heal (heals read HealingDealtMultiplier); shaman changes comments only; Nov 20 post has no healer line; client 71037. Findings 10, 11 open.",
+ "note": "Pass 26: dot.go SetTickPeriod regrid is Wrack-only (no HoT caller), CleanUp comment only; Soulforge/Flame Shock/Maelstrom reach no heal; reveal sets worn by no healer preset; no Blizzard post after t/2403040 #14; client 71037. Findings 10, 11 open.",
  "client_build": "1.60.1.71037",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-21T00:18:29Z"
  },
- "checked_at": "2026-11-22T13:10:53Z"
+ "checked_at": "2026-11-22T19:02:11Z"
 }

@@ -518,3 +518,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-22 13:10 | tank_rotations | pass 23 | master 8b5137c6d | quiet | 104 rows identical to pass 22
 2026-11-22 13:10 | tank_gear | pass 13 | master 8b5137c6d | quiet | Tank gear within tolerance
 2026-11-22 13:10 | tank_fairness | pass 25 | master 8b5137c6d | quiet | 84 rows identical; ranking unchanged
+2026-11-22 19:02 | results | pass 98 | master 7a6d1beb9 | quiet | 57 of 68 builds match; mage Ice Lance and hunter pet moves wait on re-sim
+2026-11-22 19:02 | rotations | pass 72 | master 7a6d1beb9 | quiet | preset moves match sim commits; Ice Lance still pays
+2026-11-22 19:02 | gear | pass 71 | master 7a6d1beb9 | quiet | only a real-item Enhancement Phase 0 rerank changed
+2026-11-22 19:02 | consumables | pass 98 | master 7a6d1beb9 | quiet | no consumable or enchant value changed
+2026-11-22 19:02 | mechanics | pass 98 | master 7a6d1beb9 | quiet | 14 sim commits match 71037
+2026-11-22 19:02 | fairness | pass 49 | master 7a6d1beb9 | 1 new findings | published report behind sim on 28 of 68 builds
+2026-11-22 19:02 | healer_mechanics | pass 26 | master 7a6d1beb9 | quiet | no heal path touched
+2026-11-22 19:02 | healer_rotations | pass 23 | master 7a6d1beb9 | quiet | 63 rows identical
+2026-11-22 19:02 | healer_fairness | pass 25 | master 7a6d1beb9 | quiet | 63 cells identical
+2026-11-22 19:02 | tank_mechanics | pass 27 | master 7a6d1beb9 | quiet | only Judgement of Wisdom reaches tanks
+2026-11-22 19:02 | tank_rotations | pass 24 | master 7a6d1beb9 | 1 new findings | paladin Balanced Consecration mana condition now loses
+2026-11-22 19:02 | tank_fairness | pass 26 | master 7a6d1beb9 | quiet | ranking unchanged

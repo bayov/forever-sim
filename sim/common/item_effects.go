@@ -12,6 +12,9 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// HeadmastersCharge sits apart so the block below keeps its alignment.
+const HeadmastersCharge = 13937
+
 // Ordered by ID
 const (
 	Destiny                   = 647
@@ -19,6 +22,7 @@ const (
 	FieryWarAxe               = 870
 	Bloodrazor                = 809
 	HammerOfTheNorthernWind   = 810
+	AxeOfTheDeepWoods         = 811
 	FlurryAxe                 = 871
 	SkullflameShield          = 1168
 	TeebusBlazingLongsword    = 1728
@@ -96,7 +100,7 @@ const (
 	SkullforgeReaver          = 13361
 	TheCruelHandOfTimmy       = 13401
 	RunebladeOfBaronRivendare = 13505
-	// HeadmastersCharge      = 13937
+	// HeadmastersCharge is declared apart, above.
 	GravestoneWarAxe           = 13983
 	Darrowspike                = 13984
 	Frightalon                 = 14024
@@ -301,6 +305,15 @@ func init() {
 			},
 		})
 	})
+
+	// https://www.wowhead.com/forever/item=811/axe-of-the-deep-woods
+	// Forever: Chance on hit: Blasts a target for 105 to 147 Nature damage. 18104 deals 126 with
+	// variance 0.333 (client 1.60.1.71037), at the 1.7 PPM the item's entry carries (wowsims/forever's
+	// client store). Not simulated under Classic.
+	itemhelpers.CreateWeaponCoHProcByRuleset(AxeOfTheDeepWoods, "Axe of the Deep Woods", core.SpellSchoolNature,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 1.7, SpellID: 18104, DmgMin: 105, DmgRange: 42},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=12791/barman-shanker
 	// Chance on hit: Wounds the target causing them to bleed for 100 damage over 30 sec.
@@ -1310,8 +1323,10 @@ func init() {
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.AddStatDynamic(sim, stats.FireResistance, -30)
 			},
-			OnSpellHitTaken: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if result.Landed() {
+			// Damage the wearer deals to itself (a warrior's self-damage, say) doesn't reflect, or
+			// the shield would hit the wearer and set itself off again without end.
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Landed() && spell.Unit != aura.Unit && spell != shieldSpell {
 					shieldSpell.Cast(sim, spell.Unit)
 				}
 			},
@@ -1706,43 +1721,9 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=13937/headmasters-charge
 	// Use: Gives 20 additional intellect to party members within 30 yards. (10 Min Cooldown)
-	// Originally did not stack with Arcane Intellect, but is reported to stack in SoD
-	/* core.NewItemEffect(HeadmastersCharge, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		actionID := core.ActionID{SpellID: 18264}
-
-		buffAura := character.RegisterAura(core.Aura{
-			ActionID: actionID,
-			Label:    "Headmaster's Charge",
-			Duration: time.Minute * 15,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatDynamic(sim, stats.Intellect, 25)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.AddStatDynamic(sim, stats.Intellect, -25)
-			},
-		})
-		spell := character.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
-			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
-
-			Cast: core.CastConfig{
-				CD: core.Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: time.Minute * 10,
-				},
-			},
-
-			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				buffAura.Activate(sim)
-			},
-		})
-
-		character.AddMajorCooldown(core.MajorCooldown{
-			Type:  core.CooldownTypeDPS,
-			Spell: spell,
-		})
-	}) */
+	// Client 1.60.1.71037: spell 18264, +20 Intellect for 900000 ms, 600000 ms cooldown. The sim
+	// gives it to the wearer only. It lasts longer than its cooldown, so it stays up all fight.
+	core.NewSimpleStatItemEffect(HeadmastersCharge, stats.Stats{stats.Intellect: 20}, time.Minute*15, time.Minute*10, 0)
 
 	// https://www.wowhead.com/forever/item=13040/heartseeking-crossbow
 	// Forever: Equip: Chance to strike your ranged target with a Shadowbolt for 13 to 19 Shadow
@@ -3799,6 +3780,14 @@ func init() {
 		})
 	})
 
+	// Weapon effects we leave unmodelled (Phase 0 check, client 1.60.1.71037):
+	//   - Book of the Dead (13353) summons a Skeleton (17490, creature 11200) for 60s. The client
+	//     has no stats or attacks for it, and the Forever equip aura (1298517) is a dummy whose
+	//     effect the client doesn't say.
+	//   - Demonfork (12621) drains 10 health a second for 5s (16603): 50 damage a proc at an
+	//     unknown rate.
+	//   - Julie's Dagger (6660) heals, and Hammer of the Titans (12796) and The Unstoppable Force
+	//     (19323) only stun, so they deal nothing to a boss.
 	// Jewelry uses we leave unmodelled (Phase 0 check, client 1.60.1.71037):
 	//   - Cannonball Runner (13382) summons a cannon for 10s that casts Cannon Fire (17501, 85 to 139
 	//     Holy to nearby enemies), and Arcanite Dragonling (16022) a dragonling for 60s. The client

@@ -1,18 +1,18 @@
-# Healer fairness pass 24 (2026-11-22, master 8b5137c6d)
+# Healer fairness pass 25 (2026-11-22, master 7a6d1beb9)
 
 Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth;
 last at 1.385, 0.005 behind the shaman), -20261104-4 (low).
 
-Due because 10 watched files changed since b4b68c52e (net diff to 8b5137c6d):
-- `sim/paladin/talents.go`, `judgement.go`, `consecration.go`, `soc.go`, `sor.go`, `seal_of_fury.go`: Two-Handed Weapon
-  Specialization's Holy part moves to the Holy school under Forever (Nov 19 hotfix) and follows item swaps. It applies only
-  with a two-handed main hand; neither Holy paladin preset carries one, and it is a damage multiplier, not healing.
-- `sim/shaman/talents.go`, `stormstrike.go`, `item_sets_pve.go`, `sim/core/buffs.go`: comments only (Maelstrom Weapon PPM
-  source, Dungeon Set 1 in set 1679, Windfury Totem client rows).
-- `orchestration/standards.md` 41 (Blizzard's word overrides an earlier ruling): no open healer finding rests on a ruling it retires.
-- No `tools/healbench/req/` or `tools/encounters/` change.
-- Check: all 63 cells, both roles, seed 101, 1,000 it (`screen.sh`, healbench built on 8b5137c6d with `-tags with_db`
-  in the repo, no worktree needed): identical to `ref/healer_fairness/bench_a667736.tsv`, so sections 1-3 below stand.
+Due because 4 watched files changed since 8b5137c6d:
+- `sim/core/dot.go`: `SetTickPeriod` now retimes a dot on the grid of its own expiry (wowsims/forever retimeOnGrid). Its only
+  caller is Wrack (`sim/warlock/talents.go:331-333`); no HoT or healer channel uses it.
+- `sim/paladin/item_sets_pve.go`: Soulforge 4-piece reuses Lightforge's Crusader's Wrath aura when both are worn. Spell power
+  proc on damage/melee sets; neither Holy paladin preset wears 4+4 of them, and its cells are unchanged.
+- `sim/shaman/flame_shock.go` (Flame Shock's GCD hastes under Forever) and `talents.go` (Windfury Totem swings give no
+  Maelstrom stack): no Restoration shaman preset casts Flame Shock, has Maelstrom Weapon or haste.
+- No `tools/healbench/req/` or `tools/encounters/` change. Priest .results only gained a new item-set test row.
+- Check: all 63 cells, both roles, seed 101, 1,000 it (`screen.sh`, healbench built on 7a6d1beb9 with `-tags with_db`):
+  identical to `ref/healer_fairness/bench_a667736.tsv`, so sections 1-3 below stand.
 
 The rest is pass 21's (master a6677362f), still current:
 

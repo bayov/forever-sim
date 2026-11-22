@@ -87,5 +87,13 @@
   "13622": {"name": "Enchant Bracer - Lesser Intellect", "source": "Trainer, skill 150 (Classic)"},
   "13663": {"name": "Enchant Chest - Greater Mana", "source": "Trainer, skill 185 (Classic)"},
   "1248458": {"name": "Enchant Bracer - Minor Intellect", "avail": "doubtful", "note": "Forever formula, source unchecked", "source": "Forever-only spell, no source found yet"},
-  "1248460": {"name": "Enchant Bracer - Lesser Agility", "avail": "doubtful", "note": "Forever formula, source unchecked", "source": "Forever-only spell, no source found yet"}
+  "1248460": {"name": "Enchant Bracer - Lesser Agility", "avail": "doubtful", "note": "Forever formula, source unchecked", "source": "Forever-only spell, no source found yet"},
+  "7793": {"name": "Enchant 2H Weapon - Lesser Intellect", "note": "Formula 6349 vendor 5s, reagents 3 Greater Magic Essence", "source": "Vendor: Formula 6349 sold by npcs 3012, 3346, 5158 and 5758 for 5s, skill 100"},
+  "13380": {"name": "Enchant 2H Weapon - Lesser Spirit", "avail": "doubtful", "note": "Formula 11038 is a 0.3% drop from many mobs", "source": "Drop: Formula 11038, about 0.2 to 0.4% from many mobs and lockboxes, skill 110"},
+  "21931": {"name": "Enchant Weapon - Winter's Might", "avail": "doubtful", "note": "Formula 17725 has no known source in Forever", "source": "Formula 17725, skill 190, no source in our data, reagents Greater Mystic Essence, Vision Dust, Large Glowing Shard and Wintersbite"},
+  "1219579": {"name": "Enchant Off-Hand - Wisdom", "note": "Forever only, formula 274393 vendor for 240 of currency 3402", "source": "Vendor: Formula 274393 sold by npcs 248199 and 256732 for 240 of currency 3402, skill 300"},
+  "3975": {"name": "Standard Scope", "note": "Engineering craft, scope needs Engineering to make", "source": "Engineering recipe learned from the trainer, makes item 4406"},
+  "3976": {"name": "Accurate Scope", "note": "Engineering craft, scope needs Engineering to make", "source": "Engineering recipe learned from the trainer, makes item 4407"},
+  "12459": {"name": "Deadly Scope", "note": "Engineering craft, scope needs Engineering to make", "source": "Engineering recipe learned from the trainer, makes item 10546"},
+  "12460": {"name": "Sniper Scope", "note": "Engineering craft, scope needs Engineering to make", "source": "Engineering recipe learned from the trainer, makes item 10548"}
 }

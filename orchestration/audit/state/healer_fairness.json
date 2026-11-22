@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
+  "master": "7a6d1beb9d03196d2c9e3840af566c191ce7c717"
  },
- "last_pass_at": "2026-11-22T13:04:53Z",
- "pass": 24,
+ "last_pass_at": "2026-11-22T18:58:00Z",
+ "pass": 25,
  "result": "quiet",
  "baseline": "a6677362f",
- "note": "Pass 24 on 8b5137c6d: Two-Handed Weapon Specialization on the Holy school (needs a 2H main hand, no Holy paladin preset has one); shaman talents/stormstrike/item sets and core buffs.go comment-only; standards 41 retires no healer ruling. All 63 cells (seed 101, 1,000 it) identical to bench_a667736.tsv. Healbench builds in the repo with -tags with_db. Open: -20261115-1, -20261104-4.",
+ "note": "Pass 25 on 7a6d1beb9: dot.go SetTickPeriod on-grid retime (Wrack only), Soulforge 4pc shares Crusader's Wrath, Flame Shock hasted GCD, Maelstrom Weapon skips Windfury Totem swings: none reach a healer preset. All 63 cells (seed 101, 1,000 it) identical to bench_a667736.tsv. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-22T13:10:53Z"
+ "checked_at": "2026-11-22T19:02:11Z"
 }

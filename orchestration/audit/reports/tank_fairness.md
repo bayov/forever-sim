@@ -1,33 +1,52 @@
-# tank_fairness pass 25: 2026-11-22, master 8b5137c6d
+# tank_fairness pass 26: 2026-11-22, master 7a6d1beb9
 
-Due: 11 watched files changed since b4b68c52e: `orchestration/standards.md` (standards 41, Blizzard's notes override
-earlier rulings), `sim/paladin/{consecration,judgement,seal_of_fury,soc,sor,talents}.go` (Two-Handed Weapon
-Specialization raises all Holy damage, Nov 19 hotfix, 1c80dafff), `sim/shaman/{item_sets_pve,stormstrike,talents}.go`
-(Five Thunders set, Stormstrike), `sim/warrior/talents.go` (push 114097, Unbridled Wrath on Heroic Strike and Cleave).
+Due: 8 watched files changed since 8b5137c6d: `sim/core/debuffs.go` (Judgement of Wisdom: under Forever a missed, dodged
+or parried white swing no longer pays, wowsims/forever EV-0018), `sim/core/attack.go` (a test helper),
+`sim/paladin/item_sets_pve.go` (Soulforge 4 + Lightforge 4 share Crusader's Wrath), `sim/shaman/flame_shock.go` (GCD haste
+under Forever), `sim/shaman/talents.go` (no Maelstrom stack off Windfury Totem's swing), `sim/warrior/{deep_wounds,execute,
+talents}.go` (Deep Wounds per hand and without the warrior's damage bonuses, no bleed from Thunder Clap crits; Execute
+rolls Windfury twice and refunds nothing when avoided; no Bloodthrill or Flurry charge off the totem's swing).
 No change to `tools/tankbench`, `tools/encounters`, the tank requests, the tank UIs or `docs/tank_*.md`. Quiet: no new finding.
 
 ## Method
 
-Built tankbench at 8b5137c6d (`make items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on all 13
-requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against
-`ref/tank_fairness/summary.tsv`: all 84 baseline rows identical to the byte; the only extra rows are the legacy
-`warrior_protection.json`. Baseline not refreshed.
+Built tankbench at 7a6d1beb9 (`make items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on all 13
+requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against the baseline: the 21
+warrior rows identical to the byte; paladin, bear and Warden rows moved within noise. Baseline refreshed (84 rows).
 
-Fairness of the changes: 2H Weapon Specialization needs a two-hander, so no shield-wearing paladin preset moves (rows
-identical); the warrior's push 114097 was already in the pass 18 numbers; the shaman changes don't touch the Warden's
-gear or rotation. Standards 41 retires no open tank_fairness finding (none waits on a ruling a Blizzard note settles).
+Fairness of the changes:
+- Judgement of Wisdom is on every tank request (`judgementOfWisdom: true` in all 12), so the Forever miss rule hits the
+  two mana tanks alike: paladin TPS -3 to -5 on every boss and weight (about 0.3%, less mana), Warden TPS -1 to -4. The
+  bear and Warden score moves are the RNG stream shifting (fewer JoW rolls), all within 2 sigma.
+- The warrior changes don't reach the presets: the three warrior talent strings take no Deep Wounds, the APLs cast no
+  Execute, and the rows are identical, so Windfury, Flurry and Bloodthrill rules leave them as they were.
+- No Warden APL casts Flame Shock; no tank wears Soulforge or Lightforge.
 
 ## Ranking (six-boss mean, own weight, seed 1)
 
-| weight | order | pass 25 (= pass 24) |
-|---|---|---|
-| Max threat | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
-| Balanced | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |
-| Max survival | Warrior, Paladin, Bear, Warden | 1837 / 1776 / 364 / -2211 |
+| weight | order | pass 26 | pass 25 |
+|---|---|---|---|
+| Max threat | Warrior, Paladin, Bear, Warden | 4235 / 3240 / 3128 / 2628 | 4235 / 3246 / 3123 / 2628 |
+| Balanced | Warrior, Paladin, Bear, Warden | 3475 / 2797 / 2130 / 1272 | 3475 / 2805 / 2131 / 1281 |
+| Max survival | Warrior, Paladin, Bear, Warden | 1837 / 1778 / 347 / -2252 | 1837 / 1776 / 364 / -2211 |
 
-Open findings re-checked against the requests (unchanged): paladin Major Mana Potion with no potion action
-(-20261105-1), Warden Night Elf / Night Elf / Undead (-20261105-2), paladin damage taken waiting on the user's calls
-(-20261104-2), legacy `warrior_protection.json` still read (-20261104-5). None fixed.
+TPS (Balanced): warrior 2075, bear 1628, paladin 1515, Warden 1382. Healing needed (Balanced): paladin 243, warrior 340,
+bear 474, Warden 666.
+
+## What a preset rewards (six-boss mean at w 1/3, 1, 3; seed 1)
+
+| spec | Max threat build | Balanced build | Max survival build |
+|---|---|---|---|
+| Warrior | **4235** / 3319 / 569 | 4120 / **3475** / 1537 | 3433 / 3034 / **1837** |
+| Paladin | **3240** / 2787 / 1428 | 3205 / **2797** / 1575 | 3088 / 2760 / **1778** |
+| Bear | **3128** / 1972 / -1493 | 3000 / **2130** / -480 | 2390 / 1879 / **347** |
+| Warden | **2628** / 1053 / -3672 | 2493 / **1272** / -2392 | 2401 / 1238 / **-2252** |
+
+Each preset leads its own weight; the paladin's Balanced build leads its Max threat build at w 1 by 10 only (16 in pass 19).
+
+Open findings re-checked (unchanged): paladin Major Mana Potion with no potion action (-20261105-1), Warden Night Elf /
+Night Elf / Undead (-20261105-2), paladin damage taken waiting on the user's calls (-20261104-2), legacy
+`warrior_protection.json` still read (-20261104-5; now also `tools/dps_report/tankheal.py`, `tools/healbench/main_test.go`).
 
 ---
 

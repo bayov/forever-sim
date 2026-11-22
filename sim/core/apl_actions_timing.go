@@ -37,7 +37,10 @@ func (action *APLActionWait) IsReady(sim *Simulation) bool {
 
 func (action *APLActionWait) Execute(sim *Simulation) {
 	action.unit.Rotation.pushControllingAction(action)
-	action.curWaitTime = sim.CurrentTime + action.duration.GetDuration(sim)
+	// A wait on something that never comes (the next Auto Shot of a hunter with no ranged weapon
+	// is at NeverExpires) waits for the rest of the fight. Adding it to the current time would
+	// overflow into the past and end the wait at once, over and over in the same instant.
+	action.curWaitTime = sim.CurrentTime + min(action.duration.GetDuration(sim), NeverExpires-max(sim.CurrentTime, 0))
 
 	pa := &PendingAction{
 		Priority:     ActionPriorityLow,

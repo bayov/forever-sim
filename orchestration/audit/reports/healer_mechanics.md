@@ -1,24 +1,25 @@
-# healer_mechanics pass 25 (2026-11-22, master 8b5137c6d)
+# healer_mechanics pass 26 (2026-11-22, master 7a6d1beb9d)
 
-Range b4b68c52e9..8b5137c6d6. Gate: 9 watched files (paladin consecration, judgement, seal_of_fury, soc, sor, talents;
-shaman item_sets_pve, stormstrike, talents). Client still 1.60.1.71037 (wago latest). Update ledger: no new healer row
-(PAL-HF-07 is Retribution). Blizzard t/2403040 post 14 (2026-11-21, "November 20") is rogue, warlock, dungeons,
-Stormshroud Armor, quests and UI: no healer line.
+Range 8b5137c6d6..7a6d1beb9d. Gate: 4 watched files (sim/core/dot.go, sim/paladin/item_sets_pve.go,
+sim/shaman/flame_shock.go, sim/shaman/talents.go). Client still 1.60.1.71037 (wago latest). Blizzard t/2403040: no post
+after post 14 (2026-11-21T00:18:29Z, no healer line). TASKS.md / daily update: Nov 20 server pushes 114204-114326
+(Execute, Judgement procs, Chastise, Intensity, Nature's Bounty, Spiritcaller) name no heal, healing talent or
+healing-engine row. Update ledger unchanged.
 
 ## Changed files
 
 | File | Change | Healer effect | Verdict |
 |---|---|---|---|
-| sim/paladin/talents.go | 2H Weapon Specialization Holy part school-wide under Forever (Nov 19 hotfix), item-swap aware | `SchoolDamageDealtMultiplier[Holy]` only; heals read `HealingDealtMultiplier` (`sim/core/spell_result.go` CasterHealingMultiplier), so Holy Shock's heal, Holy Light, Flash of Light untouched; no Holy preset wields a 2H with the talent | no healer effect |
-| consecration.go, judgement.go, seal_of_fury.go, soc.go, sor.go | spell-side 2H multiplier dropped under Forever | damage spells only | none |
-| sim/shaman/talents.go, stormstrike.go | Maelstrom Weapon / Stormstrike comments now cite client 70959 | Enhancement only | none |
-| sim/shaman/item_sets_pve.go | comment: Dungeon Set 1 pieces in set 1679 | no healer preset wears 1679 | none |
-| sim/core/buffs.go (unwatched) | Windfury Totem ICD comment only | none | none |
+| sim/core/dot.go | `SetTickPeriod` retimes on the dot's expiry grid (3960dd1f6); CleanUp change is a comment | only caller is Wrack (`sim/warlock/talents.go:331,333`); no HoT calls it; CleanUp logic unchanged, so pass 9's "last tick at expiry lands" holds | no healer effect |
+| sim/paladin/item_sets_pve.go | Soulforge (Classic) 4pc reuses an existing "Crusader's Wrath" aura so 4 + 4 Forever Soulforge pieces share one buff | spell power proc on melee; Holy presets wear `level60_phase1_synthetic` gear, no Soulforge | none |
+| sim/shaman/flame_shock.go | Forever: haste shortens Flame Shock's GCD | damage spell; Restoration preset casts no Flame Shock in healing fights | none |
+| sim/shaman/talents.go | Maelstrom Weapon: no stack from Windfury Totem's swing under Forever | Enhancement talent | none |
+| sim/common/item_sets/forever_dungeon_set_1_reveal.go (unwatched) | 8 Dungeon Set 1 reveal sets wired, incl. Vestments of the Virtuous (priest) and Soulforge (paladin) | no healer preset wears them (all healer gear is synthetic); Deathmist 4pc self-heal not modelled, a DPS set | none |
 
 ## Tests
 
-`go test -tags=with_db ./sim/paladin/... ./sim/shaman/...` green (holy, protection, retribution, elemental,
-enhancement, warden).
+`go test -tags=with_db ./sim/paladin/holy/ ./sim/priest/... ./sim/shaman/... ./sim/druid/... ./sim/core/`: all green (holy, priest
+healing/shadow, shaman elemental/enhancement/warden, druid, balance, feral, tank, core). (Without `-tags=with_db` the holy suite panics on a missing item 272436; that's the build tag, not a bug.)
 
 ## Findings
 

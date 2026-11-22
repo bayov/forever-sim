@@ -356,6 +356,14 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		return wa.swingAt
 	}
 
+	// No weapon in the slot (a hunter with the ranged slot empty, or swapped out of it): nothing
+	// to swing. Its swing duration is 0, so swinging would come due again in the same instant
+	// forever.
+	if wa.SwingSpeed <= 0 {
+		wa.swingAt = NeverExpires
+		return wa.swingAt
+	}
+
 	// Under Forever a melee swing waits out a cast that resets it. The completed cast sets the
 	// real swing time; this one only has to land past the cast's end, wherever pushback moves it.
 	// An extra attack doesn't wait: it swings right after the hit that granted it, in the same

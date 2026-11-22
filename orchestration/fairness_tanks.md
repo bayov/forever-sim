@@ -1,7 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-22, pass 25, master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
+preset weight, its reasons, and the open questions. Last pass: 2026-11-22, pass 26, master 7a6d1beb9 (Judgement of Wisdom pays no mana off an avoided white swing under Forever: paladin TPS about -0.3%, Warden -0.2%, warrior identical; warrior Deep Wounds, Execute and Windfury talent rules reach no tank preset). Pass 25: master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
 Undead condition, Totem of Rage's Forever 2%, a crit-against-target mark; no tank preset wears an affected item; all 12
 presets identical to pass 23). Pass 23: 2026-11-19, master e671e881e (the least-HPS
 search in `sim/core/tank_score.go` restarts replays from the last capped point; all 12 presets identical to pass 22).
@@ -17,9 +17,9 @@ Judgement of Command melee again) and the warrior's Balanced and Max survival re
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4235 / 3246 / 3123 / 2628 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3475 / 2805 / 2131 / 1281 |
-| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1837 / 1776 / 364 / -2211 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4235 / 3240 / 3128 / 2628 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3475 / 2797 / 2130 / 1272 |
+| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1837 / 1778 / 347 / -2252 |
 
 The Nov 13 Windfury rule (every landed main hand hit rolls the totem) gave the bear +328 / +260 / +129 (12% at Max
 threat, TPS +163) and the Warden +88 / +61 at Max threat / Balanced; the paladin +38 at Balanced; the warrior nothing
@@ -30,8 +30,8 @@ so fair): two-seed means now warrior 1830 (1836.7 / 1822.3), paladin 1781 (1775.
 ahead by 49 (2.7%), outside the error. The paladin's open potion action (finding -20261105-1, +374 at Max survival in
 pass 13) would still put the paladin first.
 
-TPS (Balanced): warrior 2075, bear 1628, paladin 1519, Warden 1385. Healing needed (Balanced): paladin 245, warrior 340,
-bear 473, Warden 664.
+TPS (Balanced): warrior 2075, bear 1628, paladin 1515, Warden 1382. Healing needed (Balanced): paladin 243, warrior 340,
+bear 474, Warden 666.
 
 Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins
 at its preset (pass 11).
