@@ -81,7 +81,17 @@ three were already listed. Nothing added.
 
 ## Check
 
-Pending: Enhancement's RANK_ONLY run for trinket, finger, neck and back.
+Enhancement's `RANK_ONLY=1 SLOTS=trinket,finger,neck,back` finishes with no unlisted item (exit 0, 5819 sim runs on
+4 cores). Picks are unchanged: Blackhand's Breadth and Chained Essence of Eranikus, Watcher's Signet of Brilliance and
+Channeler's Ring, Beads of Ogre Might, Arcanoweave Cloak. Both new effects get ranked: Cloak of Fire's use is worth
++1.1 DPS on the boss and +4.4 against 4 mobs (back rank 26 vs 4 mobs), Linken's Boomerang's +1.4 on the boss. Neither
+makes the list. `EFFECTS_ONLY` writes effects only for a list's picks, so they can't show there until a pick wears them.
+
+The other 22 specs have no list yet, so `RANK_ONLY` can't run for them (it needs `FROM`). Their candidates are all
+listed, so step 3's unlisted check should find none in these slots. One bug turned up on the way:
+the first run panicked on Cloak of Fire's ticks (no defense type on a crit check), fixed in 07c1ac4.
+
+To run the script here I needed a `jj` shim (the container has only git) and `protoc` for the generated protos.
 
 ## Needs a user call
 
