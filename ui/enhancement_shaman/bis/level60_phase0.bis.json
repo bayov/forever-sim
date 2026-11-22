@@ -2031,7 +2031,7 @@
           }
         ],
         "cooldown": {
-          "rank": 30,
+          "rank": 29,
           "loss": 16.96
         }
       },
@@ -2068,7 +2068,7 @@
           }
         ],
         "cooldown": {
-          "rank": 8,
+          "rank": 9,
           "loss": 9.49
         }
       },
@@ -2080,7 +2080,7 @@
         "conditional": [
           {
             "label": "vs 4 mobs",
-            "rank": 8,
+            "rank": 9,
             "loss": 9.35
           }
         ],
@@ -2113,6 +2113,16 @@
         ]
       },
       {
+        "id": 14022,
+        "name": "Barov Peasant Caller",
+        "dps": 991.66,
+        "loss": 8.6,
+        "cooldown": {
+          "rank": 27,
+          "loss": 15.97
+        }
+      },
+      {
         "id": 274759,
         "name": "Everlook Pathcarver",
         "dps": 991.6,
@@ -2127,7 +2137,6 @@
         "name": "Behemoth Bones",
         "dps": 991.23,
         "loss": 9.03,
-        "unsourced": true,
         "avail": "doubtful",
         "note": "Blackmaw Hold? · no source in db"
       },
@@ -2137,7 +2146,7 @@
         "dps": 990.76,
         "loss": 9.5,
         "cooldown": {
-          "rank": 12,
+          "rank": 13,
           "loss": 10.34
         },
         "note": "Pix Xizzix · 125 Reals · unique with ACA"
@@ -2200,7 +2209,7 @@
         "dps": 989.21,
         "loss": 11.06,
         "cooldown": {
-          "rank": 28,
+          "rank": 27,
           "loss": 16.16
         }
       },
@@ -2260,8 +2269,7 @@
         "id": 286556,
         "name": "Winds of Tanaris",
         "dps": 987.42,
-        "loss": 12.84,
-        "unsourced": true
+        "loss": 12.84
       },
       {
         "id": 13171,
@@ -2271,26 +2279,20 @@
         "conditional": [
           {
             "label": "vs Plants",
-            "rank": 9,
+            "rank": 10,
             "loss": 9.25
           },
           {
             "label": "vs 4 mobs",
-            "rank": 28,
+            "rank": 27,
             "loss": 16.15
           }
         ],
         "cooldown": {
-          "rank": 30,
+          "rank": 29,
           "loss": 16.4
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
-      },
-      {
-        "id": 13382,
-        "name": "Cannonball Runner",
-        "dps": 986.91,
-        "loss": 13.35
       },
       {
         "id": 270226,
@@ -2305,7 +2307,7 @@
           }
         ],
         "cooldown": {
-          "rank": 30,
+          "rank": 29,
           "loss": 16.87
         }
       },
@@ -2317,27 +2319,10 @@
         "conditional": [
           {
             "label": "vs Dragonkin",
-            "rank": 20,
+            "rank": 21,
             "loss": 11.89
           }
         ]
-      },
-      {
-        "id": 11819,
-        "name": "Second Wind",
-        "dps": 985.66,
-        "loss": 14.6,
-        "conditional": [
-          {
-            "label": "in mountains",
-            "rank": 25,
-            "loss": 13.24
-          }
-        ],
-        "cooldown": {
-          "rank": 28,
-          "loss": 14.6
-        }
       },
       {
         "id": 19812,
