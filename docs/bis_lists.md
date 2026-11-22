@@ -76,8 +76,10 @@ We used to ask for the `-confidence` margin at `-iters` too, but then Don Julio'
 
 `-gear-no-pick` takes item IDs the search never picks, but every list still ranks. The Phase 0
 list uses it for the items that need Exalted reputation (`avail` `infeasible` in
-`phase0_content.json`, user 2026-11-20), like The Unstoppable Force from Frostwolf. That grind
-is very long, so the set doesn't count on it, and each slot's pick is the best item we can get.
+`phase0_content.json`, user 2026-11-20), like The Unstoppable Force from Frostwolf, and for
+items that cost 300g or more (user, 2026-11-22), like Dawn Armor at about 350g on the auction
+house. Both take very long to get, so the set doesn't count on them, and each slot's pick is the best
+item we can get.
 But a player who has the reputation still sees where the item goes on the set. Such an item is
 ranked like any other, on the set with its real loss, but it never takes a pick's place
 (see above). When it beats the pick, it sits above the pick with a negative loss, since each list
@@ -360,7 +362,8 @@ can be filled in.
   a little from the list's. `avail` and `note` are from `phase0_enchants.json` (see Enchants).
 - `avail` and `note` come from checking by hand what the game has open
   (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `doubtful` (we don't know of
-  a way yet) or `infeasible` (it needs Exalted reputation, user 2026-11-20), and an open entry
+  a way yet) or `infeasible` (it needs Exalted reputation, user 2026-11-20, or costs 300g or
+  more, user 2026-11-22), and an open entry
   has none (user, 2026-11-20: the note tells the effort, so open but slow has no tag of its
   own). `note` says what it takes, or what's still in the way. `bis_phase0.sh` leaves out every
   item the check marks `out` (not before the raids) and copies `avail` and `note` onto the
@@ -375,7 +378,10 @@ says how long), because the level 30 pools are big. A new spec is a few more lin
 
 `tools/rotopt/bis_phase0.sh` writes the level 60 Phase 0 Enhancement list
 (`ui/enhancement_shaman/bis/level60_phase0.bis.json`) and its effect values
-(`level60_phase0.effects.json` next to it).
+(`level60_phase0.effects.json` next to it). It also writes the picks with their enchants as
+`ui/enhancement_shaman/gear_sets/level60_phase0.gear.json`, the gear of the sim UI's "Phase 0"
+build preset (with the list's talents, under the Phase 0 group). It skips that file when `OUT`
+is set, since then the list isn't the real one.
 
 It uses two fight lengths (user, 2026-11-20, see How uses count). Everything but the uses counts
 on `DUR` (180s), because there's little or no time to regen mana between fights. Each use counts

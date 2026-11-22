@@ -777,7 +777,8 @@
         "name": "Dawn Armor",
         "dps": 987.76,
         "loss": 12.5,
-        "note": "On AH ~350g · or Leatherworking craft"
+        "note": "On AH ~350g · or Leatherworking craft",
+        "avail": "infeasible"
       },
       {
         "id": 11726,

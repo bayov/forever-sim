@@ -269,7 +269,7 @@
   "227862": {"avail": "out", "name": "Incandescent Mooncloth Boots", "include": true, "note": "Needs Tailoring to wear · Meilosh · Mooncloth Boots + Mooncloth + 25 Winterfall Spirit Beads"},
   "228190": {"avail": "out", "name": "Knowledge of the Timbermaw", "include": true, "note": "Needs Tailoring to wear · Meilosh · Wisdom of the Timbermaw + Mooncloth + 20 Winterfall Spirit Beads"},
   "250617": {"avail": "infeasible", "name": "Stormcarver", "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g) · Master Forge blueprint not seen dropping yet"},
-  "252483": {"name": "Dawn Armor", "note": "On AH ~350g · or Leatherworking craft"},
+  "252483": {"avail": "infeasible", "name": "Dawn Armor", "note": "On AH ~350g · or Leatherworking craft"},
   "252484": {"name": "Timbermaw Tunic", "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g"},
   "252486": {"name": "Ironfeather Leggings", "note": "On AH ~121g · or Leatherworking 300 · pattern on AH ~16g"},
   "252539": {"name": "Prowler's Leather Bracers", "note": "Leatherworking craft"},
