@@ -186,6 +186,8 @@ ind_buffs = {'greaterBlessingOfKings': ib.get('blessingOfKings', False), 'greate
 debuffs = {k: bool(d.get(k)) or (k == 'sunderArmor' and 'sunderRamp' in d) for k in ['judgementOfWisdom', 'judgementOfLight', 'judgementOfTheCrusader', 'faerieFire',
            'curseOfElements', 'sunderArmor', 'curseOfWeakness', 'curseOfRecklessness', 'demoralizingRoar', 'demoralizingShout',
            'thunderClap', 'insectSwarm', 'scorpidSting', 'exposeArmor']}
+# Theirs made Judgement of the Crusader a TristateEffect (d09b43130c, Libram of Fervor as Improved); ours is plain.
+debuffs['judgementOfTheCrusader'] = 'TristateEffectRegular' if debuffs['judgementOfTheCrusader'] else 'TristateEffectMissing'
 
 # Cooldowns of the spells spellUsesLostByDelay names, which theirs lacks (it is rewritten from remainingTime).
 CD = {20572: '120s', 1259799: '180s', ('item', 993016): '120s', ('item', 993117): '120s', ('item', 991018): '120s',
