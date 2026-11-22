@@ -3799,6 +3799,14 @@ func init() {
 		})
 	})
 
+	// Jewelry uses we leave unmodelled (Phase 0 check, client 1.60.1.71037):
+	//   - Cannonball Runner (13382) summons a cannon for 10s that casts Cannon Fire (17501, 85 to 139
+	//     Holy to nearby enemies), and Arcanite Dragonling (16022) a dragonling for 60s. The client
+	//     has neither creature's spells or cast rate, so we can't say what they deal.
+	//   - Six Demon Bag (7734) picks its spell on the server. The client has only a dummy effect.
+	//   - Ramstein's Lightning Bolts (13515) is a 2s stun in Forever (1299443), no damage.
+	//   - The rest are defensive or out of combat: absorbs, heals, reflectors, resistances,
+	//     dispels, teleports, speed, roots and fishing.
 	// https://www.wowhead.com/classic/item=11905/linkens-boomerang
 	// Forever: Use: Linken's Boomerang (15712) deals 150 Physical damage, varying by 49% (113 to
 	// 187), and disarms the target for 10 sec and knocks it down for 2 sec. 3 min cooldown, and 10
