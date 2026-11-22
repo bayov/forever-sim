@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f"
+  "master": "7a6d1beb9d03196d2c9e3840af566c191ce7c717"
  },
- "last_pass_at": "2026-11-22T13:06:00Z",
- "pass": 22,
+ "last_pass_at": "2026-11-22T19:01:57Z",
+ "pass": 23,
  "result": "quiet",
- "note": "Pass 22 on 8b5137c6d. Watched changes (paladin 2H Spec Holy school-wide, Ret damage spells, Maelstrom Weapon PPM, set 1679 comment) do not reach healers. All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
+ "note": "Pass 23 on 7a6d1beb9. Watched changes (dot SetTickPeriod for Wrack, Soulforge 4pc aura reuse, Flame Shock GCD haste, Maelstrom comment) do not reach healers. All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
- "client_build": "1.60.1.70888",
- "checked_at": "2026-11-22T13:10:53Z"
+ "client_build": "1.60.1.71037",
+ "checked_at": "2026-11-22T19:02:11Z"
 }

@@ -4,11 +4,20 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261122-1: Published report lags five classes' fixes after the 30314ad60 re-sim; 28 of 68 builds off by 1.7 to 111 DPS and six specs change place
+- severity: high (Fury 2H +2.5%, Frost -11.7%; the published order is wrong in six places)
+- affects: warrior (all 11 builds, +5.7 to +27.4), warlock Affliction (3 builds, +11.9 to +12.8), shaman Enhancement (4 builds, -8.9 to -9.5), mage Frost / Frostfire (-110.8 / -58.3), hunter pet builds (9 builds, -1.7 to -4.6)
+- found: 2026-11-22, master 7a6d1beb9
+- evidence: `ui/dps_report/data/builds.json` at 7a6d1beb9 (last re-sim 30314ad60) against the loop's shared 20k run on the 7a6d1beb9 CLI (`/tmp/audit-work/runs/master`, report requests unchanged): 40 of 68 builds within 1.5 (every class whose code did not move), 28 off, each traced to a sim commit merged after 30314ad60: b7edf19bb (Execute rolls Windfury Totem twice, no Flurry charge or Bloodthrill off the totem's swing) Fury 2H 1104.2 -> 1131.6, Fury 1099.2 -> 1115.7, Arms 1072.2 -> 1080.3; 3960dd1f6 (Wrack half-point ticks) Affliction 1076.4 -> 1089.2; 840029bd8 (no Maelstrom stack from the totem) plus bd7029410 (Judgement of Wisdom on landed swings) Enhancement 1080.0 -> 1070.9; 4192d6e49 (Ice Lance 0.11 SP) Frost 945.4 -> 834.6, Frostfire 1064.3 -> 1006.0; 051a21cd3 (pet keeps summon AP) BM 1115.4 -> 1111.4, Survival -4.6, MM -2.1. Place changes in the 28-spec table: Fury 2H 5 -> 4 and Fury 6 -> 5 (both pass BM), Affliction 9 -> 7 (passes Arms and Enhancement), Enhancement 7 -> 9, Frostfire 11 -> 15, Frost 22 -> 27. The race picks hold: Frost / Frostfire re-swept at 5k seed 1 every race, High Order 834.0 best for Frost, Frostfire Human 1007.1 vs High Order 1005.5. results.md's 2026-11-22 update on results-20261104-2 names only the mage and hunter rows ("57 of 68 match"); the warrior, Affliction and Enhancement rows are not in it.
+- proposed fix: re-sim the five classes' builds in the report (`regenerate-dps-report`; it re-runs the builds whose inputs changed) and commit builds.json and the metas together, so one class's fix never ships without the others' re-sim.
+- needs: orchestrator fix
+
 ### fairness-20261118-1: Balance's report race (Night Elf) is no longer its best; High Order sims 3.7 to 6.1 higher since haste shortens the GCD
 - severity: medium (0.4% to 0.7% on all four Balance builds; Balance keeps its class-level place between Elemental and Shadow)
 - affects: druid__balance (default), druid__balance-duty-ff, druid__balance-wrath, druid__balance-wrath-duty-ff
 - found: 2026-11-18, master a6677362f
 - evidence: the published report's own race table (ui/dps_report/data/builds.json at a6677362f, raceIters 10000) now names High Order as bestRace for all four: Balance 955.6 vs 959.4 (+3.8), FF duty 920.0 vs 924.9 (+4.9), Wrath 865.8 vs 871.9 (+6.1), Wrath FF duty 833.9 vs 840.0 (+6.1). At 8219f1083 Night Elf was best for all four. Paired check, shared CLI a6677362fc06, 20000 iterations, seeds 1 / 1000003, report request with only the race changed: druid__balance Night Elf 956.1 / 956.2, High Order with its race rotation (req/races/druid__balance.SkyborneHighOrder.json) 959.8 / 959.8 (+3.7), High Order on the preset rotation 948.8 / 949.0; druid__balance-wrath Night Elf 866.0 / 866.1, High Order (no race rotation) 871.9 / 871.9 (+5.9). Sure of the numbers. Cause: ee35da473 / c2efe4ae3 (standards 27, haste shortens a spell GCD to 1s) makes the Skyborne 2% haste racial worth more; the 87ce834 regeneration re-simmed at the old race. Standards 16 / 29 say presets re-pick to the best race; this is outside noise.
+- 2026-11-22 (pass 49, 7a6d1beb9): no druid or race change in range; Balance requests still Night Elf, shared 20k run Balance 956.1 / Wrath 866.0 (baseline Wrath High Order 872.5). Still open.
 - proposed fix: set the four Balance requests' and presets' race to Skyborne High Order (Balance and Balance FF duty with the race-tuned rotation the race table already uses) and re-sim them; or record in standards why Night Elf stays.
 - needs: orchestrator fix
 

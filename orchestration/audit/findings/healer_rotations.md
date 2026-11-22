@@ -11,6 +11,7 @@
 - update 2026-11-19, master 8f388c7f3: no new evidence; all 63 rows byte-identical to the pass-19 baseline (shaman raid Magmadar 1.778). Paired confirmation still not run.
 - update 2026-11-20, master e07e8fdb8: no new evidence; all 63 rows byte-identical (shaman raid Magmadar 1.778). Paired confirmation still not run.
 - update 2026-11-22, master 8b5137c6d: no new evidence; all 63 rows byte-identical (shaman raid Magmadar 1.778). Paired confirmation still not run.
+- update 2026-11-22, master 7a6d1beb9: no new evidence; all 63 rows byte-identical (shaman raid Magmadar 1.778). Paired confirmation still not run.
 - needs: orchestrator fix (confirm with paired runs; rule whether the new baseline stands)
 
 ### healer_rotations-20261115-1: Wild Growth at 0.066 a tick lowers the Restoration druid raid healer's carry (mean -0.022, Vaelastrasz -0.104, Onyxia -0.047), because its gate now waits for twice the missing health; the gate at 0.75x of expected healing wins back +0.018
@@ -35,6 +36,7 @@
 - update 2026-11-19, master 8f388c7f3: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical after 65f0ea9d6, a no-op refactor of swiftmendHot).
 - update 2026-11-20, master e07e8fdb8: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical).
 - update 2026-11-22, master 8b5137c6d: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical).
+- update 2026-11-22, master 7a6d1beb9: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical).
 - needs: worker fix
 
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
@@ -74,6 +76,7 @@
 - update 2026-11-19, master 8f388c7f3: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
 - update 2026-11-20, master e07e8fdb8: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
 - update 2026-11-22, master 8b5137c6d: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
+- update 2026-11-22, master 7a6d1beb9: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
 - needs: worker fix
 
 ## Resolved
