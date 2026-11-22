@@ -37,6 +37,15 @@ The top 3 open or doubtful items per slot (doubtful marked `?`). Out and infeasi
 | fury_dw | mainhand | Ironfoe, Krol Blade, Dal'Rend's Sacred Charge |
 | fury_dw | offhand | Felstriker, Thrash Blade, Greenhammer? |
 | fury_dw | ranged | Satyr's Bow, Blackcrow, Deep Jungle Rifle |
+| hunter_bm | mainhand | Huntsman's Harpoon, Arcanite Reaper, Lok'delar (out) |
+| hunter_bm | offhand | Tooth of the Matriarch, King Mosh's Tooth, Kanai's Knife? |
+| hunter_bm | ranged | Rhok'delar (out), Ankle Slicers, Assassin's Throwing Axe |
+| hunter_mm | mainhand | Lok'delar (out), Massacre Sword of the Falcon |
+| hunter_mm | offhand | Tooth of the Matriarch, King Mosh's Tooth, Bagh Nakh |
+| hunter_mm | ranged | Ankle Slicers, Rhok'delar (out), Eaglehorn Long Bow |
+| hunter_sv | mainhand | Sword of Zeal, Axe of the Deep Woods, Thrash Blade |
+| hunter_sv | offhand | Distracting Dagger, Felstriker, Alcor's Sunrazor? |
+| hunter_sv | ranged | Rhok'delar (out), Deep Jungle Rifle, Satyr's Bow |
 | mage_arcane | mainhand | Nanaya's Control Spire, Stoneflower Staff, Rod of the Ogre Magi |
 | mage_arcane | offhand | Obsidian Bauble, Spirit of Aquementas, Tome of the Lost |
 | mage_arcane | ranged | Bonecreeper Stylus, Dragon Finger of the Elder, Wand of Arcane Potency |
@@ -67,7 +76,7 @@ The top 3 open or doubtful items per slot (doubtful marked `?`). Out and infeasi
 | smite | offhand | Spirit of Aquementas, Obsidian Bauble, Eternal Rod of Holy Wrath |
 | smite | ranged | Ritssyn's Wand of Bad Mojo, Dragon Finger of Holy Wrath, Dragon Finger of Magic |
 
-Hunters (bm, mm, sv) are missing: their ranged ranking hangs (see below).
+Hunters are ranked after the hang fix below.
 
 ## Effects modelled
 
@@ -77,6 +86,8 @@ All values from client 1.60.1.71037, in `sim/common/item_effects.go`. Tests are 
 - **Headmaster's Charge (13937):** Use gives +20 Intellect for 15 min on a 10 min cooldown (spell 18264). The sim gives it to the wearer only. Test `TestHeadmastersChargeUse`. EFFECTS_ONLY on frost mage: 1.8 DPS.
 - **Axe of the Deep Woods (811):** Wrath (18104) deals 105 to 147 Nature at 1.7 PPM, under Forever only. The PPM is from wowsims/forever's client store. Test `TestAxeOfTheDeepWoodsProc`. EFFECTS_ONLY on dual-wield fury: 12.1 DPS.
 - **Flame Wrath (11809), a fix:** its fire shield hit back the wearer's own damage and set itself off without end. That crashed the arms and fury two-hand search with a stack overflow. Test `TestFlameWrathShieldIgnoresSelfDamage`.
+
+- **An empty weapon slot no longer swings (a fix):** with no ranged weapon, a hunter's Auto Shot came due again in the same instant without end. The ranking sims the set with the ranged slot empty, so every hunter ranged ranking hung. A wait on the next Auto Shot also overflowed. Both are fixed in `sim/core/attack.go` and `apl_actions_timing.go`. Test `TestNoRangedWeaponFinishes`.
 
 ## Effects left unmodelled
 
