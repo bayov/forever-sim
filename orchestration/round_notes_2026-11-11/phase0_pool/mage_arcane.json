@@ -1,25 +1,25 @@
 {
   "spec": "mage_arcane",
   "options": {
-    "back": 981,
-    "chest": 895,
-    "feet": 379,
-    "finger1": 612,
-    "finger2": 612,
-    "hands": 381,
-    "head": 412,
-    "legs": 413,
-    "mainhand": 612,
-    "neck": 372,
+    "back": 979,
+    "chest": 893,
+    "feet": 376,
+    "finger1": 607,
+    "finger2": 607,
+    "hands": 376,
+    "head": 411,
+    "legs": 410,
+    "mainhand": 608,
+    "neck": 369,
     "offhand": 567,
     "ranged": 183,
-    "shoulder": 362,
-    "trinket1": 104,
-    "trinket2": 104,
-    "waist": 325,
+    "shoulder": 360,
+    "trinket1": 91,
+    "trinket2": 91,
+    "waist": 324,
     "wrist": 333
   },
-  "items": 1275,
+  "items": 1231,
   "unmodelled": [
     {
       "id": 833,
@@ -106,18 +106,6 @@
       "kind": "Use, Chance on hit"
     },
     {
-      "id": 11808,
-      "name": "Circle of Flame",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
-      "id": 11905,
-      "name": "Linken's Boomerang",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
       "id": 12185,
       "name": "Bloodsail Admiral's Hat",
       "slot": "head",
@@ -178,28 +166,10 @@
       "kind": "Use"
     },
     {
-      "id": 13937,
-      "name": "Headmaster's Charge",
-      "slot": "mainhand",
-      "kind": "Use"
-    },
-    {
       "id": 13953,
       "name": "Silent Fang",
       "slot": "mainhand",
       "kind": "Chance on hit"
-    },
-    {
-      "id": 14134,
-      "name": "Cloak of Fire",
-      "slot": "back",
-      "kind": "Use"
-    },
-    {
-      "id": 14152,
-      "name": "Robe of the Archmage",
-      "slot": "chest",
-      "kind": "Use"
     },
     {
       "id": 15867,
@@ -226,12 +196,6 @@
       "kind": "Use"
     },
     {
-      "id": 17691,
-      "name": "Stormpike Insignia Rank 1",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
       "id": 17744,
       "name": "Heart of Noxxion",
       "slot": "trinket1",
@@ -240,36 +204,6 @@
     {
       "id": 17759,
       "name": "Mark of Resolution",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17900,
-      "name": "Stormpike Insignia Rank 2",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17901,
-      "name": "Stormpike Insignia Rank 3",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17902,
-      "name": "Stormpike Insignia Rank 4",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17903,
-      "name": "Stormpike Insignia Rank 5",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17904,
-      "name": "Stormpike Insignia Rank 6",
       "slot": "trinket1",
       "kind": "Use"
     },
@@ -402,21 +336,9 @@
       "kind": "classic"
     },
     {
-      "id": 20693,
-      "name": "Weighted Cloak",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20694,
       "name": "Glowing Black Orb",
       "slot": "offhand",
-      "kind": "classic"
-    },
-    {
-      "id": 20697,
-      "name": "Crystalline Threaded Cape",
-      "slot": "back",
       "kind": "classic"
     },
     {
@@ -436,44 +358,8 @@
       "name": "Lord Blackwood's Blade",
       "slot": "mainhand",
       "kind": "classic"
-    },
-    {
-      "id": 280450,
-      "name": "Manaflare Robes",
-      "slot": "chest",
-      "kind": "partial"
-    },
-    {
-      "id": 280451,
-      "name": "Manaflare Gloves",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280452,
-      "name": "Manaflare Boots",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280453,
-      "name": "Manaflare Pants",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280454,
-      "name": "Manaflare Mantle",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280455,
-      "name": "Manaflare Crown",
-      "slot": "head",
-      "kind": "partial"
     }
   ],
-  "foreverNoTooltip": 337,
-  "unlisted": 1098
+  "foreverNoTooltip": 317,
+  "unlisted": 726
 }
