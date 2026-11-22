@@ -251,18 +251,24 @@ var ItemSetStormshroudArmor = core.NewItemSet(core.ItemSet{
 				},
 			})
 		},
-		// 2% chance on melee attack of restoring 30 energy.
+		// 2% chance on melee attack of restoring 30 energy (Classic). Forever: 3% chance of restoring
+		// 18 energy (Blizzard hotfixes, November 20, 2026: "changed to a 3% chance (was 4%) on melee
+		// attack of restoring 18 energy (was 30)").
 		3: func(a core.Agent) {
 			char := a.GetCharacter()
 			if !char.HasEnergyBar() {
 				return
+			}
+			chance, energy := 0.02, 30.0
+			if char.Env.IsForever() {
+				chance, energy = 0.03, 18.0
 			}
 			metrics := char.NewEnergyMetrics(core.ActionID{SpellID: 23863})
 			proc := char.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 23864},
 				SpellSchool: core.SpellSchoolNature,
 				ApplyEffects: func(sim *core.Simulation, u *core.Unit, spell *core.Spell) {
-					char.AddEnergy(sim, 30, metrics)
+					char.AddEnergy(sim, energy, metrics)
 				},
 			})
 			char.RegisterAura(core.Aura{
@@ -276,7 +282,7 @@ var ItemSetStormshroudArmor = core.NewItemSet(core.ItemSet{
 					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
-					if sim.RandomFloat("Revitalize") < 0.02 {
+					if sim.RandomFloat("Revitalize") < chance {
 						proc.Cast(sim, result.Target)
 					}
 				},
