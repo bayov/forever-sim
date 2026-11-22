@@ -971,6 +971,39 @@ func init() {
 		})
 	})
 
+	// https://www.wowhead.com/forever/item=14022/barov-peasant-caller
+	// Use: Calls forth three Servants of Alexi Barov to fight for you for 15 sec. (6 Min Cooldown)
+	// The servants and the numbers behind them are in guardians/barov_servant.go. The log doesn't
+	// show whether the use shares a cooldown with other trinkets, so we don't give it one.
+	barovPeasantCaller := func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{SpellID: 18307},
+			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 6,
+				},
+			},
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				for _, petAgent := range character.PetAgents {
+					if servant, ok := petAgent.(*guardians.BarovServant); ok {
+						servant.EnableWithTimeout(sim, servant, time.Second*15)
+					}
+				}
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	}
+	core.NewItemEffect(guardians.BarovPeasantCallerHorde, barovPeasantCaller)
+	core.NewItemEffect(guardians.BarovPeasantCallerAlliance, barovPeasantCaller)
+
 	// https://foreverchanges.pro/item/285292
 	// Equip: +9 Attack Power Vs Humanoids. Forever build 70009 gave the Deadmines thrown
 	// weapon this in place of a point of Agility.
