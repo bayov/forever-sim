@@ -244,3 +244,84 @@ func TestForeverChainedEssenceOfEranikus(t *testing.T) {
 		t.Error("the cloud missed every target")
 	}
 }
+
+// Linken's Boomerang's use deals 113 to 187 Physical damage. It can't miss or crit, has a 3 min
+// cooldown and puts the other burst trinkets on a 10 sec cooldown.
+func TestForeverLinkensBoomerang(t *testing.T) {
+	sim, enh := newTrinketSim(t, 1, 1000000, common.LinkensBoomerang, common.EverlookPathcarver)
+	use := enh.GetSpell(core.ActionID{ItemID: common.LinkensBoomerang})
+	if use == nil {
+		t.Fatal("no Linken's Boomerang use")
+	}
+	if enh.GetMajorCooldown(use.ActionID) == nil {
+		t.Fatal("Linken's Boomerang is not a major cooldown, so the rotation won't use it")
+	}
+	pathcarver := enh.GetSpell(core.ActionID{ItemID: common.EverlookPathcarver})
+
+	if !use.Cast(sim, enh.CurrentTarget) {
+		t.Fatal("Linken's Boomerang didn't cast")
+	}
+	if got := use.CD.TimeToReady(sim); got != 3*time.Minute {
+		t.Errorf("cooldown %s after the use, want 3m", got)
+	}
+	if pathcarver.CanCast(sim, enh.CurrentTarget) {
+		t.Error("Everlook Pathcarver is ready right after Linken's Boomerang")
+	}
+	sim.CurrentTime += 10 * time.Second
+	if !pathcarver.CanCast(sim, enh.CurrentTarget) {
+		t.Error("Everlook Pathcarver still not ready 10 sec after Linken's Boomerang")
+	}
+
+	for range 999 {
+		sim.CurrentTime += 3 * time.Minute
+		use.Cast(sim, enh.CurrentTarget)
+	}
+	m := use.SpellMetrics()[enh.CurrentTarget.UnitIndex]
+	if m.Hits != 1000 || m.Crits != 0 || m.Misses != 0 {
+		t.Errorf("%d hits, %d crits and %d misses from 1000 uses, want 1000 hits", m.Hits, m.Crits, m.Misses)
+	}
+	if avg := m.TotalDamage / 1000; math.Abs(avg-150) > 3 {
+		t.Errorf("%.2f damage a use, want about 150", avg)
+	}
+}
+
+// Cloak of Fire's use burns every enemy for 25 Fire every 5 sec, 3 times. The ticks can't miss
+// or crit. It has a 2 min cooldown and shares none with the trinkets.
+func TestForeverCloakOfFire(t *testing.T) {
+	sim, enh := newTrinketSimWith(t, func(request *proto.RaidSimRequest) {
+		player := request.Raid.Parties[0].Players[0]
+		player.Equipment.Items[proto.ItemSlot_ItemSlotBack].Id = common.CloakOfFire
+	}, 3, 60, common.EverlookPathcarver)
+	use := enh.GetSpell(core.ActionID{ItemID: common.CloakOfFire})
+	if use == nil {
+		t.Fatal("no Cloak of Fire use")
+	}
+	if enh.GetMajorCooldown(use.ActionID) == nil {
+		t.Fatal("Cloak of Fire is not a major cooldown, so the rotation won't use it")
+	}
+	burn := enh.GetSpell(core.ActionID{SpellID: 18374})
+	pathcarver := enh.GetSpell(core.ActionID{ItemID: common.EverlookPathcarver})
+
+	at(sim, 1, func(sim *core.Simulation) {
+		if !use.Cast(sim, enh.CurrentTarget) {
+			t.Fatal("Cloak of Fire didn't cast")
+		}
+		if got := use.CD.TimeToReady(sim); got != 2*time.Minute {
+			t.Errorf("cooldown %s after the use, want 2m", got)
+		}
+		if !pathcarver.CanCast(sim, enh.CurrentTarget) {
+			t.Error("Everlook Pathcarver isn't ready after Cloak of Fire")
+		}
+	})
+	runSim(sim)
+
+	for _, target := range sim.Encounter.TargetUnits {
+		m := burn.SpellMetrics()[target.UnitIndex]
+		if m.Misses != 0 || m.Ticks+m.ResistedTicks != 3 || m.CritTicks+m.ResistedCritTicks != 0 {
+			t.Errorf("%s: %d misses, %d ticks and %d crit ticks, want 3 ticks", target.Label, m.Misses, m.Ticks+m.ResistedTicks, m.CritTicks+m.ResistedCritTicks)
+		}
+		if m.TotalTickDamage <= 0 || m.TotalTickDamage > 75 {
+			t.Errorf("%s took %.1f, want more than 0 and up to 3 * 25", target.Label, m.TotalTickDamage)
+		}
+	}
+}
