@@ -76,10 +76,32 @@ We used to ask for the `-confidence` margin at `-iters` too, but then Don Julio'
 
 `-gear-no-pick` takes item IDs the search never picks, but every list still ranks. The Phase 0
 list uses it for the items that need Exalted reputation (`avail` `infeasible` in
-`phase0_content.json`, user 2026-11-20), like The Unstoppable Force from Frostwolf, and for
-items that cost 300g or more (user, 2026-11-22), like Dawn Armor at about 350g on the auction
-house. Both take very long to get, so the set doesn't count on them, and each slot's pick is the best
-item we can get.
+`phase0_content.json`, user 2026-11-20), like The Unstoppable Force from Frostwolf. That grind
+is very long, so the set doesn't count on it, and each slot's pick is the best item we can get.
+
+It also leaves out items that cost too much gold for what they add: more than 30g for each DPS
+(`MAX_GOLD_PER_DPS`, user 2026-11-22). `tools/rotopt/phase0_prices.py --write` prices each item
+and divides by the DPS it adds over the best cheaper item of its slot (the second best for rings
+and trinkets). It writes `gold` and `goldPerDps` into `phase0_content.json`, and the script makes
+every item over the line infeasible, with "133g per DPS" in its note.
+
+An item's gold is the cheapest of its auction house price, its recipe's materials and the effort
+of farming it. The first two come from our auction house scans (BayovCore's BayovAuctionData).
+The effort is the hours it takes at 30g an hour (user, 2026-11-22). Without it a rare drop cost
+nothing, so the list picked Treant's Bane, a 0.38% drop from the Dire Maul tribute, over Brain
+Hacker at 255g. The hours are the runs we expect times the time of a run. The runs are 1 / (drop
+chance x 0.5), because we assume one other player in the group needs the item too. A run takes the
+dungeon's typical clear time plus 20 minutes, for getting there and finding a group. So a bind on pickup drop costs only its effort, and a bind on equip drop costs the
+cheaper of its effort and the auction house. Treant's Bane comes to 526 runs, 439 hours and
+about 13200g, so Brain Hacker (12g per DPS over Brutehammer of Magic) is the better buy. Quest,
+vendor and reputation items get no effort price yet, and neither do world drops outside
+dungeons, since their chance is too small to farm.
+
+The chances come from the BayovUI wiki (Naowh's Dungeon Journal), and from AtlasLoot Classic's
+`droprate.lua` where the wiki has none. The clear times are estimates in the script's
+`RUN_MINUTES`. `--gold-per-hour`, `--roll-share` and `--run-overhead` change the three numbers,
+and the table says how it priced each item. Prices move, so run it again before a rerun, and once
+more after one, since new picks change what each item is measured against.
 But a player who has the reputation still sees where the item goes on the set. Such an item is
 ranked like any other, on the set with its real loss, but it never takes a pick's place
 (see above). When it beats the pick, it sits above the pick with a negative loss, since each list
@@ -362,8 +384,8 @@ can be filled in.
   a little from the list's. `avail` and `note` are from `phase0_enchants.json` (see Enchants).
 - `avail` and `note` come from checking by hand what the game has open
   (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `doubtful` (we don't know of
-  a way yet) or `infeasible` (it needs Exalted reputation, user 2026-11-20, or costs 300g or
-  more, user 2026-11-22), and an open entry
+  a way yet) or `infeasible` (it needs Exalted reputation, user 2026-11-20, or costs over 30g
+  per DPS, user 2026-11-22), and an open entry
   has none (user, 2026-11-20: the note tells the effort, so open but slow has no tag of its
   own). `note` says what it takes, or what's still in the way. `bis_phase0.sh` leaves out every
   item the check marks `out` (not before the raids) and copies `avail` and `note` onto the
