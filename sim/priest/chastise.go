@@ -56,9 +56,12 @@ func (priest *Priest) registerChastiseSpell() {
 					Duration: time.Minute * 2,
 				},
 			},
-			// Not in Shadowform: rank 5 (1277335) has StanceExclude 0x8000000.
+			// Humanoids only. Castable in Shadowform since the Blizzard hotfixes of November 20, 2026
+			// ("Chastise can now be cast in Shadowform"): server hotfix push 114309 (wago.tools, build
+			// 71037) removes the SpellShapeshift rows 55853-55857, so no rank has StanceExclude any
+			// more (rank 5, 1277335, had 0x8000000 before it).
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-				return target.MobType == proto.MobType_MobTypeHumanoid && (priest.ShadowformAura == nil || !priest.ShadowformAura.IsActive())
+				return target.MobType == proto.MobType_MobTypeHumanoid
 			},
 			ExtraCastConditionNeedsEvent: true,
 

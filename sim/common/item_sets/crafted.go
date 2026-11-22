@@ -253,7 +253,8 @@ var ItemSetStormshroudArmor = core.NewItemSet(core.ItemSet{
 		},
 		// 2% chance on melee attack of restoring 30 energy (Classic). Forever: 3% chance of restoring
 		// 18 energy (Blizzard hotfixes, November 20, 2026: "changed to a 3% chance (was 4%) on melee
-		// attack of restoring 18 energy (was 30)").
+		// attack of restoring 18 energy (was 30)"), confirmed by server hotfix push 114204 (wago.tools:
+		// SpellAuraOptions 134496 ProcChance 4 -> 3, SpellEffect 700855 30 -> 18).
 		3: func(a core.Agent) {
 			char := a.GetCharacter()
 			if !char.HasEnergyBar() {
