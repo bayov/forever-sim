@@ -22,7 +22,8 @@
 # WOW_DATA_CACHE moves). A run that stops halfway (a block that never lifts,
 # a closed terminal) picks up where it stopped, and a page younger than
 # WOWHEAD_CACHE_DAYS (an environment variable, 7 by default) isn't fetched again. Set it
-# to 0 to fetch everything fresh.
+# to 0 to fetch everything fresh. A script can ask for a page with its own age limit
+# (`page(path, days=60)`), for pages that rarely change, like a vendor's location.
 #
 # The scripts that use this declare their dependencies inline, so run them with uv:
 #
@@ -139,18 +140,20 @@ class Wowhead:
     def _cache_path(url):
         return os.path.join(PAGES, urllib.parse.quote(url[len(BASE):], safe='') + '.html.gz')
 
-    def page(self, path):
+    def page(self, path, days=None):
         """The HTML of a wowhead page, like page('forever/item=6270').
 
-        None when wowhead says the page doesn't exist. Raises when wowhead keeps
+        A cached page younger than `days` (WOWHEAD_CACHE_DAYS when None) isn't fetched
+        again. None when wowhead says the page doesn't exist. Raises when wowhead keeps
         refusing us after every wait in BLOCK_WAITS.
         """
+        days = self.cache_days if days is None else days
         url = path if path.startswith('http') else BASE + path
         cache = self._cache_path(url)
         with self.lock:
             try:
                 mtime = os.path.getmtime(cache)
-                if time.time() - mtime < self.cache_days * 86400:
+                if time.time() - mtime < days * 86400:
                     self.cached += 1
                     self.oldest = mtime if self.oldest is None else min(self.oldest, mtime)
                     with gzip.open(cache, 'rt', encoding='utf-8') as f:
