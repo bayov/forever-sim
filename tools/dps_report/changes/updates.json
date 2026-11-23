@@ -5980,6 +5980,21 @@
      ]
     },
     {
+     "title": "Frost and Frostfire mages re-tuned for the weaker Ice Lance: Frost takes Missile Barrage, Frostfire casts Fire Blast down to 40% mana",
+     "kind": "rotation",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frost",
+      "mage__frostfire"
+     ],
+     "note": "Frost moves two Arcane Concentration points and Arcane Meditation to Missile Barrage 2 and Incineration 5, and renews Ice Barrier with 2 sec of Frigid Power left (was 6): 834.3 to 838.4 at 180 s. Frostfire moves Burning Soul to Incineration 5 and uses Fire Blast on cooldown above 40% mana (was 80%): 1006.2 to 1008.1, and about 7 more at 300 s. Both still cast Ice Lance on the last Fingers of Frost charge.",
+     "commits": [
+      "b8b89d6"
+     ]
+    },
+    {
      "title": "Windfury Totem's extra swing no longer gives a Maelstrom Weapon stack",
      "kind": "sim",
      "classes": [
@@ -6623,6 +6638,14 @@
     {
      "commit": "219829b",
      "why": "test goldens and report hashes for the fixes above; no sim result changes of its own"
+    },
+    {
+     "commit": "e1989eb",
+     "why": "test only: the healing test's mages no longer die"
+    },
+    {
+     "commit": "7fccbfd",
+     "why": "test expectations only"
     }
    ],
    "source": {

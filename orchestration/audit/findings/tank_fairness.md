@@ -18,6 +18,7 @@
 - pass 12 (2026-11-13, master 71562a8b0): not fixed; still Night Elf / Night Elf / Undead after the enchant re-pick (a6a8305da). Paired 3,000 iterations, seed 1, against the preset race: Max threat Orc -49.8, Troll -54.0; Balanced Troll -76.8, Orc -82.7; Max survival Tauren -123.5, Troll -189.3. Legal scores about 2,507 / 1,142 / -2,435; the Warden stays last at every weight.
 - pass 25 (2026-11-22, master 8b5137c6d): not fixed; requests still Night Elf / Night Elf / Undead; bench rows identical to pass 24.
 - pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2628 / 1272 / -2252, still last at every weight.
+- pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -37,6 +38,7 @@
 - pass 18 (2026-11-17, master 5f20dfdf4): not fixed; requests unchanged. Push 114097 (Unbridled Wrath on Heroic Strike and Cleave) lifts the warrior's Max survival to 1836.7 ± 11.9 against the paladin's 1797.7 ± 13.1 (seed 1), but seed 2 gives paladin 1832.5 against warrior 1822.3: still a tie, and the potion (+374 last measured) still decides that place.
 - pass 25 (2026-11-22, master 8b5137c6d): not fixed; all three requests still Major Mana Potion, no potion action; bench rows identical to pass 24.
 - pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests unchanged. Max survival warrior 1836.7 ± 11.9, paladin 1778.0 ± 15.9 (seed 1); the potion (+374 last measured) would still reverse it.
+- pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -74,6 +76,7 @@
 - pass 11 (2026-11-12, master 4fb90c298): unchanged in kind (Balanced healing needed paladin 241 against warrior 340, bear 464, Warden 665); still waits on the user's calls (a), (b), (c).
 - pass 12 (2026-11-13, master 71562a8b0): unchanged in kind (Balanced healing needed paladin 239 against warrior 344, bear 464, Warden 660); still waits on the user's calls (a), (b), (c).
 - pass 26 (2026-11-22, master 7a6d1beb9): unchanged in kind (Balanced healing needed paladin 243 against warrior 340, bear 474, Warden 666); still waits on the user's calls (a), (b), (c).
+- pass 27 (2026-11-23, master 5518f4873): unchanged (rows identical to pass 26); still waits on the user's calls (a), (b), (c).
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
