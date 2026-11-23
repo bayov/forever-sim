@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 975.08,
   "made": "2026-11-23",
-  "sim": "c6815ec54461+",
+  "sim": "fa80123cb056+",
   "slots": {
     "head": [
       {
@@ -417,7 +417,7 @@
         "loss": 18.41,
         "unsourced": true,
         "avail": "infeasible",
-        "note": "Defilers Exalted (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed"
+        "note": "Defilers Exalted (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 272106,
@@ -511,8 +511,8 @@
         "name": "Defiler's Leather Shoulders",
         "dps": 951.88,
         "loss": 23.2,
-        "avail": "doubtful",
-        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 20158,
@@ -625,8 +625,8 @@
         "name": "Deathguard's Cloak",
         "dps": 959.22,
         "loss": 15.86,
-        "avail": "doubtful",
-        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 18734,
@@ -1323,7 +1323,7 @@
         "loss": 3.13,
         "unsourced": true,
         "avail": "doubtful",
-        "note": "Defilers Honored (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed"
+        "note": "Defilers Honored (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 20163,
@@ -1346,7 +1346,7 @@
         "loss": 5.93,
         "unsourced": true,
         "avail": "doubtful",
-        "note": "Defilers Honored (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed"
+        "note": "Defilers Honored (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 20150,
@@ -1712,7 +1712,7 @@
         "loss": 17.28,
         "unsourced": true,
         "avail": "doubtful",
-        "note": "Defilers Revered (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed"
+        "note": "Defilers Revered (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 18692,
@@ -1846,9 +1846,17 @@
     ],
     "finger": [
       {
+        "id": 19325,
+        "name": "Don Julio's Band",
+        "dps": 975.02,
+        "loss": -2.07,
+        "avail": "infeasible",
+        "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
+      },
+      {
         "id": 275982,
         "name": "Warden's Signet of Brilliance",
-        "dps": 975.98,
+        "dps": 973.84,
         "loss": -0.9,
         "unsourced": true,
         "avail": "infeasible",
@@ -1857,7 +1865,7 @@
       {
         "id": 275977,
         "name": "Watcher's Signet of Brilliance",
-        "dps": 975.08,
+        "dps": 972.94,
         "loss": 0,
         "unsourced": true,
         "bis": true,
@@ -1865,189 +1873,178 @@
         "note": "Watchers Revered · no rep source found yet"
       },
       {
-        "id": 19325,
-        "name": "Don Julio's Band",
-        "dps": 975.08,
+        "id": 272406,
+        "name": "Channeler's Ring",
+        "dps": 972.94,
         "loss": 0,
         "bis": true,
-        "avail": "doubtful",
-        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
+        "note": "Pix Xizzix · 75 Reals · owned"
+      },
+      {
+        "id": 275981,
+        "name": "Warden's Signet of Ferocity",
+        "dps": 971.86,
+        "loss": 1.08,
+        "unsourced": true,
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 22433,
         "name": "Don Mauricio's Band of Domination",
-        "dps": 973.42,
-        "loss": 1.66,
+        "dps": 971.29,
+        "loss": 1.65,
         "avail": "infeasible",
         "note": "379g per DPS"
       },
       {
-        "id": 272406,
-        "name": "Channeler's Ring",
-        "dps": 973.01,
-        "loss": 2.07,
-        "note": "Pix Xizzix · 75 Reals · owned"
+        "id": 275976,
+        "name": "Watcher's Signet of Ferocity",
+        "dps": 971.06,
+        "loss": 1.88,
+        "unsourced": true,
+        "avail": "doubtful",
+        "note": "Watchers Revered · no rep source found yet"
       },
       {
         "id": 275973,
         "name": "Tracker's Signet of Brilliance",
-        "dps": 972.96,
-        "loss": 2.12,
+        "dps": 970.83,
+        "loss": 2.11,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Honored · no rep source found yet"
       },
       {
+        "id": 22339,
+        "name": "Rune Band of Wizardry",
+        "dps": 970.38,
+        "loss": 2.56,
+        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 272408,
+        "name": "Cutthroat's Signet",
+        "dps": 969.97,
+        "loss": 2.97,
+        "note": "Pix Xizzix · 75 Reals"
+      },
+      {
         "id": 275969,
         "name": "Initiate's Signet of Brilliance",
-        "dps": 972.08,
-        "loss": 3,
+        "dps": 969.96,
+        "loss": 2.98,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Friendly · no rep source found yet"
       },
       {
-        "id": 275981,
-        "name": "Warden's Signet of Ferocity",
-        "dps": 971.93,
-        "loss": 3.15,
+        "id": 275972,
+        "name": "Tracker's Signet of Ferocity",
+        "dps": 969.83,
+        "loss": 3.11,
         "unsourced": true,
         "avail": "doubtful",
-        "note": "Watchers Exalted · no rep source found yet · unsure, used by standards 42"
+        "note": "Watchers Honored · no rep source found yet"
       },
       {
         "id": 260219,
         "name": "Engraved Band",
-        "dps": 971.54,
-        "loss": 3.54,
+        "dps": 969.49,
+        "loss": 3.45,
         "note": "Quest: Blackmaw Reclamation, Blackmaw Hold (as Eagle's Head Signet)"
       },
       {
         "id": 13098,
         "name": "Painweaver Band",
-        "dps": 971.2,
-        "loss": 3.88,
+        "dps": 969.08,
+        "loss": 3.87,
         "avail": "infeasible",
         "note": "483g per DPS"
       },
       {
-        "id": 275976,
-        "name": "Watcher's Signet of Ferocity",
-        "dps": 971.12,
-        "loss": 3.96,
-        "unsourced": true,
-        "avail": "doubtful",
-        "note": "Watchers Revered · no rep source found yet"
-      },
-      {
         "id": 19510,
         "name": "Legionnaire's Band",
-        "dps": 971.07,
-        "loss": 4.01,
+        "dps": 969.04,
+        "loss": 3.9,
         "note": "Warsong Outriders Honored, Kelm Hargunth, Barrens"
+      },
+      {
+        "id": 275968,
+        "name": "Initiate's Signet of Ferocity",
+        "dps": 969,
+        "loss": 3.94,
+        "unsourced": true,
+        "avail": "doubtful",
+        "note": "Watchers Friendly · no rep source found yet"
+      },
+      {
+        "id": 17713,
+        "name": "Blackstone Ring",
+        "dps": 968.91,
+        "loss": 4.03
       },
       {
         "id": 275738,
         "name": "Jereman's Bauble",
-        "dps": 970.83,
-        "loss": 4.26,
+        "dps": 968.9,
+        "loss": 4.04,
         "avail": "doubtful",
         "note": "Quest: Return to Jereman"
       },
       {
         "id": 276073,
         "name": "Band of the Damned",
-        "dps": 970.81,
-        "loss": 4.27,
+        "dps": 968.88,
+        "loss": 4.06,
         "note": "Drop: Vectus, Scholomance"
       },
       {
         "id": 13001,
         "name": "Maiden's Circle",
-        "dps": 970.75,
-        "loss": 4.33,
+        "dps": 968.82,
+        "loss": 4.12,
         "note": "On AH ~80g"
       },
       {
         "id": 11980,
         "suffix": 699,
         "name": "Opal Ring of the Tiger",
-        "dps": 970.46,
-        "loss": 4.62,
+        "dps": 968.43,
+        "loss": 4.51,
         "note": "Random world drop"
       },
       {
-        "id": 22339,
-        "name": "Rune Band of Wizardry",
-        "dps": 970.45,
-        "loss": 4.63,
-        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 12017,
-        "suffix": 698,
-        "name": "Prismatic Band of the Tiger",
-        "dps": 970.13,
-        "loss": 4.95,
-        "note": "Random world drop"
+        "id": 18500,
+        "name": "Tarnished Elven Ring",
+        "dps": 968.41,
+        "loss": 4.53
       },
       {
         "id": 275984,
         "name": "Warden's Signet of Vigilance",
-        "dps": 970.04,
-        "loss": 5.04,
+        "dps": 968.11,
+        "loss": 4.83,
         "unsourced": true,
         "avail": "infeasible",
         "note": "Watchers Exalted · no rep source found yet"
       },
       {
-        "id": 272408,
-        "name": "Cutthroat's Signet",
-        "dps": 970.03,
-        "loss": 5.05,
-        "note": "Pix Xizzix · 75 Reals"
+        "id": 12017,
+        "suffix": 698,
+        "name": "Prismatic Band of the Tiger",
+        "dps": 968.1,
+        "loss": 4.84,
+        "note": "Random world drop"
       },
       {
         "id": 275980,
         "name": "Watcher's Signet of Vigilance",
-        "dps": 970,
-        "loss": 5.08,
+        "dps": 968.06,
+        "loss": 4.88,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Revered · no rep source found yet"
-      },
-      {
-        "id": 275975,
-        "name": "Tracker's Signet of Vigilance",
-        "dps": 969.95,
-        "loss": 5.13,
-        "unsourced": true,
-        "avail": "doubtful",
-        "note": "Watchers Honored · no rep source found yet"
-      },
-      {
-        "id": 13345,
-        "name": "Seal of Rivendare",
-        "dps": 969.92,
-        "loss": 5.16,
-        "note": "Drop: Baron Rivendare, Stratholme"
-      },
-      {
-        "id": 275972,
-        "name": "Tracker's Signet of Ferocity",
-        "dps": 969.9,
-        "loss": 5.18,
-        "unsourced": true,
-        "avail": "doubtful",
-        "note": "Watchers Honored · no rep source found yet"
-      },
-      {
-        "id": 11980,
-        "suffix": 954,
-        "name": "Opal Ring of the Gorilla",
-        "dps": 969.89,
-        "loss": 5.19,
-        "note": "Random world drop"
       }
     ],
     "trinket": [
@@ -2472,7 +2469,7 @@
         "dps": 964.81,
         "loss": 10.27,
         "avail": "infeasible",
-        "note": "Frostwolf Exalted · mace · AV queue unconfirmed"
+        "note": "Frostwolf Exalted · mace · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 2915,
