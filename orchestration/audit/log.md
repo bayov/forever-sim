@@ -541,3 +541,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-23 06:51 | gear | pass 72 | master 2de7021bf | quiet | only real Phase 0 items changed, no synthetic ids
 2026-11-23 06:51 | consumables | pass 100 | master 2de7021bf | quiet | enchants match client; wowhead sources unchecked (empty pages)
 2026-11-23 06:51 | fairness | pass 51 | master 2de7021bf | quiet | builds match shared run; fairness-20261118-1 still open
+2026-11-23 12:51 | gear | pass 73 | master 7e0a01a8d9 | quiet | standards 42 only, not a gear rule
+2026-11-23 12:51 | consumables | pass 101 | master 7e0a01a8d9 | quiet | standards 42 only; wago build unchanged
+2026-11-23 12:51 | fairness | pass 52 | master 7e0a01a8d9 | quiet | standards 42 only; builds unchanged
+2026-11-23 12:51 | healer_gear | pass 13 | master 7e0a01a8d9 | quiet | standards 42 only
+2026-11-23 12:51 | healer_fairness | pass 26 | master 7e0a01a8d9 | quiet | no changed items in healbench reqs
+2026-11-23 12:51 | tank_gear | pass 14 | master 7e0a01a8d9 | quiet | standards 42 only
+2026-11-23 12:51 | tank_fairness | pass 28 | master 7e0a01a8d9 | quiet | tank inputs unchanged

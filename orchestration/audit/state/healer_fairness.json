@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "2de7021bf71d06f53a8ff7e9fea974138f06165b"
+  "master": "b48605aa38d1ab522b4f3f495dc75e160534a192"
  },
- "last_pass_at": "2026-11-22T18:58:00Z",
- "pass": 25,
+ "last_pass_at": "2026-11-23T12:51:07Z",
+ "pass": 26,
  "result": "quiet",
  "baseline": "a6677362f",
- "note": "Pass 25 on 7a6d1beb9: dot.go SetTickPeriod on-grid retime (Wrack only), Soulforge 4pc shares Crusader's Wrath, Flame Shock hasted GCD, Maelstrom Weapon skips Windfury Totem swings: none reach a healer preset. All 63 cells (seed 101, 1,000 it) identical to bench_a667736.tsv. Open: -20261115-1, -20261104-4.",
+ "note": "Pass 26 on 7e0a01a8d: only standards 42 (phase 0 gear availability) and phase 0 gear/db changes; no healer request item or sim code touched. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-23T06:51:06Z"
+ "checked_at": "2026-11-23T12:51:36Z"
 }

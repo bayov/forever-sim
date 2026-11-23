@@ -1,12 +1,9 @@
-# Consumables pass 100 (master 2de7021bf7, client 1.60.1.71037)
+# Consumables pass 101 (quiet)
 
-Result: quiet, no new findings.
+Master 7e0a01a8d9, previous audited 2de7021bf71.
 
-Checked (diff 5518f4873..2de7021bf, one watched file):
-- ui/enhancement_shaman/gear_sets/level60_phase0.gear.json (Phase 0 reshuffle): head 252605 + 2543, feet 1887, legs 1506, plus real-item swaps (227006, 18405, 227005). Item choice belongs to the gear auditor (state/gear.json pass 72 already notes this set).
-- Enchants vs client 71037 (ench.py): 2543 Attack Speed +1% (Arcanum of Rapidity, item 18329); 1506 Strength +8 (Lesser Arcanum of Voracity 11645); 1887 Agility +7 (Boots Greater Agility, spell 20023, formula 16245). All exist, none raid-only by name. 2543 was already in the set.
-- Sources not confirmed: wowhead returned empty pages (srcid.py NO SOURCE for 252605, 18405, 16245, 11645); recorded as "could not check", not guessed. 18405 Belt of the Archmage is Phase 2 in tools/database/overrides.go:47 (a gear question, not a consumable).
-- scan.sh origin/master: banned, Revelation, crit-elixir lists empty. NONSYN trinkets 13965 and 10455 (enhancement Phase 0), accepted as in pass 98/99. Minor-armor exclusive count shows 3 vs "expect 2", unchanged since pass 99 (debuffs.go not in the diff).
-- Wago: not re-probed beyond the 71037 fetch used here.
-
-No open items besides the two low findings in findings/consumables.md.
+- Findings: none new. Open items unchanged (consumables-20261110-1, consumables-20261105-1, both low).
+- Why due: orchestration/standards.md changed (rule 42, Phase 0 gear with unsure availability is used, user ruling 2026-11-23). It concerns Phase 0 gear lists, not Level 60 consumes, buffs or enchants, so nothing here changes.
+- Watched paths (presets.ts, mksettings, level60 gear, sim/core consumes/buffs/debuffs/totems, sim/common, forever_enchants.go, assumptions_def.py, staff imbue): `git diff 2de7021bf71 HEAD` is empty.
+- Wago: latest 1.60 build 1.60.1.71037, same as the last pass.
+- Class branches: changes.sh lists them as thousands of commits ahead, all stale copies (gotcha 1); not audited.
