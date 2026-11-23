@@ -264,8 +264,9 @@ func loadUnsourcedItems(path string) (map[int32]bool, error) {
 // "Premier" in front.
 var foreverPvpRankName = regexp.MustCompile(`^(Premier )?(Private|Scout|Corporal|Grunt|Sergeant|Senior Sergeant|Master Sergeant|First Sergeant|Sergeant Major|Stone Guard|Knight|Blood Guard|Knight-Lieutenant|Legionnaire|Knight-Captain|Centurion|Knight-Champion|Champion|Lieutenant Commander|Lieutenant General|Commander|General|Marshal|Warlord|Field Marshal|High Warlord|Grand Marshal)'s `)
 
-// Every option for every slot the player can use at their level.
-func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, minIlvl, maxIlvl int32, exclude, include []int32, hitOnly, synthetic, noRaids bool) ([][]gearOption, error) {
+// Every option for every slot the player can use at their level, leaving out what only the
+// other faction can get (faction.go).
+func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, minIlvl, maxIlvl int32, exclude, include []int32, hitOnly, synthetic, noRaids bool, factions *factionCheck) ([][]gearOption, error) {
 	data, err := os.ReadFile(dbPath)
 	if err != nil {
 		return nil, err
@@ -288,11 +289,17 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 	}
 
 	class := player.Class
-	horde := contains([]proto.Race{proto.Race_RaceOrc, proto.Race_RaceTroll, proto.Race_RaceTauren, proto.Race_RaceUndead}, player.Race)
 	armor := armorTypesFor(class, level)
 	pool := make([][]gearOption, len(gearSlotNames))
 
 	add := func(slot proto.ItemSlot, item *proto.UIItem) {
+		// Last, so the dry run counts only what would be in the pool otherwise (faction.go).
+		if why := factions.otherFaction(item); why != "" {
+			if _, ok := factions.dropped[item.Id]; !ok {
+				factions.dropped[item.Id] = poolItem{ID: item.Id, Name: item.Name, Slot: gearSlotNames[slot], Kind: why}
+			}
+			return
+		}
 		twoHand := item.HandType == proto.HandType_HandTypeTwoHand
 		unsourced := len(item.Sources) == 0 && unsourcedItems[item.Id]
 		once := item.Unique || len(item.Sources) > 0 && !slices.ContainsFunc(item.Sources, func(src *proto.UIItemSource) bool {
@@ -393,10 +400,6 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 			return prof == proto.Profession_ProfessionUnknown || prof == player.Profession1 || prof == player.Profession2
 		}
 		if !hasProfession(item.RequiredProfession) || item.BindOnPickup && !hasProfession(craftedProfession(item)) {
-			continue
-		}
-		if item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY && !horde ||
-			item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_ALLIANCE_ONLY && horde {
 			continue
 		}
 		switch item.Type {

@@ -1,32 +1,26 @@
 {
   "spec": "arms",
   "options": {
-    "back": 1102,
-    "chest": 2447,
-    "feet": 1750,
-    "finger1": 814,
-    "finger2": 814,
-    "hands": 1887,
+    "back": 1100,
+    "chest": 2445,
+    "feet": 1748,
+    "finger1": 813,
+    "finger2": 813,
+    "hands": 1878,
     "head": 1991,
-    "legs": 2106,
-    "mainhand": 1623,
-    "neck": 518,
-    "offhand": 588,
+    "legs": 2105,
+    "mainhand": 1621,
+    "neck": 521,
+    "offhand": 590,
     "ranged": 327,
-    "shoulder": 1757,
-    "trinket1": 103,
-    "trinket2": 103,
-    "waist": 1750,
-    "wrist": 1516
+    "shoulder": 1752,
+    "trinket1": 102,
+    "trinket2": 102,
+    "waist": 1753,
+    "wrist": 1519
   },
-  "items": 2662,
+  "items": 2646,
   "unmodelled": [
-    {
-      "id": 811,
-      "name": "Axe of the Deep Woods",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
     {
       "id": 833,
       "name": "Lifestone",
@@ -80,12 +74,6 @@
       "name": "Truesilver Champion",
       "slot": "mainhand",
       "kind": "Chance on hit"
-    },
-    {
-      "id": 8348,
-      "name": "Helm of Fire",
-      "slot": "head",
-      "kind": "Use"
     },
     {
       "id": 8367,
@@ -158,18 +146,6 @@
       "name": "Force of Magma",
       "slot": "mainhand",
       "kind": "Chance on hit"
-    },
-    {
-      "id": 11808,
-      "name": "Circle of Flame",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
-      "id": 11905,
-      "name": "Linken's Boomerang",
-      "slot": "trinket1",
-      "kind": "Use"
     },
     {
       "id": 12185,
@@ -298,22 +274,10 @@
       "kind": "Use"
     },
     {
-      "id": 13937,
-      "name": "Headmaster's Charge",
-      "slot": "mainhand",
-      "kind": "Use"
-    },
-    {
       "id": 13953,
       "name": "Silent Fang",
       "slot": "mainhand",
       "kind": "Chance on hit"
-    },
-    {
-      "id": 14134,
-      "name": "Cloak of Fire",
-      "slot": "back",
-      "kind": "Use"
     },
     {
       "id": 15418,
@@ -534,12 +498,6 @@
       "kind": "classic"
     },
     {
-      "id": 11603,
-      "name": "Vilerend Slicer",
-      "slot": "mainhand",
-      "kind": "classic"
-    },
-    {
       "id": 11743,
       "name": "Rockfist",
       "slot": "mainhand",
@@ -654,21 +612,9 @@
       "kind": "classic"
     },
     {
-      "id": 20693,
-      "name": "Weighted Cloak",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20696,
       "name": "Crystal Spiked Maul",
       "slot": "mainhand",
-      "kind": "classic"
-    },
-    {
-      "id": 20697,
-      "name": "Crystalline Threaded Cape",
-      "slot": "back",
       "kind": "classic"
     },
     {
@@ -696,96 +642,831 @@
       "kind": "classic"
     },
     {
-      "id": 23087,
-      "name": "Breastplate of Undead Slaying",
-      "slot": "chest",
-      "kind": "classic"
-    },
-    {
-      "id": 23090,
-      "name": "Bracers of Undead Slaying",
-      "slot": "wrist",
-      "kind": "classic"
-    },
-    {
       "id": 23132,
       "name": "Lord Blackwood's Blade",
       "slot": "mainhand",
       "kind": "classic"
-    },
-    {
-      "id": 280899,
-      "name": "Gauntlets of Glory",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280900,
-      "name": "Greaves of Glory",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280901,
-      "name": "Legplates of Glory",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280902,
-      "name": "Breastplate of Glory",
-      "slot": "chest",
-      "kind": "partial"
-    },
-    {
-      "id": 280903,
-      "name": "Shoulders of Glory",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280904,
-      "name": "Helm of Glory",
-      "slot": "head",
-      "kind": "partial"
-    },
-    {
-      "id": 280905,
-      "name": "Handguards of Glory",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280906,
-      "name": "Sabatons of Glory",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280907,
-      "name": "Legguards of Glory",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280908,
-      "name": "Chestguard of Glory",
-      "slot": "chest",
-      "kind": "partial"
-    },
-    {
-      "id": 280909,
-      "name": "Pauldrons of Glory",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280910,
-      "name": "Greathelm of Glory",
-      "slot": "head",
-      "kind": "partial"
     }
   ],
-  "foreverNoTooltip": 602,
-  "unlisted": 2274
+  "foreverNoTooltip": 553,
+  "unlisted": 1706,
+  "faction": "Horde",
+  "factionDropped": [
+    {
+      "id": 9651,
+      "name": "Gryphon Rider's Stormhammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 9652,
+      "name": "Gryphon Rider's Leggings",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 9655,
+      "name": "Seedtime Hoop",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 10707,
+      "name": "Steelsmith Greaves",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 10739,
+      "name": "Ring of Fortitude",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 10740,
+      "name": "Centurion Legplates",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 10741,
+      "name": "Lordrec Helmet",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 10745,
+      "name": "Kaylari Shoulders",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 10746,
+      "name": "Runesteel Vambraces",
+      "slot": "wrist",
+      "kind": "item"
+    },
+    {
+      "id": 11867,
+      "name": "Maddening Gauntlets",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 11868,
+      "name": "Choking Band",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 11873,
+      "name": "Ethereal Mist Cape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 11874,
+      "name": "Clouddrift Mantle",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 11875,
+      "name": "Breezecloud Bracers",
+      "slot": "wrist",
+      "kind": "item"
+    },
+    {
+      "id": 11888,
+      "name": "Quintis' Research Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 11889,
+      "name": "Bark Iron Pauldrons",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 12018,
+      "name": "Conservator Helm",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 12021,
+      "name": "Shieldplate Sabatons",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 12041,
+      "name": "Windshear Leggings",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 12050,
+      "name": "Hazecover Boots",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 12051,
+      "name": "Brazen Gauntlets",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 12061,
+      "name": "Blade of Reckoning",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 12062,
+      "name": "Skilled Fighting Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 12065,
+      "name": "Ward of the Elements",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 12102,
+      "name": "Ring of the Aristocrat",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 12543,
+      "name": "Songstone of Ironforge",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 12548,
+      "name": "Magni's Will",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 14023,
+      "name": "Barov Peasant Caller",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 15791,
+      "name": "Turquoise Sash",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 15792,
+      "name": "Plow Wood Spaulders",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 15795,
+      "name": "Emerald Mist Gauntlets",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 16622,
+      "name": "Thornflinger",
+      "slot": "ranged",
+      "kind": "item"
+    },
+    {
+      "id": 16623,
+      "name": "Opaline Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 17691,
+      "name": "Stormpike Insignia Rank 1",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17900,
+      "name": "Stormpike Insignia Rank 2",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17901,
+      "name": "Stormpike Insignia Rank 3",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17902,
+      "name": "Stormpike Insignia Rank 4",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17903,
+      "name": "Stormpike Insignia Rank 5",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17904,
+      "name": "Stormpike Insignia Rank 6",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 19084,
+      "name": "Stormpike Soldier's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19086,
+      "name": "Stormpike Sage's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19091,
+      "name": "Stormpike Plate Girdle",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 19092,
+      "name": "Stormpike Mail Girdle",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 19093,
+      "name": "Stormpike Leather Girdle",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 19094,
+      "name": "Stormpike Cloth Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 19097,
+      "name": "Stormpike Soldier's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19098,
+      "name": "Stormpike Sage's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19100,
+      "name": "Electrified Dagger",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19102,
+      "name": "Crackling Staff",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19104,
+      "name": "Stormstrike Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19514,
+      "name": "Protector's Band",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19516,
+      "name": "Protector's Band",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19522,
+      "name": "Lorekeeper's Ring",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19523,
+      "name": "Lorekeeper's Ring",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19530,
+      "name": "Caretaker's Cape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19531,
+      "name": "Caretaker's Cape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19538,
+      "name": "Sentinel's Medallion",
+      "slot": "neck",
+      "kind": "content"
+    },
+    {
+      "id": 19539,
+      "name": "Sentinel's Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19546,
+      "name": "Sentinel's Blade",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19547,
+      "name": "Sentinel's Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19554,
+      "name": "Protector's Sword",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19555,
+      "name": "Protector's Sword",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19562,
+      "name": "Outrunner's Bow",
+      "slot": "ranged",
+      "kind": "item"
+    },
+    {
+      "id": 19563,
+      "name": "Outrunner's Bow",
+      "slot": "ranged",
+      "kind": "item"
+    },
+    {
+      "id": 19570,
+      "name": "Lorekeeper's Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19571,
+      "name": "Lorekeeper's Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 20044,
+      "name": "Highlander's Mail Girdle",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 20051,
+      "name": "Highlander's Mail Greaves",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 20056,
+      "name": "Highlander's Mail Pauldrons",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 20118,
+      "name": "Highlander's Mail Girdle",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 20121,
+      "name": "Highlander's Mail Greaves",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 22672,
+      "name": "Sentinel's Plate Legguards",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 22748,
+      "name": "Sentinel's Chain Leggings",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 22749,
+      "name": "Sentinel's Leather Pants",
+      "slot": "legs",
+      "kind": "content"
+    },
+    {
+      "id": 22750,
+      "name": "Sentinel's Lizardhide Pants",
+      "slot": "legs",
+      "kind": "content"
+    },
+    {
+      "id": 22752,
+      "name": "Sentinel's Silk Leggings",
+      "slot": "legs",
+      "kind": "content"
+    },
+    {
+      "id": 22753,
+      "name": "Sentinel's Lamellar Legguards",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 260181,
+      "name": "Sentinel's Plate",
+      "slot": "chest",
+      "kind": "item"
+    },
+    {
+      "id": 260182,
+      "name": "Elunar Belt",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 260205,
+      "name": "Highborne Research Tablet",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 260207,
+      "name": "Staff of Archmage Selwyn",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 260209,
+      "name": "Truesong's Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 270118,
+      "name": "Cindercloth Gown",
+      "slot": "chest",
+      "kind": "item"
+    },
+    {
+      "id": 270275,
+      "name": "Cleansed Vilebranch Medallion",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 270276,
+      "name": "Cleansed Vilebranch Icon",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 271903,
+      "name": "Enriched Seal",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 271906,
+      "name": "Volunteer's Lucky Seal",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 271907,
+      "name": "Expeditionary's Cape",
+      "slot": "back",
+      "kind": "sources"
+    },
+    {
+      "id": 271908,
+      "name": "Theramore Signet",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271909,
+      "name": "Theramore Signet",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271913,
+      "name": "Militant's Band",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271914,
+      "name": "Militant's Band",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271917,
+      "name": "Seal of the Expedition",
+      "slot": "neck",
+      "kind": "sources"
+    },
+    {
+      "id": 271918,
+      "name": "Seal of the Expedition",
+      "slot": "neck",
+      "kind": "sources"
+    },
+    {
+      "id": 271921,
+      "name": "Expeditionary's Cape",
+      "slot": "back",
+      "kind": "sources"
+    },
+    {
+      "id": 271924,
+      "name": "Rebels' Rugged Reaper",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271925,
+      "name": "Rebels' Rugged Reaper",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271928,
+      "name": "Clever Expeditionary's Spellblade",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271929,
+      "name": "Clever Expeditionary's Spellblade",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271936,
+      "name": "Guerrilla's Jagged Mace",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271937,
+      "name": "Guerrilla's Jagged Mace",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271940,
+      "name": "Theramore Gauntlets",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271941,
+      "name": "Theramore Gauntlets",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271945,
+      "name": "Theramore Handwraps",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271946,
+      "name": "Theramore Handwraps",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271948,
+      "name": "Theramore Gloves",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271949,
+      "name": "Theramore Gloves",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271950,
+      "name": "Theramore Handguards",
+      "slot": "hands",
+      "kind": "sources"
+    },
+    {
+      "id": 271951,
+      "name": "Theramore Handguards",
+      "slot": "hands",
+      "kind": "sources"
+    },
+    {
+      "id": 271953,
+      "name": "Theramore Shoulderpads",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 271954,
+      "name": "Theramore Shoulders",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 271955,
+      "name": "Theramore Pauldrons",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 271956,
+      "name": "Theramore Epaulets",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 271957,
+      "name": "Theramore Mantle",
+      "slot": "shoulder",
+      "kind": "sources"
+    },
+    {
+      "id": 271959,
+      "name": "Theramore Spaulders",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 272957,
+      "name": "Theramore Shoulderguards",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 273800,
+      "name": "Thomas's Ring",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 274718,
+      "name": "Lost Veteran's Sabatons",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 275438,
+      "name": "Greaves of Mourning",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 275439,
+      "name": "Blunderflame Bone Bow",
+      "slot": "ranged",
+      "kind": "item"
+    },
+    {
+      "id": 275669,
+      "name": "Punchy's Punchers",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 275685,
+      "name": "Stormwind Intelligence Seal",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 275715,
+      "name": "Rocket Pilot Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 275721,
+      "name": "Rocketeer Leggings",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 275729,
+      "name": "Rusty Propeller Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 275827,
+      "name": "Wool-Stitched Waistband",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 276900,
+      "name": "Denric's Dog Tags",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 276901,
+      "name": "Uncle's Heroism",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 276902,
+      "name": "Youngster's First Bow",
+      "slot": "ranged",
+      "kind": "item"
+    },
+    {
+      "id": 276903,
+      "name": "Shimmerwine Shanker",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 279825,
+      "name": "Theramore Defender's Gauntlets",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 279901,
+      "name": "Expeditionary Legplates",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 279903,
+      "name": "Diemetradon Scale Spaulders",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 279905,
+      "name": "Ravasaur Hide Footpads",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 279931,
+      "name": "Lost Researcher's Hood",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 281286,
+      "name": "High Order Pendant",
+      "slot": "neck",
+      "kind": "content"
+    }
+  ]
 }

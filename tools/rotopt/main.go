@@ -376,10 +376,24 @@ func main() {
 				excludeEnchants = append(excludeEnchants, int32(v))
 			}
 		}
-		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMinIlvl), int32(*gearMaxIlvl), exclude, include, *gearHitOnly, *gearSynthetic, *gearNoRaids)
+		factions, err := newFactionCheck(setup.player().Race, *gearContent, *questSidesPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "faction check: %v\n", err)
+			os.Exit(2)
+		}
+		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMinIlvl), int32(*gearMaxIlvl), exclude, include, *gearHitOnly, *gearSynthetic, *gearNoRaids, factions)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
 			os.Exit(2)
+		}
+		// An item only the other faction can get comes off the starting set too, like an
+		// excluded one (the hunters' start had Theramore Pauldrons on an Orc).
+		if equipment := setup.player().Equipment; equipment != nil {
+			for _, item := range equipment.Items {
+				if item != nil && item.Id != 0 && factions.otherFaction(itemsByID[item.Id]) != "" {
+					item.Reset()
+				}
+			}
 		}
 		markNoPick(pool, noPick)
 		mhTypes, err := parseWeaponTypes(*gearMainHandTypes)
@@ -394,7 +408,7 @@ func main() {
 			os.Exit(2)
 		}
 		if *gearPoolReport != "" {
-			if err := writePoolReport(*gearPoolReport, *gearPoolSpec, pool); err != nil {
+			if err := writePoolReport(*gearPoolReport, *gearPoolSpec, pool, factions); err != nil {
 				fmt.Fprintf(os.Stderr, "-gear-pool-report: %v\n", err)
 				os.Exit(2)
 			}
