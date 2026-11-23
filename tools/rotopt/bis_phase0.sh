@@ -31,8 +31,10 @@
 #
 # SPEC picks the spec from tools/rotopt/phase0_specs.json, one entry per DPS spec of the DPS
 # Report: the report build the fight comes from, the talents, the starting gear, the weapon
-# setup and where the lists go. Every spec but Enhancement starts with no gear, and the search
-# fills each slot. What follows on talents, starting gear and weapons is Enhancement's entry.
+# setup and where the lists go. Most specs start with no gear, and the search fills each slot.
+# A hunter can't: with no ranged weapon its DPS is NaN, nothing beats NaN, so the search swapped
+# nothing (2026-11-23). The hunters start from timesaver.gg's Forever list (2026-11-20) where it's
+# open, with Eaglehorn Long Bow for its Core Marksman Rifle, and the report's enchants. What follows on talents, starting gear and weapons is Enhancement's entry.
 #
 # DRY_RUN=1 sims nothing. For each spec of SPEC (every spec in the table by default, or a comma
 # separated list) it writes what the search's pool would hold (-gear-pool-report) to
