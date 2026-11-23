@@ -1,25 +1,25 @@
 {
   "spec": "rogue_subtlety",
   "options": {
-    "back": 1100,
-    "chest": 1195,
-    "feet": 798,
-    "finger1": 811,
-    "finger2": 811,
-    "hands": 892,
-    "head": 905,
-    "legs": 979,
-    "mainhand": 167,
-    "neck": 512,
-    "offhand": 584,
+    "back": 1098,
+    "chest": 1193,
+    "feet": 795,
+    "finger1": 806,
+    "finger2": 806,
+    "hands": 887,
+    "head": 904,
+    "legs": 974,
+    "mainhand": 165,
+    "neck": 510,
+    "offhand": 582,
     "ranged": 324,
-    "shoulder": 798,
-    "trinket1": 103,
-    "trinket2": 103,
-    "waist": 736,
-    "wrist": 665
+    "shoulder": 796,
+    "trinket1": 90,
+    "trinket2": 90,
+    "waist": 735,
+    "wrist": 666
   },
-  "items": 1619,
+  "items": 1577,
   "unmodelled": [
     {
       "id": 833,
@@ -58,12 +58,6 @@
       "kind": "Use"
     },
     {
-      "id": 8348,
-      "name": "Helm of Fire",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
       "id": 9380,
       "name": "Jang'thraze the Protector",
       "slot": "offhand",
@@ -80,18 +74,6 @@
       "name": "Fist of the Damned",
       "slot": "offhand",
       "kind": "Chance on hit"
-    },
-    {
-      "id": 11808,
-      "name": "Circle of Flame",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
-      "id": 11905,
-      "name": "Linken's Boomerang",
-      "slot": "trinket1",
-      "kind": "Use"
     },
     {
       "id": 12185,
@@ -148,12 +130,6 @@
       "kind": "Use"
     },
     {
-      "id": 14134,
-      "name": "Cloak of Fire",
-      "slot": "back",
-      "kind": "Use"
-    },
-    {
       "id": 15853,
       "name": "Windreaper",
       "slot": "offhand",
@@ -178,12 +154,6 @@
       "kind": "Use"
     },
     {
-      "id": 17691,
-      "name": "Stormpike Insignia Rank 1",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
       "id": 17738,
       "name": "Claw of Celebras",
       "slot": "offhand",
@@ -198,36 +168,6 @@
     {
       "id": 17759,
       "name": "Mark of Resolution",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17900,
-      "name": "Stormpike Insignia Rank 2",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17901,
-      "name": "Stormpike Insignia Rank 3",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17902,
-      "name": "Stormpike Insignia Rank 4",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17903,
-      "name": "Stormpike Insignia Rank 5",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 17904,
-      "name": "Stormpike Insignia Rank 6",
       "slot": "trinket1",
       "kind": "Use"
     },
@@ -384,18 +324,6 @@
       "kind": "classic"
     },
     {
-      "id": 20693,
-      "name": "Weighted Cloak",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
-      "id": 20697,
-      "name": "Crystalline Threaded Cape",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20720,
       "name": "Dark Whisper Blade",
       "slot": "mainhand",
@@ -436,44 +364,8 @@
       "name": "Studded Timbermaw Brawlers",
       "slot": "hands",
       "kind": "classic"
-    },
-    {
-      "id": 280872,
-      "name": "Grimstitch Pants",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280875,
-      "name": "Grimstitch Gloves",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280876,
-      "name": "Grimstitch Spaulders",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280877,
-      "name": "Grimstitch Mask",
-      "slot": "head",
-      "kind": "partial"
-    },
-    {
-      "id": 280878,
-      "name": "Grimstitch Boots",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280879,
-      "name": "Grimstitch Chestpiece",
-      "slot": "chest",
-      "kind": "partial"
     }
   ],
-  "foreverNoTooltip": 408,
-  "unlisted": 1378
+  "foreverNoTooltip": 387,
+  "unlisted": 946
 }
