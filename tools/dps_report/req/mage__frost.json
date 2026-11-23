@@ -85,7 +85,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "0502050030001-4-253500230111301211",
+            "talentsString": "050203203-5-253500230111301211",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -203,7 +203,7 @@
                               "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "6s"
+                                  "val": "2s"
                                 }
                               }
                             }
