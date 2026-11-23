@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "5518f4873f37fcfe98c72c3fedf8341d09ab03a9"
+  "master": "2de7021bf71d06f53a8ff7e9fea974138f06165b"
  },
  "last_pass_at": "2026-11-23T00:50:17Z",
  "pass": 99,
  "result": "findings",
  "note": "Pass 99: 7a6d1beb9..5518f4873, 5 sim commits (empty-slot swing, Axe of the Deep Woods, Headmaster's Charge, Flame Wrath self damage, Helm of Fire / Circle of Flame / Robe of the Archmage). New: 20261123-1 (low) Robe's Replenish Mana misses spell category 30 shared 60 s CD. No new Blizzard post. Client 71037 still newest.",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T00:53:24Z",
+ "checked_at": "2026-11-23T06:51:06Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

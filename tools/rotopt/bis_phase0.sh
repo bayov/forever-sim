@@ -31,8 +31,11 @@
 #
 # SPEC picks the spec from tools/rotopt/phase0_specs.json, one entry per DPS spec of the DPS
 # Report: the report build the fight comes from, the talents, the starting gear, the weapon
-# setup and where the lists go. Every spec but Enhancement starts with no gear, and the search
-# fills each slot. What follows on talents, starting gear and weapons is Enhancement's entry.
+# setup and where the lists go. Most specs start with no gear, and the search fills each slot.
+# A hunter can't: with no ranged weapon its DPS is NaN, nothing beats NaN, so the search swapped
+# nothing (2026-11-23). The hunters start from the set Beast Mastery's first search found from
+# timesaver.gg's Forever list (2026-11-20, open items, Eaglehorn Long Bow for its Core Marksman
+# Rifle), with the report's enchants. The second finger is empty, its pick had a random suffix. What follows on talents, starting gear and weapons is Enhancement's entry.
 #
 # DRY_RUN=1 sims nothing. For each spec of SPEC (every spec in the table by default, or a comma
 # separated list) it writes what the search's pool would hold (-gear-pool-report) to
@@ -331,6 +334,7 @@ elif [ -n "$SLOTS" ]; then
 fi
 
 # What we write: the list (not with EFFECTS_ONLY) and the effects file (not with EFFECTS_OUT=none).
+mkdir -p "$(dirname "$out")"
 outputs="-gear-rank-out $out"
 if [ -n "$EFFECTS_ONLY" ]; then
 	outputs=""
