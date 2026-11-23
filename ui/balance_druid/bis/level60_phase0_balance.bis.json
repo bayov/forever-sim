@@ -705,7 +705,8 @@
         "id": 11623,
         "name": "Spritecaster Cape",
         "dps": 828.12,
-        "loss": 10.56
+        "loss": 10.56,
+        "note": "Houndmaster Grebmar (Blackrock Depths)"
       },
       {
         "id": 18350,
