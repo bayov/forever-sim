@@ -193,6 +193,7 @@ func main() {
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, wagoItems)
 	AttachItemSetIDs(db, wagoItems)
+	AttachClassLimits(db, wagoItems)
 	AttachWandSchools(db, wagoItems)
 	database.MarkHiddenStats(db, fmt.Sprintf("%s/hidden_items.json", dbDir))
 
@@ -402,6 +403,23 @@ func AttachItemSetIDs(db *database.WowDatabase, wagoItems map[int32]database.Wag
 	for _, item := range db.Items {
 		if wagoItem, ok := wagoItems[item.Id]; ok {
 			item.SetId = wagoItem.ItemSetID
+		}
+	}
+}
+
+// AttachClassLimits gives an item that no other source limits to some classes the limit
+// ItemSparse has for it: the Forever client's where it has the item, Classic 1.15.3's
+// otherwise. Wowhead's Forever listing has no row for the Classic items Forever brought back
+// under new IDs, so Benediction (289296) and Anathema (289297) came in for every class
+// instead of priests only, and Rhok'delar (289303) for every class instead of hunters.
+// An item that has a limit keeps it, since Wowhead's also counts the quest it comes from.
+func AttachClassLimits(db *database.WowDatabase, wagoItems map[int32]database.WagoDbItem) {
+	for _, item := range db.Items {
+		if len(item.ClassAllowlist) > 0 {
+			continue
+		}
+		if wagoItem, ok := wagoItems[item.Id]; ok {
+			item.ClassAllowlist = wagoItem.ClassAllowlist()
 		}
 	}
 }

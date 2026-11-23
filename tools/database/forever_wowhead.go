@@ -184,6 +184,57 @@ var foreverWeaponSkills = map[int32]map[proto.WeaponSkill]float64{
 	18388: {}, // Stoneshatter, Classic +4 crossbows.
 }
 
+// Equip stats that Wowhead's jsonequip and forever_seen_in_game.json don't carry: "+2 Weapon
+// Damage" (the item's BonusPhysicalDamage) and "+7 to All Resistances" (each of the five
+// resistances). From BayovCore's full item sweep on client 1.60.1.71037 (2026-11-21), which
+// reads them from GetItemStats as ITEM_MOD_PHYSICAL_DAMAGE_DONE_SHORT and
+// ITEM_MOD_SPELL_RESISTANCE_ALL_SCHOOLS_SHORT. Where the client's hotfix cache has the item, its
+// ItemSparse lists the same stats as types 83 and 124 (forever_client_cache.json), and
+// foreverchanges.pro's tooltip of Sharpened Cutlery has its "+1 Weapon Damage".
+//
+// ToProto and ReadForeverSeenInGame both apply it, since either one's stats can be the last.
+// A seen entry with its own bonusPhysicalDamage or allResistances wins over this table.
+type foreverEquipStat struct {
+	weaponDamage   float64
+	allResistances float64
+}
+
+var foreverEquipStats = map[int32]foreverEquipStat{
+	13255:  {weaponDamage: 1},    // Trueaim Gauntlets.
+	14551:  {weaponDamage: 1},    // Edgemaster's Handguards.
+	21189:  {weaponDamage: 4},    // Might of Cenarius.
+	226830: {weaponDamage: 1},    // Darkmantle Bracers.
+	249470: {weaponDamage: 2},    // Molten Heart of the Mountain.
+	274092: {weaponDamage: 1},    // Sharpened Cutlery.
+	274614: {weaponDamage: 2},    // Knucklebone Ring.
+	280012: {weaponDamage: 2},    // Talon of Tor'Rel.
+	12065:  {allResistances: 7},  // Ward of the Elements.
+	12252:  {allResistances: 6},  // Staff of Protection.
+	12609:  {allResistances: 20}, // Polychromatic Visionwrap.
+	20504:  {allResistances: 5},  // Lightforged Blade.
+	22195:  {allResistances: 5},  // Light Obsidian Belt.
+	22197:  {allResistances: 5},  // Heavy Obsidian Belt.
+	22198:  {allResistances: 5},  // Jagged Obsidian Shield.
+	277559: {allResistances: 7},  // Shen'dralar Relic.
+	280009: {allResistances: 4},  // Titanosaur Scale Pendant.
+}
+
+// The sim's resistance stats, which "to All Resistances" adds to.
+var allResistanceStats = []proto.Stat{
+	proto.Stat_StatArcaneResistance, proto.Stat_StatFireResistance, proto.Stat_StatFrostResistance,
+	proto.Stat_StatNatureResistance, proto.Stat_StatShadowResistance,
+}
+
+// apply puts the equip stats on an item whose stats array doesn't have them yet.
+func (e foreverEquipStat) apply(item *proto.UIItem) {
+	if e.weaponDamage != 0 {
+		item.BonusPhysicalDamage = e.weaponDamage
+	}
+	for _, stat := range allResistanceStats {
+		item.Stats[stat] += e.allResistances
+	}
+}
+
 // foreverWeaponSkillSlice turns an entry of foreverWeaponSkills into the item's list of
 // skill by weapon type.
 func foreverWeaponSkillSlice(skills map[proto.WeaponSkill]float64) []float64 {
@@ -449,6 +500,7 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 	if skills, ok := foreverWeaponSkills[wi.ID]; ok {
 		item.WeaponSkills = foreverWeaponSkillSlice(skills)
 	}
+	foreverEquipStats[wi.ID].apply(item)
 	if itemType == proto.ItemType_ItemTypeWeapon || itemType == proto.ItemType_ItemTypeRanged {
 		item.WeaponDamageMin = wi.num("dmgmin1")
 		item.WeaponDamageMax = wi.num("dmgmax1")

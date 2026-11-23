@@ -39,10 +39,14 @@ type foreverSeenItem struct {
 	WeaponSpeed     float64            `json:"weaponSpeed"`
 	HitRating       float64            `json:"hitRating"`
 	CritRating      float64            `json:"critRating"`
-	InventoryType   int32              `json:"inventoryType"`
-	ClassID         int32              `json:"classID"`
-	SubclassID      int32              `json:"subclassID"`
-	By              string             `json:"by"`
+	// "+2 Weapon Damage" and "+7 to All Resistances", which the stats can't hold. An entry
+	// without them takes foreverEquipStats' instead, since a sweep can miss an Equip line.
+	BonusPhysicalDamage float64 `json:"bonusPhysicalDamage"`
+	AllResistances      float64 `json:"allResistances"`
+	InventoryType       int32   `json:"inventoryType"`
+	ClassID             int32   `json:"classID"`
+	SubclassID          int32   `json:"subclassID"`
+	By                  string  `json:"by"`
 }
 
 // ReadForeverSeenInGame reads the file into items for MergeItems, with the database's
@@ -79,6 +83,14 @@ func ReadForeverSeenInGame(path string, have map[int32]*proto.UIItem) []*proto.U
 			HitRating: e.HitRating, CritRating: e.CritRating,
 			Ilvl: e.Ilvl, RequiredLevel: e.RequiredLevel, Quality: proto.ItemQuality(e.Quality),
 		}
+		equip := foreverEquipStats[int32(id)]
+		if e.BonusPhysicalDamage != 0 {
+			equip.weaponDamage = e.BonusPhysicalDamage
+		}
+		if e.AllResistances != 0 {
+			equip.allResistances = e.AllResistances
+		}
+		equip.apply(item)
 		// The game shows weapon skill as a stat, but the file doesn't carry it, so an
 		// item's Forever skill comes from foreverWeaponSkills (or it keeps Classic's).
 		if skills, ok := foreverWeaponSkills[int32(id)]; ok {
