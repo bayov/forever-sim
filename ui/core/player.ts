@@ -1312,7 +1312,10 @@ export class Player<SpecType extends Spec> {
 		// Add pseudo stats that should be included in item EP.
 		itemStats = itemStats.addPseudoStat(PseudoStat.BonusPhysicalDamage, item.bonusPhysicalDamage);
 
-		const lines = [...this.computeGearStatsEPBreakdown(itemStats, item.hitRating, item.critRating), ...this.computeHasteEPBreakdown(itemStats)];
+		const lines = [
+			...this.computeGearStatsEPBreakdown(itemStats, item.hitRating, item.critRating, item.kindLimitedCrit),
+			...this.computeHasteEPBreakdown(itemStats),
+		];
 
 		// For random suffix items, use the suffix option with the highest EP for the purposes of ranking items in the picker.
 		if (item.randomSuffixOptions.length > 0) {
@@ -1334,7 +1337,12 @@ export class Player<SpecType extends Spec> {
 	//
 	// Under Forever we value gear stats the way the sim applies them. Gear hit and crit
 	// count for melee and spells both (see unifyEquipHitAndCrit), so we add them up into one
-	// Hit line and one Crit line, after turning any rating into percent.
+	// Hit line and one Crit line, after turning any rating into percent. An item with
+	// kindLimitedCrit keeps its Melee Crit and Spell Crit apart, as the sim does, and each is
+	// priced at its own weight. A caster's default weights give Melee Crit nothing and a
+	// warrior's give Spell Crit nothing, so Blackhand's Breadth adds no crit EP for a mage and
+	// Eye of the Beast none for a warrior. Weights the sim computes hold full crit in both, so
+	// they can't tell the two apart.
 	//
 	// Healing gear needs nothing special. A Forever item that reads "healing by up to 21
 	// and damage by up to 7" is already 7 spell power plus 14 healing in the database.
@@ -1349,7 +1357,7 @@ export class Player<SpecType extends Spec> {
 	// armor on items leave it out. So when the weights only price one of the two, as most of
 	// them only price Armor, both parts get that price on one Armor line. When both are priced
 	// differently, each part keeps its own line.
-	private computeGearStatsEPBreakdown(stats: Stats, hitRating = 0, critRating = 0): Array<EPContribution> {
+	private computeGearStatsEPBreakdown(stats: Stats, hitRating = 0, critRating = 0, kindLimitedCrit = false): Array<EPContribution> {
 		const lines: Array<EPContribution> = [];
 		const addLine = (name: string, amount: number, weight: number) => {
 			// The pseudo stat enum has gaps (BonusPhysicalDamage is 30), so some reads come back
@@ -1360,9 +1368,14 @@ export class Player<SpecType extends Spec> {
 
 		if (this.sim.getRuleset() === Ruleset.RulesetForever) {
 			const hit = stats.getStat(Stat.StatMeleeHit) + stats.getStat(Stat.StatSpellHit) + hitRating / HIT_RATING_PER_PERCENT;
-			const crit = stats.getStat(Stat.StatMeleeCrit) + stats.getStat(Stat.StatSpellCrit) + critRating / CRIT_RATING_PER_PERCENT;
+			const meleeOnlyCrit = kindLimitedCrit ? stats.getStat(Stat.StatMeleeCrit) : 0;
+			const spellOnlyCrit = kindLimitedCrit ? stats.getStat(Stat.StatSpellCrit) : 0;
+			const crit =
+				stats.getStat(Stat.StatMeleeCrit) + stats.getStat(Stat.StatSpellCrit) - meleeOnlyCrit - spellOnlyCrit + critRating / CRIT_RATING_PER_PERCENT;
 			addLine('Hit (melee and spell)', hit, Math.max(weight(Stat.StatMeleeHit), weight(Stat.StatSpellHit)));
 			addLine('Crit (melee and spell)', crit, Math.max(weight(Stat.StatMeleeCrit), weight(Stat.StatSpellCrit)));
+			addLine('Crit (melee and ranged)', meleeOnlyCrit, weight(Stat.StatMeleeCrit));
+			addLine('Crit (spells)', spellOnlyCrit, weight(Stat.StatSpellCrit));
 			stats = stats.withStat(Stat.StatMeleeHit, 0).withStat(Stat.StatSpellHit, 0).withStat(Stat.StatMeleeCrit, 0).withStat(Stat.StatSpellCrit, 0);
 		}
 

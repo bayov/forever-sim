@@ -434,7 +434,8 @@ function slotsFor(item: Item, rules: LevelingGearClassRules): Array<ItemSlot> {
 
 // scorePiece is a piece's worth by the stat weights, like the gear picker's EP. Under Forever
 // an item's hit and crit count for melee and spells both, so we price them once, at the
-// larger weight. Bonus armor takes the armor price when it has none of its own.
+// larger weight, except the crit of an item with kindLimitedCrit, which each kind's weight
+// prices on its own (Player.computeGearStatsEPBreakdown). Bonus armor takes the armor price when it has none of its own.
 export function scorePiece(piece: LevelingGearPiece, slot: ItemSlot, weights: Stats): number {
 	const item = piece.item;
 	const stats = new Stats(item.stats).add(new Stats(piece.randomSuffix?.stats ?? []));
@@ -444,9 +445,12 @@ export function scorePiece(piece: LevelingGearPiece, slot: ItemSlot, weights: St
 		if (!skip.has(stat)) score += stats.getStat(stat) * weights.getStat(stat);
 	}
 	const hit = stats.getStat(Stat.StatMeleeHit) + stats.getStat(Stat.StatSpellHit) + item.hitRating / 10;
-	const crit = stats.getStat(Stat.StatMeleeCrit) + stats.getStat(Stat.StatSpellCrit) + item.critRating / 14;
+	const meleeOnlyCrit = item.kindLimitedCrit ? stats.getStat(Stat.StatMeleeCrit) : 0;
+	const spellOnlyCrit = item.kindLimitedCrit ? stats.getStat(Stat.StatSpellCrit) : 0;
+	const crit = stats.getStat(Stat.StatMeleeCrit) + stats.getStat(Stat.StatSpellCrit) - meleeOnlyCrit - spellOnlyCrit + item.critRating / 14;
 	score += hit * Math.max(weights.getStat(Stat.StatMeleeHit), weights.getStat(Stat.StatSpellHit));
 	score += crit * Math.max(weights.getStat(Stat.StatMeleeCrit), weights.getStat(Stat.StatSpellCrit));
+	score += meleeOnlyCrit * weights.getStat(Stat.StatMeleeCrit) + spellOnlyCrit * weights.getStat(Stat.StatSpellCrit);
 	const armorWeight = weights.getStat(Stat.StatArmor);
 	const bonusArmorWeight = weights.getStat(Stat.StatBonusArmor) || armorWeight;
 	score += stats.getStat(Stat.StatArmor) * armorWeight + stats.getStat(Stat.StatBonusArmor) * bonusArmorWeight;

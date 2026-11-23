@@ -53,6 +53,7 @@ message SimDatabaseFileItem {
 	string set_name = 23;
 	int32 set_id = 29;
 	SpellSchool spell_school = 36;
+	bool kind_limited_crit = 37;
 }
 
 message UIZone {
@@ -74,7 +75,7 @@ message UIFaction {
 // Contains all information about an Item needed by the UI.
 // Generally this will include everything needed by the sim, plus some
 // additional data for displaying / filtering.
-// NextIndex: 31
+// NextIndex: 38
 message UIItem {
 	int32 id = 1;
 	string name = 2;
@@ -150,6 +151,11 @@ message UIItem {
 	// A wand's damage school, from ItemSparse's DamageType. Physical (unset) for every
 	// other item.
 	SpellSchool spell_school = 36;
+
+	// Forever's gear crit counts for every attack, but this item's tooltip limits it to one
+	// kind: its Melee Crit is for melee and ranged attacks only, its Spell Crit for spells
+	// only (Blackhand's Breadth, Eye of the Beast). See core's unifyEquipHitAndCrit.
+	bool kind_limited_crit = 37;
 }
 
 enum Expansion {

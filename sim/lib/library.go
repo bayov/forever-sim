@@ -121,6 +121,7 @@ func getDatabase(itemIds *int32, numItems int32, enchantIds *int32, numEnchants 
 			SetId:            item.SetID,
 			HitRating:        item.HitRating,
 			CritRating:       item.CritRating,
+			KindLimitedCrit:  item.KindLimitedCrit,
 		}
 	}
 	for i, enchantId := range eids {

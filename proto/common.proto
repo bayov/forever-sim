@@ -1318,7 +1318,7 @@ message SimDatabase {
 }
 
 // Contains only the Item info needed by the sim.
-// NextIndex: 20
+// NextIndex: 24
 message SimItem {
 	int32 id = 1;
 	repeated Class class_allowlist = 17;
@@ -1345,6 +1345,7 @@ message SimItem {
 	double crit_rating = 21;
 
 	SpellSchool spell_school = 22; // A wand's damage school; physical (unset) for every other item.
+	bool kind_limited_crit = 23; // See UIItem.kind_limited_crit.
 }
 
 // Extra enum for describing which items are eligible for an enchant, when

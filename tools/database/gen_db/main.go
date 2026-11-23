@@ -310,6 +310,7 @@ func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWow
 			continue
 		}
 		dropped += droppedRatings
+		item.KindLimitedCrit = whItem.KindLimitedCrit()
 		if have, ok := db.Items[item.Id]; ok {
 			// proto.Merge appends lists, and these two are already on the item.
 			item.Sources = nil
