@@ -225,20 +225,21 @@ func tickDamage(sim *core.Simulation, spell *druid.DruidSpell, target *core.Unit
 	return metrics.TotalDamage - before
 }
 
-// TestCatRakeTickAttackPower checks Rake's tick under Forever: 34 + 0.055 attack power, the
-// attack power read when the tick lands (wowsims/forever's fit to PR #149's tests), both 25% up
-// with the November 2 development notes.
+// TestCatRakeTickAttackPower checks Rake's tick under Forever: 34 at the November 2 notes' 25% up
+// plus 0.065 attack power, read when the tick lands, which the scale leaves alone
+// (wowsims/forever's EV-0031, EV-0033, EV-0034 and EV-0036 logs, 2026-11-07 to 12: 0.065 on ranks
+// 1 to 4; user ruling 2026-11-22).
 func TestCatRakeTickAttackPower(t *testing.T) {
 	sim, cat := newCatSim(t, "")
 	target := noCritsNoArmor(sim, cat)
 	dot := cat.Rake.Dot(target)
 	dot.Apply(sim)
 	ap := cat.Rake.MeleeAttackPower(target)
-	if got, want := tickDamage(sim, cat.Rake, target), 1.25*(34+0.055*ap)*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rake, target), (1.25*34+0.065*ap)*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
 		t.Errorf("Rake ticks for %.3f at %.0f attack power, want %.3f", got, ap, want)
 	}
 	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
-	if got, want := tickDamage(sim, cat.Rake, target), 1.25*(34+0.055*(ap+1000))*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rake, target), (1.25*34+0.065*(ap+1000))*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
 		t.Errorf("Rake ticks for %.3f after 1000 attack power more, want %.3f", got, want)
 	}
 }
@@ -284,7 +285,7 @@ func TestCatRendAndTearBleeds(t *testing.T) {
 		rake := cat.Rake.Dot(target)
 		rake.Apply(sim)
 		ap := cat.Rake.MeleeAttackPower(target)
-		want := 1.25 * (34 + 0.055*ap) * cat.Rake.BaseDamageMultiplierAdditive * rake.SnapshotAttackerMultiplier * rendAndTear
+		want := (1.25*34 + 0.065*ap) * cat.Rake.BaseDamageMultiplierAdditive * rake.SnapshotAttackerMultiplier * rendAndTear
 		if got := tickDamage(sim, cat.Rake, target); !nearDamage(got, want) {
 			t.Errorf("talents %q: Rake ticks for %.3f, want %.3f", talents, got, want)
 		}
@@ -371,9 +372,10 @@ func TestCatNaturalInstinctRip(t *testing.T) {
 }
 
 // TestCatRipTicksLive checks that a Forever Rip tick reads attack power and the damage
-// multipliers when it lands, with the combo points kept from the cast: 15 + 25.5 a point and
-// 1% of attack power a point, the fifth counted as the fourth, all 25% up with the November 2
-// development notes.
+// multipliers when it lands, with the combo points kept from the cast: 15 + 25.5 a point, 25% up
+// with the November 2 development notes, and 0.0114 of attack power a point, the fifth counted as
+// the fourth, outside that scale (wowsims/forever's EV-0031 to EV-0036 logs, 2026-11-07 to 12: the
+// same share on ranks 1 to 5; user ruling 2026-11-22).
 func TestCatRipTicksLive(t *testing.T) {
 	sim, cat := newCatSim(t, "")
 	target := noCritsNoArmor(sim, cat)
@@ -383,12 +385,12 @@ func TestCatRipTicksLive(t *testing.T) {
 	cat.SpendComboPoints(sim, cat.Rip.Spell)
 	ap := cat.Rip.MeleeAttackPower(target)
 	multiplier := dot.SnapshotAttackerMultiplier
-	if got, want := tickDamage(sim, cat.Rip, target), 1.25*(15+25.5*5+0.04*ap)*multiplier; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rip, target), (1.25*(15+25.5*5)+4*0.0114*ap)*multiplier; !nearDamage(got, want) {
 		t.Errorf("Rip ticks for %.3f at %.0f attack power, want %.3f", got, ap, want)
 	}
 	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
 	cat.PseudoStats.DamageDealtMultiplier *= 1.1
-	if got, want := tickDamage(sim, cat.Rip, target), 1.25*(15+25.5*5+0.04*(ap+1000))*multiplier*1.1; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rip, target), (1.25*(15+25.5*5)+4*0.0114*(ap+1000))*multiplier*1.1; !nearDamage(got, want) {
 		t.Errorf("Rip ticks for %.3f after 1000 attack power and 10%% damage more, want %.3f", got, want)
 	}
 }

@@ -22,19 +22,23 @@ var rakeSpells = []RakeRankInfo{
 	{id: 9904, level: 54, initialDamage: 61, dotTickDamage: 34},
 }
 
-// rakeTickAPCoefficient is the attack power share of a Forever Rake tick, every rank. The client
-// leaves it to the server; wowsims/forever fits 0.055 to testers' rank 1 ticks at 136, 162, 217
-// and 237 attack power ("Aus and Chalkie, Rake and swipe AP scaling tests, 2026-10-01", PR #149)
-// and gives ranks 2 to 4 the same. The tick reads the attack power when it lands, as theirs
-// does.
-const rakeTickAPCoefficient = 0.055
+// rakeTickAPCoefficient is the attack power share of a Forever Rake tick, every rank, outside the
+// November 2 scale. The client leaves it to the server. wowsims/forever's logs (builds 70862 and
+// 70888, after the November 2 notes) read the hit's share on every rank: EV-0031 rank 1
+// (2026-11-07, 0.0652, 55 of 55 ticks at 221 attack power), EV-0033 rank 2 (2026-11-08, 1,157 of
+// 1,232 ticks), EV-0034 rank 3 (2026-11-10, 683 of 686 ticks) and EV-0036 rank 4 (2026-11-12, 237
+// of 238 ticks), all at 0.065 (user ruling 2026-11-22: a share measured from a Forever log wins).
+// The sim had testers' 0.055 (PR #149, 2026-10-01) × 1.25 = 0.06875. The tick reads the attack
+// power when it lands (EV-0032: 334 of 337 ticks fit the live attack power).
+const rakeTickAPCoefficient = 0.065
 
 // rakeHitAPCoefficient is the attack power share of a Forever Rake's direct hit, every rank, read
 // at the hit and outside the November 2 scale (the user's ruling, 2026-11-12). wowsims/forever
 // 0384d8f98c fits 0.0648 to a 1.60.1.70862 combat log of a Tauren druid at levels 22 to 25: rank
 // 1's hit read 45 on 26 of 26 hits at 221 attack power with Savage Fury 2/2, a weapon damage buff
-// didn't move it, and ranks 2 to 4 are taken to carry rank 1's share. Their older PR #149 tester
-// had the hit take none.
+// didn't move it. Their later logs read 0.065 on ranks 2 to 4 too (EV-0033, EV-0034 and EV-0036,
+// 2026-11-08 to 12: 514 of 530, 347 of 349 and 121 of 121 hits). Their older PR #149 tester had
+// the hit take none.
 const rakeHitAPCoefficient = 0.065
 
 func (druid *Druid) registerRakeSpell() {
@@ -55,7 +59,7 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 	baseDamageInitial := scale * rakeRank.initialDamage
 	baseDamageTick := scale * rakeRank.dotTickDamage
 	energyCost := 40 - float64(druid.Talents.Ferocity)
-	tickAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), scale*rakeTickAPCoefficient, 0)
+	tickAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), rakeTickAPCoefficient, 0)
 	hitAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), rakeHitAPCoefficient, 0)
 	hitBase := func(target *core.Unit, spell *core.Spell) float64 {
 		return baseDamageInitial + hitAPCoefficient*spell.MeleeAttackPower(target)

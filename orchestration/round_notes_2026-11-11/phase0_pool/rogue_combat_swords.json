@@ -142,18 +142,6 @@
       "kind": "Use"
     },
     {
-      "id": 13399,
-      "name": "Gargoyle Shredder Talons",
-      "slot": "offhand",
-      "kind": "Chance on hit"
-    },
-    {
-      "id": 13408,
-      "name": "Soul Breaker",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 13515,
       "name": "Ramstein's Lightning Bolts",
       "slot": "trinket1",
@@ -162,12 +150,6 @@
     {
       "id": 13953,
       "name": "Silent Fang",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
-      "id": 15853,
-      "name": "Windreaper",
       "slot": "mainhand",
       "kind": "Chance on hit"
     },
@@ -188,12 +170,6 @@
       "name": "Arcanite Dragonling",
       "slot": "trinket1",
       "kind": "Use"
-    },
-    {
-      "id": 17002,
-      "name": "Ichor Spitter",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
     },
     {
       "id": 17690,
