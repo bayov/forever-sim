@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Tests for phase0_prices.py: python3 tools/rotopt/test_phase0_prices.py"""
+import contextlib
+import io
 import os
 import sys
+import tempfile
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -16,6 +19,32 @@ def entry(iid, name, loss, pick=False):
 def gpd(slot, entries, prices, content=None, recipes=None, line=30, effort=None):
     rows = phase0_prices.price_slot(slot, entries, content or {}, prices, recipes or {}, line, effort)
     return {r['name']: (r['gpd'], r['over']) for r in rows if r['gpd'] is not None}
+
+
+class NewestAhFile(unittest.TestCase):
+    def test_main_account_first(self):
+        with tempfile.TemporaryDirectory() as wow:
+            def save(account, at):
+                folder = os.path.join(wow, '_forever_', 'WTF', 'Account', account, 'SavedVariables')
+                os.makedirs(folder, exist_ok=True)
+                path = os.path.join(folder, 'BayovAuctionData.lua')
+                open(path, 'w').close()
+                os.utime(path, (at, at))
+                return path
+
+            def find():
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    return phase0_prices.newest_ah_file(wow), out.getvalue()
+            self.assertEqual(find(), (None, ''))
+            alt = save('1#2', 100000)
+            self.assertEqual(find(), (alt, ''))
+            main = save('1#1', 99000)
+            self.assertEqual(find(), (main, ''))
+            save('1#2', 99000 + 7 * 3600)
+            path, said = find()
+            self.assertEqual(path, main)
+            self.assertIn('1#2 has newer prices', said)
 
 
 class ParsePrice(unittest.TestCase):

@@ -118,9 +118,29 @@ RUN_MINUTES = {
 DEFAULT_RUN_MINUTES = 60
 
 
+# How much newer another account's prices have to be before we say so.
+MUCH_NEWER = 6 * 3600
+
+
+def account_of(path):
+    return os.path.basename(os.path.dirname(os.path.dirname(path)))
+
+
 def newest_ah_file(wow):
+    """The main's newest BayovAuctionData.lua, or another account's when the main has none.
+
+    Two accounts of ours play the same client, often at once, and the main's is
+    the one that ends in #1. We say so when another one's prices are much newer.
+    """
     paths = glob.glob(os.path.join(wow, '*', 'WTF', 'Account', '*', 'SavedVariables', 'BayovAuctionData.lua'))
-    return max(paths, key=os.path.getmtime) if paths else None
+    if not paths:
+        return None
+    ours = max([p for p in paths if account_of(p).endswith('#1')] or paths, key=os.path.getmtime)
+    newest = max(paths, key=os.path.getmtime)
+    if os.path.getmtime(newest) - os.path.getmtime(ours) > MUCH_NEWER:
+        print(f"note: {account_of(newest)} has newer prices than {account_of(ours)}'s, which we use. "
+              f'--ah reads them: {newest}')
+    return ours
 
 
 def middle(values):
@@ -342,7 +362,7 @@ def price_slot(slot, entries, content, prices, recipes, max_gpd, effort=None):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--write', action='store_true', help='save gold and goldPerDps in phase0_content.json')
-    ap.add_argument('--ah', help='a BayovAuctionData.lua (default: the newest under --wow)')
+    ap.add_argument('--ah', help="a BayovAuctionData.lua (default: the main account's newest under --wow)")
     ap.add_argument('--wow', default=os.environ.get('WOW_DIR', '/mnt/d/Gaming/World of Warcraft'))
     ap.add_argument('--wago', help='a wago table folder with SpellEffect.csv and SpellReagents.csv (default: the newest build)')
     ap.add_argument('--list', default=LIST)
