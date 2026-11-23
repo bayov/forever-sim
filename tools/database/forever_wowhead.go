@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
@@ -16,8 +17,8 @@ import (
 // Classic inputs know none of that. The listing rows carry the item's slot and quality,
 // the jsonequip block carries its stats, so together they are enough to build a UIItem.
 // Hit and critical strike rating go on the item as they are, and the sim turns them into
-// percent at the character's level. Other ratings (expertise, defense, dodge) are dropped
-// because the sim has no use for them.
+// percent at the character's level. The sim keeps the other ratings in percent, so those
+// are turned into percent here (foreverWowheadPercentRatings).
 type ForeverWowheadDB struct {
 	MaxReqLevel int32                `json:"maxReqLevel"`
 	Items       []ForeverWowheadItem `json:"items"`
@@ -116,8 +117,24 @@ func (wi ForeverWowheadItem) spellStats() (spellPower, spellDamage, healingPower
 	return spellPower, damage - spellPower, healing - spellPower
 }
 
+// Ratings the sim keeps in percent, with how much rating is 1%.
+//
+// Every tooltip BayovCore recorded in game agrees on these (2026-11-23, 102 items with
+// dodge, 26 with block, 17 with haste), and so does Wowhead's rating on the items both
+// have. Haste is "attack speed and casting speed", so it goes into both.
+var foreverWowheadPercentRatings = map[string]struct {
+	stats []proto.Stat
+	per   float64
+}{
+	"exprtng":   {[]proto.Stat{proto.Stat_StatExpertise}, 10},
+	"parryrtng": {[]proto.Stat{proto.Stat_StatParry}, 15},
+	"dodgertng": {[]proto.Stat{proto.Stat_StatDodge}, 12},
+	"blockrtng": {[]proto.Stat{proto.Stat_StatBlock}, 5},
+	"hastertng": {[]proto.Stat{proto.Stat_StatMeleeHaste, proto.Stat_StatSpellHaste}, 10},
+}
+
 // Rating stats the sim cannot use. Counted so the run reports how much it dropped.
-var foreverWowheadRatings = []string{"hastertng", "dodgertng", "parryrtng", "blockrtng", "armorpenrtng"}
+var foreverWowheadRatings = []string{"armorpenrtng"}
 
 // Weapon skill on the Forever items that had it in Classic, from wowhead's Forever
 // tooltips (2026-10-09).
@@ -383,9 +400,12 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 	statsArr[proto.Stat_StatSpellPower], statsArr[proto.Stat_StatSpellDamage], statsArr[proto.Stat_StatHealingPower] = wi.spellStats()
 	// "+12 Attack Power" is ranged attack power too, as the Classic tooltips read it.
 	statsArr[proto.Stat_StatRangedAttackPower] += wi.num("atkpwr")
-	// Expertise is a flat percent like hit and crit: the tooltip shows 10 rating as "1.0%"
-	// less chance to be dodged or parried. The sim's Expertise stat is in percent.
-	statsArr[proto.Stat_StatExpertise] += wi.num("exprtng") / 10
+	for key, rating := range foreverWowheadPercentRatings {
+		for _, stat := range rating.stats {
+			// Four digits, as in forever_seen_in_game.json.
+			statsArr[stat] += math.Round(wi.num(key)/rating.per*1e4) / 1e4
+		}
+	}
 	dropped := 0
 	for _, key := range foreverWowheadRatings {
 		if wi.num(key) != 0 {
