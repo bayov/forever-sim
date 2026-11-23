@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "b48605aa38d1ab522b4f3f495dc75e160534a192"
+  "master": "c78d983aca33ba66a9f9e80c39cdc671daad4bd9"
  },
  "last_pass_at": "2026-11-23T12:51:10Z",
  "pass": 52,
  "result": "quiet",
  "baseline": "8b5137c6d6a265567527ab7e2c6cc570c0b0107f",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T12:51:36Z",
+ "checked_at": "2026-11-23T18:54:07Z",
  "baseline_note": "8b5137c6d full re-sweep (5k, seed 1, every race) after the Nov 16/19 hotfixes (Flurry, 2H Spec Holy, Shank)"
 }
