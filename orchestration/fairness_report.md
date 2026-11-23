@@ -4,7 +4,50 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 7a6d1beb9: Ice Lance 0.11 of spell power (4192d6e49, user ruling 2026-11-22); Windfury Totem: Execute rolls twice, no Flurry charge or Bloodthrill off its swing (b7edf19bb); Wrack half-point ticks (3960dd1f6); no Maelstrom stack from the totem (840029bd8); Judgement of Wisdom on landed swings (bd7029410); hunter pet keeps its summon AP (051a21cd3); DPS Report re-sim of shaman and warrior (30314ad60, before the later fixes); pass 49, 2026-11-22)
+## 1. Cross-spec table (master 5518f4873: DPS Report re-sim after the JoW, Ice Lance, Maelstrom, Wrack, warrior totem and hunter pet fixes (6ce43d3c8); Frost and Frostfire re-tuned for Ice Lance 0.11 (b8b89d6a8) and re-simmed (98dc8871e); Phase 0 armor uses and item effects, empty weapon slot no swing (no report request affected); pass 50, 2026-11-23)
+
+Economy pass: the loop's shared run (20,000 iterations, report requests at the report race, 5518f4873 CLI), no full race re-sweep. "Published" is builds.json at 5518f4873. "Baseline" is the 8b5137c6d sweep at the report race (5k, seed 1). Rank in brackets is pass 49's.
+
+| # (pass 49) | Spec | Report race | DPS now | Published (builds.json) | Gap | Baseline 8b5137c6d |
+|---|---|---|---|---|---|---|
+| 1 (1) | Lone Wolf (hunter) | Night Elf | 1291.3 | 1291.2 | +0.1 | 1291.8 (-0.0%) |
+| 2 (2) | Marksmanship | Orc | 1199.2 | 1199.5 | -0.3 | 1201.7 (-0.2%) |
+| 3 (3) | Feral | Night Elf | 1186.2 | 1185.9 | +0.3 | 1186.0 (+0.0%) |
+| 4 (4) | Fury (two-hand) | Orc | 1131.6 | 1131.7 | -0.1 | 1113.4 (+1.6%) |
+| 5 (5) | Fury (dual wield) | Orc | 1115.7 | 1115.0 | +0.7 | 1104.6 (+1.0%) |
+| 6 (6) | Beast Mastery | Orc | 1111.4 | 1111.5 | -0.1 | 1115.5 (-0.4%) |
+| 7 (7) | Affliction | Undead | 1089.2 | 1089.0 | +0.2 | 1076.8 (+1.2%) |
+| 8 (8) | Arms | Orc | 1080.3 | 1080.5 | -0.2 | 1079.0 (+0.1%) |
+| 9 (9) | Enhancement | Orc | 1070.9 | 1070.1 | +0.8 | 1080.0 (-0.8%) |
+| 10 (10) | Destruction | Orc | 1069.2 | 1069.0 | +0.2 | 1069.1 (+0.0%) |
+| 11 (11) | Demonology | Orc | 1056.1 | 1056.2 | -0.1 | 1056.6 (-0.0%) |
+| 12 (12) | Fire | Human | 1053.0 | 1052.8 | +0.2 | 1053.8 (-0.1%) |
+| 13 (13) | Retribution | Undead | 1026.5 | 1026.4 | +0.1 | 1027.0 (-0.0%) |
+| 14 (14) | Survival | Orc | 1007.5 | 1007.7 | -0.2 | 1012.9 (-0.5%) |
+| 15 (15) | Frostfire | Human | 1007.3 | 1008.1 | -0.8 | 1065.7 (-5.5%) |
+| 16 (16) | Destruction Fire | Undead | 997.8 | 997.3 | +0.5 | 997.9 (-0.0%) |
+| 17 (17) | Elemental | Windshaper | 981.9 | 981.8 | +0.1 | 981.2 (+0.1%) |
+| 18 (18) | Arcane | Gnome | 962.7 | 962.1 | +0.6 | 963.6 (-0.1%) |
+| 19 (19) | Balance | Night Elf | 956.1 | 955.6 | +0.5 | 956.3 (-0.0%) |
+| 20 (20) | Shadow | Undead | 948.7 | 948.5 | +0.2 | 948.6 (+0.0%) |
+| 21 (21) | Rogue Combat Swords | Undead | 948.4 | 948.5 | -0.1 | 948.5 (-0.0%) |
+| 22 (22) | Rogue Seal Fate Swords | Undead | 943.0 | 942.9 | +0.1 | 942.6 (+0.0%) |
+| 23 (23) | Rogue Combat Daggers | Undead | 940.7 | 940.9 | -0.2 | 941.2 (-0.1%) |
+| 24 (24) | Rogue Seal Fate Daggers | Undead | 908.0 | 907.6 | +0.4 | 907.9 (+0.0%) |
+| 25 (25) | Rogue Subtlety | Night Elf | 875.4 | 875.5 | -0.1 | 875.6 (-0.0%) |
+| 26 (26) | Rogue Mutilate | Undead | 870.3 | 870.1 | +0.2 | 870.0 (+0.0%) |
+| 27 (27) | Frost | High Order | 838.6 | 838.4 | +0.2 | 945.0 (-11.3%) |
+| 28 (28) | Smite | Undead | 781.0 | 780.9 | +0.1 | 781.0 (+0.0%) |
+
+Top over bottom: 1.65x
+
+- Pass 50 (5518f4873, 2026-11-23). builds.json matches the shared run on 68 of 68 builds within 1.5 (largest gap 0.8): fairness-20261122-1 resolved by 6ce43d3c8 and 98dc8871e. No place changes against pass 49. The mage re-tune (talents and APL only, same race, consumables and buffs) lifts Frost 834.6 -> 838.6 and Frostfire 1006.0 -> 1007.3. The other sim changes (Phase 0 armor uses, item effects, empty weapon slot, APL wait guard) move no request: no shared leak.
+- Race (builds.json race table, 10k): Balance still High Order +3.7 to +6.1 (fairness-20261118-1 open). Below a finding: MM wolf / tallstrider pet variants Night Elf +1.6 / +1.8 over Orc (base MM keeps Orc), Fire Gnome +1.2 over Human, both near race-table noise.
+- Gear: audit1b 19/19 PASS.
+
+<details><summary>Previous §1 (7a6d1beb9, 2026-11-22)</summary>
+
+### 1 (superseded 2026-11-23, 5518f4873) Cross-spec table (master 7a6d1beb9: Ice Lance 0.11 of spell power (4192d6e49, user ruling 2026-11-22); Windfury Totem: Execute rolls twice, no Flurry charge or Bloodthrill off its swing (b7edf19bb); Wrack half-point ticks (3960dd1f6); no Maelstrom stack from the totem (840029bd8); Judgement of Wisdom on landed swings (bd7029410); hunter pet keeps its summon AP (051a21cd3); DPS Report re-sim of shaman and warrior (30314ad60, before the later fixes); pass 49, 2026-11-22)
 
 Economy pass: the loop's shared run (20,000 iterations, report requests at the report race, 7a6d1beb9 CLI), no full race re-sweep; Frost and Frostfire re-swept at every race (5k, seed 1). "Published" is builds.json (last re-sim 30314ad60). "Baseline" is the 8b5137c6d sweep at the report race (5k, seed 1). Rank in brackets is the 8b5137c6d table's.
 
@@ -45,6 +88,8 @@ Top over bottom: 1.65x
 - Findings: fairness-20261122-1 (high): builds.json lags these five classes on 28 of 68 builds; six specs change place (Fury 2H and Fury pass BM, Affliction passes Arms and Enhancement, Frostfire 11 -> 15, Frost 22 -> 27).
 - Race: Frost High Order 834.0 still best; Frostfire Human 1007.1 now best (High Order 1005.5). Balance: fairness-20261118-1 open, unchanged.
 - Gear: audit1b 19/19 PASS.
+
+</details>
 
 <details><summary>Previous §1 (8b5137c6d, 2026-11-22)</summary>
 
