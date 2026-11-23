@@ -27,7 +27,7 @@
     "shadow": {"req": "priest__shadow", "weapons": "any", "dir": "shadow_priest"},
     "smite": {"req": "priest__smite", "weapons": "any", "dir": "shadow_priest"},
     "rogue_combat_swords": {"req": "rogue__combat-swords", "weapons": "dual-wield", "dir": "rogue",
-      "start": [16707, 19491, 271955, 13340, 252483, 226830, 226828, 272395, 226827, 226831, 275976, 272408, 10455, 19289, 6622, 279261, 19107], "startEnchants": true},
+      "start": [279253, 15411, 12927, 13340, 252483, 226830, 226828, 272395, 226827, 226831, 19325, 275981, 10455, 19289, 6622, 279261, 280020], "startEnchants": true},
     "rogue_assassination": {"req": "rogue__mutilate", "weapons": "dual-wield", "mhTypes": "Dagger", "ohTypes": "Dagger", "dir": "rogue"},
     "rogue_subtlety": {"req": "rogue__subtlety", "weapons": "dual-wield", "mhTypes": "Dagger", "dir": "rogue"},
     "affliction": {"req": "warlock__affliction", "weapons": "any", "dir": "warlock"},
