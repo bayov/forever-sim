@@ -32,6 +32,8 @@ type HunterPet struct {
 
 	// Under Forever, the attack power inherited at the summon, kept while the pet is out.
 	summonAttackPower float64
+	// What the pet takes from the hunter's stats (makeStatInheritance).
+	inherit core.PetStatInheritance
 }
 
 func (hunter *Hunter) NewHunterPet() *HunterPet {
@@ -95,6 +97,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		hasOwnerCooldown: petConfig.SpecialAbility == FuriousHowl,
 	}
 	inherit := hunter.makeStatInheritance()
+	hp.inherit = inherit
 	hp.Pet = core.NewPet(petConfig.Name, &hunter.Character, hunterPetBaseStats, func(ownerStats stats.Stats) stats.Stats {
 		return hp.keepSummonStats(inherit(ownerStats))
 	}, true, false)
@@ -417,14 +420,26 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 // the pet inherits neither here (makeStatInheritance).
 // The summon is Enable, which snapshots the owner before it marks the pet enabled. The pet is enabled
 // at the reset, as theirs is: the owner's permanent buffs (raid buffs, consumables, Trueshot Aura) are
-// up, and what the APL casts before the pull, Aspect of the Hawk among it, is not. A pet the sim
-// dismisses and summons again takes a new snapshot.
+// up, and what the APL casts before the pull is not, except Aspect of the Hawk (summonedWithHawk).
+// A pet the sim dismisses and summons again takes a new snapshot.
 func (hp *HunterPet) keepSummonStats(inherited stats.Stats) stats.Stats {
 	if !hp.IsEnabled() {
 		hp.summonAttackPower = inherited[stats.AttackPower]
 	}
 	inherited[stats.AttackPower] = hp.summonAttackPower
 	return inherited
+}
+
+// The hunter summons the pet with their usual aspect up, since that's the one a player keeps on
+// (sensible default, the user's ruling of 2026-11-23; notes.md To Verify). So Aspect of the Hawk going
+// up or down before the pull, as the APL's prepull Aspect of the Hawk does, moves the summon's attack
+// power too: the pet takes 10% of the aspect's ranged attack power. In the fight it doesn't. Called
+// before the hunter's stat changes, so the pet's update picks up the new snapshot.
+func (hp *HunterPet) summonedWithHawk(sim *core.Simulation, rangedAttackPower float64) {
+	if hp == nil || !hp.IsEnabled() || sim.CurrentTime > 0 {
+		return
+	}
+	hp.summonAttackPower += hp.inherit(stats.Stats{stats.RangedAttackPower: rangedAttackPower})[stats.AttackPower]
 }
 
 type PetConfig struct {

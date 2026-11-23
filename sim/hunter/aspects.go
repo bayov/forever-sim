@@ -71,9 +71,11 @@ func (hunter *Hunter) registerAspectOfTheHawkSpell() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.pet.summonedWithHawk(sim, rap*hunter.AspectOfTheHawkAPMultiplier)
 			aura.Unit.AddStatDynamic(sim, stats.RangedAttackPower, rap*hunter.AspectOfTheHawkAPMultiplier)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			hunter.pet.summonedWithHawk(sim, -rap*hunter.AspectOfTheHawkAPMultiplier)
 			aura.Unit.AddStatDynamic(sim, stats.RangedAttackPower, -rap*hunter.AspectOfTheHawkAPMultiplier)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
