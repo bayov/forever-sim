@@ -325,9 +325,11 @@ func TestHealingFightBoundRanks(t *testing.T) {
 }
 
 // A share hits that part of the group a cast, the fraction a chance of one more: 0.375 of four
-// mages is one or two a cast, 1.5 on average, where hitting them all is 4 a cast.
+// mages is one or two a cast, 1.5 on average, where hitting them all is 4 a cast. Each hit is small
+// enough that no mage dies (with no healer, 100 a hit killed some late in the run hitting everyone,
+// which then counted fewer hits).
 func TestHealingFightRaidDamageShare(t *testing.T) {
-	every := &proto.RaidDamageEvent{School: proto.SpellSchool_SpellSchoolArcane, MinDamage: 100, MaxDamage: 100, Who: proto.RaidDamageEvent_NotTanks, EverySeconds: 2, FirstAt: 1}
+	every := &proto.RaidDamageEvent{School: proto.SpellSchool_SpellSchoolArcane, MinDamage: 40, MaxDamage: 40, Who: proto.RaidDamageEvent_NotTanks, EverySeconds: 2, FirstAt: 1}
 	part := googleProto.Clone(every).(*proto.RaidDamageEvent)
 	part.Share = 0.375
 	// The event's hits on the players (it always lands).

@@ -60,29 +60,51 @@ gen mage_arcane level60_arcane "blastFiller=75,blastClearcast=1,blastBuff=4,blas
 gen mage_fire level60_fire "scorchRefresh=9,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.25,wand=1"
 # Frostbolt to Ice Barrier (the launch realms' 2026-10-30 hotfix: Frigid Power 15% Frost damage for
 # a minute from each Ice Barrier, 5% more while the shield holds, Ice Lance 4 times the damage on a
-# Frozen target). Ice Barrier goes up before the pull and again when Frigid Power has under 6 sec
-# left, so Frigid Power never drops. Ice Lance goes on the last Fingers of Frost charge as the
-# Frostbolt completes (the charge is spent a spell batch after the cast, so the Frostbolt and the
-# Ice Lance both read the target as Frozen): +5 at 120 / 180 / 300 sec together over Ice Lance on
-# every charge, now that Ice Lance does 4 times the damage. The build has no Arcane Blast, so the
-# blastBuff knob adds nothing. No Evocation (the mana lasts). When a Frostbolt would not land
-# before the end (its cast plus 1 sec), Ice Lance instead. The wand only when nothing else can go.
-gen mage_frost level60_frost "iceLance=4,missileBarrage=1,fireBlastMana=0,evocationMana=0,evocationMinTime=90,blastBuff=3,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=2,iceBarrierRefresh=6,iceBarrierPrepull=1,wand=1"
+# Frozen target). Ice Barrier goes up before the pull and again when Frigid Power has under 2 sec
+# left (6 before 2026-11-22), so Frigid Power never drops. Ice Lance goes on the last Fingers of
+# Frost charge as the Frostbolt completes (the charge is spent a spell batch after the cast, so
+# the Frostbolt and the Ice Lance both read the target as Frozen): +5 at 120 / 180 / 300 sec
+# together over Ice Lance on every charge, now that Ice Lance does 4 times the damage. The build
+# has no Arcane Blast, so the blastBuff knob adds nothing. No Evocation (the mana lasts). When a
+# Frostbolt would not land before the end (its cast plus 1 sec), Ice Lance instead. The wand only
+# when nothing else can go.
+# Round of 2026-11-22 (Ice Lance's spell power coefficient is 0.11 under Forever, from 0.429, so it
+# hits about a quarter as hard; 834.6 at 180 sec after that change): Ice Lance stays on the last
+# charge as a Frostbolt completes (over 120 / 180 / 300 sec together, on the new talents: no Ice
+# Lance is -28, every charge -6, the last charge without waiting for the Frostbolt -0.1). The
+# talent search over the three together moved Arcane Concentration 2 and Arcane Meditation to
+# Missile Barrage 2 and Incineration 5 (050203203-5-253500230111301211), so Arcane Missiles takes
+# Missile Barrage's procs; the build still ends a 180 sec fight with 5000 mana. The knob search on
+# it then refreshes Ice Barrier with 2 sec of Frigid Power left, not 6 (+0.7). Together +3.9 /
+# +3.9 / +4.0 at 120 / 180 / 300 sec (seed 1, 40,000 iterations; +3.5 / +3.6 / +3.9 on seed
+# 7777). Fire Blast on cooldown still loses (-11 above 80% mana).
+gen mage_frost level60_frost "iceLance=4,missileBarrage=1,fireBlastMana=0,evocationMana=0,evocationMinTime=90,blastBuff=3,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=2,iceBarrierRefresh=2,iceBarrierPrepull=1,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 7 sec left on it, Pyroblast at 3
 # Heating Up stacks, Ice Lance on the last Fingers of Frost charge (ahead of Scorch and Pyroblast;
-# the first charge goes on a Frostfire Bolt, which the charge makes a Shatter crit), Frostfire Bolt.
-# Since 70425 every Fire Blast adds a Heating Up stack, so Fire Blast goes on cooldown above 80%
-# mana, and below that with the mana the fight can't use (above 70 a second of the fight left).
-# Evocation below 10% with more than 75 sec of the fight left. Once Evocation is spent or no longer
-# worth it (75 sec or less left, the same cutoff, so the two lines are one decision) and the mana is
-# under 30 a second of the fight left, rank 2 Frostfire Bolt (285 mana for 9% less damage). The
-# 2026-10-23 knob search (120, 180 and 300 sec together, after the Fingers of Frost batch timing)
-# moved Ice Lance to the last charge, Evocation from 20% and 45 sec, and the rank 2 line from 60 a
-# second: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets. No mana gems, for the Demonic
-# Rune. The rank 2 line read 60 sec while Evocation read 90 sec, so with 60 to 90 sec left and
-# Evocation ready neither went (full-rank bolts drained the mana, the wand finished); one cutoff
-# searched at 180 +- 20 sec (2026-10-28, 8 seeds x 2500): 70 to 90 tie there (+0.5 to +0.9), 60
-# loses 3.1, and 75 gains most at 210 / 240 sec (+10.2 / +7.4, 0 at 120 / 150 / 300). The on-use
-# trinket waits for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before
-# the end (its cast plus 1.5 sec), Ice Lance instead, and the wand when out of mana.
-gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=80,evocationMana=10,evocationMinTime=75,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1"
+# the first charge goes on a Frostfire Bolt, which the charge makes a Shatter crit), Frostfire
+# Bolt. Since 70425 every Fire Blast adds a Heating Up stack, so Fire Blast goes on cooldown above
+# 40% mana (80% until 2026-11-22), and below that with the mana the fight can't use (above 70 a
+# second of the fight left). Evocation below 10% with more than 75 sec of the fight left. Once
+# Evocation is spent or no longer worth it (75 sec or less left, the same cutoff, so the two lines
+# are one decision) and the mana is under 30 a second of the fight left, rank 2 Frostfire Bolt
+# (285 mana for 9% less damage). The 2026-10-23 knob search (120, 180 and 300 sec together, after
+# the Fingers of Frost batch timing) moved Ice Lance to the last charge, Evocation from 20% and 45
+# sec, and the rank 2 line from 60 a second: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed
+# sets. No mana gems, for the Demonic Rune. The rank 2 line read 60 sec while Evocation read 90
+# sec, so with 60 to 90 sec left and Evocation ready neither went (full-rank bolts drained the
+# mana, the wand finished); one cutoff searched at 180 +- 20 sec (2026-10-28, 8 seeds x 2500): 70
+# to 90 tie there (+0.5 to +0.9), 60 loses 3.1, and 75 gains most at 210 / 240 sec (+10.2 / +7.4,
+# 0 at 120 / 150 / 300). The on-use trinket waits for the 5th Fire Vulnerability stack. When a
+# Frostfire Bolt would not land before the end (its cast plus 1.5 sec), Ice Lance instead, and the
+# wand when out of mana.
+# Round of 2026-11-22 (Ice Lance's spell power coefficient is 0.11 under Forever, from 0.429;
+# 1005.8 at 180 sec after that change): Ice Lance is now worth little here (no Ice Lance is -3.6
+# over 120 / 180 / 300 sec together, every charge -17, as the Frostfire Bolt completes -1), but
+# it stays on the last charge ahead of Scorch and Pyroblast. Fire Blast goes on cooldown above 40%
+# mana, not 80%. The talent search over the three together then moved Burning Soul 3 (pushback)
+# to Incineration 5 (Fire Blast and Scorch crit; -5550000103013303-0235000311203002), and the knob
+# search on it kept every knob. Together +3.4 / +1.7 / +7.2 at 120 / 180 / 300 sec (seed 1,
+# 40,000 iterations; +3.5 / +1.8 / +7.3 on seed 7777). Leaving Fingers of Frost, Shatter and Ice
+# Lance for 12 Arcane points (Improved Channeling, Arcane Subtlety, Arcane Concentration or
+# Missile Barrage) is still 83 to 133 behind.
+gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=40,evocationMana=10,evocationMinTime=75,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1"
