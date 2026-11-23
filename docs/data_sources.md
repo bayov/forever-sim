@@ -134,11 +134,11 @@ report what the client says, so they rank with it when they show client data. Th
 - **Why two files:** the Forever client's ItemSparse on wago.tools has about 19,000 rows, and
   6,662 of db.json's 11,356 items aren't among them (most Classic items). So the Classic file
   stays, pinned, and the Forever one is laid over it: an item the Forever file has takes its
-  set and faction from there.
+  set, faction and class mask from there.
 - **Forever:** `python3 tools/sources/itemsparse.py <build>` writes
-  `assets/db_inputs/forever_client_items.csv` (ID, name, item level, Flags_1, PvP rank and
-  set, from the build's ItemSparse and ItemSet tables through `wago.py`) and
-  `forever_client_items.meta.json` with the build. Set IDs come from the ItemSet table's
+  `assets/db_inputs/forever_client_items.csv` (ID, name, item level, Flags_1, PvP rank,
+  set, damage type and class mask, from the build's ItemSparse and ItemSet tables through
+  `wago.py`) and `forever_client_items.meta.json` with the build. Set IDs come from the ItemSet table's
   member lists first, because it also lists Classic items ItemSparse lacks.
 - **Classic:** `assets/db_inputs/wago_db2_items.csv` (2024), the whole ItemSparse of
   `https://wago.tools/db2/ItemSparse/csv?build=1.15.3.55646`. Pinned, no fetcher.

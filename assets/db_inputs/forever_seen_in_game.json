@@ -1,5 +1,5 @@
 {
-"meta": {"build": "1.60.1.71037", "fetched": "2026-11-23T13:44Z", "source": "BayovCore in game (forever)", "tool": "bayovui/build/seen_items.py"},
+"meta": {"build": "1.60.1.71037", "fetched": "2026-11-23T15:45Z", "source": "BayovCore in game (forever)", "tool": "bayovui/build/seen_items.py"},
 "items": {
 "154": {"name": "Primitive Mantle", "ilvl": 1, "quality": 1, "stats": {}, "inventoryType": 4, "classID": 4, "subclassID": 0, "seen": "2026-10-18", "by": "Bayov"},
 "647": {"name": "Destiny", "ilvl": 57, "requiredLevel": 52, "quality": 4, "stats": {"Strength": 10}, "weaponDamageMin": 155, "weaponDamageMax": 233, "weaponSpeed": 3.6, "inventoryType": 17, "classID": 2, "subclassID": 8, "seen": "2026-11-21", "by": "Bayov"},

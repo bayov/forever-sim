@@ -35,7 +35,7 @@
 # A hunter can't: with no ranged weapon its DPS is NaN, nothing beats NaN, so the search swapped
 # nothing (2026-11-23). The hunters start from the set Beast Mastery's first search found from
 # timesaver.gg's Forever list (2026-11-20, open items, Eaglehorn Long Bow for its Core Marksman
-# Rifle), with the report's enchants. The second finger is empty, its pick had a random suffix. What follows on talents, starting gear and weapons is Enhancement's entry.
+# Rifle), with the report's enchants. The second finger is empty, its pick had a random suffix. The shoulders are empty too: Theramore Pauldrons are Alliance only (2026-11-23). What follows on talents, starting gear and weapons is Enhancement's entry.
 #
 # DRY_RUN=1 sims nothing. For each spec of SPEC (every spec in the table by default, or a comma
 # separated list) it writes what the search's pool would hold (-gear-pool-report) to
