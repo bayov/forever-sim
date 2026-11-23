@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "b48605aa38d1ab522b4f3f495dc75e160534a192"
+  "master": "c78d983aca33ba66a9f9e80c39cdc671daad4bd9"
  },
  "last_pass_at": "2026-11-23T12:51:07Z",
  "pass": 26,
@@ -8,5 +8,5 @@
  "baseline": "a6677362f",
  "note": "Pass 26 on 7e0a01a8d: only standards 42 (phase 0 gear availability) and phase 0 gear/db changes; no healer request item or sim code touched. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-23T12:51:36Z"
+ "checked_at": "2026-11-23T18:54:07Z"
 }

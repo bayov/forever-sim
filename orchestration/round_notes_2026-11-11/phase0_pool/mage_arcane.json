@@ -70,12 +70,6 @@
       "kind": "Chance on hit"
     },
     {
-      "id": 9372,
-      "name": "Sul'thraze the Lasher",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 9380,
       "name": "Jang'thraze the Protector",
       "slot": "mainhand",
@@ -134,12 +128,6 @@
       "name": "Heart of the Scale",
       "slot": "trinket1",
       "kind": "Use"
-    },
-    {
-      "id": 13348,
-      "name": "Demonshear",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
     },
     {
       "id": 13353,
@@ -415,7 +403,7 @@
     }
   ],
   "foreverNoTooltip": 308,
-  "unlisted": 709,
+  "unlisted": 703,
   "faction": "Alliance",
   "factionDropped": [
     {

@@ -14,8 +14,8 @@ type RipRankInfo struct {
 }
 
 // Rip under Forever (1.60.1.70338, wago.tools): rank 6 ticks for 15 plus 25.5 a combo
-// point (1.12 has 17 and 28), 10% less. The attack power part is left to the server, the
-// sim keeps 1.12's (see newRipSpellConfig).
+// point (1.12 has 17 and 28), 10% less. The attack power part is left to the server; the
+// sim takes wowsims/forever's log share (ripTickAPCoefficient).
 var ripRanks = []RipRankInfo{
 	{id: 1079, level: 20, dmgTickBase: 3, dmgTickPerCombo: 4.4},
 	{id: 9492, level: 28, dmgTickBase: 4, dmgTickPerCombo: 7.2},
@@ -26,6 +26,17 @@ var ripRanks = []RipRankInfo{
 }
 
 const RipTicks int32 = 6
+
+// ripTickAPCoefficient is the attack power share of a Forever Rip tick a combo point, every rank,
+// with the fifth point counted as the fourth. wowsims/forever's logs (builds 70862 and 70888,
+// after the November 2 notes' 25%) read the same share on every rank they reached: EV-0031 rank 1
+// (2026-11-07, levels 22 to 25, 17 ticks), EV-0032 rank 2 (2026-11-08 to 09, 139 of 139 ticks),
+// EV-0033 rank 3 (2026-11-08, 210 of 237 ticks), EV-0034 rank 4 (2026-11-10, 371 of 372 ticks)
+// and EV-0036 rank 5 (2026-11-12, 190 of 191 ticks, k 0.011365 to 0.011405; the share on all 5
+// points fits none of the 109 five-point ticks). Rank 6 at 60 is taken to carry it too (user
+// ruling 2026-11-22: a share measured from a Forever log wins; the earlier wait for a level 60
+// log is dropped). The sim had 0.01 × 1.25 = 0.0125.
+const ripTickAPCoefficient = 0.0114
 
 func (druid *Druid) registerRipSpell() {
 	// Add highest available Rip rank for level.
@@ -46,14 +57,17 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 
 	// The combo points the Rip went up with, per target.
 	comboPoints := map[int32]float64{}
-	// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
-	// The November 2 development notes raise the base points and the attack power part by about
-	// 25% (tuning_70753.go).
-	scale := core.TernaryFloat64(druid.Env.IsForever(), nov2BleedScale, 1)
+	// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5: 0.01 a tick a point.
+	// The November 2 development notes raise the base points by about 25% (tuning_70753.go).
+	// Under Forever the attack power share is ripTickAPCoefficient a tick a point, outside that
+	// scale, since it is measured after the notes.
+	forever := druid.Env.IsForever()
+	scale := core.TernaryFloat64(forever, nov2BleedScale, 1)
+	apPerPoint := core.TernaryFloat64(forever, ripTickAPCoefficient, 0.01)
 	tickDamage := func(target *core.Unit, spell *core.Spell) float64 {
 		cp := comboPoints[target.UnitIndex]
 		cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
-		return scale * (ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target))
+		return scale*(ripRank.dmgTickBase+ripRank.dmgTickPerCombo*cp) + apPerPoint*cpScaling*spell.MeleeAttackPower(target)
 	}
 
 	return core.SpellConfig{

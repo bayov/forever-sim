@@ -22,12 +22,12 @@ import (
 //
 // Server hotfix push 114097 (2026-11-17) sets the buff's ProcTypeMask from 4 to 20, melee auto
 // attacks and melee abilities (SpellAuraOptions 249144). Of the abilities only Heroic Strike and Cleave,
-// which take the swing's place, use a charge, once a cast however many targets a Cleave hits: in
-// wowsims/forever's EV-0138 log (build 70938) Whirlwind and Bloodthirst use none. Under the old mask
-// the sim already let Heroic Strike and Cleave use one, a charge for each target Cleave hit.
-//
-// Still an assumption (report assumption warr_rs_landed, one value, user ruling 2026-11-04): only landed
-// swings use a charge (the hit mask is server side, not in the data).
+// which take the swing's place, use a charge, once a cast, landed or not, however many targets a
+// Cleave hits, and each charge gives its 5 Rage. wowsims/forever's EV-0138 (2026-11-16, build 70938
+// with hotfixes to push 114115, a level 60 Fury warrior): Cleave 19 casts and Heroic Strike 3 at 1
+// a cast, on 1 or 2 targets; Whirlwind (12 casts), Bloodthirst (11) and Hamstring (6) none. A white
+// swing uses one only when it lands (report assumption warr_rs_landed, measured in the same log:
+// 106 of 106 landed swings, 0 of 22 missed), Windfury Totem's swing among them (14 charges).
 func (warrior *Warrior) registerRecklessSwingsCD() {
 	if !warrior.Talents.RecklessSwings {
 		return
@@ -37,7 +37,7 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 1329554})
 	healthCost := 0.25 * warrior.GetBaseStats()[stats.Health]
 
-	cleaveSpentAt := time.Duration(-1)
+	queuedSpentAt := time.Duration(-1)
 	warrior.RecklessSwingsAura = warrior.RegisterAura(core.Aura{
 		Label:     "Reckless Swings",
 		ActionID:  actionID,
@@ -45,18 +45,20 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 		MaxStacks: 4,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.SetStacks(sim, 4)
-			cleaveSpentAt = -1
+			queuedSpentAt = -1
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
-			// A Cleave's hits all land at its cast.
-			if warrior.Cleave != nil && spell == warrior.Cleave.Spell {
-				if cleaveSpentAt == sim.CurrentTime {
+			if warrior.isQueuedSwing(spell) {
+				// A Cleave's hits all land at its cast.
+				if queuedSpentAt == sim.CurrentTime {
 					return
 				}
-				cleaveSpentAt = sim.CurrentTime
+				queuedSpentAt = sim.CurrentTime
+			} else if !result.Landed() {
+				return
 			}
 			warrior.AddRage(sim, 5, rageMetrics)
 			aura.RemoveStack(sim)
