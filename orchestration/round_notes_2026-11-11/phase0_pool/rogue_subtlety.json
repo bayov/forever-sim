@@ -118,22 +118,10 @@
       "kind": "Use"
     },
     {
-      "id": 13399,
-      "name": "Gargoyle Shredder Talons",
-      "slot": "offhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 13515,
       "name": "Ramstein's Lightning Bolts",
       "slot": "trinket1",
       "kind": "Use"
-    },
-    {
-      "id": 15853,
-      "name": "Windreaper",
-      "slot": "offhand",
-      "kind": "Chance on hit"
     },
     {
       "id": 15867,

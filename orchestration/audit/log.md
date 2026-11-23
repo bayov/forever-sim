@@ -548,3 +548,5 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-23 12:51 | healer_fairness | pass 26 | master 7e0a01a8d9 | quiet | no changed items in healbench reqs
 2026-11-23 12:51 | tank_gear | pass 14 | master 7e0a01a8d9 | quiet | standards 42 only
 2026-11-23 12:51 | tank_fairness | pass 28 | master 7e0a01a8d9 | quiet | tank inputs unchanged
+2026-11-23 18:54 | consumables | pass 102 | master c78d983aca | quiet | Forever item procs only; no preset items or consumable values changed
+2026-11-23 18:54 | mechanics | pass 100 | master c78d983aca | quiet | 4 sim commits checked, 9 proc spells match client 71037

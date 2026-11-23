@@ -1,31 +1,39 @@
-# Mechanics pass 99 (2026-11-23, master 5518f4873)
+# Mechanics pass 100 (2026-11-23)
 
-Range 7a6d1beb9..5518f4873: 5 sim commits, 4 non-test sim files. No new client build (1.60.1.71037 still newest).
-No new Blizzard post. No daily-update commits to TASKS.md or the ledger. One new finding (low).
+Master b48605aa3..c78d983ac. Client 1.60.1.71037 still the newest (wago probe 300). Result: quiet.
 
 ## Get current
 
-| Source | Seen | Newer? |
+| Source | Newest read | New since pass 99 |
 |---|---|---|
-| Client | 1.60.1.71037 (`wago.py latest --probe 300`) | no |
-| Hotfix thread t/2403040 | last post 2026-11-21 00:18:29Z, post 1 edited 00:19:18Z | no |
-| Dev notes t/2360696 | last 2026-11-04 19:35Z, post 1 edited 2026-11-03 03:20Z | no |
-| Daily update | no TASKS.md / update_ledger.md commits, no forever-update merges | no |
+| Dev notes thread 2360696 | post 8, 2026-11-04 (post 1 edited 11-03) | none |
+| Hotfix thread 2403040 | post 14, 2026-11-21 (post 1 edited 11-21) | none |
+| Blue posts (Kaivax, Aggrend, Gnedi, Linxy, Brenoch) | Kaivax 2026-11-23, topic 2426335 | lockbox behaviour only, no combat mechanic |
+| Daily update | 0f1d8ebcd TASKS.md: process 71037 | already covered by pass 99 (Windfury 100 ms category CD folds into mechanics-20261118-1) |
 
-## Commits checked (client 1.60.1.71037, `sp.py`, SpellCategories, SpellCooldowns, ItemEffect)
+## Commits
 
-| Commit | Change | Verdict |
+| Commit | Area | Verdict |
 |---|---|---|
-| 79c688d0c | Empty weapon slot never swings (swingAt = NeverExpires); APL wait capped at NeverExpires | engine safety fix; no effect on any equipped weapon |
-| 078699747 | Axe of the Deep Woods: 18104 Wrath, bp 126 var 0.333 = 105-147 Nature, 1.7 PPM | damage matches tier 1; PPM from wowsims/forever's client store (client has no PPM row) |
-| 65f071726 | Headmaster's Charge: 18264 +20 Int, 15 min, 10 min CD | matches (ItemEffect 99609, eff 35 party aura 29 bp 20); wearer-only is fine for a solo sim |
-| 592444f24 | Flame Wrath shield ignores self damage | correct; no reflect of own damage |
-| efe009fe1 | Helm of Fire 10578: 331 var 0.272, 33 per 2 s for 8 s, 5 min CD, 10 s cat 1141 | matches ItemEffect 98606 and SpellEffect |
-| efe009fe1 | Circle of Flame 17447: 79 var 0.5 per 1 s, 10 s, 5 min CD | matches ItemEffect 99200 |
-| efe009fe1 | Robe of the Archmage 18385: 500 var 0.5, 5 min CD | values match; but spell Category 30 with 60 s category recovery is missed: mechanics-20261123-1 |
+| aff06f74e | `sim/core/ruleset.go` unifyEquipHitAndCrit: items flagged KindLimitedCrit keep crit to their own kind (Blackhand's Breadth melee/ranged, Eye of the Beast spells) | Sound: the flagged crit is pulled out of the shared pool and added back to its own stat only; multipliers applied as for the pool. Item-level tooltip source, not a shared formula change. |
+| 6e128175e | `sim/core/racials.go` GetFaction -> RaceFaction | Refactor, behaviour unchanged. |
+| 57ea8cb6b | Weapon skills from the 70938 item sweep; 1% ranged-only hit on Marksman Bands, Stoneshatter, Sash of the Grand Hunt; not passed to the hunter pet | Matches the Biznick's Accurascope treatment; pet comment updated. |
+| 31e5077ab | Forever item effect values and 26 Forever-only procs (`sim/common/forever_item_procs.go`) | Spell data spot-checked on 71037, all match (table below). PPMs are not in the client (ProcChance 101, no SpellProcsPerMinute); the 1 PPM default is a stated assumption, not a finding. |
 
-## Conclusions
+## Spot check, client 1.60.1.71037 (`tools/audit/mechanics/sp.py`)
 
-- mechanics-20261123-1 (low): the robe's Replenish Mana shares spell category 30 (60 s) with mana gems,
-  healthstones and Demonic Rune; the sim gives it no shared cooldown. No preset wears it.
-- Open findings unchanged: 20261120-2, 20261118-2, 20261118-1 (shaman half), 20261113-2, 20261104-1.
+| Spell | Sim | Client |
+|---|---|---|
+| 17483 Shadow Bolt (Demonshear) | 150 + 34 / 2 s for 6 s | bp 150; aura 3 bp 34 per 2000, dur 6000 |
+| 18086 Firebolt (Force of Magma) | 182 | bp 182 |
+| 1299631 Smite (Lightcrest Hammer) | 105, x2 vs Undead | bp 105; eff 3 bp 2 |
+| 19874 Lightning Bolt (Shimmering Platinum Warhammer) | 252 | bp 252 |
+| 16415 Fireball (Taran Icebreaker) | 300 + 25 / 2 s for 8 s | bp 300; bp 25 per 2000, dur 8000 |
+| 1298499 Warblade of Caer Darrow | 27.72 | bp 27.72 |
+| 1300783 Slaughter (Angerforge's) | 109, x2 vs Orc/Troll | bp 109; eff 3 bp 2 |
+| 1315878 Flamebreak Talisman | 33 Agi (66 vs Elemental), 30 s, 5 min / 30 s category | aura 29 bp 33 x2, dur 30000, cd 300000 / 30000 |
+| 1291103 Serenity (Serenity Field) | 72 Spirit, 15 s | aura 29 misc 4 bp 72, dur 15000 |
+
+## Open findings
+
+None of the six open findings was touched by these commits; all stay open.

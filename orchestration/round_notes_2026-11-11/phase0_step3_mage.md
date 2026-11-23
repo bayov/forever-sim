@@ -1,117 +1,107 @@
-# Phase 0 step 3: mage (2026-11-23)
+# Phase 0 step 3: mage (2026-11-23, rerun on master 5e0a327)
 
-Arcane, Fire, Frost and Frostfire, each a full `bis_phase0.sh` search at 180s (uses at 90s). Frost and Frostfire
-ran after the re-tune (b8b89d6a8). Lists: `ui/mage/bis/level60_phase0_mage_<spec>.bis.json` and `.effects.json`.
+Arcane, Fire, Frost and Frostfire, each a full `bis_phase0.sh` search at 180s (uses at 90s), rerun per
+`briefs/phase0_rerun_1123.md` after the item data fixes (Dodge, Block, Parry and haste, Blackhand's Breadth and Eye of
+the Beast crit types, weapon skill, faction by race, standards 42 flips, the 26 Forever item procs and the weapon
+damage, resistance and class limit fixes). Lists: `ui/mage/bis/level60_phase0_mage_<spec>.bis.json` and
+`.effects.json`.
+
+## What changed from the earlier lists
+
+- **Arcane** (846.0 to 855.2 by the search's score): Knowledge of the Timbermaw and Rugged Mantle of the Timbermaw
+  (Tailoring, Meilosh) take waist and shoulder. Sorcerer's Robes replaces Robe of the Archmage to keep the 6pc. Star of
+  Mystaria for Lady Maye's Pendant, Songstone of Ironforge for Band of the Damned.
+- **Fire** (935.5 to 930.0): Blackhand's Breadth is out (its crit is melee and ranged only now), Chained Essence of
+  Eranikus takes its place. Rune Band of Wizardry (in by standards 42) replaces Watcher's Signet. Knowledge of the
+  Timbermaw on waist, Star of Mystaria 0.5 ahead of Orb of the Darkmoon.
+- **Frost** (733.8 to 740.4): Knowledge of the Timbermaw on waist, Rune Band of Wizardry for Channeler's Ring.
+- **Frostfire** (884.8 to 883.4): Blackhand's Breadth out for Chained Essence of Eranikus. Rune Band of Wizardry for
+  Watcher's Signet. Knowledge of the Timbermaw on waist.
+
+## PvP reputation check (b1bbe4347)
+
+b1bbe4347 made Exalted rewards infeasible and put the other AV and AB items in by standards 42. DRY_RUN on it, done
+by the warlock worker: the pools are unchanged (1275 items). No mage pick was an Exalted reward. Each newly included
+item that fits a mage was already ranked and loses to the pick: Stormpike Cloth Girdle 14 to 23 DPS, Crackling Staff 8
+to 30, Wand of Biting Cold (Frost) 2.8. So no slot was rerun and the lists and calibration stand.
 
 ## What changed on the way
 
-- **Forever's class sets weren't in any pool.** Sorcerer's Regalia 1671 (226929 to 226936) sits in the SoD item ID
-  range, and `isSodItem` drops those items unless `phase0_content.json` marks them `include`. The parent's ruling
-  (Forever's Dungeon Set 2 copies, like Five Thunders) added the 8 valid mage rows, with doubtful on head and chest
-  only. The first arcane and fire lists (no set) were 811 and 903. With the set they're 846 and 936.
-- Unlisted picks, now listed: Sparklance Wand (Bolt or Vitrix, seen in game Nov 21), Magister's Bindings
-  (Blackrock Spire trash), Spritecaster Cape (Houndmaster Grebmar, BRD, ranked only), Wand of Biting Cold (AV quest,
-  doubtful, ranked only).
-- The dry runs found no new unmodelled, hidden-stat or unlisted items, only a smaller pool from step 2's "out" tags.
-- Container fixes, not in the repo: no `jj` here (a shim gives the script the git hash for its sim stamp), and the
-  Go protos had to be generated (`make sim/core/proto/api.pb.go`). `ui/mage/bis/` didn't exist, so the first run's
-  writes failed and it ran again.
+- Golden Sandals (arcane spell power) was an unlisted arcane pick in the first, stopped run. It's a Tailoring 235 pattern
+  from Jim'bek for 90 Merchant's Favor (Honored), like the listed Black Sandals. It and the mage school siblings
+  (Netherfroth and Nethershine Cuffs, Fiery Waistcord, Frothing and Fiery Sandals) are now in `phase0_content.json`.
+  None of them is a pick on the final lists.
+- The dry runs on 5e0a327 found no new unmodelled or unlisted item worth a look: the Stormpike Insignias (no DPS
+  effect) and three hidden-stat items (below). Sul'thraze and Demonshear left the unmodelled list.
+- Container fixes, not in the repo: a `jj` shim for the sim stamp, protoc and protoc-gen-go for the Go protos.
 
 ## Picks
 
-The search's set scores (list `dps`) are 846.0 Arcane, 935.5 Fire, 733.8 Frost and 884.8 Frostfire. They run
-10 to 17 above a plain `-eval` of the same set (Calibration). The settings and APL are the same byte for byte, so the
-gap is in how the search scores a set (uses off at 180s plus use values at 90s), not in the gear.
+Calibration `-eval` matches each search's final line exactly (843.5, 921.1, 726.8, 872.4).
 
 Enchants (all four): Arcanum of Focus on head and legs, +6 spell power necklace, Mystic Rugged Armor Kit on chest
 and feet, Greater Spellpower on wrist, Spellblasting on the staff. Hands: Arcane Power for Arcane, the armor kit
 for the rest.
 
-| Slot | Arcane | Fire | Frostfire | Source |
-|---|---|---|---|---|
-| Head | Sorcerer's Crown (doubtful) | same | same | T0.5, end of the Valthalak chain |
-| Neck | Lady Maye's Pendant (doubtful) | Orb of the Darkmoon | Star of Mystaria | world drop / Faire 1200 tickets / Balnazzar |
-| Shoulder | Sorcerer's Mantle | same | same | T0.5, Anthion chain |
-| Back | Arcanoweave Cloak | same | same | Pix Xizzix, 75 Reals |
-| Chest | Robe of the Archmage | same | same | Tailoring 295, BRS pattern |
-| Wrist | Sorcerer's Bindings | same | same | T0.5, bracer quest |
-| Hands | Sorcerer's Gauntlets | same | same | T0.5, gloves and belt quest |
-| Waist | Belt of the Archmage | same | same | Tailoring 295, AH pattern |
-| Legs | Sorcerer's Leggings | same | same | T0.5, Anthion chain |
-| Feet | Sorcerer's Sandals | same | same | T0.5, Anthion chain |
-| Rings | Channeler's Ring, Band of the Damned | Channeler's Ring, Watcher's Signet of Brilliance (doubtful) | same as Fire | Pix 75 Reals / Vectus, Scholo / Watchers Revered |
-| Trinkets | Chained Essence of Eranikus, Eye of the Beast | Eye of the Beast, Blackhand's Breadth | same as Fire | ST quest / BRS quests |
-| Weapon | Headmaster's Charge | Elemental Mage Staff | same as Fire | Gandling, Scholo / world drop epic BoE |
-| Wand | Bonecreeper Stylus | Ritssyn's Wand of Bad Mojo | same as Fire | Gandling / Rivendare |
+| Slot | Arcane | Fire | Frost | Frostfire | Source |
+|---|---|---|---|---|---|
+| Head | Sorcerer's Crown (doubtful) | same | same | same | T0.5, end of the Valthalak chain |
+| Neck | Star of Mystaria | Star of Mystaria | Orb of the Darkmoon | Star of Mystaria | Balnazzar / Faire 1200 tickets |
+| Shoulder | Rugged Mantle of the Timbermaw (doubtful, hidden stats) | Sorcerer's Mantle | same as Fire | same as Fire | Meilosh, Tailoring / T0.5 |
+| Back | Arcanoweave Cloak | same | same | same | Pix Xizzix, 75 Reals |
+| Chest | Sorcerer's Robes (doubtful) | Robe of the Archmage | same as Fire | same as Fire | T0.5 / Tailoring 295, BRS pattern |
+| Wrist | Sorcerer's Bindings | same | same | same | T0.5, bracer quest |
+| Hands | Sorcerer's Gauntlets | same | same | same | T0.5, gloves and belt quest |
+| Waist | Knowledge of the Timbermaw (hidden stats) | same | same | same | Meilosh, Tailoring, 20 Winterfall Spirit Beads |
+| Legs | Sorcerer's Leggings | same | same | same | T0.5, Anthion chain |
+| Feet | Sorcerer's Sandals | same | same | same | T0.5, Anthion chain |
+| Rings | Channeler's Ring, Songstone of Ironforge | Channeler's Ring, Rune Band of Wizardry | Watcher's Signet of Brilliance (doubtful), Rune Band of Wizardry | same as Fire | Pix 75 Reals / Ironforge chain, Alliance / Valthalak / Watchers Revered |
+| Trinkets | Chained Essence of Eranikus, Eye of the Beast | same | same | same | ST quest / BRS quest |
+| Weapon | Headmaster's Charge | Elemental Mage Staff | same as Fire | same as Fire | Gandling, Scholo / world drop epic BoE |
+| Wand | Bonecreeper Stylus | Ritssyn's Wand of Bad Mojo | same as Fire | same as Fire | Gandling / Rivendare |
 
-Frost has the same armor as Frostfire, with Orb of the Darkmoon, Chained Essence of Eranikus and Eye of the Beast,
-Elemental Mage Staff and Ritssyn's Wand. Its rings are Watcher's Signet of Brilliance (doubtful) and Channeler's Ring.
+All four keep the Sorcerer's 6pc: Arcane wears the Robes in place of the Mantle, the rest wear the Mantle.
 
 ## Hand check flags
 
-- **Sorcerer's Crown** (doubtful, all four): worth 15 DPS to Arcane, 10 to Fire and 3 to Frost on its own, since it's
-  the sixth piece. Without it, the best 6pc (Spellweaver's Turban plus Sorcerer's Belt) sims 815.0 Arcane, 908.0
-  Fire, 716.4 Frost.
-- **Elemental Mage Staff** (Fire, Frost, Frostfire): Forever made it an epic, item level 61, random world drop, BoE.
-  It's 15.6 DPS over the next weapon for Fire, 20.6 for Frostfire and 6.2 for Frost. No AH price is known, so the 30g per
-  DPS cap can't check it. Arcane takes Headmaster's Charge.
-- **Lady Maye's Pendant** (Arcane, doubtful, no Forever source): Star of Mystaria is 1.7 behind.
-- **Watcher's Signet of Brilliance** (Fire, Frost, Frostfire, doubtful, no rep source found): Flaming Band of
-  Intellect is 1.7 behind for Fire, even for Frostfire.
-- **Orb of the Darkmoon** (Fire, Frost): needs a Faire week (next Dec 7 to 14).
-- **Nacreous Shell Necklace** beats every neck pick by 0.7 to 2.3, but 217g per DPS is over the cap.
-- Uses and procs: Chained Essence of Eranikus (Arcane) is modelled. None of the picks have an unmodelled effect or
-  hidden stats. The Sorcerer's 5pc (when struck) isn't modelled and doesn't matter for DPS.
-- Robe of the Archmage and Belt of the Archmage are BoP tailoring: a non-tailor loses them. Sorcerer's Robes and
-  Belt are the set's own fallbacks.
-
-## Set check
-
-Each spec's picks at 180s, 10000 iterations, with set pieces swapped out for each slot's best non-set item
-(Spellweaver's Turban, or Eye of Flame (doubtful) for Frostfire, on head, Mantle of the Timbermaw (doubtful) on
-shoulder, the next legs and feet).
-
-| | 6pc | 4pc | 2pc |
-|---|---|---|---|
-| Arcane | 830.4 | 814.3 | 803.4 |
-| Fire | 918.2 | 909.4 | 884.2 |
-| Frostfire | 874.9 | 860.9 | 835.4 |
-| Frost (first search took 2pc) | 719.7 | 715.8 | 718.1 |
-| Frost 6pc without the Crown (Sorcerer's Belt) | 716.4 | | |
-
-Frost's first search stopped at 2 pieces (730.8 by its score, 718.1 by `-eval`), since a 4pc is worth less than
-the 2pc picks for a frost mage who never runs out of mana. Frost now starts from the 6pc set (`start` in
-`phase0_specs.json`) and its search kept all 6 (733.8 by its score, 719.7 by `-eval`). The 1.6 DPS comes from the
-6pc's +23 spell power and needs the doubtful Crown.
+- **Knowledge of the Timbermaw** (all four) and **Rugged Mantle of the Timbermaw** (Arcane): Forever still hides
+  their stats, so the search uses the SoD values (25 and 27 spell power). The belt is 7.3 to 10.3 over Belt of the
+  Archmage. If Forever's numbers are lower, Belt of the Archmage is the fallback. Both need Tailoring, which the
+  report builds have. The Mantle is doubtful (Loom blueprint unseen), 6.3 over Mantle of the Timbermaw for Arcane.
+- **Sorcerer's Crown** (doubtful, all four) and **Sorcerer's Robes** (doubtful, Arcane): as before, the end of the
+  Valthalak chain. Robe of the Archmage is 5.2 behind for Arcane.
+- **Rune Band of Wizardry** (Fire, Frost, Frostfire): Lord Valthalak, in by standards 42. Arcane has it 0.03 behind
+  Songstone.
+- **Watcher's Signet of Brilliance** (Frost, doubtful, no rep source found): Channeler's Ring is 0.06 behind.
+- **Elemental Mage Staff** (Fire, Frost, Frostfire): epic BoE world drop, no AH price known.
+- **Orb of the Darkmoon** (Frost): needs a Faire week (next Dec 7 to 14). Star of Mystaria is 1.9 behind.
+- **Songstone of Ironforge** (Arcane): Alliance only. The report's race is Alliance, and Horde gets Eye of Orgrimmar.
+- **Nacreous Shell Necklace** and **Warden's Signet of Brilliance** beat some picks by up to 2.8 but are infeasible
+  (cost cap, Exalted).
+- Uses and procs: Chained Essence of Eranikus is modelled. No pick has an unmodelled effect.
 
 ## Public lists
 
-No public Arcane or Frostfire list. Fire lists found (the fetch tool's summaries, not read directly):
+No public Arcane, Frost or Frostfire list. Fire lists (the fetch tool's summaries from the earlier pass):
 
-- conquestcapped.com, Forever, T0.5: our Fire list matches it on head, shoulder, wrist, hands, legs, feet, back,
-  chest, waist, Channeler's Ring and Eye of the Beast. Differences: Rune Band of Wizardry and Sageblade are "out" in
-  our tags (Valthalak, and world boss plans). Nacreous Shell Necklace is over our cost cap. Weakness Analyzer ranks
-  6.5 behind Blackhand's Breadth. They use Sageblade plus Obsidian Bauble, we use Elemental Mage Staff.
+- conquestcapped.com, Forever, T0.5: our Fire list now matches it on Rune Band of Wizardry too, besides head,
+  shoulder, wrist, hands, legs, feet, back, chest, Channeler's Ring and Eye of the Beast. Differences: Sageblade
+  (world boss plans, out), Nacreous Shell Necklace (over our cost cap), Belt of the Archmage (Knowledge of the
+  Timbermaw beats it by 7.3 here, on hidden stats), Elemental Mage Staff for Sageblade plus Obsidian Bauble.
 - mythicsim.com, Forever, BRS focus: Spellweaver's Turban and Mantle of the Timbermaw lose to the 6pc. Dryad's Wrist
-  Bindings (WSG exalted) and Don Rodrigo's Band (AV exalted) are infeasible in our tags. Gloves of Spell Mastery is
-  "out" (raid pattern). Pendant of Celerity and Rune Band of Wizardry are "out". Same staff as ours.
-- noobtoboss.com, generic Classic: older choices (Hands of Power, Skyshroud Leggings, Clutch of Andros), all ranked
-  well below the set pieces here.
-
-One thing to check: Rune Band of Wizardry and Pendant of Celerity are tagged "out" as Dungeon Set 2 chain items
-(Lord Valthalak). If Forever's T0.5 chain is open, Valthalak may be too.
+  Bindings and Don Rodrigo's Band are Exalted (infeasible). Gloves of Spell Mastery is a raid pattern. Same staff.
+- noobtoboss.com, generic Classic: older choices, all well below the set pieces here.
 
 ## Calibration
 
-Report build at 180s, 10000 iterations, `rotopt -eval`, the Phase 0 set against the report's synthetic gear. The
-synthetic numbers match the published ones (Arcane 962.9 against 962.3).
+Report build at 180s, 10000 iterations, `rotopt -eval`, the Phase 0 set against the report's synthetic gear.
 
-| Spec | Phase 0 | Synthetic | Gap |
-|---|---|---|---|
-| Arcane | 830.4 | 962.9 | -132.5 (-13.8%) |
-| Fire | 918.2 | 1052.8 | -134.6 (-12.8%) |
-| Frost | 719.7 | 838.5 | -118.8 (-14.2%) |
-| Frostfire | 874.9 | 1007.4 | -132.5 (-13.2%) |
+| Spec | Phase 0 | Synthetic | Gap | Earlier Phase 0 |
+|---|---|---|---|---|
+| Arcane | 843.5 | 962.9 | -119.4 (-12.4%) | 830.4 |
+| Fire | 921.1 | 1052.8 | -131.7 (-12.5%) | 918.2 |
+| Frost | 726.8 | 838.5 | -111.7 (-13.3%) | 719.7 |
+| Frostfire | 872.4 | 1007.4 | -135.0 (-13.4%) | 874.9 |
 
-The synthetic Phase 1 gear sits 13 to 14% above the Phase 0 sets for every mage spec, so the specs are ranked about
-the same either way.
+The synthetic Phase 1 gear sits 12 to 13% above the Phase 0 sets for every mage spec, so the specs rank the same
+either way.
