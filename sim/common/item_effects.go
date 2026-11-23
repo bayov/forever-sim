@@ -281,29 +281,49 @@ func init() {
 	// https://www.wowhead.com/classic/item=13246/argent-avenger
 	// Chance on hit: Increases Attack Power against Undead by 200 for 10 sec.
 	// 1 PPM from Armaments Discord
+	// Forever's 17352 gives everyone 100 attack power and 100 ranged attack power for 10 sec, and
+	// 100 more attack power against Undead. The sword also has a lasting 12 attack power against
+	// Undead (client 1.60.1.71037 ItemSparse: stat 128 at share 8000, beside its 14 Attack Power
+	// at share 9333).
 	core.RegisterItemConditions(ArgentAvenger, core.MobTypeCondition(proto.MobType_MobTypeUndead))
 	itemhelpers.CreateWeaponProcAura(ArgentAvenger, "Argent Avenger", 1.0, func(character *core.Character) *core.Aura {
 		matchingTargets := core.FilterSlice(
 			character.Env.Encounter.TargetUnits,
 			func(unit *core.Unit) bool { return unit.MobType == proto.MobType_MobTypeUndead },
 		)
+		forever := character.Env.IsForever()
+		vsUndead := core.TernaryFloat64(forever, 100, 200)
+		addVsUndead := func(bonus float64) {
+			for _, target := range matchingTargets {
+				for _, at := range character.AttackTables[target.UnitIndex] {
+					at.BonusAttackPowerTaken += bonus
+				}
+			}
+		}
+		allStats := stats.Stats{stats.AttackPower: 100, stats.RangedAttackPower: 100}
+
+		if forever {
+			core.MakePermanent(character.GetOrRegisterAura(core.Aura{
+				Label:    "Argent Avenger vs Undead",
+				OnGain:   func(aura *core.Aura, sim *core.Simulation) { addVsUndead(12) },
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) { addVsUndead(-12) },
+			}))
+		}
 
 		return character.GetOrRegisterAura(core.Aura{
 			ActionID: core.ActionID{SpellID: 17352},
 			Label:    "Argent Avenger",
 			Duration: time.Second * 10,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				for _, target := range matchingTargets {
-					for _, at := range character.AttackTables[target.UnitIndex] {
-						at.BonusAttackPowerTaken += 200
-					}
+				addVsUndead(vsUndead)
+				if forever {
+					character.AddStatsDynamic(sim, allStats)
 				}
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				for _, target := range matchingTargets {
-					for _, at := range character.AttackTables[target.UnitIndex] {
-						at.BonusAttackPowerTaken -= 200
-					}
+				addVsUndead(-vsUndead)
+				if forever {
+					character.AddStatsDynamic(sim, allStats.Invert())
 				}
 			},
 		})
@@ -851,8 +871,9 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=14487/bonechill-hammer
 	// Chance on hit: Blasts a target for 90 Frost damage.
-	// 1 PPM from Armaments Discord
-	itemhelpers.CreateWeaponCoHProcDamage(BonechillHammer, "Bonechill Hammer", 1.0, 18276, core.SpellSchoolFrost, 90, 0, 0, core.DefenseTypeMagic)
+	// 1 PPM from Armaments Discord. Forever's Frost Blast (18276) deals 105 (client 1.60.1.71037).
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(BonechillHammer, "Bonechill Hammer", 1.0, 18276, core.SpellSchoolFrost,
+		[2]float64{90, 0}, [2]float64{105, 0}, 0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=17076/bonereavers-edge
 	// Chance on hit: Your attacks ignore 700 of your enemies' armor for 10 sec. This effect stacks up to 3 times.
@@ -1125,8 +1146,9 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=10696/enchanted-azsharite-felbane-sword
-	// Equip: +33 Attack Power when fighting Demons.
-	core.NewMobTypeAttackPowerEffect(EnchantedAzshariteSword, []proto.MobType{proto.MobType_MobTypeDemon}, 33)
+	// Equip: +33 Attack Power when fighting Demons. Forever's is 15 (client 1.60.1.71037
+	// ItemSparse: stat 127 at share 13636, beside its 18 Attack Power at share 16363).
+	core.NewMobTypeAttackPowerEffectForever(EnchantedAzshariteSword, []proto.MobType{proto.MobType_MobTypeDemon}, 33, 15)
 
 	// https://www.wowhead.com/classic/item=18202/eskhandars-left-claw
 	// Chance on hit: Slows enemy's movement by 60% and causes them to bleed for 150 damage over 30 sec.
@@ -1225,8 +1247,9 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=18310/fiendish-machete
-	// Equip: +36 Attack Power when fighting Elementals.
-	core.NewMobTypeAttackPowerEffect(FiendishMachete, []proto.MobType{proto.MobType_MobTypeElemental}, 36)
+	// Equip: +36 Attack Power when fighting Elementals. Forever's is 18 (client 1.60.1.71037
+	// ItemSparse: stat 126 at share 12857, the same as its 18 Attack Power).
+	core.NewMobTypeAttackPowerEffectForever(FiendishMachete, []proto.MobType{proto.MobType_MobTypeElemental}, 36, 18)
 
 	// https://www.wowhead.com/classic/item=870/fiery-war-axe
 	// Forever: Fireball (18796) is 262 with variance 0.239, 231 to 293, and 20 every 2 sec for 6 sec
@@ -1369,8 +1392,13 @@ func init() {
 	// https://www.wowhead.com/classic/item=14024/frightalon
 	// Chance on hit: Lowers all attributes of target by 10 for 1 min.
 	// TODO: Proc rate assumed and needs testing
+	// Forever's 19755 only makes the target's fears last 25% longer (aura 232 in client
+	// 1.60.1.71037), so it does nothing there.
 	core.NewItemEffect(Frightalon, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		if character.Env.IsForever() {
+			return
+		}
 		procMask := character.GetProcMaskForItem(Frightalon)
 
 		debuffAuraArray := character.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
@@ -2150,7 +2178,9 @@ func init() {
 		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=12709/pips-skinner
-	core.NewMobTypeAttackPowerEffect(PipsSkinner, []proto.MobType{proto.MobType_MobTypeBeast}, 45)
+	// +45 Attack Power when fighting Beasts. Forever's is 30 (client 1.60.1.71037 ItemSparse: stat
+	// 131 at share 20000, beside its 20 Attack Power at share 13333).
+	core.NewMobTypeAttackPowerEffectForever(PipsSkinner, []proto.MobType{proto.MobType_MobTypeBeast}, 45, 30)
 
 	// https://www.wowhead.com/classic/item=18816/perditions-blade
 	// Chance on hit: Blasts a target for 40 to 56 Fire damage.
@@ -3070,20 +3100,28 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=11920/wraith-scythe
 	// Chance on hit: Steals 45 life from target enemy.
+	// Forever's Drain Life (16414) steals 49 with no spell power coefficient, and twice as much
+	// from Undead (effect 2, client 1.60.1.71037).
+	core.RegisterItemConditions(WraithScythe, core.MobTypeCondition(proto.MobType_MobTypeUndead))
 	itemhelpers.CreateWeaponProcSpell(WraithScythe, "Wraith Scythe", 1.0, func(character *core.Character) *core.Spell {
 		actionID := core.ActionID{SpellID: 16414}
 		healthMetrics := character.NewHealthMetrics(actionID)
+		forever := character.Env.IsForever()
 
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:         actionID,
 			SpellSchool:      core.SpellSchoolShadow,
 			DefenseType:      core.DefenseTypeMagic,
 			ProcMask:         core.ProcMaskEmpty,
-			BonusCoefficient: 0.3,
+			BonusCoefficient: core.TernaryFloat64(forever, 0, 0.3),
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				result := spell.CalcAndDealDamage(sim, target, 45, spell.OutcomeAlwaysHit)
+				damage := 45.0
+				if forever {
+					damage = core.TernaryFloat64(target.MobType == proto.MobType_MobTypeUndead, 98, 49)
+				}
+				result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeAlwaysHit)
 				character.GainHealth(sim, result.Damage, healthMetrics)
 			},
 		})
@@ -4078,8 +4116,12 @@ func init() {
 	// https://www.wowhead.com/classic/item=22321/heart-of-wyrmthalak
 	// Equip: Chance to bathe your melee target in flames for 120 to 180 Fire damage.
 	// TODO: Proc rate assumed from a wowhead comment and needs testing
+	// Forever's Flame Lash (27655) deals 140 with variance 0.4 (112 to 168), procs from melee and
+	// ranged attacks, and deals three times as much to Orcs (27656 effect 2, client 1.60.1.71037).
+	core.RegisterItemConditions(HeartOfWyrmthalak, core.ConditionVsOrcsAndOgres)
 	core.NewItemEffect(HeartOfWyrmthalak, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		forever := character.Env.IsForever()
 		spell := character.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 27656},
 			SpellSchool:      core.SpellSchoolFire,
@@ -4088,14 +4130,22 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamage(sim, target, sim.Roll(120, 180), spell.OutcomeMagicHitAndCrit)
+				if !forever {
+					spell.CalcAndDealDamage(sim, target, sim.Roll(120, 180), spell.OutcomeMagicHitAndCrit)
+					return
+				}
+				damage := sim.Roll(112, 168)
+				if target.MobFamily == proto.MobFamily_MobFamilyOrc {
+					damage *= 3
+				}
+				spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:              "Heart of Wyrmthalak Trigger",
 			Callback:          core.CallbackOnSpellHitDealt,
 			Outcome:           core.OutcomeLanded,
-			ProcMask:          core.ProcMaskMelee,
+			ProcMask:          core.Ternary(forever, core.ProcMaskMeleeOrRanged, core.ProcMaskMelee),
 			SpellFlagsExclude: core.SpellFlagSuppressEquipProcs,
 			PPM:               0.4,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
@@ -4587,20 +4637,24 @@ func init() {
 	//   defensive use.
 
 	// https://www.wowhead.com/classic/item=23078/gauntlets-of-undead-slaying
-	// +60 Attack Power when fighting Undead.
-	core.NewMobTypeAttackPowerEffect(GauntletsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60)
+	// +60 Attack Power when fighting Undead. Forever's is 30 (client 1.60.1.71037 ItemSparse:
+	// stat 128 at share 11111, the same as its 30 Attack Power).
+	core.NewMobTypeAttackPowerEffectForever(GauntletsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60, 30)
 
 	// https://www.wowhead.com/classic/item=23081/handwraps-of-undead-slaying
-	// +60 Attack Power when fighting Undead.
-	core.NewMobTypeAttackPowerEffect(HandwrapsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60)
+	// +60 Attack Power when fighting Undead. Forever's is 30 (client 1.60.1.71037 ItemSparse:
+	// stat 128 at share 11111, the same as its 30 Attack Power).
+	core.NewMobTypeAttackPowerEffectForever(HandwrapsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60, 30)
 
 	// https://www.wowhead.com/classic/item=23082/handguards-of-undead-slaying
-	// +60 Attack Power when fighting Undead.
-	core.NewMobTypeAttackPowerEffect(HandguardsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60)
+	// +60 Attack Power when fighting Undead. Forever's is 30 (client 1.60.1.71037 ItemSparse:
+	// stat 128 at share 11111, the same as its 30 Attack Power).
+	core.NewMobTypeAttackPowerEffectForever(HandguardsOfUndeadSlaying, []proto.MobType{proto.MobType_MobTypeUndead}, 60, 30)
 
 	// https://www.wowhead.com/classic/item=23084/gloves-of-undead-cleansing
-	// Increases damage done to Undead by magical spells and effects by up to 35.
-	core.NewMobTypeSpellPowerEffect(GlovesOfUndeadCleansing, []proto.MobType{proto.MobType_MobTypeUndead}, 35)
+	// Increases damage done to Undead by magical spells and effects by up to 35. Forever's is 18
+	// (client 1.60.1.71037 ItemSparse: stat 136 at share 6666, the same as its 18 spell power).
+	core.NewMobTypeSpellPowerEffectForever(GlovesOfUndeadCleansing, []proto.MobType{proto.MobType_MobTypeUndead}, 35, 18)
 
 	// https://www.wowhead.com/classic/item=23085/robe-of-undead-cleansing
 	// Increases damage done to Undead by magical spells and effects by up to 48.
