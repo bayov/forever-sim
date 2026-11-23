@@ -797,6 +797,7 @@
   "21531": {"avail": "doubtful", "name": "Drake Tooth Necklace", "include": true, "note": "Quest: The Nightmare Manifests"},
   "21532": {"avail": "doubtful", "name": "Drudge Boots", "include": true, "note": "Quest: The Nightmare Manifests"},
   "21563": {"avail": "infeasible", "name": "Don Rodrigo's Band", "note": "Frostwolf Exalted · AV queue unconfirmed"},
+  "21594": {"avail": "out", "name": "Bracers of the Fallen Son", "note": "Item level 88 BoP, Classic Ahn'Qiraj raid loot · no Forever source"},
   "22095": {"avail": "out", "name": "Bindings of The Five Thunders", "note": "Quest: An Earnest Proposition · needs Molten Core T1"},
   "22096": {"avail": "out", "name": "Boots of The Five Thunders", "note": "Quest: Anthion's Parting Words · needs Molten Core T1"},
   "22097": {"avail": "out", "name": "Coif of The Five Thunders", "note": "Quest: Saving the Best for Last · needs Molten Core T1"},
