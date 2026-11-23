@@ -1,26 +1,18 @@
-# tank_fairness pass 26: 2026-11-22, master 7a6d1beb9
+# tank_fairness pass 27: 2026-11-23, master 5518f4873
 
-Due: 8 watched files changed since 8b5137c6d: `sim/core/debuffs.go` (Judgement of Wisdom: under Forever a missed, dodged
-or parried white swing no longer pays, wowsims/forever EV-0018), `sim/core/attack.go` (a test helper),
-`sim/paladin/item_sets_pve.go` (Soulforge 4 + Lightforge 4 share Crusader's Wrath), `sim/shaman/flame_shock.go` (GCD haste
-under Forever), `sim/shaman/talents.go` (no Maelstrom stack off Windfury Totem's swing), `sim/warrior/{deep_wounds,execute,
-talents}.go` (Deep Wounds per hand and without the warrior's damage bonuses, no bleed from Thunder Clap crits; Execute
-rolls Windfury twice and refunds nothing when avoided; no Bloodthrill or Flurry charge off the totem's swing).
-No change to `tools/tankbench`, `tools/encounters`, the tank requests, the tank UIs or `docs/tank_*.md`. Quiet: no new finding.
+Due: 1 watched file changed since 7a6d1beb9: `sim/core/attack.go`, a guard so a weapon attack with no weapon in the slot
+(SwingSpeed 0, e.g. a hunter with an empty ranged slot) never swings instead of coming due forever. The rest of the range
+is mage re-tunes, a Phase 0 item ban (Bracers of the Fallen Son) and a warrior DPS item test. No change to
+`tools/tankbench`, `tools/encounters`, the tank requests, the tank UIs, `docs/tank_*.md` or any tank class package.
+Quiet: no new finding.
 
 ## Method
 
-Built tankbench at 7a6d1beb9 (`make items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on all 13
-requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against the baseline: the 21
-warrior rows identical to the byte; paladin, bear and Warden rows moved within noise. Baseline refreshed (84 rows).
-
-Fairness of the changes:
-- Judgement of Wisdom is on every tank request (`judgementOfWisdom: true` in all 12), so the Forever miss rule hits the
-  two mana tanks alike: paladin TPS -3 to -5 on every boss and weight (about 0.3%, less mana), Warden TPS -1 to -4. The
-  bear and Warden score moves are the RNG stream shifting (fewer JoW rolls), all within 2 sigma.
-- The warrior changes don't reach the presets: the three warrior talent strings take no Deep Wounds, the APLs cast no
-  Execute, and the rows are identical, so Windfury, Flurry and Bloodthrill rules leave them as they were.
-- No Warden APL casts Flame Shock; no tank wears Soulforge or Lightforge.
+Built tankbench at 5518f4873 (`make proto items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on all
+requests x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py <dir> --tsv` against the baseline: all
+84 preset rows identical to the byte (the legacy `warrior_protection.json` rows, finding 20261104-5, are left out of the
+baseline as before). Every tank preset wields a main hand and none has a ranged attack loop that reaches the guard, so the
+change can't touch them. Baseline unchanged. Ranking and the tables below are pass 26's, still current.
 
 ## Ranking (six-boss mean, own weight, seed 1)
 

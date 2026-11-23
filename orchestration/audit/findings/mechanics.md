@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261123-1: Robe of the Archmage's Replenish Mana shares the 60 s spell category cooldown with mana gems, healthstones and Demonic Rune; the sim gives it none
+- severity: low (estimate, not measured: no preset or gear set wears item 14152; it only touches mage builds the Phase 0 gear search tries, where pressing the robe can delay a mana gem or rune by up to 60 s)
+- affects: mage (any build wearing Robe of the Archmage); shared item code
+- found: 2026-11-23, master 5518f4873
+- evidence: sim/common/forever_armor_uses.go (efe009fe1) says "no category cooldown, so it doesn't share one with mana gems or runes", reading only ItemEffect 99905 (5 min, SpellCategoryID 0). But client 1.60.1.71037 SpellCategories gives spell 18385 Category 30 (row 75807), and SpellCooldowns gives it CategoryRecoveryTime 60000 (row 55362), the same category and 60 s as the gems' Replenish Mana 10052/10057/10058, the Healthstones (5720, 5723, 6262, 6263, 11732, 23474-23477) and Demonic Rune 16666. The mage gems already model that category through GetConjuredCD() (sim/mage/mana_gem.go:60-65). Tier 1.
+- proposed fix: in the robe's CastConfig add `SharedCD: core.Cooldown{Timer: character.GetConjuredCD(), Duration: time.Minute}` and fix the comment. The conjured timer is one timer, so after a gem (2 min item category) the robe would wait 2 min instead of 1; acceptable, or give the robe its own check of the timer.
+- needs: orchestrator fix
+
 ### mechanics-20261120-2: Client 1.60.1.71037 extends the rogue Tier 1 5-piece cost cut to Death Mark; the sim cuts only Eviscerate
 - severity: low (estimate, not measured: Subtlety, the only Level 60 rogue preset that casts Death Mark, casts it about 9.5 times in 180 s, so 5 Energy each is about 48 Energy, about 1.4 Hemorrhages, roughly +0.3% to +0.4% DPS; the other five rogue presets never cast it)
 - affects: rogue (Subtlety; any build wearing 5 pieces of Grimstitch Armor or the synthetic Phase 1 sets that casts Death Mark)
