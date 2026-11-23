@@ -16,6 +16,8 @@ const (
 	itemSetHeader = "ItemSet"
 	// The weapon's damage school, in the game files' order (DamageTypeSchool).
 	damageTypeHeader = "DamageType"
+	// The classes that can wear the item, as a class mask (-1 for all).
+	allowableClassHeader = "AllowableClass"
 
 	flag1AllianceOnly = 0x6002
 	flag1HordeOnly    = 0x6001
@@ -27,6 +29,34 @@ type WagoDbItem struct {
 	// Only an item with an ItemSparse row has a damage type.
 	DamageType    int
 	HasDamageType bool
+	// The ItemSparse class mask, 0 when the row has none.
+	ClassMask int
+}
+
+// The class bits of the nine classes Classic has. A mask with all of them limits nothing.
+const allClassesMask = int(ClassMaskWarrior | ClassMaskPaladin | ClassMaskHunter | ClassMaskRogue | ClassMaskPriest |
+	ClassMaskShaman | ClassMaskMage | ClassMaskWarlock | ClassMaskDruid)
+
+// ClassAllowlist is the item's class limit from its ItemSparse class mask, or nil when the
+// mask lets every class wear it (-1, 0 or a mask with all nine).
+func (item WagoDbItem) ClassAllowlist() []proto.Class {
+	if item.ClassMask <= 0 || item.ClassMask&allClassesMask == allClassesMask {
+		return nil
+	}
+	return WowheadItem{ClassMask: uint16(item.ClassMask & allClassesMask)}.getClassRestriction()
+}
+
+// parseClassMask reads an AllowableClass cell, which is blank for an item only the ItemSet
+// table lists.
+func parseClassMask(item *WagoDbItem, cell string, row []string) {
+	if cell == "" {
+		return
+	}
+	mask, err := strconv.Atoi(cell)
+	if err != nil {
+		log.Fatalf("Cannot parse AllowableClass from row %v: %v", row, err)
+	}
+	item.ClassMask = mask
 }
 
 // ItemSparse's DamageType numbers the schools 0 physical, 1 holy, 2 fire, 3 nature, 4 frost,
@@ -97,6 +127,9 @@ func ParseWagoDB(dbContents string) map[int32]WagoDbItem {
 	if _, ok := headerMap[damageTypeHeader]; !ok {
 		log.Fatalf("The wago csv does not have a DamageType header column. All columns: %#v", headerMap)
 	}
+	if _, ok := headerMap[allowableClassHeader]; !ok {
+		log.Fatalf("The wago csv does not have an AllowableClass header column. All columns: %#v", headerMap)
+	}
 
 	result := map[int32]WagoDbItem{}
 	for {
@@ -128,6 +161,7 @@ func ParseWagoDB(dbContents string) map[int32]WagoDbItem {
 			ItemSetID:          int32(itemSet),
 		}
 		parseDamageType(&item, row[headerMap[damageTypeHeader]], row)
+		parseClassMask(&item, row[headerMap[allowableClassHeader]], row)
 		result[int32(itemID)] = item
 	}
 
@@ -138,9 +172,10 @@ func ParseWagoDB(dbContents string) map[int32]WagoDbItem {
 //
 // wagoItems is Classic 1.15.3's ItemSparse (wago_db2_items.csv), and contents is
 // forever_client_items.csv from tools/sources/itemsparse.py. An item in the Forever file
-// takes its set from there, and its faction and damage type too when the file has its
-// ItemSparse row (Flags_1 and DamageType are blank for an item only the ItemSet table lists). Every other item keeps
-// Classic's, because the Forever ItemSparse on wago.tools lacks most Classic items.
+// takes its set from there, and its faction, damage type and class mask too when the file
+// has its ItemSparse row (those columns are blank for an item only the ItemSet table lists).
+// Every other item keeps Classic's, because the Forever ItemSparse on wago.tools lacks most
+// Classic items.
 func OverlayForeverClientItems(wagoItems map[int32]WagoDbItem, contents string) {
 	r := csv.NewReader(strings.NewReader(contents))
 	header, err := r.Read()
@@ -151,7 +186,7 @@ func OverlayForeverClientItems(wagoItems map[int32]WagoDbItem, contents string) 
 	for i, name := range header {
 		col[name] = i
 	}
-	for _, name := range []string{itemIDHeader, flags1Header, itemSetHeader, damageTypeHeader} {
+	for _, name := range []string{itemIDHeader, flags1Header, itemSetHeader, damageTypeHeader, allowableClassHeader} {
 		if _, ok := col[name]; !ok {
 			log.Fatalf("forever_client_items.csv has no %s column. All columns: %#v", name, header)
 		}
@@ -182,6 +217,7 @@ func OverlayForeverClientItems(wagoItems map[int32]WagoDbItem, contents string) 
 		}
 		item.ItemSetID = int32(itemSet)
 		parseDamageType(&item, row[col[damageTypeHeader]], row)
+		parseClassMask(&item, row[col[allowableClassHeader]], row)
 		wagoItems[int32(itemID)] = item
 	}
 }

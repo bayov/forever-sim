@@ -18,15 +18,17 @@ faction and set from here, and every other item keeps Classic's.
 
 The columns:
 
-    ID, Name, ItemLevel, Flags_1, RequiredPVPRank, ItemSet, DamageType
+    ID, Name, ItemLevel, Flags_1, RequiredPVPRank, ItemSet, DamageType, AllowableClass
 
-Name, ItemLevel, Flags_1, RequiredPVPRank and DamageType are blank for an item
-that is only in the ItemSet table. DamageType is a weapon's damage school in
-the game files' order (0 physical, 1 holy, 2 fire, 3 nature, 4 frost, 5 shadow,
-6 arcane), which gen_db gives wands. ItemSet comes from the ItemSet table's member
-lists first, because that table also lists Classic items ItemSparse doesn't
-have (Defias Leather's five pieces), and from ItemSparse's own column after
-that. Forever's ItemSet table and ItemSparse agree on every item both have.
+Name, ItemLevel, Flags_1, RequiredPVPRank, DamageType and AllowableClass are
+blank for an item that is only in the ItemSet table. DamageType is a weapon's
+damage school in the game files' order (0 physical, 1 holy, 2 fire, 3 nature,
+4 frost, 5 shadow, 6 arcane), which gen_db gives wands. AllowableClass is the
+mask of classes that can wear the item (-1 for all), which gen_db gives an
+item no other source limits, like Benediction's Forever copy. ItemSet comes
+from the ItemSet table's member lists first, because that table also lists
+Classic items ItemSparse doesn't have (Defias Leather's five pieces), and from
+ItemSparse's own column after that. Forever's ItemSet table and ItemSparse agree on every item both have.
 """
 import csv
 import json
@@ -40,7 +42,7 @@ import wago  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'db_inputs', 'forever_client_items.csv')
 META = os.path.join(ROOT, 'assets', 'db_inputs', 'forever_client_items.meta.json')
-COLUMNS = ['ID', 'Name', 'ItemLevel', 'Flags_1', 'RequiredPVPRank', 'ItemSet', 'DamageType']
+COLUMNS = ['ID', 'Name', 'ItemLevel', 'Flags_1', 'RequiredPVPRank', 'ItemSet', 'DamageType', 'AllowableClass']
 
 
 def read(build):
@@ -48,7 +50,8 @@ def read(build):
     for r in wago.rows('ItemSparse', build):
         items[int(r['ID'])] = {'ID': r['ID'], 'Name': r['Display_lang'], 'ItemLevel': r['ItemLevel'],
                                'Flags_1': r['Flags_1'], 'RequiredPVPRank': r['RequiredPVPRank'],
-                               'ItemSet': r['ItemSet'], 'DamageType': r['DamageType']}
+                               'ItemSet': r['ItemSet'], 'DamageType': r['DamageType'],
+                               'AllowableClass': r['AllowableClass']}
     for s in wago.rows('ItemSet', build):
         for k, v in s.items():
             if k.startswith('ItemID_') and v not in ('', '0'):

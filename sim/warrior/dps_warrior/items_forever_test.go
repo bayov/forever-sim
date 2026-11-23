@@ -16,12 +16,18 @@ func newWarriorWithMainHand(t *testing.T, ruleset proto.Ruleset, mainHand int32)
 }
 
 func newWarriorWithGear(t *testing.T, ruleset proto.Ruleset, mainHand int32, offHand int32, consumes *proto.Consumes, debuffs *proto.Debuffs) (*core.Simulation, *DpsWarrior) {
+	return newWarriorWithItems(t, ruleset, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotMainHand: mainHand, proto.ItemSlot_ItemSlotOffHand: offHand},
+		consumes, debuffs, core.NewDefaultTarget())
+}
+
+func newWarriorWithItems(t *testing.T, ruleset proto.Ruleset, slots map[proto.ItemSlot]int32, consumes *proto.Consumes, debuffs *proto.Debuffs, target *proto.Target) (*core.Simulation, *DpsWarrior) {
 	items := make([]*proto.ItemSpec, 17)
 	for i := range items {
 		items[i] = &proto.ItemSpec{}
 	}
-	items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: mainHand}
-	items[proto.ItemSlot_ItemSlotOffHand] = &proto.ItemSpec{Id: offHand}
+	for slot, id := range slots {
+		items[slot] = &proto.ItemSpec{Id: id}
+	}
 	player := &proto.Player{
 		Race:      proto.Race_RaceTauren,
 		Class:     proto.Class_ClassWarrior,
@@ -33,7 +39,7 @@ func newWarriorWithGear(t *testing.T, ruleset proto.Ruleset, mainHand int32, off
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, debuffs),
-		Encounter:  &proto.Encounter{Duration: 600, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		Encounter:  &proto.Encounter{Duration: 600, Targets: []*proto.Target{target}},
 		SimOptions: &proto.SimOptions{Ruleset: ruleset, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
@@ -113,6 +119,8 @@ func TestForeverWeaponProcDamage(t *testing.T) {
 		{"Teebu's Blazing Longsword", 1728, 1300753, 18086, 140, 140, 150, 150},
 		{"The Lobotomizer", 19324, 1290950, 24388, 200, 300, 200, 300},
 		{"Gryphon Rider's Stormhammer", 9651, 18081, 18081, 77, 105, 91, 125},
+		{"Bonechill Hammer", 14487, 18276, 18276, 105, 105, 90, 90},
+		{"Wraith Scythe", 11920, 16414, 16414, 49, 49, 45, 45},
 	} {
 		for _, r := range []struct {
 			ruleset  proto.Ruleset
@@ -377,5 +385,75 @@ func TestForeverBladeOfHanna(t *testing.T) {
 	_, era := newWarriorWithMainHand(t, proto.Ruleset_RulesetClassic, 2801)
 	if era.GetSpell(core.ActionID{SpellID: 1325508}) != nil {
 		t.Error("Classic Blade of Hanna has Perfected Form")
+	}
+}
+
+// Chances on hit and equips only the Forever client gives (client 1.60.1.71037): the direct damage
+// under Forever, and no spell under Classic.
+func TestForeverOnlyItemProcDamage(t *testing.T) {
+	for _, c := range []struct {
+		name     string
+		slot     proto.ItemSlot
+		item     int32
+		spell    int32
+		min, max float64
+	}{
+		{"Demonshear", proto.ItemSlot_ItemSlotMainHand, 13348, 17483, 150, 150},
+		{"Force of Magma", proto.ItemSlot_ItemSlotMainHand, 11803, 18086, 182, 182},
+		{"Hedgecutter", proto.ItemSlot_ItemSlotMainHand, 18498, 1302344, 33.18, 50.82},
+		{"Iceblade Hacker", proto.ItemSlot_ItemSlotMainHand, 13952, 1298416, 73.5, 136.5},
+		{"Iceblade Hacker equip", proto.ItemSlot_ItemSlotMainHand, 13952, 1298414, 40.7, 40.7},
+		{"Lightcrest Hammer", proto.ItemSlot_ItemSlotMainHand, 276419, 1299631, 105, 105},
+		{"Shimmering Platinum Warhammer", proto.ItemSlot_ItemSlotMainHand, 15418, 19874, 210.98, 293.02},
+		{"Sul'thraze the Lasher", proto.ItemSlot_ItemSlotMainHand, 9372, 1294430, 95.4, 222.6},
+		{"Taran Icebreaker", proto.ItemSlot_ItemSlotMainHand, 2915, 16415, 270, 330},
+		{"Waveslicer", proto.ItemSlot_ItemSlotMainHand, 18324, 1302166, 70, 70},
+		{"Warblade of Caer Darrow", proto.ItemSlot_ItemSlotMainHand, 13982, 1298499, 22.18, 33.26},
+		{"Dark Iron Rifle", proto.ItemSlot_ItemSlotRanged, 16004, 29641, 21.27, 30.73},
+		{"Dwarven Hand Cannon", proto.ItemSlot_ItemSlotRanged, 2099, 29639, 39.44, 58.56},
+		{"Shell Launcher Shotgun", proto.ItemSlot_ItemSlotRanged, 13146, 29647, 31.5, 45.5},
+		{"Hurricane", proto.ItemSlot_ItemSlotRanged, 2824, 29502, 6, 10},
+		{"Fiery Plate Gauntlets", proto.ItemSlot_ItemSlotHands, 12631, 7714, 4, 4},
+		{"Storm Gauntlets", proto.ItemSlot_ItemSlotHands, 12632, 16614, 3, 3},
+		{"Force Imbued Gauntlets", proto.ItemSlot_ItemSlotHands, 18383, 1302247, 2, 2},
+	} {
+		slots := map[proto.ItemSlot]int32{c.slot: c.item}
+		_, era := newWarriorWithItems(t, proto.Ruleset_RulesetClassic, slots, &proto.Consumes{}, &proto.Debuffs{}, core.NewDefaultTarget())
+		if era.GetSpell(core.ActionID{SpellID: c.spell}) != nil {
+			t.Errorf("Classic %s: has spell %d", c.name, c.spell)
+		}
+		sim, war := newWarriorWithItems(t, proto.Ruleset_RulesetForever, slots, &proto.Consumes{}, &proto.Debuffs{}, core.NewDefaultTarget())
+		spell := war.GetSpell(core.ActionID{SpellID: c.spell})
+		if spell == nil {
+			t.Errorf("Forever %s: no spell %d", c.name, c.spell)
+			continue
+		}
+		lo, hi := procRange(sim, war, spell, 2000)
+		if lo < c.min-0.01 || hi > c.max+0.01 || lo > c.min+0.02*(c.max-c.min)+0.01 || hi < c.max-0.02*(c.max-c.min)-0.01 {
+			t.Errorf("Forever %s: %.2f to %.2f, want %.2f to %.2f", c.name, lo, hi, c.min, c.max)
+		}
+	}
+}
+
+// Forever's Lightcrest Hammer deals twice as much to Undead, and Wraith Scythe steals twice as much
+// from them.
+func TestForeverItemProcsVsUndead(t *testing.T) {
+	for _, c := range []struct {
+		name   string
+		item   int32
+		spell  int32
+		damage float64
+	}{
+		{"Lightcrest Hammer", 276419, 1299631, 210},
+		{"Wraith Scythe", 11920, 16414, 98},
+	} {
+		target := core.NewDefaultTarget()
+		target.MobType = proto.MobType_MobTypeUndead
+		sim, war := newWarriorWithItems(t, proto.Ruleset_RulesetForever, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotMainHand: c.item},
+			&proto.Consumes{}, &proto.Debuffs{}, target)
+		lo, hi := procRange(sim, war, war.GetSpell(core.ActionID{SpellID: c.spell}), 200)
+		if lo != c.damage || hi != c.damage {
+			t.Errorf("%s vs Undead: %.1f to %.1f, want %.0f", c.name, lo, hi, c.damage)
+		}
 	}
 }
