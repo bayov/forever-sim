@@ -805,7 +805,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Lava Burst's Flame Shock 20%: add or multiply with Call of Flame** (1.35 or 1.38; `sim/shaman/lava_burst.go:9`, `:67-69`).
   - This is one of the round's examples, but it is about 0.3%: Lava Burst is about 14% of Elemental's damage, and the difference is 2.2% of that.
   - Season of Discovery's sure crit is not a candidate: Forever's tooltip says 20% more damage.
-- **Rip and Ferocious Bite attack power** (server side; `sim/druid/rip.go:53`, `ferocious_bite.go:118`): no sensible spread. Since 2026-10-23 Rip's ticks read attack power live (wowsims/forever's rip.go). The preset rips at 4 combo points, where 1.12's 24% and WotLK's 1% a point a tick (24% over 6 ticks) agree. Bite is 7% of the damage.
+- **Rip and Ferocious Bite attack power** (server side; `sim/druid/rip.go`, `ferocious_bite.go:118`): no sensible spread. Since 2026-10-23 Rip's ticks read attack power live (wowsims/forever's rip.go). Since 2026-11-22 Rip's share is measured: 0.0114 of attack power a tick a combo point, the fifth counted as the fourth, outside the Nov 2 scale (wowsims/forever's EV-0031 to EV-0036 logs, 2026-11-07 to 12, ranks 1 to 5; user ruling 2026-11-22), where the sim had 0.01 × 1.25. Rake's tick takes their measured 0.065 the same way (was 0.055 × 1.25). Bite is 7% of the damage.
 - **Ignite: no cap (Season of Discovery) or a stop after 5 crits (Era).** Five crits inside one 4 sec window is rare at the presets' crit, under 0.5% for Fire and Frostfire.
 - **Premeditation out of Stealth** (Subtlety, −7.7 if it needed Stealth). Client 14183 dropped the stealth-only attribute, and ForeverChanges reads it the same way. Preparation's reset list is Classic's.
 - **Deadly Poison re-snapshot on each application.** It measured +6.3 on an old Mutilate set, but what still feeds it on the final builds is unclear. Likely under 0.5%.
@@ -836,4 +836,4 @@ Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM) until 2026-11-03: no analogue below 10. Since then Low is SoD's 10.
 - The halfway values of the rank-tuning entries (`priest_smite8_tuning`, `hunter_raptor_31plus`, `mage_frostbolt10`, `sham_es7_tuning`, `druid_wrath8_tuning`): a judgement between "client as is" and "held at the ≤30 ratio", kept as their one value by the user's ruling of 2026-10-25.
 
-No sensible range at all: Rip and Ferocious Bite attack power, and the untested 31-point capstones (listed above).
+No sensible range at all: Ferocious Bite attack power (Rip's measured since 2026-11-22), and the untested 31-point capstones (listed above).

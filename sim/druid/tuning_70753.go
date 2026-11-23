@@ -6,7 +6,9 @@ package druid
 //   - Shred 200% weapon damage (was 155%), Claw 140% (110%), Ravage 435% (350%): shred.go,
 //     claw.go, ravage.go.
 //   - "Rip / Rake / Ferocious Bite / Pounce: Base points and attack power scaling increased by
-//     about 25%": nov2BleedScale on the rank tables and the attack power coefficients.
+//     about 25%": nov2BleedScale on the rank tables and Ferocious Bite's attack power
+//     coefficient. Rip's and Rake's attack power shares are wowsims/forever's log readings since
+//     2026-11-22 (rip.go, rake.go: EV-0031 to EV-0036), which already hold the 25%.
 //   - "Starfire: Base damage points increased by about 40%": nov2StarfireScale on the base damage
 //     and its growth a level.
 //   - Rend and Tear 3% a point (2% before): talents.go.
