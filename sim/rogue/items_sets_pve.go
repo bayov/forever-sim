@@ -439,11 +439,12 @@ var grimstitchBonuses = map[int32]core.ApplyEffect{
 			},
 		}))
 	},
-	// Reduces the cost of your Envenom and Eviscerate abilities by 5 Energy. Forever has no Envenom.
+	// Reduces the cost of your Eviscerate and Death Mark abilities by 5 Energy (client 1.60.1.71037: SpellEffect
+	// 1326934 class mask 131072/0/4 = Eviscerate and Death Mark; through 70959 it was Envenom and Eviscerate).
 	5: func(agent core.Agent) {
 		rogue := agent.(RogueAgent).GetRogue()
 		rogue.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.SpellCode == SpellCode_RogueEviscerate {
+			if spell.SpellCode == SpellCode_RogueEviscerate || spell.SpellCode == SpellCode_RogueDeathMark {
 				spell.Cost.FlatModifier -= 5
 			}
 		})
