@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "b48605aa38d1ab522b4f3f495dc75e160534a192"
+  "master": "c78d983aca33ba66a9f9e80c39cdc671daad4bd9"
  },
  "last_pass_at": "2026-11-22T19:01:57Z",
  "pass": 23,
@@ -8,5 +8,5 @@
  "note": "Pass 23 on 7a6d1beb9. Watched changes (dot SetTickPeriod for Wrack, Soulforge 4pc aura reuse, Flame Shock GCD haste, Maelstrom comment) do not reach healers. All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T12:51:36Z"
+ "checked_at": "2026-11-23T18:54:07Z"
 }
