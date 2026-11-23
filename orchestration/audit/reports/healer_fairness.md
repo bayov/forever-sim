@@ -1,18 +1,15 @@
-# Healer fairness pass 25 (2026-11-22, master 7a6d1beb9)
+# Healer fairness pass 26 (2026-11-23, master 7e0a01a8d)
 
-Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth;
-last at 1.385, 0.005 behind the shaman), -20261104-4 (low).
+Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth),
+-20261104-4 (low).
 
-Due because 4 watched files changed since 8b5137c6d:
-- `sim/core/dot.go`: `SetTickPeriod` now retimes a dot on the grid of its own expiry (wowsims/forever retimeOnGrid). Its only
-  caller is Wrack (`sim/warlock/talents.go:331-333`); no HoT or healer channel uses it.
-- `sim/paladin/item_sets_pve.go`: Soulforge 4-piece reuses Lightforge's Crusader's Wrath aura when both are worn. Spell power
-  proc on damage/melee sets; neither Holy paladin preset wears 4+4 of them, and its cells are unchanged.
-- `sim/shaman/flame_shock.go` (Flame Shock's GCD hastes under Forever) and `talents.go` (Windfury Totem swings give no
-  Maelstrom stack): no Restoration shaman preset casts Flame Shock, has Maelstrom Weapon or haste.
-- No `tools/healbench/req/` or `tools/encounters/` change. Priest .results only gained a new item-set test row.
-- Check: all 63 cells, both roles, seed 101, 1,000 it (`screen.sh`, healbench built on 7a6d1beb9 with `-tags with_db`):
-  identical to `ref/healer_fairness/bench_a667736.tsv`, so sections 1-3 below stand.
+Due because `orchestration/standards.md` changed since 2de7021bf: new standard 42 (phase 0 gear of unsure
+availability is used, with a note, not asked about). It concerns phase 0 gear lists; healer presets wear the
+synthetic healer set (standards 35), so it changes nothing here.
+- Other changes since 2de7021bf: phase 0 content/prices (`tools/rotopt/`), a Fury phase 0 BiS, item db and
+  hidden_items updates. None of the changed item ids appear in any `tools/healbench/req/*.json`; no `sim/`,
+  `tools/healbench/` or `tools/encounters/` change. No re-bench needed: pass 25's cells stand
+  (`ref/healer_fairness/bench_a667736.tsv`).
 
 The rest is pass 21's (master a6677362f), still current:
 

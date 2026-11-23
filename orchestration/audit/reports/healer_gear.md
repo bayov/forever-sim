@@ -1,9 +1,5 @@
-# healer_gear pass 12 (master 8b5137c6d6, 2026-11-22T12:53:54Z)
-
-Result: quiet. Short pass, nothing to recompute.
-
-- Why due: one watched file changed since b4b68c52e9, orchestration/standards.md (new rule 41: Blizzard's own word overrides an earlier ruling).
-- Rule 41 concerns mechanics rulings; it changes no gear standard (1b, 5, 5a, 35) and no healer row.
-- Unchanged since last pass (git diff b4b68c52e9..8b5137c6d6): tools/database/forever_synthetic_items_*.go, ui/*/gear_sets/**, orchestration/gear_targets.md, orchestration/tools/healers/**.
-- So the previous pass's per-piece and per-set tables stand; no re-measure. Open findings: none.
-- client_build not re-checked this pass (state keeps 1.60.1.70959; gate shows 1.60.1.71037).
+# healer_gear pass 13 report
+Master 7e0a01a8d9. Trigger: orchestration/standards.md changed since 2de7021bf (one added line, rule 42).
+Rule 42 (Phase 0 gear of unsure availability is used, not asked about) concerns Phase 0 gear. It does not touch 1b, 5, 5a or 35.
+No change in tools/database healer synthetic sets, ui/*/gear_sets, sim/*/items.go or gear_targets.md since the last pass (git diff empty).
+Pieces, sets and rows were not recomputed: no input changed. Result: quiet, no findings; the Open section stays empty.
