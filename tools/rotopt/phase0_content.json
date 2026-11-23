@@ -647,6 +647,7 @@
   "19103": {"name": "Frostbite", "avail": "doubtful", "note": "Frostwolf Clan Revered · AV queue unconfirmed"},
   "19105": {"name": "Frost Runed Headdress", "avail": "doubtful", "note": "No known source"},
   "19107": {"name": "Bloodseeker", "avail": "doubtful", "note": "Alterac Valley quest · AV queue unconfirmed"},
+  "19108": {"avail": "doubtful", "name": "Wand of Biting Cold", "note": "Quest reward, Alterac Valley · AV queue unconfirmed"},
   "19109": {"avail": "doubtful", "name": "Deep Rooted Ring", "note": "No known source"},
   "19111": {"avail": "doubtful", "name": "Winteraxe Epaulets", "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"},
   "19112": {"avail": "doubtful", "name": "Frozen Steel Vambraces", "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"},
