@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 839.67,
   "made": "2026-11-23",
-  "sim": "0c95f2831c84",
+  "sim": "410255783526",
   "slots": {
     "head": [
       {
@@ -2283,7 +2283,11 @@
         "id": 272439,
         "name": "Serenity Field",
         "dps": 827.44,
-        "loss": 12.22,
+        "loss": 12.23,
+        "cooldown": {
+          "rank": 15,
+          "loss": 12.23
+        },
         "note": "Pix Xizzix · 125 Reals"
       },
       {
@@ -2357,7 +2361,7 @@
           },
           {
             "label": "vs 4 mobs",
-            "rank": 15,
+            "rank": 14,
             "loss": 12.22
           }
         ],
