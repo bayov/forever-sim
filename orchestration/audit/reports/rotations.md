@@ -1,52 +1,43 @@
-# Rotations pass 72 (2026-11-22, master 7a6d1beb9)
+# Rotations pass 73 (2026-11-23, master 5518f4873)
 
-Not quiet (sim changed for presets), but no new findings.
+Quiet: the only rotation change is the mage re-tune, already measured by its worker; no new findings.
 
-## What changed (8b5137c6d..7a6d1beb9)
+## What changed (7a6d1beb9..5518f4873)
 
-- APL logic (`apl_logic_diff.py`): no APL file touched. No req file changed.
-- Sim: Ice Lance 0.11 of spell power under Forever (4192d6e49); Wrack ticks the half points of a dot's grid (3960dd1f6);
-  warrior Deep Wounds takes the critting hand's weapon (990cade4e), avoided Execute refunds nothing (aa394d3be), Windfury
-  Totem swing gives no Bloodthrill or Flurry charge and Execute rolls it twice (b7edf19bb); Maelstrom gets no stack from the
-  totem (840029bd8); haste shortens Flame Shock's GCD (56e5f070d); JoW pays only on landed swings (bd7029410); hunter pet
-  keeps its summon-time AP (051a21cd3); item effects (Linken's Boomerang, Cloak of Fire, Dungeon Set 1 reveal sets).
-  tools/rotopt Phase 0 files are outside the presets.
+- APL logic (`apl_logic_diff.py`): two files.
+  - `ui/mage/apls/level60_frost.apl.json`: Ice Barrier (13033) refreshed below 2 s of Frigid Power (1326891), was 6 s.
+  - `ui/mage/apls/level60_frostfire.apl.json`: Fire Blast (10199) at mana >= 40%, was 80%.
+  - Both with talent changes (b8b89d6a8, "re-tune Frost and Frostfire for Ice Lance's 0.11 coefficient").
+- Sim `.go` (non-test): `sim/common/forever_armor_uses.go` and `item_effects.go` (Helm of Fire, Circle of Flame, Robe of
+  the Archmage, Headmaster's Charge, Axe of the Deep Woods, Flame Wrath), `sim/core/attack.go` and
+  `apl_actions_timing.go` (an empty weapon slot doesn't swing; a wait on NeverExpires doesn't overflow). None of them
+  moves a raid preset (baseline below). tools/rotopt Phase 0 files are outside the presets.
 
-## Baseline (3000 it, seed 424242), new file `ref/rotations/baseline_7a6d1be_3000it_seed424242.tsv`
+## Baseline (3000 it, seed 424242), new file `ref/rotations/baseline_5518f48_3000it_seed424242.tsv`
 
 | preset | old | new | move |
 |---|---|---|---|
-| mage frost | 946.2 | 835.1 | -11.74% |
-| mage frostfire | 1065.2 | 1006.9 | -5.47% |
-| shaman enhancement (4 builds) | 976.8-1079.4 | 966.9-1067.3 | -0.96 to -1.12% |
-| hunter SV / BM / MM (9 builds) | | | -0.14 to -0.43% |
-| warlock affliction (+ duties) | 1076.8 / 1058.2 / 1066.2 | 1089.2 / 1070.8 / 1079.2 | +1.16 to +1.23% |
-| warrior fury (+ duties) | 1102.7 | 1113.1 | +0.85 to +0.95% |
-| warrior fury_2h (+ duties) | 1113.8 | 1129.4 | +1.41 to +1.81% |
-| warrior arms (+ duties) | 1078.6 | 1081.7 | +0.17 to +0.28% |
-| paladins, other warlocks, elemental | | | within ±0.24% |
+| mage frost | 835.1 | 839.6 | +0.53% |
+| mage frostfire | 1006.9 | 1009.7 | +0.28% |
 
-Every move matches a sim commit above; none comes from a rotation.
+The other 66 presets are unchanged to 0.05 DPS.
 
-## Checks
+## Spot-check of the merged re-tune
 
-- **Ice Lance after the 0.11 coefficient** (the big mover). Paired ab.py, set 1e6, B-A at 120/180/300 s:
-  - Frost, B = no Fingers of Frost Ice Lance line: -42.6 / -43.9 / -44.6 (±0.5). The line still pays by far.
-  - Frost, B = Ice Lance on any FoF charge (not just the last, with the bolt in flight): -19.7 / -19.7 / -19.3.
-  - Frostfire, B = no "Ice Lance on the last FoF charge" line: +1.0 / -11.9 / -9.8. Keep the line.
-  - All losses are far past the noise, so the second seed set (only needed to confirm a gain) was skipped.
-- Affliction: Wrack is already the filler ahead of Shadow Bolt ("whenever nothing above it is due"); the half-point
-  ticks only make it better, and there's no Wrack gate to re-tune.
-- Open findings rotations-20261122-1 (Shock Ret HoW/HS order) and rotations-20261112-1 (rogue poison swap) have not landed:
-  no APL or req changed.
+Frost with Ice Barrier back at 6 s (B) vs master's 2 s (A), paired `ab.py`, 20k it, 8 blocks, B-A at 120 / 180 / 300 s:
+
+| S0 1e6 | S0 2e8 | pooled |
+|---|---|---|
+| -0.75 / -0.98 / -0.68 | -0.45 / -0.54 / -0.61 | -0.60 / -0.76 / -0.65 |
+
+A at 180 s: 839.5. The 2 s gate holds (the worker's +3.9 includes the talent change). Frostfire's Fire Blast gate was
+not re-run; the worker confirmed it on two seeds at 40k.
+
+## Open findings
+
+- rotations-20261122-1 (Shock Ret HoW/Holy Strike order) and rotations-20261112-1 (rogue poison swap): not landed
+  (no paladin or rogue APL/req change in the range). Still open.
 
 ## Optional
 
-- None new.
-
-## Not done this pass
-
-- Warrior Execute (avoided Execute refunds nothing) and Deep Wounds changes: the Execute and HS/Cleave thresholds weren't
-  re-searched; this belongs with the open warrior threshold re-search item.
-- Paladin hasted-GCD re-timing and Windfury ability-timing items: unchanged.
-- The machine was heavily loaded (load ~38 on 4 cores), so the pass was kept to the mage A/Bs.
+None new. The pass-doc list of optional results stands.

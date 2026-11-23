@@ -530,3 +530,11 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-22 19:02 | tank_mechanics | pass 27 | master 7a6d1beb9 | quiet | only Judgement of Wisdom reaches tanks
 2026-11-22 19:02 | tank_rotations | pass 24 | master 7a6d1beb9 | 1 new findings | paladin Balanced Consecration mana condition now loses
 2026-11-22 19:02 | tank_fairness | pass 26 | master 7a6d1beb9 | quiet | ranking unchanged
+2026-11-23 00:53 | results | pass 99 | master 5518f4873 | quiet | builds.json matches shared run 68/68; metas stale tracked
+2026-11-23 00:53 | rotations | pass 73 | master 5518f4873 | quiet | mage re-tune only; baseline refreshed
+2026-11-23 00:53 | consumables | pass 99 | master 5518f4873 | quiet | no consumes moved
+2026-11-23 00:53 | mechanics | pass 99 | master 5518f4873 | 1 new findings | Robe of the Archmage Replenish Mana lacks 60s shared CD (low)
+2026-11-23 00:53 | fairness | pass 50 | master 5518f4873 | quiet | fairness-20261122-1 resolved; ranking unchanged
+2026-11-23 00:53 | tank_mechanics | pass 28 | master 5518f4873 | quiet | empty-slot swing fix doesn't reach tanks
+2026-11-23 00:53 | tank_rotations | pass 25 | master 5518f4873 | quiet | 104 rows match pass 24
+2026-11-23 00:53 | tank_fairness | pass 27 | master 5518f4873 | quiet | ranking unchanged
