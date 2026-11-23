@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 853.07,
   "made": "2026-11-23",
-  "sim": "9573d9210991",
+  "sim": "0c95f2831c84",
   "slots": {
     "head": [
       {
@@ -130,6 +130,12 @@
         "note": "Random world drop · BoE"
       },
       {
+        "id": 287019,
+        "name": "Defias Enforcer's Mask",
+        "dps": 845.31,
+        "loss": 7.76
+      },
+      {
         "id": 10261,
         "suffix": 370,
         "name": "Adventurer's Bandana of Agility",
@@ -192,14 +198,6 @@
           "rank": 25,
           "loss": 14.14
         }
-      },
-      {
-        "id": 15430,
-        "suffix": 368,
-        "name": "Peerless Headband of Agility",
-        "dps": 844.24,
-        "loss": 8.83,
-        "note": "Random world drop · BoE"
       }
     ],
     "neck": [
@@ -218,6 +216,14 @@
         "dps": 852.94,
         "loss": 0.13,
         "note": "Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
+      },
+      {
+        "id": 22659,
+        "name": "Medallion of the Dawn",
+        "dps": 852.82,
+        "loss": 0.24,
+        "avail": "doubtful",
+        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 22150,
@@ -341,6 +347,12 @@
         "note": "Quest: Work Well Done"
       },
       {
+        "id": 12103,
+        "name": "Star of Mystaria",
+        "dps": 846.87,
+        "loss": 6.2
+      },
+      {
         "id": 18381,
         "name": "Evil Eye Pendant",
         "dps": 846.74,
@@ -378,37 +390,15 @@
         "dps": 846.62,
         "loss": 6.45,
         "note": "On AH ~3.5g"
-      },
-      {
-        "id": 12026,
-        "suffix": 1560,
-        "name": "Quicksilver Pendant of Power",
-        "dps": 846.62,
-        "loss": 6.45,
-        "note": "Random world drop"
-      },
-      {
-        "id": 12045,
-        "suffix": 1560,
-        "name": "Swamp Pendant of Power",
-        "dps": 846.62,
-        "loss": 6.45,
-        "note": "Random world drop"
       }
     ],
     "shoulder": [
       {
-        "id": 271955,
-        "name": "Theramore Pauldrons",
-        "dps": 853.07,
-        "loss": 0,
-        "bis": true
-      },
-      {
         "id": 272105,
         "name": "Darkspear Pauldrons",
         "dps": 853.07,
-        "loss": 0
+        "loss": 0,
+        "bis": true
       },
       {
         "id": 20194,
@@ -583,6 +573,14 @@
         "id": 10228,
         "suffix": 362,
         "name": "Nightshade Spaulders of Agility",
+        "dps": 841.5,
+        "loss": 11.56,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 15432,
+        "suffix": 362,
+        "name": "Peerless Shoulders of Agility",
         "dps": 841.5,
         "loss": 11.56,
         "note": "Random world drop · BoE"
@@ -1007,6 +1005,14 @@
         "note": "Prince Tortheldrin (Dire Maul)"
       },
       {
+        "id": 22668,
+        "name": "Bracers of Subterfuge",
+        "dps": 834.32,
+        "loss": 18.74,
+        "avail": "doubtful",
+        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
+      },
+      {
         "id": 13120,
         "name": "Deepfury Bracers",
         "dps": 832.04,
@@ -1149,14 +1155,6 @@
         "name": "Supreme Bracers of Power",
         "dps": 830.65,
         "loss": 22.41
-      },
-      {
-        "id": 15188,
-        "suffix": 212,
-        "name": "Grand Armguards of Agility",
-        "dps": 830.25,
-        "loss": 22.82,
-        "note": "Random world drop · BoE"
       }
     ],
     "hands": [
@@ -1172,12 +1170,6 @@
       {
         "id": 272099,
         "name": "Raider Gloves",
-        "dps": 834.38,
-        "loss": 18.69
-      },
-      {
-        "id": 271948,
-        "name": "Theramore Gloves",
         "dps": 834.38,
         "loss": 18.69
       },
@@ -1344,6 +1336,12 @@
         "dps": 826.55,
         "loss": 26.52,
         "note": "Random world drop · BoE"
+      },
+      {
+        "id": 16712,
+        "name": "Shadowcraft Gloves",
+        "dps": 826.39,
+        "loss": 26.68
       }
     ],
     "waist": [
@@ -2149,21 +2147,21 @@
       {
         "id": 13965,
         "name": "Blackhand's Breadth",
-        "dps": 852.47,
-        "loss": 0.6,
+        "dps": 852.12,
+        "loss": 0.94,
         "conditional": [
           {
             "label": "vs Orcs and Ogres",
             "rank": 1,
-            "loss": -6.46,
+            "loss": -6.1,
             "bis": true
           }
         ],
         "cooldown": {
           "rank": 9,
-          "loss": 9.79
+          "loss": 10.13
         },
-        "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data"
+        "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
       },
       {
         "id": 11815,
@@ -2719,14 +2717,6 @@
         "note": "Warchief Rend Blackhand · Blackrock Spire"
       },
       {
-        "id": 18392,
-        "name": "Distracting Dagger",
-        "dps": 847.83,
-        "loss": 5.24,
-        "with": 6622,
-        "note": "Prince Tortheldrin · Dire Maul"
-      },
-      {
         "id": 11744,
         "name": "Bloodfist",
         "dps": 844.33,
@@ -2883,6 +2873,15 @@
         "note": "Quest: Drum Up Trouble"
       },
       {
+        "id": 280029,
+        "name": "Cinderedge Crescent",
+        "dps": 836.14,
+        "loss": 16.93,
+        "with": 6622,
+        "avail": "doubtful",
+        "note": "Cinder · Shaper's Terrace · only reported"
+      },
+      {
         "id": 18310,
         "name": "Fiendish Machete",
         "dps": 833.71,
@@ -2891,7 +2890,7 @@
         "conditional": [
           {
             "label": "vs Elementals",
-            "rank": 7,
+            "rank": 6,
             "loss": 10.1
           }
         ]
@@ -2905,7 +2904,7 @@
         "conditional": [
           {
             "label": "vs Undead",
-            "rank": 9,
+            "rank": 8,
             "loss": 10.6
           }
         ]
@@ -3103,7 +3102,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true
       },
@@ -3113,7 +3112,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": 852.77,
+        "dps": 852.63,
         "loss": 1.02,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
       },
@@ -3123,7 +3122,7 @@
         "item": 11645,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Strength",
-        "dps": 851.7,
+        "dps": 851.57,
         "loss": 2.09
       },
       {
@@ -3132,7 +3131,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 849.43,
+        "dps": 849.29,
         "loss": 4.36,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
       },
@@ -3142,7 +3141,7 @@
         "item": 11642,
         "name": "Lesser Arcanum of Constitution",
         "effect": "+100 health",
-        "dps": 849.3,
+        "dps": 849.17,
         "loss": 4.49
       },
       {
@@ -3151,7 +3150,7 @@
         "item": 11646,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Stamina",
-        "dps": 849.27,
+        "dps": 849.14,
         "loss": 4.52
       }
     ],
@@ -3162,7 +3161,7 @@
         "spell": 1249059,
         "name": "Enchant Necklace - Agility",
         "effect": "+5 Agility",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "120 Merchant's Favor"
@@ -3173,7 +3172,7 @@
         "spell": 1249019,
         "name": "Enchant Necklace - Strength",
         "effect": "+5 Strength",
-        "dps": 852.09,
+        "dps": 851.96,
         "loss": 1.7,
         "note": "120 Merchant's Favor"
       },
@@ -3183,7 +3182,7 @@
         "spell": 1249057,
         "name": "Enchant Necklace - Spell Power",
         "effect": "+6 spell power",
-        "dps": 850.91,
+        "dps": 850.77,
         "loss": 2.88,
         "note": "120 Merchant's Favor"
       },
@@ -3193,7 +3192,7 @@
         "spell": 1249058,
         "name": "Enchant Necklace - Healing Power",
         "effect": "+11 healing, +4 spell damage",
-        "dps": 850.8,
+        "dps": 850.67,
         "loss": 2.98,
         "note": "120 Merchant's Favor"
       }
@@ -3205,7 +3204,7 @@
         "spell": 1219587,
         "name": "Enchant Cloak - Agility",
         "effect": "+5 Agility",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3215,7 +3214,7 @@
         "spell": 13882,
         "name": "Enchant Cloak - Lesser Agility",
         "effect": "+3 Agility",
-        "dps": 852.21,
+        "dps": 852.07,
         "loss": 1.58,
         "note": "Formula on AH ~0.4g"
       },
@@ -3225,7 +3224,7 @@
         "spell": 13419,
         "name": "Enchant Cloak - Minor Agility",
         "effect": "+3 Agility",
-        "dps": 852.21,
+        "dps": 852.07,
         "loss": 1.58
       }
     ],
@@ -3235,7 +3234,7 @@
         "spell": 20025,
         "name": "Enchant Chest - Greater Stats",
         "effect": "+4 all stats",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~351g"
@@ -3245,7 +3244,7 @@
         "spell": 13941,
         "name": "Enchant Chest - Stats",
         "effect": "+3 all stats",
-        "dps": 852.93,
+        "dps": 852.79,
         "loss": 0.86
       },
       {
@@ -3254,7 +3253,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 852.49,
+        "dps": 852.36,
         "loss": 1.3
       },
       {
@@ -3263,7 +3262,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 851.89,
+        "dps": 851.76,
         "loss": 1.9,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3272,7 +3271,7 @@
         "spell": 13700,
         "name": "Enchant Chest - Lesser Stats",
         "effect": "+2 all stats",
-        "dps": 851.56,
+        "dps": 851.42,
         "loss": 2.23
       },
       {
@@ -3281,7 +3280,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 851.3,
+        "dps": 851.16,
         "loss": 2.49
       },
       {
@@ -3290,7 +3289,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 850.7,
+        "dps": 850.57,
         "loss": 3.09
       },
       {
@@ -3298,7 +3297,7 @@
         "spell": 13626,
         "name": "Enchant Chest - Minor Stats",
         "effect": "+1 all stats",
-        "dps": 850.69,
+        "dps": 850.56,
         "loss": 3.1
       },
       {
@@ -3307,7 +3306,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 849.81,
+        "dps": 849.68,
         "loss": 3.98,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3316,7 +3315,7 @@
         "spell": 20026,
         "name": "Enchant Chest - Major Health",
         "effect": "+100 health",
-        "dps": 849.78,
+        "dps": 849.65,
         "loss": 4
       }
     ],
@@ -3327,7 +3326,7 @@
         "spell": 1248599,
         "name": "Enchant Bracer - Superior Agility",
         "effect": "+9 Agility",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -3338,7 +3337,7 @@
         "spell": 20010,
         "name": "Enchant Bracer - Superior Strength",
         "effect": "+9 Strength",
-        "dps": 851.47,
+        "dps": 851.33,
         "loss": 2.32,
         "note": "Formula on AH ~145g"
       },
@@ -3348,7 +3347,7 @@
         "spell": 1248497,
         "name": "Enchant Bracer - Agility",
         "effect": "+5 Agility",
-        "dps": 851.14,
+        "dps": 851,
         "loss": 2.65,
         "avail": "doubtful",
         "note": "No known source"
@@ -3358,7 +3357,7 @@
         "spell": 13939,
         "name": "Enchant Bracer - Greater Strength",
         "effect": "+7 Strength",
-        "dps": 850.87,
+        "dps": 850.74,
         "loss": 2.92
       },
       {
@@ -3367,7 +3366,7 @@
         "spell": 1248460,
         "name": "Enchant Bracer - Lesser Agility",
         "effect": "+4 Agility",
-        "dps": 850.6,
+        "dps": 850.47,
         "loss": 3.18,
         "avail": "doubtful",
         "note": "Forever formula, source unchecked"
@@ -3378,7 +3377,7 @@
         "spell": 7779,
         "name": "Enchant Bracer - Minor Agility",
         "effect": "+3 Agility",
-        "dps": 850.08,
+        "dps": 849.95,
         "loss": 3.7
       },
       {
@@ -3387,7 +3386,7 @@
         "spell": 13661,
         "name": "Enchant Bracer - Strength",
         "effect": "+5 Strength",
-        "dps": 849.98,
+        "dps": 849.85,
         "loss": 3.81
       },
       {
@@ -3396,7 +3395,7 @@
         "spell": 13536,
         "name": "Enchant Bracer - Lesser Strength",
         "effect": "+4 Strength",
-        "dps": 849.68,
+        "dps": 849.55,
         "loss": 4.11
       },
       {
@@ -3405,7 +3404,7 @@
         "spell": 7782,
         "name": "Enchant Bracer - Minor Strength",
         "effect": "+3 Strength",
-        "dps": 849.39,
+        "dps": 849.25,
         "loss": 4.4
       },
       {
@@ -3414,7 +3413,7 @@
         "spell": 1220624,
         "name": "Enchant Bracer - Greater Spellpower",
         "effect": "+16 spell power",
-        "dps": 849.3,
+        "dps": 849.16,
         "loss": 4.49,
         "note": "Merchant's Favor Honored"
       }
@@ -3426,7 +3425,7 @@
         "spell": 1248640,
         "name": "Enchant Gloves - Superior Strength",
         "effect": "+15 Strength",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3436,7 +3435,7 @@
         "spell": 13948,
         "name": "Enchant Gloves - Minor Haste",
         "effect": "+1% attack speed",
-        "dps": 852.48,
+        "dps": 852.34,
         "loss": 1.31
       },
       {
@@ -3445,7 +3444,7 @@
         "spell": 20012,
         "name": "Enchant Gloves - Greater Agility",
         "effect": "+7 Agility",
-        "dps": 852.44,
+        "dps": 852.3,
         "loss": 1.35,
         "note": "Formula on AH ~6g"
       },
@@ -3455,7 +3454,7 @@
         "spell": 13815,
         "name": "Enchant Gloves - Agility",
         "effect": "+7 Agility",
-        "dps": 852.44,
+        "dps": 852.3,
         "loss": 1.35
       },
       {
@@ -3464,7 +3463,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 851.7,
+        "dps": 851.57,
         "loss": 2.09
       },
       {
@@ -3473,7 +3472,7 @@
         "spell": 20013,
         "name": "Enchant Gloves - Greater Strength",
         "effect": "+7 Strength",
-        "dps": 851.1,
+        "dps": 850.97,
         "loss": 2.68,
         "note": "7% formula drop"
       },
@@ -3483,7 +3482,7 @@
         "spell": 13887,
         "name": "Enchant Gloves - Strength",
         "effect": "+7 Strength",
-        "dps": 851.1,
+        "dps": 850.97,
         "loss": 2.68
       },
       {
@@ -3492,7 +3491,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 851.1,
+        "dps": 850.97,
         "loss": 2.68,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3502,7 +3501,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 850.51,
+        "dps": 850.37,
         "loss": 3.28
       },
       {
@@ -3511,7 +3510,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 849.91,
+        "dps": 849.78,
         "loss": 3.88
       }
     ],
@@ -3522,7 +3521,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true
       },
@@ -3532,7 +3531,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": 852.77,
+        "dps": 852.63,
         "loss": 1.02,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
       },
@@ -3542,7 +3541,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 852,
+        "dps": 851.87,
         "loss": 1.79
       },
       {
@@ -3551,7 +3550,7 @@
         "item": 11645,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Strength",
-        "dps": 851.7,
+        "dps": 851.57,
         "loss": 2.09
       },
       {
@@ -3560,7 +3559,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 851.4,
+        "dps": 851.27,
         "loss": 2.38,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3570,7 +3569,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 850.81,
+        "dps": 850.68,
         "loss": 2.98
       },
       {
@@ -3579,7 +3578,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 850.22,
+        "dps": 850.08,
         "loss": 3.57
       },
       {
@@ -3588,7 +3587,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 849.43,
+        "dps": 849.29,
         "loss": 4.36,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
       },
@@ -3598,7 +3597,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 849.33,
+        "dps": 849.19,
         "loss": 4.46,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3608,7 +3607,7 @@
         "item": 11642,
         "name": "Lesser Arcanum of Constitution",
         "effect": "+100 health",
-        "dps": 849.3,
+        "dps": 849.17,
         "loss": 4.49
       }
     ],
@@ -3618,7 +3617,7 @@
         "spell": 20023,
         "name": "Enchant Boots - Greater Agility",
         "effect": "+7 Agility",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~8g"
@@ -3629,7 +3628,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 852.53,
+        "dps": 852.39,
         "loss": 1.26
       },
       {
@@ -3637,7 +3636,7 @@
         "spell": 13935,
         "name": "Enchant Boots - Agility",
         "effect": "+5 Agility",
-        "dps": 852.21,
+        "dps": 852.07,
         "loss": 1.58
       },
       {
@@ -3646,7 +3645,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 851.93,
+        "dps": 851.8,
         "loss": 1.86,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3656,7 +3655,7 @@
         "spell": 13637,
         "name": "Enchant Boots - Lesser Agility",
         "effect": "+4 Agility",
-        "dps": 851.67,
+        "dps": 851.53,
         "loss": 2.12
       },
       {
@@ -3665,7 +3664,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 851.34,
+        "dps": 851.2,
         "loss": 2.45
       },
       {
@@ -3674,7 +3673,7 @@
         "spell": 7867,
         "name": "Enchant Boots - Minor Agility",
         "effect": "+3 Agility",
-        "dps": 851.14,
+        "dps": 851,
         "loss": 2.65
       },
       {
@@ -3683,7 +3682,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 850.74,
+        "dps": 850.61,
         "loss": 3.05
       },
       {
@@ -3692,7 +3691,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 849.85,
+        "dps": 849.72,
         "loss": 3.93,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3702,7 +3701,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 849.8,
+        "dps": 849.67,
         "loss": 3.98
       }
     ],
@@ -3711,7 +3710,7 @@
         "id": 1900,
         "spell": 20034,
         "name": "Enchant Weapon - Crusader",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~400g"
@@ -3720,7 +3719,7 @@
         "id": 803,
         "spell": 13898,
         "name": "Enchant Weapon - Fiery Weapon",
-        "dps": 850.42,
+        "dps": 850.29,
         "loss": 3.37,
         "note": "41% formula drop"
       },
@@ -3728,7 +3727,7 @@
         "id": 1898,
         "spell": 20032,
         "name": "Enchant Weapon - Lifestealing",
-        "dps": 848.03,
+        "dps": 847.89,
         "loss": 5.76,
         "note": "Formula on AH ~149g"
       },
@@ -3737,7 +3736,7 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": 846.28,
+        "dps": 846.15,
         "loss": 7.51,
         "note": "Timbermaw rep, tier unknown"
       },
@@ -3745,7 +3744,7 @@
         "id": 1897,
         "spell": 20031,
         "name": "Enchant Weapon - Superior Striking",
-        "dps": 843.27,
+        "dps": 843.14,
         "loss": 10.52,
         "note": "Formula on AH ~50g"
       },
@@ -3754,7 +3753,7 @@
         "spell": 23799,
         "name": "Enchant Weapon - Strength",
         "effect": "+15 Strength",
-        "dps": 842.6,
+        "dps": 842.47,
         "loss": 11.18,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3763,28 +3762,28 @@
         "id": 805,
         "spell": 13943,
         "name": "Enchant Weapon - Greater Striking",
-        "dps": 842.18,
+        "dps": 842.05,
         "loss": 11.6
       },
       {
         "id": 943,
         "spell": 13693,
         "name": "Enchant Weapon - Striking",
-        "dps": 841.1,
+        "dps": 840.96,
         "loss": 12.69
       },
       {
         "id": 241,
         "spell": 13503,
         "name": "Enchant Weapon - Lesser Striking",
-        "dps": 840.01,
+        "dps": 839.88,
         "loss": 13.78
       },
       {
         "id": 250,
         "spell": 7788,
         "name": "Enchant Weapon - Minor Striking",
-        "dps": 838.92,
+        "dps": 838.79,
         "loss": 14.87
       }
     ],
@@ -3793,7 +3792,7 @@
         "id": 1900,
         "spell": 20034,
         "name": "Enchant Weapon - Crusader",
-        "dps": 853.79,
+        "dps": 853.65,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~400g"
@@ -3803,7 +3802,7 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": 853.58,
+        "dps": 853.45,
         "loss": 0.2,
         "note": "Timbermaw rep, tier unknown"
       },
@@ -3811,7 +3810,7 @@
         "id": 803,
         "spell": 13898,
         "name": "Enchant Weapon - Fiery Weapon",
-        "dps": 850.26,
+        "dps": 850.13,
         "loss": 3.53,
         "note": "41% formula drop"
       },
@@ -3820,7 +3819,7 @@
         "spell": 23799,
         "name": "Enchant Weapon - Strength",
         "effect": "+15 Strength",
-        "dps": 849.9,
+        "dps": 849.76,
         "loss": 3.89,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3829,7 +3828,7 @@
         "id": 1898,
         "spell": 20032,
         "name": "Enchant Weapon - Lifestealing",
-        "dps": 849.41,
+        "dps": 849.28,
         "loss": 4.38,
         "note": "Formula on AH ~149g"
       },
@@ -3837,7 +3836,7 @@
         "id": 1897,
         "spell": 20031,
         "name": "Enchant Weapon - Superior Striking",
-        "dps": 847.26,
+        "dps": 847.13,
         "loss": 6.53,
         "note": "Formula on AH ~50g"
       },
@@ -3845,28 +3844,28 @@
         "id": 805,
         "spell": 13943,
         "name": "Enchant Weapon - Greater Striking",
-        "dps": 846.83,
+        "dps": 846.7,
         "loss": 6.96
       },
       {
         "id": 943,
         "spell": 13693,
         "name": "Enchant Weapon - Striking",
-        "dps": 846.4,
+        "dps": 846.27,
         "loss": 7.38
       },
       {
         "id": 241,
         "spell": 13503,
         "name": "Enchant Weapon - Lesser Striking",
-        "dps": 845.98,
+        "dps": 845.84,
         "loss": 7.81
       },
       {
         "id": 250,
         "spell": 7788,
         "name": "Enchant Weapon - Minor Striking",
-        "dps": 845.55,
+        "dps": 845.42,
         "loss": 8.24
       }
     ]
