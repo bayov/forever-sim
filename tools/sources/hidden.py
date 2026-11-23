@@ -53,7 +53,7 @@ reveal has its own. Only 6 have a push at all, because the server sent their
 rows again later (Aegis of Stormwind in push 112864), and that says when it
 sent them again, not when they were revealed. So the order is the push when
 there is one, then the date BayovCore saw the reveal (or else first saw the
-item) for the rest, and the ones with neither go first, by ID. Until
+item while playing) for the rest, and the ones with neither go first, by ID. Until
 BayovCore has dates for them, that's most of the list. Shirts, tabards, bags,
 ammo and items without a slot are left out.
 """
@@ -61,6 +61,7 @@ import argparse
 import collections
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -87,6 +88,9 @@ SLOTS = {1: 'head', 2: 'neck', 3: 'shoulder', 4: 'shirt', 5: 'chest', 6: 'waist'
          25: 'thrown', 26: 'ranged', 28: 'relic'}
 # Gear that isn't worth a line in the reveals: shirts, bags, tabards and ammo.
 NOT_REVEALS = (4, 18, 19, 24)
+# Blizzard's test gear, like Tim's Test Ranged Weapon (bayovui's seen_items.py has the
+# same pattern).
+TEST_NAME = re.compile(r'\bTest(ing)?\b|^\d+ (Green|Blue|Epic) ')
 
 
 def load(name, folder=INPUTS):
@@ -102,8 +106,12 @@ def in_game():
     return {int(k): v for k, v in load(path)['items'].items()}
 
 
-def reveals(item, shipped, revealed, seen):
+def reveals(item, shipped, revealed, seen, sim):
     """Every weapon and armor piece Forever hid and has revealed, the newest last.
+
+    The item level and quality are from the client's cache, or from the sim for an
+    item the cache hasn't caught up with (138 of them on 2026-11-23). Blizzard's own
+    test gear is left out.
 
     The order is the push, then the date BayovCore saw it, and the ones with
     neither go first, by ID, since we can't tell when they came (the module
@@ -115,14 +123,17 @@ def reveals(item, shipped, revealed, seen):
         if not row or str(i) in shipped or row['ClassID'] not in (WEAPON, ARMOR):
             continue
         r, g = revealed.get(i, {}), seen.get(i, {})
-        if not (r.get('name') or g):
+        if not (r.get('name') or g) or TEST_NAME.search(r.get('name') or g.get('name') or ''):
             continue
+        # dbcache.py and gen_db both leave out zeros, and quality 0 is a poor item.
+        known = r if r.get('name') else sim.get(i)
+        quality = known.get('quality', 0) if known else None
         slot = r.get('inventoryType') or int(row['InventoryType'])
         if not slot or slot in NOT_REVEALS:
             continue
         entry = collections.OrderedDict([
             ('id', i), ('name', r.get('name') or g.get('name')), ('slot', SLOTS.get(slot, slot)),
-            ('inventoryType', slot), ('ilvl', r.get('ilvl')), ('quality', r.get('quality'))])
+            ('inventoryType', slot), ('ilvl', r.get('ilvl') or sim.get(i, {}).get('ilvl')), ('quality', quality)])
         if r.get('name'):
             # dbcache.py leaves out zeros, so a row with data and no required level has none.
             entry['requiredLevel'] = r.get('requiredLevel', 0)
@@ -189,7 +200,7 @@ def read(build):
                       'name': r.get('name'), 'ilvl': r.get('ilvl'), 'quality': r.get('quality'), 'sources': []}
 
     gear = [e for e in out.values() if e['state'] == 'hidden']
-    shown = reveals(item, shipped, revealed, seen)
+    shown = reveals(item, shipped, revealed, seen, sim)
     counts = collections.OrderedDict([
         ('hidden', len(hidden)),
         ('hiddenGear', len(gear)),

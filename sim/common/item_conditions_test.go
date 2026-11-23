@@ -35,6 +35,14 @@ func TestItemConditions(t *testing.T) {
 		{common.SealOfTheDawn, "vs Undead"},
 		{common.TigulesHarpoon, "vs Beasts"},
 		{common.GrileksCarver, "vs Dragonkin"},
+		// Forever's chances on hit that hit some creatures harder.
+		{common.WraithScythe, "vs Undead"},
+		{common.HeartOfWyrmthalak, "vs Orcs and Ogres"},
+		{common.AngerforgesBattleAxe, "vs Trolls"},
+		{common.AngerforgesBattleAxe, "vs Orcs and Ogres"},
+		{common.Hedgecutter, "vs Plants"},
+		{common.LightcrestHammer, "vs Undead"},
+		{common.FlamebreakTalisman, "vs Elementals"},
 	}
 	for _, c := range cases {
 		labels := []string{}
