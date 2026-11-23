@@ -243,15 +243,31 @@ func (warrior *Warrior) applyUnbridledWrath() {
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
 	forever := warrior.Env.IsForever()
 
-	// Push 114097's melee abilities: the ones that deal damage (Bloodthirst, Mortal Strike, Execute,
-	// Heroic Strike and Cleave, whose white mask bit already counted, and the rest), but not
-	// Whirlwind. The row gives Whirlwind no exception and no client flag sets it apart (its
-	// attributes match Bloodthirst's); the exception is from wowsims/forever's EV-0138 log (build
-	// 70938, 2026-11-16): Unbridled Wrath came on 70% of Heroic Strikes and 67% of Cleaves but on 2
-	// of 425 Whirlwind hits (0.5%).
+	// Push 114097's melee abilities: the ones that deal damage (Heroic Strike and Cleave, whose
+	// white mask bit already counted, and the rest), but not Whirlwind, Shield Slam, Revenge or
+	// Shield Bash. The row gives them no exception and no client flag sets them apart (Whirlwind's
+	// attributes match Bloodthirst's); the exceptions are wowsims/forever's logs:
+	//   - EV-0148 (2026-11-17 to 18, build 70938, push 114122; a level 60 Protection warrior with
+	//     Unbridled Wrath 5/5): isolated landed white swings 58.8%, Heroic Strikes 61.7%, totem
+	//     hits 59.3%, each target a Cleave lands on 0.60; Shield Slam 0 of 977, Revenge 0 of 601,
+	//     Thunder Clap 0 of 2,238, Retaliation 0 of 49, Victory Rush 0 of 24, Shield Bash 0 of 44.
+	//   - EV-0138 (2026-11-16, build 70938, push 114115; a level 60 Fury warrior): Heroic Strike 70%,
+	//     Cleave 67%, Windfury Totem hits 59%, Whirlwind 2 of 425 (0.5%).
+	// Thunder Clap is a spell in the sim and procs nothing; Retaliation and Victory Rush aren't in
+	// it. Bloodthirst, Mortal Strike, Execute, Slam, Overpower and Hamstring have no count in
+	// either log, so they keep the row's reading and proc it as a white hit does (To Verify, notes.md).
 	procsOnAbility := func(spell *core.Spell, result *core.SpellResult) bool {
-		return spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) && result.Damage > 0 &&
-			spell.ActionID.SpellID != 1680 // Whirlwind, both strikes
+		if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || result.Damage <= 0 {
+			return false
+		}
+		switch {
+		case spell.ActionID.SpellID == 1680, // Whirlwind, both strikes
+			spell.SpellCode == SpellCode_WarriorShieldSlam,
+			spell.SpellCode == SpellCode_WarriorRevenge,
+			isShieldBash(spell.ActionID.SpellID):
+			return false
+		}
+		return true
 	}
 
 	warrior.RegisterAura(core.Aura{
@@ -422,18 +438,34 @@ func (warrior *Warrior) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *cor
 		Duration: time.Millisecond * 500,
 	}
 	forever := warrior.Env.IsForever()
+	queuedSpentAt := time.Duration(-1)
 	return core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
 		Label: fmt.Sprintf("Flurry Consume Trigger - %d", flurryAura.ActionID.SpellID),
+		OnReset: func(_ *core.Aura, _ *core.Simulation) {
+			queuedSpentAt = -1
+		},
 		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Remove a stack: a white swing, landed or not, two within 0.5 sec spending one (report
 			// assumption flurry_batch). Server hotfix push 114097 (2026-11-17) sets the buff's
 			// ProcTypeMask (SpellAuraOptions 126501) from 4 to 20, melee auto attacks and melee
-			// abilities, but no ability uses a charge: Bloodthirst, Whirlwind and the rest none in
-			// wowsims/forever's EV-0138 log (build 70938), and under Forever Heroic Strike and Cleave
-			// no longer either since Blizzard's November 16 hotfix ("Fixed an issue where Flurry
-			// stacks were consumed by Cleave or Heroic Strike", t/2403040 post 11). Outside Forever
-			// a Heroic Strike or Cleave in the swing's place still spends one.
+			// abilities.
+			//
+			// Under Forever a Heroic Strike or Cleave spends one charge a cast, landed or not, on one
+			// target or two, apart from the white swings' 0.5 sec window: wowsims/forever's EV-0138
+			// (2026-11-16, build 70938 with hotfixes to push 114115, a level 60 Fury warrior in Upper
+			// Blackrock Spire): 36 clean casts with Flurry up each spent 1 (Cleave on 2 targets 22, on
+			// 1 of 2 landed 3, on 1 target 2, Heroic Strike 8 landed and 1 dodged), and a Cleave 26 ms
+			// after a white swing spent one of its own. The charge goes before the crit's refresh, so
+			// a crit ends the cast at 3. Blizzard's November 16 hotfix ("Fixed an issue where Flurry
+			// stacks were consumed by Cleave or Heroic Strike", t/2403040 post 11) reads the other
+			// way; the log came after it (user ruling 2026-11-22: a rule measured from a Forever log
+			// wins). Bloodthirst, Whirlwind and the other abilities spend none.
 			if forever && spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				if !warrior.isQueuedSwing(spell) || !flurryAura.IsActive() || queuedSpentAt == sim.CurrentTime {
+					return
+				}
+				queuedSpentAt = sim.CurrentTime // a Cleave's hits all land at its cast
+				flurryAura.RemoveStack(sim)
 				return
 			}
 			// Nor does Windfury Totem's attack, though the sim swings it as a white extra attack

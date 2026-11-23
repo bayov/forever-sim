@@ -16,13 +16,19 @@ On master 5e0a327 (item procs, weapon damage, resistances, class limits on top o
 What changed and why:
 
 - All three: Rugged Mantle of the Timbermaw and Knowledge of the Timbermaw (the Meilosh Tailoring upgrades,
-  new in the pool) take shoulder and waist. Mindfang takes the main hand now that standards 42 includes it.
+  new in the pool) take shoulder and waist. Mindfang took the main hand
+  until b1bbe4347 (below).
 - Affliction (+35.7): Talisman of Ascendance (standards 42) for Chained Essence, Tearfall Bracers and
   Master's Boots for the BoE bracers and boots, Skul's Ghastly Touch for Bonecreeper Stylus (was within noise).
 - Demonology (+29.7): Talisman of Ascendance for Eye of the Beast, Elegant Bracers and Master's Boots of
   Shadow Wrath for the Flameweave Cuffs and High Councillor's Boots.
 - Destruction (+28.2): Rune Band of Wizardry (now included) for Channeler's Ring, Sandworm Skin Gloves for
   Deathmist Wraps.
+- b1bbe4347 made Exalted rewards infeasible, so Mindfang went. `RANK_ONLY SLOTS=mainhand,offhand` put Blade
+  of the New Moon (Affliction, Demonology) and Witchblade (Destruction) back. Off hands kept Obsidian Bauble.
+  The other newly included AV and AB items (Frostwolf Cloth Belt, Wand of Biting Cold and the rest) were
+  already ranked and lose to the picks, so no other slot moved. In a SLOTS run the unranked slots and the
+  list's top `dps` keep the old set's numbers (966.23, 904.82, 907.58), about 13 to 16 above the new set.
 
 ## Picks
 
@@ -37,7 +43,6 @@ Shared by all three:
 | Chest | Robe of the Void, armor kit | Tailoring 295, pattern from Gandling |
 | Waist | Knowledge of the Timbermaw | Meilosh, Tailoring, from Wisdom of the Timbermaw |
 | Finger | Watcher's Signet of Brilliance | Watchers Revered (doubtful) |
-| Main hand | Mindfang | Defilers Exalted (doubtful) |
 | Off hand | Obsidian Bauble, Wisdom | Pusillin, Dire Maul |
 
 By spec:
@@ -50,6 +55,7 @@ By spec:
 | Feet | Master's Boots of Shadow Wrath (BoE world drop) | Master's Boots of Shadow Wrath | Master's Boots of Magic (BoE world drop) |
 | Finger 2 | Eye of Orgrimmar (BRD quest, Horde) | Channeler's Ring (Pix, 75 Reals) | Rune Band of Wizardry (Valthalak, Dungeon Set 2 chain) |
 | Trinkets | Talisman of Ascendance (Insignia quest, doubtful), Weakness Analyzer (Pix, 125 Reals) | Talisman of Ascendance, Chained Essence of Eranikus (Sunken Temple quest) | Eye of the Beast (UBRS quest), Weakness Analyzer |
+| Main hand | Blade of the New Moon (Immol'thar, DM) | Blade of the New Moon | Witchblade (Gandling, Scholo) |
 | Wand | Skul's Ghastly Touch (Skul, Strat) | Bonecreeper Stylus (Gandling, Scholo) | Bonecreeper Stylus |
 
 Weapon enchants: Mighty Intellect (Affliction), Revelation (Demonology, Destruction).
@@ -59,7 +65,7 @@ Weapon enchants: Mighty Intellect (Affliction), Revelation (Demonology, Destruct
 - Hidden stats: Rugged Mantle and Knowledge of the Timbermaw. Forever hides their stats, so the sim uses
   the older version's. Both in all three lists.
 - Doubtful, included by standards 42: Rugged Mantle (its Loom blueprint not seen dropping), Watcher's
-  Signet (no Watchers rep source found), Mindfang (Arathi Basin unconfirmed), Talisman of Ascendance
+  Signet (no Watchers rep source found), Talisman of Ascendance
   (Naxx-era Insignia quest), Sandworm Skin Gloves (Roman'khan chain), Rune Band of Wizardry (Valthalak
   summon unconfirmed).
 - Pix Xizzix Reals, rate unknown: Affliction 200, Demonology 150, Destruction 200.
@@ -93,11 +99,9 @@ wowtbc.gg's WoW Forever pre-raid lists (no epics, no BoE world drops), from the 
 
 - Rune Band of Wizardry now matches the public list for Destruction. Sageblade, Leggings of Torment and
   Songstone of Ironforge stay out (world boss plans, patch 1.10, Alliance only).
-- Mindfang, a PvP rep item the first run left out, is now our main hand. The public list has no PvP items.
 - Talisman of Ascendance is a standard pre-raid caster trinket and now leads two lists.
-- Tome of Shadow Force and Therazane's Touch (Frostwolf Exalted) would beat Obsidian Bauble by 0.4 to 5.0 DPS
-  (Destruction's Tome is 0.6 behind) but stay no-pick, AV queue unconfirmed. Mindfang (Defilers, Arathi Basin
-  unconfirmed) is included by standards 42, so the two PvP reputations are tagged differently.
+- Exalted PvP rewards are ranked, not picked: Mindfang would add 12 to 16 DPS, Ironbark Staff 4 to 8, Tome of
+  Shadow Force and Therazane's Touch up to 5 over Obsidian Bauble.
 - Omnicast Boots trail our BoE Master's Boots. The public list leaves out BoE world drops.
 - Affliction: Dark Advisor's Pendant is an easy swap for the Orb if the Faire is missed. Maiden's Circle is
   a sure alternative to the doubtful Signet.
@@ -109,8 +113,8 @@ Report build, 180s, 10000 iterations, `rotopt -eval`. The synthetic numbers matc
 
 | Spec | Phase 0 | Synthetic | Gap | First Phase 0 list |
 |---|---|---|---|---|
-| Affliction | 955.8 | 1089.1 | -133.3 (-12.2%) | 920.1 |
-| Demonology | 888.0 | 1056.0 | -168.0 (-15.9%) | 858.3 |
-| Destruction | 894.0 | 1069.3 | -175.3 (-16.4%) | 865.8 |
+| Affliction | 943.5 | 1089.1 | -145.6 (-13.4%) | 920.1 |
+| Demonology | 874.0 | 1056.0 | -182.0 (-17.2%) | 858.3 |
+| Destruction | 879.2 | 1069.3 | -190.1 (-17.8%) | 865.8 |
 
-The synthetic gear still reads as a raid level set, 12 to 16% above Phase 0, with 10% hit against 2 to 4%.
+The synthetic gear still reads as a raid level set, 13 to 18% above Phase 0, with 10% hit against 2 to 4%.

@@ -740,8 +740,10 @@ func abilityRage(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell, 
 
 // TestForeverUnbridledWrathOnAbilities checks server hotfix push 114097 (SpellAuraOptions 124699,
 // ProcTypeMask 4 to 20): under Forever a landed damaging melee ability procs Unbridled Wrath's 1 Rage
-// at its 12% a rank, as a white hit does, but Whirlwind doesn't (wowsims/forever's EV-0138 log: 2 of
-// 425 Whirlwind hits) and an ability that deals no damage doesn't.
+// at its 12% a rank, as a white hit does, an ability that deals no damage doesn't, and neither do
+// the abilities wowsims/forever's logs show none on: Whirlwind (EV-0138, 2026-11-16: 2 of 425) and
+// Shield Slam and Revenge (EV-0148, 2026-11-17 to 18: 0 of 977 and 0 of 601, where Heroic Strike
+// read 61.7%).
 func TestForeverUnbridledWrathOnAbilities(t *testing.T) {
 	sim, war := newForeverWarriorArmed(t, P1Talents, 991014, 991015)
 	if war.Talents.UnbridledWrath == 0 || war.Bloodthirst == nil {
@@ -749,17 +751,24 @@ func TestForeverUnbridledWrathOnAbilities(t *testing.T) {
 	}
 	chance := 0.12 * float64(war.Talents.UnbridledWrath)
 	whirlwindOH := war.GetSpell(core.ActionID{SpellID: 1680}.WithTag(2))
-	for _, c := range []struct {
+	type abilityCase struct {
 		name   string
 		spell  *core.Spell
 		damage float64
 		want   float64
-	}{
+	}
+	cases := []abilityCase{
 		{"Bloodthirst", war.Bloodthirst.Spell, 500, chance},
 		{"a Bloodthirst that deals nothing", war.Bloodthirst.Spell, 0, 0},
+		{"Heroic Strike", war.HeroicStrike.Spell, 500, chance},
 		{"Whirlwind", war.Whirlwind.Spell, 500, 0},
 		{"Whirlwind's off-hand strike", whirlwindOH, 500, 0},
-	} {
+		{"Revenge", war.Revenge.Spell, 500, 0},
+	}
+	if war.ShieldSlam != nil {
+		cases = append(cases, abilityCase{"Shield Slam", war.ShieldSlam.Spell, 500, 0})
+	}
+	for _, c := range cases {
 		if got := abilityRage(sim, war, c.spell, c.damage, 4000); math.Abs(got-c.want) > 0.03 {
 			t.Errorf("%s gives %.3f Rage a hit from Unbridled Wrath, want %.2f", c.name, got, c.want)
 		}
@@ -798,31 +807,100 @@ func TestForeverRecklessSwingsCleaveOnce(t *testing.T) {
 	}
 }
 
-// TestForeverFlurryNotSpentByHeroicStrikeOrCleave checks Blizzard's November 16 hotfix ("Fixed an
-// issue where Flurry stacks were consumed by Cleave or Heroic Strike", t/2403040 post 11): under
-// Forever a Heroic Strike or Cleave leaves Flurry's charges alone, and a white swing still spends one.
-func TestForeverFlurryNotSpentByHeroicStrikeOrCleave(t *testing.T) {
-	sim, war := newForeverWarriorArmed(t, P1Talents, 991014, 991015)
+// TestForeverFlurrySpentByHeroicStrikeAndCleave checks wowsims/forever's EV-0138 log (2026-11-16,
+// build 70938 with hotfixes to push 114115): under Forever a Heroic Strike or Cleave spends one
+// Flurry charge a cast, landed or not, on one target or two, apart from the white swings' 0.5 sec
+// window, and a crit then sets Flurry to 3. Bloodthirst spends none.
+func TestForeverFlurrySpentByHeroicStrikeAndCleave(t *testing.T) {
+	sim, war := newForeverWarriorTargets(t, P1Talents, 991014, 991015, 2)
 	flurry := war.GetAura("Flurry Proc (12972)")
 	if flurry == nil {
 		t.Fatal("the talents should give 3 points of Flurry")
 	}
-	hit := func(spell *core.Spell) {
-		result := spell.NewResult(war.CurrentTarget)
-		result.Outcome = core.OutcomeHit
+	hit := func(spell *core.Spell, target *core.Unit, outcome core.HitOutcome) {
+		result := spell.NewResult(target)
+		result.Outcome = outcome
 		result.Damage = 500
 		result.PreOutcomeDamage = 500
 		spell.DealDamage(sim, result)
 	}
-	flurry.Activate(sim)
-	flurry.SetStacks(sim, 3)
-	hit(war.HeroicStrike.Spell)
-	hit(war.Cleave.Spell)
-	if got := flurry.GetStacks(); got != 3 {
-		t.Errorf("Heroic Strike and Cleave left Flurry at %d charges, want 3", got)
+	step := func() { // each cast at a time of its own
+		for now := sim.CurrentTime; sim.CurrentTime < now+time.Second && !sim.Step(); {
+		}
+		flurry.Activate(sim)
+		flurry.SetStacks(sim, 3)
 	}
-	hit(war.AutoAttacks.MHAuto())
+	targets := sim.Encounter.ActiveTargetUnits
+
+	step()
+	hit(war.HeroicStrike.Spell, targets[0], core.OutcomeHit)
 	if got := flurry.GetStacks(); got != 2 {
-		t.Errorf("a white swing left Flurry at %d charges, want 2", got)
+		t.Errorf("a landed Heroic Strike left Flurry at %d charges, want 2", got)
+	}
+	step()
+	hit(war.HeroicStrike.Spell, targets[0], core.OutcomeDodge)
+	if got := flurry.GetStacks(); got != 2 {
+		t.Errorf("a dodged Heroic Strike left Flurry at %d charges, want 2", got)
+	}
+	step()
+	hit(war.Cleave.Spell, targets[0], core.OutcomeHit)
+	hit(war.Cleave.Spell, targets[1], core.OutcomeHit)
+	if got := flurry.GetStacks(); got != 2 {
+		t.Errorf("a Cleave on 2 targets left Flurry at %d charges, want 2", got)
+	}
+	// A white swing right after a Cleave still spends its own.
+	hit(war.AutoAttacks.MHAuto(), targets[0], core.OutcomeHit)
+	if got := flurry.GetStacks(); got != 1 {
+		t.Errorf("a white swing after a Cleave left Flurry at %d charges, want 1", got)
+	}
+	step()
+	flurry.SetStacks(sim, 2)
+	hit(war.Cleave.Spell, targets[0], core.OutcomeCrit)
+	hit(war.Cleave.Spell, targets[1], core.OutcomeHit)
+	if got := flurry.GetStacks(); got != 3 {
+		t.Errorf("a Cleave crit at 2 charges left Flurry at %d, want 3", got)
+	}
+	step()
+	hit(war.Bloodthirst.Spell, targets[0], core.OutcomeHit)
+	if got := flurry.GetStacks(); got != 3 {
+		t.Errorf("Bloodthirst left Flurry at %d charges, want 3", got)
+	}
+}
+
+// TestForeverRecklessSwingsHeroicStrikeAvoided checks wowsims/forever's EV-0138 log (2026-11-16,
+// build 70938 with hotfixes to push 114115): a Heroic Strike uses a Reckless Swings charge and gives
+// its 5 Rage whether it lands or not, while a white swing uses one only when it lands (106 of 106
+// landed, 0 of 22 missed), and Bloodthirst, Whirlwind and Hamstring use none.
+func TestForeverRecklessSwingsHeroicStrikeAvoided(t *testing.T) {
+	sim, war := newForeverWarriorArmed(t, "30313013-250530055121100031", 991014, 991015) // P1Talents with Reckless Swings
+	if war.RecklessSwingsAura == nil {
+		t.Fatal("the talents give no Reckless Swings")
+	}
+	for _, c := range []struct {
+		name    string
+		spell   *core.Spell
+		outcome core.HitOutcome
+		want    int32
+	}{
+		{"a dodged Heroic Strike", war.HeroicStrike.Spell, core.OutcomeDodge, 3},
+		{"a missed white swing", war.AutoAttacks.MHAuto(), core.OutcomeMiss, 4},
+		{"a landed white swing", war.AutoAttacks.MHAuto(), core.OutcomeHit, 3},
+		{"Bloodthirst", war.Bloodthirst.Spell, core.OutcomeHit, 4},
+		{"Whirlwind", war.Whirlwind.Spell, core.OutcomeHit, 4},
+		{"Hamstring", war.Hamstring.Spell, core.OutcomeHit, 4},
+	} {
+		for now := sim.CurrentTime; sim.CurrentTime < now+time.Second && !sim.Step(); {
+		}
+		war.RecklessSwingsAura.Deactivate(sim)
+		war.RecklessSwingsAura.Activate(sim)
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		result := c.spell.NewResult(war.CurrentTarget)
+		result.Outcome = c.outcome
+		result.Damage = core.TernaryFloat64(c.outcome.Matches(core.OutcomeLanded), 500, 0)
+		before := war.RecklessSwingsAura.GetStacks()
+		c.spell.DealDamage(sim, result)
+		if got := war.RecklessSwingsAura.GetStacks(); got != c.want {
+			t.Errorf("%s left Reckless Swings at %d charges from %d, want %d", c.name, got, before, c.want)
+		}
 	}
 }

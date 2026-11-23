@@ -1,6 +1,7 @@
 package dpswarrior
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -219,4 +220,54 @@ func newForeverWarriorBuffed(t *testing.T, raidBuffs *proto.RaidBuffs) (*core.Si
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	return sim, sim.Raid.Parties[0].Players[0].(*DpsWarrior).GetWarrior()
+}
+
+// TestForeverWindfuryTotemSwingAsWhite checks wowsims/forever's EV-0138 log (2026-11-16, build
+// 70938 with hotfixes to push 114115): Windfury Totem's swing gives the Rage of a main-hand white
+// hit (crit doubled), rolls Unbridled Wrath at the white swing's rate (61 of 103, 59%) and uses a
+// Reckless Swings charge when it lands (14 charges), as the sim's white extra swing does.
+func TestForeverWindfuryTotemSwingAsWhite(t *testing.T) {
+	totem := core.ActionID{SpellID: core.WindfuryBuffSpellId[3]}
+	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
+	war.AutoAttacks.CancelAutoSwing(sim)
+	auto := war.AutoAttacks.MHAuto()
+	for _, outcome := range []core.HitOutcome{core.OutcomeHit, core.OutcomeCrit} {
+		white := whiteRage(sim, war, auto, outcome, 500)
+		restore := war.AutoAttacks.SetExtraAttackSourceForTest(totem)
+		got := whiteRage(sim, war, auto, outcome, 500)
+		restore()
+		if white <= 0 || math.Abs(got-white) > 1e-9 {
+			t.Errorf("a Windfury Totem swing (outcome %v) gives %.3f Rage, want a white hit's %.3f", outcome, got, white)
+		}
+	}
+
+	sim, war = newForeverWarriorArmed(t, "30313013-250530055121100031", 991014, 991015) // P1Talents with Reckless Swings
+	war.AutoAttacks.CancelAutoSwing(sim)
+	auto = war.AutoAttacks.MHAuto()
+	restore := war.AutoAttacks.SetExtraAttackSourceForTest(totem)
+	defer restore()
+	war.RecklessSwingsAura.Activate(sim)
+	whiteRage(sim, war, auto, core.OutcomeHit, 500)
+	if got := war.RecklessSwingsAura.GetStacks(); got != 3 {
+		t.Errorf("a landed Windfury Totem swing left Reckless Swings at %d charges, want 3", got)
+	}
+	war.RecklessSwingsAura.Deactivate(sim)
+	// Unbridled Wrath's share: the swings that gave more than the least any gave.
+	const n = 4000
+	rages := make([]float64, n)
+	base := math.Inf(1)
+	for i := range rages {
+		rages[i] = whiteRage(sim, war, auto, core.OutcomeHit, 500)
+		base = math.Min(base, rages[i])
+	}
+	procs := 0
+	for _, rage := range rages {
+		if rage > base+0.5 {
+			procs++
+		}
+	}
+	chance := 0.12 * float64(war.Talents.UnbridledWrath)
+	if got := float64(procs) / n; math.Abs(got-chance) > 0.03 {
+		t.Errorf("Unbridled Wrath came on %.3f of Windfury Totem swings, want %.2f", got, chance)
+	}
 }
