@@ -1,9 +1,17 @@
-# Consumables pass 101 (quiet)
+# Consumables audit, pass 102
 
-Master 7e0a01a8d9, previous audited 2de7021bf71.
+Master c78d983aca, previous audited b48605aa38. Client 1.60.1.71037 (wago latest, unchanged). Result: quiet, no findings.
 
-- Findings: none new. Open items unchanged (consumables-20261110-1, consumables-20261105-1, both low).
-- Why due: orchestration/standards.md changed (rule 42, Phase 0 gear with unsure availability is used, user ruling 2026-11-23). It concerns Phase 0 gear lists, not Level 60 consumes, buffs or enchants, so nothing here changes.
-- Watched paths (presets.ts, mksettings, level60 gear, sim/core consumes/buffs/debuffs/totems, sim/common, forever_enchants.go, assumptions_def.py, staff imbue): `git diff 2de7021bf71 HEAD` is empty.
-- Wago: latest 1.60 build 1.60.1.71037, same as the last pass.
-- Class branches: changes.sh lists them as thousands of commits ahead, all stale copies (gotcha 1); not audited.
+## Moved
+- sim/common/forever_item_procs.go (new): Forever chance-on-hit, equip and use effects for 26 weapons, gauntlets and trinkets. Item ids are not in any preset or level60 gear set (`git grep` on presets.ts and level60 gear: no hits).
+- sim/common/item_effects.go: Forever values for Argent Avenger, Bonechill Hammer, undead/demon/elemental/beast AP items, Wraith Scythe, Heart of Wyrmthalak, +1% ranged hit on three items. None are in a Level 60 DPS preset. No consumable, buff, debuff or enchant value changed.
+- Open findings (Minor Health name, feral mksettings sapper) unchanged; neither file moved.
+
+## scan.sh
+- banned, Revelation, crit elixirs: empty.
+- NONSYN: ui/enhancement_shaman/gear_sets/level60_phase0.gear.json trinkets 13965, 10455. New Phase 0 BiS set (2026-11-22/23), real items on purpose; standards 42 says use unsure Phase 0 gear. Not a finding. Source of the two trinkets not checked this pass.
+- Count "minor-armor exclusive effects" is 3 vs expected 2 (ref 2): debuffs.go now has the exclusive effect on CoR, FF and a third site (lines 1106, 1135, 1172); debuffs.go not moved since the last pass, so the scan counts a pre-existing form. Not looked into further.
+- Totem lines match the rulings.
+
+## Open
+No new items. Suggest the next pass update scan.sh's NONSYN allowance for Phase 0 sets.
