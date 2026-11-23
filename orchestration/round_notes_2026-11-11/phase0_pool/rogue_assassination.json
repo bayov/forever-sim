@@ -1,25 +1,25 @@
 {
   "spec": "rogue_assassination",
   "options": {
-    "back": 1102,
-    "chest": 1195,
-    "feet": 807,
-    "finger1": 814,
-    "finger2": 814,
-    "hands": 895,
-    "head": 907,
-    "legs": 977,
+    "back": 1100,
+    "chest": 1193,
+    "feet": 804,
+    "finger1": 813,
+    "finger2": 813,
+    "hands": 890,
+    "head": 906,
+    "legs": 975,
     "mainhand": 168,
     "neck": 515,
     "offhand": 132,
     "ranged": 328,
-    "shoulder": 803,
-    "trinket1": 103,
-    "trinket2": 103,
+    "shoulder": 801,
+    "trinket1": 101,
+    "trinket2": 101,
     "waist": 743,
-    "wrist": 665
+    "wrist": 666
   },
-  "items": 1569,
+  "items": 1550,
   "unmodelled": [
     {
       "id": 833,
@@ -58,27 +58,9 @@
       "kind": "Use"
     },
     {
-      "id": 8348,
-      "name": "Helm of Fire",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
       "id": 10697,
       "name": "Enchanted Azsharite Felbane Dagger",
       "slot": "mainhand",
-      "kind": "Use"
-    },
-    {
-      "id": 11808,
-      "name": "Circle of Flame",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
-      "id": 11905,
-      "name": "Linken's Boomerang",
-      "slot": "trinket1",
       "kind": "Use"
     },
     {
@@ -115,12 +97,6 @@
       "id": 13515,
       "name": "Ramstein's Lightning Bolts",
       "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 14134,
-      "name": "Cloak of Fire",
-      "slot": "back",
       "kind": "Use"
     },
     {
@@ -336,18 +312,6 @@
       "kind": "classic"
     },
     {
-      "id": 20693,
-      "name": "Weighted Cloak",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
-      "id": 20697,
-      "name": "Crystalline Threaded Cape",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20720,
       "name": "Dark Whisper Blade",
       "slot": "mainhand",
@@ -382,44 +346,8 @@
       "name": "Studded Timbermaw Brawlers",
       "slot": "hands",
       "kind": "classic"
-    },
-    {
-      "id": 280872,
-      "name": "Grimstitch Pants",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280875,
-      "name": "Grimstitch Gloves",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280876,
-      "name": "Grimstitch Spaulders",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280877,
-      "name": "Grimstitch Mask",
-      "slot": "head",
-      "kind": "partial"
-    },
-    {
-      "id": 280878,
-      "name": "Grimstitch Boots",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280879,
-      "name": "Grimstitch Chestpiece",
-      "slot": "chest",
-      "kind": "partial"
     }
   ],
-  "foreverNoTooltip": 402,
-  "unlisted": 1301
+  "foreverNoTooltip": 385,
+  "unlisted": 896
 }

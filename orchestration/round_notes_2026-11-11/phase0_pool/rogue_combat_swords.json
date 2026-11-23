@@ -1,32 +1,26 @@
 {
   "spec": "rogue_combat_swords",
   "options": {
-    "back": 1102,
-    "chest": 1195,
-    "feet": 807,
-    "finger1": 814,
-    "finger2": 814,
-    "hands": 895,
-    "head": 907,
-    "legs": 977,
-    "mainhand": 737,
+    "back": 1100,
+    "chest": 1193,
+    "feet": 804,
+    "finger1": 813,
+    "finger2": 813,
+    "hands": 890,
+    "head": 906,
+    "legs": 975,
+    "mainhand": 736,
     "neck": 515,
     "offhand": 588,
     "ranged": 328,
-    "shoulder": 803,
-    "trinket1": 103,
-    "trinket2": 103,
+    "shoulder": 801,
+    "trinket1": 101,
+    "trinket2": 101,
     "waist": 743,
-    "wrist": 665
+    "wrist": 666
   },
-  "items": 1732,
+  "items": 1712,
   "unmodelled": [
-    {
-      "id": 811,
-      "name": "Axe of the Deep Woods",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
     {
       "id": 833,
       "name": "Lifestone",
@@ -64,12 +58,6 @@
       "kind": "Use"
     },
     {
-      "id": 8348,
-      "name": "Helm of Fire",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
       "id": 9380,
       "name": "Jang'thraze the Protector",
       "slot": "mainhand",
@@ -104,18 +92,6 @@
       "name": "Jang'thraze the Protector",
       "slot": "mainhand",
       "kind": "Use, Chance on hit"
-    },
-    {
-      "id": 11808,
-      "name": "Circle of Flame",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
-      "id": 11905,
-      "name": "Linken's Boomerang",
-      "slot": "trinket1",
-      "kind": "Use"
     },
     {
       "id": 12185,
@@ -188,12 +164,6 @@
       "name": "Silent Fang",
       "slot": "mainhand",
       "kind": "Chance on hit"
-    },
-    {
-      "id": 14134,
-      "name": "Cloak of Fire",
-      "slot": "back",
-      "kind": "Use"
     },
     {
       "id": 15853,
@@ -384,12 +354,6 @@
       "kind": "classic"
     },
     {
-      "id": 11603,
-      "name": "Vilerend Slicer",
-      "slot": "mainhand",
-      "kind": "classic"
-    },
-    {
       "id": 11743,
       "name": "Rockfist",
       "slot": "mainhand",
@@ -468,18 +432,6 @@
       "kind": "classic"
     },
     {
-      "id": 20693,
-      "name": "Weighted Cloak",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
-      "id": 20697,
-      "name": "Crystalline Threaded Cape",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20698,
       "name": "Elemental Attuned Blade",
       "slot": "mainhand",
@@ -526,44 +478,8 @@
       "name": "Studded Timbermaw Brawlers",
       "slot": "hands",
       "kind": "classic"
-    },
-    {
-      "id": 280872,
-      "name": "Grimstitch Pants",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280875,
-      "name": "Grimstitch Gloves",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280876,
-      "name": "Grimstitch Spaulders",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280877,
-      "name": "Grimstitch Mask",
-      "slot": "head",
-      "kind": "partial"
-    },
-    {
-      "id": 280878,
-      "name": "Grimstitch Boots",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280879,
-      "name": "Grimstitch Chestpiece",
-      "slot": "chest",
-      "kind": "partial"
     }
   ],
-  "foreverNoTooltip": 432,
-  "unlisted": 1456
+  "foreverNoTooltip": 415,
+  "unlisted": 1018
 }
