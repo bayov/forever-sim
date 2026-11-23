@@ -121,19 +121,24 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // 2026-10-23 search, after Fingers of Frost's charges came to be spent a spell batch after each
 // cast, put Ice Lance on the last charge only (the first goes on a Frostfire Bolt, which reads the
 // target as Frozen for Shatter), Evocation below 10% with 90 sec left and rank 2 below 30 mana a
-// second of the fight left: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets.
+// second of the fight left: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets. Since Ice
+// Lance took 0.11 of spell power (2026-11-22, a quarter of SoD's 0.429) it is worth 3.6 here, and
+// Fire Blast goes on cooldown above 40% mana, not 80% (tools/rotopt/mage_presets.sh).
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Frostfire', Level60FrostfireAPL, {
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on the last Fingers of Frost charge, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Synthetic',
 });
-// Frostbolt, with Ice Barrier before the pull and again when Frigid Power has under 6 sec left, so
+// Frostbolt, with Ice Barrier before the pull and again when Frigid Power has under 2 sec left, so
 // its 15% Frost damage never drops (the launch realms' 2026-10-30 hotfix; 5% more while the shield
 // holds). Ice Lance (4 times the damage on a Frozen target since that hotfix, and Shatter's crit)
 // goes on the last Fingers of Frost charge as a Frostbolt completes: the charge is spent a spell
 // batch after the cast, so the Frostbolt and the Ice Lance both read Frozen. That is +5 at 120 /
 // 180 / 300 sec together over Ice Lance on every charge (the 2026-11-01 knob search; it lost 11 to
 // 23 at 180 sec when Ice Lance did 3 times the damage). No Evocation. When a Frostbolt would not
-// land before the end (its cast plus 1 sec), Ice Lance instead.
+// land before the end (its cast plus 1 sec), Ice Lance instead. Since Ice Lance took 0.11 of spell
+// power (2026-11-22, a quarter of SoD's 0.429) it still goes there: none is 28 behind. Arcane
+// Missiles takes Missile Barrage's procs, and Ice Barrier waits for 2 sec of Frigid Power left, not
+// 6 (tools/rotopt/mage_presets.sh).
 export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Frost', Level60FrostAPL, {
 	tooltip: 'Frostbolt, with Ice Barrier for Frigid Power and Ice Lance on the last Fingers of Frost charge as a Frostbolt lands.',
 	group: 'Synthetic',
@@ -219,9 +224,13 @@ export const DefaultAPL = APLLevel60Frostfire;
 // are Incineration 2 and Master of Elements 3: 1051.0 at 180 sec (1096.4 before, the loss is
 // Critical Mass and Ice Lance's cooldown). The rotation search over 120, 180 and 300 sec kept every
 // knob.
+// Ice Lance took 0.11 of spell power on 2026-11-22 (0.429 before). The talent search over 120, 180
+// and 300 sec together then moved Burning Soul 3 to Incineration 5 (0/29/22), with Fire Blast on
+// cooldown above 40% mana: +3.4 / +1.7 / +7.2 (Human, 40,000 iterations, seed 1; seed 7777 within
+// 0.1). Dropping Fingers of Frost, Shatter and Ice Lance for 12 Arcane points is still 83 behind.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Frostfire',
-	SavedTalents.create({ talentsString: '-2550030103013303-0235000311203002' }),
+	SavedTalents.create({ talentsString: '-5550000103013303-0235000311203002' }),
 	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Synthetic' },
 );
 // Frost (28/1/22, 2026-10-30): Frost to Fingers of Frost (Improved Frostbolt, Precision, Ice
@@ -257,8 +266,14 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // and Missile Barrage for Incineration and ended 936.5 after the knob search (Arcane Blast back at 1
 // to 4 stacks is 25 to 170 behind). It is 945.3 / 944.9 / 937.6 as a Skyborne High Order, against
 // 927.0 / 929.3 / 925.6 for the old build on the hotfix (Undead, 20,000 iterations, seed 1).
-export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Frost', SavedTalents.create({ talentsString: '0502050030001-4-253500230111301211' }), {
-	tooltip: 'Frost to Ice Barrier: Frigid Power, Fingers of Frost, Shatter and Ice Lance, with Arcane Concentration.',
+// Ice Lance took 0.11 of spell power on 2026-11-22 (0.429 before; the build fell to 834.6 at 180
+// sec). The talent search over 120, 180 and 300 sec together moved Arcane Concentration 2 and Arcane
+// Meditation to Missile Barrage 2 (Frostbolt's procs make Arcane Missiles free and twice as fast)
+// and Incineration 5 (16/4/31 becomes 15/5/31: 050203203-5-253500230111301211). With Ice Barrier
+// refreshed at 2 sec of Frigid Power left it is +3.9 / +3.9 / +4.0 as a Skyborne High Order (40,000
+// iterations, seed 1; +3.5 / +3.6 / +3.9 on seed 7777), and still ends a 180 sec fight with 5000 mana.
+export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Frost', SavedTalents.create({ talentsString: '050203203-5-253500230111301211' }), {
+	tooltip: 'Frost to Ice Barrier: Frigid Power, Fingers of Frost, Shatter and Ice Lance, with Arcane Concentration and Missile Barrage.',
 	group: 'Synthetic',
 });
 // Fire (14/34/3): every Fire damage talent to Combustion with Critical Mass 3, Burning Soul 2
