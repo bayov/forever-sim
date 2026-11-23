@@ -538,3 +538,6 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-23 00:53 | tank_mechanics | pass 28 | master 5518f4873 | quiet | empty-slot swing fix doesn't reach tanks
 2026-11-23 00:53 | tank_rotations | pass 25 | master 5518f4873 | quiet | 104 rows match pass 24
 2026-11-23 00:53 | tank_fairness | pass 27 | master 5518f4873 | quiet | ranking unchanged
+2026-11-23 06:51 | gear | pass 72 | master 2de7021bf | quiet | only real Phase 0 items changed, no synthetic ids
+2026-11-23 06:51 | consumables | pass 100 | master 2de7021bf | quiet | enchants match client; wowhead sources unchecked (empty pages)
+2026-11-23 06:51 | fairness | pass 51 | master 2de7021bf | quiet | builds match shared run; fairness-20261118-1 still open

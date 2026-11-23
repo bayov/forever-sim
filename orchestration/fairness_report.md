@@ -41,6 +41,7 @@ Economy pass: the loop's shared run (20,000 iterations, report requests at the r
 
 Top over bottom: 1.65x
 
+- Pass 51 (2de7021bf, 2026-11-23). Table unchanged: the only watched change is the Enhancement Phase 0 real-gear preset (ui/enhancement_shaman/gear_sets/level60_phase0.gear.json, fffaeccb5), which no report request wears. builds.json still matches the shared 2de7021bf run on 68 of 68 builds within 1.5; race picks as in pass 50.
 - Pass 50 (5518f4873, 2026-11-23). builds.json matches the shared run on 68 of 68 builds within 1.5 (largest gap 0.8): fairness-20261122-1 resolved by 6ce43d3c8 and 98dc8871e. No place changes against pass 49. The mage re-tune (talents and APL only, same race, consumables and buffs) lifts Frost 834.6 -> 838.6 and Frostfire 1006.0 -> 1007.3. The other sim changes (Phase 0 armor uses, item effects, empty weapon slot, APL wait guard) move no request: no shared leak.
 - Race (builds.json race table, 10k): Balance still High Order +3.7 to +6.1 (fairness-20261118-1 open). Below a finding: MM wolf / tallstrider pet variants Night Elf +1.6 / +1.8 over Orc (base MM keeps Orc), Fire Gnome +1.2 over Human, both near race-table noise.
 - Gear: audit1b 19/19 PASS.
