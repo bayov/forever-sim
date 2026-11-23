@@ -18,6 +18,13 @@ damage, resistance and class limit fixes). Lists: `ui/mage/bis/level60_phase0_ma
 - **Frostfire** (884.8 to 883.4): Blackhand's Breadth out for Chained Essence of Eranikus. Rune Band of Wizardry for
   Watcher's Signet. Knowledge of the Timbermaw on waist.
 
+## PvP reputation check (b1bbe4347)
+
+b1bbe4347 made Exalted rewards infeasible and put the other AV and AB items in by standards 42. DRY_RUN on it, done
+by the warlock worker: the pools are unchanged (1275 items). No mage pick was an Exalted reward. Each newly included
+item that fits a mage was already ranked and loses to the pick: Stormpike Cloth Girdle 14 to 23 DPS, Crackling Staff 8
+to 30, Wand of Biting Cold (Frost) 2.8. So no slot was rerun and the lists and calibration stand.
+
 ## What changed on the way
 
 - Golden Sandals (arcane spell power) was an unlisted arcane pick in the first, stopped run. It's a Tailoring 235 pattern
