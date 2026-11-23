@@ -14,12 +14,12 @@
     "offhand": 586,
     "ranged": 324,
     "shoulder": 796,
-    "trinket1": 101,
-    "trinket2": 101,
+    "trinket1": 102,
+    "trinket2": 102,
     "waist": 738,
     "wrist": 668
   },
-  "items": 1611,
+  "items": 1612,
   "unmodelled": [
     {
       "id": 833,
@@ -489,12 +489,6 @@
       "name": "Eye of Orgrimmar",
       "slot": "finger1",
       "kind": "item"
-    },
-    {
-      "id": 13965,
-      "name": "Blackhand's Breadth",
-      "slot": "trinket1",
-      "kind": "content"
     },
     {
       "id": 14022,

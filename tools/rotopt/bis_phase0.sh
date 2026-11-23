@@ -113,8 +113,8 @@
 #   - What only the other faction can get, by the build's race (2026-11-23, faction.go): an
 #     item our data gives a faction, one whose every source is one faction's reputation,
 #     quest or vendor (Theramore and Darkspear in the Barrens), and one the content check
-#     tags with a "faction" (Eye of the Beast, a Horde quest reward our data has no quest
-#     for). It comes off the starting set too. phase0_enchants.json tags enchants the same
+#     tags with a "faction" (Courier's Clasp, a Horde quest reward our data has no quest
+#     side for). It comes off the starting set too. phase0_enchants.json tags enchants the same
 #     way. The dry run lists what it leaves out (factionDropped).
 #
 # What it ranks but never picks: the items phase0_content.json marks "infeasible" (user,

@@ -79,10 +79,10 @@ func TestFactionCheckFiles(t *testing.T) {
 		if len(c.quests) == 0 {
 			t.Errorf("no quest sides read")
 		}
-		eye := &proto.UIItem{Id: 13968, Name: "Eye of the Beast"}
+		clasp := &proto.UIItem{Id: 279833, Name: "Courier's Clasp"}
 		theramore := &proto.UIItem{Id: 271955, Name: "Theramore Pauldrons"}
-		if got := c.otherFaction(eye) != ""; got != (want == proto.Faction_Alliance) {
-			t.Errorf("%v: Eye of the Beast left out %v", race, got)
+		if got := c.otherFaction(clasp) != ""; got != (want == proto.Faction_Alliance) {
+			t.Errorf("%v: Courier's Clasp left out %v", race, got)
 		}
 		if got := c.otherFaction(theramore) != ""; got != (want == proto.Faction_Horde) {
 			t.Errorf("%v: Theramore Pauldrons left out %v", race, got)
