@@ -36,13 +36,14 @@ func warriorStrikesAfterSwing(t *testing.T, k Knobs) (after, before, all int) {
 		t.Fatal(res.Error.Message)
 	}
 	// In log order, so a Windfury Totem attack a strike procs (it can take a queued Heroic Strike)
-	// does not count as a swing ahead of it. The log rounds to 10 ms.
-	re := regexp.MustCompile(`\[([0-9.]+)\].*Casting \{(OtherID: 7, Tag: 1|SpellID: 11567, Tag: 1|SpellID: 23894|SpellID: 1680|SpellID: 7373)\}`)
+	// does not count as a swing ahead of it. The log rounds to 10 ms. A Heroic Strike swing is the
+	// untagged 11567: Tag 1 is the queue press, which comes on the APL's clock, not the swing timer's.
+	re := regexp.MustCompile(`\[([0-9.]+)\].*Casting \{(OtherID: 7, Tag: 1|SpellID: 11567|SpellID: 23894|SpellID: 1680|SpellID: 7373)\}`)
 	last := -10.0
 	var strikes []float64
 	for _, m := range re.FindAllStringSubmatch(res.Logs, -1) {
 		at, _ := strconv.ParseFloat(m[1], 64)
-		if m[2] == "OtherID: 7, Tag: 1" || m[2] == "SpellID: 11567, Tag: 1" {
+		if m[2] == "OtherID: 7, Tag: 1" || m[2] == "SpellID: 11567" {
 			last = at
 			for _, st := range strikes {
 				if at > st+0.005 && at-st < 0.095 {
