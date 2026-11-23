@@ -106,5 +106,6 @@ gen mage_frost level60_frost "iceLance=4,missileBarrage=1,fireBlastMana=0,evocat
 # search on it kept every knob. Together +3.4 / +1.7 / +7.2 at 120 / 180 / 300 sec (seed 1,
 # 40,000 iterations; +3.5 / +1.8 / +7.3 on seed 7777). Leaving Fingers of Frost, Shatter and Ice
 # Lance for 12 Arcane points (Improved Channeling, Arcane Subtlety, Arcane Concentration or
-# Missile Barrage) is still 83 to 133 behind.
+# Missile Barrage) is still 83 to 133 behind. The 40% threshold loses about 14 at 480 sec, where
+# the mana runs short; kept (2026-11-23), since the report is tuned at 120 / 180 / 300 sec.
 gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=40,evocationMana=10,evocationMinTime=75,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1"
