@@ -120,4 +120,66 @@ Calibration (report build): Phase 0 958.0, synthetic 1027.1 (report 1026.4), gap
 
 ## Elemental
 
-ELE_PENDING
+List `ui/elemental_shaman/bis/level60_phase0_ele.bis.json`, report talents, Windshaper. Score 877.0.
+
+| Slot | Pick | Source |
+|---|---|---|
+| Head | Spellweaver's Turban | General Drakkisath, UBRS |
+| Neck | Orb of the Darkmoon | Darkmoon Faire, 1200 tickets (Faire weeks Nov 9-16, Dec 7-14) |
+| Shoulder | Pauldrons of The Five Thunders | Mokvar, Anthion chain |
+| Back | Arcanoweave Cloak | Pix Xizzix, 75 Reals |
+| Chest | Vest of The Five Thunders | Mokvar, end of the Valthalak chain (doubtful) |
+| Wrist | Bindings of The Five Thunders | Mokvar bracer quest, 20g |
+| Hands | Gauntlets of The Five Thunders | Mokvar gloves and belt quest |
+| Waist | Cord of The Five Thunders | Mokvar gloves and belt quest |
+| Legs | Ironfeather Leggings | AH ~121g, or Leatherworking 300 |
+| Feet | Slippers of The Five Thunders | Mokvar, Anthion chain |
+| Rings | Channeler's Ring, Watcher's Signet of Brilliance | Pix Xizzix 75 Reals; Watchers Revered (doubtful) |
+| Trinkets | Eye of the Beast, Chained Essence of Eranikus | BRS quest; Sunken Temple quest |
+| Main hand | Hand of Edward the Odd | Random world drop |
+| Off hand | Obsidian Bauble | Pusillin, Dire Maul |
+| Totem | Burning Totem | Pix Xizzix, 50 Reals |
+
+Enchants: Arcanum of Focus on head and legs, +6 spell power neck, Mystic Rugged Armor Kit on chest and
+feet, +16 spell power bracer, +20 Nature damage gloves, Revelation on the weapon, +6 Intellect +5 Spirit
+off hand. The list has no cloak enchant.
+
+Flags:
+- Vest of The Five Thunders is doubtful (after the summoning chain). Without it the best set is a 4pc
+  with Alanna's Embrace and Belt of the Archmage, 855.4 against 860.7.
+- Watcher's Signet of Brilliance is doubtful. The best ring that isn't loses 2.96 (Maiden's Circle).
+- Hand of Edward the Odd: random world drop with no AH price. Witchblade (Gandling) loses 7.35. Its
+  melee proc doesn't matter to a caster.
+- Orb of the Darkmoon needs a Faire week. The next one is Dec 7-14. Barbed Thorn Necklace loses 1.63.
+- Eye of the Beast: BRS quest reward, quest not in our data.
+- No pick has an unmodelled effect or hidden stats.
+
+Set check (Five Thunders): 6pc as picked 860.7. 6pc with Kilt for the doubtful Vest (Alanna's Embrace in
+the chest) 853.3, 4pc (Alanna's Embrace, Belt of the Archmage) 855.4, 2pc (also Adventurer's Boots of
+Nature's Wrath, Skyfury Gauntlets) 828.0. The search's 6pc stands.
+
+Comparison, timesaver.gg Forever Elemental (data of 2026-11-13). Its URL is a leveling-gear page, so it
+may not mean to be a level 60 list:
+- Orb of the Darkmoon matches.
+- Their Elements pieces (Coif, Vest, Gauntlets, Boots), Ironfeather Shoulders and Brazecore Armguards
+  give way to the Five Thunders 6pc and rank outside our top 25.
+- Barrage Girdle -13.8, Postmaster's Seal -6.5, Mastersmith's Hammer -8.6. Blue Dragonscale Leggings and
+  Observer's Shield rank outside the top 25.
+- Cloak of Earth and Sky is doubtful (pattern has no known source). Don Mauricio's Band is infeasible
+  (379g a DPS). Cleansed Vilebranch Icon is out (Alliance only quest).
+- Heart of the Primeval is item level 40, below the pool's floor of 50, so it was never simmed.
+  Jewel of the Guard Captain ranks outside the top 25.
+
+Calibration (report build): Phase 0 860.7, synthetic 981.9 (report 981.8), gap -121.2 (-12.3%).
+
+## Calibration summary
+
+| Spec | Phase 0 | Synthetic | Gap |
+|---|---|---|---|
+| Enhancement | 996.2 | 1071.3 | -75.1 (-7.0%) |
+| Elemental | 860.7 | 981.9 | -121.2 (-12.3%) |
+| Retribution | 958.0 | 1027.1 | -69.1 (-6.7%) |
+
+The synthetic Phase 1 gear sits 7% above the Phase 0 sets for the two melee specs and 12% for
+Elemental, close to the mages' 13 to 14%. So the synthetic gear flatters the casters by about 5% next to
+Enhancement and Retribution. On Phase 0 gear the melee specs would rank about 5% higher against them.

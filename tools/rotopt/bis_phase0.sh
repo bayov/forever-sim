@@ -333,6 +333,7 @@ elif [ -n "$SLOTS" ]; then
 fi
 
 # What we write: the list (not with EFFECTS_ONLY) and the effects file (not with EFFECTS_OUT=none).
+mkdir -p "$(dirname "$out")"
 outputs="-gear-rank-out $out"
 if [ -n "$EFFECTS_ONLY" ]; then
 	outputs=""
