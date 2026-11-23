@@ -2,24 +2,24 @@
   "spec": "mage_frostfire",
   "options": {
     "back": 979,
-    "chest": 893,
-    "feet": 376,
+    "chest": 895,
+    "feet": 378,
     "finger1": 607,
     "finger2": 607,
-    "hands": 376,
-    "head": 411,
-    "legs": 410,
+    "hands": 378,
+    "head": 413,
+    "legs": 412,
     "mainhand": 608,
     "neck": 369,
     "offhand": 567,
     "ranged": 183,
-    "shoulder": 360,
+    "shoulder": 362,
     "trinket1": 91,
     "trinket2": 91,
-    "waist": 324,
-    "wrist": 333
+    "waist": 326,
+    "wrist": 335
   },
-  "items": 1231,
+  "items": 1247,
   "unmodelled": [
     {
       "id": 833,
@@ -358,8 +358,32 @@
       "name": "Lord Blackwood's Blade",
       "slot": "mainhand",
       "kind": "classic"
+    },
+    {
+      "id": 226939,
+      "name": "Sorcerer's Shoulders",
+      "slot": "shoulder",
+      "kind": "classic"
+    },
+    {
+      "id": 226940,
+      "name": "Sorcerer's Legs",
+      "slot": "legs",
+      "kind": "classic"
+    },
+    {
+      "id": 226943,
+      "name": "Sorcerer's Boots",
+      "slot": "feet",
+      "kind": "classic"
+    },
+    {
+      "id": 226944,
+      "name": "Sorcerer's Chest",
+      "slot": "chest",
+      "kind": "classic"
     }
   ],
   "foreverNoTooltip": 317,
-  "unlisted": 724
+  "unlisted": 722
 }
