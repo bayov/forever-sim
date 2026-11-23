@@ -1453,7 +1453,7 @@
   "287026": {"name": "Escape Plan", "note": "Zone drop"},
   "287029": {"name": "Nature Guardian's Legguards", "avail": "doubtful", "note": "No known source · seen in game Nov 9"},
   "287030": {"name": "Blackmaw Bindings", "note": "Seen in game Nov 13 · drop source unknown (Blackmaw Hold?)"},
-  "287033": {"name": "Furbolg Berserker's Boots", "note": "Seen in game Nov 21 · drop source unknown (Furbolg rares like Sabella No-Eyes?) · unsure, used by standards 42"},
+  "287033": {"name": "Furbolg Berserker's Boots", "note": "Seen in game Nov 21 · drop source unknown (Furbolg rares like Sabella No-Eyes?) · unsure, used by standards 42", "avail": "doubtful", "include": true},
   "287034": {"name": "Grove Subjugator's Blade", "avail": "doubtful", "note": "No known source"},
   "287035": {"name": "Demon Worshipper's Necklace", "note": "On AH ~20g"},
   "287037": {"name": "Shaper's Robe", "avail": "doubtful", "note": "Ravasaur Juvenile · zone unknown · only reported"},
