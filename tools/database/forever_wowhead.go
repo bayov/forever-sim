@@ -161,6 +161,27 @@ var foreverWeaponSkills = map[int32]map[proto.WeaponSkill]float64{
 	14551:  {proto.WeaponSkill_WeaponSkillAxes: 1, proto.WeaponSkill_WeaponSkillDaggers: 1, proto.WeaponSkill_WeaponSkillSwords: 1},
 	286619: {proto.WeaponSkill_WeaponSkillUnarmed: 1}, // Big Basher's Belt, +1 fist weapons. Revealed Nov 7-8.
 	280068: {proto.WeaponSkill_WeaponSkillUnarmed: 1}, // Bloody Claws of Attack, +1 fist weapons. Revealed Nov 8-9 (Wowhead Forever tooltip).
+	// From BayovCore's item sweep on client 1.60.1.70938 (2026-11-13), which reads the
+	// skill line ("Equip: Increased Daggers +1."). Where the client's hotfix cache has the
+	// item, its ItemSparse skill stat agrees (forever_client_cache.json): 91 two-handed
+	// maces, 93 axes, 94 bows, 96 daggers, 101 polearms.
+	9375:   {proto.WeaponSkill_WeaponSkillAxes: 1},            // Expert Goldminer's Helmet, Classic +7.
+	18392:  {proto.WeaponSkill_WeaponSkillDaggers: 1},         // Distracting Dagger, Classic +6.
+	18505:  {proto.WeaponSkill_WeaponSkillDaggers: 1},         // Mugger's Belt, Classic +5.
+	15860:  {proto.WeaponSkill_WeaponSkillDaggers: 1},         // Blinkstrike Armguards, none in Classic.
+	2915:   {proto.WeaponSkill_WeaponSkillTwoHandedMaces: 1},  // Taran Icebreaker, none in Classic.
+	13056:  {proto.WeaponSkill_WeaponSkillPolearms: 1},        // Frenzied Striker, none in Classic.
+	280026: {proto.WeaponSkill_WeaponSkillBows: 1},            // Albinofur Grips.
+	274929: {proto.WeaponSkill_WeaponSkillTwoHandedAxes: 1},   // Hurley's Felling Axe.
+	275669: {proto.WeaponSkill_WeaponSkillUnarmed: 1},         // Punchy's Punchers, +1 fist weapons.
+	276102: {proto.WeaponSkill_WeaponSkillTwoHandedSwords: 1}, // Bladewind.
+	280016: {proto.WeaponSkill_WeaponSkillFeralCombat: 1},     // Spiderchitin Wrap.
+	286616: {proto.WeaponSkill_WeaponSkillFeralCombat: 1},     // Matriarch's Prowlers.
+	// Classic's ranged skill is gone. The sweep reads each one's other Equip line (ranged
+	// hit 1%), and Sash of the Grand Hunt's full tooltip from a loot (1.60.1.70888) agrees.
+	18296: {}, // Marksman Bands, Classic +2 bows, crossbows and guns.
+	22207: {}, // Sash of the Grand Hunt, Classic +2 bows, crossbows and guns.
+	18388: {}, // Stoneshatter, Classic +4 crossbows.
 }
 
 // foreverWeaponSkillSlice turns an entry of foreverWeaponSkills into the item's list of

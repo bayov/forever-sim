@@ -130,9 +130,11 @@ const (
 	ForceReactiveDisk          = 18168
 	EskhandarsLeftClaw         = 18202
 	EskhandarsRightClaw        = 18203
+	MarksmanBands              = 18296
 	FiendishMachete            = 18310
 	RazorGauntlets             = 18326
 	QuelSerrar                 = 18348
+	Stoneshatter               = 18388
 	BaronCharrsSceptre         = 18671
 	TalismanOfEphemeralPower   = 18820
 	EssenceOfThePureFlame      = 18815
@@ -162,6 +164,7 @@ const (
 	PitchforkOfMadness         = 19963
 	EmeraldDragonfang          = 20578
 	Earthstrike                = 21180
+	SashOfTheGrandHunt         = 22207
 	WrathOfCenarius            = 21190
 	EyeOfMoam                  = 21473
 	ScarabBrooch               = 21625
@@ -4802,6 +4805,16 @@ func init() {
 	///////////////////////////////////////////////////////////////////////////
 	//                                 Other
 	///////////////////////////////////////////////////////////////////////////
+
+	// Equip: Improves your chance to hit with ranged weapons by 1.0%. Forever's Marksman Bands,
+	// Stoneshatter and Sash of the Grand Hunt (client 1.60.1.70938 item sweep, and the Sash's
+	// tooltip from a loot). The game sends no stat for the line, so the items carry no hit. It
+	// is ranged only, like Biznick's Accurascope, and doesn't reach the hunter's pet.
+	for _, itemID := range []int32{MarksmanBands, Stoneshatter, SashOfTheGrandHunt} {
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			agent.GetCharacter().AddBonusRangedHitRating(1 * core.MeleeHitRatingPerHitChance)
+		})
+	}
 
 	// https://www.wowhead.com/classic/item=17111/blazefury-medallion
 	// Equip: Adds 2 fire damage to your melee attacks.
