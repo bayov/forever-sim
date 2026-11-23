@@ -1,191 +1,176 @@
-# Phase 0 step 3: druid and priest (2026-11-23)
+# Phase 0 step 3: druid and priest (rerun of 2026-11-23)
 
-Balance, Feral, Shadow and Smite, from `tools/rotopt/bis_phase0.sh` on master. Lists in
-`ui/balance_druid/bis/`, `ui/feral_druid/bis/` and `ui/shadow_priest/bis/` (`level60_phase0_<spec>`).
+Balance, Feral, Shadow and Smite, from `tools/rotopt/bis_phase0.sh` on master 5e0a327fe (item procs,
+weapon damage, resistances, class limits), then b1bbe4347 (Exalted rewards infeasible, AV and AB items
+in). Lists in `ui/balance_druid/bis/`, `ui/feral_druid/bis/` and `ui/shadow_priest/bis/`
+(`level60_phase0_<spec>`).
 
 ## Summary
 
-| Spec | Phase 0 | Synthetic | Gap |
-|---|---|---|---|
-| Balance | 821.4 | 956.1 | -134.7 (-14.1%) |
-| Feral | 1066.5 | 1186.1 | -119.6 (-10.1%) |
-| Shadow | 847.2 | 948.4 | -101.2 (-10.7%) |
-| Smite | 686.2 | 781.1 | -94.9 (-12.1%) |
+| Spec | Phase 0 | Synthetic | Gap | Earlier Phase 0 |
+|---|---|---|---|---|
+| Balance | 822.7 | 956.1 | -133.4 (-14.0%) | 821.4 |
+| Feral | 1068.5 | 1186.1 | -117.6 (-9.9%) | 1066.3 |
+| Shadow | 855.3 | 948.4 | -93.1 (-9.8%) | 847.2 |
+| Smite | 687.8 | 781.1 | -93.3 (-11.9%) | 686.2 |
 
-Calibration: each spec's report build at 180s (the request's 20s variation kept), 10000 iterations,
-seed 1, on the list's picks with their enchants and on the report's synthetic gear. The synthetic
-gear is 10 to 14% above what Phase 0 offers for all four, so it reads as a Phase 1 set, not a pre-raid one.
+Calibration: each spec's report build at 180s, 10000 iterations, seed 1, `rotopt -eval` on the list's
+picks with their enchants and on the report's synthetic gear. "Earlier Phase 0" is the earlier list
+simmed the same way on today's data. The synthetic gear stays 10 to 14% above Phase 0, a Phase 1 set.
 
-What changed in the shared files:
+What changed:
 
-- The dry run pools matched `phase0_pool/` but for fewer items (more now tagged), with no new
-  unmodelled or hidden stat items.
-- Bracers of the Fallen Son (21594) "out": item level 88 BoP leather with no source, Classic
-  Ahn'Qiraj loot. It was Balance's first wrist pick, so Balance ran again.
-- Fel Cape (279269) and Mana-infused Cord (279267) "doubtful": Forever's Tailoring 300 crafts with
-  no known pattern source. Their siblings (Robes of Fiery Devastation, Rime-encrusted Boots) need
-  the raid essence. Fel Cape was 1 DPS under Shadow's back pick.
-- Feralheart Raiment (set 1667, 31 rows) and Vestments of the Virtuous (set 1675, 14 rows, no
-  chest) "include", by the parent's ruling, with head and chest "doubtful" like Five Thunders.
-  All four specs ran again after it. The set code covers the IDs (`setId` on every row).
+- Balance: Rune Band of Wizardry for Channeler's Ring, within noise (Channeler's ranks 1.4 above).
+- Feral: Theramore Pauldrons, Bracers of Subterfuge, Timbermaw Brawlers and Protector's Band in, from
+  the newly modelled data and the faction check. Don Julio's Band was picked, then went infeasible
+  (b1bbe4347), so the finger slots ran again and Cutthroat's Signet came back.
+- Shadow: the Virtuous pieces are out. Spellweaver's Turban, Rugged Mantle of the Timbermaw, Robe of
+  Winter Night, Knowledge of the Timbermaw and other Shadow Wrath rolls in. Mindfang and Don Julio's
+  Band were picked, then went infeasible, so finger, main hand and off hand ran again: Hand of Edward
+  the Odd and Rune Band of Wizardry.
+- Smite: Master's Vest of Holy Wrath, Knowledge of the Timbermaw, Jereman's Bauble and Spirit of
+  Aquementas for the Eternal Chestguard, Belt of the Archmage, Watcher's Signet and Tome of the Lost.
 
-A false alarm, for the record: a hand test said Virtuous in 6 slots beat Shadow's picks by 41 DPS.
-It had kept the old items' random suffixes on three swapped slots. Without them the 6 pieces sim
-841.6 against the list's 847.2, and a full rerun from that start ended at 841.6 too. The list
-stands. Anyone who swaps items in a request by hand should drop `randomSuffix` on those slots.
+Process: the dry runs matched `phase0_pool/` but for three effects now modelled (Force of Magma,
+Shimmering Platinum Warhammer, Taran Icebreaker) and, after b1bbe4347, six fewer unlisted items in the
+priest pools. No new unmodelled or hidden stat items. The faction check leaves 134 Horde items out of the
+druid pools and 84 Alliance items out of the priest pools. The runs took 36 min (Balance) to 2h (Feral)
+on 4 cores. This container has no `jj`, so a git shim stood in for the script's sim hash.
 
 ## Balance
 
-Feralheart 6 pieces (head, shoulder, chest, wrist, hands, feet).
+Feralheart 6 pieces (head, shoulder, chest, wrist, hands, feet). List score 839.7.
 
 | Slot | Pick | Source |
 |---|---|---|
-| head | Feralheart Cowl (doubtful) | Set quest: end of the Valthalak chain, step gold unknown, or the vendor after |
-| neck | Orb of the Darkmoon | Quest: 1200 Tickets - Orb of the Darkmoon, Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11 |
-| shoulder | Feralheart Spaulders | Set quest: Anthion chain (Strat, Dire Maul), step gold unknown, or the vendor after |
+| head | Feralheart Cowl (doubtful) | Set quest: end of the Valthalak chain, or the vendor after |
+| neck | Orb of the Darkmoon | Quest: 1200 Tickets, Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11 |
+| shoulder | Feralheart Spaulders | Set quest: Anthion chain (Strat, Dire Maul), or the vendor after |
 | back | Arcanoweave Cloak | Pix Xizzix, 75 Reals |
-| chest | Feralheart Vest (doubtful) | Set quest: end of the Valthalak chain, step gold unknown, or the vendor after |
+| chest | Feralheart Vest (doubtful) | Set quest: end of the Valthalak chain, or the vendor after |
 | wrist | Feralheart Wraps | Set quest: bracer quest, or the vendor after |
-| hands | Feralheart Hands | Set quest: gloves and belt quest, after the bracer quest, or the vendor after |
-| waist | Belt of the Archmage | Tailoring 295, pattern on AH ~131g, Loom on AH ~10g |
-| legs | Ironfeather Leggings | On AH ~121g, or Leatherworking 300, pattern on AH ~16g |
-| feet | Feralheart Galoshes | Set quest: Anthion chain (Strat, Dire Maul), step gold unknown, or the vendor after |
+| hands | Feralheart Hands | Set quest: gloves and belt quest, or the vendor after |
+| waist | Belt of the Archmage | Tailoring 295, pattern on AH ~131g |
+| legs | Ironfeather Leggings | On AH ~121g, or Leatherworking 300 |
+| feet | Feralheart Galoshes | Set quest: Anthion chain, or the vendor after |
 | finger | Watcher's Signet of Brilliance (doubtful) | Watchers Revered, no rep source found yet |
-| finger | Channeler's Ring | Pix Xizzix, 75 Reals, owned |
+| finger | Rune Band of Wizardry | Lord Valthalak, summon unconfirmed in Forever (include, standards 42) |
 | trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |
-| trinket | Eye of the Beast | Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data |
+| trinket | Eye of the Beast | Quest reward, Blackrock Spire, no side in our data |
 | mainhand | Hand of Edward the Odd | Random world drop |
 | offhand | Obsidian Bauble | Pusillin, Dire Maul |
-| ranged | Idol of the Moon (doubtful) | No known source, may be late content |
+| ranged | Idol of the Moon (doubtful) | No known source |
 
 Flags:
-- Night Elf build: the report's Balance and Feral builds are Night Elf, but Eye of the Beast (and
-  Feral's Blackhand's Breadth) are Horde quest rewards in Classic ("For The Horde!", Rend). The item
-  data has no faction flag on them, so the search keeps them. User call.
-- Doubtful head and chest (Feralheart, end of the Valthalak chain): without both, the best is 4
-  pieces with Spellweaver's Turban and Alanna's Embrace, 806.7 DPS (-14.7).
-- Watcher's Signet of Brilliance (doubtful, no Watchers rep source): Maiden's Circle is 3.0 DPS under.
-- Idol of the Moon (doubtful, no known source) is the only idol the list ranks. Without it the slot is empty.
+- Doubtful head and chest (Feralheart, end of the Valthalak chain): Spellweaver's Turban is 11.1 under,
+  Robes of Dark Summons 13.4 under (doubtful too).
+- Rune Band of Wizardry and Channeler's Ring are within noise. Idol of the Moon is the only idol ranked.
 - No pick has an unmodelled effect or hidden stats.
 
-Public list (wowtbc.gg Balance pre-raid): it shares Eye of the Beast and the Belt of the
-Archmage slot idea (Ban'thok Sash there, 2.7 DPS under ours). The big differences are the Forever
-items (Feralheart set, Arcanoweave Cloak, Channeler's Ring, Orb of the Darkmoon) and Hand of Edward
-the Odd with Obsidian Bauble over Witchblade and Spirit of Aquementas. Those guides predate Forever's
-items, so that's expected. Robes of the Royal Crown, Hands of Power and Skyshroud Leggings lose to
-the set pieces and Ironfeather Leggings.
+Public list (wowtbc.gg Balance pre-raid): as before. It shares Eye of the Beast and Belt of the Archmage's
+slot (Ban'thok Sash there, 3.1 under). The differences are Forever items, which those guides predate.
 
 ## Feral
 
-No set: only the Feralheart Cap (1 piece).
+Feralheart Cap only, no set. List score 1082.4.
 
 | Slot | Pick | Source |
 |---|---|---|
-| head | Feralheart Cap (doubtful) | Set quest: end of the Valthalak chain, step gold unknown, or the vendor after |
-| neck | Amulet of the Darkmoon | Quest: 1200 Tickets - Amulet of the Darkmoon, Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11 |
-| shoulder | Darkspear Pauldrons |  |
-| back | Cape of the Black Baron | Drop: Baron Rivendare, Stratholme |
-| chest | Timbermaw Tunic | On AH ~251g, or Leatherworking 300, pattern on AH ~256g |
-| wrist | Warpwood Bracers | Quest: Lethtendris's Web (Dire Maul) |
-| hands | Theramore Gloves |  |
-| waist | Shifter's Belt | Pix Xizzix, Reals (price not in data), Druid only |
-| legs | Warbear Woolies |  |
+| head | Feralheart Cap (doubtful) | Set quest: end of the Valthalak chain, or the vendor after |
+| neck | Amulet of the Darkmoon | Quest: 1200 Tickets, Faire weeks |
+| shoulder | Theramore Pauldrons | Theramore rep, Alliance only |
+| back | Cape of the Black Baron | Baron Rivendare, Stratholme |
+| chest | Timbermaw Tunic | On AH ~251g, or Leatherworking 300 |
+| wrist | Bracers of Subterfuge (doubtful) | Naxx-era Insignia quest, Eastern Plaguelands per Wowhead's Forever data |
+| hands | Timbermaw Brawlers | Leatherworking 300, pattern from Meilosh (Timbermaw Revered) |
+| waist | Shifter's Belt | Pix Xizzix, Reals, Druid only |
+| legs | Warbear Woolies | No source in our data, left open by the Enhancement check |
 | feet | Drudge Boots (doubtful) | Quest: The Nightmare Manifests |
+| finger | Protector's Band | Silverwing Sentinels Honored, Alliance only |
 | finger | Cutthroat's Signet | Pix Xizzix, 75 Reals |
-| finger | Opal Ring of the Tiger | Random world drop |
-| trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |
-| trinket | Blackhand's Breadth | Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data |
-| mainhand | Crystal Spiked Maul (doubtful) | No known source |
+| trinket | Chained Essence of Eranikus | Quest, Sunken Temple |
+| trinket | Blackhand's Breadth | Quest reward, Blackrock Spire, no side in our data |
+| mainhand | Crystal Spiked Maul (doubtful) | No known source, stats hidden in Forever |
 | ranged | Idol of Ferocity | Lord Roccor, Blackrock Depths |
 
 Flags:
-- Crystal Spiked Maul: doubtful (no known source) and its stats are hidden in Forever. Bonecrusher
-  is 1.8 DPS under. The Unstoppable Force ranks 7.7 above, infeasible (Frostwolf Exalted).
-- Feralheart Cap (doubtful): Outlaw's Collar is 5.2 under. Drudge Boots (doubtful, Silithus):
-  Supreme Shoes of the Tiger 1.7 under.
-- Blackhand's Breadth on a Night Elf build, as above.
-- Darkspear Pauldrons, Theramore Gloves and Warbear Woolies were left open by the Enhancement check
-  without a note. Wowhead's Forever data sells the first two in The Barrens. Not confirmed in game.
+- Bracers of Subterfuge (doubtful): Forest Stalker's Bracers rank 4.0 above it at the final iterations,
+  so the wrist is a toss up either way.
+- Crystal Spiked Maul (doubtful, hidden stats): as before. The Unstoppable Force ranks 7.6 above,
+  infeasible. Feralheart Cap (doubtful): Outlaw's Collar 4.4 under. Drudge Boots: Dunestalker's 1.4 under.
+- Don Julio's Band ranks 1.6 above the rings, infeasible (Frostwolf Exalted, Horde).
 
-Public list (wowtbc.gg Feral pre-raid): Cape of the Black Baron matches. Manual Crowd Pummeler is
-its weapon. Ours ranks it 23rd, 24.5 under: its use is modelled (+46.7 DPS at 90s) but its item
-level 34 stats lose that and more. Mark of Fordring (5.8 under), Swiftwalker Boots (2.7),
-Cloudrunner Girdle (8.5), Hand of Justice (6.7) and the Devilsaur pieces (12 to 13) all rank under
-the Forever items and Pix Xizzix gear. No mistake found.
+Public list (wowtbc.gg Feral pre-raid): as before. Cape of the Black Baron matches, Manual Crowd
+Pummeler ranks far under on its item level 34 stats. No mistake found.
 
 ## Shadow
 
-Two Virtuous pieces (head, shoulder). More pieces lose (see the false alarm above).
+No set: Virtuous Cowl ranks 0.2 above Spellweaver's Turban, within noise. List score 875.2.
 
 | Slot | Pick | Source |
 |---|---|---|
-| head | Virtuous Cowl (doubtful) | Set quest: end of the Valthalak chain, step gold unknown, or the vendor after |
-| neck | Dark Advisor's Pendant | Drop: Vectus, Scholomance |
-| shoulder | Virtuous Epaulets | Set quest: Anthion chain (Strat, Dire Maul), step gold unknown, or the vendor after |
+| head | Spellweaver's Turban | General Drakkisath, Upper Blackrock Spire |
+| neck | Dark Advisor's Pendant | Vectus, Scholomance |
+| shoulder | Rugged Mantle of the Timbermaw (doubtful) | Meilosh, Tailoring, Loom blueprint unseen |
 | back | Arcanoweave Cloak | Pix Xizzix, 75 Reals |
-| chest | Robes of Dark Summons (doubtful) | Impaan the Imprisoner, Blackmaw Hold, not in guides yet |
-| wrist | Eternal Bindings of Shadow Wrath | Random world drop, BoE |
-| hands | Felcloth Gloves | Tailoring 280, pattern from Knot Thimblejack's Cache (Dire Maul) 16%, BoP, 12 Runecloth bolts, 20 Felcloth, 8  |
-| waist | Belt of the Archmage | Tailoring 295, pattern on AH ~131g, Loom on AH ~10g |
-| legs | Master's Leggings of Shadow Wrath | Random world drop, BoE |
-| feet | Eternal Boots of Shadow Wrath | Random world drop, BoE |
+| chest | Robe of Winter Night | Tailoring 245, pattern from Cobalt Mageweaver 0.8% |
+| wrist | Flameweave Cuffs of Shadow Wrath | Lord Incendius, Blackrock Depths |
+| hands | Felcloth Gloves | Tailoring 280, pattern from Knot Thimblejack's Cache |
+| waist | Knowledge of the Timbermaw | Meilosh, Tailoring, Mooncloth and 20 Winterfall Spirit Beads |
+| legs | Eternal Sarong of Shadow Wrath | Prince Tortheldrin, Dire Maul West, or world drop |
+| feet | Master's Boots of Shadow Wrath | Random world drop, BoE |
 | finger | Watcher's Signet of Brilliance (doubtful) | Watchers Revered, no rep source found yet |
-| finger | Channeler's Ring | Pix Xizzix, 75 Reals, owned |
-| trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |
-| trinket | Eye of the Beast | Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data |
+| finger | Rune Band of Wizardry | Lord Valthalak, summon unconfirmed (include) |
+| trinket | Chained Essence of Eranikus | Quest, Sunken Temple |
+| trinket | Eye of the Beast | Quest reward, Blackrock Spire |
 | mainhand | Hand of Edward the Odd | Random world drop |
 | offhand | Obsidian Bauble | Pusillin, Dire Maul |
 | ranged | Ritssyn's Wand of Bad Mojo | Baron Rivendare, Stratholme |
 
 Flags:
-- Doubtful head (Virtuous Cowl) and chest (Robes of Dark Summons): with Spellweaver's Turban and Robe
-  of Winter Night instead it sims 847.9, the same within noise. So the doubtful picks cost nothing.
-- Watcher's Signet (doubtful): Eye of Orgrimmar is level with it.
-- No unmodelled effects or hidden stats among the picks. Robe of Winter Night, Felcloth Gloves and
-  Belt of the Archmage need the build's Tailoring.
+- Rugged Mantle of the Timbermaw (doubtful): Virtuous Epaulets 4.2 under.
+- Mindfang ranks 4.5 above the main hand, Tome of Shadow Force 3.9 above the off hand, both infeasible.
+- Tailoring picks: Robe of Winter Night, Felcloth Gloves and both Timbermaw pieces need the build's Tailoring.
+- No unmodelled effects or hidden stats among the picks.
 
-Public list (wowtbc.gg Shadow pre-raid): it shares Dark Advisor's Pendant, Belt of the Archmage's slot,
-Eye of the Beast and the Robe of Winter Night (our open fallback). Ritssyn's Wand over Skul's
-Ghastly Touch, and Hand of Edward the Odd with Obsidian Bauble over Scepter of the Unholy with
-Spirit of Aquementas. Shadow Wrath world drops over Maleki's Footwraps and Skyshroud Leggings.
+Public list (wowtbc.gg Shadow pre-raid): now closer, sharing Dark Advisor's Pendant, Robe of Winter
+Night, Eye of the Beast and the Shadow Wrath rolls. Ritssyn's Wand over Skul's Ghastly Touch, Hand of
+Edward the Odd with Obsidian Bauble over Scepter of the Unholy with Spirit of Aquementas.
 
 ## Smite
 
-Virtuous 6 pieces (all but chest and waist).
+Virtuous 6 pieces (all but chest and waist). List score 697.6.
 
 | Slot | Pick | Source |
 |---|---|---|
-| head | Virtuous Cowl (doubtful) | Set quest: end of the Valthalak chain, step gold unknown, or the vendor after |
-| neck | Orb of the Darkmoon | Quest: 1200 Tickets - Orb of the Darkmoon, Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11 |
-| shoulder | Virtuous Epaulets | Set quest: Anthion chain (Strat, Dire Maul), step gold unknown, or the vendor after |
+| head | Virtuous Cowl (doubtful) | Set quest: end of the Valthalak chain, or the vendor after |
+| neck | Orb of the Darkmoon | Quest: 1200 Tickets, Faire weeks |
+| shoulder | Virtuous Epaulets | Set quest: Anthion chain, or the vendor after |
 | back | Arcanoweave Cloak | Pix Xizzix, 75 Reals |
-| chest | Eternal Chestguard of Holy Wrath | Random world drop, BoE |
+| chest | Master's Vest of Holy Wrath | Random world drop, BoE, also General Drakkisath |
 | wrist | Virtuous Wraps | Set quest: bracer quest, or the vendor after |
-| hands | Virtuous Hands | Set quest: gloves and belt quest, after the bracer quest, or the vendor after |
-| waist | Belt of the Archmage | Tailoring 295, pattern on AH ~131g, Loom on AH ~10g |
-| legs | Virtuous Leggings | Set quest: Anthion chain (Strat, Dire Maul), step gold unknown, or the vendor after |
-| feet | Virtuous Slippers | Set quest: Anthion chain (Strat, Dire Maul), step gold unknown, or the vendor after |
+| hands | Virtuous Hands | Set quest: gloves and belt quest, or the vendor after |
+| waist | Knowledge of the Timbermaw | Meilosh, Tailoring |
+| legs | Virtuous Leggings | Set quest: Anthion chain, or the vendor after |
+| feet | Virtuous Slippers | Set quest: Anthion chain, or the vendor after |
 | finger | Maiden's Circle | On AH ~80g |
-| finger | Watcher's Signet of Brilliance (doubtful) | Watchers Revered, no rep source found yet |
-| trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |
-| trinket | Weakness Analyzer | Pix Xizzix, 125 Reals, unique with ACA |
+| finger | Jereman's Bauble (doubtful) | Quest: Return to Jereman |
+| trinket | Chained Essence of Eranikus | Quest, Sunken Temple |
+| trinket | Weakness Analyzer | Pix Xizzix, 125 Reals |
 | mainhand | Hand of Edward the Odd | Random world drop |
-| offhand | Tome of the Lost | General Drakkisath, Blackrock Spire |
+| offhand | Spirit of Aquementas | Quest: It's Dangerous to Go Alone |
 | ranged | Ritssyn's Wand of Bad Mojo | Baron Rivendare, Stratholme |
 
 Flags:
-- Virtuous Cowl (doubtful): without it the best is Spellweaver's Turban with Virtuous Cord to keep 6
-  pieces, 677.5 DPS (-8.7).
-- Watcher's Signet (doubtful): Eye of Orgrimmar is level with it.
-- Maiden's Circle and Weakness Analyzer are priced (80g, 125 Reals). Nothing unmodelled or hidden.
+- Virtuous Cowl (doubtful): Virtuous Crown keeps the set, 7.8 under.
+- Jereman's Bauble (doubtful): Eye of Orgrimmar and Band of the Damned are level with it, so it costs nothing.
+- Mindfang 1.6 under the main hand, infeasible now anyway. Nothing unmodelled or hidden.
 
-Public list: no Smite pre-raid list found. A forum post suggests the mage list. Ours shares the
-caster items with Shadow, with Holy Wrath suffixes and Tome of the Lost in the off hand.
+Public list: no Smite pre-raid list found. It shares the caster items with Shadow.
 
-## User calls
+## Open questions (unchanged)
 
-- Night Elf druid builds wearing Horde quest rewards (Eye of the Beast, Blackhand's Breadth).
-- The Feralheart and Virtuous head and chest (end of the Valthalak chain): Balance -14.7, Smite -8.7
-  without them, Shadow and Feral about 0 and -5.
-- Watcher's Signet of Brilliance (Watchers Revered, no rep source) in three lists, worth 0 to 3 DPS.
-- Crystal Spiked Maul (no source, hidden stats) and Idol of the Moon (no source).
+- Night Elf druids wear Eye of the Beast and Blackhand's Breadth, Classic Horde quest rewards with no
+  side in our data, kept for both factions by `phase0_content.json`.
+- Feralheart and Virtuous head and chest at the end of the Valthalak chain, and Idol of the Moon and
+  Crystal Spiked Maul with no known source.

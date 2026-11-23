@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 1082.44,
   "made": "2026-11-23",
-  "sim": "410255783526+",
+  "sim": "42aaa98c2ce9",
   "slots": {
     "head": [
       {
@@ -1883,59 +1883,59 @@
     ],
     "finger": [
       {
-        "id": 272408,
-        "name": "Cutthroat's Signet",
-        "dps": 1082.58,
-        "loss": -0.14,
-        "note": "Pix Xizzix · 75 Reals"
-      },
-      {
         "id": 19325,
         "name": "Don Julio's Band",
-        "dps": 1082.44,
-        "loss": 0,
-        "bis": true,
-        "avail": "doubtful",
-        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
+        "dps": 1082.68,
+        "loss": -1.62,
+        "avail": "infeasible",
+        "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 19514,
         "name": "Protector's Band",
-        "dps": 1082.44,
+        "dps": 1081.07,
         "loss": 0,
         "bis": true,
         "note": "Silverwing Sentinels Honored, Alliance only"
       },
       {
-        "id": 275981,
-        "name": "Warden's Signet of Ferocity",
-        "dps": 1081.97,
-        "loss": 0.47,
-        "unsourced": true,
-        "avail": "doubtful",
-        "note": "Watchers Exalted · no rep source found yet · unsure, used by standards 42"
+        "id": 272408,
+        "name": "Cutthroat's Signet",
+        "dps": 1081.07,
+        "loss": 0,
+        "bis": true,
+        "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 11980,
         "suffix": 699,
         "name": "Opal Ring of the Tiger",
-        "dps": 1081.73,
+        "dps": 1080.36,
         "loss": 0.71,
         "note": "Random world drop"
+      },
+      {
+        "id": 275981,
+        "name": "Warden's Signet of Ferocity",
+        "dps": 1080.02,
+        "loss": 1.05,
+        "unsourced": true,
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 12017,
         "suffix": 697,
         "name": "Prismatic Band of the Tiger",
-        "dps": 1081.16,
+        "dps": 1079.79,
         "loss": 1.28,
         "note": "Random world drop"
       },
       {
         "id": 275976,
         "name": "Watcher's Signet of Ferocity",
-        "dps": 1080.82,
-        "loss": 1.62,
+        "dps": 1078.87,
+        "loss": 2.19,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Revered · no rep source found yet"
@@ -1944,138 +1944,135 @@
         "id": 12005,
         "suffix": 696,
         "name": "Granite Ring of the Tiger",
-        "dps": 1080.42,
-        "loss": 2.02,
+        "dps": 1078.45,
+        "loss": 2.62,
         "note": "Random world drop · other suffixes on AH ~3.3g"
       },
       {
         "id": 12016,
         "suffix": 696,
         "name": "Jungle Ring of the Tiger",
-        "dps": 1080.42,
-        "loss": 2.02,
+        "dps": 1078.45,
+        "loss": 2.62,
         "note": "Random world drop"
       },
       {
         "id": 11979,
         "suffix": 696,
         "name": "Peridot Circle of the Tiger",
-        "dps": 1080.42,
-        "loss": 2.02,
+        "dps": 1078.45,
+        "loss": 2.62,
         "note": "Random world drop"
       },
       {
         "id": 11992,
         "suffix": 696,
         "name": "Vermilion Band of the Tiger",
-        "dps": 1080.42,
-        "loss": 2.02,
+        "dps": 1078.45,
+        "loss": 2.62,
         "note": "Random world drop"
+      },
+      {
+        "id": 22255,
+        "name": "Magma Forged Band",
+        "dps": 1078.45,
+        "loss": 2.62,
+        "note": "Drop: Watchman Doomgrip and Secret Safe, Blackrock Depths"
       },
       {
         "id": 260219,
         "name": "Engraved Band",
-        "dps": 1079.81,
-        "loss": 2.63,
+        "dps": 1078.15,
+        "loss": 2.92,
         "note": "Quest: Blackmaw Reclamation, Blackmaw Hold (as Eagle's Head Signet)"
       },
       {
+        "id": 18500,
+        "name": "Tarnished Elven Ring",
+        "dps": 1078.14,
+        "loss": 2.93
+      },
+      {
         "id": 10795,
-        "suffix": 695,
+        "suffix": 694,
         "name": "Drakeclaw Band of the Tiger",
-        "dps": 1079.73,
-        "loss": 2.71,
+        "dps": 1077.88,
+        "loss": 3.19,
         "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple"
       },
       {
         "id": 19516,
         "name": "Protector's Band",
-        "dps": 1079.73,
-        "loss": 2.71,
+        "dps": 1077.75,
+        "loss": 3.32,
         "note": "Silverwing Sentinels Honored, Alliance only"
-      },
-      {
-        "id": 22255,
-        "name": "Magma Forged Band",
-        "dps": 1079.73,
-        "loss": 2.72,
-        "note": "Drop: Watchman Doomgrip and Secret Safe, Blackrock Depths"
-      },
-      {
-        "id": 18500,
-        "name": "Tarnished Elven Ring",
-        "dps": 1079.54,
-        "loss": 2.91
       },
       {
         "id": 284282,
         "name": "Queen Guard's Royal Seal",
-        "dps": 1079.44,
-        "loss": 3,
+        "dps": 1077.68,
+        "loss": 3.39,
         "note": "Drop: Varo'then's Ghost, Azshara"
+      },
+      {
+        "id": 12548,
+        "name": "Magni's Will",
+        "dps": 1077.24,
+        "loss": 3.83
       },
       {
         "id": 275972,
         "name": "Tracker's Signet of Ferocity",
-        "dps": 1079.1,
-        "loss": 3.34,
+        "dps": 1077.15,
+        "loss": 3.92,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Honored · no rep source found yet"
       },
       {
-        "id": 284102,
-        "name": "Signet of the Soulless Rider",
-        "dps": 1078.82,
-        "loss": 3.62,
-        "unsourced": true,
-        "avail": "doubtful",
-        "note": "No known source"
-      },
-      {
         "id": 11978,
         "suffix": 693,
         "name": "Jasper Link of the Tiger",
-        "dps": 1078.72,
-        "loss": 3.73,
+        "dps": 1077.13,
+        "loss": 3.94,
         "note": "Random world drop"
       },
       {
         "id": 12002,
         "suffix": 693,
         "name": "Marble Circle of the Tiger",
-        "dps": 1078.72,
-        "loss": 3.73
+        "dps": 1077.13,
+        "loss": 3.94
       },
       {
         "id": 12004,
         "suffix": 693,
         "name": "Obsidian Band of the Tiger",
-        "dps": 1078.72,
-        "loss": 3.73,
+        "dps": 1077.13,
+        "loss": 3.94,
         "note": "Random world drop"
       },
       {
         "id": 11991,
         "suffix": 693,
         "name": "Quicksilver Ring of the Tiger",
-        "dps": 1078.72,
-        "loss": 3.73,
+        "dps": 1077.13,
+        "loss": 3.94,
         "note": "Random world drop"
       },
       {
         "id": 11990,
         "suffix": 693,
         "name": "Selenium Loop of the Tiger",
-        "dps": 1078.72,
-        "loss": 3.73
+        "dps": 1077.13,
+        "loss": 3.94
       },
       {
         "id": 11977,
         "suffix": 693,
         "name": "Serpentine Loop of the Tiger",
-        "dps": 1078.72,
-        "loss": 3.73
+        "dps": 1077.13,
+        "loss": 3.94
       }
     ],
     "trinket": [
@@ -2433,7 +2430,7 @@
         "dps": 1089.99,
         "loss": -7.55,
         "avail": "infeasible",
-        "note": "Frostwolf Exalted · mace · AV queue unconfirmed"
+        "note": "Frostwolf Exalted · mace · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 20696,
