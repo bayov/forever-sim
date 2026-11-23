@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 991.81,
   "made": "2026-11-23",
-  "sim": "1983749cb976+",
+  "sim": "757a9e94fa85+",
   "slots": {
     "head": [
       {
@@ -653,6 +653,13 @@
         "note": "Random world drop"
       },
       {
+        "id": 22337,
+        "name": "Shroud of Domination",
+        "dps": 980.1,
+        "loss": 11.71,
+        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
         "id": 284866,
         "name": "Windserpent Scaled Cloak",
         "dps": 980.06,
@@ -755,14 +762,6 @@
         "id": 10148,
         "suffix": 693,
         "name": "Mighty Cloak of the Tiger",
-        "dps": 979.1,
-        "loss": 12.71,
-        "note": "Random world drop"
-      },
-      {
-        "id": 10224,
-        "suffix": 693,
-        "name": "Nightshade Cloak of the Tiger",
         "dps": 979.1,
         "loss": 12.71,
         "note": "Random world drop"
@@ -1165,7 +1164,8 @@
         "dps": 991.81,
         "loss": 0,
         "bis": true,
-        "enchant": 1248640
+        "enchant": 1248640,
+        "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Revered)"
       },
       {
         "id": 226861,
@@ -1947,7 +1947,8 @@
         "name": "Engraved Band",
         "dps": 991.81,
         "loss": 0,
-        "bis": true
+        "bis": true,
+        "note": "Quest: Blackmaw Reclamation, Blackmaw Hold (as Eagle's Head Signet)"
       },
       {
         "id": 284102,
@@ -2631,6 +2632,13 @@
         "loss": 59.96
       },
       {
+        "id": 22314,
+        "name": "Huntsman's Harpoon",
+        "dps": 931.46,
+        "loss": 60.35,
+        "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
         "id": 12583,
         "name": "Blackhand Doomsaw",
         "dps": 931.37,
@@ -2680,12 +2688,6 @@
         "dps": 921.05,
         "loss": 70.76,
         "unsourced": true
-      },
-      {
-        "id": 280059,
-        "name": "Tuskblade Halberd",
-        "dps": 920.15,
-        "loss": 71.66
       }
     ],
     "offhand": [],
