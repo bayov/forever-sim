@@ -46,12 +46,6 @@
       "kind": "Use"
     },
     {
-      "id": 2915,
-      "name": "Taran Icebreaker",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 4696,
       "name": "Lapidis Tankard of Tidesippe",
       "slot": "offhand",
@@ -90,12 +84,6 @@
     {
       "id": 11608,
       "name": "Dark Iron Pulverizer",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
-      "id": 11803,
-      "name": "Force of Magma",
       "slot": "mainhand",
       "kind": "Chance on hit"
     },
@@ -170,12 +158,6 @@
       "name": "Ramstein's Lightning Bolts",
       "slot": "trinket1",
       "kind": "Use"
-    },
-    {
-      "id": 15418,
-      "name": "Shimmering Platinum Warhammer",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
     },
     {
       "id": 15867,
