@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 967.33,
   "made": "2026-11-23",
-  "sim": "1decd8b92862",
+  "sim": "757a9e94fa85",
   "slots": {
     "head": [
       {
@@ -673,6 +673,13 @@
         "note": "Drop: High Interrogator Gerstahn, Blackrock Depths"
       },
       {
+        "id": 22337,
+        "name": "Shroud of Domination",
+        "dps": 956.47,
+        "loss": 10.86,
+        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
         "id": 276737,
         "name": "Cloak of the Tidemistress",
         "dps": 956.27,
@@ -753,14 +760,6 @@
         "id": 10159,
         "suffix": 693,
         "name": "Mercurial Cloak of the Tiger",
-        "dps": 956.25,
-        "loss": 11.08,
-        "note": "Random world drop"
-      },
-      {
-        "id": 10148,
-        "suffix": 693,
-        "name": "Mighty Cloak of the Tiger",
         "dps": 956.25,
         "loss": 11.08,
         "note": "Random world drop"
@@ -1184,7 +1183,8 @@
         "id": 19049,
         "name": "Timbermaw Brawlers",
         "dps": 966.68,
-        "loss": 0.65
+        "loss": 0.65,
+        "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Revered)"
       },
       {
         "id": 272096,
@@ -1917,7 +1917,8 @@
         "name": "Engraved Band",
         "dps": 967.33,
         "loss": 0,
-        "bis": true
+        "bis": true,
+        "note": "Quest: Blackmaw Reclamation, Blackmaw Hold (as Eagle's Head Signet)"
       },
       {
         "id": 19510,
