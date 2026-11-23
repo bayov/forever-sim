@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
@@ -906,7 +907,7 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants 
 		talents = s.setup.talents
 	}
 	faction := "Alliance"
-	if contains([]proto.Race{proto.Race_RaceOrc, proto.Race_RaceTroll, proto.Race_RaceTauren, proto.Race_RaceUndead}, player.Race) {
+	if core.RaceFaction(player.Race) == proto.Faction_Horde {
 		faction = "Horde"
 	}
 	header := []struct {

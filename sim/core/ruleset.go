@@ -49,14 +49,25 @@ func (character *Character) addEquipRatings(equipStats stats.Stats) stats.Stats 
 // Forever pays out hit and critical strike from gear against every kind of attack
 // rather than splitting them into a melee and a spell pool. Attribute conversions are
 // untouched: only the hit and crit an item spells out become universal.
+//
+// An item with KindLimitedCrit is the exception: its tooltip limits its crit to one kind,
+// so its Melee Crit stays melee and ranged and its Spell Crit stays spells.
 func (character *Character) unifyEquipHitAndCrit(equipStats stats.Stats) stats.Stats {
+	var meleeOnly, spellOnly float64
+	for _, item := range character.Equipment {
+		if item.KindLimitedCrit {
+			meleeOnly += item.Stats[stats.MeleeCrit] * character.itemStatMultipliers[stats.MeleeCrit]
+			spellOnly += item.Stats[stats.SpellCrit] * character.itemStatMultipliers[stats.SpellCrit]
+		}
+	}
+
 	hit := equipStats[stats.MeleeHit] + equipStats[stats.SpellHit]
-	crit := equipStats[stats.MeleeCrit] + equipStats[stats.SpellCrit]
+	crit := equipStats[stats.MeleeCrit] + equipStats[stats.SpellCrit] - meleeOnly - spellOnly
 
 	equipStats[stats.MeleeHit] = hit
 	equipStats[stats.SpellHit] = hit
-	equipStats[stats.MeleeCrit] = crit
-	equipStats[stats.SpellCrit] = crit
+	equipStats[stats.MeleeCrit] = crit + meleeOnly
+	equipStats[stats.SpellCrit] = crit + spellOnly
 
 	return equipStats
 }

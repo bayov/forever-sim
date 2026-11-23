@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "2de7021bf71d06f53a8ff7e9fea974138f06165b"
+  "master": "b48605aa38d1ab522b4f3f495dc75e160534a192"
  },
- "last_pass_at": "2026-11-23T12:00:00Z",
- "pass": 72,
+ "last_pass_at": "2026-11-23T12:50:55Z",
+ "pass": 73,
  "result": "quiet",
- "note": "Pass 72: only change is Enhancement level60_phase0.gear.json (Phase 0 reshuffle, real items 252605/227006/18405/227005 etc, no 99xxxx ids); outside the synthetic Phase 1 audit. No synthetic item, set, trinket or enchant changed.",
+ "note": "Pass 73: only watched change is standards 42 (Phase 0 gear availability, use it, don't ask); not a Phase 1 synthetic gear rule. No synthetic item, set, trinket or enchant changed.",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T06:51:06Z"
+ "checked_at": "2026-11-23T12:51:36Z"
 }

@@ -75,6 +75,7 @@ type Item struct {
 	WeaponSkills        stats.WeaponSkills
 	HitRating           float64
 	CritRating          float64
+	KindLimitedCrit     bool // See proto.UIItem.kind_limited_crit.
 
 	// Modified for each instance of the item.
 	RandomSuffix RandomSuffix
@@ -105,6 +106,7 @@ func ItemFromProto(pData *proto.SimItem) Item {
 		WeaponSkills:        stats.WeaponSkillsFloatArray(pData.WeaponSkills),
 		HitRating:           pData.HitRating,
 		CritRating:          pData.CritRating,
+		KindLimitedCrit:     pData.KindLimitedCrit,
 	}
 }
 

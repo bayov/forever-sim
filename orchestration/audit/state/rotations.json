@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "2de7021bf71d06f53a8ff7e9fea974138f06165b"
+  "master": "b48605aa38d1ab522b4f3f495dc75e160534a192"
  },
  "last_pass_at": "2026-11-23T00:51:15Z",
  "pass": 73,
  "result": "quiet",
  "note": "Pass 73: only APL change is the mage Ice Lance re-tune (b8b89d6a8: Frost Ice Barrier 6s->2s, Frostfire Fire Blast mana 0.8->0.4); baseline moves Frost +4.5, Frostfire +2.8, nothing else. Sim .go changes (armor Use effects, empty-weapon swing) reach no preset. Spot-check: Frost 6s loses -0.8 pooled at 180. No new findings.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-23T06:51:06Z",
+ "checked_at": "2026-11-23T12:51:36Z",
  "baseline": "baseline_5518f48_3000it_seed424242.tsv"
 }

@@ -682,6 +682,7 @@ func addLeftoverItems() error {
 			WeaponSkills:        item.WeaponSkills,
 			HitRating:           item.HitRating,
 			CritRating:          item.CritRating,
+			KindLimitedCrit:     item.KindLimitedCrit,
 		}
 		core.ItemsByID[item.Id] = core.ItemFromProto(simItem)
 		leftoverItems[item.Id] = simItem

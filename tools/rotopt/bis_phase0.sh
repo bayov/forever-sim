@@ -46,6 +46,8 @@
 #
 #   DRY_RUN=1 tools/rotopt/bis_phase0.sh
 #
+# It also lists what the faction check leaves out of each pool (below).
+#
 # Phase 0 is what Forever has before its raids open on 2026-12-09: dungeons, quests, crafting,
 # reputation, world drops and PvP reputation (tools/rotopt/phase0.go has the rules). The fight
 # is the spec's DPS Report build, for Enhancement the default one (tools/dps_report/req/shaman__enhancement-level60.json):
@@ -103,10 +105,17 @@
 #     (Exalted). So they're candidates now, doubtful because we know of no reputation source
 #     yet. The Warden's Signets need Exalted, so they're infeasible (below).
 #   - Every item tools/rotopt/phase0_content.json marks "out". That file is the hand check of
-#     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
-#     we don't know of a way yet, and "infeasible" is below. Every other item it lists is open,
+#     what the game has open (2026-11-12): "out" means we know it isn't open before the raids
+#     (orchestration/standards.md item 42, an unsure item is "include" with a note), "doubtful"
+#     means we don't know of a way yet, and "infeasible" is below. Every other item it lists is open,
 #     and its note says what it takes. An item it doesn't list hasn't been checked: when a pick
 #     or one of a list's top 5 is one, the run prints them all and fails (below).
+#   - What only the other faction can get, by the build's race (2026-11-23, faction.go): an
+#     item our data gives a faction, one whose every source is one faction's reputation,
+#     quest or vendor (Theramore and Darkspear in the Barrens), and one the content check
+#     tags with a "faction" (Courier's Clasp, a Horde quest reward our data has no quest
+#     side for). It comes off the starting set too. phase0_enchants.json tags enchants the same
+#     way. The dry run lists what it leaves out (factionDropped).
 #
 # What it ranks but never picks: the items phase0_content.json marks "infeasible" (user,
 # 2026-11-20, -gear-no-pick). Those need Exalted reputation, which is a very long grind: the
@@ -146,8 +155,9 @@
 # Then every enchant goes on the set, slot by slot, and the best one stays (bis_enchants.go). The
 # items are ranked on the set with those enchants, so the list's DPS has them. The enchants are a
 # few DPS apart, so they're ranked at 10000 iterations. tools/rotopt/phase0_enchants.json is the
-# hand check of what's open, by spell ID: "out" leaves an enchant out (raid formulas, Alliance
-# quests), and its avail and note go on the list's entries. Each slot keeps its 10 best enchants.
+# hand check of what's open, by spell ID: "out" leaves an enchant out (raid formulas), "faction"
+# leaves it out of the other faction's builds (an Alliance quest's), and its avail and note go on
+# the list's entries. Each slot keeps its 10 best enchants.
 #
 # Items whose effect grows under a condition (Blackhand's Breadth vs Orcs and Ogres, Seal of the Dawn
 # vs Undead, Golden Banana in forest or grassland) are ranked again with it met, and an item that
@@ -274,7 +284,7 @@ if [ -n "$DRY_RUN" ]; then
 			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
 			$(weapon_flags "$s") -gear-pool-spec "$s" \
 			-gear-content "$content" -gear-pool-report "$dry_dir/$s.json" "$@" >/dev/null
-		jq -r '"\(.spec): \(.items) items, \(.unmodelled | length) unmodelled, \(.hiddenStats | length) hidden stats, \(.unlisted) unlisted"' "$dry_dir/$s.json"
+		jq -r '"\(.spec): \(.items) items, \(.unmodelled | length) unmodelled, \(.hiddenStats | length) hidden stats, \(.unlisted) unlisted, \(.factionDropped | length) left out as \(if .faction == "Horde" then "Alliance" else "Horde" end) only"' "$dry_dir/$s.json"
 	done
 	exit 0
 fi
@@ -345,7 +355,7 @@ fi
 
 go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" -iters 2000 \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
-	-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
+	-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" -gear-content "$content" \
 	-gear-screen-iters 300 -gear-screen-keep 40 \
 	-gear-rank-name "Phase 0" -gear-rank-keep 25 $(weapon_flags "$spec") \
 	-gear-rank-spec "$(rank_spec "$spec")" -gear-rank-sim "$sim" \

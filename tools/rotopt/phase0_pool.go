@@ -26,7 +26,7 @@ import (
 var (
 	gearPoolReport = flag.String("gear-pool-report", "", "gear search dry run: write the pool's size, the items with unmodelled use or proc effects, the items with hidden stats and the items -gear-content doesn't list to this JSON file, then stop")
 	gearPoolSpec   = flag.String("gear-pool-spec", "", "the spec -gear-pool-report names, the key of tools/rotopt/phase0_specs.json")
-	gearContent    = flag.String("gear-content", "", "the hand check of what is open (tools/rotopt/phase0_content.json), for -gear-pool-report's unlisted items")
+	gearContent    = flag.String("gear-content", "", "the hand check of what is open (tools/rotopt/phase0_content.json): its faction tags for the gear search's faction check, and -gear-pool-report's unlisted items")
 	itemTooltips   = flag.String("item-tooltips", "assets/db_inputs/wowhead_item_tooltips.csv", "wowhead's Classic item tooltips, id and JSON per row, for -gear-pool-report")
 )
 
@@ -50,6 +50,10 @@ type poolReport struct {
 	// Unlisted counts the items -gear-content doesn't list. Most of a pool is, so the run's
 	// check of the picks and top 5s (bis_phase0.sh) is what names them.
 	Unlisted int `json:"unlisted"`
+	// Faction is the build's, and FactionDropped what the faction check left out of the pool:
+	// the items only the other faction can get, with what says so (faction.go).
+	Faction        string     `json:"faction"`
+	FactionDropped []poolItem `json:"factionDropped"`
 }
 
 // readTooltips maps an item ID to its tooltip HTML. Each line is the ID, a comma and the
@@ -98,7 +102,7 @@ func unmodelledEffect(id int32, tooltip string) string {
 }
 
 // writePoolReport writes the dry run's report of the pool, for the spec named spec.
-func writePoolReport(path, spec string, pool [][]gearOption) error {
+func writePoolReport(path, spec string, pool [][]gearOption, factions *factionCheck) error {
 	tooltips, err := readTooltips(*itemTooltips)
 	if err != nil {
 		return err
@@ -147,7 +151,14 @@ func writePoolReport(path, spec string, pool [][]gearOption) error {
 		}
 	}
 	report.Items = len(seen)
-	for _, list := range [][]poolItem{report.Unmodelled, report.HiddenStats} {
+	report.FactionDropped = []poolItem{}
+	if factions != nil {
+		report.Faction = factions.faction.String()
+		for _, e := range factions.dropped {
+			report.FactionDropped = append(report.FactionDropped, e)
+		}
+	}
+	for _, list := range [][]poolItem{report.Unmodelled, report.HiddenStats, report.FactionDropped} {
 		sort.Slice(list, func(i, j int) bool { return list[i].ID < list[j].ID })
 	}
 	data, err := json.MarshalIndent(report, "", "  ")

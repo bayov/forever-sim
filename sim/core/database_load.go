@@ -48,6 +48,7 @@ func init() {
 			WeaponSkills:        item.WeaponSkills,
 			HitRating:           item.HitRating,
 			CritRating:          item.CritRating,
+			KindLimitedCrit:     item.KindLimitedCrit,
 		}
 	}
 

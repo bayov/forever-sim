@@ -1,4 +1,20 @@
-# tank_fairness pass 27: 2026-11-23, master 5518f4873
+# tank_fairness pass 28: 2026-11-23, master 7e0a01a8d
+
+Due: 1 watched file changed since 2de7021bf: `orchestration/standards.md`, new standard 42 (Phase 0 gear whose
+availability is unsure is included with a note, not asked about). The rest of the range is Phase 0 DPS work (prices,
+content list, arms / fury / combat swords BiS files) and other auditors' state. No change to `sim/`, `proto/`,
+`tools/tankbench`, the tank requests, the tank UIs or `docs/tank_*.md`.
+
+Standard 42 governs Phase 0 BiS gear selection only. The tank presets use the synthetic sets on their Tanks rows
+(standards 36), and no tank preset, request or doc has a Phase 0 build, so it changes no term the tanks are compared on.
+Tank requests and sim code are byte-identical to pass 27's master, so tankbench was not re-run: the baseline
+(`ref/tank_fairness/summary.tsv`) and the tables below stand. Quiet: no new finding. Open findings unchanged
+(20261105-2, 20261105-1, 20261104-2, 20261104-5). If Phase 0 tank builds are added later, check them against
+standard 42 and standards 36 then.
+
+## Earlier pass 27 (method and tables still current)
+
+### Pass 27: 2026-11-23, master 5518f4873
 
 Due: 1 watched file changed since 7a6d1beb9: `sim/core/attack.go`, a guard so a weapon attack with no weapon in the slot
 (SwingSpeed 0, e.g. a hunter with an empty ranged slot) never swings instead of coming due forever. The rest of the range

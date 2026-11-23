@@ -388,7 +388,8 @@ func (hp *HunterPet) moveToward(sim *core.Simulation, distance float64) {
 // always 0 here, where every weapon skill is at the maximum.
 // The pet takes the hunter's ranged hit as melee hit and 17/8 of it as spell hit, so Lightning Breath
 // doesn't roll from 0% hit (forever-bugs #394, wowsims/forever 9ce48b6aba). The hunter's ranged hit
-// is its MeleeHit; Biznick's Accurascope's ranged-only 3% doesn't reach the pet.
+// is its MeleeHit; the ranged-only hit of Biznick's Accurascope (3%) and of Marksman Bands,
+// Stoneshatter and Sash of the Grand Hunt (1% each) doesn't reach the pet.
 // Classic pets inherit nothing.
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {

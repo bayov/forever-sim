@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	goproto "google.golang.org/protobuf/proto"
 )
@@ -28,6 +29,7 @@ import (
 // What's left out on top of that is in the -gear-rank-enchants file, a hand check of what
 // the game has open, keyed by the enchant's spell ID: "out" leaves an enchant out, and
 // "avail" ("doubtful") and "note" go on its entry the way phase0_content.json's do on items.
+// "faction" leaves it out of the other faction's builds, like an item (faction.go).
 //
 // Each slot holds one enchant, so things that share it can't stack: Iron Counterweight
 // (a blacksmith's attachment) and Crusader are two options of the same weapon slot.
@@ -83,9 +85,17 @@ type bisEnchantSlot struct {
 
 // The hand check of an enchant (-gear-rank-enchants).
 type enchantCheck struct {
-	Name  string `json:"name"`
-	Avail string `json:"avail"`
-	Note  string `json:"note"`
+	Name    string `json:"name"`
+	Avail   string `json:"avail"`
+	Note    string `json:"note"`
+	Faction string `json:"faction"`
+}
+
+// otherFactionEnchant says whether only the other faction can get the enchant.
+func otherFactionEnchant(check enchantCheck, race proto.Race) bool {
+	f, err := parseFaction(check.Faction)
+	build := core.RaceFaction(race)
+	return err == nil && f != proto.Faction_Unknown && build != proto.Faction_Unknown && f != build
 }
 
 func loadEnchantChecks(path string) (map[int32]enchantCheck, error) {
@@ -102,6 +112,9 @@ func loadEnchantChecks(path string) (map[int32]enchantCheck, error) {
 		id, err := strconv.Atoi(k)
 		if err != nil {
 			return nil, fmt.Errorf("%s: key %q is not a spell ID", path, k)
+		}
+		if _, err := parseFaction(v.Faction); err != nil {
+			return nil, fmt.Errorf("%s: spell %s: %w", path, k, err)
 		}
 		out[int32(id)] = v
 	}
@@ -174,7 +187,7 @@ func enchantFitsItem(e *proto.UIEnchant, item *proto.UIItem, player *proto.Playe
 func (s *searcher) bisEnchantOptions(item *proto.UIItem, checks map[int32]enchantCheck) []*proto.UIEnchant {
 	var out []*proto.UIEnchant
 	for _, e := range allEnchants {
-		if checks[e.SpellId].Avail == "out" || !enchantFitsItem(e, item, s.setup.player(), s.level) {
+		if checks[e.SpellId].Avail == "out" || otherFactionEnchant(checks[e.SpellId], s.setup.player().Race) || !enchantFitsItem(e, item, s.setup.player(), s.level) {
 			continue
 		}
 		if slices.ContainsFunc(out, func(o *proto.UIEnchant) bool { return o.EffectId == e.EffectId }) {

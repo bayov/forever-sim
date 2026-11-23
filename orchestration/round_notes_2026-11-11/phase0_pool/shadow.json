@@ -1,25 +1,25 @@
 {
   "spec": "shadow",
   "options": {
-    "back": 925,
-    "chest": 834,
-    "feet": 364,
-    "finger1": 615,
-    "finger2": 615,
-    "hands": 364,
-    "head": 378,
-    "legs": 389,
+    "back": 923,
+    "chest": 832,
+    "feet": 363,
+    "finger1": 614,
+    "finger2": 614,
+    "hands": 361,
+    "head": 379,
+    "legs": 390,
     "mainhand": 542,
-    "neck": 375,
+    "neck": 378,
     "offhand": 527,
     "ranged": 174,
-    "shoulder": 349,
-    "trinket1": 104,
-    "trinket2": 104,
-    "waist": 311,
-    "wrist": 305
+    "shoulder": 350,
+    "trinket1": 103,
+    "trinket2": 103,
+    "waist": 315,
+    "wrist": 308
   },
-  "items": 1323,
+  "items": 1326,
   "unmodelled": [
     {
       "id": 833,
@@ -100,18 +100,6 @@
       "kind": "Chance on hit"
     },
     {
-      "id": 11808,
-      "name": "Circle of Flame",
-      "slot": "head",
-      "kind": "Use"
-    },
-    {
-      "id": 11905,
-      "name": "Linken's Boomerang",
-      "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
       "id": 12185,
       "name": "Bloodsail Admiral's Hat",
       "slot": "head",
@@ -181,18 +169,6 @@
       "id": 13515,
       "name": "Ramstein's Lightning Bolts",
       "slot": "trinket1",
-      "kind": "Use"
-    },
-    {
-      "id": 13937,
-      "name": "Headmaster's Charge",
-      "slot": "mainhand",
-      "kind": "Use"
-    },
-    {
-      "id": 14134,
-      "name": "Cloak of Fire",
-      "slot": "back",
       "kind": "Use"
     },
     {
@@ -432,12 +408,6 @@
       "kind": "classic"
     },
     {
-      "id": 20693,
-      "name": "Weighted Cloak",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20694,
       "name": "Glowing Black Orb",
       "slot": "offhand",
@@ -450,90 +420,537 @@
       "kind": "classic"
     },
     {
-      "id": 20697,
-      "name": "Crystalline Threaded Cape",
-      "slot": "back",
-      "kind": "classic"
-    },
-    {
       "id": 20720,
       "name": "Dark Whisper Blade",
       "slot": "mainhand",
       "kind": "classic"
     },
     {
-      "id": 280912,
-      "name": "Robes of Conviction",
-      "slot": "chest",
-      "kind": "partial"
-    },
-    {
-      "id": 280913,
-      "name": "Handguards of Conviction",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280914,
-      "name": "Boots of Conviction",
-      "slot": "feet",
-      "kind": "partial"
-    },
-    {
-      "id": 280915,
-      "name": "Leggings of Conviction",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280917,
-      "name": "Pauldrons of Conviction",
+      "id": 227808,
+      "name": "Rugged Mantle of the Timbermaw",
       "slot": "shoulder",
-      "kind": "partial"
+      "kind": "classic"
     },
     {
-      "id": 280918,
-      "name": "Halo of Conviction",
-      "slot": "head",
-      "kind": "partial"
-    },
-    {
-      "id": 280919,
-      "name": "Garb of Conviction",
-      "slot": "chest",
-      "kind": "partial"
-    },
-    {
-      "id": 280920,
-      "name": "Gloves of Conviction",
-      "slot": "hands",
-      "kind": "partial"
-    },
-    {
-      "id": 280921,
-      "name": "Treads of Conviction",
+      "id": 227862,
+      "name": "Incandescent Mooncloth Boots",
       "slot": "feet",
-      "kind": "partial"
+      "kind": "classic"
     },
     {
-      "id": 280922,
-      "name": "Pants of Conviction",
-      "slot": "legs",
-      "kind": "partial"
-    },
-    {
-      "id": 280923,
-      "name": "Mantle of Conviction",
-      "slot": "shoulder",
-      "kind": "partial"
-    },
-    {
-      "id": 280924,
-      "name": "Crown of Conviction",
-      "slot": "head",
-      "kind": "partial"
+      "id": 228190,
+      "name": "Knowledge of the Timbermaw",
+      "slot": "waist",
+      "kind": "classic"
     }
   ],
-  "foreverNoTooltip": 369,
-  "unlisted": 1113
+  "foreverNoTooltip": 333,
+  "unlisted": 736,
+  "faction": "Horde",
+  "factionDropped": [
+    {
+      "id": 9651,
+      "name": "Gryphon Rider's Stormhammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 9654,
+      "name": "Cairnstone Sliver",
+      "slot": "ranged",
+      "kind": "item"
+    },
+    {
+      "id": 9655,
+      "name": "Seedtime Hoop",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 10708,
+      "name": "Skullspell Orb",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 10739,
+      "name": "Ring of Fortitude",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 11868,
+      "name": "Choking Band",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 11873,
+      "name": "Ethereal Mist Cape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 11875,
+      "name": "Breezecloud Bracers",
+      "slot": "wrist",
+      "kind": "item"
+    },
+    {
+      "id": 11888,
+      "name": "Quintis' Research Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 12050,
+      "name": "Hazecover Boots",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 12062,
+      "name": "Skilled Fighting Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 12065,
+      "name": "Ward of the Elements",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 12102,
+      "name": "Ring of the Aristocrat",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 12543,
+      "name": "Songstone of Ironforge",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 12548,
+      "name": "Magni's Will",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 14023,
+      "name": "Barov Peasant Caller",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 15791,
+      "name": "Turquoise Sash",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 16623,
+      "name": "Opaline Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 17691,
+      "name": "Stormpike Insignia Rank 1",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17900,
+      "name": "Stormpike Insignia Rank 2",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17901,
+      "name": "Stormpike Insignia Rank 3",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17902,
+      "name": "Stormpike Insignia Rank 4",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17903,
+      "name": "Stormpike Insignia Rank 5",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17904,
+      "name": "Stormpike Insignia Rank 6",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 19084,
+      "name": "Stormpike Soldier's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19086,
+      "name": "Stormpike Sage's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19094,
+      "name": "Stormpike Cloth Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 19097,
+      "name": "Stormpike Soldier's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19098,
+      "name": "Stormpike Sage's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19100,
+      "name": "Electrified Dagger",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19102,
+      "name": "Crackling Staff",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19104,
+      "name": "Stormstrike Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19514,
+      "name": "Protector's Band",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19516,
+      "name": "Protector's Band",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19522,
+      "name": "Lorekeeper's Ring",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19523,
+      "name": "Lorekeeper's Ring",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19530,
+      "name": "Caretaker's Cape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19531,
+      "name": "Caretaker's Cape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19538,
+      "name": "Sentinel's Medallion",
+      "slot": "neck",
+      "kind": "content"
+    },
+    {
+      "id": 19539,
+      "name": "Sentinel's Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19546,
+      "name": "Sentinel's Blade",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19547,
+      "name": "Sentinel's Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19570,
+      "name": "Lorekeeper's Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19571,
+      "name": "Lorekeeper's Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 22752,
+      "name": "Sentinel's Silk Leggings",
+      "slot": "legs",
+      "kind": "content"
+    },
+    {
+      "id": 260201,
+      "name": "Highborne Memory Crystal",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 260205,
+      "name": "Highborne Research Tablet",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 260207,
+      "name": "Staff of Archmage Selwyn",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 260208,
+      "name": "Prelate's Orb",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 260209,
+      "name": "Truesong's Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 270112,
+      "name": "Gryphon Rider's Crop",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 270118,
+      "name": "Cindercloth Gown",
+      "slot": "chest",
+      "kind": "item"
+    },
+    {
+      "id": 270275,
+      "name": "Cleansed Vilebranch Medallion",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 270276,
+      "name": "Cleansed Vilebranch Icon",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 271903,
+      "name": "Enriched Seal",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 271906,
+      "name": "Volunteer's Lucky Seal",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 271907,
+      "name": "Expeditionary's Cape",
+      "slot": "back",
+      "kind": "sources"
+    },
+    {
+      "id": 271908,
+      "name": "Theramore Signet",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271909,
+      "name": "Theramore Signet",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271913,
+      "name": "Militant's Band",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271914,
+      "name": "Militant's Band",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 271917,
+      "name": "Seal of the Expedition",
+      "slot": "neck",
+      "kind": "sources"
+    },
+    {
+      "id": 271918,
+      "name": "Seal of the Expedition",
+      "slot": "neck",
+      "kind": "sources"
+    },
+    {
+      "id": 271921,
+      "name": "Expeditionary's Cape",
+      "slot": "back",
+      "kind": "sources"
+    },
+    {
+      "id": 271928,
+      "name": "Clever Expeditionary's Spellblade",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271929,
+      "name": "Clever Expeditionary's Spellblade",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271932,
+      "name": "Insurgent's Manifesto",
+      "slot": "offhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271933,
+      "name": "Insurgent's Manifesto",
+      "slot": "offhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271936,
+      "name": "Guerrilla's Jagged Mace",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271937,
+      "name": "Guerrilla's Jagged Mace",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 271945,
+      "name": "Theramore Handwraps",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271946,
+      "name": "Theramore Handwraps",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 271953,
+      "name": "Theramore Shoulderpads",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 273800,
+      "name": "Thomas's Ring",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 275671,
+      "name": "Field Agent Beverage",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 275685,
+      "name": "Stormwind Intelligence Seal",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 275715,
+      "name": "Rocket Pilot Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 275827,
+      "name": "Wool-Stitched Waistband",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 276900,
+      "name": "Denric's Dog Tags",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 276901,
+      "name": "Uncle's Heroism",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 276903,
+      "name": "Shimmerwine Shanker",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 276904,
+      "name": "Shimmerwine Spirits",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 279931,
+      "name": "Lost Researcher's Hood",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 281286,
+      "name": "High Order Pendant",
+      "slot": "neck",
+      "kind": "content"
+    }
+  ]
 }
