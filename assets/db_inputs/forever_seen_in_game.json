@@ -1,5 +1,5 @@
 {
-"meta": {"build": "1.60.1.71037", "fetched": "2026-11-23T12:41Z", "source": "BayovCore in game (forever)", "tool": "bayovui/build/seen_items.py"},
+"meta": {"build": "1.60.1.71037", "fetched": "2026-11-23T13:13Z", "source": "BayovCore in game (forever)", "tool": "bayovui/build/seen_items.py"},
 "items": {
 "154": {"name": "Primitive Mantle", "ilvl": 1, "quality": 1, "stats": {}, "inventoryType": 4, "classID": 4, "subclassID": 0, "seen": "2026-10-18", "by": "Bayov"},
 "647": {"name": "Destiny", "ilvl": 57, "requiredLevel": 52, "quality": 4, "stats": {"Strength": 10}, "weaponDamageMin": 155, "weaponDamageMax": 233, "weaponSpeed": 3.6, "inventoryType": 17, "classID": 2, "subclassID": 8, "seen": "2026-11-21", "by": "Bayov"},
@@ -197,9 +197,9 @@
 "11962": {"name": "Manacle Cuffs", "ilvl": 55, "quality": 3, "stats": {"Intellect": 15, "SpellPower": 7, "Armor": 34}, "inventoryType": 9, "classID": 4, "subclassID": 1, "seen": "2026-11-21", "by": "Bayov"},
 "11963": {"name": "Penance Spaulders", "ilvl": 53, "quality": 2, "stats": {"Agility": 8, "Stamina": 8, "Spirit": 9, "Armor": 104}, "inventoryType": 3, "classID": 4, "subclassID": 2, "seen": "2026-11-21", "by": "Bayov"},
 "11964": {"name": "Swiftstrike Cudgel", "ilvl": 55, "quality": 2, "stats": {"Agility": 5}, "weaponDamageMin": 36, "weaponDamageMax": 68, "weaponSpeed": 1.6, "hitRating": 8, "inventoryType": 21, "classID": 2, "subclassID": 4, "seen": "2026-11-21", "by": "Bayov"},
-"11970": {"name": "Spinel Ring", "ilvl": 34, "requiredLevel": 29, "quality": 2, "stats": {"AttackPower": 6, "RangedAttackPower": 6}, "inventoryType": 11, "classID": 4, "subclassID": 0, "seen": "2026-11-06", "by": "Bayov Oom"},
+"11970": {"name": "Spinel Ring", "ilvl": 34, "requiredLevel": 29, "quality": 2, "stats": {}, "inventoryType": 11, "classID": 4, "subclassID": 0, "seen": "2026-11-21", "by": "Bayov"},
 "12000": {"name": "Limb Cleaver", "ilvl": 55, "quality": 2, "stats": {"Strength": 21, "Stamina": 6}, "weaponDamageMin": 82, "weaponDamageMax": 123, "weaponSpeed": 2.4, "inventoryType": 17, "classID": 2, "subclassID": 1, "seen": "2026-11-21", "by": "Bayov"},
-"12012": {"name": "Marsh Ring", "ilvl": 45, "requiredLevel": 40, "quality": 2, "stats": {"AttackPower": 20, "RangedAttackPower": 20}, "inventoryType": 11, "classID": 4, "subclassID": 0, "seen": "2026-11-09", "by": "Bayov Oom"},
+"12012": {"name": "Marsh Ring", "ilvl": 45, "requiredLevel": 40, "quality": 2, "stats": {}, "inventoryType": 11, "classID": 4, "subclassID": 0, "seen": "2026-11-21", "by": "Bayov"},
 "12038": {"name": "Lagrave's Seal", "ilvl": 54, "quality": 2, "stats": {"Intellect": 7, "Spirit": 7, "SpellPower": 8}, "inventoryType": 11, "classID": 4, "subclassID": 0, "seen": "2026-11-21", "by": "Bayov"},
 "12049": {"name": "Splintsteel Armor", "ilvl": 53, "quality": 2, "stats": {"Strength": 9, "Stamina": 14, "Spirit": 12, "Armor": 288}, "inventoryType": 5, "classID": 4, "subclassID": 3, "seen": "2026-11-21", "by": "Bayov"},
 "12059": {"name": "Conqueror's Medallion", "ilvl": 58, "quality": 3, "stats": {"Strength": 10, "Agility": 5, "Stamina": 11, "Spirit": 6}, "inventoryType": 2, "classID": 4, "subclassID": 0, "seen": "2026-11-23", "by": "Bayov Oom"},
