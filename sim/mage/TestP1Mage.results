@@ -188,6 +188,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Mage-Phase1-AllItems-RobeoftheArchmage-14152"
+ value: {
+  dps: 1489.7375
+  tps: 1297.45509
+ }
+}
+dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Sorcerer'sRegalia"
  value: {
   dps: 1233.007
