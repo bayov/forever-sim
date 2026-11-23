@@ -23,6 +23,7 @@
   "6660": {"name": "Julie's Dagger", "note": "Random world drop"},
   "7734": {"avail": "doubtful", "name": "Six Demon Bag", "note": "Classic world drop · Forever source unknown"},
   "8300": {"name": "Traveler's Leggings", "note": "Random world drop · BoE"},
+  "8348": {"name": "Helm of Fire", "note": "Leatherworking craft · Fireball use modelled (step 2 notes)"},
   "8367": {"name": "Dragonscale Breastplate", "note": "Leatherworking 255 · Dragonscale · defensive use not modelled"},
   "9449": {"name": "Manual Crowd Pummeler", "include": true, "note": "Crowd Pummeler 9-60, Gnomeregan · 3 charges that never come back · one 30s haste per 180s fight (3 min cooldown)"},
   "9484": {"name": "Spellshock Leggings", "note": "Drop: Zul'Farrak trash"},
