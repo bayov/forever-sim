@@ -43,6 +43,11 @@ merged into it (`gearSet`, `equipment`, `gearNote`, `gearHow`, `gearGain`) and t
 was simmed on the preset's gear, so check it with rotopt. It removes the gear of an earlier run that no longer applies
 (the whole file when it holds nothing else).
 
+A race of the other faction than the preset's can't wear the set's faction rewards (Phase 0 sets, 2026-11-24): where
+the build's gear set has a faction twin, `<gearSet>.<Faction>.gear.json` beside it in ui/*/gear_sets/ (the set with
+those slots swapped for that faction's best, tools/rotopt/bis_phase0.sh SLOTS with that RACE), the race wears the twin,
+kept by the rule. Its cost against the preset's gear at that race is simmed paired as above and recorded as the gain.
+Everything above (the hit, the Dwarf's bonus stats, their paired sim) is then worked out on the twin.
 The gear's hit and crit are one pool under Forever (sim/core/ruleset.go unifyEquipHitAndCrit adds the melee and spell
 values, bonus stats included), so the bonus stats swap writes each once: MeleeHit and MeleeCrit for melee and hunters, SpellHit and
 SpellCrit for casters. Either works for both kinds of attack.
@@ -168,6 +173,44 @@ def step_equipment(st, step):
     return json.load(open(os.path.join(st['dir'], st['steps'][step] + '.gear.json')))
 
 
+ALLIANCE = {'Human', 'Dwarf', 'Gnome', 'NightElf', 'SkyborneHighOrder'}  # core.RaceFaction
+
+
+def faction(race):
+    return 'Alliance' if race in ALLIANCE else 'Horde'
+
+
+def faction_set(meta, pl, race):
+    """The gear set's twin for this race's faction, (name, equipment), when the race is of the other faction than the
+    preset's and the twin exists beside the set (the one file named the meta's `gearSet` with the request's items)."""
+    gs, f = meta.get('gearSet'), faction(race)
+    if not gs or f == faction(meta['race']):
+        return None
+    mine = _ids(pl.get('equipment'))
+    found = [f for f in sorted(glob.glob(os.path.join(TREE, 'ui', '*', 'gear_sets', gs + '.gear.json')))
+             if _ids(json.load(open(f))) == mine]
+    if len(found) != 1:
+        return None
+    twin = os.path.join(os.path.dirname(found[0]), f'{gs}.{faction(race)}.gear.json')
+    if not os.path.exists(twin):
+        return None
+    return f'{gs}.{faction(race)}', json.load(open(twin))
+
+
+_names = {}
+
+
+def item_name(i):
+    """An item's name from the BiS lists (ui/*/bis/), its id where none lists it."""
+    if not _names:
+        for f in glob.glob(os.path.join(TREE, 'ui', '*', 'bis', '*.bis.json')):
+            for es in json.load(open(f)).get('slots', {}).values():
+                for e in es:
+                    if e.get('id') and e.get('name'):
+                        _names[e['id']] = e['name']
+    return _names.get(i, str(i))
+
+
 def price(k):
     return PRICE['AttackPower'] if k == 'AttackPowerBoth' else PRICE[k]
 
@@ -195,10 +238,15 @@ def plan(bid, race, to_cap=False):
     req = json.load(open(os.path.join(D, 'req', bid + '.json')))
     pl = req['raid']['parties'][0]['players'][0]
     names = stat_names()
-    hit, caster, why = race_hit(meta, req, race)
-    cap = SPELL_CAP if caster else MELEE_CAP
     if bid not in _preset_hit:
         _preset_hit[bid] = race_hit(meta, req, meta['race'])[0]
+    fs = faction_set(meta, pl, race)
+    if fs:  # the other faction's twin: everything below is worked out on it
+        req = json.loads(json.dumps(req))
+        pl = req['raid']['parties'][0]['players'][0]
+        pl['equipment'] = json.loads(json.dumps(fs[1]))
+    hit, caster, why = race_hit(meta, req, race)
+    cap = SPELL_CAP if caster else MELEE_CAP
     # the hit the race's step aims at: the cap, or the preset race's own hit where the preset carries more (a dual
     # wielder past the yellow cap by sim, standards 4), so only the race's difference moves it; --to-cap: the cap
     target = cap if to_cap else max(cap, _preset_hit[bid])
@@ -208,7 +256,9 @@ def plan(bid, race, to_cap=False):
     p = {'build': bid, 'race': race, 'class': meta['class'], 'spec': meta.get('spec'), 'role': 'caster' if caster else 'melee/ranged',
          'hit': round(hit, 2), 'hitFrom': why, 'cap': cap, 'presetHit': round(_preset_hit[bid], 2), 'target': round(target, 2),
          'gearHit': gear_hit, 'excess': excess}
-    st = gear_steps(meta, pl)
+    if fs:
+        p.update({'factionSet': fs[0], 'factionEq': fs[1]})
+    st = None if fs else gear_steps(meta, pl)
     if st:
         lo, hi = min(st['steps']), max(st['steps'])
         step = min(max(st['own'] - math.floor(hit - target + 0.5), lo), hi)
@@ -296,8 +346,28 @@ def hit_text(p):
             f"{p['cap']:g}% {'spell' if p['role'] == 'caster' else 'yellow'} cap")
 
 
+def faction_record(p, feq, iters):
+    """The override keys for a faction twin, with the Dwarf's bonus stats on it where they're kept."""
+    fc = p['factionCost']
+    gain = {'dps': fc['gain'], 'se': fc['se'], 'iterations': iters, 'seed': 1, 'duration': 180}
+    keys = {'gearSet': p['factionSet'], 'equipment': feq}
+    note = f"{faction(p['race'])} gear: {p['factionSwap']}"
+    how = (f"race_gear.py: the preset's set has {faction(p['race'])} twin {p['factionSet']}, since a "
+           f"{p['race']} can't wear the other faction's rewards. {p['race']} {fc['dpsPreset']:.1f} with the preset's gear, "
+           f"{fc['dpsSwap']:.1f} with the twin; gain.se is the paired error, {fc['seUnpaired']:.2f} unpaired.")
+    if p.get('keep') and p.get('bonusStats'):
+        keys['bonusStats'] = p['bonusStats']
+        note += '. ' + p['note']
+        shares = ', '.join(f'{k} {v}%' for k, v in p['shares'].items())
+        how += (f" Then {hit_text(p)} on the twin, its own hit {p['gearHit']:g}%: {p['excess']:g}% re-spent over its shares "
+                f"at the 1b prices ({shares}), {p['dpsPreset']:.1f} -> {p['dpsSwap']:.1f} (paired gain {p['gain']:+.2f} ± {p['se']:.2f}).")
+    return keys, note, gain, how
+
+
 def gear_record(p, eq, iters):
     """The override keys for a kept swap: (gear keys, note, gain or None, how)."""
+    if 'factionSet' in p:
+        return faction_record(p, eq, iters)
     gain = ({'dps': p['gain'], 'se': p['se'], 'iterations': iters, 'seed': 1, 'duration': 180} if 'gain' in p else None)
     pair = (f" {p['race']} {p['dpsPreset']:.1f} with the preset's gear, {p['dpsSwap']:.1f} with the swap; gain.se is the "
             f"paired error (the same seeded fights), {p['seUnpaired']:.2f} unpaired." if gain else '')
@@ -368,12 +438,24 @@ def main(args):
                 continue  # the preset's own race is the preset
             p, req, meta = plan(bid, race, '--to-cap' in args)
             eq = p.pop('equipment', None)  # a step's gear set: the override file holds it, race_gear.json names it
+            feq = p.pop('factionEq', None)  # the faction twin's gear: the override file holds it
             path = race_override.own_path(bid, race)
+            if feq:  # what the twin costs at this race, paired against the preset's gear
+                rq = at_race(json.load(open(os.path.join(D, 'req', bid + '.json'))), race)
+                rq['encounter']['duration'] = 180
+                base, swap, gain, se, se_unpaired = paired(rq, None, iters, feq)
+                old = {it.get('id') for it in rq['raid']['parties'][0]['players'][0]['equipment']['items']}
+                p['factionCost'] = {'dpsPreset': round(base, 2), 'dpsSwap': round(swap, 2), 'gain': round(gain, 2),
+                                    'se': round(se, 2), 'seUnpaired': round(se_unpaired, 2)}
+                p['factionSwap'] = ', '.join(item_name(it['id']) for it in feq.get('items', [])
+                                             if it.get('id') and it.get('id') not in old) or 'no item changes'
             if p.get('skip'):
                 pass
             elif p['excess'] == 0:
                 p['skip'] = ('the set carries no hit' if p['gearHit'] <= 0 else 'no hit over the cap') if race == DWARF \
                     else 'no hit-trade steps'
+                if feq:
+                    p['skip'] += ' (faction twin only)'
             elif p['excess'] < 0:
                 p.update({'keep': True, 'note': describe_step(p)})  # under the cap: the higher step by the rule
             else:
@@ -397,7 +479,10 @@ def main(args):
             print(line, flush=True)
             if not write:
                 continue
-            if p.get('keep'):
+            if feq:
+                write_file(path, p, feq, iters)
+                print(f"  {p['factionSet']}: {p['factionSwap']}, {p['factionCost']['gain']:+.2f} ± {p['factionCost']['se']:.2f}")
+            elif p.get('keep'):
                 write_file(path, p, eq, iters)
             else:
                 drop_gear(path, 'loses or ties at 2 SE' if 'gain' in p else p['skip'])
