@@ -36,10 +36,11 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 43, [5]float64{66, 37, 70, 60, 74}},
 		// We have no sheet past 43 yet, so level 44 stays on 1.12's row.
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 44, [5]float64{66, 40, 71, 63, 76}},
-		// The Skyborne keep their sheets' offset: the Human's row less 1 Strength and Stamina and 1 more
-		// Agility and Intellect, with no Human Spirit.
-		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 1, [5]float64{22, 21, 21, 21, 20}},
-		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassHunter, 1, [5]float64{19, 24, 20, 21, 21}}, // the 2026-09-22 sheet
+		// The Skyborne's own offsets from level 1 naked sheets (wowsims/forever EV-0093, 2026-11-06): the
+		// Human's row, with no Human Spirit, plus High Order -3, +4, -1, +4, -3 and Windshaper -4, +3, 0,
+		// -1, +3.
+		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 1, [5]float64{20, 24, 21, 24, 17}},
+		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassWarrior, 1, [5]float64{19, 23, 22, 19, 23}},
 		// Level 60: the class baseline plus Classic's offset. These are 1.12's level 60 warrior rows but for
 		// the Human's Spirit (47 there, The Human Spirit baked in) and the Gnome's Intellect (35, Expansive
 		// Mind baked in).
@@ -51,7 +52,8 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		{proto.Race_RaceTauren, proto.Class_ClassWarrior, 60, [5]float64{125, 75, 112, 25, 47}},
 		{proto.Race_RaceGnome, proto.Class_ClassWarrior, 60, [5]float64{115, 83, 109, 33, 45}},
 		{proto.Race_RaceTroll, proto.Class_ClassWarrior, 60, [5]float64{121, 82, 111, 26, 46}},
-		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 60, [5]float64{119, 81, 109, 31, 45}},
+		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 60, [5]float64{117, 84, 109, 34, 42}},
+		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassWarrior, 60, [5]float64{116, 83, 110, 29, 48}},
 		{proto.Race_RaceTauren, proto.Class_ClassDruid, 60, [5]float64{70, 55, 72, 95, 112}},
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 60, [5]float64{88, 52, 97, 87, 103}},
 	}
