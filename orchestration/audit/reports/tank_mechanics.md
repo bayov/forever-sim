@@ -1,27 +1,28 @@
-# tank_mechanics: pass 28
+# tank_mechanics pass 29 (2026-11-24, master 566067a394)
 
-- master: 5518f4873f (last pass 7a6d1beb9d), 2026-11-23
-- result: quiet
-- client: 1.60.1.71037 (latest on wago.tools, unchanged since pass 25)
+Why due: 6 watched files changed since c78d983aca (cd71e78c2 warrior, be773f5eb druid).
+Client: 1.60.1.71037 still newest (wago.py latest). Update ledger: nothing since the last pass.
 
-## What changed (watched paths)
+## Changes read
 
-| commit | file | change | reaches tanks? |
-|---|---|---|---|
-| 79c688d0c | sim/core/attack.go | `WeaponAttack.swing` sets `swingAt = NeverExpires` when `SwingSpeed <= 0` (empty slot), so a hunter with no ranged weapon no longer loops at one instant | No |
-
-Why not: a tank's shield off-hand has SwingSpeed 0, but `IsDualWielding` is false for it, so the
-off-hand swing is never scheduled (attack.go:544, :717) and this branch is never reached. Tank main
-hands and the boss's weapon have SwingSpeed > 0. A weapon swap re-sets `mh.swingAt` (attack.go:1056),
-so no slot stays parked at NeverExpires after one. Engine behaviour for tanks (attack table, Rage
-from damage, threat, block, tank sheet, score replay) untouched.
+| Commit | File | Tank effect | Verdict | Tier |
+|---|---|---|---|---|
+| cd71e78c2 | sim/warrior/talents.go `applyUnbridledWrath` | Shield Slam, Revenge, Shield Bash (and Whirlwind) no longer proc Unbridled Wrath; white, totem, Heroic Strike, Cleave still do | Matches wowsims/forever EV-0148, a level 60 Protection warrior log (Shield Slam 0/977, Revenge 0/601, Shield Bash 0/44; read 2026-11-24) | log (tier 1.5) |
+| cd71e78c2 | sim/warrior/reckless_swings.go | Heroic Strike / Cleave spend one charge a cast, landed or not; white swings only when landed | Matches EV-0138 (Fury log); prot takes Reckless Swings, so an avoided Heroic Strike now spends a charge | log |
+| cd71e78c2 | sim/warrior/talents.go Flurry consume, heroic_strike_cleave.go `isQueuedSwing` | Flurry: Fury only; prot presets don't take Flurry | n/a for tanks | - |
+| be773f5eb | sim/druid/rake.go, rip.go, tuning_70753.go | Cat Rake/Rip AP shares | Bear never casts Rake or Rip; Lacerate untouched | n/a |
 
 ## Tests
 
-`go test -tags=with_db ./sim/warrior/... ./sim/paladin/... ./sim/druid/tank/... ./sim/shaman/warden/... ./sim/core/`: all pass.
+`go test -tags=with_db ./sim/warrior/... ./sim/druid/... ./sim/core/`: all pass.
+Exclusion pinned by `TestForeverUnbridledWrathOnAbilities` (dps_warrior/forever_mechanics_test.go:747),
+Reckless Swings by `TestForeverRecklessSwingsHeroicStrikeAvoided` / `...CleaveOnce`.
+(Without `-tags=with_db` the warrior packages panic on item 991014: a build-tag need, not a bug.)
 
-## Open findings (unchanged)
+## Findings
 
-- tank_mechanics-20261117-1 (low, user ruling): Unbridled Wrath skips Sunder Armor.
-- tank_mechanics-20261108-1 (low, worker fix): no test pins Warden shock threat under Stormstrike.
-- tank_mechanics-20261107-1 (low, worker fix): stale "client disagrees" labels (warrior, bear, Warden).
+- No new findings.
+- 20261117-1 (Sunder and Unbridled Wrath): new evidence added. EV-0148 doesn't count Sunder, but every
+  other prot special reads 0, so the sim's exclusion of Sunder is the likely server behaviour; suggest
+  ruling (b).
+- 20261108-1, 20261107-1: unchanged, still open.

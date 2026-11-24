@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "c78d983aca33ba66a9f9e80c39cdc671daad4bd9"
+  "master": "e7062a6a4490fb9c8077d14f873797e8cdcd5978"
  },
- "last_pass_at": "2026-11-23T18:53:52Z",
- "pass": 100,
+ "last_pass_at": "2026-11-24T00:50:16Z",
+ "pass": 101,
  "result": "quiet",
- "note": "Pass 100: b48605aa3..c78d983ac, 4 sim commits (kind-limited crit for Blackhand's Breadth / Eye of the Beast in ruleset.go, RaceFaction refactor in racials.go, Forever weapon skills + 1% ranged hit on three hunter items, Forever item effect values and 26 Forever-only item procs). Proc spell values spot-checked on 71037 (17483, 18086, 1299631, 19874, 16415, 1298499, 1315878, 1291103, 1300783): all match. No new findings. No new dev-notes or hotfix post; one Kaivax post 2026-11-23 (topic 2426335, lockbox behaviour, not combat). Client 71037 still newest (probe 300).",
+ "note": "Pass 101: c78d983ac..566067a39, 3 sim commits, all class rules from wowsims/forever logs or user-ruled defaults (warrior Flurry/Reckless Swings/Unbridled Wrath cd71e78c2, druid Rip/Rake tick AP be773f5eb, hunter pet summoned with Hawk b82ad9a1e). No shared-engine change. Flurry on HS/Cleave reverses the Nov 16 hotfix wording under the 2026-11-22 log ruling: settled. No new dev-notes or hotfix post; blue tracker newest Kaivax 2026-11-23 18:55Z (mount riding, not combat). Client 71037 still newest (probe 300).",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T18:54:07Z",
+ "checked_at": "2026-11-24T01:09:06Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -29,7 +29,7 @@
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)",
   "note": "114138-114326 read through the daily update's TASKS.md entries (region 93 rows)"
  },
- "blue_tracker_seen": "2026-11-23T16:26:12Z",
+ "blue_tracker_seen": "2026-11-23T18:55:22Z",
  "hotfix_post_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040/14",
   "date": "2026-11-21T00:18:29Z",

@@ -1,9 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_5518f48_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  5518f4873 (pass 73), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/5518f4873f37/wowsimcli`). Moves since
-  7a6d1beb9: Frost +0.53% (835.1 -> 839.6) and Frostfire +0.28% (1006.9 -> 1009.7) from the Ice Lance re-tune (b8b89d6a8);
-  nothing else moved.
+- `baseline_566067a_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  566067a39 (pass 74), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/566067a39465/wowsimcli`). Moves since
+  5518f4873: feral cat -15.0 and -14.9 (Rip/Rake AP shares, be773f5eb); Fury -3.6, duty-battle-shout -5.5, duty-sunder -1.5,
+  Fury 2H -0.6 / -1.3 (warrior proc rework, cd71e78c2); BM +1.2 to +1.4 and MM +0.7 to +0.8 (pet summoned with Hawk, b82ad9a1e).
 ## Not committed (kept locally, re-create as needed)
 
 - Built CLIs. Re-create with

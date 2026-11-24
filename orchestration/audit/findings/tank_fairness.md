@@ -19,6 +19,7 @@
 - pass 25 (2026-11-22, master 8b5137c6d): not fixed; requests still Night Elf / Night Elf / Undead; bench rows identical to pass 24.
 - pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2628 / 1272 / -2252, still last at every weight.
 - pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
+- pass 29 (2026-11-24, master 566067a39): not fixed; requests still Night Elf / Night Elf / Undead, Warden rows identical.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -39,6 +40,7 @@
 - pass 25 (2026-11-22, master 8b5137c6d): not fixed; all three requests still Major Mana Potion, no potion action; bench rows identical to pass 24.
 - pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests unchanged. Max survival warrior 1836.7 ± 11.9, paladin 1778.0 ± 15.9 (seed 1); the potion (+374 last measured) would still reverse it.
 - pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
+- pass 29 (2026-11-24, master 566067a39): not fixed; requests unchanged. The warrior's Max survival fell to 1814.7 ± 12.2 (Unbridled Wrath off Shield Slam and Revenge) against the paladin's 1778.0 ± 15.9, seed 1; the potion (+374 last measured) would reverse it.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -77,6 +79,7 @@
 - pass 12 (2026-11-13, master 71562a8b0): unchanged in kind (Balanced healing needed paladin 239 against warrior 344, bear 464, Warden 660); still waits on the user's calls (a), (b), (c).
 - pass 26 (2026-11-22, master 7a6d1beb9): unchanged in kind (Balanced healing needed paladin 243 against warrior 340, bear 474, Warden 666); still waits on the user's calls (a), (b), (c).
 - pass 27 (2026-11-23, master 5518f4873): unchanged (rows identical to pass 26); still waits on the user's calls (a), (b), (c).
+- pass 29 (2026-11-24, master 566067a39): unchanged in kind (Balanced healing needed paladin 243, warrior 342); still waits on the user's calls.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -96,6 +99,7 @@
 - pass 10 (2026-11-12, master 67ad7c6a4): unchanged; tools/tankbench/req/warrior_protection.json still present.
 - pass 11 (2026-11-12, master 4fb90c298): unchanged; tools/tankbench/req/warrior_protection.json still present.
 - pass 12 (2026-11-13, master 71562a8b0): unchanged; tools/tankbench/req/warrior_protection.json still present.
+- pass 29 (2026-11-24, master 566067a39): unchanged; the file is still present.
 
 ## Resolved
 

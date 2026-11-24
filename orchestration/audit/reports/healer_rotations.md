@@ -1,39 +1,44 @@
-# Healer rotations pass 23 (quiet)
+# Healer rotations pass 24 (findings)
 
-- Master: 7a6d1beb9 (`last.master` was 8b5137c6d). Audited 2026-11-22. Client build 1.60.1.71037 (gate).
-- Bench: `tools/healbench` built in the audit checkout, default seed, `-carry`, 1,000 iterations, via
-  `tools/audit/healer_rotations/baseline.sh`. setup.sh's `protoc-gen-go` install had not landed in this session;
-  `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest` then `make sim/core/proto/api.pb.go` fixed it.
+- Master: 566067a39 (`last.master` was c78d983ac). Audited 2026-11-24.
+- Bench: `tools/healbench` built on master, default seed, `-carry`, 1,000 iterations, via
+  `tools/audit/healer_rotations/baseline.sh`.
 
-## What changed since 8b5137c6d (the 4 watched files)
+## What changed since c78d983ac (the 3 watched files)
 
-- `sim/core/dot.go`: `SetTickPeriod` now retimes a dot on the grid of its own expiry (Wrack, warlock). Only
-  Wrack calls it; no heal-over-time changes its period, so healer HoTs are untouched.
-- `sim/paladin/item_sets_pve.go`: Soulforge Armor 4-piece reuses an existing Crusader's Wrath aura (Forever set
-  1673 stacking with Lightforge). No healer preset wears either set.
-- `sim/shaman/flame_shock.go`: Flame Shock's GCD takes haste under Forever. Not in any Restoration shaman APL.
-- `sim/shaman/talents.go`: comment only (Maelstrom Weapon and Windfury Totem, Enhancement).
-- No healer APL, request, encounter file, `sim/druid`/`sim/priest` heal or healbench main.go change.
+- `sim/druid/rip.go`, `sim/druid/rake.go`: Rip and Rake tick attack power shares from Forever logs (be773f5eb).
+  Feral bleeds only; no Restoration druid APL casts them.
+- `sim/druid/tuning_70753.go`: comment only.
+- No healer APL, healer request, encounter file, heal, talent or healbench main.go change.
 
 ## Baseline (1,000 it) vs ref
 
-All 63 rows (9 requests x 7 boss files, each in its role) byte-identical to `ref/healer_bench/summary.tsv`, which
-confirms none of the changes reaches the healers. Ref kept as is.
+- Tank role (35 rows): byte-identical.
+- Raid role (28 rows): all moved, 16 by more than 0.02 carry, signs mixed (largest: paladin_holy_raid golemagg
+  2.679 -> 2.775, vaelastrasz rows -0.03 to -0.05 for paladin/priest/shaman, +0.052 druid).
+- Cause, confirmed: the ref predates b8b89d6a8 (Frost mage Ice Lance re-tune, 2026-11-23), which changed
+  `tools/dps_report/req/mage__frost.json`, healbench's default `-filler`. Master healbench with
+  `-filler` = the pre-b8b89d6a8 file reproduces the old ref row exactly (paladin_holy_raid golemagg 2.679).
+  The raid healers' score depends on a DPS preset's talents: finding healer_rotations-20261124-1.
+- Ref `ref/healer_bench/summary.tsv` refreshed on master.
 
-Rows behind the open findings:
-
-| request | boss | carry | mana left | OOM | other died |
-|---|---|---|---|---|---|
-| druid_restoration_raid | onyxia | 0.946 | 6,303 | (1,403 s) | 5.8% |
-| priest_discipline (tank) | chromaggus | 0.871 | 341 | 101 s | - |
-| shaman_restoration_raid | magmadar | 1.778 | 7,638 | (2,322 s) | 0.0% |
+| request (raid) | boss | carry ref | carry now |
+|---|---|---|---|
+| druid_restoration_raid | magmadar | 1.857 | 1.907 |
+| druid_restoration_raid | vaelastrasz | 1.042 | 1.094 |
+| paladin_holy_raid | golemagg | 2.679 | 2.775 |
+| paladin_holy_raid | ragnaros | 1.270 | 1.315 |
+| priest_holy_raid | magmadar | 2.100 | 2.145 |
+| priest_holy_raid | vaelastrasz | 1.264 | 1.217 |
+| shaman_restoration_raid | chromaggus | 1.092 | 1.127 |
+| shaman_restoration_raid | vaelastrasz | 1.139 | 1.096 |
 
 ## Rotation lines
 
-No line changed and the baseline is identical, so the line-by-line findings of earlier passes stand; no new
-one-line variants were tried this pass.
+Not re-tried this pass: no healer rotation or heal changed. Open findings unchanged: -20261118-1, -20261115-1,
+-20261104-2.
 
-## Findings
+## Left over
 
-No new findings. Open, unchanged: -20261118-1 (baseline moved by 7199c8f9c, paired confirmation still pending),
--20261115-1 (Wild Growth gate x0.75), -20261104-2 (Discipline tank OOM on Chromaggus).
+- A stray binary `/healbench_old` (old-build check) was left at the filesystem root; the safety check refused
+  its removal. Delete it by hand.
