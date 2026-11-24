@@ -33,6 +33,7 @@
 - pass 17: still open (user call); 2f7e255af changes no warrior code or preset, warrior baseline bit-identical; not re-tested.
 - pass 22: still open (user call); e07e8fdb8 changes no warrior code or preset, warrior baseline bit-identical; not re-tested.
 - pass 23: still open (user call); 8b5137c6d's Flurry change (Heroic Strike no longer spends a charge under Forever) leaves the warrior baseline bit-identical; not re-tested.
+- pass 26: still open (user call); cd71e78c2 (Unbridled Wrath off Shield Slam/Revenge/Bash, HS spends Flurry and Reckless Swings) moves Max survival's scoring mean 1847.5 -> 1832.8, trinket lines untouched; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)

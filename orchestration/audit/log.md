@@ -550,3 +550,14 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-23 12:51 | tank_fairness | pass 28 | master 7e0a01a8d9 | quiet | tank inputs unchanged
 2026-11-23 18:54 | consumables | pass 102 | master c78d983aca | quiet | Forever item procs only; no preset items or consumable values changed
 2026-11-23 18:54 | mechanics | pass 100 | master c78d983aca | quiet | 4 sim commits checked, 9 proc spells match client 71037
+2026-11-24 01:09 | results | pass 100 | master 566067a394 | quiet | 61 of 68 builds match; feral/fury drift explained by sim commits, update to results-20261104-2
+2026-11-24 01:09 | rotations | pass 74 | master 566067a394 | quiet | no APL gain past the bar; feral -15, fury -1.5 to -5.5, hunters +1
+2026-11-24 01:09 | consumables | pass 103 | master 566067a394 | quiet | only warrior Flurry text changed; no consumable values
+2026-11-24 01:09 | mechanics | pass 101 | master 566067a394 | quiet | 3 sim commits checked, all log-backed class rules
+2026-11-24 01:09 | fairness | pass 53 | master 566067a394 | quiet | only feral, fury, hunters moved; each race still best
+2026-11-24 01:09 | healer_mechanics | pass 27 | master 566067a394 | quiet | cat-only bleed changes
+2026-11-24 01:09 | healer_rotations | pass 24 | master 566067a394 | 1 new findings | raid healer scores depend on the report's Frost mage preset (medium)
+2026-11-24 01:09 | healer_fairness | pass 27 | master 566067a394 | quiet | no healer request uses Rip or Rake
+2026-11-24 01:09 | tank_mechanics | pass 29 | master 566067a394 | quiet | warrior Unbridled Wrath and Flurry changes match logs
+2026-11-24 01:09 | tank_rotations | pass 26 | master 566067a394 | quiet | only prot warriors moved, within noise
+2026-11-24 01:09 | tank_fairness | pass 29 | master 566067a394 | quiet | ranking unchanged; warrior leads paladin by 37 at max survival
