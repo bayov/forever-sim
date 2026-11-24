@@ -902,12 +902,26 @@ func useDurOf(s *searcher) any {
 	return *useDur
 }
 
+// enchantBase is the set's DPS the enchant lists are ranked against: the enchant ranking's own
+// measure, at its iterations, as a pick's dps and loss give it, or the set's when no enchant
+// list was ranked.
+func enchantBase(enchants []bisEnchantSlot, base result) float64 {
+	for _, slot := range enchants {
+		for _, e := range slot.entries {
+			if e.BiS {
+				return e.DPS + e.Loss
+			}
+		}
+	}
+	return base.dps
+}
+
 // writeBis writes the list file. The format is the contract BayovCore's bis.py reads, see
 // docs/bis_lists.md. Each entry goes on a line of its own, so a diff of two runs reads
 // item by item.
 //
-// from, when set (-gear-rank-slots), is the list whose other slots we copy, with its top-level
-// dps.
+// from, when set (-gear-rank-slots), is the list whose other slots we copy, their dps measured
+// again on base.
 func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants []bisEnchantSlot, from *rankFrom) error {
 	player := s.setup.player()
 	talents := player.TalentsString
@@ -963,8 +977,13 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants 
 		enchantLists = append(enchantLists, list)
 	}
 	if from != nil {
-		slotLists = mergeLists(bisListNames, slotLists, from.Slots)
-		enchantLists = mergeLists(gearSlotNames, enchantLists, from.Enchants)
+		var err error
+		if slotLists, err = mergeLists(bisListNames, slotLists, from.Slots, base.dps); err != nil {
+			return err
+		}
+		if enchantLists, err = mergeLists(gearSlotNames, enchantLists, from.Enchants, enchantBase(enchants, base)); err != nil {
+			return err
+		}
 	}
 	b.WriteString("  \"slots\": {\n")
 	writeLists(&b, slotLists)

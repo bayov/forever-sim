@@ -66,7 +66,7 @@
   "1248498": {"name": "Enchant Bracer - Lesser Healing Power", "source": "Quest 'Mysterious Mysticism' / Gelkis, Magram quartermasters (Desolace)"},
   "1248510": {"name": "Enchant 2H Weapon - Lesser Agility", "avail": "doubtful", "note": "No known source", "source": "Formula 249511 has no source in data"},
   "1248511": {"name": "Enchant 2H Weapon - Lesser Strength", "avail": "doubtful", "note": "No known source", "source": "Formula 249513 has no source in data"},
-  "1248599": {"name": "Enchant Bracer - Superior Agility", "avail": "doubtful", "note": "No known source", "source": "Formula 249524 has no source in data"},
+  "1248599": {"name": "Enchant Bracer - Superior Agility", "note": "Formula 249524 drops from Thuzadin Acolyte (Stratholme), 8.41%", "source": "Drop: Formula 249524, 8.41% from Thuzadin Acolyte (NPC 10399, Stratholme), forever_wowhead_recipes.json"},
   "1248607": {"name": "Enchant 2H Weapon - Mighty Spell Power", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1248640": {"name": "Enchant Gloves - Superior Strength", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
   "1248645": {"name": "Enchant Gloves - Natural Power", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored)"},
