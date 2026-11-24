@@ -11,8 +11,9 @@ and every race override in req/races the gear the report sims. Each line startin
   - a pick or enchant of the other faction (the content check's "faction" against the list's faction, or a race
     override's race);
   - the gear set not matching the list's picks and enchants;
-  - an open item (not infeasible, under the gold line) more than --noise DPS above the slot's pick: the search
-    stopped short there;
+  - an open item more than --noise DPS above the slot's pick: the search stopped short there. An item tagged
+    "infeasible" or "out" (by the content check today or on the list's own row) or over the gold line ranks but is
+    never a pick, so it may sit above the pick (Nacreous Shell Necklace above the casters' neck picks);
   - a request whose gearSet isn't a Phase 0 set, has a hit-trade step (_hit), or whose equipment isn't that set's.
 
 It doesn't check sources against the game, set bonuses, hit or the list's dps: the pass does those by hand.
@@ -91,8 +92,11 @@ def main():
                 item_ok(f'{spec} {slot}', r['id'], fac)
             best = min((r['loss'] for r in pk), default=0)
             for r in rows:
-                c = content.get(str(r['id'])) or {}  # today's tag, not the one the list copied when it ran
-                if r.get('bis') or c.get('avail') in ('infeasible', 'out') or (c.get('goldPerDps') or 0) > a.max_gpd:
+                c = content.get(str(r['id'])) or {}  # today's tag, and the one the list copied when it ran
+                # an item tagged infeasible (Exalted reputation, or over the gold line when the list ran) ranks but is
+                # never a pick, by design (bis_phase0.sh -gear-no-pick): sitting above the pick is not a finding
+                if (r.get('bis') or c.get('avail') in ('infeasible', 'out') or r.get('avail') in ('infeasible', 'out')
+                        or (c.get('goldPerDps') or 0) > a.max_gpd):
                     continue
                 if r['loss'] < best - a.noise:
                     flag(f"{spec} {slot}: open {r['name']} ({r['id']}) sits {best - r['loss']:.2f} above the pick")
