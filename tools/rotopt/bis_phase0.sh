@@ -125,7 +125,8 @@
 # What it ranks but never picks: the items phase0_content.json marks "infeasible" (user,
 # 2026-11-20, -gear-no-pick). Those need Exalted reputation, which is a very long grind: the
 # Frostwolf rewards (The Unstoppable Force, Don Julio's Band), Warsong Gulch, the Defilers, the
-# Darkspear Raiders, the Watchers (the Warden's Signets) and Timbermaw (the Stormcarver plans).
+# Watchers (the Warden's Signets) and Timbermaw (the Stormcarver plans). The Darkspear Raiders'
+# gloves and shoulders need only Revered (the item data, 2026-11-24), so they're open.
 # The search never puts one in the set, so each slot's pick is the best item we can get. But
 # each slot's list still ranks them on that set, so a player who has the reputation sees where
 # the item goes. Each list is in order of loss, so one that beats the pick sits above it, with a
