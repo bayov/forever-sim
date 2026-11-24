@@ -637,7 +637,7 @@
   "18984": {"name": "Dimensional Ripper - Everlook", "note": "Engineering 260, Goblin Engineer, learned from the trainer"},
   "18986": {"name": "Ultrasafe Transporter: Gadgetzan", "note": "Engineering 260, Gnomish Engineer, learned from the trainer"},
   "19024": {"avail": "doubtful", "name": "Arena Grand Master", "note": "Quest: Arena Grandmaster"},
-  "19044": {"name": "Might of the Timbermaw", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
+  "19044": {"name": "Might of the Timbermaw", "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Friendly)", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "19047": {"name": "Wisdom of the Timbermaw", "note": "Tailoring 255 · pattern from Meilosh (Timbermaw Hold Honored)"},
   "19049": {"name": "Timbermaw Brawlers", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Revered)"},
   "19050": {"avail": "doubtful", "name": "Mantle of the Timbermaw", "note": "BoE · Loom + Timbermaw Revered · station blueprint not seen dropping yet · not on our AH yet"},
