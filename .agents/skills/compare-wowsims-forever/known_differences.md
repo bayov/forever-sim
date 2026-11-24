@@ -75,6 +75,7 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 | Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | Choice. `--no-raid-damage`. Rage (2026-11-22): Fury 20.2, Arms 20.1, Fury 2H 19.2. Casters and hunters in their tables |
 | Off-GCD items (Thistle Tea, Cold Blood, Bloodrage) | Fire when the rotation says | Only at the next GCD check; Thistle Tea at energy <= 0 never fires | Choice. Thistle Tea for ours (2026-11-22): Feral 22.4, Seal Fate Daggers 18.9 (theirs casts it 0 times), Seal Fate Swords about 4.5 (timing), Combat Daggers 1.8 net; Combat Swords 14.8, Subtlety 10.3, Mutilate 5.8 (2026-11-12). Cold Blood's 1.0 a fight to 0.35 was the converter (fixed 2026-11-15, now 1.0 both) |
 | Judgement of Wisdom on avoided white swings | Missed and dodged swings roll it too (`sim/core/debuffs.go:~578`, a Classic comment; `sim/shaman/enhancement/mana_returns_test.go:13-41` asserts it, 9eef440fb) | Landed swings only (their 9f254e8d87, 2026-11-09, a level 41 log with the miss counts in their DB row; `sim/core/judgement_of_wisdom_test.go`) | Open, likely ours: ask the user, don't fix unasked. Survival 3.8 for ours (2026-11-22, mana) |
+| Blood Fury's weapon damage | +10% of weapon average damage beside +10% AP (beta sheets, logs) | AP only | Evidence (their bug, not reported). For ours (2026-11-24): Fury 5.2, Combat Swords 4.5, Enhancement 3.7, Beast Mastery 1.8 |
 
 ## Hunter
 
@@ -90,6 +91,8 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 | Ranged Weapon Specialization on Serpent Sting | Left out (`sim/hunter/talents.go:103`, no comment or evidence) | Raises it (`talents_marksmanship.go:243`; their weapon-requirements.md: a per-weapon damage done mod of the mask's schools on ranged attacks) | Open: 19507 is A_MOD_DAMAGE_PERCENT_DONE, Misc 127 (every school), ranged weapons, so the school doesn't leave Nature out; whether a weapon-gated damage done mod reaches a DoT needs a Marksmanship log of Serpent Sting ticks. Marksmanship 7.9 for theirs (2026-11-22) |
 | Tallstrider's Dust Cloud | Cast only when no stronger armor cut is up (`sim/hunter/pet_forever.go:400-417`) | An always-on filler that stacks (`pets.go:453-466`), so fewer Bites | Open, no log. Tallstrider Beast Mastery 1.5 for ours (2026-11-22) |
 | Raid damage taken | Pushes back shots | None | Choice. Marksmanship 1.9 (2026-11-22) |
+| Marksmanship's mana | Out of mana 3.5 s a fight; ours' ManaRegen tag 2 gains about 4 times theirs | Out of mana 16.3 s a fight | Open, not traced. About 2 for ours on high-Intellect races (2026-11-24) |
+| Wind Blessed on Marksmanship | | Worth more through the Marksmanship shot mix | Choice, the shot mix's family (Marksmanship -5.7 in the gaps above). 6.3 for theirs (2026-11-24) |
 | Hunter's Mark on trap ticks | Immolation Trap's tick reads ranged attack power with the target's Hunter's Mark (`sim/hunter/immolation_trap.go`) | Counts it differently (not traced in their code) | Open (notes.md:313: the traps' attack power share is server side). Survival 1.2 |
 | Unexplained (2026-11-22, after every flip) | Physical hits 1 to 2% bigger in ours (Subtlety's 0.6% has the same sign) | | Survival about 13 for ours. Beast Mastery's player about 4.1 for ours: Auto Shot 3.6 casts more (clipping timing), hits 0.4% bigger, Aimed Shot's ammo at the item's 2.8 speed to 2.5 (`sim/hunter/aimed_shot.go:78`), partly unexplained. Marksmanship 5.7 for ours: shot mix (ours, theirs: Arcane Shot 34.5, 36.4 casts; Aimed Shot 19.6, 18.5; theirs' Auto Shot has a 0.307 s cast). The 2026-11-17 Immolation Trap timing and Serpent Sting parts not remeasured |
 
@@ -100,6 +103,7 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
 | Poised after the prepull | The rogue starts the prepull at full Energy with Poised, so the opener gets it (`sim/rogue/poised.go:45`) | Not up at the pull | Choice (the fight's start). For ours: Combat Daggers 9.4 (2026-11-22, the whole prepull block), Combat Swords 2.5 |
+| Gnome Eureka!'s timing on Combat Swords | Shifted by the prepull's Poised (the row above) | | Choice (the fight's start), follows from Poised. Combat Swords 0.8 (2026-11-24) |
 | Mutilate's strike order | Main hand first, then the off hand (`sim/rogue/mutilate.go:79-82`) | Off hand first | Open, not flipped. About 1.1 |
 | Death Mark's attack power and crit | Read at the cast, capped once at the detonation (path not traced) | Read live at each store, clamped each time (`death_mark.go:44,59`) | Open. Subtlety 3.7 for ours (2026-11-22, new) |
 | Deadly Poison's damage multipliers | Snapshot at the application (`sim/rogue/poisons.go:~185-199`) | Read at each tick (not traced) | Open. Mutilate 1.4 for ours (2026-11-22, new) |
@@ -129,7 +133,6 @@ Pet focus now agrees: both regain 10 a second (theirs since 8223020463).
 | Warchief's Blessing | 15% melee and cast speed, so the spell GCD shortens to 1.304 s (`sim/core/buffs.go` ApplyWarchiefsBlessing) | Melee haste only (A_MOD_MELEE_HASTE_3, `spells_auto_gen.go:23600`) | Evidence: a beta log (Lightning Bolt 1.30 s with it, 1.505 s without, notes.md), so theirs is wrong. No report preset turns it on |
 | Magma Totem's last pulse | 20 pulses per 40 s totem | About 19 | Engine timing, no log. Enhancement 2.7 to 5.8 (2026-11-22) |
 | Greater Blessing of Might and Wisdom | Rank 2's 133 AP, 40 MP5 (standards 8a) | Rank 1's 112, 36 | Ruling. `align.py` closes it (the AP +21, MP5 +4 of most runs) |
-| Blood Fury's weapon damage | +10% of weapon average damage beside +10% AP (beta sheets, logs) | AP only | Evidence (their bug, not reported). Orc Enhancement 2.9 |
 | Crusader beside Windfury Weapon's strikes | Holy Strength lands at once, reaching both strikes | 10 ms later | Open, notes.md "Server batch window". Enhancement 0.6 |
 | Spell queue window on cooldowns | None | A spell within 400 ms of its cooldown is queued, rotation idles (`spell_queueing.go` `CanQueue`) | Choice. Elemental -0.8 for theirs (2026-11-22); Retribution about +5 for theirs, Holy Shock Ret +4 |
 | Raid damage taken | Pushes back casts | None | Choice. Elemental 6.1 (2026-11-22, new) |
@@ -151,6 +154,7 @@ Mental Dexterity) are Settled.
 | Raid damage taken | Breaks Ice Barrier, pushes casts back | None | Choice. 2026-11-22: Frost 43 to 49, Fire 8.5, Arcane 6.4, Frostfire 5.8 |
 | castSpell Shoot (wand) | Rotation can cut it before its first shot (`sim/core/wand.go`) | Always fires one shot; after Fire Blast it holds the next cast | Choice. Theirs loses (2026-11-22) Fire 23.6, Frostfire 12.7, Frost 12.0; priests' last Shoot line Shadow 24.8, Shadow/Holy 22.5, Smite 6.7 |
 | Spell miss floor | 1% (Classic) | None (no source) | Open (orchestration/alignment_round_2026-10-23.md: keep without new evidence). For theirs: Smite 5.8; every mage build and Shadow 0 (hit below the cap) |
+| Read Leyline's Energized (aura 110, High Order) | Since 2026-11-24 half again of the Spirit regen and the MP5, but not Blessing of Wisdom's or Mana Spring's periodic energize share (EV-0114's Innervate rule, `racials_forever.go` registerReadLeyline); before, Spirit regen only | Half again of all the regen, the energize ticks included (`mana.go` manaRegenMultiplier) | Open: no log measures Energized. 0 on Frost (2026-11-24, before ours took the MP5) |
 | Fire Blast's range | 20 yd, +15 a point Improved Fire Blast, checked only in leveling | Checked in raids | Settled for presets by standards 33. Our raid sims let any spell land from any distance |
 
 Both have Arcane Concentration's split across an Arcane Missiles channel (theirs 5ad9515c15).
@@ -263,7 +267,19 @@ A gap on one of these is a regression.
   Ours since 2026-11-22 (their 20093d47de; EV-0138 and EV-0140, build 70938 to push 114115: 68 of
   74 totem hits with Flurry up removed none, the other 6 explained; 22 of 22 crits gave Flurry).
 - Two-hand white crit rage: twice the whole swing.
-- Orc shaman base stats 97 Sta, 87 Int, 103 Spi; Undead 79 Str, 128 Agi, priest Spirit 130.
+- Shaman base attributes at 60: the class row Str 88, Agi 52, Int 87 (Sta 95, Spi 100), a level 60
+  Dwarf shaman's sheet less the Dwarf offset (their 23ebe1f5a6, EV-0181, builds 70888 to 71037), so an
+  Orc shaman 91, 49, 97, 84, 103. Ours since 2026-11-24; before, 1.12's 85, 55, 90. Undead 79 Str,
+  128 Agi, priest Spirit 130.
+- Skyborne race offsets against the Human: High Order Str -3, Agi +4, Sta -1, Int +4, Spi -3,
+  Windshaper Str -4, Agi +3, Sta 0, Int -1, Spi +3 (their 577c857e05, EV-0093, level 1 naked sheets
+  of 2026-11-06). Ours since 2026-11-24; before, both shared -1, +1, -1, +1, 0.
+- Blood Fury's 10% reaches the SpellDamage stat (Greater Arcane Elixir, Lobster Stew, the
+  Spellblasting potions) as well as spell power and healing (their `racials.go:87`). Ours since
+  2026-11-24.
+- Innervate multiplies the Spirit regen and MP5 by 5 but leaves periodic energize auras (Blessing of
+  Wisdom, Mana Spring) unscaled (their 64aea076aa, EV-0114, a 1.60.1.70938 ledger). Ours since
+  2026-11-24; before, Spirit regen only.
 - Ice Lance: every rank 8 s on category 19, shared with Fire Blast (`mage_ice_lance_cd`). Both
   key Fingers of Frost by the buff's id, 400669.
 - Ice Lance's spell power coefficient 0.11 on every rank (`mage_ice_lance_coef`). Ours since

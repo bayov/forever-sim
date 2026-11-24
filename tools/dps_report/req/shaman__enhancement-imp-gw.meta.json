@@ -6,24 +6,24 @@
   "isDefault": false,
   "pr": 7,
   "race": "Orc",
-  "talents": "053303102-055030110051212151-01",
+  "talents": "053303102-054030110051212141-03",
   "treeNames": [
     "Elemental",
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic_hit-1",
+  "gearSet": "level60_phase0",
   "apl": "optimized",
   "published": {
-    "dps": 1066.3,
-    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 982.4,
+    "source": "the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1066.3,
-    "stderr": 0.49,
+    "dps": 982.4,
+    "stderr": 0.42,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "summary": "The default Enhancement build, with Improved Ghost Wolf for utility.",
   "keyTalents": [
@@ -76,9 +76,10 @@
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (100% weapon damage, 8s) and Mental Dexterity (100% of Intellect as attack power at 3/3) take Blizzard's 2026-11-10 hotfix values; Flurry and the shocks the November 2 notes'. No server row carries them yet.",
     "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem.",
-    "Improved Ghost Wolf moved to row 4 in the November 2 notes, so its two points now need 15 Enhancement points above them. They come out of Improved Stormstrike and Elemental points.",
-    "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance.",
-    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 129 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 140."
+    "Improved Ghost Wolf moved to row 4 in the November 2 notes, so its two points now need 15 Enhancement points above them. They come out of Ancestral Knowledge and Maelstrom Weapon, and Tidal Focus 3 brings melee hit to the 8% cap.",
+    "The relic is Burning Totem. Totem of the Storm ties it within 2 DPS at every fight length.",
+    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 129 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 140.",
+    "Wears The Five Thunders 6-piece (Phase 0 list). The 4-piece proc rate (The Furious Storm) is unconfirmed, and the 5-piece's disarm isn't simmed."
   ],
-  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.. Nov 13 re-search (Windfury Weapon's attacks roll Windfury Totem): the build wears the hit-1 step (mksettings -gear level60_phase1_synthetic_hit-1), +1.2 to +2.6 at 120 / 180 / 300 s on two seeds; its Dwarf wears hit-2. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (optimized stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.4 / +1.6 / +1.6 and +1.5 / +2.1 / +1.9 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved"
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.. Nov 13 re-search (Windfury Weapon's attacks roll Windfury Totem): the build wears the hit-1 step (mksettings -gear the synthetic set at hit step -1), +1.2 to +2.6 at 120 / 180 / 300 s on two seeds; its Dwarf wears hit-2. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (optimized stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.4 / +1.6 / +1.6 and +1.5 / +2.1 / +1.9 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved Phase 0 step 4 (2026-11-24): the Phase 0 set (mksettings -gear level60_phase0 -talents 053303102-054030110051212141-03, Orc, APL optimized), was the synthetic set at hit step -1 at 1066.3. The set has 5% hit, so Tidal Focus 1 left melee hit at 6%: the list's talents (the user's, Tidal Focus 3 for an Ancestral Knowledge and a Maelstrom Weapon point) are +22.3 / +22.5 / +21.0 at 120 / 180 / 300 s at 20,000 iterations (the talent search found Maelstrom Weapon 3 with Tidal Focus 3, +17.9 / +18.5 / +17.0). Burning Totem and Totem of the Storm tie within 1 DPS."
 }

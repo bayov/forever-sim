@@ -189,6 +189,17 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 	return unit.stats[stats.MP5] / 5.0
 }
 
+// The MP5's regen with Innervate's or Energized's multiplier on it. A periodic energize aura
+// (Blessing of Wisdom, Mana Spring) ticks the same amount under Innervate as outside it, so its
+// share stays unscaled. Adding only the surplus keeps a multiplier of 1 bit-exact.
+func (unit *Unit) scaledMP5ManaRegenPerSecond() float64 {
+	regen := unit.MP5ManaRegenPerSecond()
+	if extra := unit.PseudoStats.MP5RegenMultiplier - 1; extra != 0 {
+		regen += (unit.stats[stats.MP5] - unit.PseudoStats.EnergizeMP5) / 5.0 * extra
+	}
+	return regen
+}
+
 // Returns the rate of mana regen per second from spirit.
 // All classes except Priest and Mage use this.
 func (unit *Unit) SpiritManaRegenPerSecondDefault() float64 {
@@ -222,7 +233,7 @@ func (unit *Unit) spiritManaRegenPerSecond() float64 {
 // Returns the rate of mana regen per second, assuming this unit is
 // considered to be casting.
 func (unit *Unit) ManaRegenPerSecondWhileCasting() float64 {
-	regenRate := unit.MP5ManaRegenPerSecond()
+	regenRate := unit.scaledMP5ManaRegenPerSecond()
 
 	spiritRegen := unit.spiritManaRegenPerSecond()
 	spiritRegenRate := 0.0
@@ -244,7 +255,7 @@ func (unit *Unit) ManaRegenPerSecondWhileCasting() float64 {
 // Returns the rate of mana regen per second, assuming this unit is
 // considered to be not casting.
 func (unit *Unit) ManaRegenPerSecondWhileNotCasting() float64 {
-	regenRate := unit.MP5ManaRegenPerSecond()
+	regenRate := unit.scaledMP5ManaRegenPerSecond()
 
 	spiritRegen := unit.spiritManaRegenPerSecond()
 	regenRate += spiritRegen * unit.PseudoStats.SpiritRegenMultiplier

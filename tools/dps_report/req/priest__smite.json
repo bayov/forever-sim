@@ -9,76 +9,80 @@
             "equipment": {
               "items": [
                 {
-                  "id": 995016,
-                  "enchant": 1509
+                  "id": 226957,
+                  "enchant": 2544
                 },
                 {
-                  "id": 995022,
+                  "id": 19426,
                   "enchant": 1249057
                 },
                 {
-                  "id": 995017
+                  "id": 226955
                 },
                 {
-                  "id": 995023
+                  "id": 272411
                 },
                 {
-                  "id": 995018,
+                  "id": 10246,
+                  "randomSuffix": 1941,
                   "enchant": 1254966
                 },
                 {
-                  "id": 995024,
+                  "id": 226953,
                   "enchant": 1220624
                 },
                 {
-                  "id": 995019,
+                  "id": 226958,
                   "enchant": 1213622
                 },
                 {
-                  "id": 995025
+                  "id": 228190
                 },
                 {
-                  "id": 995020,
+                  "id": 226956,
+                  "enchant": 2544
+                },
+                {
+                  "id": 226959,
                   "enchant": 1254966
                 },
                 {
-                  "id": 995021,
-                  "enchant": 1254966
+                  "id": 13001
                 },
                 {
-                  "id": 995030
+                  "id": 275738
                 },
                 {
-                  "id": 995031
+                  "id": 10455
                 },
                 {
-                  "id": 995033
+                  "id": 272438
                 },
                 {
-                  "id": 995034
+                  "id": 2243,
+                  "enchant": 1248805
                 },
                 {
-                  "id": 995029,
-                  "enchant": 1219580
+                  "id": 11904,
+                  "enchant": 1219579
                 },
-                {},
                 {
-                  "id": 995027
+                  "id": 22408
                 }
               ]
             },
             "consumes": {
               "flask": "FlaskOfSupremePower",
               "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
               "spellPowerBuff": "GreaterArcaneElixir",
               "shadowPowerBuff": "ElixirOfShadowPower",
+              "firePowerBuff": "ElixirOfGreaterFirepower",
               "mainHandImbue": "WizardOil",
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
               "intellectElixir": "ElixirOfTheOwl",
-              "firePowerBuff": "ElixirOfGreaterFirepower",
-              "manaRegenElixir": "GreaterMagebloodElixir",
               "spiritElixir": "ElixirOfGreaterSpirit"
             },
             "buffs": {
@@ -133,7 +137,7 @@
                         },
                         "rhs": {
                           "const": {
-                            "val": "0.4"
+                            "val": "0.6"
                           }
                         }
                       }
@@ -294,7 +298,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.8"
+                                  "val": "0.3"
                                 }
                               }
                             }
@@ -345,7 +349,7 @@
                   }
                 },
                 {
-                  "notes": "Smite while the mana lasts the fight at 35 mana a second.",
+                  "notes": "Smite while the mana lasts the fight at 20 mana a second.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -358,7 +362,7 @@
                             },
                             "rhs": {
                               "const": {
-                                "val": "35"
+                                "val": "20"
                               }
                             }
                           }
@@ -376,11 +380,11 @@
                   }
                 },
                 {
-                  "notes": "Rank 7 Smite once it would not: most of the damage for far less mana.",
+                  "notes": "Rank 3 Smite once it would not: most of the damage for far less mana.",
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10933
+                        "spellId": 598
                       }
                     }
                   }
@@ -435,8 +439,8 @@
       "faerieFire": true,
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

@@ -9,57 +9,57 @@
             "equipment": {
               "items": [
                 {
-                  "id": 992001,
-                  "enchant": 1506
+                  "id": 12640,
+                  "enchant": 2543
                 },
                 {
-                  "id": 992002,
+                  "id": 15411,
                   "enchant": 1249057
                 },
                 {
-                  "id": 992003
+                  "id": 226969
                 },
                 {
-                  "id": 992004,
+                  "id": 272411,
                   "enchant": 1219587
                 },
                 {
-                  "id": 992005,
+                  "id": 252483,
                   "enchant": 1891
                 },
                 {
-                  "id": 992006,
+                  "id": 226970,
                   "enchant": 1220624
                 },
                 {
-                  "id": 992007,
-                  "enchant": 1213622
+                  "id": 226975,
+                  "enchant": 1248640
                 },
                 {
-                  "id": 992008
+                  "id": 18405
                 },
                 {
-                  "id": 992009,
-                  "enchant": 1506
+                  "id": 252606,
+                  "enchant": 2543
                 },
                 {
-                  "id": 992010,
-                  "enchant": 1254966
+                  "id": 226974,
+                  "enchant": 1887
                 },
                 {
-                  "id": 992011
+                  "id": 275977
                 },
                 {
-                  "id": 992013
+                  "id": 272406
                 },
                 {
-                  "id": 992014
+                  "id": 10455
                 },
                 {
-                  "id": 992015
+                  "id": 19812
                 },
                 {
-                  "id": 992012,
+                  "id": 647,
                   "enchant": 1219580
                 },
                 {},
@@ -116,21 +116,17 @@
               ],
               "priorityList": [
                 {
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 992015
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentTime": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -145,18 +141,24 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 992015
+                                  },
                                   "delay": {
                                     "math": {
+                                      "op": "OpDiv",
                                       "lhs": {
                                         "math": {
+                                          "op": "OpSub",
                                           "lhs": {
                                             "math": {
+                                              "op": "OpMul",
                                               "lhs": {
                                                 "remainingTime": {}
                                               },
-                                              "op": "OpMul",
                                               "rhs": {
                                                 "const": {
                                                   "val": "4"
@@ -164,13 +166,11 @@
                                               }
                                             }
                                           },
-                                          "op": "OpSub",
                                           "rhs": {
                                             "currentTime": {}
                                           }
                                         }
                                       },
-                                      "op": "OpDiv",
                                       "rhs": {
                                         "const": {
                                           "val": "5"
@@ -182,13 +182,9 @@
                                     "const": {
                                       "val": "20s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "itemId": 992015
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -198,70 +194,70 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
                     }
-                  },
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."
+                  }
                 },
                 {
+                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "itemId": 10646
                       }
                     }
-                  },
-                  "notes": "Goblin Sapper Charge on cooldown."
+                  }
                 },
                 {
+                  "notes": "Hammer of Wrath below 20% health.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 24239
                       }
                     }
-                  },
-                  "notes": "Hammer of Wrath below 20% health."
+                  }
                 },
                 {
+                  "notes": "Consecration with the mana to spare.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20924
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpGe",
                         "lhs": {
                           "currentManaPercent": {}
                         },
-                        "op": "OpGe",
                         "rhs": {
                           "const": {
                             "val": "0.2"
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20924
+                      }
                     }
-                  },
-                  "notes": "Consecration with the mana to spare."
+                  }
                 },
                 {
+                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10333
                       }
                     }
-                  },
-                  "notes": "Holy Strike on cooldown."
+                  }
                 },
                 {
+                  "notes": "Judgement on cooldown, on whichever damage seal is up.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -287,17 +283,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Judgement on cooldown, on whichever damage seal is up."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20293
+                        "spellId": 20271
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -327,17 +323,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Unsealed Wrath: once the seal has stored 2 copies, the other damage seal, so the next swing spends them all.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -350,6 +346,7 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "auraNumStacks": {
                                   "auraId": {
@@ -357,7 +354,6 @@
                                   }
                                 }
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "2"
@@ -367,17 +363,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Unsealed Wrath: once the seal has stored 2 copies, the other damage seal, so the next swing spends them all."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20293
+                        "spellId": 20920
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "And back once the other seal has stored 3 copies, which the next swing spends.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -390,6 +386,7 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "auraNumStacks": {
                                   "auraId": {
@@ -397,7 +394,6 @@
                                   }
                                 }
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "3"
@@ -407,25 +403,29 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
                     }
-                  },
-                  "notes": "And back once the other seal has stored 3 copies, which the next swing spends."
+                  }
                 },
                 {
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10314
                       }
                     }
-                  },
-                  "notes": "Exorcism on cooldown, only against Undead and Demons."
+                  }
                 },
                 {
+                  "notes": "Racials and trinkets on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials and trinkets on a free GCD."
+                  }
                 }
               ]
             },
@@ -471,8 +471,8 @@
       "faerieFire": true,
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

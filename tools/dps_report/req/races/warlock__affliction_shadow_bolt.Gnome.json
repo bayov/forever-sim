@@ -492,5 +492,77 @@
   "seed": 1,
   "duration": 180
  },
- "how": "rotopt -template warlock -race Gnome -durs 180 -eval, the preset's knobs (bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1,berserking=1,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15) plus eureka=1 (tools/rotopt/warlock.go). At the pull and on cooldown its 8 sec went on Bane of Doom, Corruption, Immolate and Life Tap, which it does not cover, and one Shadow Bolt landed inside it. Paired over 20000 iterations. Remade 2026-10-28 when the presets took berserking=1 (the Troll Berserking line, which does nothing for a Gnome): the same gain over the new preset."
+ "how": "rotopt -template warlock -race Gnome -durs 180 -eval, the preset's knobs (bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1,berserking=1,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15) plus eureka=1 (tools/rotopt/warlock.go). At the pull and on cooldown its 8 sec went on Bane of Doom, Corruption, Immolate and Life Tap, which it does not cover, and one Shadow Bolt landed inside it. Paired over 20000 iterations. Remade 2026-10-28 when the presets took berserking=1 (the Troll Berserking line, which does nothing for a Gnome): the same gain over the new preset.",
+ "gearSet": "level60_phase0_affliction_alliance",
+ "equipment": {
+  "items": [
+   {
+    "id": 14332,
+    "randomSuffix": 1865,
+    "enchant": 2544
+   },
+   {
+    "id": 19426,
+    "enchant": 1249057
+   },
+   {
+    "id": 227808
+   },
+   {
+    "id": 279269
+   },
+   {
+    "id": 14153,
+    "enchant": 1254966
+   },
+   {
+    "id": 13409,
+    "randomSuffix": 1851,
+    "enchant": 1220624
+   },
+   {
+    "id": 18407,
+    "enchant": 1254966
+   },
+   {
+    "id": 228190
+   },
+   {
+    "id": 14334,
+    "randomSuffix": 1864,
+    "enchant": 2544
+   },
+   {
+    "id": 10247,
+    "randomSuffix": 1857,
+    "enchant": 1254966
+   },
+   {
+    "id": 275977
+   },
+   {
+    "id": 12543
+   },
+   {
+    "id": 22678
+   },
+   {
+    "id": 272438
+   },
+   {
+    "id": 18372,
+    "enchant": 2568
+   },
+   {
+    "id": 15989,
+    "randomSuffix": 1852,
+    "enchant": 1219579
+   },
+   {
+    "id": 13396
+   }
+  ]
+ },
+ "gearNote": "Alliance: wears level60_phase0_affliction_alliance, the set without the Horde rewards",
+ "gearHow": "race_gear.py: Gnome is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_affliction. It wears level60_phase0_affliction_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
 }

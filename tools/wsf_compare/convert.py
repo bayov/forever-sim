@@ -402,6 +402,14 @@ def nospell(n):
     k, v = next(iter(n.items()))
     if isinstance(v, dict) and isinstance(v.get('spellId'), dict) and v['spellId'].get('spellId') in NOSPELLS:
         return k
+# Eureka! (Gnome): ours keys every class's cast as the rogue's 1259812, theirs each class's own row. Unmapped, theirs
+# drops our line and autocastOtherCooldowns casts it at the pull instead of where our rotation holds it.
+EUREKA = {'ClassRogue': 1259812, 'ClassWarrior': 1259813, 'ClassMage': 1259817, 'ClassWarlock': 1259821, 'ClassPriest': 1259823}
+_class_remap = remap
+def remap(n):
+    if n.get('spellId') == 1259812 and klass in EUREKA:
+        n = {**n, 'spellId': EUREKA[klass]}
+    return _class_remap(n)
 def walk(n):
     if isinstance(n, dict):
         if '_done' in n: return n['_done']  # a node remap() already rewrote

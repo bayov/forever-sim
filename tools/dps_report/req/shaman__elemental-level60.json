@@ -1,188 +1,190 @@
 {
-  "raid": {
-    "parties": [
+  "raid":  {
+    "parties":  [
       {
-        "players": [
+        "players":  [
           {
-            "race": "RaceSkyborneWindshaper",
-            "class": "ClassShaman",
-            "equipment": {
-              "items": [
+            "race":  "RaceSkyborneWindshaper",
+            "class":  "ClassShaman",
+            "equipment":  {
+              "items":  [
                 {
-                  "id": 990101,
-                  "enchant": 1509
+                  "id":  22267,
+                  "enchant":  2544
                 },
                 {
-                  "id": 990102,
-                  "enchant": 1249057
+                  "id":  19426,
+                  "enchant":  1249057
                 },
                 {
-                  "id": 990103
+                  "id":  227003
                 },
                 {
-                  "id": 990104,
-                  "enchant": 1888
+                  "id":  272411
                 },
                 {
-                  "id": 990105,
-                  "enchant": 1254966
+                  "id":  227004,
+                  "enchant":  1254966
                 },
                 {
-                  "id": 990106,
-                  "enchant": 1220624
+                  "id":  227001,
+                  "enchant":  1220624
                 },
                 {
-                  "id": 990107,
-                  "enchant": 1248645
+                  "id":  227006,
+                  "enchant":  1248645
                 },
                 {
-                  "id": 990108
+                  "id":  227018
                 },
                 {
-                  "id": 990109,
-                  "enchant": 1254966
+                  "id":  252486,
+                  "enchant":  2544
                 },
                 {
-                  "id": 990110,
-                  "enchant": 1254966
+                  "id":  227007,
+                  "enchant":  1254966
                 },
                 {
-                  "id": 990111
+                  "id":  22339
                 },
                 {
-                  "id": 990112
+                  "id":  272406
                 },
                 {
-                  "id": 990114
+                  "id":  10455
                 },
                 {
-                  "id": 990115
+                  "id":  13968
                 },
                 {
-                  "id": 990113,
-                  "enchant": 1219580
+                  "id":  2243,
+                  "enchant":  1248805
                 },
-                {},
                 {
-                  "id": 272433
+                  "id":  18316,
+                  "enchant":  1219579
+                },
+                {
+                  "id":  272433
                 }
               ]
             },
-            "consumes": {
-              "flask": "FlaskOfSupremePower",
-              "food": "FoodLobsterStew",
-              "manaRegenElixir": "GreaterMagebloodElixir",
-              "spellPowerBuff": "GreaterArcaneElixir",
-              "firePowerBuff": "ElixirOfFirepower",
-              "mainHandImbue": "WizardOil",
-              "defaultPotion": "CausticSmogPotion",
-              "defaultConjured": "ConjuredDemonicRune",
-              "zanzaBuff": "CerebralCortexCompound",
-              "intellectElixir": "ElixirOfGreaterIntellect",
-              "spiritElixir": "ElixirOfSages",
-              "naturePowerBuff": "ElixirOfNaturePower"
+            "consumes":  {
+              "flask":  "FlaskOfSupremePower",
+              "food":  "FoodLobsterStew",
+              "manaRegenElixir":  "GreaterMagebloodElixir",
+              "spellPowerBuff":  "GreaterArcaneElixir",
+              "firePowerBuff":  "ElixirOfFirepower",
+              "mainHandImbue":  "WizardOil",
+              "defaultPotion":  "CausticSmogPotion",
+              "defaultConjured":  "ConjuredDemonicRune",
+              "zanzaBuff":  "CerebralCortexCompound",
+              "intellectElixir":  "ElixirOfGreaterIntellect",
+              "spiritElixir":  "ElixirOfSages",
+              "naturePowerBuff":  "ElixirOfNaturePower"
             },
-            "buffs": {
-              "blessingOfKings": true,
-              "blessingOfWisdom": "TristateEffectImproved"
+            "buffs":  {
+              "blessingOfKings":  true,
+              "blessingOfWisdom":  "TristateEffectImproved"
             },
-            "talentsString": "5501331003001351-05500101-053",
-            "level": 60,
-            "profession1": "Engineering",
-            "profession2": "Alchemy",
-            "rotation": {
-              "type": "TypeAPL",
-              "prepullActions": [
+            "talentsString":  "5501331003001351-05500101-053",
+            "level":  60,
+            "profession1":  "Engineering",
+            "profession2":  "Alchemy",
+            "rotation":  {
+              "type":  "TypeAPL",
+              "prepullActions":  [
                 {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10432
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10432
                       }
                     }
                   },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-5.4s"
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-5.4s"
                     }
                   }
                 },
                 {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10497
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10497
                       }
                     }
                   },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-3.9s"
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-3.9s"
                     }
                   }
                 },
                 {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 15208
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  15208
                       }
                     }
                   },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-2.9s"
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-2.9s"
                     }
                   }
                 },
                 {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10438
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10438
                       }
                     }
                   },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-0.9s"
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-0.9s"
                     }
                   }
                 }
               ],
-              "priorityList": [
+              "priorityList":  [
                 {
-                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown.",
-                  "action": {
-                    "autocastOtherCooldowns": {}
+                  "notes":  "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown.",
+                  "action":  {
+                    "autocastOtherCooldowns":  {}
                   }
                 },
                 {
-                  "notes": "Mana Spring Totem whenever it is down, with 20 sec or more of the fight left.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
+                  "notes":  "Mana Spring Totem whenever it is down, with 20 sec or more of the fight left.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
                           {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 10497
+                            "not":  {
+                              "val":  {
+                                "auraIsActive":  {
+                                  "auraId":  {
+                                    "spellId":  10497
                                   }
                                 }
                               }
                             }
                           },
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "remainingTime": {}
+                            "cmp":  {
+                              "op":  "OpGe",
+                              "lhs":  {
+                                "remainingTime":  {}
                               },
-                              "rhs": {
-                                "const": {
-                                  "val": "20s"
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "20s"
                                 }
                               }
                             }
@@ -190,39 +192,39 @@
                         ]
                       }
                     },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10497
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10497
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
+                  "notes":  "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
                           {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 10438
+                            "not":  {
+                              "val":  {
+                                "dotIsActive":  {
+                                  "spellId":  {
+                                    "spellId":  10438
                                   }
                                 }
                               }
                             }
                           },
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "remainingTime": {}
+                            "cmp":  {
+                              "op":  "OpGe",
+                              "lhs":  {
+                                "remainingTime":  {}
                               },
-                              "rhs": {
-                                "const": {
-                                  "val": "20s"
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "20s"
                                 }
                               }
                             }
@@ -230,39 +232,39 @@
                         ]
                       }
                     },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10438
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10438
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Flame Shock when its DoT is down, with 9 sec or more of the fight left.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
+                  "notes":  "Flame Shock when its DoT is down, with 9 sec or more of the fight left.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
                           {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 29228
+                            "not":  {
+                              "val":  {
+                                "dotIsActive":  {
+                                  "spellId":  {
+                                    "spellId":  29228
                                   }
                                 }
                               }
                             }
                           },
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "remainingTime": {}
+                            "cmp":  {
+                              "op":  "OpGe",
+                              "lhs":  {
+                                "remainingTime":  {}
                               },
-                              "rhs": {
-                                "const": {
-                                  "val": "9s"
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "9s"
                                 }
                               }
                             }
@@ -270,87 +272,87 @@
                         ]
                       }
                     },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 29228
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  29228
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Earth Shock when a Lightning Bolt would not land before the end.",
-                  "action": {
-                    "condition": {
-                      "cmp": {
-                        "op": "OpLt",
-                        "lhs": {
-                          "remainingTime": {}
+                  "notes":  "Earth Shock when a Lightning Bolt would not land before the end.",
+                  "action":  {
+                    "condition":  {
+                      "cmp":  {
+                        "op":  "OpLt",
+                        "lhs":  {
+                          "remainingTime":  {}
                         },
-                        "rhs": {
-                          "math": {
-                            "op": "OpAdd",
-                            "lhs": {
-                              "spellCastTime": {
-                                "spellId": {
-                                  "spellId": 15208
+                        "rhs":  {
+                          "math":  {
+                            "op":  "OpAdd",
+                            "lhs":  {
+                              "spellCastTime":  {
+                                "spellId":  {
+                                  "spellId":  15208
                                 }
                               }
                             },
-                            "rhs": {
-                              "const": {
-                                "val": "1s"
+                            "rhs":  {
+                              "const":  {
+                                "val":  "1s"
                               }
                             }
                           }
                         }
                       }
                     },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10414
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10414
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Lightning Shield again with 50% of the mana or more and 60 sec of the fight to go. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
+                  "notes":  "Lightning Shield again with 50% of the mana or more and 60 sec of the fight to go. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
                           {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 10432
+                            "not":  {
+                              "val":  {
+                                "auraIsActive":  {
+                                  "auraId":  {
+                                    "spellId":  10432
                                   }
                                 }
                               }
                             }
                           },
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentManaPercent": {}
+                            "cmp":  {
+                              "op":  "OpGe",
+                              "lhs":  {
+                                "currentManaPercent":  {}
                               },
-                              "rhs": {
-                                "const": {
-                                  "val": "0.5"
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "0.5"
                                 }
                               }
                             }
                           },
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "remainingTime": {}
+                            "cmp":  {
+                              "op":  "OpGe",
+                              "lhs":  {
+                                "remainingTime":  {}
                               },
-                              "rhs": {
-                                "const": {
-                                  "val": "60s"
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "60s"
                                 }
                               }
                             }
@@ -358,34 +360,34 @@
                         ]
                       }
                     },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10432
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  10432
                       }
                     }
                   }
                 },
                 {
-                  "notes": "A lower rank of Lightning Bolt once the mana would not last the rest of the fight at 30 mana a second. Not while Clearcasting makes the top rank free.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
+                  "notes":  "A lower rank of Lightning Bolt once the mana would not last the rest of the fight at 30 mana a second. Not while Clearcasting makes the top rank free.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
                           {
-                            "cmp": {
-                              "op": "OpLt",
-                              "lhs": {
-                                "currentMana": {}
+                            "cmp":  {
+                              "op":  "OpLt",
+                              "lhs":  {
+                                "currentMana":  {}
                               },
-                              "rhs": {
-                                "math": {
-                                  "op": "OpMul",
-                                  "lhs": {
-                                    "remainingTime": {}
+                              "rhs":  {
+                                "math":  {
+                                  "op":  "OpMul",
+                                  "lhs":  {
+                                    "remainingTime":  {}
                                   },
-                                  "rhs": {
-                                    "const": {
-                                      "val": "30"
+                                  "rhs":  {
+                                    "const":  {
+                                      "val":  "30"
                                     }
                                   }
                                 }
@@ -393,11 +395,11 @@
                             }
                           },
                           {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 16246
+                            "not":  {
+                              "val":  {
+                                "auraIsActive":  {
+                                  "auraId":  {
+                                    "spellId":  16246
                                   }
                                 }
                               }
@@ -406,84 +408,84 @@
                         ]
                       }
                     },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 15207
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  15207
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Lightning Bolt.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 15208
+                  "notes":  "Lightning Bolt.",
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  15208
                       }
                     }
                   }
                 }
               ]
             },
-            "reactionTimeMs": 200,
-            "channelClipDelayMs": 50,
-            "distanceFromTarget": 20,
-            "elementalShaman": {
-              "options": {}
+            "reactionTimeMs":  200,
+            "channelClipDelayMs":  50,
+            "distanceFromTarget":  20,
+            "elementalShaman":  {
+              "options":  {}
             }
           }
         ],
-        "buffs": {}
+        "buffs":  {}
       }
     ],
-    "buffs": {
-      "giftOfTheWild": "TristateEffectImproved",
-      "powerWordFortitude": "TristateEffectImproved",
-      "bloodPact": "TristateEffectImproved",
-      "arcaneBrilliance": true,
-      "divineSpirit": true,
-      "battleShout": "TristateEffectImproved",
-      "trueshotAura": true,
-      "leaderOfThePack": true,
-      "moonkinAura": true,
-      "shadowProtection": true,
-      "frostResistanceAura": true,
-      "fireResistanceAura": true,
-      "thorns": "TristateEffectImproved",
-      "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+    "buffs":  {
+      "giftOfTheWild":  "TristateEffectImproved",
+      "powerWordFortitude":  "TristateEffectImproved",
+      "bloodPact":  "TristateEffectImproved",
+      "arcaneBrilliance":  true,
+      "divineSpirit":  true,
+      "battleShout":  "TristateEffectImproved",
+      "trueshotAura":  true,
+      "leaderOfThePack":  true,
+      "moonkinAura":  true,
+      "shadowProtection":  true,
+      "frostResistanceAura":  true,
+      "fireResistanceAura":  true,
+      "thorns":  "TristateEffectImproved",
+      "devotionAura":  "TristateEffectImproved",
+      "retributionAura":  "TristateEffectImproved"
     },
-    "debuffs": {
-      "judgementOfWisdom": true,
-      "judgementOfLight": true,
-      "judgementOfTheCrusader": "TristateEffectImproved",
-      "faerieFire": true,
-      "curseOfElements": true,
-      "sunderRamp": {
-        "pullSunders": 1,
-        "tank": true
+    "debuffs":  {
+      "judgementOfWisdom":  true,
+      "judgementOfLight":  true,
+      "judgementOfTheCrusader":  "TristateEffectImproved",
+      "faerieFire":  true,
+      "curseOfElements":  true,
+      "sunderRamp":  {
+        "pullSunders":  1,
+        "tank":  true
       },
-      "curseOfWeakness": "TristateEffectImproved",
-      "curseOfRecklessness": true,
-      "demoralizingRoar": "TristateEffectImproved",
-      "demoralizingShout": "TristateEffectImproved",
-      "thunderClap": "TristateEffectImproved",
-      "insectSwarm": true,
-      "scorpidSting": true
+      "curseOfWeakness":  "TristateEffectImproved",
+      "curseOfRecklessness":  true,
+      "demoralizingRoar":  "TristateEffectImproved",
+      "demoralizingShout":  "TristateEffectImproved",
+      "thunderClap":  "TristateEffectImproved",
+      "insectSwarm":  true,
+      "scorpidSting":  true
     }
   },
-  "encounter": {
-    "duration": 180,
-    "durationVariation": 20,
-    "executeProportion20": 0.2,
-    "executeProportion25": 0.25,
-    "executeProportion35": 0.35,
-    "targets": [
+  "encounter":  {
+    "duration":  180,
+    "durationVariation":  20,
+    "executeProportion20":  0.2,
+    "executeProportion25":  0.25,
+    "executeProportion35":  0.35,
+    "targets":  [
       {
-        "id": 213336,
-        "name": "Level 60",
-        "level": 63,
-        "stats": [
+        "id":  213336,
+        "name":  "Level 60",
+        "level":  63,
+        "stats":  [
           0,
           0,
           0,
@@ -529,18 +531,18 @@
           0,
           0
         ],
-        "minBaseDamage": 3000,
-        "damageSpread": 0.3333,
-        "swingSpeed": 2,
-        "parryHaste": true
+        "minBaseDamage":  3000,
+        "damageSpread":  0.3333,
+        "swingSpeed":  2,
+        "parryHaste":  true
       }
     ],
-    "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500,
-    "naturalFlaskZone": true
+    "raidDamageHitsPerMinute":  2,
+    "raidDamagePerHit":  1500,
+    "naturalFlaskZone":  true
   },
-  "simOptions": {
-    "iterations": 1000,
-    "randomSeed": "1"
+  "simOptions":  {
+    "iterations":  1000,
+    "randomSeed":  "1"
   }
 }
