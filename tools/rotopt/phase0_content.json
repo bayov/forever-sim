@@ -874,7 +874,7 @@
   "22395": {"name": "Totem of Rage", "include": true, "note": "Magmus · Blackrock Depths", "gold": 492.2, "goldPerDps": 269.0},
   "22397": {"name": "Idol of Ferocity", "note": "Lord Roccor · Blackrock Depths"},
   "22401": {"name": "Libram of Hope", "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)", "include": true},
-  "22403": {"name": "Nacreous Shell Necklace", "gold": 282.6, "goldPerDps": 180.0},
+  "22403": {"name": "Nacreous Shell Necklace", "gold": 282.6, "goldPerDps": 217.4, "note": "price restored 2026-11-24 (warlock step 4): the Enhancement price pass of 5e556ff1e dropped it, not being on that list"},
   "22407": {"name": "Helm of the New Moon", "note": "Cannon Master Willey · Stratholme"},
   "22408": {"name": "Ritssyn's Wand of Bad Mojo", "note": "Baron Rivendare · Stratholme"},
   "22409": {"name": "Tunic of the Crescent Moon", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},

@@ -359,6 +359,44 @@ def price_slot(slot, entries, content, prices, recipes, max_gpd, effort=None):
     return rows
 
 
+def apply_prices(content, priced, on_list):
+    """Save a pass's prices in content, and return how many entries changed.
+
+    priced is {item ID: row} for what this pass priced, and on_list the item IDs
+    of the list it read. Only those items' gold and goldPerDps change: an item on
+    another spec's list keeps its numbers and its avail tag, since this pass
+    never saw it (the Enhancement pass of 5e556ff1e dropped Nacreous Shell
+    Necklace's price that way). An item on the list that gets no goldPerDps now
+    loses its old one.
+    """
+    priced = {iid: r for iid, r in priced.items() if r['gpd'] is not None}
+    changed = 0
+    for iid, c in content.items():
+        if iid not in on_list:
+            continue
+        r = priced.get(iid)
+        new = {'gold': round(r['gold'], 1), 'goldPerDps': r['gpd']} if r else {}
+        old = {k: c[k] for k in ('gold', 'goldPerDps') if k in c}
+        if old != new:
+            changed += 1
+            for k in ('gold', 'goldPerDps'):
+                c.pop(k, None)
+            c.update(new)
+    # A priced list item the content check hasn't seen yet gets an entry of its own.
+    for iid, r in priced.items():
+        if iid not in content:
+            content[iid] = {'name': r['name'], 'gold': round(r['gold'], 1), 'goldPerDps': r['gpd']}
+            changed += 1
+    return changed
+
+
+def content_text(content):
+    """phase0_content.json's text: one entry per line, by item ID."""
+    keys = sorted(content, key=int)
+    return '{\n' + ''.join(f'  {json.dumps(k)}: {json.dumps(content[k], ensure_ascii=False)}'
+                            f'{"," if i < len(keys) - 1 else ""}\n' for i, k in enumerate(keys)) + '}\n'
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--write', action='store_true', help='save gold and goldPerDps in phase0_content.json')
@@ -421,28 +459,10 @@ def main():
 
     if not args.write:
         return
-    priced = {iid: r for iid, r in priced.items() if r['gpd'] is not None}
-    changed = 0
-    for iid, c in content.items():
-        r = priced.get(iid)
-        new = {'gold': round(r['gold'], 1), 'goldPerDps': r['gpd']} if r else {}
-        old = {k: c[k] for k in ('gold', 'goldPerDps') if k in c}
-        if old != new:
-            changed += 1
-            for k in ('gold', 'goldPerDps'):
-                c.pop(k, None)
-            c.update(new)
-    # A priced list item the content check hasn't seen yet gets an entry of its own.
-    for iid, r in priced.items():
-        if iid not in content:
-            content[iid] = {'name': r['name'], 'gold': round(r['gold'], 1), 'goldPerDps': r['gpd']}
-            changed += 1
+    on_list = {str(e['id']) for entries in bis['slots'].values() for e in entries}
+    changed = apply_prices(content, priced, on_list)
     with open(CONTENT, 'w') as f:
-        f.write('{\n')
-        keys = sorted(content, key=int)
-        for i, k in enumerate(keys):
-            f.write(f'  {json.dumps(k)}: {json.dumps(content[k], ensure_ascii=False)}{"," if i < len(keys) - 1 else ""}\n')
-        f.write('}\n')
+        f.write(content_text(content))
     print(f'wrote {CONTENT}, {changed} entries changed')
 
 

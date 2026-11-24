@@ -1,12 +1,12 @@
 character_stats_results: {
  key: "TestEnhancement-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 368
-  final_stats: 339
+  final_stats: 371
+  final_stats: 335
   final_stats: 581
-  final_stats: 232
+  final_stats: 228
   final_stats: 234
-  final_stats: 219.6
+  final_stats: 218.4
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -15,24 +15,24 @@ character_stats_results: {
   final_stats: 0
   final_stats: 81.25
   final_stats: 5.5
-  final_stats: 41.7208
+  final_stats: 41.6532
   final_stats: 0
   final_stats: 0
-  final_stats: 1970
+  final_stats: 1972
   final_stats: 7.5
-  final_stats: 47.4212
+  final_stats: 47.218
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 4720
+  final_stats: 4660
   final_stats: 0
   final_stats: 0
-  final_stats: 2652
+  final_stats: 2644
   final_stats: 754
   final_stats: 6
   final_stats: 5.24
   final_stats: 0
-  final_stats: 19.1612
+  final_stats: 18.958
   final_stats: 5.24
   final_stats: 0
   final_stats: 7210
@@ -50,12 +50,12 @@ character_stats_results: {
 character_stats_results: {
  key: "TestEnhancement-Phase2-CharacterStats-Default"
  value: {
-  final_stats: 380
-  final_stats: 330
+  final_stats: 384
+  final_stats: 326
   final_stats: 600
-  final_stats: 299
+  final_stats: 294
   final_stats: 234
-  final_stats: 264.7
+  final_stats: 263.2
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -64,24 +64,24 @@ character_stats_results: {
   final_stats: 0
   final_stats: 87.25
   final_stats: 8.5
-  final_stats: 43.8531
+  final_stats: 43.7686
   final_stats: 0
   final_stats: 0
-  final_stats: 1965
+  final_stats: 1968
   final_stats: 8.5
-  final_stats: 47.964
+  final_stats: 47.7608
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 5725
+  final_stats: 5650
   final_stats: 0
   final_stats: 0
-  final_stats: 3138
+  final_stats: 3130
   final_stats: 658
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 18.464
+  final_stats: 18.2608
   final_stats: 5
   final_stats: 0
   final_stats: 7400
@@ -99,12 +99,12 @@ character_stats_results: {
 character_stats_results: {
  key: "TestEnhancement-Phase3-CharacterStats-Default"
  value: {
-  final_stats: 413
-  final_stats: 373
+  final_stats: 417
+  final_stats: 369
   final_stats: 606
-  final_stats: 301
+  final_stats: 297
   final_stats: 264
-  final_stats: 287.3
+  final_stats: 286.1
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -113,24 +113,24 @@ character_stats_results: {
   final_stats: 0
   final_stats: 81.25
   final_stats: 6
-  final_stats: 40.8869
+  final_stats: 40.8193
   final_stats: 0
   final_stats: 0
-  final_stats: 2133
+  final_stats: 2137
   final_stats: 6
-  final_stats: 46.1484
+  final_stats: 45.9452
   final_stats: 3
   final_stats: 0
   final_stats: 0
-  final_stats: 5755
+  final_stats: 5695
   final_stats: 0
   final_stats: 0
-  final_stats: 3488
+  final_stats: 3480
   final_stats: 758
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 21.6484
+  final_stats: 21.4452
   final_stats: 5
   final_stats: 0
   final_stats: 7460
@@ -148,12 +148,12 @@ character_stats_results: {
 character_stats_results: {
  key: "TestEnhancement-Phase5-CharacterStats-Default"
  value: {
-  final_stats: 449
-  final_stats: 446
+  final_stats: 452
+  final_stats: 442
   final_stats: 637
-  final_stats: 261
+  final_stats: 257
   final_stats: 234
-  final_stats: 247.3
+  final_stats: 246.1
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -162,24 +162,24 @@ character_stats_results: {
   final_stats: 0
   final_stats: 86.25
   final_stats: 4
-  final_stats: 41.7109
+  final_stats: 41.6433
   final_stats: 0
   final_stats: 0
-  final_stats: 2227
+  final_stats: 2229
   final_stats: 4
-  final_stats: 51.3568
+  final_stats: 51.1536
   final_stats: 3
   final_stats: 0
   final_stats: 0
-  final_stats: 5155
+  final_stats: 5095
   final_stats: 0
   final_stats: 0
-  final_stats: 3357
+  final_stats: 3349
   final_stats: 820
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 25.3568
+  final_stats: 25.1536
   final_stats: 5
   final_stats: 0
   final_stats: 7770
@@ -197,16 +197,12 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase1-StatWeights-Default"
  value: {
-  weights: 0.85989
-  weights: 0.59965
+  weights: 0.85742
+  weights: 0.57657
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.30422
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.30315
   weights: 0
   weights: 0
   weights: 0
@@ -214,9 +210,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.34395
-  weights: 18.72295
-  weights: 11.21892
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.34297
+  weights: 19.54942
+  weights: 11.71335
   weights: 0
   weights: 0
   weights: 0
@@ -246,16 +246,12 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase2-StatWeights-Default"
  value: {
-  weights: 0.87051
-  weights: 0.47522
+  weights: 0.90829
+  weights: 0.54989
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.32004
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.31951
   weights: 0
   weights: 0
   weights: 0
@@ -263,9 +259,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.3482
-  weights: 11.14397
-  weights: 10.32387
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.34934
+  weights: 11.03036
+  weights: 11.43168
   weights: 0
   weights: 0
   weights: 0
@@ -295,16 +295,12 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase3-StatWeights-Default"
  value: {
-  weights: 0.84925
-  weights: 0.70769
+  weights: 0.86492
+  weights: 0.72386
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.30523
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.30556
   weights: 0
   weights: 0
   weights: 0
@@ -312,9 +308,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.3397
-  weights: 26.56635
-  weights: 13.04453
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.33925
+  weights: 25.59216
+  weights: 13.97867
   weights: 0
   weights: 0
   weights: 0
@@ -344,16 +344,12 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase5-StatWeights-Default"
  value: {
-  weights: 0.85385
-  weights: 0.38111
+  weights: 0.85312
+  weights: 0.38768
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.29853
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
+  weights: 0.2978
   weights: 0
   weights: 0
   weights: 0
@@ -361,9 +357,13 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.33497
-  weights: 29.55437
-  weights: 7.88575
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.33467
+  weights: 31.72677
+  weights: 8.35288
   weights: 0
   weights: 0
   weights: 0
@@ -393,1848 +393,1848 @@ stat_weights_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1368.28467
-  tps: 1034.24987
+  dps: 1369.40367
+  tps: 1035.13111
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1431.89217
-  tps: 1087.55053
+  dps: 1430.584
+  tps: 1086.38556
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1347.79267
-  tps: 1027.11278
+  dps: 1333.31283
+  tps: 1010.97181
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 1325.98283
-  tps: 1008.01847
+  dps: 1326.4085
+  tps: 1006.9364
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1506.59567
-  tps: 1142.93998
+  dps: 1510.04183
+  tps: 1147.4223
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1496.341
-  tps: 1129.01328
+  dps: 1498.041
+  tps: 1129.44258
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1510.3805
-  tps: 1139.3439
+  dps: 1518.51467
+  tps: 1145.78018
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1515.80567
-  tps: 1140.28554
+  dps: 1517.80483
+  tps: 1142.06223
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1496.341
-  tps: 1129.01328
+  dps: 1498.041
+  tps: 1129.44258
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1421.72733
-  tps: 1076.58211
+  dps: 1414.4065
+  tps: 1070.53618
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1385.11083
-  tps: 1056.83655
+  dps: 1392.80933
+  tps: 1062.46372
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1349.12733
-  tps: 1029.51485
+  dps: 1358.90867
+  tps: 1034.15037
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1163.2985
-  tps: 902.20945
+  dps: 1162.81467
+  tps: 902.16174
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1368.28467
-  tps: 1034.24987
+  dps: 1369.40367
+  tps: 1035.13111
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1347.79267
-  tps: 1027.11278
+  dps: 1333.31283
+  tps: 1010.97181
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1325.98283
-  tps: 1008.01847
+  dps: 1326.4085
+  tps: 1006.9364
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1456.72833
-  tps: 1101.6989
+  dps: 1444.82617
+  tps: 1089.3976
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1490.554
-  tps: 1131.20928
+  dps: 1495.08933
+  tps: 1134.4463
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 1341.59267
-  tps: 1020.20295
+  dps: 1340.34867
+  tps: 1019.25848
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheEarthshatterer"
  value: {
-  dps: 1292.81883
-  tps: 981.39354
+  dps: 1291.65767
+  tps: 981.27361
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 1388.75183
-  tps: 1054.911
+  dps: 1388.85
+  tps: 1055.54836
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1399.14417
-  tps: 1065.36931
+  dps: 1397.58117
+  tps: 1063.39493
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheTenStorms"
  value: {
-  dps: 1383.77583
-  tps: 1052.53223
+  dps: 1381.52683
+  tps: 1050.40327
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1521.56417
-  tps: 1146.5466
+  dps: 1520.37833
+  tps: 1143.8232
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1487.49767
-  tps: 1121.60666
+  dps: 1489.09267
+  tps: 1121.95498
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1421.72733
-  tps: 1076.58211
+  dps: 1414.4065
+  tps: 1070.53618
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1385.11083
-  tps: 1056.83655
+  dps: 1392.80933
+  tps: 1062.46372
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sWartide"
  value: {
-  dps: 1349.12733
-  tps: 1029.51485
+  dps: 1358.90867
+  tps: 1034.15037
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Average-Default"
  value: {
-  dps: 1516.67728
-  tps: 1141.49779
+  dps: 1514.56325
+  tps: 1140.18809
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-grace_of_air-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 493.02267
-  tps: 462.0295
+  dps: 492.75
+  tps: 461.80033
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-grace_of_air-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 439.27217
-  tps: 421.201
+  dps: 439.15033
+  tps: 421.07285
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-grace_of_air-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 477.50833
-  tps: 450.11201
+  dps: 477.77667
+  tps: 450.26634
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-grace_of_air-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 246.473
-  tps: 233.00148
+  dps: 242.89183
+  tps: 228.62
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-grace_of_air-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 212.02333
-  tps: 207.74329
+  dps: 210.252
+  tps: 205.82507
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-grace_of_air-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 287.345
-  tps: 298.8438
+  dps: 287.05083
+  tps: 298.6453
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1638.22
-  tps: 592.43458
+  dps: 1636.49483
+  tps: 580.90786
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 487.513
-  tps: 417.06713
+  dps: 485.469
+  tps: 414.51243
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 580.45083
-  tps: 494.83604
+  dps: 580.6825
+  tps: 494.96563
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 737.13017
-  tps: 251.70724
+  dps: 730.435
+  tps: 253.60762
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 210.21233
-  tps: 178.51878
+  dps: 210.01233
+  tps: 179.57235
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 316.6375
-  tps: 276.06891
+  dps: 312.85583
+  tps: 273.94283
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-windfury-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 493.33567
-  tps: 462.41942
+  dps: 493.06317
+  tps: 462.19012
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-windfury-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 439.71633
-  tps: 421.80614
+  dps: 439.59417
+  tps: 421.67799
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-windfury-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 478.06
-  tps: 450.49756
+  dps: 478.3275
+  tps: 450.65189
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-windfury-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 243.981
-  tps: 231.25692
+  dps: 239.99883
+  tps: 226.59563
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-windfury-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 209.575
-  tps: 206.02902
+  dps: 207.285
+  tps: 203.74867
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Auto-windfury-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 283.3025
-  tps: 296.01336
+  dps: 282.45333
+  tps: 295.42869
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-grace_of_air-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 493.02267
-  tps: 462.0295
+  dps: 492.75
+  tps: 461.80033
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-grace_of_air-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 439.27217
-  tps: 421.201
+  dps: 439.15033
+  tps: 421.07285
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-grace_of_air-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 477.50833
-  tps: 450.11201
+  dps: 477.77667
+  tps: 450.26634
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-grace_of_air-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 246.473
-  tps: 233.00148
+  dps: 242.89183
+  tps: 228.62
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-grace_of_air-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 212.02333
-  tps: 207.74329
+  dps: 210.252
+  tps: 205.82507
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-grace_of_air-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 287.345
-  tps: 298.8438
+  dps: 287.05083
+  tps: 298.6453
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1638.22
-  tps: 592.43458
+  dps: 1636.49483
+  tps: 580.90786
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 487.513
-  tps: 417.06713
+  dps: 485.469
+  tps: 414.51243
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 580.45083
-  tps: 494.83604
+  dps: 580.6825
+  tps: 494.96563
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 737.13017
-  tps: 251.70724
+  dps: 730.435
+  tps: 253.60762
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 210.21233
-  tps: 178.51878
+  dps: 210.01233
+  tps: 179.57235
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 316.6375
-  tps: 276.06891
+  dps: 312.85583
+  tps: 273.94283
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-windfury-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 493.33567
-  tps: 462.41942
+  dps: 493.06317
+  tps: 462.19012
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-windfury-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 439.71633
-  tps: 421.80614
+  dps: 439.59417
+  tps: 421.67799
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-windfury-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 478.06
-  tps: 450.49756
+  dps: 478.3275
+  tps: 450.65189
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-windfury-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 243.981
-  tps: 231.25692
+  dps: 239.99883
+  tps: 226.59563
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-windfury-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 209.575
-  tps: 206.02902
+  dps: 207.285
+  tps: 203.74867
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Orc-phase_1-Sync Delay OH-windfury-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 283.3025
-  tps: 296.01336
+  dps: 282.45333
+  tps: 295.42869
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-grace_of_air-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 488.417
-  tps: 458.41567
+  dps: 487.804
+  tps: 457.91125
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-grace_of_air-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 435.076
-  tps: 417.96245
+  dps: 434.683
+  tps: 417.61224
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-grace_of_air-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 469.34083
-  tps: 443.91398
+  dps: 469.30333
+  tps: 443.80458
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-grace_of_air-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 240.26867
-  tps: 226.47424
+  dps: 240.3045
+  tps: 227.41094
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-grace_of_air-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 208.44167
-  tps: 204.74163
+  dps: 207.80317
+  tps: 203.73065
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-grace_of_air-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 283.15083
-  tps: 295.59891
+  dps: 283.18917
+  tps: 295.58277
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1633.19817
-  tps: 576.85153
+  dps: 1626.8775
+  tps: 571.09136
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 482.26083
-  tps: 412.77023
+  dps: 481.92317
+  tps: 412.48408
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 571.94583
-  tps: 488.68444
+  dps: 571.83667
+  tps: 488.55288
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 725.64467
-  tps: 248.60652
+  dps: 719.52183
+  tps: 249.86439
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 207.38867
-  tps: 176.54262
+  dps: 208.11633
+  tps: 178.29961
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 308.68083
-  tps: 270.56793
+  dps: 305.3025
+  tps: 269.30866
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-windfury-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 488.7265
-  tps: 458.87866
+  dps: 488.11367
+  tps: 458.37417
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-windfury-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 435.516
-  tps: 418.44148
+  dps: 435.12333
+  tps: 418.09128
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-windfury-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 469.8725
-  tps: 444.28723
+  dps: 469.83667
+  tps: 444.17784
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-windfury-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 237.70183
-  tps: 224.67692
+  dps: 237.6765
+  tps: 225.57124
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-windfury-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 205.80333
-  tps: 202.89409
+  dps: 205.65883
+  tps: 202.22968
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Auto-windfury-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 279.62333
-  tps: 293.12875
+  dps: 279.25333
+  tps: 292.82897
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-grace_of_air-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 488.417
-  tps: 458.41567
+  dps: 487.804
+  tps: 457.91125
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-grace_of_air-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 435.076
-  tps: 417.96245
+  dps: 434.683
+  tps: 417.61224
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-grace_of_air-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 469.34083
-  tps: 443.91398
+  dps: 469.30333
+  tps: 443.80458
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-grace_of_air-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 240.26867
-  tps: 226.47424
+  dps: 240.3045
+  tps: 227.41094
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-grace_of_air-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 208.44167
-  tps: 204.74163
+  dps: 207.80317
+  tps: 203.73065
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-grace_of_air-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 283.15083
-  tps: 295.59891
+  dps: 283.18917
+  tps: 295.58277
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1633.19817
-  tps: 576.85153
+  dps: 1626.8775
+  tps: 571.09136
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 482.26083
-  tps: 412.77023
+  dps: 481.92317
+  tps: 412.48408
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 571.94583
-  tps: 488.68444
+  dps: 571.83667
+  tps: 488.55288
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 725.64467
-  tps: 248.60652
+  dps: 719.52183
+  tps: 249.86439
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 207.38867
-  tps: 176.54262
+  dps: 208.11633
+  tps: 178.29961
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 308.68083
-  tps: 270.56793
+  dps: 305.3025
+  tps: 269.30866
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-windfury-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 488.7265
-  tps: 458.87866
+  dps: 488.11367
+  tps: 458.37417
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-windfury-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 435.516
-  tps: 418.44148
+  dps: 435.12333
+  tps: 418.09128
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-windfury-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 469.8725
-  tps: 444.28723
+  dps: 469.83667
+  tps: 444.17784
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-windfury-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 237.70183
-  tps: 224.67692
+  dps: 237.6765
+  tps: 225.57124
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-windfury-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 205.80333
-  tps: 202.89409
+  dps: 205.65883
+  tps: 202.22968
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-Settings-Troll-phase_1-Sync Delay OH-windfury-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 279.62333
-  tps: 293.12875
+  dps: 279.25333
+  tps: 292.82897
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1160.1495
-  tps: 886.94135
+  dps: 1157.01817
+  tps: 884.06707
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1424.48567
-  tps: 1081.30827
+  dps: 1416.74933
+  tps: 1073.0921
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1481.478
-  tps: 1125.42995
+  dps: 1477.83117
+  tps: 1122.33256
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1389.18367
-  tps: 1057.66808
+  dps: 1385.87667
+  tps: 1056.69115
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sWartide"
  value: {
-  dps: 1367.64267
-  tps: 1040.50798
+  dps: 1360.546
+  tps: 1034.72443
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1526.75033
-  tps: 1158.77516
+  dps: 1521.77917
+  tps: 1155.20279
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1545.80067
-  tps: 1167.48361
+  dps: 1552.432
+  tps: 1170.89095
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1540.62183
-  tps: 1167.95714
+  dps: 1533.43183
+  tps: 1159.26669
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1562.7885
-  tps: 1176.46767
+  dps: 1565.6715
+  tps: 1182.20737
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1545.80067
-  tps: 1167.48361
+  dps: 1552.432
+  tps: 1170.89095
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1463.70083
-  tps: 1105.17945
+  dps: 1453.65617
+  tps: 1099.32801
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1438.636
-  tps: 1097.47839
+  dps: 1433.53667
+  tps: 1091.22479
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1400.71317
-  tps: 1068.14023
+  dps: 1396.42783
+  tps: 1063.65736
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1193.4015
-  tps: 933.52539
+  dps: 1192.01233
+  tps: 931.26418
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1424.48567
-  tps: 1081.30827
+  dps: 1416.74933
+  tps: 1073.0921
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1389.18367
-  tps: 1057.66808
+  dps: 1385.87667
+  tps: 1056.69115
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1367.64267
-  tps: 1040.50798
+  dps: 1360.546
+  tps: 1034.72443
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1495.8985
-  tps: 1133.80006
+  dps: 1491.24733
+  tps: 1130.10405
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1556.4105
-  tps: 1181.52422
+  dps: 1553.46367
+  tps: 1179.42542
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheEarthfury"
  value: {
-  dps: 1368.94167
-  tps: 1044.00485
+  dps: 1367.673
+  tps: 1042.60972
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheEarthshatterer"
  value: {
-  dps: 1333.7545
-  tps: 1015.56175
+  dps: 1329.77383
+  tps: 1012.17324
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheFiveThunders"
  value: {
-  dps: 1421.7175
-  tps: 1084.13529
+  dps: 1422.0255
+  tps: 1084.39799
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1430.68067
-  tps: 1091.26925
+  dps: 1427.542
+  tps: 1089.01296
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheTenStorms"
  value: {
-  dps: 1421.00283
-  tps: 1082.1979
+  dps: 1422.46933
+  tps: 1082.73484
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1545.4085
-  tps: 1169.79015
+  dps: 1535.905
+  tps: 1161.08445
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1536.809
-  tps: 1159.99382
+  dps: 1543.32783
+  tps: 1163.32582
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1463.70083
-  tps: 1105.17945
+  dps: 1453.65617
+  tps: 1099.32801
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1438.636
-  tps: 1097.47839
+  dps: 1433.53667
+  tps: 1091.22479
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sWartide"
  value: {
-  dps: 1400.71317
-  tps: 1068.14023
+  dps: 1396.42783
+  tps: 1063.65736
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Average-Default"
  value: {
-  dps: 1566.94808
-  tps: 1182.23992
+  dps: 1564.72333
+  tps: 1180.13426
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1958.979
-  tps: 731.93038
+  dps: 1944.16717
+  tps: 730.77504
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 524.51267
-  tps: 451.96624
+  dps: 523.55317
+  tps: 451.71526
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 612.05583
-  tps: 528.9662
+  dps: 611.49333
+  tps: 528.53993
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 834.54417
-  tps: 280.59515
+  dps: 837.96167
+  tps: 281.76715
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 231.8685
-  tps: 198.21137
+  dps: 231.41133
+  tps: 196.79026
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 358.47417
-  tps: 313.85676
+  dps: 359.2625
+  tps: 315.01983
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1958.979
-  tps: 731.93038
+  dps: 1944.16717
+  tps: 730.77504
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 524.51267
-  tps: 451.96624
+  dps: 523.55317
+  tps: 451.71526
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 612.05583
-  tps: 528.9662
+  dps: 611.49333
+  tps: 528.53993
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 834.54417
-  tps: 280.59515
+  dps: 837.96167
+  tps: 281.76715
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 231.8685
-  tps: 198.21137
+  dps: 231.41133
+  tps: 196.79026
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Orc-phase_2-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 358.47417
-  tps: 313.85676
+  dps: 359.2625
+  tps: 315.01983
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1941.68083
-  tps: 728.94821
+  dps: 1936.98617
+  tps: 726.48391
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 518.82517
-  tps: 447.04503
+  dps: 513.23867
+  tps: 441.09752
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 602.99833
-  tps: 522.3264
+  dps: 602.88083
+  tps: 522.165
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 831.8535
-  tps: 280.00905
+  dps: 829.4985
+  tps: 277.73864
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 228.31683
-  tps: 194.39948
+  dps: 228.666
+  tps: 195.18879
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 352.85333
-  tps: 310.82172
+  dps: 350.60083
+  tps: 309.75117
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1941.68083
-  tps: 728.94821
+  dps: 1936.98617
+  tps: 726.48391
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 518.82517
-  tps: 447.04503
+  dps: 513.23867
+  tps: 441.09752
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 602.99833
-  tps: 522.3264
+  dps: 602.88083
+  tps: 522.165
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 831.8535
-  tps: 280.00905
+  dps: 829.4985
+  tps: 277.73864
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 228.31683
-  tps: 194.39948
+  dps: 228.666
+  tps: 195.18879
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-Settings-Troll-phase_2-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 352.85333
-  tps: 310.82172
+  dps: 350.60083
+  tps: 309.75117
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1204.97017
-  tps: 925.22436
+  dps: 1202.80883
+  tps: 924.38834
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1426.9215
-  tps: 1076.01796
+  dps: 1443.82367
+  tps: 1089.29277
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1500.83967
-  tps: 1137.17786
+  dps: 1503.356
+  tps: 1139.53206
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1412.87217
-  tps: 1075.15271
+  dps: 1408.822
+  tps: 1069.1972
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sWartide"
  value: {
-  dps: 1387.30117
-  tps: 1053.2648
+  dps: 1384.38
+  tps: 1049.96272
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1622.26067
-  tps: 1224.97886
+  dps: 1616.73967
+  tps: 1219.53698
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1590.0495
-  tps: 1196.68694
+  dps: 1591.3705
+  tps: 1195.56038
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1625.00583
-  tps: 1223.36978
+  dps: 1627.14417
+  tps: 1224.02836
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1608.2235
-  tps: 1206.52481
+  dps: 1620.60517
+  tps: 1214.67593
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1590.0495
-  tps: 1196.68694
+  dps: 1591.3705
+  tps: 1195.56038
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1475.69233
-  tps: 1115.14324
+  dps: 1472.9265
+  tps: 1114.22551
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1463.20183
-  tps: 1113.76921
+  dps: 1463.96817
+  tps: 1114.20391
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1430.1335
-  tps: 1088.44534
+  dps: 1420.59917
+  tps: 1078.75411
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1244.55817
-  tps: 965.31894
+  dps: 1240.76217
+  tps: 963.11723
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1426.9215
-  tps: 1076.01796
+  dps: 1443.82367
+  tps: 1089.29277
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1412.87217
-  tps: 1075.15271
+  dps: 1408.822
+  tps: 1069.1972
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1387.30117
-  tps: 1053.2648
+  dps: 1384.38
+  tps: 1049.96272
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1557.6685
-  tps: 1175.04825
+  dps: 1550.38133
+  tps: 1168.76899
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1573.6805
-  tps: 1189.58137
+  dps: 1573.62633
+  tps: 1187.95395
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheEarthfury"
  value: {
-  dps: 1397.57983
-  tps: 1059.18442
+  dps: 1397.46383
+  tps: 1059.31338
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheEarthshatterer"
  value: {
-  dps: 1375.93833
-  tps: 1043.35737
+  dps: 1370.99467
+  tps: 1040.4212
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheFiveThunders"
  value: {
-  dps: 1456.8355
-  tps: 1104.03733
+  dps: 1457.91267
+  tps: 1105.78837
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1461.06667
-  tps: 1107.52805
+  dps: 1457.15217
+  tps: 1104.25069
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheTenStorms"
  value: {
-  dps: 1454.1025
-  tps: 1103.36173
+  dps: 1451.45033
+  tps: 1100.99105
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1627.193
-  tps: 1220.25325
+  dps: 1628.40567
+  tps: 1222.07868
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1581.5825
-  tps: 1189.53878
+  dps: 1583.0775
+  tps: 1188.65917
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1475.69233
-  tps: 1115.14324
+  dps: 1472.9265
+  tps: 1114.22551
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1463.20183
-  tps: 1113.76921
+  dps: 1463.96817
+  tps: 1114.20391
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sWartide"
  value: {
-  dps: 1430.1335
-  tps: 1088.44534
+  dps: 1420.59917
+  tps: 1078.75411
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Average-Default"
  value: {
-  dps: 1628.40739
-  tps: 1222.89537
+  dps: 1627.53179
+  tps: 1222.24635
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1931.01333
-  tps: 730.53402
+  dps: 1910.73583
+  tps: 727.77748
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 520.12033
-  tps: 446.52805
+  dps: 516.61217
+  tps: 443.29456
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 594.75667
-  tps: 502.84833
+  dps: 594.84417
+  tps: 502.88865
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 820.65517
-  tps: 281.39297
+  dps: 819.7015
+  tps: 277.75371
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 229.56783
-  tps: 195.59478
+  dps: 228.34533
+  tps: 194.24313
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 337.99667
-  tps: 288.78716
+  dps: 339.39
+  tps: 289.2626
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1931.01333
-  tps: 730.53402
+  dps: 1910.73583
+  tps: 727.77748
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 520.12033
-  tps: 446.52805
+  dps: 516.61217
+  tps: 443.29456
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 594.75667
-  tps: 502.84833
+  dps: 594.84417
+  tps: 502.88865
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 820.65517
-  tps: 281.39297
+  dps: 819.7015
+  tps: 277.75371
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 229.56783
-  tps: 195.59478
+  dps: 228.34533
+  tps: 194.24313
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Orc-phase_3-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 337.99667
-  tps: 288.78716
+  dps: 339.39
+  tps: 289.2626
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1917.868
-  tps: 722.8177
+  dps: 1906.6535
+  tps: 714.02488
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 511.19317
-  tps: 437.473
+  dps: 510.32983
+  tps: 437.88132
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 586.39333
-  tps: 496.70919
+  dps: 585.63167
+  tps: 496.13882
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 815.32967
-  tps: 275.13217
+  dps: 810.66583
+  tps: 275.6608
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 227.01217
-  tps: 193.64449
+  dps: 227.29917
+  tps: 194.46016
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 330.93167
-  tps: 284.60924
+  dps: 333.62917
+  tps: 286.0687
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1917.868
-  tps: 722.8177
+  dps: 1906.6535
+  tps: 714.02488
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 511.19317
-  tps: 437.473
+  dps: 510.32983
+  tps: 437.88132
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 586.39333
-  tps: 496.70919
+  dps: 585.63167
+  tps: 496.13882
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 815.32967
-  tps: 275.13217
+  dps: 810.66583
+  tps: 275.6608
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 227.01217
-  tps: 193.64449
+  dps: 227.29917
+  tps: 194.46016
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-Settings-Troll-phase_3-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 330.93167
-  tps: 284.60924
+  dps: 333.62917
+  tps: 286.0687
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1245.33433
-  tps: 951.84288
+  dps: 1241.90217
+  tps: 950.0517
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1491.97617
-  tps: 1126.38504
+  dps: 1484.58417
+  tps: 1117.65982
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sStormcaller"
  value: {
-  dps: 1554.7875
-  tps: 1175.09627
+  dps: 1555.66983
+  tps: 1177.30924
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1469.27267
-  tps: 1115.11258
+  dps: 1468.48883
+  tps: 1114.53016
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sWartide"
  value: {
-  dps: 1448.76983
-  tps: 1096.69894
+  dps: 1449.33233
+  tps: 1100.11188
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1685.23033
-  tps: 1267.9464
+  dps: 1678.53983
+  tps: 1261.12603
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1614.9
-  tps: 1214.87739
+  dps: 1607.45083
+  tps: 1210.71549
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1692.62183
-  tps: 1271.25881
+  dps: 1690.68033
+  tps: 1271.58658
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 1623.05533
-  tps: 1215.92687
+  dps: 1625.00117
+  tps: 1219.96655
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1614.9
-  tps: 1214.87739
+  dps: 1607.45083
+  tps: 1210.71549
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 1544.0475
-  tps: 1166.44871
+  dps: 1532.90383
+  tps: 1157.17613
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1513.49
-  tps: 1148.58466
+  dps: 1514.0565
+  tps: 1150.41403
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 1482.21917
-  tps: 1124.30024
+  dps: 1480.0475
+  tps: 1122.97503
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 1212.93233
-  tps: 940.43483
+  dps: 1209.33017
+  tps: 937.33434
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 1491.97617
-  tps: 1126.38504
+  dps: 1484.58417
+  tps: 1117.65982
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1469.27267
-  tps: 1115.11258
+  dps: 1468.48883
+  tps: 1114.53016
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 1448.76983
-  tps: 1096.69894
+  dps: 1449.33233
+  tps: 1100.11188
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1570.24983
-  tps: 1180.09974
+  dps: 1574.25467
+  tps: 1183.6611
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1636.3115
-  tps: 1235.76615
+  dps: 1632.533
+  tps: 1231.70551
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheEarthfury"
  value: {
-  dps: 1425.14017
-  tps: 1080.84504
+  dps: 1424.30717
+  tps: 1080.07389
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheEarthshatterer"
  value: {
-  dps: 1400.03367
-  tps: 1059.8344
+  dps: 1399.04633
+  tps: 1059.80771
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheFiveThunders"
  value: {
-  dps: 1480.32883
-  tps: 1121.97911
+  dps: 1477.15967
+  tps: 1119.93217
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 1480.32183
-  tps: 1123.23562
+  dps: 1477.88483
+  tps: 1120.1886
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheTenStorms"
  value: {
-  dps: 1471.96733
-  tps: 1115.99819
+  dps: 1471.10817
+  tps: 1115.49259
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 1661.31017
-  tps: 1245.73016
+  dps: 1660.63267
+  tps: 1246.25033
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 1606.1625
-  tps: 1207.5553
+  dps: 1598.701
+  tps: 1203.43376
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1544.0475
-  tps: 1166.44871
+  dps: 1532.90383
+  tps: 1157.17613
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1513.49
-  tps: 1148.58466
+  dps: 1514.0565
+  tps: 1150.41403
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sWartide"
  value: {
-  dps: 1482.21917
-  tps: 1124.30024
+  dps: 1480.0475
+  tps: 1122.97503
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Average-Default"
  value: {
-  dps: 1630.34729
-  tps: 1222.69195
+  dps: 1630.39543
+  tps: 1222.77442
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1747.26833
-  tps: 636.63921
+  dps: 1729.67367
+  tps: 632.82168
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 499.9695
-  tps: 428.36076
+  dps: 502.35067
+  tps: 431.6148
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 590.00833
-  tps: 500.59522
+  dps: 590.20833
+  tps: 500.71431
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 761.25933
-  tps: 255.39276
+  dps: 761.51083
+  tps: 260.70385
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 219.66
-  tps: 187.80037
+  dps: 218.91333
+  tps: 187.73033
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 326.69417
-  tps: 280.95867
+  dps: 324.03
+  tps: 279.05918
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1747.26833
-  tps: 636.63921
+  dps: 1729.67367
+  tps: 632.82168
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 499.9695
-  tps: 428.36076
+  dps: 502.35067
+  tps: 431.6148
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 590.00833
-  tps: 500.59522
+  dps: 590.20833
+  tps: 500.71431
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 761.25933
-  tps: 255.39276
+  dps: 761.51083
+  tps: 260.70385
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 219.66
-  tps: 187.80037
+  dps: 218.91333
+  tps: 187.73033
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Orc-phase_5-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 326.69417
-  tps: 280.95867
+  dps: 324.03
+  tps: 279.05918
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Auto-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1730.753
-  tps: 636.65303
+  dps: 1711.6925
+  tps: 626.21551
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Auto-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 498.77583
-  tps: 428.86074
+  dps: 497.814
+  tps: 427.81782
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Auto-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 582.40667
-  tps: 495.02825
+  dps: 582.2925
+  tps: 494.90796
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Auto-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 760.99517
-  tps: 256.01316
+  dps: 760.09833
+  tps: 255.55951
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Auto-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 216.0865
-  tps: 184.83681
+  dps: 215.45617
+  tps: 183.95734
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Auto-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 319.7325
-  tps: 276.53198
+  dps: 319.33833
+  tps: 276.7152
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1730.753
-  tps: 636.65303
+  dps: 1711.6925
+  tps: 626.21551
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Delay OH-optimized-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 498.77583
-  tps: 428.86074
+  dps: 497.814
+  tps: 427.81782
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Delay OH-optimized-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 582.40667
-  tps: 495.02825
+  dps: 582.2925
+  tps: 494.90796
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 760.99517
-  tps: 256.01316
+  dps: 760.09833
+  tps: 255.55951
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Delay OH-optimized-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 216.0865
-  tps: 184.83681
+  dps: 215.45617
+  tps: 183.95734
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-Settings-Troll-phase_5-Sync Delay OH-optimized-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 319.7325
-  tps: 276.53198
+  dps: 319.33833
+  tps: 276.7152
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1209.95333
-  tps: 922.40809
+  dps: 1206.89817
+  tps: 921.51895
  }
 }

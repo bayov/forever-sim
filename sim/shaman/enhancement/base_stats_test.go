@@ -16,8 +16,9 @@ import (
 // 2026-10-07, when the Forever Orc had 1 less Stamina, 2 more Intellect and 3 less Spirit than
 // Classic's (betaOrcShift). Client 1.60.1.70753 gave every race Classic's attributes
 // (development notes 2026-11-02), so the rows below are the sheets with that shift taken off:
-// 10 more health, 30 less mana and the spell crit of 2 less Intellect. Level 60 is the 1.12
-// row until we can check it on release.
+// 10 more health, 30 less mana and the spell crit of 2 less Intellect. Level 60 takes the
+// class row from a level 60 Dwarf shaman's sheet (wowsims/forever EV-0181: Str 88, Agi 52, Int 87
+// before the Orc's +3, -3, -3), the rest of it 1.12's until we can check an Orc sheet.
 //
 // The crit readings come from client 70338, when the Orc's crit racial needed an axe. Client
 // 70425's Savage gives 1% more melee and spell crit with any weapon, so the sim's crit is 1%
@@ -36,7 +37,7 @@ func TestOrcShamanBaseStats(t *testing.T) {
 	cases := []expected{
 		{1, 24, 17, 23, 18, 25, 77, 45, 30, 34, 4.504, 4.617, 4.504},
 		{30, 51, 30, 52, 44, 56, 675, 1045, 142, 60, 4.304, 3.864, 4.304},
-		{60, 88, 52, 97, 87, 103, 2070, 2545, 276, 104, 4.342, 3.770, 4.342},
+		{60, 91, 49, 97, 84, 103, 2070, 2500, 282, 98, 4.189, 3.720, 4.189},
 	}
 
 	for _, want := range cases {

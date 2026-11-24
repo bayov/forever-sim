@@ -9,61 +9,66 @@
             "equipment": {
               "items": [
                 {
-                  "id": 997001,
-                  "enchant": 1509
+                  "id": 22267,
+                  "enchant": 2544
                 },
                 {
-                  "id": 997002,
+                  "id": 19426,
                   "enchant": 1249057
                 },
                 {
-                  "id": 997003
+                  "id": 227808
                 },
                 {
-                  "id": 997004
+                  "id": 272411
                 },
                 {
-                  "id": 997005,
+                  "id": 14153,
                   "enchant": 1254966
                 },
                 {
-                  "id": 997006,
+                  "id": 10136,
+                  "randomSuffix": 990410,
                   "enchant": 1220624
                 },
                 {
-                  "id": 997007,
+                  "id": 226911,
                   "enchant": 1254966
                 },
                 {
-                  "id": 997008
+                  "id": 228190
                 },
                 {
-                  "id": 997009,
+                  "id": 13170,
+                  "enchant": 2544
+                },
+                {
+                  "id": 10247,
+                  "randomSuffix": 990447,
                   "enchant": 1254966
                 },
                 {
-                  "id": 997010,
-                  "enchant": 1254966
+                  "id": 275977
                 },
                 {
-                  "id": 997011
+                  "id": 22339
                 },
                 {
-                  "id": 997012
+                  "id": 22678
                 },
                 {
-                  "id": 997021
+                  "id": 272438
                 },
                 {
-                  "id": 997022
+                  "id": 13964,
+                  "enchant": 1248805
                 },
                 {
-                  "id": 997020,
-                  "enchant": 1219580
+                  "id": 18316,
+                  "enchant": 1219579
                 },
-                {},
                 {
-                  "id": 997015
+                  "id": 13938
                 }
               ]
             },
@@ -236,10 +241,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "60s"
@@ -254,6 +259,7 @@
                                   "vals": [
                                     {
                                       "cmp": {
+                                        "op": "OpGt",
                                         "lhs": {
                                           "spellTimeToReady": {
                                             "spellId": {
@@ -261,7 +267,6 @@
                                             }
                                           }
                                         },
-                                        "op": "OpGt",
                                         "rhs": {
                                           "const": {
                                             "val": "59s"
@@ -271,6 +276,7 @@
                                     },
                                     {
                                       "cmp": {
+                                        "op": "OpLt",
                                         "lhs": {
                                           "spellTimeToReady": {
                                             "spellId": {
@@ -278,7 +284,6 @@
                                             }
                                           }
                                         },
-                                        "op": "OpLt",
                                         "rhs": {
                                           "const": {
                                             "val": "60s"
@@ -664,8 +669,8 @@
       "faerieFire": true,
       "curseOfElements": false,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

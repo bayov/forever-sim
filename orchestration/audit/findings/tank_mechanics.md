@@ -2,6 +2,30 @@
 
 ## Open
 
+### tank_mechanics-20261124-1: Troll Regeneration's in-combat health regen is missing; Troll tanks lose about 11 HPS of healing needed
+- severity: high (moves the Troll warrior's place in the race table: Max survival +75, Balanced +25, measured)
+- affects: every Troll tank (Protection warrior, Warden shaman); the warrior race tables in docs/tank_warrior.md and the report
+- found: 2026-11-24, master c7e3b3e
+- evidence: client 1.60.1.71037 Regeneration 20555 is aura 88 (MOD_HEALTH_REGEN_PERCENT) 20 and aura 116 (MOD_REGEN_DURING_COMBAT) 20 (tier 1; forever-wiki/racials.md: "20% of total Health regeneration will continue during combat", 10%/10% in 70338). `applyForeverRaceEffects` (sim/core/racials_forever.go, Troll case) gives Beast Slaying and Berserking only, and a tank fight has no health regen, so a Troll tank regens nothing in combat; docs/tank_warrior.md "The passives all apply" doesn't list it. Measured with a scratch patch ($AUDIT_WORK/tank_mechanics/troll_regen_stoneform.patch: a 2 s tick of `outOfCombatHealthRegen(class, level, Spirit)` x 1.2 x 0.2): warrior_protection_balanced as Troll, 6000 fights, -labeled seed 1: healing needed 384 -> 373, Max threat 3594 -> 3602, Balanced 3018 -> 3043, Max survival 1291 -> 1366. On the 1000-fight race run of the same request that takes Troll past Tauren, Orc and Gnome on Max survival (1265 -> about 1340, second after Night Elf among non-Undead) and level with Orc and Gnome on Balanced. The size rests on the Wrath Spirit-regen tables the leveling sim uses (beta ticks 0.65 to 1.35x them, sim/core/leveling_tables.go), so about +-35%. Related: the leveling sim's `trollHealthRegenMultiplier` 1.1 / `trollCombatHealthRegen` 0.1 are 70338's values; 71037 reads 20% / 20%.
+- proposed fix: in the Troll case, a 2 s tick that heals 20% of 1.2x the Spirit regen (`outOfCombatHealthRegen`) while in combat, reading Spirit, not health (safe for the scoring replay); a DASH_RACIALS_OFF part "regen"; bump the leveling constants to 1.2 / 0.2. Then rerun the warrior and Warden race tables.
+- needs: orchestrator fix
+
+### tank_mechanics-20261124-2: Forever Stoneform (10% less physical damage for 8 s) isn't simmed, and the notes say the score couldn't value it
+- severity: low (+3 Balanced, +7 Max survival on cooldown, measured; Dwarf stays last)
+- affects: Dwarf Protection warrior and Protection paladin; docs/tank_warrior.md racial notes
+- found: 2026-11-24, master c7e3b3e
+- evidence: client 71037 Stoneform 20594: aura 87 (MOD_DAMAGE_PERCENT_TAKEN) -10 misc 1 (Physical), DurationIndex 31 (8 s), 180 s cooldown, 1.5 s GCD (tier 1). The Forever branch has no Stoneform (racials_forever.go: "a defensive cooldown the sim does not measure"; the Classic one in racials.go is +10% armor and Forever skips it). docs/tank_warrior.md says the defensive actives "aren't simmed, and the score couldn't value them anyway", but the score values Shield Wall the same way. Scratch patch (same file as -1), Stoneform on cooldown before Shield Wall, Dwarf balanced request, 6000 fights labeled: healing needed 385 -> 384, Max threat 3560 -> 3561, Balanced 2983 -> 2986, Max survival 1252 -> 1259 (1.5 casts a fight). A better timing may give a little more. Also stale: the Touch of the Grave comment in racials_forever.go still says "'Up to' reads as a cap ... upper bound" and "share a 1 sec cooldown"; the code and the notes now read "equal to" 5% and 15 s.
+- proposed fix: a Forever Stoneform (physical damage taken x0.9, 8 s, 3 min, GCD) as a survival cooldown, an APL line in the tank warrior (and paladin) presets, and the notes' sentence reworded; refresh the Touch of the Grave comment.
+- needs: orchestrator fix
+
+### tank_mechanics-20261124-3: No test pins the tank racial actives (Eureka!'s warrior scope, the level 60 APLs' racial lines)
+- severity: low (all four checked correct this pass)
+- affects: Protection warrior (Gnome, Night Elf, Orc, Troll)
+- found: 2026-11-24, master c7e3b3e
+- evidence: no *_test.go names Eureka! for a warrior, Elune's Light, Berserking's Forever 10% or Touch of the Grave; TestP1TankWarrior runs the "protection" APL as Orc (+Human), not the level60_* APLs that carry the racial lines. Eureka!'s warrior list in racials_forever_eureka.go is generated, and a regenerated list that gained or lost Shield Slam, Revenge or Heroic Strike would go unnoticed.
+- proposed fix: a tank_warrior test that sims level60_balanced as Gnome / Night Elf / Orc / Troll and checks each racial is cast (2 / 1.5 / 2 / 1.5 a 180 s fight), and that Eureka! multiplies Shield Slam 23925, Revenge 11601 and Heroic Strike 11567 damage by 1.1 and cost by 0.9, and leaves Sunder 11597 alone.
+- needs: worker fix
+
 ### tank_mechanics-20261117-1: Unbridled Wrath after push 114097 skips Sunder Armor (no damage), with no evidence for that limit
 - severity: low (+0.3 to +0.4% objective at stake, measured)
 - affects: Protection warrior (all three Level 60 presets take Unbridled Wrath 5/5)

@@ -149,7 +149,7 @@ func TestLevelingHealBetweenPulls(t *testing.T) {
 	}
 }
 
-// TestLevelingTrollRegen: a Troll keeps 10% of its health regen in combat (Regeneration).
+// TestLevelingTrollRegen: a Troll keeps 20% of its health regen in combat (Regeneration, client 71037).
 func TestLevelingTrollRegen(t *testing.T) {
 	req := levelingRequest(t, &proto.LevelingOptions{}, 1)
 	req.Raid.Parties[0].Players[0].Race = proto.Race_RaceTroll
@@ -177,8 +177,8 @@ func TestLevelingTrollRegen(t *testing.T) {
 	if len(combat) == 0 || len(outside) == 0 {
 		t.Fatalf("%d regen ticks in combat and %d out", len(combat), len(outside))
 	}
-	if ratio := combat[0] / outside[0]; math.Abs(ratio-0.1) > 2e-3 {
-		t.Errorf("in combat a Troll regens %.4f of its out of combat regen, want 0.1", ratio)
+	if ratio := combat[0] / outside[0]; math.Abs(ratio-0.2) > 2e-3 {
+		t.Errorf("in combat a Troll regens %.4f of its out of combat regen, want 0.2", ratio)
 	}
 }
 

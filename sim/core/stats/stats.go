@@ -414,6 +414,13 @@ type PseudoStats struct {
 	ForceFullSpiritRegen  bool    // If set, automatically uses full spirit regen regardless of FSR refresh time.
 	SpiritRegenMultiplier float64 // Multiplier on spirit portion of mana regen. For spell effect MOD_POWER_REGEN_PERCENT (110)
 
+	// Under Forever, aura 110 (Innervate, Read Leyline's Energized) multiplies the MP5 too, except
+	// the share a periodic energize aura ticks (Blessing of Wisdom, Mana Spring), which keeps its
+	// own amount (EV-0114 of wowsims/forever). MP5RegenMultiplier is that multiplier on the MP5,
+	// and EnergizeMP5 the share it leaves alone.
+	MP5RegenMultiplier float64
+	EnergizeMP5        float64
+
 	// If true, allows block/parry.
 	InFrontOfTarget bool
 
@@ -520,6 +527,7 @@ func NewPseudoStats() PseudoStats {
 		RangedSpeedMultiplier: 1,
 		AttackSpeedMultiplier: 1,
 		SpiritRegenMultiplier: 1,
+		MP5RegenMultiplier:    1,
 
 		MeleeCritMultiplier: 1,
 

@@ -12,18 +12,18 @@
     "Fire",
     "Frost"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase0_mage_frostfire",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 1064.3,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s), after Ice Lance took Fire Blast's cooldown"
+    "dps": 873.51,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1064.3,
-    "stderr": 0.6,
+    "dps": 873.51,
+    "stderr": 0.46,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [
@@ -76,5 +76,5 @@
     "Frostfire Bolt's DoT has no spell power coefficient in the client.",
     "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
-  "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60s left. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 20 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: Fire Blast, cast above 40% mana), 25 before."
+  "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60s left. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 20 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: Fire Blast, cast above 40% mana), 25 before. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_mage_frostfire), was level60_phase1_synthetic (1064.3 at 180s)."
 }

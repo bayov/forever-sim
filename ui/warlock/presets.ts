@@ -293,9 +293,12 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruct
 // twice as fast under it, Soul Siphon on those three) the talent search at 180 sec on the new
 // rotation moved nothing and Undead stays: 1075.5 / 1076.9 / 1064.0 at 120 / 180 / 300 sec (20,000
 // iterations), against 1015.1 for Shadow Bolt Affliction at 180. Without Wrack cast it is 815.
+// Phase 0 gear (2026-11-24, step 4): the talent search at 180 sec on the Phase 0 set (6% spell hit), no Immolate,
+// moved Fel Concentration 1 to 3 and Aftermath 4 into Improved Shadow Bolt 3: +3.7 / +3.4 / +2.8 at 120 / 180 / 300 sec
+// (20,000 iterations), was 05500021035001351-0050003201-005004.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	'Affliction',
-	SavedTalents.create({ talentsString: '05500021035001351-0050003201-005004' }),
+	SavedTalents.create({ talentsString: '05500023035001351-0050003201-034' }),
 	{
 		group: 'Synthetic',
 		tooltip: 'Deep Affliction with Wrack and Siphon Life, the Imp sacrificed for 15% Shadow damage.',
@@ -333,10 +336,12 @@ export const TalentsLevel60AfflictionShadowBolt = PresetUtils.makePresetTalents(
 // Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/warlock.md): on the
 // set's hit+1 step, Suppression 5 to 4 and Aftermath 4 to 5 (242-0050003201-0050355003101351): 1002.8 /
 // 997.8 / 977.8 at 120 / 180 / 300 sec (Undead, 20,000 iterations, seed 1), +0.3 / +1.1 / +1.3.
+// Phase 0 gear (2026-11-24, step 4): the destruction set carries 9% spell hit, so Suppression 5/5 is back
+// (252-0050003201-0050345003101351): 839.2 / 829.1 / 810.2, +4.9 / +5.0 / +4.8 over 242.
 
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Destruction Fire',
-	SavedTalents.create({ talentsString: '242-0050003201-0050355003101351' }),
+	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
 	{ group: 'Synthetic', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for 15% Fire damage.' },
 );
 

@@ -1,0 +1,66 @@
+{
+ "gearSet": "level60_phase0_mage_arcane_horde",
+ "equipment": {
+  "items": [
+   {
+    "id": 226935,
+    "enchant": 2544
+   },
+   {
+    "id": 12103,
+    "enchant": 1249057
+   },
+   {
+    "id": 227808
+   },
+   {
+    "id": 272411
+   },
+   {
+    "id": 226932,
+    "enchant": 1254966
+   },
+   {
+    "id": 226929,
+    "enchant": 1220624
+   },
+   {
+    "id": 226930,
+    "enchant": 1213626
+   },
+   {
+    "id": 228190
+   },
+   {
+    "id": 226933,
+    "enchant": 2544
+   },
+   {
+    "id": 226931,
+    "enchant": 1254966
+   },
+   {
+    "id": 272406
+   },
+   {
+    "id": 12545
+   },
+   {
+    "id": 10455
+   },
+   {
+    "id": 13968
+   },
+   {
+    "id": 13937,
+    "enchant": 1219580
+   },
+   {},
+   {
+    "id": 13938
+   }
+  ]
+ },
+ "note": "Horde: wears level60_phase0_mage_arcane_horde, the set without the Alliance rewards",
+ "how": "race_gear.py: Undead is Horde, so it can't wear the Alliance rewards of the preset's level60_phase0_mage_arcane. It wears level60_phase0_mage_arcane_horde, the same set with those slots re-ranked at a Horde race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}
