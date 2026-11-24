@@ -104,6 +104,12 @@
 # -0.7, -0.7 / +0.1 / -0.1), two-hand Fury (+1.5 / -0.8 / +0.4, +1.7 / +0.9 / +1.3); wfGate=2 loses or
 # ties everywhere (Fury -1.4 to -4.2).
 #
+# 2026-11-24 (Phase 0 step 4, orchestration/round_notes_2026-11-11/phase0_step4_warrior.md): on the Phase 0 sets
+# (dual wield Fury at 8% hit, was 12% on the synthetic +2 step) the talent search keeps the talents and the knob
+# search moves dual wield Fury to executeFirst=1 (Execute before Bloodthirst and Whirlwind in the execute phase).
+# 20,000 iterations, seed 1, 120 / 180 / 300 sec: Fury +5.6 / +4.1 / +4.5, its Sunder duty +4.1 / +3.1 / +3.8,
+# its Battle Shout duty +5.6 / +4.3 / +4.2. recklessSwingsRage=70 (the search's other move) adds nothing past noise.
+#
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
 set -e
@@ -118,18 +124,18 @@ gen() {
 	echo "wrote ui/warrior/apls/$name.apl.json ($knobs)"
 }
 gen warrior_fury level60_fury 30313113002-050530055120100231-1 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=50,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=1,hamstringRage=20,hsExecute=1,hsRage=60,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=50,deathWish=2,dwEnd=33,executeFirst=1,fillerGap=1,hamstringRage=20,hsExecute=1,hsRage=60,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
 gen warrior_fury level60_fury_sunder 30313113002-050530055120100231-1 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=70,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,sunderDuty=1,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=1,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=70,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,sunderDuty=1,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
 # Since Windfury Totem rolls on Heroic Strike (standards 17, 2026-11-11) its duty search (2026-11-12, the
 # Rage knobs, the rest held) keeps a global cooldown free for Bloodthirst and Whirlwind (fillerGap=1) and
 # queues Heroic Strike from 60 Rage in Reckless Swings (rsHsRage=60): +5.4 / +5.3 at 180 sec, +4.7 / +5.2
 # at 120 and +6.5 / +7.1 at 300 on seeds 1 and 1000003 (20000 iterations).
 gen warrior_fury level60_fury_battle_shout 30313113002-050530055120100231-1 \
-	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=1,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsHsRage=60,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
+	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=1,fillerGap=1,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsHsRage=60,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
 gen warrior_fury level60_fury_2h 30313113032-350500150122100231 \
 	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=20,recklessness=2,rsLate=1,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,

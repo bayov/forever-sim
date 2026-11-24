@@ -736,8 +736,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 777.94533
-  tps: 580.82343
+  dps: 777.94683
+  tps: 580.82471
  }
 }
 dps_results: {
@@ -918,7 +918,7 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 875.984
+  dps: 875.9845
   tps: 655.65059
  }
 }
@@ -939,7 +939,7 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 875.984
+  dps: 875.9845
   tps: 655.65059
  }
 }
@@ -1149,8 +1149,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 947.38133
-  tps: 360.48435
+  dps: 947.388
+  tps: 360.49005
  }
 }
 dps_results: {
@@ -1324,8 +1324,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 846.36183
-  tps: 633.58671
+  dps: 846.36483
+  tps: 633.58927
  }
 }
 dps_results: {
@@ -1618,8 +1618,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 855.681
-  tps: 640.03651
+  dps: 855.6825
+  tps: 640.0378
  }
 }
 dps_results: {
@@ -1800,8 +1800,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase5-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1106.26083
-  tps: 825.85141
+  dps: 1106.264
+  tps: 825.85417
  }
 }
 dps_results: {
@@ -1821,8 +1821,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase5-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1106.26083
-  tps: 825.85141
+  dps: 1106.264
+  tps: 825.85417
  }
 }
 dps_results: {
@@ -1912,8 +1912,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 939.48183
-  tps: 702.22528
+  dps: 939.48333
+  tps: 702.22656
  }
 }
 dps_results: {
@@ -2094,8 +2094,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase6-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 1156.88783
-  tps: 861.14607
+  dps: 1156.89433
+  tps: 861.15159
  }
 }
 dps_results: {
@@ -2115,8 +2115,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase6-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 1156.88783
-  tps: 861.14607
+  dps: 1156.89433
+  tps: 861.15159
  }
 }
 dps_results: {
@@ -2199,15 +2199,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheFiveThunders"
  value: {
-  dps: 966.074
+  dps: 966.0745
   tps: 719.67652
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 973.27267
-  tps: 725.60274
+  dps: 973.27567
+  tps: 725.60531
  }
 }
 dps_results: {
