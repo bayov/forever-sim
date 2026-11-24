@@ -15,12 +15,12 @@
   "gearSet": "level60_phase0_affliction",
   "apl": "level60_affliction_duty_recklessness",
   "published": {
-    "dps": 948.34,
+    "dps": 951.46,
     "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 948.34,
-    "stderr": 0.18,
+    "dps": 951.46,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
     "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
