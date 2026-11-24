@@ -12,18 +12,18 @@
     "Combat",
     "Subtlety"
   ],
-  "gearSet": "level60_phase1_synthetic_mutilate_hit+3",
+  "gearSet": "level60_phase0_rogue_assassination",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 866.1,
-    "source": "verify.py on this request after round 70753 (the November 2 notes' rework: new tree, Shank, Poised, Death Mark; talents and rotation searched again), wowsimcli 20,000 iterations, seed 1, 180 ± 20 s; the report is not regenerated yet"
+    "dps": 821.04,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 866.1,
-    "stderr": 0.21,
+    "dps": 821.04,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request (2026-11-03, round 70753), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Deep Assassination Mutilate with Seal Fate, Relentless Strikes, Venom and Opportunity, on two daggers.",
   "keyTalents": [
@@ -65,8 +65,8 @@
     "No Ahn'Qiraj book ranks, so Backstab and Eviscerate stop at rank VIII and Deadly Poison at IV. The books would add 13 to 18 DPS.",
     "Grimstitch 4-piece and 5-piece bonuses aren't counted. They would add about 8 and 6 DPS.",
     "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
-    "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS.",
+    "8.7% melee and spell hit on the Phase 0 set (gear, Precision 3/3 and the set bonus). Hit past the 8% yellow cap still helps white hits and poisons.",
     "No Goblin Land Mine. Its 1s cast resets the swing, so it loses DPS. The Sapper stays."
   ],
-  "notes": "Default for the Assassination raid-sim preset. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Rotation searched again on 2026-11-02 (tools/rotopt/rogue_presets.sh): the builder goes out whenever it is affordable, since an extra attack keeps the swing timer under Forever (2026-10-30); the request's rotation is the regenerated APL. Round 70753 (2026-11-03): request regenerated from mksettings with the same arguments and the new talents (00530320251451031-320303-005) and rotation (the rotopt search on the reworked tree, tools/rotopt/rogue_presets.sh), race Undead (it still leads the race sweep). 2026-11-04 (round 70753 phase 5, hit trade, the step scan in orchestration/round_70753/hit_trade/rogue.md): regeared onto level60_phase1_synthetic_mutilate_hit+3, the hit+3 step (gear hit raised 3%, the equipment is the step file's; talents unchanged). Not yet re-verified here."
+  "notes": "Default for the Assassination raid-sim preset. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Rotation searched again on 2026-11-02 (tools/rotopt/rogue_presets.sh): the builder goes out whenever it is affordable, since an extra attack keeps the swing timer under Forever (2026-10-30); the request's rotation is the regenerated APL. Round 70753 (2026-11-03): request regenerated from mksettings with the same arguments and the new talents (00530320251451031-320303-005) and rotation (the rotopt search on the reworked tree, tools/rotopt/rogue_presets.sh), race Undead (it still leads the race sweep). 2026-11-04 (round 70753 phase 5, hit trade, the step scan in orchestration/round_70753/hit_trade/rogue.md): regeared onto level60_phase1_synthetic_mutilate_hit+3, the hit+3 step (gear hit raised 3%, the equipment is the step file's; talents unchanged). Not yet re-verified here. Phase 0 gear since 2026-11-24: level60_phase0_rogue_assassination (tools/rotopt/bis_phase0.sh, orchestration/round_notes_2026-11-11/phase0_step4_rogue.md), was level60_phase1_synthetic_mutilate_hit+3 at 866.1. Melee hit 8.7% on the set, inside the range the round 70753 hit trade searched, so the talents and rotation stay. The hit steps are gone."
 }

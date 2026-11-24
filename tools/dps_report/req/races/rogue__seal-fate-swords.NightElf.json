@@ -1,0 +1,70 @@
+{
+ "gearSet": "level60_phase0_rogue_seal_fate_swords_alliance",
+ "equipment": {
+  "items": [
+   {
+    "id": 279253,
+    "enchant": 1508
+   },
+   {
+    "id": 15411,
+    "enchant": 1249059
+   },
+   {
+    "id": 271955
+   },
+   {
+    "id": 13340,
+    "enchant": 1219587
+   },
+   {
+    "id": 252483,
+    "enchant": 1891
+   },
+   {
+    "id": 226830,
+    "enchant": 1248599
+   },
+   {
+    "id": 226828,
+    "enchant": 1248640
+   },
+   {
+    "id": 272395
+   },
+   {
+    "id": 226827,
+    "enchant": 1508
+   },
+   {
+    "id": 226831,
+    "enchant": 1887
+   },
+   {
+    "id": 275976
+   },
+   {
+    "id": 272408
+   },
+   {
+    "id": 13965
+   },
+   {
+    "id": 19289
+   },
+   {
+    "id": 6622,
+    "enchant": 1900
+   },
+   {
+    "id": 12590,
+    "enchant": 1900
+   },
+   {
+    "id": 280020
+   }
+  ]
+ },
+ "note": "Alliance: wears level60_phase0_rogue_seal_fate_swords_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: NightElf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_seal_fate_swords. It wears level60_phase0_rogue_seal_fate_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}
