@@ -1,0 +1,68 @@
+{
+ "gearSet": "level60_phase0_hunter_lw_horde",
+ "equipment": {
+  "items": [
+   {
+    "id": 226887,
+    "enchant": 2543
+   },
+   {
+    "id": 22340,
+    "enchant": 1249059
+   },
+   {
+    "id": 272106
+   },
+   {
+    "id": 13340,
+    "enchant": 1219587
+   },
+   {
+    "id": 252483,
+    "enchant": 1891
+   },
+   {
+    "id": 18375,
+    "enchant": 1248599
+   },
+   {
+    "id": 15063,
+    "enchant": 931
+   },
+   {
+    "id": 272397
+   },
+   {
+    "id": 15062,
+    "enchant": 2543
+   },
+   {
+    "id": 226881,
+    "enchant": 1887
+   },
+   {
+    "id": 272408
+   },
+   {
+    "id": 260217
+   },
+   {
+    "id": 10455
+   },
+   {
+    "id": 13965
+   },
+   {
+    "id": 279910,
+    "enchant": 34
+   },
+   {},
+   {
+    "id": 284587,
+    "enchant": 664
+   }
+  ]
+ },
+ "note": "Horde: wears level60_phase0_hunter_lw_horde, the set without the Alliance rewards",
+ "how": "race_gear.py: Tauren is Horde, so it can't wear the Alliance rewards of the preset's level60_phase0_hunter_lw. It wears level60_phase0_hunter_lw_horde, the same set with those slots re-ranked at a Horde race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}
