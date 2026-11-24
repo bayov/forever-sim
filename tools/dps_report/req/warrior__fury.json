@@ -9,65 +9,65 @@
             "equipment":  {
               "items":  [
                 {
-                  "id":  991019,
+                  "id":  12640,
                   "enchant":  1506
                 },
                 {
-                  "id":  991002,
+                  "id":  15411,
                   "enchant":  1249019
                 },
                 {
-                  "id":  991304
+                  "id":  272106
                 },
                 {
-                  "id":  991004,
+                  "id":  272414,
                   "enchant":  1219587
                 },
                 {
-                  "id":  991305,
+                  "id":  252484,
                   "enchant":  1891
                 },
                 {
-                  "id":  991006,
+                  "id":  12936,
                   "enchant":  1885
                 },
                 {
-                  "id":  991007,
+                  "id":  272095,
                   "enchant":  1248640
                 },
                 {
-                  "id":  991008
+                  "id":  19044
                 },
                 {
-                  "id":  991009,
-                  "enchant":  1506
+                  "id":  22385,
+                  "enchant":  2543
                 },
                 {
-                  "id":  991020,
+                  "id":  287033,
                   "enchant":  1887
                 },
                 {
-                  "id":  991011
+                  "id":  260219
                 },
                 {
-                  "id":  991012
+                  "id":  275976
                 },
                 {
-                  "id":  991017
+                  "id":  13965
                 },
                 {
-                  "id":  991018
+                  "id":  19289
                 },
                 {
-                  "id":  991014,
+                  "id":  11684,
                   "enchant":  1900
                 },
                 {
-                  "id":  991015,
+                  "id":  12590,
                   "enchant":  1900
                 },
                 {
-                  "id":  991013
+                  "id":  18323
                 }
               ]
             },
@@ -77,7 +77,7 @@
               "agilityElixir":  "ElixirOfTheMongoose",
               "strengthBuff":  "ElixirOfFerocity",
               "attackPowerBuff":  "JujuMight",
-              "mainHandImbue":  "DenseSharpeningStone",
+              "mainHandImbue":  "DenseWeightstone",
               "offHandImbue":  "DenseSharpeningStone",
               "defaultPotion":  "MightyRagePotion",
               "dragonBreathChili":  true,
