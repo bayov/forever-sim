@@ -131,6 +131,11 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(potion, lt(currentRage(), num(k["potionRage"])), "Mighty Rage Potion when short of Rage."))
 	}
 	items = append(items, tankTrinketLines(k)...)
+	// The Orc's and Troll's actives on cooldown: an APL casts no major cooldown it doesn't name, so
+	// without these lines Blood Fury and Berserking never went off on a tank.
+	items = append(items,
+		cast(bloodFury, nil, "Blood Fury on cooldown. Other races can ignore the warning on this line."),
+		cast(berserking, nil, "Berserking on cooldown. Other races can ignore the warning on this line."))
 	// The presets' Goblin Sapper Charge (standards 11, round 4): right after the trinkets, once a fight.
 	items = append(items, cast(tankSapper, nil, "Goblin Sapper Charge on cooldown (once a fight): its threat at the pull (docs/tank_warrior.md, Round 4 consumables)."))
 	switch k["shieldWall"] {

@@ -257,6 +257,27 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 20572
+                      }
+                    }
+                  },
+                  "notes": "Blood Fury on cooldown. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 26297,
+                        "tag": 2
+                      }
+                    }
+                  },
+                  "notes": "Berserking on cooldown. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "itemId": 10646
                       }
                     }
