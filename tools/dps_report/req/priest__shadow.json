@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "00530400102-3-50052101231302251",
+            "talentsString": "02530100103-3-50042201231302251",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -588,8 +588,8 @@
       "faerieFire": true,
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

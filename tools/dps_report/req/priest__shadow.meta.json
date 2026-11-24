@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 1,
   "race": "Undead",
-  "talents": "00530400102-3-50052101231302251",
+  "talents": "02530100103-3-50042201231302251",
   "treeNames": [
     "Discipline",
     "Holy",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase0_shadow",
   "apl": "level60",
   "published": {
-    "dps": 855.19,
+    "dps": 857.46,
     "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 855.19,
+    "dps": 857.46,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
