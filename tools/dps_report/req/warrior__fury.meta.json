@@ -15,17 +15,17 @@
   "gearSet": "level60_phase0_fury_dw",
   "apl": "level60_fury",
   "published": {
-    "dps": 1102.1,
-    "source": "the DPS report's main run of this request after hotfix push 114097 (Unbridled Wrath on melee abilities except Whirlwind, one Reckless Swings charge a Cleave) and an avoided Execute keeping its extra Rage (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1007.12,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1102.1,
-    "stderr": 0.43,
+    "dps": 1007.12,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
-  "summary": "Dual-wield Fury with a 2.8s sword and a 2.9s axe. Saves Death Wish and Recklessness for the end of the fight.",
+  "summary": "Dual-wield Fury with a 2.4s mace (Ironfoe) and a 1.7s dagger (Felstriker). Saves Death Wish and Recklessness for the end of the fight.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -46,7 +46,7 @@
     "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 50 Rage",
     "Bloodthirst, then Whirlwind at 25+ Rage",
-    "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "During execute, Execute comes first, before Bloodthirst and Whirlwind. That adds 4.1 DPS at 180s on the Phase 0 gear (it lost 4.7 on the synthetic gear's 12% hit)",
     "Reckless Swings on cooldown, but only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 60+ Rage, during execute too, only when Bloodthirst and Whirlwind are 1s or more away",
     "Hamstring as filler at 20+ Rage when Bloodthirst and Whirlwind are 1s or more away (it procs Windfury Totem and Flurry)"
@@ -61,7 +61,8 @@
     "Dragonbreath Chili",
     "Mighty Rage Potion",
     "Goblin Sapper Charge",
-    "Dense Sharpening Stone"
+    "Dense Weightstone (main hand)",
+    "Dense Sharpening Stone (off hand)"
   ],
   "caveats": [
     "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
@@ -74,5 +75,5 @@
     "Saving the second Mighty Rage Potion for the last 20s adds 10.4 DPS at 180s and 0.0 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury -talents 30313113002-050530055120100231 -race Orc -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/warrior.md): regeared onto level60_phase1_synthetic_fury_hit+2 (12% gear hit, was 10%; talents unchanged); paired +2 against +0 over 10 seeds: +3.48 ± 0.59 / +2.68 ± 0.82 / +0.88 ± 0.53 at 120 / 180 / 300 s. Not yet re-verified here."
+  "notes": "Request from mksettings -spec fury -gear level60_phase0_fury_dw -apl level60_fury -talents 30313113002-050530055120100231 -race Orc -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_fury_dw, Phase 0 step 4), was the synthetic level60_phase1_synthetic_fury_hit+2 (1102.1 at 180s). mksettings puts a Dense Weightstone on the main hand, since Ironfoe is a mace. Execute first in the execute phase since 2026-11-24 (tools/rotopt/warrior_presets.sh)."
 }

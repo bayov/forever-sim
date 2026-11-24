@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_fury_dw",
   "apl": "level60_fury_sunder",
   "published": {
-    "dps": 1063.1,
-    "source": "the DPS report's main run of this request after hotfix push 114097 (Unbridled Wrath on melee abilities except Whirlwind, one Reckless Swings charge a Cleave) and an avoided Execute keeping its extra Rage (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 973.03,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1063.1,
-    "stderr": 0.43,
+    "dps": 973.03,
+    "stderr": 0.41,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [
@@ -46,7 +46,7 @@
     "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 20 Rage",
     "Bloodthirst, then Whirlwind at 25+ Rage",
-    "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "During execute, Execute comes first, before Bloodthirst and Whirlwind. That adds 4.1 DPS at 180s on the Phase 0 gear (it lost 4.7 on the synthetic gear's 12% hit)",
     "Reckless Swings on cooldown, but only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 70+ Rage, during execute too",
     "Hamstring as filler at 10+ Rage (it procs Windfury Totem and Flurry)"
@@ -61,7 +61,8 @@
     "Dragonbreath Chili",
     "Mighty Rage Potion",
     "Goblin Sapper Charge",
-    "Dense Sharpening Stone"
+    "Dense Weightstone (main hand)",
+    "Dense Sharpening Stone (off hand)"
   ],
   "caveats": [
     "The duty costs 29.0 DPS at 180s against the same build without it (1012.5 against 1041.5, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
@@ -75,7 +76,7 @@
     "Saving the second Mighty Rage Potion for the last 20s adds 10.4 DPS at 180s and 0.0 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings with the same arguments as warrior__fury except -apl level60_fury_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/warrior.md): regeared onto level60_phase1_synthetic_fury_hit+2 (12% gear hit, was 10%; talents unchanged); paired +2 against +0 over 10 seeds: +3.48 ± 0.59 / +2.68 ± 0.82 / +0.88 ± 0.53 at 120 / 180 / 300 s. Duties (seed 1, 20,000 iterations): Sunder +3.8 / +2.8 / +1.8 at 120 / 180 / 300 s. Not yet re-verified here.",
+  "notes": "Request from mksettings with the same arguments as warrior__fury except -apl level60_fury_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.8 / +2.8 / +1.8 at 120 / 180 / 300 s. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_fury_dw, Phase 0 step 4), was the synthetic level60_phase1_synthetic_fury_hit+2 (1063.1 at 180s). mksettings puts a Dense Weightstone on the main hand, since Ironfoe is a mace. Execute first in the execute phase since 2026-11-24 (tools/rotopt/warrior_presets.sh).",
   "duty": "Sunder Armor",
   "baseBuild": "warrior__fury"
 }
