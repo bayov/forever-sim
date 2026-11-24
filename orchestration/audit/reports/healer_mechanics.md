@@ -1,27 +1,27 @@
-# healer_mechanics pass 26 (2026-11-22, master 7a6d1beb9d)
+# healer_mechanics pass 27 (master 566067a394, 2026-11-24)
 
-Range 8b5137c6d6..7a6d1beb9d. Gate: 4 watched files (sim/core/dot.go, sim/paladin/item_sets_pve.go,
-sim/shaman/flame_shock.go, sim/shaman/talents.go). Client still 1.60.1.71037 (wago latest). Blizzard t/2403040: no post
-after post 14 (2026-11-21T00:18:29Z, no healer line). TASKS.md / daily update: Nov 20 server pushes 114204-114326
-(Execute, Judgement procs, Chastise, Intensity, Nature's Bounty, Spiritcaller) name no heal, healing talent or
-healing-engine row. Update ledger unchanged.
+Result: quiet.
 
-## Changed files
+## Get current
+| Source | Seen | Change |
+|---|---|---|
+| Client build (wago.tools latest) | 1.60.1.71037 | none since pass 26 |
+| Blizzard t/2403040 (Nov 20 hotfixes) | last post 2026-11-21T00:18:29Z | none newer |
+| orchestration/update_ledger.md | no commits c78d983aca..566067a394 | none |
 
-| File | Change | Healer effect | Verdict |
-|---|---|---|---|
-| sim/core/dot.go | `SetTickPeriod` retimes on the dot's expiry grid (3960dd1f6); CleanUp change is a comment | only caller is Wrack (`sim/warlock/talents.go:331,333`); no HoT calls it; CleanUp logic unchanged, so pass 9's "last tick at expiry lands" holds | no healer effect |
-| sim/paladin/item_sets_pve.go | Soulforge (Classic) 4pc reuses an existing "Crusader's Wrath" aura so 4 + 4 Forever Soulforge pieces share one buff | spell power proc on melee; Holy presets wear `level60_phase1_synthetic` gear, no Soulforge | none |
-| sim/shaman/flame_shock.go | Forever: haste shortens Flame Shock's GCD | damage spell; Restoration preset casts no Flame Shock in healing fights | none |
-| sim/shaman/talents.go | Maelstrom Weapon: no stack from Windfury Totem's swing under Forever | Enhancement talent | none |
-| sim/common/item_sets/forever_dungeon_set_1_reveal.go (unwatched) | 8 Dungeon Set 1 reveal sets wired, incl. Vestments of the Virtuous (priest) and Soulforge (paladin) | no healer preset wears them (all healer gear is synthetic); Deathmist 4pc self-heal not modelled, a DPS set | none |
+## What changed (watched paths, c78d983aca..566067a394)
+| Commit | Files | Healer reach |
+|---|---|---|
+| be773f5eb Druid: Rip and Rake tick AP shares from Forever logs | sim/druid/rake.go, rip.go, tuning_70753.go (comment) | none |
 
-## Tests
+- Rake tick AP share 0.055 x nov2BleedScale -> 0.065 flat; Rip AP share 0.01 x scale -> 0.0114 a point, outside the scale.
+- `nov2BleedScale`, `rakeTickAPCoefficient`, `ripTickAPCoefficient` are referenced only in rake.go, rip.go,
+  ferocious_bite.go and tuning_70753.go; none in sim/druid/healing.go or sim/druid/restoration/. No Restoration
+  druid heal, talent or engine path is touched. Feral DPS accuracy belongs to the mechanics pass.
 
-`go test -tags=with_db ./sim/paladin/holy/ ./sim/priest/... ./sim/shaman/... ./sim/druid/... ./sim/core/`: all green (holy, priest
-healing/shadow, shaman elemental/enhancement/warden, druid, balance, feral, tank, core). (Without `-tags=with_db` the holy suite panics on a missing item 272436; that's the build tag, not a bug.)
+## Engine / tests
+No engine or healing file changed; checks from pass 26 stand. Open: healer_mechanics-20261104-10 (untested paths),
+-11 (Riptide mana).
 
-## Findings
-
-None new. Open: 10 (untested paths, low), 11 (Riptide cost 147/180/231 vs client 150/180/230, low), unchanged (no
-restoration code in range).
+## New findings
+None.

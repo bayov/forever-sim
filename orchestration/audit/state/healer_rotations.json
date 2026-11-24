@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c78d983aca33ba66a9f9e80c39cdc671daad4bd9"
+  "master": "e7062a6a4490fb9c8077d14f873797e8cdcd5978"
  },
- "last_pass_at": "2026-11-22T19:01:57Z",
- "pass": 23,
- "result": "quiet",
- "note": "Pass 23 on 7a6d1beb9. Watched changes (dot SetTickPeriod for Wrack, Soulforge 4pc aura reuse, Flame Shock GCD haste, Maelstrom comment) do not reach healers. All 63 baseline rows byte-identical to ref; ref kept. Open: -20261118-1, -20261115-1, -20261104-2.",
+ "last_pass_at": "2026-11-24T01:00:07Z",
+ "pass": 24,
+ "result": "findings",
+ "note": "Pass 24 on 566067a39. Watched druid changes (Rip/Rake AP shares, tuning comment) are feral only. 28 raid rows moved by the Frost mage filler re-tune (b8b89d6a8): -20261124-1. Tank rows byte-identical. Ref refreshed. Open: -20261124-1, -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T18:54:07Z"
+ "checked_at": "2026-11-24T01:09:06Z"
 }

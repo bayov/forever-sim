@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 833.81,
   "made": "2026-11-23",
-  "sim": "804075da42d5+",
+  "sim": "67e56016a8d6+",
   "slots": {
     "head": [
       {
@@ -50,7 +50,8 @@
         "cooldown": {
           "rank": 25,
           "loss": 11.14
-        }
+        },
+        "note": "Leatherworking craft · Fireball use modelled (step 2 notes)"
       },
       {
         "id": 282049,
@@ -62,7 +63,8 @@
         "id": 287019,
         "name": "Defias Enforcer's Mask",
         "dps": 827.98,
-        "loss": 5.83
+        "loss": 5.83,
+        "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known)"
       },
       {
         "id": 10261,
@@ -415,8 +417,8 @@
         "name": "Defiler's Leather Shoulders",
         "dps": 825.57,
         "loss": 8.24,
-        "avail": "doubtful",
-        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 12927,
@@ -611,8 +613,8 @@
         "name": "Deathguard's Cloak",
         "dps": 833.33,
         "loss": 0.48,
-        "avail": "doubtful",
-        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 18511,
@@ -1912,45 +1914,45 @@
     ],
     "finger": [
       {
-        "id": 275981,
-        "name": "Warden's Signet of Ferocity",
-        "dps": 833.81,
-        "loss": 0,
-        "unsourced": true,
-        "bis": true,
-        "avail": "doubtful",
-        "note": "Watchers Exalted · no rep source found yet · unsure, used by standards 42"
-      },
-      {
         "id": 19325,
         "name": "Don Julio's Band",
-        "dps": 833.81,
-        "loss": 0,
-        "bis": true,
-        "avail": "doubtful",
-        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
+        "dps": 832.72,
+        "loss": -2.51,
+        "avail": "infeasible",
+        "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
+      },
+      {
+        "id": 275981,
+        "name": "Warden's Signet of Ferocity",
+        "dps": 832.35,
+        "loss": -2.14,
+        "unsourced": true,
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 275976,
         "name": "Watcher's Signet of Ferocity",
-        "dps": 832.81,
-        "loss": 1,
+        "dps": 830.21,
+        "loss": 0,
         "unsourced": true,
+        "bis": true,
         "avail": "doubtful",
         "note": "Watchers Revered · no rep source found yet"
       },
       {
         "id": 272408,
         "name": "Cutthroat's Signet",
-        "dps": 831.84,
-        "loss": 1.97,
+        "dps": 830.21,
+        "loss": 0,
+        "bis": true,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 275972,
         "name": "Tracker's Signet of Ferocity",
-        "dps": 831.29,
-        "loss": 2.52,
+        "dps": 829.85,
+        "loss": 0.36,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Honored · no rep source found yet"
@@ -1958,8 +1960,8 @@
       {
         "id": 275968,
         "name": "Initiate's Signet of Ferocity",
-        "dps": 830.29,
-        "loss": 3.52,
+        "dps": 828.86,
+        "loss": 1.35,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Friendly · no rep source found yet"
@@ -1967,145 +1969,145 @@
       {
         "id": 17713,
         "name": "Blackstone Ring",
-        "dps": 830.16,
-        "loss": 3.65
+        "dps": 828.75,
+        "loss": 1.46
       },
       {
         "id": 18500,
         "name": "Tarnished Elven Ring",
-        "dps": 829.9,
-        "loss": 3.91
+        "dps": 828.24,
+        "loss": 1.97
       },
       {
         "id": 13098,
         "name": "Painweaver Band",
-        "dps": 827.91,
-        "loss": 5.9,
+        "dps": 825.78,
+        "loss": 4.43,
         "avail": "infeasible",
         "note": "483g per DPS"
       },
       {
         "id": 19510,
         "name": "Legionnaire's Band",
-        "dps": 827.41,
-        "loss": 6.4,
+        "dps": 825.15,
+        "loss": 5.06,
         "note": "Warsong Outriders Honored, Kelm Hargunth, Barrens"
       },
       {
         "id": 11980,
         "suffix": 699,
         "name": "Opal Ring of the Tiger",
-        "dps": 826.92,
-        "loss": 6.89,
+        "dps": 824.67,
+        "loss": 5.54,
         "note": "Random world drop"
+      },
+      {
+        "id": 22339,
+        "name": "Rune Band of Wizardry",
+        "dps": 824.65,
+        "loss": 5.56,
+        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 12017,
         "suffix": 697,
         "name": "Prismatic Band of the Tiger",
-        "dps": 826.68,
-        "loss": 7.13,
+        "dps": 824.43,
+        "loss": 5.78,
         "note": "Random world drop"
       },
       {
         "id": 22255,
         "name": "Magma Forged Band",
-        "dps": 826.58,
-        "loss": 7.23,
+        "dps": 824.38,
+        "loss": 5.83,
         "note": "Drop: Watchman Doomgrip and Secret Safe, Blackrock Depths"
       },
       {
         "id": 11980,
         "suffix": 1562,
         "name": "Opal Ring of Power",
-        "dps": 826.49,
-        "loss": 7.32,
+        "dps": 824.35,
+        "loss": 5.86,
         "note": "Random world drop"
       },
       {
         "id": 12017,
         "suffix": 1562,
         "name": "Prismatic Band of Power",
-        "dps": 826.49,
-        "loss": 7.32,
+        "dps": 824.35,
+        "loss": 5.86,
         "note": "Random world drop"
       },
       {
-        "id": 11980,
-        "suffix": 358,
-        "name": "Opal Ring of Agility",
-        "dps": 826.22,
-        "loss": 7.59,
-        "note": "Random world drop"
+        "id": 280015,
+        "name": "Venomvessel Ring",
+        "dps": 824.34,
+        "loss": 5.87
       },
       {
-        "id": 12017,
-        "suffix": 358,
-        "name": "Prismatic Band of Agility",
-        "dps": 826.22,
-        "loss": 7.59,
-        "note": "Random world drop"
+        "id": 272406,
+        "name": "Channeler's Ring",
+        "dps": 824.22,
+        "loss": 6,
+        "note": "Pix Xizzix · 75 Reals · owned"
       },
       {
         "id": 12005,
         "suffix": 696,
         "name": "Granite Ring of the Tiger",
-        "dps": 826.15,
-        "loss": 7.66,
+        "dps": 823.91,
+        "loss": 6.3,
         "note": "Random world drop · other suffixes on AH ~3.3g"
       },
       {
         "id": 12016,
         "suffix": 696,
         "name": "Jungle Ring of the Tiger",
-        "dps": 826.15,
-        "loss": 7.66,
+        "dps": 823.91,
+        "loss": 6.3,
         "note": "Random world drop"
       },
       {
         "id": 11979,
         "suffix": 696,
         "name": "Peridot Circle of the Tiger",
-        "dps": 826.15,
-        "loss": 7.66,
+        "dps": 823.91,
+        "loss": 6.3,
         "note": "Random world drop"
       },
       {
         "id": 11992,
         "suffix": 696,
         "name": "Vermilion Band of the Tiger",
-        "dps": 826.15,
-        "loss": 7.66,
+        "dps": 823.91,
+        "loss": 6.3,
         "note": "Random world drop"
       },
       {
-        "id": 18701,
-        "name": "Innervating Band",
-        "dps": 826.08,
-        "loss": 7.73,
-        "avail": "doubtful",
-        "note": "BoE trash · Scholomance · or AH"
-      },
-      {
-        "id": 280015,
-        "name": "Venomvessel Ring",
-        "dps": 826.03,
-        "loss": 7.78
-      },
-      {
-        "id": 22339,
-        "name": "Rune Band of Wizardry",
-        "dps": 826.03,
-        "loss": 7.78,
-        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "id": 275982,
+        "name": "Warden's Signet of Brilliance",
+        "dps": 823.88,
+        "loss": 6.33,
+        "unsourced": true,
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet"
       },
       {
         "id": 12005,
         "suffix": 1561,
         "name": "Granite Ring of Power",
-        "dps": 826,
-        "loss": 7.81,
+        "dps": 823.87,
+        "loss": 6.34,
         "note": "Random world drop · other suffixes on AH ~3.3g"
+      },
+      {
+        "id": 12016,
+        "suffix": 1561,
+        "name": "Jungle Ring of Power",
+        "dps": 823.87,
+        "loss": 6.34,
+        "note": "Random world drop"
       }
     ],
     "trinket": [
@@ -2475,7 +2477,7 @@
         "loss": 23.12,
         "with": 12590,
         "avail": "doubtful",
-        "note": "Frostwolf Clan Revered · AV queue unconfirmed"
+        "note": "Frostwolf Clan Revered · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 19324,
@@ -2484,7 +2486,7 @@
         "loss": 24.28,
         "with": 12590,
         "avail": "infeasible",
-        "note": "Frostwolf Exalted · AV queue unconfirmed"
+        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 2163,
@@ -2774,7 +2776,7 @@
         "loss": 19.55,
         "with": 12590,
         "avail": "doubtful",
-        "note": "Frostwolf Clan Revered · AV queue unconfirmed"
+        "note": "Frostwolf Clan Revered · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 12783,
@@ -2832,7 +2834,7 @@
         "loss": 22.15,
         "with": 12590,
         "avail": "infeasible",
-        "note": "Frostwolf Exalted · AV queue unconfirmed"
+        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 15247,
@@ -2916,7 +2918,7 @@
         "dps": 832.3,
         "loss": 1.51,
         "avail": "doubtful",
-        "note": "Alterac Valley quest · AV queue unconfirmed"
+        "note": "Alterac Valley quest · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 280083,
