@@ -42,6 +42,14 @@
 # container restart costs a search one round less. What follows on talents, starting gear and
 # weapons is Enhancement's entry.
 #
+# GEAR_ONLY=1 sims nothing either. It writes each spec's gear set (the table's gearOut, GEAR_OUT
+# to write it elsewhere) from the picks of its list (FROM, the list itself by default), with
+# their enchants, the way a full or RANK_ONLY run writes it after the list. A pick that is a
+# no-pick item now gives its place to the best entry that isn't (see picks below). SPEC is one
+# spec or a comma separated list, every spec in the table by default:
+#
+#   GEAR_ONLY=1 SPEC=affliction tools/rotopt/bis_phase0.sh
+#
 # DRY_RUN=1 sims nothing. For each spec of SPEC (every spec in the table by default, or a comma
 # separated list) it writes what the search's pool would hold (-gear-pool-report) to
 # DRY_RUN_DIR (orchestration/round_notes_2026-11-11/phase0_pool by default): the pool's size,
@@ -202,7 +210,7 @@ trap 'rm -rf "$tmp"' EXIT
 
 specs=tools/rotopt/phase0_specs.json
 spec="${SPEC:-enh}"
-if [ -n "$DRY_RUN" ]; then
+if [ -n "$DRY_RUN" ] || [ -n "$GEAR_ONLY" ]; then
 	spec="${SPEC:-$(jq -r '.specs | keys_unsorted | join(",")' "$specs")}"
 fi
 # One field of a spec's entry, empty when it has none.
@@ -261,8 +269,12 @@ settings() {
 
 req=tools/dps_report/req/$(field "$spec" req).json
 dir="$(field "$spec" dir)"
-def_out="$(field "$spec" out)"
-def_out="${def_out:-ui/$dir/bis/level60_phase0_$spec.bis.json}"
+# Where a spec's list goes: the table's out, or ui/<dir>/bis/level60_phase0_<spec>.bis.json.
+list_path() {
+	o="$(field "$1" out)"
+	echo "${o:-ui/$(field "$1" dir)/bis/level60_phase0_$1.bis.json}"
+}
+def_out="$(list_path "$spec")"
 def_effects="$(field "$spec" effectsOut)"
 def_effects="${def_effects:-ui/$dir/bis/level60_phase0_$spec.effects.json}"
 effects_out="${EFFECTS_OUT:-$def_effects}"
@@ -301,8 +313,6 @@ if [ -n "$DRY_RUN" ]; then
 	exit 0
 fi
 
-jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
-settings "$spec" >"$tmp/enh.json"
 # The list's picks, with their suffix and enchant, in the order of the equipment list, as a jq
 # expression on $list[0]. An empty slot (the off hand next to a two hander) has no pick.
 #
@@ -325,6 +335,24 @@ picks='$list[0].slots as $s
 	[pick("head"; 0), pick("neck"; 0), pick("shoulder"; 0), pick("back"; 0),
 		pick("chest"; 0), pick("wrist"; 0), pick("hands"; 0), pick("waist"; 0), pick("legs"; 0), pick("feet"; 0),
 		pick("finger"; 0), pick("finger"; 1), pick("trinket"; 0), pick("trinket"; 1), pick("mainhand"; 0), pick("offhand"; 0), pick("ranged"; 0)]'
+# The gear set of a list's picks, without a search or a ranking: GEAR_ONLY=1 (see above).
+if [ -n "$GEAR_ONLY" ]; then
+	for s in $(echo "$spec" | tr , ' '); do
+		g="${GEAR_OUT:-$(field "$s" gearOut)}"
+		if [ -z "$g" ] || [ "$g" = none ]; then
+			echo "SPEC $s has no gearOut in $specs" >&2
+			exit 1
+		fi
+		f="${FROM:-$(list_path "$s")}"
+		mkdir -p "$(dirname "$g")"
+		jq -n --slurpfile list "$f" --arg nopick "$nopick" "$picks"' | {items: .}' >"$g"
+		echo "wrote $g from $f"
+	done
+	exit 0
+fi
+
+jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
+settings "$spec" >"$tmp/enh.json"
 rank_only=""
 if [ -n "$EFFECTS_ONLY" ]; then
 	RANK_ONLY=1
@@ -408,8 +436,9 @@ if [ -n "$unlisted" ]; then
 	fi
 fi
 
-# The picks as the sim UI's "Phase 0" gear preset (ui/enhancement_shaman/presets.ts), when we
-# wrote the real list. GEAR_OUT=none skips it.
+# The picks as the spec's Phase 0 gear set (gearOut), when we wrote the real list: the sim UI's
+# "Phase 0" gear preset (ui/enhancement_shaman/presets.ts) and the DPS Report's gear for the
+# spec. GEAR_OUT=none skips it.
 gear_out="${GEAR_OUT:-$(field "$spec" gearOut)}"
 gear_out="${gear_out:-none}"
 if [ -z "$OUT" ] && [ "$gear_out" != none ]; then

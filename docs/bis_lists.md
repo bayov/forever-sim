@@ -464,6 +464,12 @@ list would read as one list. `MIX_DURS=1` goes on anyway.
 `FROM` (about 2.5 min). `EFFECTS_OUT` writes them somewhere else, and `EFFECTS_OUT=none` leaves
 them out of a full or `RANK_ONLY` run.
 
+`GEAR_ONLY=1 SPEC=<spec> tools/rotopt/bis_phase0.sh` sims nothing and writes the spec's gear set
+(`gearOut` in `phase0_specs.json`, `ui/<dir>/gear_sets/level60_phase0_<spec>.gear.json`) from the
+picks of its list (`FROM`, the list itself by default) with their enchants. Without `SPEC` it writes
+every spec's. A full or `RANK_ONLY` run that writes the real list writes the gear set too. Each spec
+has one (2026-11-24), for the sim UI and the DPS Report's level 60 DPS specs.
+
 `RANK_ONLY=1 SLOTS=trinket,chest tools/rotopt/bis_phase0.sh` ranks only those lists, their
 conditional entries and their enchants (`-gear-rank-slots`), and copies every other list and
 enchant list from `FROM` (`-gear-rank-from`). The mainhand and offhand lists are scored
