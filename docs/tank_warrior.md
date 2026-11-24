@@ -582,10 +582,12 @@ iterations, seed 1 (± about 5 / 4 / 8):
 - **Every racial works now.** The APLs named no Elune's Light or Eureka!, and an APL casts no major cooldown it doesn't
   name, so Night Elf and Gnome tanks never used them (Blood Fury and Berserking had the same bug, fixed in 0f567e196).
   With them cast, Night Elf gains +155 / +148 / +150 (Max threat / Balanced / Max survival) and Gnome +120 / +124 /
-  +118. The passives all apply. Some don't reach the score: Human's Spirit, Dwarf's and Troll's Beast damage and the
-  Skyborne's Elemental damage (no scored boss is a Beast or an Elemental), and Read Leyline for a Rage user. The
-  defensive actives, Stoneform, War Stomp, Will of the Forsaken and Shadowmeld's threat drop, aren't simmed, and the
-  score couldn't value them anyway.
+  +118. Troll's Regeneration (20% of its out-of-combat health regen in combat, client 71037) and the Dwarf's Forever
+  Stoneform (10% less Physical damage for 8 s, 3 min, cast on cooldown) were missing from the sim; both are in now
+  (tank_mechanics pass 30, findings -1 and -2). The other passives all apply. Some don't reach the score: Human's
+  Spirit, Dwarf's and Troll's Beast damage and the Skyborne's Elemental damage (no scored boss is a Beast or an
+  Elemental), and Read Leyline for a Rage user. War Stomp, Will of the Forsaken and Shadowmeld's threat drop aren't
+  simmed, and the score couldn't value them anyway.
 - **Racial timing** (the `racial` and `racialAt` knobs, `tools/rotopt/warrior_tank.go`): on cooldown from the pull
   (0, kept) beats every alternative on every preset for Orc and Troll. Syncing with the attack power trinket (1) is
   the same APL in effect, because the trinket also goes at the pull. Holding for the last 15 to 60 s (2) loses 5 to

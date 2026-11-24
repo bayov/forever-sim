@@ -23,6 +23,7 @@ var (
 	thunderClap       = spellIDRank(11581, 6)
 	demoralizingShout = spellIDRank(11556, 5)
 	shieldWall        = spellID(871)
+	stoneform         = spellID(20594)
 )
 
 func (warriorTank) Knobs() []Knob {
@@ -144,6 +145,9 @@ func tankRacialLines(k Knobs) []*proto.APLListItem {
 		}
 		items = append(items, cast(r.spell, when, note+" Other races can ignore the warning on this line."))
 	}
+	// The Dwarf's Stoneform (10% less Physical damage for 8 sec, 3 min), on cooldown like Shield Block:
+	// the score can't follow health, and early use gives the most uses.
+	items = append(items, cast(stoneform, nil, "Stoneform on cooldown for its 10% less Physical damage. Other races can ignore the warning on this line."))
 	return items
 }
 
