@@ -38,10 +38,10 @@ func TestOrcShamanStatsPanel(t *testing.T) {
 	}
 
 	own := finalStats(&proto.RaidBuffs{})
-	check("Strength with our own totems", own[stats.Strength], 88)
-	check("Agility with our own totems", own[stats.Agility], 52)
+	check("Strength with our own totems", own[stats.Strength], 91)
+	check("Agility with our own totems", own[stats.Agility], 49)
 
 	raid := finalStats(&proto.RaidBuffs{StrengthOfEarthTotem: proto.TristateEffect_TristateEffectRegular})
-	check("Strength with a raid Strength of Earth", raid[stats.Strength], 88+42)
-	check("Agility with a raid Strength of Earth", raid[stats.Agility], 52)
+	check("Strength with a raid Strength of Earth", raid[stats.Strength], 91+42)
+	check("Agility with a raid Strength of Earth", raid[stats.Agility], 49)
 }

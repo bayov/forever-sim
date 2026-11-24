@@ -12,18 +12,18 @@
     "Fury",
     "Protection"
   ],
-  "gearSet": "level60_phase1_synthetic_arms",
+  "gearSet": "level60_phase0_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 1074.7,
-    "source": "the DPS report's main run of this request after hotfix push 114097 (Unbridled Wrath on melee abilities except Whirlwind, one Reckless Swings charge a Cleave) and an avoided Execute keeping its extra Rage (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1012.31,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1074.7,
-    "stderr": 0.48,
+    "dps": 1012.31,
+    "stderr": 0.42,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -75,7 +75,7 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 30303213032215201-05050005012-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27) (follows its base build, warrior__arms). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++0.2 / +1.3 / +0.2 and +0.3 / +1.2 / +0.7 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms.",
+  "notes": "Request from mksettings -spec arms -gear level60_phase0_arms -apl level60_arms_battle_shout -talents 30303213032215201-05050005012-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27) (follows its base build, warrior__arms). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++0.2 / +1.3 / +0.2 and +0.3 / +1.2 / +0.7 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_arms, Phase 0 step 4), was the synthetic level60_phase1_synthetic_arms (1074.7 at 180s).",
   "duty": "Battle Shout",
   "baseBuild": "warrior__arms"
 }

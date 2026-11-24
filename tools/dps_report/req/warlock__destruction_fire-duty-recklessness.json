@@ -9,61 +9,66 @@
             "equipment": {
               "items": [
                 {
-                  "id": 997300,
-                  "enchant": 1509
+                  "id": 22267,
+                  "enchant": 2544
                 },
                 {
-                  "id": 997002,
+                  "id": 19426,
                   "enchant": 1249057
                 },
                 {
-                  "id": 997003
+                  "id": 227808
                 },
                 {
-                  "id": 997004
+                  "id": 272411
                 },
                 {
-                  "id": 997005,
+                  "id": 14153,
                   "enchant": 1254966
                 },
                 {
-                  "id": 997006,
+                  "id": 10136,
+                  "randomSuffix": 990410,
                   "enchant": 1220624
                 },
                 {
-                  "id": 997007,
+                  "id": 226911,
                   "enchant": 1254966
                 },
                 {
-                  "id": 997008
+                  "id": 228190
                 },
                 {
-                  "id": 997009,
+                  "id": 13170,
+                  "enchant": 2544
+                },
+                {
+                  "id": 10247,
+                  "randomSuffix": 990447,
                   "enchant": 1254966
                 },
                 {
-                  "id": 997010,
-                  "enchant": 1254966
+                  "id": 275977
                 },
                 {
-                  "id": 997011
+                  "id": 22339
                 },
                 {
-                  "id": 997012
+                  "id": 22678
                 },
                 {
-                  "id": 997021
+                  "id": 272438
                 },
                 {
-                  "id": 997022
+                  "id": 13964,
+                  "enchant": 1248805
                 },
                 {
-                  "id": 997020,
-                  "enchant": 1219580
+                  "id": 18316,
+                  "enchant": 1219579
                 },
-                {},
                 {
-                  "id": 997015
+                  "id": 13938
                 }
               ]
             },
@@ -85,7 +90,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "242-0050003201-0050355003101351",
+            "talentsString": "252-0050003201-0050345003101351",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -123,27 +128,23 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Racials and trinkets on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials and trinkets on cooldown."
+                  }
                 },
                 {
+                  "notes": "Life Tap when the mana runs low or the filler costs more than is left.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 11689
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "0.05"
@@ -164,33 +165,33 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Life Tap when the mana runs low or the filler costs more than is left."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11717
+                        "spellId": 11689
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Curse of Recklessness on duty for the raid, recast before it drops.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "auraRemainingTime": {
-                                  "auraId": {
-                                    "spellId": 11717
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 11717
                                   }
                                 }
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "1.5s"
@@ -200,10 +201,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "2s"
@@ -213,18 +214,17 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 11717
+                      }
                     }
-                  },
-                  "notes": "Curse of Recklessness on duty for the raid, recast before it drops."
+                  }
                 },
                 {
                   "notes": "Bane of Doom when it lands before the fight ends, its tick at least 1 sec after the trinket comes back, so the 2 min cooldowns fired beside the trinket are up for it.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 603
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -241,10 +241,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "60s"
@@ -259,6 +259,7 @@
                                   "vals": [
                                     {
                                       "cmp": {
+                                        "op": "OpGt",
                                         "lhs": {
                                           "spellTimeToReady": {
                                             "spellId": {
@@ -266,7 +267,6 @@
                                             }
                                           }
                                         },
-                                        "op": "OpGt",
                                         "rhs": {
                                           "const": {
                                             "val": "59s"
@@ -276,6 +276,7 @@
                                     },
                                     {
                                       "cmp": {
+                                        "op": "OpLt",
                                         "lhs": {
                                           "spellTimeToReady": {
                                             "spellId": {
@@ -283,7 +284,6 @@
                                             }
                                           }
                                         },
-                                        "op": "OpLt",
                                         "rhs": {
                                           "const": {
                                             "val": "60s"
@@ -298,16 +298,17 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 603
+                      }
                     }
                   }
                 },
                 {
+                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 11713
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -335,10 +336,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "12s"
@@ -351,6 +352,7 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGt",
                                     "lhs": {
                                       "spellTimeToReady": {
                                         "spellId": {
@@ -358,7 +360,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpGt",
                                     "rhs": {
                                       "const": {
                                         "val": "12s"
@@ -368,10 +369,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLe",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpLe",
                                     "rhs": {
                                       "const": {
                                         "val": "60s"
@@ -384,17 +385,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11672
+                        "spellId": 11713
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Corruption when it is down.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -414,6 +415,7 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "dotRemainingTime": {
                                         "spellId": {
@@ -421,7 +423,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "1.5s"
@@ -434,10 +435,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "15s"
@@ -447,17 +448,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Corruption when it is down."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11668
+                        "spellId": 11672
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Immolate when it is down.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -477,6 +478,7 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "dotRemainingTime": {
                                         "spellId": {
@@ -484,7 +486,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "1.5s"
@@ -497,10 +498,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "4s"
@@ -510,42 +511,43 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Immolate when it is down."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 18932
+                        "spellId": 11668
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Conflagrate on cooldown.",
+                  "action": {
                     "condition": {
                       "dotIsActive": {
                         "spellId": {
                           "spellId": 11668
                         }
                       }
-                    }
-                  },
-                  "notes": "Conflagrate on cooldown."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17926
+                        "spellId": 18932
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Death Coil when the filler would not land before the end.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "remainingTime": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "math": {
+                            "op": "OpAdd",
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
@@ -553,7 +555,6 @@
                                 }
                               }
                             },
-                            "op": "OpAdd",
                             "rhs": {
                               "const": {
                                 "val": "0.25s"
@@ -562,28 +563,29 @@
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Death Coil when the filler would not land before the end."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17923
+                        "spellId": 17926
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Searing Pain when the filler would not land before the end.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "math": {
+                                  "op": "OpAdd",
                                   "lhs": {
                                     "spellCastTime": {
                                       "spellId": {
@@ -591,7 +593,6 @@
                                       }
                                     }
                                   },
-                                  "op": "OpAdd",
                                   "rhs": {
                                     "const": {
                                       "val": "0.25s"
@@ -603,10 +604,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "spellCastTime": {
                                   "spellId": {
@@ -618,50 +619,54 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17923
+                      }
                     }
-                  },
-                  "notes": "Searing Pain when the filler would not land before the end."
+                  }
                 },
                 {
+                  "notes": "Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "gcdIsReady": {}
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 26297,
                         "tag": 2
                       }
-                    },
-                    "condition": {
-                      "gcdIsReady": {}
                     }
-                  },
-                  "notes": "Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Incinerate while Immolate is up.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1293813
-                      }
-                    },
                     "condition": {
                       "dotIsActive": {
                         "spellId": {
                           "spellId": 11668
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1293813
+                      }
                     }
-                  },
-                  "notes": "Incinerate while Immolate is up."
+                  }
                 },
                 {
+                  "notes": "Shadow Bolt otherwise.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 11661
                       }
                     }
-                  },
-                  "notes": "Shadow Bolt otherwise."
+                  }
                 }
               ]
             },
@@ -701,8 +706,8 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "demoralizingRoar": "TristateEffectImproved",

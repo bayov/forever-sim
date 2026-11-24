@@ -20,6 +20,8 @@
 # Destruction fire moved to 242-0050003201-0050355003101351 on the shared set's hit+1 step (+0.3 / +1.1 / +1.3
 # at 120 / 180 / 300 sec). Demonology keeps Suppression 5/5 (standards 26, -require suppression); without the pin it
 # found 101-0305003131221001351-0550005003 on hit+5 (+67.3 at 180 sec), left for a user ruling. Same knobs.
+# Phase 0 gear (2026-11-24, step 4): the sets carry 8 to 10% spell hit, so Fire Destruction takes Suppression 5/5 again
+# (252-0050003201-0050345003101351, Aftermath 4): +4.9 / +5.0 / +4.8 at 120 / 180 / 300 sec, 20000 iterations.
 #   go run --tags=with_db ./tools/rotopt -template warlock -settings lock60.json -durs 180 -iters 3000 -knobs ...
 set -e
 settings=$1
@@ -47,7 +49,10 @@ base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endIn
 # and the fire build Corruption too): +0.3 to +2.2 at 120 / 180 / 300 sec on both seed sets.
 # Demonology: Soul Link and a Life Tap before the pull, the damage over time spells recast 1.5 sec
 # early.
-gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=15,immolateMinTime=15"
+# Since the Phase 0 gear (2026-11-24, step 4, orchestration/round_notes_2026-11-11/phase0_step4_warlock.md) Demonology and
+# Affliction cast no Immolate (immolate=0): the knob search at 180 sec (3000 iterations) on the Phase 0 sets moved only
+# that. 20000 iterations at 120 / 180 / 300 sec: Demonology +10.6 / +9.6 / +10.0, Affliction +13.2 / +14.0 / +32.7.
+gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=15,immolateMinTime=15,immolate=0"
 # Destruction (Shadow Bolt): Conflagrate on cooldown while Immolate is up.
 # Destruction and Affliction recast Immolate once it has less left than its cast time.
 gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
@@ -62,7 +67,7 @@ gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,do
 # and wrack=1 to 4 (Wrack whenever nothing above it is due; Shadow Bolt is left as the pre-pull cast,
 # +2.9): 956.2 to 1077.1. Knob searches at 120 and 300 sec from there and the
 # talent search at 180 moved nothing.
-gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=1,wrack=4,soulLink=0,dotLead=2.5,immolateLead=1,prepullAt=2.5,immolateMinTime=15,bane=1,corruptionMinTime=3"
+gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=1,wrack=4,soulLink=0,dotLead=2.5,immolateLead=1,prepullAt=2.5,immolateMinTime=15,bane=1,corruptionMinTime=3,immolate=0"
 # Shadow Bolt Affliction (the Affliction preset before round 70753), the Succubus out.
 gen level60_affliction_shadow_bolt "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
 # Destruction fire: Incinerate while Immolate is up, Conflagrate on cooldown, Immolate and
@@ -72,9 +77,9 @@ gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink
 # The raid curse duty presets (standards 23): the same rotations with the warlock keeping Curse of
 # the Elements (curse=1) or Curse of Recklessness (curse=2) up for the raid itself. A warlock holds one curse duty, so there is one
 # preset per build. Under Forever the curse has its own slot, so the bane stays.
-K_demonology="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=15,immolateMinTime=15"
+K_demonology="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=15,immolateMinTime=15,immolate=0"
 K_destruction="$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
-K_affliction="$base,filler=1,conflagrate=0,siphonLife=1,wrack=4,soulLink=0,dotLead=2.5,immolateLead=1,prepullAt=2.5,immolateMinTime=15,bane=1,corruptionMinTime=3"
+K_affliction="$base,filler=1,conflagrate=0,siphonLife=1,wrack=4,soulLink=0,dotLead=2.5,immolateLead=1,prepullAt=2.5,immolateMinTime=15,bane=1,corruptionMinTime=3,immolate=0"
 K_destruction_fire="$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=1.5,prepullAt=1.5,corruptionMinTime=15,immolateMinTime=4"
 for spec in demonology destruction affliction destruction_fire; do
 	eval dutyKnobs=\$K_$spec

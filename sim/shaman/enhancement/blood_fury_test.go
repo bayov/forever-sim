@@ -27,7 +27,7 @@ import (
 // average hit with attack power comes out 1.1 times bigger.
 func TestOrcShamanBloodFury(t *testing.T) {
 	player := newOrcShaman(30, "", &proto.EnhancementShaman_Options{})
-	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.SpellPower: 49, stats.HealingPower: 10}.ToFloatArray()}
+	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.SpellPower: 49, stats.HealingPower: 10, stats.SpellDamage: 35}.ToFloatArray()}
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}
@@ -39,6 +39,7 @@ func TestOrcShamanBloodFury(t *testing.T) {
 
 	healing := func() float64 { return enh.GetStat(stats.SpellPower) + enh.GetStat(stats.HealingPower) }
 	ap, sp, heal := enh.GetStat(stats.AttackPower), enh.GetStat(stats.SpellPower), healing()
+	sd := enh.GetStat(stats.SpellDamage) // Greater Arcane Elixir's kind of spell damage
 	hit := mh.CalculateAverageWeaponDamage(ap)
 	check := func(label string, got, want float64) {
 		if math.Abs(got-want) > 1e-6 {
@@ -59,6 +60,7 @@ func TestOrcShamanBloodFury(t *testing.T) {
 		}
 		check("attack power", enh.GetStat(stats.AttackPower), ap*1.1)
 		check("spell power", enh.GetStat(stats.SpellPower), sp*1.1)
+		check("spell damage", enh.GetStat(stats.SpellDamage), sd*1.1)
 		check("healing", healing(), heal*1.1)
 		check("weapon minimum", mh.BaseDamageMin, 27.5)
 		check("weapon maximum", mh.BaseDamageMax, 49.5)
@@ -77,6 +79,7 @@ func TestOrcShamanBloodFury(t *testing.T) {
 		}
 		check("attack power", enh.GetStat(stats.AttackPower), ap+18)
 		check("spell power", enh.GetStat(stats.SpellPower), sp)
+		check("spell damage", enh.GetStat(stats.SpellDamage), sd)
 		check("healing", healing(), heal)
 		check("weapon minimum", mh.BaseDamageMin, 24)
 		check("weapon maximum", mh.BaseDamageMax, 46)

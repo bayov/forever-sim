@@ -157,5 +157,31 @@ class Effort(unittest.TestCase):
                          [('Scholomance', None, 14)])
 
 
+class ApplyPrices(unittest.TestCase):
+    def row(self, name, gold, gpd):
+        return {'name': name, 'gold': gold, 'gpd': gpd}
+
+    def test_keeps_items_off_the_list(self):
+        content = {
+            '1263': {'name': 'Brain Hacker', 'gold': 255.0, 'goldPerDps': 10.7},
+            '22403': {'name': 'Nacreous Shell Necklace', 'avail': 'infeasible', 'gold': 282.6, 'goldPerDps': 217.4},
+            '13098': {'name': 'Painweaver Band', 'gold': 347.8, 'goldPerDps': 483.1},
+        }
+        priced = {'1263': self.row('Brain Hacker', 255.0, 7.4), '2915': self.row('Taran Icebreaker', 99.04, 21.9)}
+        changed = phase0_prices.apply_prices(content, priced, {'1263', '2915', '13098'})
+        self.assertEqual(changed, 3)
+        self.assertEqual(content['1263'], {'name': 'Brain Hacker', 'gold': 255.0, 'goldPerDps': 7.4})
+        self.assertEqual(content['2915'], {'name': 'Taran Icebreaker', 'gold': 99.0, 'goldPerDps': 21.9})
+        # On the list with no goldPerDps now: its old one goes.
+        self.assertEqual(content['13098'], {'name': 'Painweaver Band'})
+        # Not on the list: price and avail stay.
+        self.assertEqual(content['22403'], {'name': 'Nacreous Shell Necklace', 'avail': 'infeasible',
+                                            'gold': 282.6, 'goldPerDps': 217.4})
+
+    def test_content_text_one_entry_per_line(self):
+        text = phase0_prices.content_text({'22403': {'name': 'Nacreous Shell Necklace'}, '1263': {'name': 'Brain Hacker'}})
+        self.assertEqual(text, '{\n  "1263": {"name": "Brain Hacker"},\n  "22403": {"name": "Nacreous Shell Necklace"}\n}\n')
+
+
 if __name__ == '__main__':
     unittest.main()

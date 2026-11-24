@@ -53,18 +53,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.22076
+  weights: 0.5108
   weights: 0
-  weights: 1.12304
-  weights: 0
-  weights: 0
+  weights: 1.13446
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 8.39873
-  weights: 10.47419
+  weights: 0
+  weights: 0
+  weights: 6.34155
+  weights: 10.99172
   weights: 0
   weights: 0
   weights: 0
@@ -99,200 +99,199 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 1306.4165
-  tps: 1025.41241
-  hps: 3.13617
+  dps: 1282.94467
+  tps: 1001.37314
+  hps: 3.62333
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Champion'sThreads"
  value: {
-  dps: 1239.24017
-  tps: 974.63515
-  hps: 3.45817
+  dps: 1207.39133
+  tps: 944.07725
+  hps: 4.08417
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 1221.70117
-  tps: 956.90013
-  hps: 2.76517
+  dps: 1199.51333
+  tps: 934.82277
+  hps: 4.26133
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-DeathmistRaiment-1681"
  value: {
-  dps: 1223.74033
-  tps: 957.96558
-  hps: 3.38317
+  dps: 1197.1105
+  tps: 932.44783
+  hps: 2.73267
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Demoniac'sThreads"
  value: {
-  dps: 1330.96383
-  tps: 1044.7528
-  hps: 3.467
+  dps: 1326.27183
+  tps: 1037.44373
+  hps: 3.51767
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1468.2465
-  tps: 1142.2066
-  hps: 3.60833
+  dps: 1485.18617
+  tps: 1151.20529
+  hps: 2.91333
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 1241.12417
-  tps: 965.12374
-  hps: 3.9145
+  dps: 1247.39533
+  tps: 965.45237
+  hps: 3.1805
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1267.37717
-  tps: 994.32273
-  hps: 3.22733
+  dps: 1246.88367
+  tps: 972.8412
+  hps: 2.69517
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
  value: {
-  dps: 1455.58
-  tps: 1139.82532
-  hps: 3.05567
+  dps: 1465.24033
+  tps: 1143.48929
+  hps: 3.0555
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 1108.91433
-  tps: 870.92557
-  hps: 3.8005
+  dps: 1095.51917
+  tps: 856.03683
+  hps: 2.12017
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 1306.4165
-  tps: 1025.41241
-  hps: 3.13617
+  dps: 1282.94467
+  tps: 1001.37314
+  hps: 3.62333
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-LieutenantCommander'sThreads"
  value: {
-  dps: 1239.24017
-  tps: 974.63515
-  hps: 3.45817
+  dps: 1207.39133
+  tps: 944.07725
+  hps: 4.08417
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 1302.32683
-  tps: 884.6844
-  hps: 3.84083
+  dps: 1292.57767
+  tps: 874.03767
+  hps: 3.36883
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1458.98967
-  tps: 1072.72962
-  hps: 2.85017
+  dps: 1452.43617
+  tps: 1086.5647
+  hps: 2.55
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-TheBlackBook-19337"
  value: {
-  dps: 1454.74033
-  tps: 1130.97845
-  hps: 3.05567
+  dps: 1465.71967
+  tps: 1135.60415
+  hps: 3.0555
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1478.11383
-  tps: 1157.1962
-  hps: 3.08333
+  dps: 1483.02533
+  tps: 1157.3253
+  hps: 3.0835
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1267.37717
-  tps: 994.32273
-  hps: 3.22733
+  dps: 1246.88367
+  tps: 972.8412
+  hps: 2.69517
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Average-Default"
  value: {
-  dps: 1493.34056
-  tps: 1168.96341
-  hps: 3.45219
+  dps: 1495.30822
+  tps: 1167.03301
+  hps: 3.54911
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic_demonology-Demonology Warlock-level60_demonology-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 1493.82567
-  tps: 1169.16462
-  hps: 1.13283
+  dps: 1490.07833
+  tps: 1163.02432
+  hps: 2.26583
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic_demonology-Demonology Warlock-level60_demonology-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 1493.82567
-  tps: 1169.16462
-  hps: 1.13283
+  dps: 1490.07833
+  tps: 1163.02432
+  hps: 2.26583
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic_demonology-Demonology Warlock-level60_demonology-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 1547.81333
-  tps: 1180.27679
-  hps: 2.06
+  dps: 1570.76083
+  tps: 1198.33097
+  hps: 24.46
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic_demonology-Demonology Warlock-level60_demonology-NoBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 855.97183
-  tps: 683.78686
-  hps: 0.78017
+  dps: 856.80167
+  tps: 681.39256
+  hps: 0.73767
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic_demonology-Demonology Warlock-level60_demonology-NoBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 855.97183
-  tps: 683.78686
-  hps: 0.78017
+  dps: 856.80167
+  tps: 681.39256
+  hps: 0.73767
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic_demonology-Demonology Warlock-level60_demonology-NoBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 939.74833
-  tps: 716.34013
-  hps: 3.5475
+  dps: 937.98167
+  tps: 712.42054
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1478.40783
-  tps: 1156.76485
-  hps: 2.93517
+  dps: 1489.36867
+  tps: 1162.44823
+  hps: 2.592
  }
 }
