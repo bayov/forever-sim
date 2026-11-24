@@ -12,18 +12,18 @@
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase0_ele",
   "apl": "level60",
   "published": {
-    "dps": 976.9,
-    "source": "DPS report 2026-11-11 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 859.2,
+    "source": "the Phase 0 set level60_phase0_ele (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 768.5,
-    "stderr": 0.19,
+    "dps": 859.2,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on the Phase 0 set level60_phase0_ele (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "summary": "Deep Elemental with a staff, built on Lightning Bolt, Call of Thunder and Lightning Mastery.",
   "keyTalents": [
@@ -65,12 +65,12 @@
   ],
   "caveats": [
     "Lightning Bolt (0.78 of Era's base), Lightning Overload (30%), Call of Thunder and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
-    "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1s cooldown) does nothing now that Lava Burst is gone.",
+    "Wears The Five Thunders 6-piece (Phase 0 list). The 4-piece proc rate (The Furious Storm) is unconfirmed, and the 5-piece's disarm isn't simmed.",
     "Only one 2% crit elixir. Owl on top of Sages would add about 10 DPS.",
     "Elemental Focus procs less often on low ranks since 7 Oct. By how much is unknown.",
     "The sim doesn't check that Searing Totem reaches the boss from range.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Eye of the Storm 3 stops 70% of the pushback from the 2 hits a minute."
   ],
-  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Phase 0 step 4 (2026-11-24): the Phase 0 set (mksettings -gear level60_phase0_ele, the same talents and APL), was level60_phase1_synthetic at 976.9. Spell hit is 12% at Windshaper against the 16% cap, with Tidal Focus 5/5 already, the only hit talent. lightningBoltDownrankManaPerSec 24 and 36 and two ranks down don't beat the preset's."
 }
