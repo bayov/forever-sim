@@ -50,6 +50,17 @@
 #
 #   GEAR_ONLY=1 SPEC=affliction tools/rotopt/bis_phase0.sh
 #
+# RACE (a proto race, RaceHuman) runs the spec at another race than its report build's, for a row
+# of the other faction: its pool drops the build's faction rewards and takes its own (faction.go).
+# With RANK_ONLY, SLOTS, FROM and OUT it ranks the build's faction slots for that faction, and
+# GEAR_ONLY with that list and GEAR_OUT writes the set's faction twin, <gearOut minus .gear.json>.<Faction>.gear.json,
+# which tools/dps_report/race_gear.py gives the other faction's races (2026-11-24).
+#
+# MH_IMBUE and OH_IMBUE (a proto weapon imbue, DenseWeightstone) put another imbue on a hand. The
+# whole pool is ranked with the request's imbue, and a stone only fits its weapon type (a
+# Sharpening Stone edged, a Weightstone blunt, consumes.go ImbueFitsWeapon), so a dual wield list
+# that mixes edged and blunt weapons ranks the other type again with its own stone.
+#
 # DRY_RUN=1 sims nothing. For each spec of SPEC (every spec in the table by default, or a comma
 # separated list) it writes what the search's pool would hold (-gear-pool-report) to
 # DRY_RUN_DIR (orchestration/round_notes_2026-11-11/phase0_pool by default): the pool's size,
@@ -257,9 +268,12 @@ rank_spec() {
 # filled slot but the off hand. TALENTS wins over the table.
 settings() {
 	t="${TALENTS:-$(field "$1" talents)}"
-	jq --arg talents "$t" --argjson start "$(jq -c --arg spec "$1" '.specs[$spec].start // [range(17) | null]' "$specs")" \
+	jq --arg talents "$t" --arg race "${RACE:-}" --arg mhi "${MH_IMBUE:-}" --arg ohi "${OH_IMBUE:-}" --argjson start "$(jq -c --arg spec "$1" '.specs[$spec].start // [range(17) | null]' "$specs")" \
 		--argjson ench "$(jq --arg spec "$1" '.specs[$spec].startEnchants // false' "$specs")" \
 		'(if $talents != "" then .raid.parties[0].players[0].talentsString = $talents else . end)
+	| (if $race != "" then .raid.parties[0].players[0].race = $race else . end)
+	| (if $mhi != "" then .raid.parties[0].players[0].consumes.mainHandImbue = $mhi else . end)
+	| (if $ohi != "" then .raid.parties[0].players[0].consumes.offHandImbue = $ohi else . end)
 	| .raid.parties[0].players[0].equipment.items as $old
 	| [range(17) as $i | if $start[$i] == "req" then $old[$i].id else $start[$i] end] as $ids
 	| .raid.parties[0].players[0].equipment.items = [range(17) as $i

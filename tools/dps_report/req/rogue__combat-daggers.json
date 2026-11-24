@@ -78,7 +78,7 @@
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
               "mainHandImbue": "DenseSharpeningStone",
-              "offHandImbue": "DenseWeightstone",
+              "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MajorFrenzyPotion",
               "defaultConjured": "ConjuredRogueThistleTea",
               "dragonBreathChili": true,
