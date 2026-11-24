@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "e7062a6a4490fb9c8077d14f873797e8cdcd5978"
+  "master": "e29cfe00f6f7e9f987f892e2165166272ce11067"
  },
  "last_pass_at": "2026-11-24T00:49:34Z",
  "pass": 27,
@@ -8,5 +8,5 @@
  "baseline": "a6677362f",
  "note": "Pass 27 on 566067a394: only feral Rip/Rake tick AP shares (sim/druid/rip.go, rake.go, tuning_70753.go) and warrior/phase 0 gear changes; no healer request, heal spell, healbench or encounter touched. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-24T01:09:06Z"
+ "checked_at": "2026-11-24T06:51:05Z"
 }

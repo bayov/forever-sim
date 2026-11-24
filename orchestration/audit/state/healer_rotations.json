@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "e7062a6a4490fb9c8077d14f873797e8cdcd5978"
+  "master": "e29cfe00f6f7e9f987f892e2165166272ce11067"
  },
  "last_pass_at": "2026-11-24T01:00:07Z",
  "pass": 24,
@@ -8,5 +8,5 @@
  "note": "Pass 24 on 566067a39. Watched druid changes (Rip/Rake AP shares, tuning comment) are feral only. 28 raid rows moved by the Frost mage filler re-tune (b8b89d6a8): -20261124-1. Tank rows byte-identical. Ref refreshed. Open: -20261124-1, -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-24T01:09:06Z"
+ "checked_at": "2026-11-24T06:51:05Z"
 }

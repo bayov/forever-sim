@@ -561,3 +561,6 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-24 01:09 | tank_mechanics | pass 29 | master 566067a394 | quiet | warrior Unbridled Wrath and Flurry changes match logs
 2026-11-24 01:09 | tank_rotations | pass 26 | master 566067a394 | quiet | only prot warriors moved, within noise
 2026-11-24 01:09 | tank_fairness | pass 29 | master 566067a394 | quiet | ranking unchanged; warrior leads paladin by 37 at max survival
+2026-11-24 06:51 | gear | pass 74 | master e29cfe00f | quiet | Phase 0 BiS rerank only; no synthetic/trinket/enchant changes
+2026-11-24 06:51 | consumables | pass 104 | master e29cfe00f | quiet | Phase 0 file moved; enchants/trinkets allowed under standards 42
+2026-11-24 06:51 | fairness | pass 54 | master e29cfe00f | quiet | changed file feeds no report request; no sweep needed

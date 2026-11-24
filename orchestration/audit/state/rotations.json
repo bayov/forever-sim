@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "e7062a6a4490fb9c8077d14f873797e8cdcd5978"
+  "master": "e29cfe00f6f7e9f987f892e2165166272ce11067"
  },
  "last_pass_at": "2026-11-24T01:02:49Z",
  "pass": 74,
  "result": "quiet",
  "note": "Pass 74: no APL change. Sim changes reach presets: Rip/Rake AP shares from Forever logs (feral cat -15.0, -1.3%), warrior Flurry/Unbridled Wrath/Reckless Swings rework (Fury -1.5 to -5.5), hunter pet summoned with Hawk (BM/MM +0.7 to +1.4). A/B on the new CLI: feral drop Rip/Rake, Rip/Rake end gates, Fury HS 50/70 all lose or sit under the bar; no new findings.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-24T01:09:06Z",
+ "checked_at": "2026-11-24T06:51:05Z",
  "baseline": "baseline_566067a_3000it_seed424242.tsv"
 }
