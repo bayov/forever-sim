@@ -66,18 +66,27 @@
   },
   {
    "id": "gear",
-   "title": "Synthetic gear",
+   "title": "Phase 0 gear",
    "brief": "orchestration/auditor_gear.md",
    "model": "sonnet",
+   "sims": true,
    "watch": [
-    "tools/database/forever_synthetic_items*.go",
+    "tools/rotopt/phase0_specs.json",
+    "tools/rotopt/phase0_content.json",
+    "tools/rotopt/phase0_enchants.json",
+    "tools/rotopt/phase0*.go",
+    "tools/rotopt/faction.go",
+    "tools/rotopt/bis_phase0.sh",
+    "ui/*/bis/level60_phase0*",
+    "ui/*/gear_sets/level60_phase0*",
+    "tools/dps_report/req/**",
     "tools/database/forever_enchants.go",
     "assets/db_inputs/forever_enchants.json",
     "tools/database/forever_items.go",
-    "tools/database/*trinket*",
-    "ui/*/gear_sets/**",
-    "orchestration/standards.md",
-    "orchestration/gear_targets.md"
+    "orchestration/standards.md"
+   ],
+   "exclude": [
+    "**/*_test.go"
    ],
    "max_quiet_days": 7
   },
@@ -166,6 +175,9 @@
     "ui/*/presets.ts",
     "tools/dps_report/req/**",
     "ui/*/gear_sets/**",
+    "ui/*/bis/level60_phase0*",
+    "tools/rotopt/phase0_content.json",
+    "tools/rotopt/phase0_enchants.json",
     "ui/*/apls/**",
     "tools/database/**",
     "orchestration/standards.md"
