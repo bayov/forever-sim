@@ -11,8 +11,8 @@
   ],
   "use_dur": 90,
   "dps": 839.67,
-  "made": "2026-11-23",
-  "sim": "410255783526",
+  "made": "2026-11-24",
+  "sim": "c7e3b3e1efda+",
   "slots": {
     "head": [
       {
@@ -216,7 +216,7 @@
         "dps": 841.24,
         "loss": -1.57,
         "avail": "infeasible",
-        "note": "217g per DPS"
+        "note": "180g per DPS"
       },
       {
         "id": 19426,
@@ -1252,7 +1252,7 @@
       {
         "id": 273885,
         "name": "Grovekeeper Grips",
-        "dps": 823.54,
+        "dps": 823.55,
         "loss": 16.12
       },
       {
@@ -1499,7 +1499,7 @@
         "dps": 831.97,
         "loss": 7.7,
         "avail": "doubtful",
-        "note": "Stormpike Honored · Alliance only · AV queue unconfirmed"
+        "note": "Stormpike Honored · Alliance only · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 18504,
@@ -1907,7 +1907,9 @@
         "id": 22231,
         "name": "Kayser's Boots of Precision",
         "dps": 819.53,
-        "loss": 20.14
+        "loss": 20.14,
+        "avail": "infeasible",
+        "note": "408g per DPS"
       },
       {
         "id": 10095,
@@ -1980,8 +1982,8 @@
         "name": "Don Julio's Band",
         "dps": 838.84,
         "loss": 0.83,
-        "avail": "doubtful",
-        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 13001,
@@ -1996,7 +1998,7 @@
         "dps": 836.73,
         "loss": 2.94,
         "avail": "infeasible",
-        "note": "379g per DPS"
+        "note": "731g per DPS"
       },
       {
         "id": 275973,
@@ -2017,7 +2019,7 @@
       {
         "id": 275738,
         "name": "Jereman's Bauble",
-        "dps": 835.39,
+        "dps": 835.4,
         "loss": 4.27,
         "avail": "doubtful",
         "note": "Quest: Return to Jereman"
@@ -2123,8 +2125,8 @@
         "dps": 832.4,
         "loss": 7.27,
         "unsourced": true,
-        "avail": "doubtful",
-        "note": "Watchers Exalted · no rep source found yet · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       }
     ],
     "trinket": [
@@ -2270,7 +2272,7 @@
       {
         "id": 18470,
         "name": "Royal Seal of Eldre'Thalas",
-        "dps": 827.44,
+        "dps": 827.45,
         "loss": 12.22,
         "note": "Quest: The Emerald Dream... (Druid), Dire Maul"
       },
@@ -2302,7 +2304,7 @@
       {
         "id": 274760,
         "name": "Everlook Delivery Bot",
-        "dps": 826.82,
+        "dps": 826.83,
         "loss": 12.84,
         "cooldown": {
           "loss": 18.03
@@ -2617,7 +2619,7 @@
         "dps": 813.72,
         "loss": 25.95,
         "avail": "doubtful",
-        "note": "Stormpike Guard Revered · Alliance only · AV queue unconfirmed"
+        "note": "Stormpike Guard Revered · Alliance only · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 276397,
@@ -2667,7 +2669,7 @@
         "loss": -5.85,
         "with": 2243,
         "avail": "infeasible",
-        "note": "Frostwolf Exalted · AV queue unconfirmed"
+        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 11904,
@@ -2694,7 +2696,7 @@
         "loss": 0.27,
         "with": 2243,
         "avail": "infeasible",
-        "note": "Frostwolf Exalted · AV queue unconfirmed"
+        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 22253,
@@ -2903,7 +2905,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
@@ -2914,7 +2916,7 @@
         "item": 11648,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Intellect",
-        "dps": 832.85,
+        "dps": 833,
         "loss": 4.8
       },
       {
@@ -2923,7 +2925,7 @@
         "item": 11622,
         "name": "Lesser Arcanum of Rumination",
         "effect": "+150 mana",
-        "dps": 831.96,
+        "dps": 832.11,
         "loss": 5.69
       },
       {
@@ -2932,7 +2934,7 @@
         "item": 11649,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Spirit",
-        "dps": 831.8,
+        "dps": 831.95,
         "loss": 5.85
       },
       {
@@ -2941,7 +2943,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": 831.78,
+        "dps": 831.94,
         "loss": 5.86,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
       }
@@ -2953,7 +2955,7 @@
         "spell": 1249057,
         "name": "Enchant Necklace - Spell Power",
         "effect": "+6 spell power",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "120 Merchant's Favor"
@@ -2964,7 +2966,7 @@
         "spell": 1249058,
         "name": "Enchant Necklace - Healing Power",
         "effect": "+11 healing, +4 spell damage",
-        "dps": 836.18,
+        "dps": 836.33,
         "loss": 1.47,
         "note": "120 Merchant's Favor"
       }
@@ -2976,7 +2978,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "90 Merchant's Favor, Honored"
@@ -2987,7 +2989,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 836.91,
+        "dps": 837.07,
         "loss": 0.73
       },
       {
@@ -2996,7 +2998,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 836.18,
+        "dps": 836.33,
         "loss": 1.47
       },
       {
@@ -3005,7 +3007,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 834.71,
+        "dps": 834.87,
         "loss": 2.93
       },
       {
@@ -3013,7 +3015,7 @@
         "spell": 20025,
         "name": "Enchant Chest - Greater Stats",
         "effect": "+4 all stats",
-        "dps": 833.59,
+        "dps": 833.74,
         "loss": 4.06,
         "note": "Formula on AH ~351g"
       },
@@ -3022,7 +3024,7 @@
         "spell": 13941,
         "name": "Enchant Chest - Stats",
         "effect": "+3 all stats",
-        "dps": 833.47,
+        "dps": 833.62,
         "loss": 4.18
       },
       {
@@ -3030,7 +3032,7 @@
         "spell": 13700,
         "name": "Enchant Chest - Lesser Stats",
         "effect": "+2 all stats",
-        "dps": 833.39,
+        "dps": 833.54,
         "loss": 4.26
       },
       {
@@ -3038,7 +3040,7 @@
         "spell": 20028,
         "name": "Enchant Chest - Major Mana",
         "effect": "+100 mana",
-        "dps": 833.34,
+        "dps": 833.49,
         "loss": 4.31,
         "note": "1.1% formula drop (Major Intellect +10)"
       },
@@ -3047,7 +3049,7 @@
         "spell": 13626,
         "name": "Enchant Chest - Minor Stats",
         "effect": "+1 all stats",
-        "dps": 833.31,
+        "dps": 833.46,
         "loss": 4.34
       },
       {
@@ -3055,7 +3057,7 @@
         "spell": 13917,
         "name": "Enchant Chest - Superior Mana",
         "effect": "+65 mana",
-        "dps": 833.29,
+        "dps": 833.45,
         "loss": 4.35
       }
     ],
@@ -3066,7 +3068,7 @@
         "spell": 1220624,
         "name": "Enchant Bracer - Greater Spellpower",
         "effect": "+16 spell power",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3077,7 +3079,7 @@
         "spell": 1248498,
         "name": "Enchant Bracer - Lesser Healing Power",
         "effect": "+16 healing, +6 spell damage",
-        "dps": 830.31,
+        "dps": 830.47,
         "loss": 7.33
       },
       {
@@ -3086,7 +3088,7 @@
         "spell": 1248459,
         "name": "Enchant Bracer - Minor Healing Power",
         "effect": "+8 healing, +3 spell damage",
-        "dps": 828.12,
+        "dps": 828.27,
         "loss": 9.53,
         "avail": "doubtful",
         "note": "One drop sample only"
@@ -3097,7 +3099,7 @@
         "spell": 1248661,
         "name": "Enchant Bracer - Superior Intellect",
         "effect": "+9 Intellect",
-        "dps": 827.04,
+        "dps": 827.2,
         "loss": 10.6,
         "note": "Merchant's Favor Honored"
       },
@@ -3106,7 +3108,7 @@
         "spell": 20008,
         "name": "Enchant Bracer - Greater Intellect",
         "effect": "+7 Intellect",
-        "dps": 826.84,
+        "dps": 827,
         "loss": 10.8,
         "note": "Formula on AH ~9g"
       },
@@ -3115,7 +3117,7 @@
         "spell": 13822,
         "name": "Enchant Bracer - Intellect",
         "effect": "+5 Intellect",
-        "dps": 826.49,
+        "dps": 826.65,
         "loss": 11.15
       },
       {
@@ -3124,7 +3126,7 @@
         "spell": 13622,
         "name": "Enchant Bracer - Lesser Intellect",
         "effect": "+3 Intellect",
-        "dps": 826.13,
+        "dps": 826.28,
         "loss": 11.52
       },
       {
@@ -3133,7 +3135,7 @@
         "spell": 1248458,
         "name": "Enchant Bracer - Minor Intellect",
         "effect": "+3 Intellect",
-        "dps": 826.13,
+        "dps": 826.28,
         "loss": 11.52,
         "avail": "doubtful",
         "note": "Forever formula, source unchecked"
@@ -3143,7 +3145,7 @@
         "spell": 7766,
         "name": "Enchant Bracer - Minor Spirit",
         "effect": "+1 Spirit",
-        "dps": 825.92,
+        "dps": 826.08,
         "loss": 11.72
       },
       {
@@ -3151,7 +3153,7 @@
         "spell": 20009,
         "name": "Enchant Bracer - Superior Spirit",
         "effect": "+9 Spirit",
-        "dps": 825.92,
+        "dps": 826.08,
         "loss": 11.72,
         "note": "Formula on AH ~0.6g"
       }
@@ -3163,7 +3165,7 @@
         "spell": 1213626,
         "name": "Enchant Gloves - Arcane Power",
         "effect": "+20 ArcanePower",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3174,7 +3176,7 @@
         "spell": 1248645,
         "name": "Enchant Gloves - Natural Power",
         "effect": "+20 Nature damage",
-        "dps": 833,
+        "dps": 833.15,
         "loss": 4.65,
         "note": "Merchant's Favor Honored"
       },
@@ -3184,7 +3186,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 832.39,
+        "dps": 832.54,
         "loss": 5.26,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3194,7 +3196,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 831.66,
+        "dps": 831.81,
         "loss": 5.99
       },
       {
@@ -3203,7 +3205,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 830.92,
+        "dps": 831.08,
         "loss": 6.72
       },
       {
@@ -3212,7 +3214,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 829.46,
+        "dps": 829.61,
         "loss": 8.19
       },
       {
@@ -3220,7 +3222,7 @@
         "spell": 13948,
         "name": "Enchant Gloves - Minor Haste",
         "effect": "+1% attack speed",
-        "dps": 827.99,
+        "dps": 828.15,
         "loss": 9.65
       }
     ],
@@ -3231,7 +3233,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
@@ -3242,7 +3244,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 836.18,
+        "dps": 836.33,
         "loss": 1.47,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3252,7 +3254,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 835.45,
+        "dps": 835.6,
         "loss": 2.2
       },
       {
@@ -3261,7 +3263,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 834.71,
+        "dps": 834.87,
         "loss": 2.93
       },
       {
@@ -3270,7 +3272,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 833.25,
+        "dps": 833.4,
         "loss": 4.4
       },
       {
@@ -3279,7 +3281,7 @@
         "item": 11648,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Intellect",
-        "dps": 832.85,
+        "dps": 833,
         "loss": 4.8
       },
       {
@@ -3288,7 +3290,7 @@
         "item": 11622,
         "name": "Lesser Arcanum of Rumination",
         "effect": "+150 mana",
-        "dps": 831.96,
+        "dps": 832.11,
         "loss": 5.69
       },
       {
@@ -3297,7 +3299,7 @@
         "item": 11649,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Spirit",
-        "dps": 831.8,
+        "dps": 831.95,
         "loss": 5.85
       },
       {
@@ -3306,7 +3308,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": 831.78,
+        "dps": 831.94,
         "loss": 5.86,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
       }
@@ -3318,7 +3320,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "90 Merchant's Favor, Honored"
@@ -3329,7 +3331,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 836.91,
+        "dps": 837.07,
         "loss": 0.73
       },
       {
@@ -3338,7 +3340,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 836.18,
+        "dps": 836.33,
         "loss": 1.47
       },
       {
@@ -3347,7 +3349,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 834.71,
+        "dps": 834.87,
         "loss": 2.93
       }
     ],
@@ -3357,7 +3359,7 @@
         "game": 8217,
         "spell": 1248805,
         "name": "Enchant Weapon - Revelation",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "45 Merchant's Favor"
@@ -3367,7 +3369,7 @@
         "spell": 23804,
         "name": "Enchant Weapon - Mighty Intellect",
         "effect": "+22 Intellect",
-        "dps": 811.62,
+        "dps": 811.77,
         "loss": 26.03,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3377,7 +3379,7 @@
         "spell": 23803,
         "name": "Enchant Weapon - Mighty Spirit",
         "effect": "+20 Spirit",
-        "dps": 808.45,
+        "dps": 808.61,
         "loss": 29.19,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3390,7 +3392,7 @@
         "spell": 1219579,
         "name": "Enchant Off-Hand - Wisdom",
         "effect": "+6 Intellect, +5 Spirit",
-        "dps": 837.65,
+        "dps": 837.8,
         "loss": 0,
         "bis": true,
         "note": "Forever only, formula 274393 vendor for 240 of currency 3402"
