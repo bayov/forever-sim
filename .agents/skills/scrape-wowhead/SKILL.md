@@ -7,15 +7,16 @@ description: Scrape Wowhead's Forever database into db_inputs (gear, quests, rec
 
 Wowhead's Forever database (www.wowhead.com/forever) reads the beta client, so it knows
 the items, vendors and quests Forever added or changed before anything else does. We
-scrape three things from it into `assets/db_inputs/`:
+scrape four things from it into `assets/db_inputs/`:
 
 | Script | Writes | Read by |
 |---|---|---|
 | `tools/database/forever_wowhead/scrape.py` | `forever_wowhead_items.json`: every wearable item up to a required level, with stats, sources, and the class or side of the quest it comes from | `gen_db` (the item database), `rotopt` (items with no known source), bayovui's `bis.py` (BiS sources), `orchestration/tools/*` |
 | `tools/database/forever_wowhead/recipes.py` | `forever_wowhead_recipes.json`: every recipe item, with its vendors (stock, price, map pins), drops with chances, chests, quests, pickpocketing, fishing and containers. Also what a trainer asks for each recipe, and who sells each reagent and whether in limited stock | bayovui's `recipesources.py` (BayovCore's recipe planner), nothing in the sim |
 | `tools/database/forever_wowhead/class_spells.py` | `forever_wowhead_class_spells.json`: every class's ability ranks, with what a trainer asks for each and where it comes from (a trainer, a quest or a drop). Nine pages | bayovui's `classspells.py` (BayovCore's Training prices), nothing in the sim |
+| `tools/database/forever_wowhead/fishing.py` | `forever_wowhead_fishing.json`: each Forever zone's Fishing tab (how many catches were counted there, and how many gave each item, with its stack). About 63 zone pages, 15 minutes | bayovui's `fishing.py` (BayovCore's Level Fishing goal), nothing in the sim |
 
-All three use `tools/database/forever_wowhead/wowhead.py`. Its header has the details.
+All four use `tools/database/forever_wowhead/wowhead.py`. Its header has the details.
 
 ## Getting past Wowhead's defences
 

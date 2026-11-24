@@ -12,18 +12,18 @@
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic_hit-3",
+  "gearSet": "level60_phase0",
   "apl": "optimized",
   "published": {
-    "dps": 1080.0,
-    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 990.7,
+    "source": "the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1080.0,
-    "stderr": 0.5,
+    "dps": 990.7,
+    "stderr": 0.42,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "summary": "Two-hand axe Enhancement built on Stormstrike and Maelstrom Weapon. It drops Windfury Totem for its group, plus Magma Totem.",
   "keyTalents": [
@@ -82,8 +82,9 @@
     "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
     "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem.",
     "Reverberation 3 in place of Convection 3 since the 2026-11-10 hotfixes (+15 to +19 DPS with the rotation changes): Earth Shock comes round more often, and the mana is still enough.",
-    "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance.",
-    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 133 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 143."
+    "The relic is Burning Totem. Totem of the Storm ties it within 2 DPS at every fight length.",
+    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 133 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 143.",
+    "Wears The Five Thunders 6-piece (Phase 0 list). The 4-piece proc rate (The Furious Storm) is unconfirmed, and the 5-piece's disarm isn't simmed."
   ],
-  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (optimized stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.8 / +1.7 / +1.6 and +1.7 / +2.1 / +1.6 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved"
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (optimized stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.8 / +1.7 / +1.6 and +1.7 / +2.1 / +1.6 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved Phase 0 step 4 (2026-11-24): the Phase 0 set (mksettings -gear level60_phase0, Orc, the same talents and APL), was the synthetic set at hit step -3 at 1080.0. A talent search on the set (spiritWeapons pinned, mean of 120 / 180 / 300 s) moved nothing: Tidal Focus 3 puts melee hit on the 8% cap. The list's talents (Improved Ghost Wolf, the user's) lose 9.0 / 8.5 / 9.5 here. Burning Totem and Totem of the Storm tie within 1 DPS; fireNovaManaPerSec 10 and 22 don't beat 16."
 }

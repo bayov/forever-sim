@@ -12,18 +12,18 @@
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic_hit-4",
+  "gearSet": "level60_phase0",
   "apl": "magma",
   "published": {
-    "dps": 1025.7,
-    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 937.5,
+    "source": "the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1025.7,
-    "stderr": 0.48,
+    "dps": 937.5,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "summary": "Enhancement with Restoration points for Water Shield. Without Improved Fire Nova, it uses Magma Totem. Lightning Shield still beats Water Shield, however often the shaman is hit.",
   "keyTalents": [
@@ -75,8 +75,9 @@
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (100% weapon damage, 8s) and Mental Dexterity (100% of Intellect as attack power at 3/3) take Blizzard's 2026-11-10 hotfix values; Flurry and the shocks the November 2 notes'. No server row carries them yet.",
     "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem.",
-    "The relic is Totem of the Storm, within 0.4 DPS of Burning Totem here. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance.",
-    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 123 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 142."
+    "The relic is Burning Totem. Totem of the Storm ties it within 2 DPS at every fight length.",
+    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption), and our combat logs show Windfury Weapon's extra attacks can roll Windfury Totem, so the two chain. Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 123 DPS at 180s (Rockbiter about as much, Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 142.",
+    "Wears The Five Thunders 6-piece (Phase 0 list). The 4-piece proc rate (The Furious Storm) is unconfirmed, and the 5-piece's disarm isn't simmed."
   ],
-  "notes": "mksettings -spec enh -apl magma -talents 051003-054030021005112151-053020001 -race Orc -gear level60_phase1_synthetic -duration 180 -level 60 (standards 25: the raid's Grace of Air and Flametongue Totem; the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md. Nov 13 re-search (Windfury Weapon's attacks roll Windfury Totem): Flame Shock goes ahead of Stormstrike (magma flameShockFirst=2), +0.4 to +3.0 at 120 / 180 / 300 s on two seeds. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (magma stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.2 / +0.9 / +1.2 and +2.2 / +2.1 / +2.4 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved"
+  "notes": "mksettings -spec enh -apl magma -talents 051003-054030021005112151-053020001 -race Orc -gear level60_phase1_synthetic -duration 180 -level 60 (standards 25: the raid's Grace of Air and Flametongue Totem; the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md. Nov 13 re-search (Windfury Weapon's attacks roll Windfury Totem): Flame Shock goes ahead of Stormstrike (magma flameShockFirst=2), +0.4 to +3.0 at 120 / 180 / 300 s on two seeds. Windfury Totem Forever rule re-search (2026-11-15, every landed main-hand hit rolls the totem, Stormstrike's strike too): Stormstrike waits for Windfury Weapon's 1.5 s cooldown (magma stormstrikeWfHold=1.5, stormstrikeWfIdle=0), +1.2 / +0.9 / +1.2 and +2.2 / +2.1 / +2.4 at 120 / 180 / 300 s on seeds 1 / 1000003, 20,000 iterations; no other knob or talent moved Phase 0 step 4 (2026-11-24): the Phase 0 set (mksettings -gear level60_phase0, Orc, the same talents and APL), was the synthetic set at hit step -4 at 1025.7. Tidal Focus 5 puts melee hit at 10%, 2 over the cap, but a talent search (spiritWeapons, waterShield pinned) found no move: the spell hit still pays. Burning Totem and Totem of the Storm tie."
 }
