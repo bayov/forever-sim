@@ -39,9 +39,11 @@ var BaseStats = map[BaseStatsKey]stats.Stats{}
 // baseline plus a smaller offset with Spirit 0 (our beta sheets of 2026-10-10 and wowsims/forever
 // 6296e8546d: Tauren +2 Strength).
 //
-// The client has no base stat table, and nothing gives the Skyborne's corrected numbers yet, so
-// both keep the offset of wowsims/forever's Skyborne sheets (2026-09-22: four Human/High Order
-// class pairs and a Windshaper warrior), which the fix may have changed.
+// The client has no base stat table. The Skyborne's corrected offsets come from wowsims/forever's
+// level 1 naked sheets of 2026-11-06 (EV-0093, 577c857e05), after 70753's fix, which give each
+// Skyborne race its own offset against the Human: High Order Str -3, Agi +4, Sta -1, Int +4,
+// Spi -3, Windshaper Str -4, Agi +3, Sta 0, Int -1, Spi +3. Before, both shared the delta of the
+// 2026-09-22 beta sheets (-1, +1, -1, +1, 0). EV-0093 records no build and no level 60 sheet.
 var RaceOffsets = map[proto.Race]stats.Stats{
 	proto.Race_RaceUnknown: {},
 	proto.Race_RaceHuman:   {},
@@ -67,18 +69,18 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Stamina:   -1,
 	},
 	proto.Race_RaceSkyborneHighOrder: {
-		stats.Agility:   1,
-		stats.Strength:  -1,
-		stats.Intellect: 1,
-		stats.Spirit:    0,
+		stats.Agility:   4,
+		stats.Strength:  -3,
+		stats.Intellect: 4,
+		stats.Spirit:    -3,
 		stats.Stamina:   -1,
 	},
 	proto.Race_RaceSkyborneWindshaper: {
-		stats.Agility:   1,
-		stats.Strength:  -1,
-		stats.Intellect: 1,
-		stats.Spirit:    0,
-		stats.Stamina:   -1,
+		stats.Agility:   3,
+		stats.Strength:  -4,
+		stats.Intellect: -1,
+		stats.Spirit:    3,
+		stats.Stamina:   0,
 	},
 	proto.Race_RaceUndead: {
 		stats.Agility:   -2,
@@ -278,12 +280,17 @@ var ClassBaseStats = map[proto.Class]stats.Stats{
 		stats.Stamina:     50,
 		stats.AttackPower: -10,
 	},
+	// A level 60 Dwarf shaman's sheet (Str 90, Agi 48, Sta 98, Int 86, Spi 99 on 11,756 ledger
+	// lines, builds 1.60.1.70888 to 71037; wowsims/forever EV-0181, 23ebe1f5a6) less the Dwarf
+	// offset. 1.12's row was Str 85, Agi 55, Int 90; Stamina and Spirit match it. No other shaman
+	// race's level 60 sheet has been read, so putting the gap in the class row rather than the Dwarf
+	// offset is an assumption; our Orc shaman's sheets drift the same way up to level 43.
 	proto.Class_ClassShaman: {
 		stats.Health:      1280,
 		stats.Mana:        1520,
-		stats.Agility:     55,
-		stats.Strength:    85,
-		stats.Intellect:   90,
+		stats.Agility:     52,
+		stats.Strength:    88,
+		stats.Intellect:   87,
 		stats.Spirit:      100,
 		stats.Stamina:     95,
 		stats.AttackPower: 60*2 - 20,

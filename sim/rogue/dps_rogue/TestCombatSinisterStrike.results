@@ -442,15 +442,15 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneHighOrder-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 305.623
-  tps: 216.9908
+  dps: 305.86117
+  tps: 217.15972
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneHighOrder-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 267.13167
-  tps: 189.66302
+  dps: 267.36967
+  tps: 189.83194
  }
 }
 dps_results: {
@@ -463,64 +463,64 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneHighOrder-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 139.45767
-  tps: 99.011
+  dps: 139.57683
+  tps: 99.09804
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneHighOrder-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 122.62717
-  tps: 87.06513
+  dps: 122.7375
+  tps: 87.1459
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneHighOrder-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 173.96667
-  tps: 123.51376
+  dps: 174.03667
+  tps: 123.56577
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneWindshaper-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 305.623
-  tps: 216.9908
+  dps: 305.55117
+  tps: 216.93867
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneWindshaper-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 267.13167
-  tps: 189.66302
+  dps: 267.08483
+  tps: 189.63029
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneWindshaper-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 368.72333
-  tps: 261.7953
+  dps: 368.50667
+  tps: 261.63434
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneWindshaper-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 139.45767
-  tps: 99.011
+  dps: 139.45167
+  tps: 99.00996
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneWindshaper-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 122.62717
-  tps: 87.06513
+  dps: 122.638
+  tps: 87.07095
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-SkyborneWindshaper-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 173.96667
-  tps: 123.51376
+  dps: 173.89583
+  tps: 123.46175
  }
 }
 dps_results: {

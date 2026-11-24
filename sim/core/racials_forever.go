@@ -49,13 +49,16 @@ func applyForeverRaceEffects(agent Agent) {
 		// Artisan's Precision: "Increases hit chance with spells and attacks by 1%" (development
 		// notes 2026-10-26, which remove Earth Fury, 70425's 2% critical strike bonus to damage
 		// and healing; 70338 had Mace Specialization, 1% crit with a mace). And Big Game
-		// Hunter. Stoneform is a defensive cooldown the sim does not measure.
+		// Hunter, and Stoneform.
 		if on("precision") {
 			character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
 			character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
 		}
 		if on("beast") {
 			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
+		}
+		if on("stoneform") {
+			character.registerForeverStoneform()
 		}
 
 	case proto.Race_RaceNightElf:
@@ -125,6 +128,9 @@ func applyForeverRaceEffects(agent Agent) {
 		if on("berserking") {
 			makeBerserkingCooldown(character, .1, character.NewTimer())
 		}
+		if on("regen") {
+			character.registerTrollRegeneration()
+		}
 
 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
 		// Wind Blessed (1259710): 2% spellcasting, melee and ranged haste ("Wind-Blessed Haste
@@ -152,9 +158,11 @@ func applyForeverRaceEffects(agent Agent) {
 // regeneration by 50% (was 100%), with a 15-second duration", 2026-10-26; 70630 to 70707 read
 // 100% for 30 sec). Used at a Ley Line it also grants Attuned (1259691) for an hour, which
 // raises it to 100%; the sim fights away from Ley Lines, so it never gets that. Aura 110 is the
-// one Innervate and Evocation use, so it raises the Spirit part of the regen by half and leaves
-// mp5 alone, and it adds nothing inside the five second rule unless some of the Spirit regen
-// goes on while casting. The sim leaves it to the APL.
+// one Innervate and Evocation use. Under Forever, Innervate's aura 110 multiplies the MP5 as well
+// as the Spirit regen and leaves periodic energize ticks (Blessing of Wisdom, Mana Spring) alone
+// (wowsims/forever EV-0114, a 1.60.1.70938 ledger), so Energized raises the Spirit regen and that
+// MP5 by half. Inside the five second rule it adds half the MP5 and half of whatever Spirit regen
+// goes on while casting. No log has measured Energized itself. The sim leaves it to the APL.
 //
 // "This ability cannot be used while Innervate is active, and will be replaced by Innervate as a
 // more powerful effect" (development notes 2026-11-02): it can't be cast under an Innervate, and
@@ -167,10 +175,12 @@ func (character *Character) registerReadLeyline() {
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier += 0.5
+			character.PseudoStats.MP5RegenMultiplier += 0.5
 			character.UpdateManaRegenRates()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier -= 0.5
+			character.PseudoStats.MP5RegenMultiplier -= 0.5
 			character.UpdateManaRegenRates()
 		},
 	})
@@ -253,6 +263,7 @@ func (character *Character) registerForeverBloodFury() {
 		character.NewDynamicMultiplyStat(stats.RangedAttackPower, 1.1),
 		character.NewDynamicMultiplyStat(stats.SpellPower, 1.1),
 		character.NewDynamicMultiplyStat(stats.HealingPower, 1.1),
+		character.NewDynamicMultiplyStat(stats.SpellDamage, 1.1),
 	}
 	var bonusWeaponDamage [3]float64
 	weapons := func() [3]*Weapon {
@@ -542,14 +553,13 @@ func applyEureka(spell *Spell, scope uint8, sign float64) {
 // internal cooldown to 15 sec ("reduced to 15 seconds (was 25 seconds)"), server side: client
 // 70634 still reads 25000.
 //
-// "Up to" reads as a cap, and the amount under it is not published. The drain is modelled
-// at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
-// damage that cannot crit, cannot proc anything and heals the caster for what it deals.
+// The racial's description says "up to" 5%, but the drain's own tooltip says "Steals life from
+// target enemy equal to $1260189s1% of your maximum Health" (client 70170), with 5 base points and
+// no coefficient, so the drain is 5% of maximum health (docs/tank_warrior.md, Racials 2026-11-24).
+// It is Shadow damage that cannot crit, cannot proc anything and heals the caster for what it
+// deals.
 //
-// We assumed a 15 sec internal cooldown for a while and took it out on 2026-09-23 once the
-// beta showed nothing like it. Client 70338 does give the proc aura a ProcCategoryRecovery of
-// 1000 ms, a 1 sec internal cooldown too short to see in those logs, so the two triggers below
-// share a 1 sec cooldown.
+// The two triggers below share the internal cooldown (15 sec, below).
 //
 // The roll happens when a hostile ability is used, not when it lands, so an ability rolls
 // whether or not it hits. Since the 2026-09-24 beta build the ability needs a damage
@@ -644,4 +654,73 @@ func (character *Character) registerTouchOfTheGrave() {
 		ProcChance: procChance,
 		Handler:    proc,
 	})
+}
+
+// Forever Stoneform (20594, client 1.60.1.71037): Physical damage taken reduced by 10% for 8 sec
+// (aura 87, misc 1; DurationIndex 31), 3 min cooldown, on the global cooldown. Its Bleed, Poison
+// and Disease removal and immunity are left out: no scored boss applies one to the tank. The
+// Classic Stoneform in racials.go (10% armor) never runs under Forever.
+func (character *Character) registerForeverStoneform() {
+	actionID := ActionID{SpellID: 20594}
+	aura := character.RegisterAura(Aura{
+		Label:    "Stoneform",
+		ActionID: actionID,
+		Duration: time.Second * 8,
+		OnGain: func(_ *Aura, _ *Simulation) {
+			character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= 0.9
+		},
+		OnExpire: func(_ *Aura, _ *Simulation) {
+			character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= 0.9
+		},
+	})
+	spell := character.RegisterSpell(SpellConfig{
+		ActionID: actionID,
+		Flags:    SpellFlagNoOnCastComplete,
+		Cast: CastConfig{
+			DefaultCast: Cast{GCD: GCDDefault},
+			CD: Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: time.Minute * 3,
+			},
+		},
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			aura.Activate(sim)
+		},
+	})
+	character.AddMajorCooldown(MajorCooldown{
+		Spell: spell,
+		Type:  CooldownTypeSurvival,
+	})
+}
+
+// Troll Regeneration (20555, client 1.60.1.71037): health regeneration increased by 20% (aura 88)
+// and 20% of it continues in combat (aura 116); 70338 had 10% and 10%. A sim fight is all combat,
+// so this is the whole racial: every 2 sec tick, 20% of 1.2 times the Spirit regeneration the
+// leveling sim uses (outOfCombatHealthRegen, Wrath's tables; a beta measurement put real ticks at
+// 0.65 to 1.35 times them). It reads Spirit, not health, so a tank score's replay can follow it.
+func (character *Character) registerTrollRegeneration() {
+	metrics := character.NewHealthMetrics(ActionID{SpellID: 20555})
+	tick := func(sim *Simulation) {
+		perSecond := outOfCombatHealthRegen(character.Class, character.Level, character.GetStat(stats.Spirit)) *
+			trollHealthRegenMultiplier * trollCombatHealthRegen
+		if perSecond > 0 {
+			character.GainHealth(sim, perSecond*2, metrics)
+		}
+	}
+	// The ticks start at the first damage taken: a pending action every 2 sec changes when the
+	// rotation is looked at again, so a damage dealer that never takes damage keeps its numbers.
+	started := false
+	MakePermanent(character.RegisterAura(Aura{
+		Label: "Regeneration (Troll)",
+		OnReset: func(_ *Aura, _ *Simulation) {
+			started = false
+		},
+		OnSpellHitTaken: func(_ *Aura, sim *Simulation, _ *Spell, result *SpellResult) {
+			if started || result.Damage <= 0 || sim.Encounter.leveling != nil {
+				return // the leveling session ticks the regen itself, in and out of combat (levelingSession.tick)
+			}
+			started = true
+			StartPeriodicAction(sim, PeriodicActionOptions{Period: time.Second * 2, OnAction: tick})
+		},
+	}))
 }

@@ -6,24 +6,24 @@
   "isDefault": true,
   "pr": 104,
   "race": "Undead",
-  "talents": "05500021035001351-0050003201-005004",
+  "talents": "05500023035001351-0050003201-034",
   "treeNames": [
     "Affliction",
     "Demonology",
     "Destruction"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase0_affliction",
   "apl": "level60_affliction",
   "published": {
-    "dps": 1034.1,
-    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats; Affliction's Wrack build with the Imp sacrificed), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 965.67,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1034.1,
-    "stderr": 0.25,
+    "dps": 965.67,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Deep Affliction with Wrack as the main spell, channelled back to back while Corruption, Siphon Life and Bane of Agony tick twice as fast under it, with Soul Siphon and Shadow Mastery, the Imp sacrificed for 15% Shadow damage and no demon out.",
   "keyTalents": [
@@ -42,7 +42,6 @@
     "Life Tap below 5% mana or when the filler costs more than the mana left",
     "Bane of Agony when it is down, with more than 12s left (no Bane of Doom: Wrack speeds up Agony's ticks, not Doom's one tick)",
     "Corruption when it is down or has less than 2.5s left, with more than 3s left",
-    "Immolate when it is down or ends within its cast time, with more than 15s left",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
     "Siphon Life when it is down",
@@ -73,5 +72,5 @@
     "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
     "Soul shards and Life Tap's health cost aren't tracked."
   ],
-  "notes": "Request from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -talents 05500021035001351-0050003201-005004 -race Undead -duration 180, no edits (checked equal, round 70753). Demon Armor; no demon out, the Imp sacrificed, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps (standard 32). Undead since round 70753: with no demon out the Orc's Command does nothing; at 180 sec, 20,000 iterations, seeds 1 / 1000003: Undead 1034.1 / 1034.0, Orc 1032.8 / 1033.3, Human 1030.7 / 1031.2 (the best Alliance race). After hotfix 113766 (2026-11-10) at 180 sec, 20,000 iterations, seed 1: Undead 1076.9, Orc 1075.7, Human 1073.6, Gnome 1068.3, Troll 1064.8; Undead stays."
+  "notes": "Phase 0 (2026-11-24, step 4, orchestration/round_notes_2026-11-11/phase0_step4_warlock.md): wears level60_phase0_affliction (6% spell hit, cap 16%) in place of level60_phase1_synthetic, request regenerated with mksettings -gear level60_phase0_affliction. No Immolate (knob search on the Phase 0 set, +14.0 at 180s). Talents 05500023035001351-0050003201-034 (Fel Concentration 3, Improved Shadow Bolt 3, no Aftermath), was 05500021035001351-0050003201-005004: +3.4 at 180s. Earlier: Request from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -talents 05500021035001351-0050003201-005004 -race Undead -duration 180, no edits (checked equal, round 70753). Demon Armor; no demon out, the Imp sacrificed, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps (standard 32). Undead since round 70753: with no demon out the Orc's Command does nothing; at 180 sec, 20,000 iterations, seeds 1 / 1000003: Undead 1034.1 / 1034.0, Orc 1032.8 / 1033.3, Human 1030.7 / 1031.2 (the best Alliance race). After hotfix 113766 (2026-11-10) at 180 sec, 20,000 iterations, seed 1: Undead 1076.9, Orc 1075.7, Human 1073.6, Gnome 1068.3, Troll 1064.8; Undead stays."
 }
