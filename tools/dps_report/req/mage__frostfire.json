@@ -112,7 +112,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 996032
+                        "itemId": 10455
                       }
                     },
                     "condition": {

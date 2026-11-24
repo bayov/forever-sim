@@ -112,7 +112,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 998015
+                        "itemId": 10455
                       }
                     }
                   },
@@ -171,7 +171,7 @@
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "itemId": 998015
+                                "itemId": 10455
                               }
                             }
                           },
@@ -180,7 +180,7 @@
                               "lhs": {
                                 "spellTimeToReady": {
                                   "spellId": {
-                                    "itemId": 998015
+                                    "itemId": 10455
                                   }
                                 }
                               },
@@ -207,7 +207,7 @@
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
-                                        "itemId": 998015
+                                        "itemId": 10455
                                       }
                                     }
                                   },

@@ -4,7 +4,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":15473}}},"doAtValue":{"const":{"val":"-4.5s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":19312}}},"doAtValue":{"const":{"val":"-3s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":10947}}},"doAtValue":{"const":{"val":"-1.5s"}}},
-        {"action":{"castSpell":{"spellId":{"itemId":995034}}},"doAtValue":{"const":{"val":"-0.1s"}}},
+        {"action":{"castSpell":{"spellId":{"itemId":10455}}},"doAtValue":{"const":{"val":"-0.1s"}}},
         {"action":{"castSpell":{"spellId":{"itemId":250937}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [

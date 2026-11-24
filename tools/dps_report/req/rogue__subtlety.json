@@ -577,11 +577,11 @@
                   }
                 },
                 {
-                  "notes": "The synthetic on-use trinket on cooldown. Without the trinket ignore the warning on this line.",
+                  "notes": "The on-use trinket on cooldown. Without the trinket ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 994202
+                        "itemId": 10455
                       }
                     }
                   }

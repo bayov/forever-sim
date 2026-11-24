@@ -78,7 +78,7 @@
         {
          "auraIsActive": {
           "auraId": {
-           "itemId": 996032
+           "itemId": 10455
           }
          }
         },
@@ -87,7 +87,7 @@
           "lhs": {
            "spellTimeToReady": {
             "spellId": {
-             "itemId": 996032
+             "itemId": 10455
             }
            }
           },
@@ -126,7 +126,7 @@
         {
          "auraIsActive": {
           "auraId": {
-           "itemId": 996032
+           "itemId": 10455
           }
          }
         },
@@ -135,7 +135,7 @@
           "lhs": {
            "spellTimeToReady": {
             "spellId": {
-             "itemId": 996032
+             "itemId": 10455
             }
            }
           },

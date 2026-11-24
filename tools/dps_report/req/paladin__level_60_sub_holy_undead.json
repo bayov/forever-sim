@@ -145,7 +145,7 @@
                               "lhs": {
                                 "spellUsesLostByDelay": {
                                   "spellId": {
-                                    "itemId": 992015
+                                    "itemId": 10455
                                   },
                                   "delay": {
                                     "math": {
@@ -197,7 +197,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "itemId": 992015
+                        "itemId": 10455
                       }
                     }
                   }

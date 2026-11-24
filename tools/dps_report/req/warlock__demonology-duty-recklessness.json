@@ -144,7 +144,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 997022
+                        "itemId": 22678
                       }
                     }
                   },
@@ -292,7 +292,7 @@
                                         "lhs": {
                                           "spellTimeToReady": {
                                             "spellId": {
-                                              "itemId": 997022
+                                              "itemId": 22678
                                             }
                                           }
                                         },
@@ -309,7 +309,7 @@
                                         "lhs": {
                                           "spellTimeToReady": {
                                             "spellId": {
-                                              "itemId": 997022
+                                              "itemId": 22678
                                             }
                                           }
                                         },

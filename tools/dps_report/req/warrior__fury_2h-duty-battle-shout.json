@@ -620,69 +620,6 @@
                 {
                   "action": {
                     "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "cmp": {
-                              "op": "OpLe",
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "34s"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "itemId": 991018
-                                  },
-                                  "delay": {
-                                    "math": {
-                                      "op": "OpSub",
-                                      "lhs": {
-                                        "remainingTime": {}
-                                      },
-                                      "rhs": {
-                                        "const": {
-                                          "val": "34s"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 991018
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "condition": {
                       "cmp": {
                         "op": "OpLt",
                         "lhs": {

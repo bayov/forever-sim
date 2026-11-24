@@ -352,7 +352,7 @@
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "itemId": 993016
+                                "itemId": 10455
                               }
                             }
                           },
@@ -362,7 +362,7 @@
                               "lhs": {
                                 "spellUsesRemaining": {
                                   "spellId": {
-                                    "itemId": 993016
+                                    "itemId": 10455
                                   },
                                   "minTimeLeft": {
                                     "const": {
@@ -389,7 +389,7 @@
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
-                                        "itemId": 993016
+                                        "itemId": 10455
                                       }
                                     }
                                   },
@@ -426,7 +426,7 @@
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "itemId": 993016
+                                "itemId": 10455
                               }
                             }
                           },
@@ -436,7 +436,7 @@
                               "lhs": {
                                 "spellUsesRemaining": {
                                   "spellId": {
-                                    "itemId": 993016
+                                    "itemId": 10455
                                   },
                                   "minTimeLeft": {
                                     "const": {
@@ -463,7 +463,7 @@
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
-                                        "itemId": 993016
+                                        "itemId": 10455
                                       }
                                     }
                                   },

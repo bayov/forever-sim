@@ -375,7 +375,7 @@
                           {
                             "auraIsActive":  {
                               "auraId":  {
-                                "itemId":  990015
+                                "itemId":  10455
                               }
                             }
                           },
@@ -385,7 +385,7 @@
                               "lhs":  {
                                 "spellUsesRemaining":  {
                                   "spellId":  {
-                                    "itemId":  990015
+                                    "itemId":  10455
                                   },
                                   "minTimeLeft":  {
                                     "const":  {
@@ -412,7 +412,7 @@
                                   "delay":  {
                                     "spellTimeToReady":  {
                                       "spellId":  {
-                                        "itemId":  990015
+                                        "itemId":  10455
                                       }
                                     }
                                   },
