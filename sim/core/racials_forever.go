@@ -259,6 +259,7 @@ func (character *Character) registerForeverBloodFury() {
 		character.NewDynamicMultiplyStat(stats.RangedAttackPower, 1.1),
 		character.NewDynamicMultiplyStat(stats.SpellPower, 1.1),
 		character.NewDynamicMultiplyStat(stats.HealingPower, 1.1),
+		character.NewDynamicMultiplyStat(stats.SpellDamage, 1.1),
 	}
 	var bonusWeaponDamage [3]float64
 	weapons := func() [3]*Weapon {
