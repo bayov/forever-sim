@@ -46,12 +46,6 @@
       "kind": "Use"
     },
     {
-      "id": 2915,
-      "name": "Taran Icebreaker",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 4696,
       "name": "Lapidis Tankard of Tidesippe",
       "slot": "offhand",
@@ -108,12 +102,6 @@
     {
       "id": 11608,
       "name": "Dark Iron Pulverizer",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
-      "id": 11803,
-      "name": "Force of Magma",
       "slot": "mainhand",
       "kind": "Chance on hit"
     },
@@ -178,12 +166,6 @@
       "kind": "Chance on hit"
     },
     {
-      "id": 13285,
-      "name": "The Blackrock Slicer",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 13353,
       "name": "Book of the Dead",
       "slot": "offhand",
@@ -208,28 +190,10 @@
       "kind": "Chance on hit"
     },
     {
-      "id": 13408,
-      "name": "Soul Breaker",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
       "id": 13515,
       "name": "Ramstein's Lightning Bolts",
       "slot": "trinket1",
       "kind": "Use"
-    },
-    {
-      "id": 15418,
-      "name": "Shimmering Platinum Warhammer",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
-    },
-    {
-      "id": 15853,
-      "name": "Windreaper",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
     },
     {
       "id": 15867,
@@ -254,12 +218,6 @@
       "name": "Furbolg Medicine Pouch",
       "slot": "offhand",
       "kind": "Use"
-    },
-    {
-      "id": 17002,
-      "name": "Ichor Spitter",
-      "slot": "mainhand",
-      "kind": "Chance on hit"
     },
     {
       "id": 17690,
@@ -565,7 +523,7 @@
     }
   ],
   "foreverNoTooltip": 552,
-  "unlisted": 1430,
+  "unlisted": 1428,
   "faction": "Horde",
   "factionDropped": [
     {

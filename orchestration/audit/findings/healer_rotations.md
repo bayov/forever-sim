@@ -2,6 +2,14 @@
 
 ## Open
 
+### healer_rotations-20261124-1: Raid-role healer bench moved with the DPS report's Frost mage preset (28 raid rows, 16 by more than 0.02 carry, Holy paladin raid Golemagg +0.096), because healbench's filler is `tools/dps_report/req/mage__frost.json`
+- severity: medium (carry only; signs mixed, mean about +0.02; no healer rotation changed)
+- affects: all four raid-healer requests (druid_restoration_raid, paladin_holy_raid, priest_holy_raid, shaman_restoration_raid) on every boss file; tank-role rows byte-identical (the tank role's fillers take no damage)
+- found: 2026-11-24, master 566067a39 (last audited c78d983ac; the ref was older, from before b8b89d6a8)
+- evidence: `tools/audit/healer_rotations/baseline.sh`, 1,000 it, default seed. Only raid rows moved, e.g. paladin_holy_raid golemagg 2.679 -> 2.775, ragnaros 1.270 -> 1.315, onyxia 1.008 -> 0.984; druid_restoration_raid vaelastrasz 1.042 -> 1.094, magmadar 1.857 -> 1.907; priest_holy_raid vaelastrasz 1.264 -> 1.217, magmadar 2.100 -> 2.145; shaman_restoration_raid vaelastrasz 1.139 -> 1.096, chromaggus 1.092 -> 1.127; shaman raid Onyxia other deaths 10.6% -> 7.8%. Cause confirmed: the master healbench with `-filler` set to `git show b8b89d6a8^:tools/dps_report/req/mage__frost.json` gives paladin_holy_raid golemagg 2.679 (the old ref) exactly. b8b89d6a8 (Ice Lance re-tune) changed the Frost mage's talents (`0502050030001-4-...` -> `050203203-5-...`) and one APL timing (6s -> 2s), so the raid that healers keep alive changed. The watched druid changes (rake.go, rip.go, tuning_70753.go comment) don't reach healers.
+- proposed fix: pin the filler: copy the pre- or post-b8b89d6a8 frost request to `tools/healbench/req/filler_mage.json` and make it healbench's `-filler` default, so DPS preset tuning stops moving the healer score (and the healer_fairness/healer_mechanics baselines with it). Otherwise accept and refresh the ref whenever the mage preset changes. Ref refreshed this pass on the current filler.
+- needs: orchestrator fix
+
 ### healer_rotations-20261118-1: Healer baseline moved without a rotation change (42 of 63 rows; 9 by more than 0.02 carry, Restoration shaman raid Magmadar -0.109), most likely by 7199c8f9c (idle skip now wakes for hits a healer sees a reaction time late)
 - severity: medium (carry only; one row large; signs mixed, so it may be mostly a reshuffled random stream)
 - affects: all healers but Holy paladin tank, Discipline and Holy priest tank (those rows byte-identical)

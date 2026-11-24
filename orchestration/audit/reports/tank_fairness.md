@@ -1,16 +1,38 @@
-# tank_fairness pass 28: 2026-11-23, master 7e0a01a8d
+# tank_fairness pass 29: 2026-11-24, master 566067a39
 
-Due: 1 watched file changed since 2de7021bf: `orchestration/standards.md`, new standard 42 (Phase 0 gear whose
-availability is unsure is included with a note, not asked about). The rest of the range is Phase 0 DPS work (prices,
-content list, arms / fury / combat swords BiS files) and other auditors' state. No change to `sim/`, `proto/`,
-`tools/tankbench`, the tank requests, the tank UIs or `docs/tank_*.md`.
+Due: 6 watched files changed since c78d983ac: `sim/warrior/{talents,heroic_strike_cleave,reckless_swings}.go`
+(cd71e78c2: Unbridled Wrath no longer procs off Shield Slam, Revenge or Shield Bash, EV-0148; under Forever a Heroic
+Strike or Cleave spends one Flurry charge a cast, EV-0138, user ruling 2026-11-22; Reckless Swings) and
+`sim/druid/{rip,rake,tuning_70753}.go` (be773f5eb: Rip and Rake attack power shares from logs; cat only). No change to
+the tank requests, `tools/tankbench`, `tools/encounters`, the tank UIs or docs.
 
-Standard 42 governs Phase 0 BiS gear selection only. The tank presets use the synthetic sets on their Tanks rows
-(standards 36), and no tank preset, request or doc has a Phase 0 build, so it changes no term the tanks are compared on.
-Tank requests and sim code are byte-identical to pass 27's master, so tankbench was not re-run: the baseline
-(`ref/tank_fairness/summary.tsv`) and the tables below stand. Quiet: no new finding. Open findings unchanged
-(20261105-2, 20261105-1, 20261104-2, 20261104-5). If Phase 0 tank builds are added later, check them against
-standard 42 and standards 36 then.
+## Method
+
+Built tankbench at 566067a39 (`make proto items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on the 12
+presets x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against the baseline. Only the
+three warrior presets moved; bear, paladin and Warden rows identical to the byte. Baseline refreshed.
+
+| warrior preset | score (old -> new) | TPS | healing needed |
+|---|---|---|---|
+| Max threat (w 1/3) | 4235.2 -> 4231.7 (± 5.3) | 2177 -> 2175 | 466 -> 471 |
+| Balanced (w 1) | 3474.7 -> 3469.0 (± 7.3) | 2075 -> 2069 | 340 -> 342 |
+| Max survival (w 3) | 1836.7 -> 1814.7 (± 12.2) | 1770 -> 1765 | 215 -> 216 |
+
+Both rules are log-measured Forever behaviour applied to every warrior alike, so the loss is fair, not a finding.
+
+## Ranking (six-boss mean, own weight, seed 1)
+
+| weight | order | scores |
+|---|---|---|
+| Max threat | Warrior, Paladin, Bear, Warden | 4232 / 3240 / 3128 / 2628 |
+| Balanced | Warrior, Paladin, Bear, Warden | 3469 / 2797 / 2130 / 1272 |
+| Max survival | Warrior, Paladin, Bear, Warden | 1815 / 1778 / 347 / -2252 |
+
+The warrior's Max survival lead over the paladin is now 37 (2%), about two standard errors; finding 20261105-1's
+potion (+374) would still reverse it. Warrior builds at w 1/3, 1, 3: Max threat **4232** / 3307 / 533, Balanced
+4115 / **3469** / 1532, Max survival 3421 / 3019 / **1815**: each leads its own weight. Other specs as in pass 27 below.
+
+Quiet: no new finding. Open findings unchanged (20261105-2, 20261105-1, 20261104-2, 20261104-5).
 
 ## Earlier pass 27 (method and tables still current)
 

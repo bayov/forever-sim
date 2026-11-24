@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c78d983aca33ba66a9f9e80c39cdc671daad4bd9"
+  "master": "e7062a6a4490fb9c8077d14f873797e8cdcd5978"
  },
- "last_pass_at": "2026-11-23T00:50:12Z",
- "pass": 28,
+ "last_pass_at": "2026-11-24T00:52:21Z",
+ "pass": 29,
  "result": "quiet",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-23T18:54:07Z",
+ "checked_at": "2026-11-24T01:09:06Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 28 (5518f4873f): 1 watched file changed (attack.go 79c688d0c: a WeaponAttack with SwingSpeed<=0 never swings). Tanks unaffected: shield off-hands never schedule an OH swing (IsDualWielding false), bosses and tank main hands have SwingSpeed>0, weapon swap resets swingAt. Client still 1.60.1.71037. Tank tests pass. Open findings unchanged."
+ "note": "Pass 29 (566067a394): cd71e78c2 drops Shield Slam/Revenge/Shield Bash from Unbridled Wrath (matches EV-0148 prot log), HS/Cleave spend Reckless Swings charges landed or not (EV-0138); be773f5eb cat-only. Tests pass. No new findings; EV-0148 evidence added to 20261117-1 (leans to keeping Sunder out)."
 }

@@ -12,6 +12,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-11-22 (pass 49, 7a6d1beb9): no druid or race change in range; Balance requests still Night Elf, shared 20k run Balance 956.1 / Wrath 866.0 (baseline Wrath High Order 872.5). Still open.
 - 2026-11-23 (pass 50, 5518f4873): no druid or race change in range; builds.json race table still High Order +3.8 to +6.1 for all four. Still open.
 - 2026-11-23 (pass 51, 2de7021bf): no druid or race change in range; builds.json race table unchanged. Still open.
+- 2026-11-24 (pass 53, 566067a39): no druid Balance or race change in range (be773f5eb touches Rip and Rake only); shared 20k run Balance 956.1 unchanged. Still open.
 - proposed fix: set the four Balance requests' and presets' race to Skyborne High Order (Balance and Balance FF duty with the race-tuned rotation the race table already uses) and re-sim them; or record in standards why Night Elf stays.
 - needs: orchestrator fix
 
