@@ -9,66 +9,65 @@
             "equipment": {
               "items": [
                 {
-                  "id": 993101,
-                  "enchant": 1508
+                  "id": 279253,
+                  "enchant": 2543
                 },
                 {
-                  "id": 993102,
+                  "id": 15411,
                   "enchant": 1249059
                 },
                 {
-                  "id": 993103
+                  "id": 272106
                 },
                 {
-                  "id": 993104,
+                  "id": 13340,
                   "enchant": 1219587
                 },
                 {
-                  "id": 993105,
+                  "id": 252483,
                   "enchant": 1891
                 },
                 {
-                  "id": 993106,
-                  "enchant": 1248497
+                  "id": 18375,
+                  "enchant": 1248599
                 },
                 {
-                  "id": 993107,
-                  "enchant": 1887
+                  "id": 15063,
+                  "enchant": 931
                 },
                 {
-                  "id": 993108
+                  "id": 272397
                 },
                 {
-                  "id": 993109,
+                  "id": 15062,
                   "enchant": 1508
                 },
                 {
-                  "id": 993110,
+                  "id": 226881,
                   "enchant": 1887
                 },
                 {
-                  "id": 993111
+                  "id": 275976
                 },
                 {
-                  "id": 993112
+                  "id": 272408
                 },
                 {
-                  "id": 993116
+                  "id": 10455
                 },
                 {
-                  "id": 993117
+                  "id": 19289
                 },
                 {
-                  "id": 993113,
-                  "enchant": 1900
+                  "id": 13952,
+                  "enchant": 803
                 },
                 {
-                  "id": 993114,
+                  "id": 12590,
                   "enchant": 2564
                 },
                 {
-                  "id": 993115,
-                  "enchant": 664
+                  "id": 18323
                 }
               ]
             },
@@ -417,8 +416,8 @@
       "faerieFire": true,
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
