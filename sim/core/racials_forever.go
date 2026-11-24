@@ -700,19 +700,27 @@ func (character *Character) registerForeverStoneform() {
 // 0.65 to 1.35 times them). It reads Spirit, not health, so a tank score's replay can follow it.
 func (character *Character) registerTrollRegeneration() {
 	metrics := character.NewHealthMetrics(ActionID{SpellID: 20555})
-	character.RegisterResetEffect(func(sim *Simulation) {
-		if sim.Encounter.leveling != nil {
-			return // the leveling session ticks the regen itself, in and out of combat (levelingSession.tick)
+	tick := func(sim *Simulation) {
+		perSecond := outOfCombatHealthRegen(character.Class, character.Level, character.GetStat(stats.Spirit)) *
+			trollHealthRegenMultiplier * trollCombatHealthRegen
+		if perSecond > 0 {
+			character.GainHealth(sim, perSecond*2, metrics)
 		}
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period: time.Second * 2,
-			OnAction: func(sim *Simulation) {
-				perSecond := outOfCombatHealthRegen(character.Class, character.Level, character.GetStat(stats.Spirit)) *
-					trollHealthRegenMultiplier * trollCombatHealthRegen
-				if perSecond > 0 {
-					character.GainHealth(sim, perSecond*2, metrics)
-				}
-			},
-		})
-	})
+	}
+	// The ticks start at the first damage taken: a pending action every 2 sec changes when the
+	// rotation is looked at again, so a damage dealer that never takes damage keeps its numbers.
+	started := false
+	MakePermanent(character.RegisterAura(Aura{
+		Label: "Regeneration (Troll)",
+		OnReset: func(_ *Aura, _ *Simulation) {
+			started = false
+		},
+		OnSpellHitTaken: func(_ *Aura, sim *Simulation, _ *Spell, result *SpellResult) {
+			if started || result.Damage <= 0 || sim.Encounter.leveling != nil {
+				return // the leveling session ticks the regen itself, in and out of combat (levelingSession.tick)
+			}
+			started = true
+			StartPeriodicAction(sim, PeriodicActionOptions{Period: time.Second * 2, OnAction: tick})
+		},
+	}))
 }
