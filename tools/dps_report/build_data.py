@@ -336,15 +336,17 @@ for _o in outs:  # the request's meta file is the source of truth for text (it c
 outs.sort(key=lambda o: (CLASS_ORDER.index(o['meta']['class']), -o['main']['dps']))
 
 builds, races, lengths, abilities, auras, hist, stats, gear, setup, notes = [], [], [], [], [], [], [], [], [], []
-# The gear rules of the bundled gear round (orchestration/standards.md 1b, 5a, 8a), shown on the Method tab.
+# The gear rules of the Phase 0 lists (orchestration/standards.md 1b, 8a and 42, tools/rotopt/bis_phase0.sh), shown
+# on the Method tab. Tanks and healers keep the synthetic sets (standards 35, 36).
 GEAR_RULES = [
-    "Each piece matches Forever's stat budget for its slot, item level and type, within 1%.",
-    "In the budget, spell power counts 0.86 a point, attack power 0.5, ranged attack power 0.4 and every other stat 1.",
-    "Item levels: 66 for head, shoulders, chest, hands, legs and feet. 71 for neck, back, wrist, waist, rings, one-handers and ranged. 76 for two-handers.",
-    "Each spec gives Stamina the same share as its Season of Discovery level 60 best-in-slot sets. Hit is at the cap.",
-    "Two synthetic item level 71 trinkets. One has stats. The other, used every 2 min, gives 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20s. Forever's launch trinkets aren't simulated.",
-    "Retribution and Enhancement also carry spell power and Intellect.",
-    "Only the tier set's 2-piece bonus is active. Enchants are the best Phase 1 ones from outside raids.",
+    "Each DPS spec wears its Phase 0 list: the best gear it can get before the first raids open on 2026-12-09, found by a gear search on the spec's preset.",
+    "In: dungeon drops, quest rewards, crafted gear, world drops, the auction house and reputation rewards up to Revered, PvP reputations included.",
+    "Ranked but never picked: Exalted rewards and items that cost a lot of gold for the DPS they add.",
+    "Out: raid and world boss loot, gear made from raid materials, and what only the other faction can get, by the preset's race.",
+    "An item we aren't sure is open yet is used, with a note saying what is unsure.",
+    "Every slot gets the best enchant that is open before the raids. Set bonuses count at however many pieces the list wears. Hit is whatever sims best, not forced to the cap.",
+    "Trinkets are real. A use or proc counts where the sim models it. An item whose effect isn't modelled counts for its stats alone.",
+    "Tanks and healers still wear made-up gear at Phase 1 item levels.",
 ]
 for _i, _t in enumerate(GEAR_RULES):
     notes.append({'build': '_round', 'kind': 'gear', 'order': _i, 'text': _t})

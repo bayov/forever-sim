@@ -2577,6 +2577,8 @@ export function startReport(dash, events) {
       const q = r?.quality || g.quality || 'common';
       const set = r?.set ? r.set : null;
       const use = arr(r?.lines).some((l) => /^Use:/.test(String(l[1])));
+      // The tanks' and healers' made-up trinkets ("... Synthetic ... (Phase 1)") get a tag for their kind, and their
+      // names lose the suffix. The DPS presets' Phase 0 items are real, so neither touches them.
       const synth = /Synthetic/.test(g.item) && /^Trinket/.test(name);
       return tt(el('div', { class: 'item-picker-root', 'data-key': `${enc(b.id)},${enc(name)}` },
         el('div', { class: 'item-picker-icon-wrapper' },
