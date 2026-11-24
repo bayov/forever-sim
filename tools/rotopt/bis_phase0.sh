@@ -189,7 +189,13 @@
 # (2026-11-20) made a RANK_ONLY SLOTS=trinket,mainhand run 3 min, and EFFECTS_ONLY 2.5 min.
 set -e
 
-sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -T 'if(empty, "", "+")')"
+# The sim the list comes from: the last commit, with a + when the files differ from it. jj where
+# it is, git where it isn't (the cloud containers have no jj).
+if command -v jj >/dev/null 2>&1 && jj root >/dev/null 2>&1; then
+	sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -T 'if(empty, "", "+")')"
+else
+	sim="$(git rev-parse --short=12 HEAD)$(if [ -n "$(git status --porcelain)" ]; then echo +; fi)"
+fi
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
