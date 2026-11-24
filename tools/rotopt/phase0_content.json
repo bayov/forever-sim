@@ -238,6 +238,7 @@
   "12929": {"name": "Emberfury Talisman", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "12930": {"name": "Briarwood Reed", "note": "Drop: Jed Runewatcher, Lower Blackrock Spire"},
   "12936": {"name": "Battleborn Armbraces", "note": "Warchief Rend Blackhand · Upper Blackrock Spire · looted Nov 10"},
+  "12939": {"name": "Dal'Rend's Tribal Guardian", "include": true, "note": "Warchief Rend Blackhand · Blackrock Spire"},
   "12940": {"name": "Dal'Rend's Sacred Charge", "note": "Warchief Rend Blackhand · Blackrock Spire"},
   "12963": {"name": "Blademaster Leggings", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "12965": {"name": "Spiritshroud Leggings", "note": "The Beast (Upper Blackrock Spire)"},
