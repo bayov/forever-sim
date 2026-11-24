@@ -90,11 +90,12 @@ func outOfCombatHealthRegen(class proto.Class, level int32, spirit float64) floa
 // 3.3.5 emulators use 50%.) Food and water come on top.
 const sittingHealthRegenMultiplier = 4.0 / 3
 
-// Troll Regeneration (racials.md, unchanged under Forever): 10% more health regen, and 10% of
-// it goes on in combat. The beta measurement saw the combat part (+1 a tick against 10.5).
+// Troll Regeneration (20555): 20% more health regen, and 20% of it goes on in combat (client
+// 1.60.1.71037, auras 88 and 116; 10% and 10% in 70338, when a beta measurement saw the combat
+// part, +1 a tick against 10.5). registerTrollRegeneration uses them in every fight too.
 const (
-	trollHealthRegenMultiplier = 1.1
-	trollCombatHealthRegen     = 0.1
+	trollHealthRegenMultiplier = 1.2
+	trollCombatHealthRegen     = 0.2
 )
 
 // mobKillXP is the XP a normal mob of mobLevel gives at our level, by the 1.12 server's

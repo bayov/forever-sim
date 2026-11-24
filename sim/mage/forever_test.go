@@ -871,7 +871,7 @@ func TestForeverEverlookDeliveryBot(t *testing.T) {
 }
 
 // The High Order's Read Leyline is a 0.5 sec cast on a 2 min cooldown (client 1.60.1.70753), and
-// its Energized raises the Spirit part of the mana regen by 50% for 15 sec (development notes
+// its Energized raises the Spirit regen (and the MP5, TestForeverAura110ScalesMP5) by 50% for 15 sec (development notes
 // 2026-10-26). It can't be cast under an Innervate, and an Innervate ends it (development notes
 // 2026-11-02).
 func TestForeverReadLeyline(t *testing.T) {
@@ -919,6 +919,44 @@ func TestForeverReadLeyline(t *testing.T) {
 	if !readLeyline.CanCast(sim, mage.CurrentTarget) {
 		t.Error("Read Leyline can't be cast once the Innervate is gone")
 	}
+}
+
+// Innervate and Energized are aura 110, which under Forever multiplies the MP5 as well as the Spirit
+// regen, while a periodic energize aura like Blessing of Wisdom ticks its own amount under it:
+// wowsims/forever EV-0114 reads a Tauren druid's regen under Innervate as 5 × (Spirit regen + MP5),
+// with Blessing of Wisdom's ticks at 30 mana under it as outside it (1.60.1.70938).
+func TestForeverAura110ScalesMP5(t *testing.T) {
+	sim, mage := newMageWithRace(proto.Race_RaceSkyborneHighOrder, &proto.IndividualBuffs{
+		Innervates: 1, BlessingOfWisdom: proto.TristateEffect_TristateEffectRegular})
+	mage.AddStatDynamic(sim, stats.MP5, 20) // gear MP5, like Warchief's Blessing's aura in the ledger
+	bow := mage.PseudoStats.EnergizeMP5 / 5
+	if bow <= 0 {
+		t.Fatal("Blessing of Wisdom counts no periodic energize MP5")
+	}
+	spirit := mage.SpiritManaRegenPerSecondDefault()
+	gear := mage.GetStat(stats.MP5)/5 - bow
+	if math.Abs(gear-4) > 1e-9 {
+		t.Fatalf("gear MP5 regen %.3f, want 4", gear)
+	}
+	near := func(label string, got, want float64) {
+		if math.Abs(got-want) > 1e-9 {
+			t.Errorf("%s: %.4f mana a second, want %.4f", label, got, want)
+		}
+	}
+	near("unbuffed", mage.ManaRegenPerSecondWhileNotCasting(), spirit+gear+bow)
+
+	energized := mage.GetAura("Energized")
+	energized.Activate(sim)
+	near("Energized", mage.ManaRegenPerSecondWhileNotCasting(), 1.5*(spirit+gear)+bow)
+	energized.Deactivate(sim)
+	near("after Energized", mage.ManaRegenPerSecondWhileNotCasting(), spirit+gear+bow)
+
+	innervate := mage.GetAurasWithTag(core.InnervateAuraTag)[0]
+	innervate.Activate(sim)
+	near("Innervate", mage.ManaRegenPerSecondWhileNotCasting(), 5*(spirit+gear)+bow)
+	near("Innervate while casting", mage.ManaRegenPerSecondWhileCasting(), 5*(spirit+gear)+bow)
+	innervate.Deactivate(sim)
+	near("after Innervate", mage.ManaRegenPerSecondWhileNotCasting(), spirit+gear+bow)
 }
 
 func newMageWithRace(race proto.Race, buffs ...*proto.IndividualBuffs) (*core.Simulation, *Mage) {

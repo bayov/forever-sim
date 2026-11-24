@@ -298,6 +298,29 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 20594
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentTime": {}
+                        },
+                        "op": "OpGe",
+                        "rhs": {
+                          "const": {
+                            "val": "20s"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Stoneform on cooldown, after the opening, for its 10% less Physical damage. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "itemId": 10646
                       }
                     }
