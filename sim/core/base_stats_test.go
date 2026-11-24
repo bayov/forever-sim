@@ -34,8 +34,11 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 15, [5]float64{36, 23, 36, 29, 39}},
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 30, [5]float64{51, 30, 52, 44, 56}},
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 43, [5]float64{66, 37, 70, 60, 74}},
-		// We have no sheet past 43 yet, so level 44 stays on 1.12's row.
-		{proto.Race_RaceOrc, proto.Class_ClassShaman, 44, [5]float64{66, 40, 71, 63, 76}},
+		// We have no sheet from 44 to 59, so those take 1.12's row plus a gap drawn straight from level 43's
+		// to the level 60 row's (+3, -3, -3, EV-0181): level 44 has 1.12's 66, 40, 71, 63, 76 shifted by
+		// +2, -2, -1, and level 59 1.12's 86, 51, 95, 85, 101 by +3, -3, -3.
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 44, [5]float64{68, 38, 71, 62, 76}},
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 59, [5]float64{89, 48, 95, 82, 101}},
 		// The Skyborne's own offsets from level 1 naked sheets (wowsims/forever EV-0093, 2026-11-06): the
 		// Human's row, with no Human Spirit, plus High Order -3, +4, -1, +4, -3 and Windshaper -4, +3, 0,
 		// -1, +3.
@@ -55,7 +58,12 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 60, [5]float64{117, 84, 109, 34, 42}},
 		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassWarrior, 60, [5]float64{116, 83, 110, 29, 48}},
 		{proto.Race_RaceTauren, proto.Class_ClassDruid, 60, [5]float64{70, 55, 72, 95, 112}},
-		{proto.Race_RaceOrc, proto.Class_ClassShaman, 60, [5]float64{88, 52, 97, 87, 103}},
+		// The shaman's class row is a level 60 Dwarf shaman's sheet less the Dwarf offset (EV-0181: Str 90,
+		// Agi 48, Sta 98, Int 86, Spi 99 over builds 70888 to 71037), which puts 1.12's 85, 55, 90 at
+		// 88, 52, 87.
+		{proto.Race_RaceDwarf, proto.Class_ClassShaman, 60, [5]float64{90, 48, 98, 86, 99}},
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 60, [5]float64{91, 49, 97, 84, 103}},
+		{proto.Race_RaceTauren, proto.Class_ClassShaman, 60, [5]float64{93, 47, 97, 82, 102}},
 	}
 	for _, c := range cases {
 		base := getBaseStatsCombo(c.race, c.class, c.level)

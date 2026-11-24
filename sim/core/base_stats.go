@@ -280,12 +280,17 @@ var ClassBaseStats = map[proto.Class]stats.Stats{
 		stats.Stamina:     50,
 		stats.AttackPower: -10,
 	},
+	// A level 60 Dwarf shaman's sheet (Str 90, Agi 48, Sta 98, Int 86, Spi 99 on 11,756 ledger
+	// lines, builds 1.60.1.70888 to 71037; wowsims/forever EV-0181, 23ebe1f5a6) less the Dwarf
+	// offset. 1.12's row was Str 85, Agi 55, Int 90; Stamina and Spirit match it. No other shaman
+	// race's level 60 sheet has been read, so putting the gap in the class row rather than the Dwarf
+	// offset is an assumption; our Orc shaman's sheets drift the same way up to level 43.
 	proto.Class_ClassShaman: {
 		stats.Health:      1280,
 		stats.Mana:        1520,
-		stats.Agility:     55,
-		stats.Strength:    85,
-		stats.Intellect:   90,
+		stats.Agility:     52,
+		stats.Strength:    88,
+		stats.Intellect:   87,
 		stats.Spirit:      100,
 		stats.Stamina:     95,
 		stats.AttackPower: 60*2 - 20,

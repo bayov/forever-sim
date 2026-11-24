@@ -59,8 +59,12 @@ levelstats[(5, 8)][1] = (s, a, st, sp, i)
 # or two above 1.12, and Agility and Intellect a point or two below, and the gap grows slowly
 # with level. Levels 2, 4, 6, 7 and 11 happen to round to 1.12's row.
 #
-# We have no sheet for level 1 or for levels 44 to 60, so those stay on 1.12's rows. Level 60
-# doesn't read this table at all (it uses ClassBaseStats in base_stats.go).
+# We have no sheet for level 1, so it stays on 1.12's row. Level 60 doesn't read this table at
+# all (it uses ClassBaseStats in base_stats.go), where a level 60 Dwarf shaman's sheet (wowsims/
+# forever EV-0181) puts the class row at Strength +3, Agility -3 and Intellect -3 against 1.12, the
+# same drift as level 43's +2, -2 and -1, grown. With no sheet for levels 44 to 59, those take
+# 1.12's row plus the gap drawn in a straight line from level 43's to level 60's, rounded
+# (FOREVER_DRIFT_TO_60 below).
 FOREVER_ATTRIBUTES = {
     (2, 7): {  # Orc shaman
         2: (25, 17, 24, 19, 26),
@@ -107,7 +111,28 @@ FOREVER_ATTRIBUTES = {
         43: (66, 37, 70, 60, 74),
     },
 }
+# The shaman class row's gap to 1.12 at level 60 (EV-0181), Strength, Agility, Stamina, Intellect, Spirit.
+SHAMAN_GAP_AT_60 = (3, -3, 0, -3, 0)
+
+
+def round_half_away(x):
+    return int(x + 0.5) if x >= 0 else -int(-x + 0.5)
+
+
+# Levels 44 to 59 of the Orc shaman, between its last sheet (43) and the level 60 row.
+FOREVER_DRIFT_TO_60 = {}
 for (race, cls), levels in FOREVER_ATTRIBUTES.items():
+    last = max(levels)
+    gap_last = [a - b for a, b in zip(levels[last], levelstats[(race, cls)][last])]
+    for level in range(last + 1, 60):
+        t = (level - last) / (60 - last)
+        gap = [round_half_away(g + (g60 - g) * t) for g, g60 in zip(gap_last, SHAMAN_GAP_AT_60)]
+        FOREVER_DRIFT_TO_60.setdefault((race, cls), {})[level] = tuple(
+            a + g for a, g in zip(levelstats[(race, cls)][level], gap))
+
+for (race, cls), levels in FOREVER_ATTRIBUTES.items():
+    levelstats[(race, cls)].update(levels)
+for (race, cls), levels in FOREVER_DRIFT_TO_60.items():
     levelstats[(race, cls)].update(levels)
 
 melee_crit = read_gt("chancetomeleecrit.txt")
