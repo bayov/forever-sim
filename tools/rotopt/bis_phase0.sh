@@ -53,7 +53,7 @@
 # RACE (a proto race, RaceHuman) runs the spec at another race than its report build's, for a row
 # of the other faction: its pool drops the build's faction rewards and takes its own (faction.go).
 # With RANK_ONLY, SLOTS, FROM and OUT it ranks the build's faction slots for that faction, and
-# GEAR_ONLY with that list and GEAR_OUT writes the set's faction twin, <gearOut minus .gear.json>.<Faction>.gear.json,
+# GEAR_ONLY with that list and GEAR_OUT writes the set's faction copy, <gearOut minus .gear.json>_<horde|alliance>.gear.json,
 # which tools/dps_report/race_gear.py gives the other faction's races (2026-11-24).
 #
 # MH_IMBUE and OH_IMBUE (a proto weapon imbue, DenseWeightstone) put another imbue on a hand. The
