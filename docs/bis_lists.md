@@ -466,11 +466,12 @@ them out of a full or `RANK_ONLY` run.
 
 `RANK_ONLY=1 SLOTS=trinket,chest tools/rotopt/bis_phase0.sh` ranks only those lists, their
 conditional entries and their enchants (`-gear-rank-slots`), and copies every other list and
-enchant list from `FROM` as it is (`-gear-rank-from`). The mainhand and offhand lists are scored
-together, so naming either one scores both, but only the named one is written anew. The copied lists keep their numbers, so the list's
-top-level `dps` stays the old one. The ranked lists' losses are against the set's DPS as measured
-now, and the output prints both. A `SLOTS` run writes the effect values only when `EFFECTS_OUT`
-is set.
+enchant list from `FROM` (`-gear-rank-from`). The mainhand and offhand lists are scored
+together, so naming either one scores both, but only the named one is written anew. The list's
+top-level `dps` is the final set's, measured in this run as in a full one, and each copied entry
+keeps its `loss` but gets its `dps` again from that measure (the set's DPS less the loss), so no
+figure is left from the old set (2026-11-24). The output prints how far the set moved from the old
+list's `dps`. A `SLOTS` run writes the effect values only when `EFFECTS_OUT` is set.
 
 ## Before release
 

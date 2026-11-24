@@ -16,8 +16,10 @@
 #   RANK_ONLY=1 OUT=/tmp/check.bis.json tools/rotopt/bis_phase0.sh -iters 300 -gear-rank-confirm-iters 2000 -gear-rank-enchant-iters 1000
 #
 # SLOTS (with RANK_ONLY) ranks only those lists, with their enchants, and copies every other list
-# from FROM as it is (-gear-rank-slots). The lists are head, neck, shoulder, back, chest, wrist,
-# hands, waist, legs, feet, finger, trinket, mainhand, offhand and ranged:
+# from FROM (-gear-rank-slots). The list's dps is the final set's, measured in the run, and each
+# copied entry keeps its loss but gets its dps from that measure. The lists are head, neck,
+# shoulder, back, chest, wrist, hands, waist, legs, feet, finger, trinket, mainhand, offhand and
+# ranged:
 #
 #   RANK_ONLY=1 SLOTS=trinket tools/rotopt/bis_phase0.sh
 #

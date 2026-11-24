@@ -289,26 +289,36 @@ func TestTrimEnchants(t *testing.T) {
 }
 
 // With -gear-rank-slots the ranked lists come from the new ranking and every other list from the
-// old file, in the file's order. A ring list covers both ring slots' enchant lists.
+// old file, in the file's order, with each copied entry's dps measured again on the set's DPS now
+// (its loss stays). A ring list covers both ring slots' enchant lists.
 func TestMergeLists(t *testing.T) {
 	defer func(old string) { *gearRankSlots = old }(*gearRankSlots)
 	*gearRankSlots = "trinket,finger"
 	old := map[string][]json.RawMessage{
-		"head":    {json.RawMessage(`{"id": 1}`)},
+		"head": {json.RawMessage(`{"id": 1}`),
+			json.RawMessage(`{"id":5, "name":"Old Helm", "dps": 966.23, "loss": 0, "bis": true, "cooldown": {"loss": 1.5}}`),
+			json.RawMessage(`{"id":6,"dps":964.23,"loss":2,"note":"dps"}`)},
 		"finger":  {json.RawMessage(`{"id":2}`)},
 		"trinket": {json.RawMessage(`{"id":3}`)},
 		"offhand": {},
 	}
 	fresh := []rawList{{name: "trinket", entries: []json.RawMessage{json.RawMessage(`{"id":4}`)}}}
 	var got []string
-	for _, l := range mergeLists(bisListNames, fresh, old) {
+	merged, err := mergeLists(bisListNames, fresh, old, 953.534)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, l := range merged {
 		got = append(got, l.name)
 		for _, e := range l.entries {
 			got = append(got, string(e))
 		}
 	}
 	// The finger list was ranked and came out empty, so the old one doesn't come back.
-	want := []string{"head", `{"id":1}`, "trinket", `{"id":4}`, "offhand"}
+	want := []string{"head", `{"id":1}`,
+		`{"id":5,"name":"Old Helm","dps":953.53,"loss":0,"bis":true,"cooldown":{"loss":1.5}}`,
+		`{"id":6,"dps":951.53,"loss":2,"note":"dps"}`,
+		"trinket", `{"id":4}`, "offhand"}
 	if !slices.Equal(got, want) {
 		t.Errorf("mergeLists = %q, want %q", got, want)
 	}
