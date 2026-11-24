@@ -533,58 +533,25 @@ rotopt `-eval`, the preset's talents, knobs and gear, 3,000 iterations (`round2/
 
 | Race | Max threat | Balanced | Max survival |
 |---|---|---|---|
-| Undead | **3,696.9** | **3,012.2** | **1,204.0** |
-| Tauren | 3,545.1 | 2,851.8 | 973.4 |
-| the Skyborne (both) | 3,546.3 | 2,817.1 | 855.6 |
-| Human | 3,539.8 | 2,818.7 | 874.0 |
-| Night Elf | 3,530.0 | 2,811.3 | 900.3 |
-| Troll | 3,527.4 | 2,808.8 | 871.0 |
-| Orc | 3,522.7 | 2,801.8 | 853.2 |
-| Dwarf | 3,521.7 | 2,806.2 | 861.5 |
-| Gnome | 3,518.5 | 2,801.2 | 855.2 |
-
-Undead's lead at every weight (+150, +160, +231) is Touch of the Grave's drain healing the tank, modelled at its "up to
-5% of max health" cap (`sim/core/racials_forever.go`): a call (below). Without it, Tauren leads at Balanced and Max
-survival, and the Skyborne and Tauren tie at Max threat. The presets keep Undead, as before.
-
-What the searches dropped: Slam (15 s under Forever), Reckless Swings, Demoralizing Shout (the tank pays for it,
-`tankscore.OwnDebuffs`), Vanguard and the Charge opener, Last Stand (its health change isn't followed by the replay, see
-Rotation template), Gore Drinker (unreachable with Shield Slam), Improved Heroic Strike (since Unbridled Wrath stopped
-proccing on Heroic Strike).
-
-Files: `tools/tankbench/req/warrior_protection_{max_threat,balanced,max_survival}.json`,
-`ui/tank_warrior/apls/level60_{max_threat,balanced,max_survival}.apl.json`, `ui/tank_warrior/presets.ts` (the three
-builds, Balanced first), `ui/tank_warrior/gear_sets/level60_phase1_synthetic{,_armor_trinket}.gear.json`.
-`tools/tankbench/req/warrior_protection.json` is legacy (Warbringer gear, Orc, the old talents `35--251533120331221351`),
-kept until the healing session decides (tank_fairness-20261104-5). It is left as it was: `sim/raid_healing_test.go`,
-`tools/healbench`, `tools/encounters/from_logs.py` and `TestForeverTankScore` read it, and replacing it breaks
-`TestForeverTankScore` (no iteration needs 500 HPS on the synthetic set) and `TestHealingFightHealComm`.
-
-## Racials (2026-11-24)
-
-The prot racials pass (brief `orchestration/round_notes_2026-11-11/briefs/prot_racials_1124.md`; raw output and
-scripts in `orchestration/tank_handoff/warrior/racials_1124/`). `rotopt -eval`, each preset's shipped knobs
-(`orchestration/tank_handoff/windfury_retune/knobs/`), the six scoring bosses at the preset's own weight, 10,000
-iterations, seed 1 (± about 5 / 4 / 8):
-
-| Race | Max threat | Balanced | Max survival |
-|---|---|---|---|
 | Undead | 4,234.2 | **3,459.2** | **1,818.4** |
 | Night Elf | **4,265.0** | 3,443.1 | 1,633.8 |
+| Troll | 4,192.1 | 3,382.9 | 1,619.4 |
 | Orc | 4,236.3 | 3,399.3 | 1,531.1 |
 | Gnome | 4,218.2 | 3,395.0 | 1,541.2 |
-| Troll | 4,183.4 | 3,346.9 | 1,513.1 |
 | Tauren | 4,126.9 | 3,329.2 | 1,544.6 |
+| Dwarf | 4,101.8 | 3,286.7 | 1,476.0 |
 | Human | 4,124.8 | 3,296.6 | 1,445.5 |
 | the Skyborne (both) | 4,127.3 | 3,291.8 | 1,458.3 |
-| Dwarf | 4,101.8 | 3,276.5 | 1,432.5 |
 
 - **Every racial works now.** The APLs named no Elune's Light or Eureka!, and an APL casts no major cooldown it doesn't
   name, so Night Elf and Gnome tanks never used them (Blood Fury and Berserking had the same bug, fixed in 0f567e196).
   With them cast, Night Elf gains +155 / +148 / +150 (Max threat / Balanced / Max survival) and Gnome +120 / +124 /
   +118. Troll's Regeneration (20% of its out-of-combat health regen in combat, client 71037) and the Dwarf's Forever
-  Stoneform (10% less Physical damage for 8 s, 3 min, cast on cooldown) were missing from the sim; both are in now
-  (tank_mechanics pass 30, findings -1 and -2). The other passives all apply. Some don't reach the score: Human's
+  Stoneform (10% less Physical damage for 8 s, 3 min) were missing from the sim; both are in now (tank_mechanics
+  pass 30, findings -1 and -2). Troll gains +9 / +36 / +106. Stoneform has a GCD and cuts the Rage from hits taken,
+  so it costs threat: on cooldown from the pull it lost 238 / 188 / 133, and from 5 or 10 s it still loses
+  (`racials_1124/stoneform_i10000_s1.tsv`, knob `stoneformAt`). From 20 s it gains -7 / +10 / +44, so Balanced and
+  Max survival cast it from 20 s, and Max threat never does. The other passives all apply. Some don't reach the score: Human's
   Spirit, Dwarf's and Troll's Beast damage and the Skyborne's Elemental damage (no scored boss is a Beast or an
   Elemental), and Read Leyline for a Rage user. War Stomp, Will of the Forsaken and Shadowmeld's threat drop aren't
   simmed, and the score couldn't value them anyway.

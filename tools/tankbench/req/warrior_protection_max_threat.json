@@ -190,16 +190,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20594
-                      }
-                    }
-                  },
-                  "notes": "Stoneform on cooldown for its 10% less Physical damage. Other races can ignore the warning on this line."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "itemId": 10646
                       }
                     }

@@ -77,8 +77,9 @@ Rage. We can't put a fair number on that, so the race tables leave it out.
 
 ## Warrior: Racial buttons
 Blood Fury, Berserking, Elune's Light and Eureka! are used on cooldown from the pull. Waiting for the end of the fight
-or a few seconds in always scored lower: early threat is what lets your DPS start. Stoneform is used on cooldown too:
-in game, save it for a big hit or a bleed if you can.
+or a few seconds in always scored lower: early threat is what lets your DPS start. Stoneform is different: it costs a global
+cooldown and some Rage from the hits it softens, so Balanced and Max survival use it on cooldown from 20 seconds in,
+after your opening, and Max threat skips it. In game, save it for a big hit or a bleed if you can.
 
 ## Warrior: Low-health buttons
 The sim doesn't wait for you to get low. Shield Wall is used near the end of the fight, and Last Stand and health
