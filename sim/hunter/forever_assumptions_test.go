@@ -442,6 +442,35 @@ func TestForeverPetKeepsItsSummonAttackPower(t *testing.T) {
 	}
 }
 
+// The hunter summons the pet with Aspect of the Hawk up (the user's ruling of 2026-11-23, a sensible
+// default): the aspect going up before the pull, as the APL's prepull cast does, raises the summon's
+// attack power by 10% of the aspect's, and toggling it in the fight moves nothing.
+func TestForeverPetSummonedWithHawk(t *testing.T) {
+	sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetForever)
+	pet := hunter.pet
+	if hunter.AspectOfTheHawkAura == nil {
+		t.Fatal("no Aspect of the Hawk at 60")
+	}
+	sim.CurrentTime = -time.Second
+	ap, rap := pet.GetStat(stats.AttackPower), hunter.GetStat(stats.RangedAttackPower)
+	hunter.AspectOfTheHawkAura.Activate(sim)
+	hawk := hunter.GetStat(stats.RangedAttackPower) - rap
+	if hawk <= 0 {
+		t.Fatalf("Aspect of the Hawk gives %.2f ranged attack power", hawk)
+	}
+	if got := pet.GetStat(stats.AttackPower) - ap; math.Abs(got-0.1*hawk) > 1e-6 {
+		t.Errorf("Aspect of the Hawk before the pull raises the pet's attack power by %.2f, want %.2f", got, 0.1*hawk)
+	}
+
+	sim.CurrentTime = 5 * time.Second
+	hunter.AspectOfTheHawkAura.Deactivate(sim)
+	hunter.AspectOfTheHawkAura.Activate(sim)
+	hunter.AspectOfTheHawkAura.Deactivate(sim)
+	if got := pet.GetStat(stats.AttackPower) - ap; math.Abs(got-0.1*hawk) > 1e-6 {
+		t.Errorf("Aspect of the Hawk toggled in the fight leaves the pet %.2f up, want the summon's %.2f", got, 0.1*hawk)
+	}
+}
+
 // Lone Wolf with a pet out gives the hunter nothing and divides the pet's damage by 1.2
 // (wowsims/forever 56e9bc08e0).
 func TestLoneWolfWithAPet(t *testing.T) {

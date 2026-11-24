@@ -200,3 +200,10 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 
 	return warrior.curQueuedAutoSpell.Spell
 }
+
+// isQueuedSwing says whether spell is Heroic Strike or Cleave, the strikes that take the main
+// hand swing's place.
+func (warrior *Warrior) isQueuedSwing(spell *core.Spell) bool {
+	return (warrior.HeroicStrike != nil && spell == warrior.HeroicStrike.Spell) ||
+		(warrior.Cleave != nil && spell == warrior.Cleave.Spell)
+}
