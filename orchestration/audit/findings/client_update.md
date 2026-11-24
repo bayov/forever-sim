@@ -4,12 +4,21 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261124-1: Blizzard's Nov 23 hotfix halves the Darkmoon Faire buffs' power, but client 71091 still gives Sayge's fortunes 10%
+- severity: low (no report request or preset takes a Sayge's fortune; a build that does would lose up to 5% damage if the fortunes are now 5%)
+- affects: any build with Sayge's Dark Fortune (`IndividualBuffs.SaygesFortune`)
+- found: 2026-11-24, master eceb090196
+- evidence: Blizzard's November 23 hotfixes (read on foreverchanges.pro/patch-notes, November 23 "Spells"): "Fixed an issue where Darkmoon Faire buffs were granting twice as much power as intended", no numbers. Client 71091 (`spell.py 71091 23768` etc.): Sayge's Dark Fortune of Damage 23768 aura 79 still 10, Strength 23735 / Stamina 23737 / Armor 23767 still 10; no hotfix row for them in the client diff. Either the bug doubled a correct 10% on the server (the sim is right) or the intended value is 5% and is server side only. Sim: `sim/core/buffs.go:2451-2475`, 10%. Ledger SHR-HF-08. Confidence: low which reading is right.
+- proposed fix: none until a Sayge's tooltip, a character sheet or a wago.tools/hotfixes row after 2026-11-23 shows the value; if 5%, set the Forever fortunes to 1.05 / 5%.
+- needs: worker fix (verify first)
+
 ### client_update-20261120-1: Execute's cast spell becomes Always Hit and suppresses procs in 71037; the sim's "avoided Execute keeps its extra rage" may no longer hold
 - severity: low until verified (an estimate: if the extra rage is now spent on every Execute, Fury and Arms in execute phase lose a little rage on the 5-8% of Executes that are dodged or missed; well under 0.5%)
 - affects: every warrior request (execute phase)
 - found: 2026-11-20, master e6eaa94706
 - evidence: client 71037 (`db2diff.py 70959 71037`, Warrior): Execute 5308/20658/20660/20661/20662, the dummy (effect 0 Effect 3) that triggers 26651 (effect 1 Effect 64), SpellMisc Attributes_3 1024 -> 459776 (adds 0x10000 Suppress Caster Procs, 0x20000 Suppress Target Procs, 0x40000 Always Hit; rank 20662 had the two suppress bits already) and Attributes_2 +0x100. Not in any Blizzard note. `sim/warrior/execute.go:41-60` models one hit-rolling special and, under Forever, keeps the extra rage when it is avoided (2ebdc14d6, from 36 avoided Executes in 70862 logs). An always-hitting dummy whose script spends the rage would end that; the client can't show which. Ledger WAR-U-16. Confidence: low that anything changed in game; the bits look like a fix for procs firing twice (dummy and damage spell).
 - proposed fix: none until a warrior log after 2026-11-20 shows avoided Executes (log-audit: rage before and after a dodged or missed Execute 20647/26651); if they now spend it all, drop the Forever branch in execute.go.
+- update 2026-11-24 (pass 16, master eceb090196): client 71091 carries push 114313 on the Execute casts (Attributes_3 0x70400 -> 0x60400: Suppress Caster Procs off again, Always Hit and Suppress Target Procs kept; Attributes_4 +0x800000 Suppress Weapon Procs). Blizzard's November 23 hotfixes add "Fixed an issue where a few spells and abilities were causing more weapon procs than intended". The 71037 logs after the push still showed about 1.81 Windfury rolls per Execute (`execute.go:15-28`, assumption `warr_exec_wf2`), so a log after 2026-11-23 should settle both the second roll and the avoided-Execute rage. Ledger WAR-HF-05.
 - needs: worker fix (verify first)
 
 ### client_update-20261117-1: Windfury Totem's proc is a weapon-damage strike in 70959, not an extra white swing with a 2-charge attack power buff
@@ -71,6 +80,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-10-30, master 36a772f
 - evidence: 22817 effects 0-3 (aura 99 +200 AP, 124 +200 RAP, 13 +230 spell damage, 135 healing) all become aura 4 in 70707. Either the buff is dead or a script applies it. Sim: `sim/core/buffs.go:2244` gives 200 AP and 200 RAP. Ledger SHR-U-16.
 - proposed fix: none until confirmed in game; if it is dead, drop it under Forever.
+- update 2026-11-24 (pass 16): Blizzard's November 23 hotfix fixes it "granting twice as much Spell Power as intended", and foreverchanges.pro (71091, "Found in the game") reads 115 spell damage and healing (was 230) with 200 AP unchanged, so the buff is live. In flight on `forever-update/2026-11-24-71091` (3f1c2708d: 115 spell damage and healing under Forever). Ledger SHR-HF-07.
 - needs: verify (in game)
 
 ## Resolved

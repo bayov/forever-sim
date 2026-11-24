@@ -2,6 +2,24 @@
 
 ## Open
 
+### healer_mechanics-20261124-17: Innervate and Energized scale the camp Mana Well's MP5, a periodic energize they should leave alone
+- severity: low (Horde healers with camp buffs on and Innervate on them; about 464 mana too many per Innervate, estimated, not simmed)
+- affects: engine; whoever is Innervated (Restoration druid self-Innervate) or has Read Leyline, with the camp Mana Well (no Blessing of Wisdom)
+- found: 2026-11-24, master eceb090196
+- evidence: ed1df1d51 (EV-0114) scales MP5 under aura 110 except `PseudoStats.EnergizeMP5`, which only Blessing of Wisdom
+  and the raid Mana Spring feed (buffs.go:453, 465). Client 1.60.1.71091 (tier 1): Mana Well's 1230587 "Boosted Mana
+  Regeneration" is Effect 6 aura 24 (periodic energize) 29 every 5000 ms, the same aura as Blessing of Wisdom 19742-25290
+  and Mana Spring 5677/10491; the sim adds it as plain MP5 29 (camp_buffs.go:58), so Innervate gives 4 x 29/5 x 20 s = 464
+  extra mana and Energized 0.5 x 29/5 x 15 s = 87. The other MP5 sources check out: aura 85 (scaled, right) for the
+  Mageblood elixirs 24363/1250942-8, Wicked Regeneration 1250932, Warchief's Blessing 1304594, Epiphany 28804, Atiesh
+  28145, item MP5 (21359-21366...); Nightfin Soup 18194 is aura 24 too but Forever's Nightfin gives spell damage only
+  (consumes.go:615), so it never reaches the scaled path. Doc: docs/healing_druid.md:153 still describes Innervate as
+  Spirit regen only.
+- proposed fix: `$AUDIT_WORK/healer_mechanics/mana_well_energize.patch`: after camp_buffs.go:58 add
+  `character.PseudoStats.EnergizeMP5 += 29`; extend TestForeverAura110ScalesMP5 with the Mana Well; update
+  docs/healing_druid.md "Innervate on ourselves" to "Spirit regen and MP5 (not Blessing of Wisdom or Mana Spring ticks)".
+- needs: orchestrator fix
+
 ### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
 - severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
 - affects: Restoration shaman (all presets and leveling)

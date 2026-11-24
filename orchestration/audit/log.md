@@ -564,3 +564,16 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-24 06:51 | gear | pass 74 | master e29cfe00f | quiet | Phase 0 BiS rerank only; no synthetic/trinket/enchant changes
 2026-11-24 06:51 | consumables | pass 104 | master e29cfe00f | quiet | Phase 0 file moved; enchants/trinkets allowed under standards 42
 2026-11-24 06:51 | fairness | pass 54 | master e29cfe00f | quiet | changed file feeds no report request; no sweep needed
+2026-11-24 19:15 | results | pass 101 | master eceb090 | quiet | Phase 0 regear moved every request; builds.json still Phase 1, no sim error
+2026-11-24 19:15 | rotations | pass 75 | master eceb090 | quiet | 13 changed APLs beat old versions; new 3000it baseline; non-regeared specs not re-searched
+2026-11-24 19:15 | gear | pass 75 | master eceb090 | quiet | only Phase 0 gear sets changed
+2026-11-24 19:15 | consumables | pass 105 | master eceb090 | quiet | no consumable/enchant changes in 71037->71091
+2026-11-24 19:15 | mechanics | pass 102 | master eceb090 | 1 new finding | Darkmoon Faire buffs hotfix (low)
+2026-11-24 19:15 | fairness | pass 55 | master eceb090 | 2 new findings | hunter/rogue still Phase 1 gear (high); Fire/Shadow race (low)
+2026-11-24 19:15 | client_update | pass 16 | master eceb090 | 1 new finding | build 71091 ledger; Darkmoon double power unverified (low)
+2026-11-24 19:15 | healer_mechanics | pass 28 | master eceb090 | 1 new finding | Mana Well MP5 scaled by Innervate (low)
+2026-11-24 19:15 | healer_rotations | pass 25 | master eceb090 | quiet | raid moves from mage filler; update to existing finding
+2026-11-24 19:15 | healer_fairness | pass 28 | master eceb090 | 1 new finding | bench filler follows Frost mage Phase 0 gear (high, needs ruling)
+2026-11-24 19:15 | tank_mechanics | pass 31 | master eceb090 | 1 new finding | Dwarf paladin/Warden never cast Stoneform (low)
+2026-11-24 19:15 | tank_rotations | pass 28 | master eceb090 | quiet | baseline refreshed; Windfury wait loses for warrior
+2026-11-24 19:15 | tank_fairness | pass 30 | master eceb090 | 1 new finding | Stoneform missing on paladin/Warden rows (low)

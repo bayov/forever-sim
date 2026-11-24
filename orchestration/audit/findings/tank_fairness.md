@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_fairness-20261124-1: Only the warrior APLs cast Stoneform; Dwarf paladin and Dwarf Warden race rows go without it
+- severity: low (a race-table row, not a preset or the spec order; estimated about +10 Balanced and +40 Max survival on each Dwarf row, 0.5% and 3%)
+- affects: Protection paladin and Warden race tables (ui/dps_report/data/tank_races.json Dwarf rows); Dwarf players reading the tank page
+- found: 2026-11-24, master eceb090
+- evidence: 8d5fdd664 / dfd015925 register Forever Stoneform 20594 as a `CooldownTypeSurvival` MajorCooldown (sim/core/racials_forever.go, registerForeverStoneform) and add an explicit `currentTime >= 20s` Stoneform line to the warrior's Balanced and Max survival requests and APLs. The paladin, bear and Warden presets have no racial lines and lean on `autocastOtherCooldowns`, which never fires a survival cooldown in a scoring run (`survivalCooldownDue`, sim/core/major_cooldown.go:152: HpPercentForDefensives 0 or readsNoHealth means never). So bench_races.py's Dwarf rows for paladin (Balanced 2657, Max survival 1481) and Warden (Balanced 1133, Max survival -2548) carry Stoneform as a part that is never cast, while the warrior's Dwarf row gets it. Size from the warrior's own sweep (tools/.../racials_1124/stoneform_i10000_s1.tsv, 10k, seed 1: never -> from 20 s, Balanced 3276.5 -> 3286.7, Max survival 1432.5 -> 1476.0); not re-measured on the paladin or Warden (no sims this pass). Elune's Light, Blood Fury, Berserking and Eureka! are DPS-type and do fire under autocast, so only Stoneform is lopsided. It doesn't move a preset race: Undead paladin leads Dwarf by about 300 at Max survival, and Dwarf trails Troll and Tauren for the Warden.
+- proposed fix: add the warrior's Stoneform line (castSpell 20594 when currentTime >= 20 s, Balanced and Max survival; none at Max threat, per dfd015925's sweep) to the paladin and Warden level 60 APLs and tankbench requests (the bear can't be a Dwarf), then re-run bench_races for those two. Or, more general: let autocast fire survival-type racials on a fixed timer in scoring runs, which would also cover any future defensive racial.
+- needs: worker fix
+
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
 - affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))

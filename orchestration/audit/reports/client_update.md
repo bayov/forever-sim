@@ -1,35 +1,39 @@
-# client_update pass 15: build 1.60.1.71037 (2026-11-20)
+# client_update pass 16 (2026-11-24, master eceb090196)
 
-Master audited: e6eaa94706. Previous build 1.60.1.70959. Sim runs: 2,000-iteration runs of the three Retribution requests and Subtlety on the master CLI, only for damage shares and cast counts (no before/after; fixes need code).
+Build: **1.60.1.71091** (wago.tools `latest --probe 300`), baseline 71037. Note for `.agents/skills/dps-report/state.json` `foreverClientBuild`: 1.60.1.71091.
 
-## What 71037 is
+## What was checked
 
-The client copy of Blizzard's November 17 hotfixes (t/2403040 post 12, 2026-11-18 03:24Z) and part of push 114097. Post 13 (November 19, 2026-11-20 04:00Z) was read too; its Retribution line is server side. Dev-notes thread 2360696: nothing after post 10 (11-04). foreverchanges.pro: no 71037 yet. `table_summary.py 70959 71037`: SpellEffect +16 / -2 / 25 changed, SpellMisc 74 changed, ItemSparse 74 added / 17 changed; Trait*, SpellPower, ChrRaces identical. Mostly camping, Reagent Economy, NPC spells and new dungeon set items.
+- `table_summary.py 71037 71091`: 75 spells changed (SpellEffect +15/-5/~42, SpellMisc ~34), ItemSparse +1/~3, ItemEffect -1/~1. Trait*, SpellItemEnchantment, ChrRaces identical.
+- `db2diff.py 71037 71091` (337 lines) and `items_diff.py 71037 71091` (no request item, nothing at ilvl 55+).
+- Sources: foreverchanges.pro (71091 current, "No item reads differently"; Blizzard's November 23 hotfix notes and "Found in the game"). Blizzard forum JSON rate-limited ("performed this action too many times"); the Nov 23 notes were read through foreverchanges.
+- Each player-relevant change grepped in `sim/` and read; open branches `forever-update/2026-11-22` (PR #137) and `forever-update/2026-11-24-71091` checked.
 
-## DPS-relevant changes and sim status
+## What 71091 is
 
-| Ledger row | Change | Sim |
+The client copy of server pushes 114268, 114283, 114309, 114313, 114314 and 114320 (Nov 19-23), plus a new druid-themed NPC encounter (~45 NPC spells). No talent, enchant, racial or item-stat change.
+
+## DPS-relevant rows (ledger section "Build 1.60.1.71091", 12 rows)
+
+| Row | Change | Status |
 |---|---|---|
-| PAL-HF-07 | Blizzard 11-19: Two-Handed Weapon Specialization on all Holy damage with a 2H | **wrong** vs ruling 2026-11-15; already filed as mechanics-20261120-1. Damage shares (2k it): HoW + JoR 8.5-9% of `paladin__level_60`, HoW + Holy Shock 16.6% of shock_ret, so about +0.5% / +1% at 6% |
-| ROG-U-02 | Rogue T1 5P cuts Death Mark's cost too | **missing**; already filed as mechanics-20261120-2. Subtlety casts 9.5 Death Marks a 180 s fight: 48 energy |
-| SHA-HF-10 | Blizzard 11-17: Windfury Totem attacks don't spend Flurry | **wrong**; already filed as mechanics-20261118-1 |
-| WAR-U-16 | Execute dummy Always Hit + suppress procs | ambiguous; new client_update-20261120-1 (low) |
-| HUN-U-14 | Hunter T1 5P reaches Multi-Shot (push 114065 in client) | landed |
-| SHR-HF-05 | Darkmoon Card: Blue Dragon 3% (now in client) | landed (3ec610c40); 20261117-3 resolved |
-| WAR-HF-01..03 | Flurry / Unbridled Wrath / Reckless Swings mask 4 -> 20 in the client | unchanged (UW, RS landed; Flurry 20261117-2 still open) |
-| SHR-HF-04 | Windfury Totem procs get category 2619, 100 ms | landed |
-| SHR-U-25 | Staffs, Onyxia Blood Talisman, Spiritcaller pieces, 74 new dungeon set items | missing in db, minor (update on 20261117-4) |
+| WAR-HF-05 | Execute casts: Suppress Weapon Procs, Suppress Caster Procs off (push 114313) + Blizzard "fewer weapon procs" | ambiguous; update on client_update-20261120-1 (`warr_exec_wf2`) |
+| ROG-HF-07 | Mutilate casts suppress weapon procs | landed (no separate cast in sim) |
+| ROG-HF-08 | Shank procs again, Boot Knife as a target proc aura | landed |
+| PAL-HF-08 | Judgement 20271 suppresses weapon procs | landed |
+| PAL-HF-09 | JoL/JoW/JoJ 40 s | landed |
+| PRI-HF-01 | Chastise in Shadowform | in flight (PR #137) |
+| PRI-HF-02 | Dark Inspiration Spirit % via Mind Flay | landed |
+| WL-HF-06 | Intensity on Incinerate | in flight, n/a |
+| DRU-HF-03 | Feralheart 4P / Wildheart 5P Nature's Bounty gives Energy | in flight (3f1c2708d) |
+| SHR-HF-07 | Fengus' Ferocity 115 SP | in flight (3f1c2708d); update on client_update-20261030-4 |
+| SHR-HF-08 | Darkmoon Faire buffs "twice as much power" | ambiguous; new finding client_update-20261124-1 (low) |
+| SHR-HF-09 | Stormshroud 3P 3% / 18 Energy now in client | landed (PR #136) |
 
-n/a: Reagent Economy, camping, world buff death/player flags, Vampiric Embrace, Filcher's Cowl, Sap, Genesis on Pounce Bleed, Darkmoon Heroism/Maelstrom, Howler's Cry, Lash of the Dark Rider, NPC spells.
+Also in the client: Two-Handed Weapon Specialization 20111 Attributes_5 0x10000 (PAL-HF-07, landed).
 
-## Findings
+## Conclusions
 
-- New: client_update-20261120-1 (low, needs verify).
-- Resolved: client_update-20261117-3.
-- Updated: -20261117-1 (WF category), -20261117-2 (mask in client), -20261117-4 (more items).
-- Not filed again (the mechanics auditor has them): mechanics-20261120-1, -20261120-2, -20261118-1.
-
-## For the orchestrator
-
-- `.agents/skills/dps-report/state.json` `foreverClientBuild` -> 1.60.1.71037.
-- Ledger: new section "Build 1.60.1.71037", Summary +6 rows (819), ruling 8 (PAL-HF-07).
+- One new low finding (Darkmoon Faire values unverified). Nothing missing or wrong at yes-level beyond what is in flight or already open.
+- Open findings: none resolved on master since pass 15 (11 sim commits, none touching them).
+- Left open: Blizzard forum thread 2403040 not re-read (rate limit); the Nov 23 notes came from foreverchanges.

@@ -1,24 +1,32 @@
-# tank_fairness pass 29: 2026-11-24, master 566067a39
+# tank_fairness pass 30: 2026-11-24, master eceb09019
 
-Due: 6 watched files changed since c78d983ac: `sim/warrior/{talents,heroic_strike_cleave,reckless_swings}.go`
-(cd71e78c2: Unbridled Wrath no longer procs off Shield Slam, Revenge or Shield Bash, EV-0148; under Forever a Heroic
-Strike or Cleave spends one Flurry charge a cast, EV-0138, user ruling 2026-11-22; Reckless Swings) and
-`sim/druid/{rip,rake,tuning_70753}.go` (be773f5eb: Rip and Rake attack power shares from logs; cat only). No change to
-the tank requests, `tools/tankbench`, `tools/encounters`, the tank UIs or docs.
+Due: 7 watched files changed since e29cfe00f, all the Protection warrior's racials (0f567e196, d757d5dd6, 8d5fdd664,
+ae99ebd00, dfd015925): the three warrior requests and level 60 APLs gain Blood Fury, Berserking, Elune's Light and
+Eureka! on cooldown, and Stoneform from 20 s at Balanced and Max survival (none at Max threat); rotopt's warrior_tank
+template gains racialAt / stoneformAt knobs. No change to the paladin, bear or Warden requests, tools/tankbench or the
+encounters. No sims this pass (gate: sims false, no shared run).
 
-## Method
+## Same terms
 
-Built tankbench at 566067a39 (`make proto items`, `--tags=with_db`), ran `tools/audit/tank_fairness/bench.sh` on the 12
-presets x six scoring bosses, 3,000 iterations, seed 1, and diffed `summary.py --tsv` against the baseline. Only the
-three warrior presets moved; bear, paladin and Warden rows identical to the byte. Baseline refreshed.
-
-| warrior preset | score (old -> new) | TPS | healing needed |
+| tank | preset races | racial casts in APL | how racials fire in a score |
 |---|---|---|---|
-| Max threat (w 1/3) | 4235.2 -> 4231.7 (± 5.3) | 2177 -> 2175 | 466 -> 471 |
-| Balanced (w 1) | 3474.7 -> 3469.0 (± 7.3) | 2075 -> 2069 | 340 -> 342 |
-| Max survival (w 3) | 1836.7 -> 1814.7 (± 12.2) | 1770 -> 1765 | 215 -> 216 |
+| Warrior | Undead x3 | all five named (Stoneform not at Max threat) | explicit lines; Undead's are no-ops |
+| Paladin | Undead x3 | none | autocastOtherCooldowns |
+| Bear | Night Elf / Tauren / Night Elf | none | autocastOtherCooldowns |
+| Warden | Night Elf / Undead / Night Elf | none | autocastOtherCooldowns |
 
-Both rules are log-measured Forever behaviour applied to every warrior alike, so the loss is fair, not a finding.
+Autocast fires DPS-type racials (Blood Fury, Berserking, Elune's Light, Eureka!) but never a survival cooldown in a
+scoring run (`survivalCooldownDue`, major_cooldown.go:152). Forever Stoneform is registered as survival type, so the
+paladin's and Warden's Dwarf race rows never cast it while the warrior's does: new finding -20261124-1 (low; about
++10 Balanced / +40 Max survival per row, from the warrior's 10k sweep in racials_1124/stoneform_i10000_s1.tsv; no preset
+race moves). Everything else on the requests is unchanged since pass 29.
+
+## Numbers
+
+The warrior presets are Undead, so every new racial line is a no-op for them (tank_rotations pass 27 found the warrior
+baseline bit-identical after the first racial lines). The Troll regen and Stoneform code in racials_forever.go touches
+only Troll and Dwarf, which no preset plays. Ranking and spreads stand as pass 29 measured them (baseline
+ref/tank_fairness/summary.tsv kept, not re-simmed):
 
 ## Ranking (six-boss mean, own weight, seed 1)
 

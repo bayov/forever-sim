@@ -50,5 +50,6 @@ Setup note (pass 2): the local `wago/<build>+hf` tables can be the bare build's 
 - Maul and Lacerate threat beyond the form; Enrage's 16% armor cut; Faerie Fire (Feral) threat in bear form (value is set server-side).
 - Holy Shield's ×1.2 threat (tooltip + tier 3); how Righteous Fury's two multipliers stack.
 - Redoubt's proc chance below 5/5 (the presets take 5/5).
-- Troll Regeneration's in-combat regen missing (20261124-1); Forever Stoneform not simmed (20261124-2).
+- Stoneform not cast by a Dwarf paladin or Warden (20261124-4): autocast survival cooldowns never fire in scoring runs. Troll Regeneration (20% of 1.2x Spirit regen in combat) and the warrior's Stoneform are in since 8d5fdd664 (client 71037/71091 rows, tier 1); the regen's size rests on Wrath's Spirit tables (+-35%).
 - No avoidance while casting (spell_outcome.go:673): tier 3 only.
+- Client 71091 (pass 31): no tank ability, talent or racial row changed. Judgement 20271 and Execute gain Attributes_4 0x800000 (Suppress Weapon Procs, the Nov 23 "more weapon procs than intended" hotfix); no tank preset casts Execute or a melee Judgement of Command, so no tank effect. 25752/25757/25945 (Judgement of Light/Wisdom/Justice, 10 -> 40 s) are level 1 NPC copies the sim doesn't use.
