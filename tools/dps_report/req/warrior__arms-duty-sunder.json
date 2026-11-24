@@ -6,65 +6,65 @@
           {
             "race": "RaceOrc",
             "class": "ClassWarrior",
-            "equipment":  {
-              "items":  [
+            "equipment": {
+              "items": [
                 {
-                  "id":  12640,
-                  "enchant":  2543
+                  "id": 12640,
+                  "enchant": 2543
                 },
                 {
-                  "id":  15411,
-                  "enchant":  1249019
+                  "id": 15411,
+                  "enchant": 1249019
                 },
                 {
-                  "id":  275737
+                  "id": 275737
                 },
                 {
-                  "id":  272414,
-                  "enchant":  1219587
+                  "id": 272414,
+                  "enchant": 1219587
                 },
                 {
-                  "id":  252484,
-                  "enchant":  1891
+                  "id": 252484,
+                  "enchant": 1891
                 },
                 {
-                  "id":  12936,
-                  "enchant":  1885
+                  "id": 12936,
+                  "enchant": 1885
                 },
                 {
-                  "id":  272095,
-                  "enchant":  1248640
+                  "id": 272095,
+                  "enchant": 1248640
                 },
                 {
-                  "id":  272403
+                  "id": 272403
                 },
                 {
-                  "id":  22385,
-                  "enchant":  1506
+                  "id": 22385,
+                  "enchant": 1506
                 },
                 {
-                  "id":  287033,
-                  "enchant":  1887
+                  "id": 287033,
+                  "enchant": 1887
                 },
                 {
-                  "id":  260219
+                  "id": 260219
                 },
                 {
-                  "id":  275976
+                  "id": 275976
                 },
                 {
-                  "id":  13965
+                  "id": 13965
                 },
                 {
-                  "id":  19289
+                  "id": 19289
                 },
                 {
-                  "id":  13982,
-                  "enchant":  1900
+                  "id": 13982,
+                  "enchant": 1900
                 },
                 {},
                 {
-                  "id":  19107
+                  "id": 19107
                 }
               ]
             },
@@ -74,7 +74,7 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "mainHandImbue":  "DenseSharpeningStone",
+              "mainHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MightyRagePotion",
               "dragonBreathChili": true,
               "zanzaBuff": "ROIDS",

@@ -809,6 +809,27 @@
                     },
                     "castSpell":  {
                       "spellId":  {
+                        "spellId":  20662,
+                        "rank":  5
+                      }
+                    }
+                  }
+                },
+                {
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
+                          {
+                            "sequenceIsComplete":  {
+                              "sequenceName":  "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
                         "spellId":  23894,
                         "rank":  4
                       }
@@ -844,27 +865,6 @@
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  1680
-                      }
-                    }
-                  }
-                },
-                {
-                  "action":  {
-                    "condition":  {
-                      "and":  {
-                        "vals":  [
-                          {
-                            "sequenceIsComplete":  {
-                              "sequenceName":  "sunder"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  20662,
-                        "rank":  5
                       }
                     }
                   }

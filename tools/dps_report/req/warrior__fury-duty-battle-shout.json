@@ -6,68 +6,68 @@
           {
             "race": "RaceOrc",
             "class": "ClassWarrior",
-            "equipment":  {
-              "items":  [
+            "equipment": {
+              "items": [
                 {
-                  "id":  12640,
-                  "enchant":  1506
+                  "id": 12640,
+                  "enchant": 1506
                 },
                 {
-                  "id":  15411,
-                  "enchant":  1249019
+                  "id": 15411,
+                  "enchant": 1249019
                 },
                 {
-                  "id":  272106
+                  "id": 272106
                 },
                 {
-                  "id":  272414,
-                  "enchant":  1219587
+                  "id": 272414,
+                  "enchant": 1219587
                 },
                 {
-                  "id":  252484,
-                  "enchant":  1891
+                  "id": 252484,
+                  "enchant": 1891
                 },
                 {
-                  "id":  12936,
-                  "enchant":  1885
+                  "id": 12936,
+                  "enchant": 1885
                 },
                 {
-                  "id":  272095,
-                  "enchant":  1248640
+                  "id": 272095,
+                  "enchant": 1248640
                 },
                 {
-                  "id":  19044
+                  "id": 19044
                 },
                 {
-                  "id":  22385,
-                  "enchant":  2543
+                  "id": 22385,
+                  "enchant": 2543
                 },
                 {
-                  "id":  287033,
-                  "enchant":  1887
+                  "id": 287033,
+                  "enchant": 1887
                 },
                 {
-                  "id":  260219
+                  "id": 260219
                 },
                 {
-                  "id":  275976
+                  "id": 275976
                 },
                 {
-                  "id":  13965
+                  "id": 13965
                 },
                 {
-                  "id":  19289
+                  "id": 19289
                 },
                 {
-                  "id":  11684,
-                  "enchant":  1900
+                  "id": 11684,
+                  "enchant": 1900
                 },
                 {
-                  "id":  12590,
-                  "enchant":  1900
+                  "id": 12590,
+                  "enchant": 1900
                 },
                 {
-                  "id":  18323
+                  "id": 18323
                 }
               ]
             },
@@ -77,8 +77,8 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "mainHandImbue":  "DenseWeightstone",
-              "offHandImbue":  "DenseSharpeningStone",
+              "mainHandImbue": "DenseWeightstone",
+              "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MightyRagePotion",
               "dragonBreathChili": true,
               "zanzaBuff": "ROIDS",
@@ -891,6 +891,27 @@
                       "and": {
                         "vals": [
                           {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20662,
+                        "rank": 5
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
                             "cmp": {
                               "op": "OpGe",
                               "lhs": {
@@ -935,27 +956,6 @@
                       "spellId": {
                         "spellId": 23894,
                         "rank": 4
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "sequenceIsComplete": {
-                              "sequenceName": "sunder"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20662,
-                        "rank": 5
                       }
                     }
                   }
