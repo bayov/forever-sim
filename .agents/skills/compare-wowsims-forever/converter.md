@@ -22,7 +22,13 @@ gives a wrong result. A new class or rotation may need more of the same kind.
   name and stats; `ENCH` holds hand picks. Theirs silently drops an unmapped enchant.
 - **Stats:** their spell stats are `...Damage` where ours are `...Power`; their `SpellDamage` is
   our `SpellPower` plus our `SpellDamage`. `layers.py` and `align.py` compare them that way.
-- **Races:** theirs spells Skyborne `RaceWindshaperSkyborne`.
+- **Races:** theirs spells Skyborne `RaceWindshaperSkyborne`. Ours keys every class's Eureka!
+  as the rogue's 1259812, theirs each class's own (warrior 1259813, mage 1259817, warlock
+  1259821, priest 1259823): `remap()` moves a rotation's 1259812 to the class's (2026-11-24;
+  unmapped, theirs dropped the Gnome warlock's held Eureka! line and autocast it at the pull).
+  The player's own `bonusStats` (a race override's) don't reach theirs: only `SET_BONUS` and
+  `ALIGN` do. Stoneform is cast in neither (ours doesn't model it, theirs has it as a
+  survival cooldown, which isn't autocast).
 - **Their sheet leaves out talent crit applied per attack** (Cruelty, Weaponmaster's axe crit),
   so `layers.py` shows ours 5 to 10% crit higher on warriors. Compare crits per hit in
   `breakdown.py`.
