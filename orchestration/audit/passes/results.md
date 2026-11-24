@@ -184,7 +184,7 @@ The rulings and their evidence are in `orchestration/standards.md` and the "Sett
 ## Explaining the ranking (the other half of the role)
 
 When numbers move, explain the new order and not just the deltas. Account for each gap by naming its causes: talents and their size, spell
-coefficients and base damage, gear scaling, the synthetic weapon, the raid buffs and debuffs a spec gets, resource limits, and Forever's changes against
+coefficients and base damage, gear scaling, the Phase 0 list (a spec's real pre-raid gear, its set bonuses and trinkets), the raid buffs and debuffs a spec gets, resource limits, and Forever's changes against
 Classic. Back each one with the breakdown (`summ.py`) and a paired sim. Uncertainties the classes already document (for example the warlock
 demons' melee and stat scaling behind Demonology's lead) are context, not findings. Point to their assumption row.
 

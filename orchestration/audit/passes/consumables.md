@@ -89,7 +89,8 @@ Then make variants with `python3 -I tools/audit/consumables/var.py base.json out
    - **Consumes objects:** every `Consumes.create` in presets.ts and the `consumes:` func in spec_*.go. They must
      match each other.
    - **RaidBuffs / Debuffs / IndividualBuffs objects:** these and the mksettings `raid:` funcs must match each other.
-   - **Gear sets:** enchants and trinkets.
+   - **Gear sets:** enchants and trinkets. For a Phase 0 set the gear pass owns legality (`phase0_enchants.json`); here,
+     check that an enchant's or trinket's effect works in the sim and matches the client.
    - **Sim code that changes a buff, debuff, consumable or enchant value:** check every number against the client
      with `q.py` / `ench.py`. Compute level scaling as `min(level, MaxLevel) - max(BaseLevel, SpellLevel)` from
      SpellLevels, but see gotcha 3.
@@ -114,8 +115,8 @@ Then make variants with `python3 -I tools/audit/consumables/var.py base.json out
     Fire-toasted Bun (holiday item).
   - Allowed: Cerebral Cortex Compound (Blasted Lands quest); Elixir of Frost Power (holiday recipe, but the elixir
     is tradeable); Mighty Intellect 2568 (Thorium Brotherhood Revered, borderline).
-- **Trinkets:** synthetic 99xxxx ids or empty (standards 1b). No real non-relic items. Relics are fine (Undermine
-  vendor Pix Xizzix).
+- **Trinkets:** DPS presets wear the real trinkets of their Phase 0 list (standards 8a, 43), which the gear pass
+  checks. Tanks and healers keep synthetic 99xxxx trinkets. Relics are fine (Undermine vendor Pix Xizzix).
 - **At most one** of the five +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale) per Consumes preset.
 - **Revelation (1248805)** only on the shamans.
 - **Standards 18:** Sunder Armor on, Expose Armor off, in presets.ts and mksettings. No rogue APL casts Expose

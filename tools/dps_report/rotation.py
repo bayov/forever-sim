@@ -8,7 +8,9 @@ SYM = {'OpLt': '<', 'OpLe': '≤', 'OpGt': '>', 'OpGe': '≥', 'OpEq': '=', 'OpN
 MATH = {'OpAdd': 'plus', 'OpSub': 'minus', 'OpMul': 'times', 'OpDiv': 'divided by'}
 AUTO = {'MainHand': 'main-hand', 'OffHand': 'off-hand', 'Ranged': 'ranged', 'Any': 'next'}
 # Conditions the humaniser can only read out clause by clause (math, nested brackets) get their wording from
-# rotation_text.json, keyed by that read-out. PLAIN_MISSING and PLAIN_USED are for build_data.py's warnings.
+# rotation_text.json, keyed by that read-out. A key may say {trinket} for a trinket the build wears, so one entry
+# words a trinket line for every build whatever the trinket. PLAIN_MISSING and PLAIN_USED are for build_data.py's
+# warnings.
 PLAIN = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rotation_text.json')))['when']
 PLAIN_MISSING, PLAIN_USED = set(), set()
 # Why a preset's line is the way it is, where that isn't obvious: rotation_text.json's "why" entries, each for its
@@ -47,10 +49,15 @@ def code_like(when):
     return top >= 2 or bool(re.search(r'\b(times|minus|divided by|longer of|shorter of|add up to|uses left|can still be used)\b', when))
 
 
-def plain(when):
+def plain(when, trinkets=()):
     if when in PLAIN:
         PLAIN_USED.add(when)
         return PLAIN[when]
+    for t in sorted(trinkets, key=len, reverse=True):
+        k = when.replace(t, '{trinket}')
+        if t in when and k in PLAIN:
+            PLAIN_USED.add(k)
+            return PLAIN[k].replace('{trinket}', t)
     if code_like(when):
         PLAIN_MISSING.add(when)
     return when
@@ -216,6 +223,7 @@ class Humaniser:
         self.cur_name = None  # the line's own spell name, which its text doesn't link
         self.cur = None  # the key of the line's own spell: "holding it would mean one fewer use" needs no name for it
         self.items = set()  # the item names conditions use (tidy)
+        self.trinkets = set()  # the names of the trinkets the build wears (tidy, plain)
         self.fallbacks = []
 
     def sp(self, ref):
@@ -229,7 +237,7 @@ class Humaniser:
         """A whole condition, once more: a trinket named again and again is "the trinket" after the first time, and
         "no Hawk 1 ... or no Hawk 2 ..." is a count, and "X is not up and X is not ready" is "X is neither up nor ready"."""
         for n in sorted(self.items, key=len, reverse=True):
-            if re.search(r'Trinket|Talisman', n) and when.count(n) > 1:
+            if (n in self.trinkets or re.search(r'Trinket|Talisman', n)) and when.count(n) > 1:
                 i = when.index(n) + len(n)
                 when = when[:i] + when[i:].replace(n, 'the trinket').replace('no more the trinket this fight', 'no more trinket uses this fight')
         when = re.sub(r'\(?\b([A-Z][\w\' ]*?) is not up and \1 is not ready\)?', r'\1 is neither up nor ready', when)
@@ -677,7 +685,7 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
         elif kind == 'channelSpell':
             ref = body.get('spellId')
             if body.get('interruptIf'):
-                extra = H.link(polish(plain('Stops channeling once ' + H.pred(body['interruptIf']))))
+                extra = H.link(polish(plain('Stops channeling once ' + H.pred(body['interruptIf']), H.trinkets)))
         elif kind == 'move':
             r = body.get('rangeFromTarget', {}).get('const', {}).get('val', '0')
             extra = 'Into melee range' if str(r) in ('0', '0s') else 'Just inside melee range' if 4 < (secs(r) or 0) < 5 else f'To {r} yd from the boss'
@@ -706,7 +714,7 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
             'build': bid, 'section': section, 'order': order,
             'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto', 'strictSequence': 'sequence'}.get(kind, kind),
             'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
-            'at': at, 'when': H.link(polish(plain(when[:1].upper() + when[1:]))) if when else '', 'extra': extra, 'notes': clean_note(notes),
+            'at': at, 'when': H.link(polish(plain(when[:1].upper() + when[1:], H.trinkets))) if when else '', 'extra': extra, 'notes': clean_note(notes),
             'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),
             # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
             # build_data folds it.
@@ -751,9 +759,11 @@ def talent_known(cls, talents, talent_string):
     return known
 
 
-def _humaniser(nm, cls=None, talents=None, talent_string=None):
+def _humaniser(nm, cls=None, talents=None, talent_string=None, equipment=None):
     H = Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k), lambda aura: talent_token(cls, talents, aura),
                   talent_known(cls, talents, talent_string))
+    # The trinket slots' items by name, so a real trinket reads like a synthetic one (tidy, plain).
+    H.trinkets = {nm('i%d' % it['id']) for it in ((equipment or {}).get('items') or [])[12:14] if it and it.get('id')}
     H.link = lambda t: link_talents(t, cls, talents, H.cur_name)
     return H
 
@@ -761,6 +771,11 @@ def _humaniser(nm, cls=None, talents=None, talent_string=None):
 def _talent_string(req_dir, bid):
     rq = json.load(open(os.path.join(req_dir, bid + '.json')))
     return rq['raid']['parties'][0]['players'][0].get('talentsString')
+
+
+def _equipment(req_dir, bid):
+    rq = json.load(open(os.path.join(req_dir, bid + '.json')))
+    return rq['raid']['parties'][0]['players'][0].get('equipment')
 
 
 def _rotation(req_dir, bid):
@@ -774,7 +789,7 @@ def build(req_dir, outs, nm, names, abilities, racial_race, talents=None):
     casts = {(a['build'], a['key']): a['casts'] for a in abilities}
     for o in outs:
         bid = o['id']
-        H = _humaniser(nm, o['meta'].get('class'), talents, _talent_string(req_dir, bid))
+        H = _humaniser(nm, o['meta'].get('class'), talents, _talent_string(req_dir, bid), _equipment(req_dir, bid))
         mine = apl_rows(bid, _rotation(req_dir, bid), o['meta'].get('race'), nm, names, casts, racial_race, H)
         for r in mine:
             r['why'] = why_of(bid, o['meta'].get('baseBuild'), r) if r['section'] == 'priority' else ''
@@ -844,7 +859,8 @@ def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, lo
             race = race_name(rc['race'])
             mine = ov['rotation']
             whys = text(ov).get('why', {})
-            H = _humaniser(nm, o['meta'].get('class'), talents, ov.get('talentsString') or _talent_string(req_dir, bid))
+            H = _humaniser(nm, o['meta'].get('class'), talents, ov.get('talentsString') or _talent_string(req_dir, bid),
+                           ov.get('equipment') or _equipment(req_dir, bid))
             new = {(r['section'], r['order']): r for r in apl_rows(bid, mine, race, nm, names, {}, racial_race, H)}
             fallbacks += H.fallbacks
             old = {(r['section'], r['order']): r for r in pre.get(bid, [])}

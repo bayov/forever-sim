@@ -107,6 +107,11 @@ Give each the brief in `tools/audit/rotations/brief.txt`, with its "What changed
 
 ## Open items and pending rulings
 
+- **Phase 0 trinkets (2026-11-24):** the DPS presets now wear their Phase 0 lists' real trinkets (standards 43). Check each
+  APL's trinket lines name the items the build wears, not the old synthetic ids (99xxxx), and that an on-use trinket
+  lines up with the build's cooldowns as its synthetic one did. A build whose list has no on-use trinket shouldn't
+  keep a trinket line. Rotation lines that hold a cooldown for the trinket (standards 31) need a fresh check on the
+  real trinket's duration and cooldown. Remove this item once a pass has done it for every class.
 - **Warrior Heroic Strike and Cleave thresholds (user ruling 2026-11-17):** since wago push 114097 (2026-11-17), landed
   melee abilities proc Unbridled Wrath, Flurry and Reckless Swings, not only white swings. The warrior builds moved under
   1% in update_1117, so their rage thresholds weren't re-searched. Re-search them the next time a warrior rotation search

@@ -5,7 +5,7 @@ Follow `orchestration/audit/PASS.md` around this doc. It started as the long-run
 ## The role
 
 Make sure the Level 60 DPS presets compare fairly across classes. That means:
-- equal-strength synthetic gear (standards 1b, 5a, 5b);
+- gear from the same Phase 0 pool by the same rules for every DPS spec (standards 43), not equal-strength gear: since 2026-11-24 each spec wears its real pre-raid best, so a gap in gear is a real gap;
 - the same representative consumables, buffs, debuffs and raid assumptions for every spec;
 - fair set bonuses, weapons and races;
 - a published cross-spec ranking that matches what the current requests actually sim.
@@ -49,7 +49,7 @@ A new client build usually brings shared changes such as racials and raid buffs.
 source tools/audit/setup.sh                          # AUDIT_WORK and the toolchain
 export AUDIT_TREE=$(dirname $(tools/audit/build_cli.sh origin/master))/tree   # a detached checkout of origin/master
 tools/audit/fairness/build.sh                         # $AUDIT_WORK/wowsimcli
-python3 tools/audit/fairness/audit1b.py               # 19 lines, each "5a PASS | 1b PASS"
+python3 tools/audit/gear/phase0_check.py > $AUDIT_WORK/phase0.txt   # the gear pass's legality checks; read its '!' lines
 python3 tools/audit/fairness/sweep.py > $AUDIT_WORK/sweep.log      # about 20 min, 4 threads
 python3 tools/audit/fairness/table.py $AUDIT_WORK/sweep.log \
     orchestration/audit/ref/fairness/sweep_baseline.log <baseline sha> > $AUDIT_WORK/table.md
@@ -62,7 +62,14 @@ python3 tools/audit/fairness/table.py $AUDIT_WORK/sweep.log \
 - **Published against current:** `meta.published.dps` against the report race's DPS in the sweep. At 5000 iterations the noise is about ±1.5. A larger gap means the report is stale for that build. The usual cause is a shared change (raid buff, ruling) that was re-simmed for only some classes, which makes the ranking unfair. That's a finding.
 - **Best race against the report race:** the report should use the best race. A loss of 1 or more is worth a note to the class owner. Ties within 0.5 are noise; Arcane and Survival are exact Human/Orc ties today.
 - **Movement against the baseline:** for every build that moved, attribute the change to a commit. An unexplained move, or a move in a class whose code didn't change, is a finding: it means a shared change leaked.
-- **Gear:** every `audit1b.py` line must pass. A FAIL goes to the class owner with the slot and the ratio.
+- **Gear (Phase 0, standards 43):** the gear pass owns each list's legality. Here, check that the lists are comparable:
+  - every spec's row in `tools/rotopt/phase0_specs.json` fights as its report build, and every DPS request wears its spec's Phase 0 set (`phase0_check.py` flags a request that doesn't);
+  - the same rules for every spec: one content check, one gold line, Exalted rewards ranked but not picked, unsure items in (standards 42), the faction check by the build's race;
+  - no spec's search stopped short where another's didn't: an open item above a pick, a list on an older sim than the rest (`sim` in the list), a set bonus several pieces away never tried as a whole (the class's step 4 notes);
+  - each list's `dps` against the report build's DPS in the sweep, within about 2 for builds that wear their spec's list with its talents;
+  - unmodelled effects and hidden stats on picks or near-picks, which undervalue some specs: estimate the largest and name the specs;
+  - hit: each build's total hit against its cap, and its hit talents re-checked at the Phase 0 set's hit.
+  A gap that comes from the rules being applied unevenly is a finding for the class owner. A gap that comes from real gear (a spec whose best pre-raid items are weaker) is not.
 - **Shared assumptions applied unevenly** are the classic finding. Examples:
   - raid hits that push back one class's casts but not another's;
   - a pushback-avoid talent taken but not modelled;
@@ -119,6 +126,7 @@ The full table, with races, is `orchestration/audit/ref/fairness/table_baseline.
 
 ## Open items
 
+- **The Phase 0 switch (2026-11-24)** moves every DPS build at once. Its movement is the gear change, not a leak: attribute it to the publish commit, check the new ranking against the lists' `dps`, then take a new sweep baseline.
 - **Hunter end-of-fight test:** Aimed and Sniper Shot past the fight's end. The rotation auditor was asked to test it; the result hasn't been seen yet.
 - **Ice Lance Low range (user call pending):** the sim uses 0.429 (Season of Discovery server value). The client says 0, and the dashboard Low is 0.2145. The recommendation is that Low include 0, the only value with a Forever source; at 0, Frost loses about 18.5%.
 - **Flametongue Totem stacking with the Windfury imbue (`sham_ftt_stack`):** user ruling "assume it works". Still To Verify in game; worth +38 to Enhancement.
@@ -134,14 +142,14 @@ The full table, with races, is `orchestration/audit/ref/fairness/table_baseline.
 - Melee raid: Grace of Air plus Windfury Totem (standards 25). The second shaman's fire slot is Flametongue Totem, which only Enhancement benefits from. The raid stays symmetric: each melee spec gets its best weapon totem.
 - Warlock demons and hunter pets take no player buffs (standards 14), so the Moonkin / LotP split changes no warlock number.
 - Creature-type talents on the generic boss: Improved Tracking on; Murder, Ret's type bonuses and Beast Slaying off (standards 19).
-- Trinkets: two budget-equal synthetic trinkets per spec (1b).
+- Trinkets and set bonuses are real since 2026-11-24 (standards 8a, 6, 43). A spec with a stronger pre-raid trinket or set isn't an asymmetry to fix.
 
 ## Gotchas
 
 - **Sim the report's own requests, not mksettings with a hand-kept talent copy.** The copies went stale silently after the class ports. The old existence check passed because the stale strings survive as vs-type variants.
 - **Cache on the binary too.** Item stats live in the compiled database, so a database-only change needs a rebuild and a new cache key. `sweep.py` keys on the binary's mtime.
-- **SoD items carry both melee and spell hit/crit.** Take the max, not the sum. `audit1b.py` does.
-- **5b:** Ret and Enhancement hold their SP and Int, and the 5a check must not rescale them.
+- **A list's `dps` is the spec's preset at the list's talents.** Duty, encounter and other-talent builds of the spec wear the same set and may sim lower or higher; compare those against their own published numbers, not the list.
+- **`audit1b.py`** checks synthetic sets against the 1b budget. No DPS preset wears one now, so it only matters if synthetic pieces come back.
 - **Never use `pgrep`/`pkill -f <script name>`.** It matches your own shell and kills it. Wait on the PID or run the sweep in the background with a completion notice.
 - **Shaman and warrior raid-hit options look alike but differ.** Read the code before assuming an effect: the shamans' hits once only fired the shield and dealt no damage.
 - **`tools/audit/fairness/hacks_optional.py`** holds three env-gated local switches used for one-off measurements: no weapon racials, skipping set-bonus tiers, and a Rage-only raid hit. Apply it to a scratch checkout only, never commit it. The sweep doesn't need it.

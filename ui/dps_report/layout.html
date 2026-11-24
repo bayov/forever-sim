@@ -172,7 +172,7 @@
       <div class="content-block-header"><h6 class="content-block-title">Best races</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-races">How are races compared?</button></div>
       <div class="fv-about-body" id="about-races" data-title="How races are compared" hidden>
         <p><b>How.</b> The preset is simmed as every race its class can be, <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s. Gear, talents, rotation, consumes and random rolls stay the same. The racials are Forever's, from its client. The preset plays the best race.</p>
-        <p><b>Own rotation or gear.</b> A race that clearly does better with its own rotation or gear is simmed with it. Its row gets a tag, and the Rotation card shows each change and why.</p>
+        <p><b>Own rotation or gear.</b> A race that clearly does better with its own rotation or gear is simmed with it. Its row gets a tag, and the Rotation card shows each change and why. A race of the other faction can't wear the gear's faction rewards, so it wears its own faction's best in those slots.</p>
         <p><b>Why trust it.</b> Only the race changes, and every race starts from the same random rolls. Once the race changes a hit or a cast, the fights drift apart, so some luck is left. Each preset sims as many fights as it takes to pin the gap between two races down to about a third of a DPS (up to 40,000), so races within about 0.7 DPS of each other are marked as tied (≈).</p>
         <p><b>Limits.</b></p>
         <ul>
@@ -193,7 +193,7 @@
     <div class="content-block fv-card" id="sp-racials-card" data-jump="Racials">
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-racials">How are racials measured?</button></div>
       <div class="fv-about-body" id="about-racials" data-title="How racials are measured" hidden>
-        <p><b>How.</b> The preset is simmed with all racials off, which leaves the race's base stats. Then it's simmed with each racial off in turn. A racial's bar is the DPS it adds. When a race wears its own gear for a racial (a Dwarf drops the hit Artisan's Precision makes spare), the sims without that racial wear the preset's gear, so the gear trade is part of the racial's bar. Two racials that overlap split the shared part, so the parts add up to the race's total.</p>
+        <p><b>How.</b> The preset is simmed with all racials off, which leaves the race's base stats. Then it's simmed with each racial off in turn. A racial's bar is the DPS it adds. When a race wears its own gear for a racial (say, less hit for a race whose racial adds hit), the sims without that racial wear the preset's gear, so the gear trade is part of the racial's bar. Two racials that overlap split the shared part, so the parts add up to the race's total.</p>
         <p><b>Limits.</b> The same as for Best races. Only damage on a boss that stands still counts. Racials for one boss type count only with "Boss type racials" on.</p>
       </div>
       <div class="fv-toolbar">
@@ -279,18 +279,24 @@
 
     <div class="content-block fv-card" id="sp-gear-card" data-jump="Gear">
       <div class="content-block-header"><h6 class="content-block-title">Gear</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-gear">How was gear made?</button></div>
-      <p class="fv-note">Made-up gear at Phase 1 item levels.</p>
+      <p class="fv-note">Phase 0 gear: the best the spec can get before the first raids open.</p>
       <div class="fv-about-body" id="about-gear" data-title="How gear was made" hidden>
-        <p><b>How.</b> Forever hasn't shown its level 60 raid loot yet, so every piece here is made up. Each piece's stats fit Forever's stat budget for its slot and item level. The item levels match Era's Phase 1 best in slot: 66 for head, shoulders, chest, hands, legs and feet, 71 for neck, back, wrists, waist, rings, one-handers and ranged, and 76 for two-handers.</p>
-        <p>The stat mix follows each spec's level 60 best in slot from Season of Discovery. Mana users get about 10% Spirit, and every preset gets hit up to the cap. Weapons keep the DPS of the Era Phase 1 weapon they replace, at the type and speed the spec does best with. Two pieces are from the class's Forever tier set, for its 2-piece bonus. Both trinkets are made up too.</p>
-        <p><b>Why trust it.</b> The budget is fitted to Era's level 60 epics. Forever's beta gear matches Era's budget within about 3%. Over 300 level 60 epics Forever has shown (crafted, reputation and PvP, item level 60 and 65) match these pieces within about 2%. Caster weapons get the double budget Forever's real caster weapons have. Every piece was checked against the budget, and the sets against each other.</p>
+        <p><b>How.</b> Forever's first raids open on 2026-12-09. Until then players gear from dungeons, quests, crafting, reputation, PvP reputation, world drops and the auction house. We call that Phase 0. Each DPS spec has its own list. A gear search tries every item the spec can wear in each slot on the spec's preset, keeps whatever adds the most DPS and goes round again until no item beats the one it has. Then it tries every enchant the same way. Presets of the same spec wear its list, unless their talents need their own.</p>
+        <p><b>What counts.</b></p>
+        <ul>
+          <li>In: dungeon drops and quest rewards, crafted gear, world drops, the auction house, and reputation rewards up to Revered, PvP reputations included.</li>
+          <li>Ranked but never picked: Exalted rewards, a very long grind, and items that cost a lot of gold for the DPS they add.</li>
+          <li>Out: raid and world boss loot, gear made from raid materials, and what only the other faction can get. The faction comes from the preset's race.</li>
+          <li>An item we aren't sure is open yet, like one whose quest or vendor we haven't found, is used. Its note in the list says what is unsure.</li>
+        </ul>
+        <p>Set bonuses count at however many pieces the list wears. Hit is whatever the search found best, not forced to the cap. Trinkets are real, their on-use effects included where the sim models them.</p>
+        <p><b>Why trust it.</b> Every pick's source and availability was checked by hand, and each list was compared with a public pre-raid list for the spec where one exists. Where they differ, the sim says why. Sets whose bonus needs several pieces at once were also tried as a whole, since a search that swaps one slot at a time can stop short of them.</p>
         <p><b>Limits.</b></p>
         <ul>
-          <li>The best real Forever gear with known stats is item level 65, plus one ring at 70. If Phase 1 tops out at 65, these sets have about 5% to 6% more stats than real gear.</li>
-          <li>Forever's real epics put about 28% of their budget into Stamina, against 18% here. Only 1 piece in 20 has hit, against 4 in 10 here. So these numbers are likely a bit high, most of all for specs that reach the hit cap from gear.</li>
-          <li>Some real Forever pieces have expertise. These sets have none.</li>
-          <li>Raid drops, the tier sets' real stats, procs, on-use effects and Forever's launch trinkets are unknown. The made-up trinkets stand in for them.</li>
-          <li>Only the 2-piece set bonus counts.</li>
+          <li>Some items have a use or proc the sim doesn't model. They count for their stats alone, so they rank lower than they should.</li>
+          <li>Forever still hides some items' stats. Those use their Classic stats, or the part Forever shows.</li>
+          <li>Some picks may turn out not to be open before the raids.</li>
+          <li>The search scores an on-use item on a 90s fight, for the short fights of dungeons. The report sims 180s.</li>
         </ul>
       </div>
       <div class="fv-gearwrap">
@@ -411,7 +417,7 @@
     <div class="content-block fv-card" id="method-card">
       <div class="content-block-header"><h6 class="content-block-title">Sim setup</h6></div>
       <div class="fv-prose" id="method-prose">
-        <p>Each preset has its own talents, rotation, race, consumes and made-up Phase 1 gear. All get the same raid buffs.</p>
+        <p>Each preset has its own talents, rotation, race, consumes and Phase 0 gear, the best its spec can get before the first raids. All get the same raid buffs.</p>
         <ul class="fv-list">
           <li><b>Main number:</b> mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights, with the same random rolls for every preset.</li>
           <li><b>Fight:</b> <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) vs a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with no creature type and <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs.</li>
@@ -513,8 +519,21 @@
     </div>
 
     <div class="content-block fv-card" id="rs-gear-card">
-      <div class="content-block-header"><h6 class="content-block-title">Gear</h6></div>
-      <p class="fv-note">Made-up gear at Phase 1 item levels.</p>
+      <div class="content-block-header"><h6 class="content-block-title">Gear</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-rs-gear">How was gear made?</button></div>
+      <p class="fv-note">Made-up gear at Phase 1 item levels. Only DPS presets have Phase 0 gear so far.</p>
+      <div class="fv-about-body" id="about-rs-gear" data-title="How gear was made" hidden>
+        <p><b>How.</b> Tanks and healers don't have Phase 0 gear lists yet, so every piece here is made up. Each piece's stats fit Forever's stat budget for its slot and item level. The item levels match Era's Phase 1 best in slot: 66 for head, shoulders, chest, hands, legs and feet, 71 for neck, back, wrists, waist, rings, one-handers and ranged, and 76 for two-handers.</p>
+        <p>The stat mix follows real level 60 best in slot lists, Season of Discovery's for tanks and Wowhead's for healers. Mana users get about 10% Spirit. Tanks get hit up to the cap where it helps them, healers none. Weapons keep the DPS of the Era Phase 1 weapon they replace, at the type and speed the spec does best with. Two pieces are from the class's Forever tier set, for its 2-piece bonus. Both trinkets are made up too.</p>
+        <p><b>Why trust it.</b> The budget is fitted to Era's level 60 epics. Forever's beta gear matches Era's budget within about 3%. Over 300 level 60 epics Forever has shown (crafted, reputation and PvP, item level 60 and 65) match these pieces within about 2%. Caster weapons get the double budget Forever's real caster weapons have. Every piece was checked against the budget, and the sets against each other.</p>
+        <p><b>Limits.</b></p>
+        <ul>
+          <li>The best real Forever gear with known stats is item level 65, plus one ring at 70. If Phase 1 tops out at 65, these sets have about 5% to 6% more stats than real gear.</li>
+          <li>Forever's real epics put about 28% of their budget into Stamina, against 18% here. Only 1 piece in 20 has hit, against 4 in 10 here. So these numbers are likely a bit high, most of all for specs that reach the hit cap from gear.</li>
+          <li>Some real Forever pieces have expertise. These sets have none.</li>
+          <li>Raid drops, the tier sets' real stats, procs, on-use effects and Forever's launch trinkets are unknown. The made-up trinkets stand in for them. A tank's stat trinket has tank stats.</li>
+          <li>Only the 2-piece set bonus counts.</li>
+        </ul>
+      </div>
       <div class="fv-gearwrap"><div id="rs-gear-tab"><div class="gear-picker-root" id="rs-gear"></div></div></div>
     </div>
 
