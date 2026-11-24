@@ -928,7 +928,7 @@ func init() {
 
 	// https://www.wowhead.com/forever/item=1263/brain-hacker
 	// Forever: Chance on hit: Brain Hacker (17148) deals 250 Physical with variance 0.4 and makes
-	// the target's spells take 30% longer to cast for 9 sec (client 1.60.1.70959 SpellEffect: a
+	// the target's spells take 30% longer to cast for 30 sec (client 1.60.1.70959 SpellEffect: a
 	// school damage effect and aura 65). It is on the melee table (DefenseType 2). We roll it by
 	// the whole variance either side, 150 to 350, as we do for Gut Ripper's Wound. The rate is 1
 	// PPM, the one wowsims/forever fitted from one wearer's log (their EV-0132), since the
@@ -4352,8 +4352,10 @@ func init() {
 	// Forever: Second Wind (15604) restores 63 mana every sec for 10 sec. "This effect is doubled
 	// in Mountainous areas", so we give 126 when the encounter's outdoor_terrain is Mountains.
 	// The cooldown stays 15 min (client 1.60.1.70959 ItemEffect 102627 and SpellEffect bp 63).
-	// The item's 10 sec category cooldown (2554) is shared only with defensive items like
-	// Vigilance Charm, so we leave it out.
+	//
+	// Using it also puts category 2554 on cooldown for 10 sec. 18 other items are in that
+	// category, such as Burst of Knowledge, Spectral Essence and Vigilance Charm. We don't sim
+	// that shared cooldown, so a Second Wind right next to one of them comes too early.
 	core.NewItemEffect(SecondWind, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		manaPerTick := 30.0
