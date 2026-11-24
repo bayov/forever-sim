@@ -621,6 +621,7 @@
   "18720": {"name": "Shroud of the Nathrezim", "note": "Hel'nurath (Dire Maul East, summoned)"},
   "18722": {"name": "Death Grips", "note": "Magistrate Barthilas · Stratholme"},
   "18723": {"name": "Animated Chain Necklace", "note": "Drop: Ramstein the Gorger, Stratholme"},
+  "18725": {"name": "Peacemaker", "include": true, "note": "Magistrate Barthilas (Strat)"},
   "18727": {"name": "Crimson Felt Hat", "note": "Magistrate Barthilas (Stratholme)"},
   "18728": {"name": "Anastari Heirloom", "note": "Drop: Baroness Anastari, Stratholme"},
   "18730": {"name": "Shadowy Laced Handwraps", "note": "Baroness Anastari · Stratholme"},
@@ -1223,6 +1224,7 @@
   "274383": {"avail": "doubtful", "name": "Kanai's Knife", "note": "Quest: Soldier's Solace"},
   "274384": {"avail": "doubtful", "name": "Illegible Dogtags", "note": "Quest: Soldier's Solace"},
   "274386": {"avail": "doubtful", "name": "Toy Soldier", "note": "Quest: Soldier's Solace"},
+  "274419": {"name": "Bear Poking Stick", "include": true, "note": "Dala Fairmaw (npc 256629), zone 616, likely Mount Hyjal"},
   "274721": {"avail": "doubtful", "name": "Tattered Sandals", "note": "Quest: Threading a Solution"},
   "274759": {"name": "Everlook Pathcarver", "note": "Zippie Fizzbolt, Everlook"},
   "274760": {"name": "Everlook Delivery Bot", "note": "Zippie Fizzbolt, Everlook"},
@@ -1309,6 +1311,7 @@
   "279270": {"avail": "doubtful", "name": "Cloak of Earth and Sky", "note": "Tailoring 300, pattern has no known source"},
   "279273": {"name": "Hyper Deluxe Sniper Rifle Mk XVII", "avail": "doubtful", "note": "Engineering 300 · schematic (279322) has no known source"},
   "279833": {"name": "Courier's Clasp", "note": "Quest: Thrall Needs to Know (Horde)", "faction": "Horde"},
+  "279910": {"name": "Beastslayer's Trident", "include": true, "note": "Quest reward (Wowhead source quest, no quest id known) · on timesaver.gg's Forever hunter BiS"},
   "280010": {"name": "Gargantuan Wristguards", "note": "Titanosaur · Forever rare · looted Nov 8"},
   "280011": {"avail": "doubtful", "name": "Deeproar Cord", "note": "Titanosaur? · no source in db"},
   "280012": {"name": "Talon of Tor'Rel", "note": "Tor'Rel and Izha'Rel"},
@@ -1460,5 +1463,6 @@
   "287037": {"name": "Shaper's Robe", "avail": "doubtful", "note": "Ravasaur Juvenile · zone unknown · only reported"},
   "287041": {"name": "Time-Forgotten Bindings", "note": "On AH ~14g"},
   "287046": {"name": "Pylon Poker", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
+  "287075": {"name": "Belgrom's Revenge", "include": true, "note": "Quest: Revenge Exacted (91531) · Horde only"},
   "287077": {"name": "Demonbane Knife", "avail": "doubtful", "note": "Quest: Flags of Our Forebears, Mount Hyjal · Horde only, Hyjal not confirmed open"}
 }
