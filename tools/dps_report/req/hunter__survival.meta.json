@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_hunter_sv",
   "apl": "sv",
   "published": {
-    "dps": 1012.1,
-    "source": "the DPS report's main run of this request after the hunter fixes of 2026-11-17 (pet white swings without the hunter's crit, Predator's Edge twice on Raptor Strike, a queued Raptor Strike's off-hand miss penalty, traps on spell hit) (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 926.7,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1012.1,
-    "stderr": 0.31,
+    "dps": 926.7,
+    "stderr": 0.23,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Melee Survival with a cat, built around Expose Prey into Mongoose Bite. The pet does about 13% of the damage.",
   "keyTalents": [
