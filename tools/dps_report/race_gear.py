@@ -34,6 +34,9 @@ Otherwise (no steps, or the set can't be found), and for the Dwarf only, the tra
 A Phase 0 set (ADDED 2026-11-24, Phase 0 step 4) holds the preset race's faction rewards. A race of the other faction
 wears `<gearSet>_horde` or `<gearSet>_alliance` from beside it where that file exists (those slots re-ranked at one of its
 races with bis_phase0.sh RANK_ONLY SLOTS), kept by the rule without a sim. Without the file the race wears the preset's set.
+The race's hit and the gear's are counted on the faction set, and a Dwarf over the cap trades its excess as bonus stats
+on top of it (UPDATED 2026-11-24: it used to keep the faction set alone, so Dwarf rows never traded), simmed like any
+bonus stats swap against the faction set alone; a loss keeps the faction set without the bonus stats.
 
 A swap that takes hit away (a race over the cap: a lower step, or the bonus stats) is simmed at that race with the
 preset's gear and with the swap (180 s, seed 1, 20,000 iterations, both with the same seed, so the fights pair up: the
@@ -219,10 +222,15 @@ def plan(bid, race, to_cap=False):
     req = json.load(open(os.path.join(D, 'req', bid + '.json')))
     pl = req['raid']['parties'][0]['players'][0]
     names = stat_names()
-    hit, caster, why = race_hit(meta, req, race)
-    cap = SPELL_CAP if caster else MELEE_CAP
     if bid not in _preset_hit:
         _preset_hit[bid] = race_hit(meta, req, meta['race'])[0]
+    fs = faction_set(meta, race)
+    if fs:  # the other faction's set: the race's hit and the gear's are counted on it, and the trade goes on top of it
+        req = json.loads(json.dumps(req))
+        req['raid']['parties'][0]['players'][0]['equipment'] = json.loads(json.dumps(fs['equipment']))
+        pl = req['raid']['parties'][0]['players'][0]
+    hit, caster, why = race_hit(meta, req, race)
+    cap = SPELL_CAP if caster else MELEE_CAP
     # the hit the race's step aims at: the cap, or the preset race's own hit where the preset carries more (a dual
     # wielder past the yellow cap by sim, standards 4), so only the race's difference moves it; --to-cap: the cap
     target = cap if to_cap else max(cap, _preset_hit[bid])
@@ -232,12 +240,10 @@ def plan(bid, race, to_cap=False):
     p = {'build': bid, 'race': race, 'class': meta['class'], 'spec': meta.get('spec'), 'role': 'caster' if caster else 'melee/ranged',
          'hit': round(hit, 2), 'hitFrom': why, 'cap': cap, 'presetHit': round(_preset_hit[bid], 2), 'target': round(target, 2),
          'gearHit': gear_hit, 'excess': excess}
-    fs = faction_set(meta, race)
     if fs:  # the other faction's set: the race wears it whatever its hit (the list was ranked at the preset's hit)
         p.update({'gearSet': meta['gearSet'], 'stepSet': fs['name'], 'faction': fs['faction'],
-                  'presetFaction': fs['presetFaction'], 'equipment': fs['equipment'], 'excess': 0})
-        return p, req, meta
-    st = gear_steps(meta, pl)
+                  'presetFaction': fs['presetFaction'], 'equipment': fs['equipment']})
+    st = None if fs else gear_steps(meta, pl)
     if st:
         lo, hi = min(st['steps']), max(st['steps'])
         step = min(max(st['own'] - math.floor(hit - target + 0.5), lo), hi)
@@ -336,7 +342,17 @@ def gear_record(p, eq, iters):
         how = (f"race_gear.py: {p['race']} is {p['faction']}, so it can't wear the {p['presetFaction']} rewards of the preset's "
                f"{p['gearSet']}. It wears {p['stepSet']}, the same set with those slots re-ranked at a {p['faction']} race "
                f"(bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim.")
-        return {'gearSet': p['stepSet'], 'equipment': eq}, p['note'], None, how
+        if 'gain' not in p:
+            return {'gearSet': p['stepSet'], 'equipment': eq}, p['note'], None, how
+        if not p.get('bonusStats'):
+            return ({'gearSet': p['stepSet'], 'equipment': eq}, p['note'], None,
+                    how + f" On it, {hit_text(p)}: trading the {p['excess']:g}% excess for bonus stats lost or tied at 2 SE "
+                    f"({p['gain']:+.2f} ± {p['se']:.2f}), so the set is worn as it is.")
+        shares = ', '.join(f'{k} {v}%' for k, v in p['shares'].items())
+        how += (f" On it, {hit_text(p)}, the set's own hit {p['gearHit']:g}%: {p['excess']:g}% "
+                f"({p['excess'] * HIT_RATING:g} budget points) re-spent over the set's shares at the 1b prices ({shares}). "
+                f"Hit and crit are one pool for the gear, so each is written once." + pair.replace("the preset's gear", 'the set'))
+        return {'gearSet': p['stepSet'], 'equipment': eq, 'bonusStats': p['bonusStats']}, p['note'], gain, how
     if eq:
         more = 'less' if p['excess'] > 0 else 'more'
         how = (f"race_gear.py: {hit_text(p)}. The preset wears {p['gearSet']} (hit step {p['ownStep']:+d}); {p['race']} "
@@ -407,8 +423,16 @@ def main(args):
             path = race_override.own_path(bid, race)
             if p.get('skip'):
                 pass
-            elif p.get('faction'):
-                p.update({'keep': True, 'note': describe_step(p)})  # the other faction's set, by the rule
+            elif p.get('faction'):  # the other faction's set, by the rule; a Dwarf's excess hit traded on top of it
+                if p.get('bonusStats'):
+                    rq = at_race(req, race)  # req wears the faction set (plan)
+                    rq['encounter']['duration'] = 180
+                    base, swap, gain, se, se_unpaired = paired(rq, p['bonusStats'], iters)
+                    p.update({'dpsPreset': round(base, 2), 'dpsSwap': round(swap, 2), 'gain': round(gain, 2),
+                              'se': round(se, 2), 'seUnpaired': round(se_unpaired, 2), 'bonusKept': gain >= 2 * se})
+                    if not p['bonusKept']:
+                        p['dropped'] = p.pop('bonusStats')
+                p.update({'keep': True, 'note': describe_step(p) + ('; ' + describe(p) if p.get('bonusStats') else '')})
             elif p['excess'] == 0:
                 p['skip'] = ('the set carries no hit' if p['gearHit'] <= 0 else 'no hit over the cap') if race == DWARF \
                     else 'no hit-trade steps'
@@ -429,7 +453,8 @@ def main(args):
             elif 'step' in p:
                 line += f" step {p['ownStep']:+d} -> {p['step']:+d}"
             if 'gain' in p:
-                line += f"  {p['dpsPreset']:8.1f} -> {p['dpsSwap']:8.1f}  gain {p['gain']:+6.2f} ± {p['se']:.2f}  {'KEEP' if p['keep'] else 'drop'}  {p['note']}"
+                kept = p.get('bonusKept', p['keep'])
+                line += f"  {p['dpsPreset']:8.1f} -> {p['dpsSwap']:8.1f}  gain {p['gain']:+6.2f} ± {p['se']:.2f}  {'KEEP' if kept else 'drop'}  {p['note']}"
             elif p.get('keep'):
                 line += f"  KEEP (rule)  {p['note']}"
             else:

@@ -31,13 +31,33 @@
   "presetHit": 7.6,
   "target": 8.0,
   "gearHit": 5.6,
-  "excess": 0,
+  "excess": 0.6,
   "gearSet": "level60_phase0_hunter_bm",
   "stepSet": "level60_phase0_hunter_bm_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "bonusStats": {
+   "MeleeHit": -0.6,
+   "Agility": 3.548,
+   "Intellect": 0.771,
+   "MeleeCrit": 0.062,
+   "AttackPower": 1.635,
+   "RangedAttackPower": 1.635
+  },
+  "shares": {
+   "Agility": 59.1,
+   "CritRating": 14.4,
+   "AttackPowerBoth": 13.6,
+   "Intellect": 12.9
+  },
+  "dpsPreset": 995.08,
+  "dpsSwap": 998.5,
+  "gain": 3.41,
+  "se": 0.02,
+  "seUnpaired": 0.27,
+  "bonusKept": true,
   "keep": true,
-  "note": "Alliance: wears level60_phase0_hunter_bm_alliance, the set without the Horde rewards"
+  "note": "Alliance: wears level60_phase0_hunter_bm_alliance, the set without the Horde rewards; 0.6% hit over the cap re-spent as 3.5 Agility, 1.6 attack power, 0.06% crit and 0.8 Intellect"
  },
  "hunter__beast-mastery.NightElf": {
   "build": "hunter__beast-mastery",
@@ -301,13 +321,33 @@
   "presetHit": 7.6,
   "target": 8.0,
   "gearHit": 5.6,
-  "excess": 0,
+  "excess": 0.6,
   "gearSet": "level60_phase0_hunter_mm",
   "stepSet": "level60_phase0_hunter_mm_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "bonusStats": {
+   "MeleeHit": -0.6,
+   "Agility": 3.464,
+   "Intellect": 0.665,
+   "MeleeCrit": 0.062,
+   "AttackPower": 2.01,
+   "RangedAttackPower": 2.01
+  },
+  "shares": {
+   "Agility": 57.7,
+   "AttackPowerBoth": 16.8,
+   "CritRating": 14.4,
+   "Intellect": 11.1
+  },
+  "dpsPreset": 1077.92,
+  "dpsSwap": 1082.21,
+  "gain": 4.3,
+  "se": 0.02,
+  "seUnpaired": 0.33,
+  "bonusKept": true,
   "keep": true,
-  "note": "Alliance: wears level60_phase0_hunter_mm_alliance, the set without the Horde rewards"
+  "note": "Alliance: wears level60_phase0_hunter_mm_alliance, the set without the Horde rewards; 0.6% hit over the cap re-spent as 3.5 Agility, 2.0 attack power, 0.06% crit and 0.7 Intellect"
  },
  "hunter__marksmanship.NightElf": {
   "build": "hunter__marksmanship",
@@ -426,11 +466,31 @@
   "presetHit": 9,
   "target": 9,
   "gearHit": 4.0,
-  "excess": 0,
+  "excess": 1.0,
   "gearSet": "level60_phase0_hunter_sv",
   "stepSet": "level60_phase0_hunter_sv_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "shares": {
+   "Agility": 46.1,
+   "CritRating": 24.4,
+   "AttackPowerBoth": 23.9,
+   "Intellect": 5.6
+  },
+  "dpsPreset": 916.05,
+  "dpsSwap": 915.72,
+  "gain": -0.33,
+  "se": 0.14,
+  "seUnpaired": 0.32,
+  "bonusKept": false,
+  "dropped": {
+   "MeleeHit": -1.0,
+   "MeleeCrit": 0.174,
+   "Agility": 4.611,
+   "AttackPower": 4.772,
+   "RangedAttackPower": 4.772,
+   "Intellect": 0.563
+  },
   "keep": true,
   "note": "Alliance: wears level60_phase0_hunter_sv_alliance, the set without the Horde rewards"
  },
@@ -957,11 +1017,31 @@
   "presetHit": 9.7,
   "target": 9.7,
   "gearHit": 6.7,
-  "excess": 0,
+  "excess": 1.0,
   "gearSet": "level60_phase0_rogue_combat_swords",
   "stepSet": "level60_phase0_rogue_combat_swords_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "shares": {
+   "Agility": 65.5,
+   "CritRating": 18.6,
+   "AttackPowerBoth": 13.3,
+   "Strength": 2.7
+  },
+  "dpsPreset": 834.62,
+  "dpsSwap": 834.1,
+  "gain": -0.52,
+  "se": 0.12,
+  "seUnpaired": 0.36,
+  "bonusKept": false,
+  "dropped": {
+   "MeleeHit": -1.0,
+   "MeleeCrit": 0.133,
+   "Agility": 6.549,
+   "AttackPower": 2.655,
+   "RangedAttackPower": 2.655,
+   "Strength": 0.265
+  },
   "keep": true,
   "note": "Alliance: wears level60_phase0_rogue_combat_swords_alliance, the set without the Horde rewards"
  },
@@ -1382,11 +1462,31 @@
   "presetHit": 9.7,
   "target": 9.7,
   "gearHit": 6.7,
-  "excess": 0,
+  "excess": 1.0,
   "gearSet": "level60_phase0_rogue_seal_fate_swords",
   "stepSet": "level60_phase0_rogue_seal_fate_swords_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "shares": {
+   "Agility": 65.5,
+   "CritRating": 18.6,
+   "AttackPowerBoth": 13.3,
+   "Strength": 2.7
+  },
+  "dpsPreset": 854.86,
+  "dpsSwap": 854.79,
+  "gain": -0.06,
+  "se": 0.14,
+  "seUnpaired": 0.41,
+  "bonusKept": false,
+  "dropped": {
+   "MeleeHit": -1.0,
+   "MeleeCrit": 0.133,
+   "Agility": 6.549,
+   "AttackPower": 2.655,
+   "RangedAttackPower": 2.655,
+   "Strength": 0.265
+  },
   "keep": true,
   "note": "Alliance: wears level60_phase0_rogue_seal_fate_swords_alliance, the set without the Horde rewards"
  },
@@ -2123,13 +2223,33 @@
   "presetHit": 8.3,
   "target": 8.3,
   "gearHit": 8.3,
-  "excess": 0,
+  "excess": 1.0,
   "gearSet": "level60_phase0_arms",
   "stepSet": "level60_phase0_arms_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "bonusStats": {
+   "MeleeHit": -1.0,
+   "MeleeCrit": 0.207,
+   "Strength": 4.227,
+   "AttackPower": 3.039,
+   "RangedAttackPower": 3.039,
+   "Agility": 1.354
+  },
+  "shares": {
+   "Strength": 42.3,
+   "CritRating": 29.0,
+   "AttackPowerBoth": 15.2,
+   "Agility": 13.5
+  },
+  "dpsPreset": 999.25,
+  "dpsSwap": 1005.05,
+  "gain": 5.8,
+  "se": 0.06,
+  "seUnpaired": 0.58,
+  "bonusKept": true,
   "keep": true,
-  "note": "Alliance: wears level60_phase0_arms_alliance, the set without the Horde rewards"
+  "note": "Alliance: wears level60_phase0_arms_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 4.2 Strength, 3.0 attack power, 0.21% crit and 1.4 Agility"
  },
  "warrior__arms.NightElf": {
   "build": "warrior__arms",
@@ -2283,11 +2403,31 @@
   "presetHit": 8,
   "target": 8.0,
   "gearHit": 8.0,
-  "excess": 0,
+  "excess": 1.0,
   "gearSet": "level60_phase0_fury_dw",
   "stepSet": "level60_phase0_fury_dw_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
+  "shares": {
+   "Strength": 40.6,
+   "CritRating": 31.8,
+   "Agility": 15.8,
+   "AttackPowerBoth": 11.8
+  },
+  "dpsPreset": 999.65,
+  "dpsSwap": 998.14,
+  "gain": -1.52,
+  "se": 0.25,
+  "seUnpaired": 0.56,
+  "bonusKept": false,
+  "dropped": {
+   "MeleeHit": -1.0,
+   "MeleeCrit": 0.227,
+   "Strength": 4.064,
+   "AttackPower": 2.353,
+   "RangedAttackPower": 2.353,
+   "Agility": 1.578
+  },
   "keep": true,
   "note": "Alliance: wears level60_phase0_fury_dw_alliance, the set without the Horde rewards"
  },
