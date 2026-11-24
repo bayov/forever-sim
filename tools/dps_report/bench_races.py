@@ -46,9 +46,9 @@ from dashpaths import D, RNG  # noqa: E402
 # Racial parts a tank or healer can feel, by race: run_races.py's PARTS (the DPS ones) plus Night Elf dodge. The boss
 # type parts (beast, insight) are left out: no tank or healing boss has a creature type.
 PARTS = {
-    'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'chastise'], 'NightElf': ['dodge', 'elune', 'shadowmeld', 'starshards'],
+    'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'chastise', 'stoneform'], 'NightElf': ['dodge', 'elune', 'shadowmeld', 'starshards'],
     'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
-    'Tauren': ['endurance'], 'Troll': ['berserking', 'shadowguard'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
+    'Tauren': ['endurance'], 'Troll': ['berserking', 'shadowguard', 'regen'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
 }
 PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice', 'shadowguard'}
 PET_ONLY = {'command'}

@@ -1,74 +1,67 @@
 {
- "gearSet": "level60_phase1_synthetic_arms_hit-1",
+ "gearSet": "level60_phase0_arms_alliance",
  "equipment": {
   "items": [
    {
-    "id": 991001,
-    "enchant": 1506
+    "id": 12640,
+    "enchant": 2543
    },
    {
-    "id": 991002,
+    "id": 15411,
     "enchant": 1249019
    },
    {
-    "id": 991003
+    "id": 275737
    },
    {
-    "id": 991004,
+    "id": 272414,
     "enchant": 1219587
    },
    {
-    "id": 991005,
+    "id": 252484,
     "enchant": 1891
    },
    {
-    "id": 991006,
+    "id": 12936,
     "enchant": 1885
    },
    {
-    "id": 991007,
+    "id": 226861,
     "enchant": 1248640
    },
    {
-    "id": 991008
+    "id": 272403
    },
    {
-    "id": 991009,
+    "id": 22385,
     "enchant": 1506
    },
    {
-    "id": 991300,
+    "id": 287033,
     "enchant": 1887
    },
    {
-    "id": 991011
+    "id": 260219
    },
    {
-    "id": 991012
+    "id": 275976
    },
    {
-    "id": 991017
+    "id": 13965
    },
    {
-    "id": 991018
+    "id": 19289
    },
    {
-    "id": 991016,
+    "id": 13982,
     "enchant": 1900
    },
    {},
    {
-    "id": 991013
+    "id": 19107
    }
   ]
  },
- "note": "1% hit over the cap traded through the set's hit -1 step",
- "gain": {
-  "dps": 6.53,
-  "se": 0.12,
-  "iterations": 20000,
-  "seed": 1,
-  "duration": 180
- },
- "how": "race_gear.py: Dwarf hit 9% against the 8% yellow cap. The preset wears level60_phase1_synthetic_arms (hit step +0); Dwarf wears the set's step -1, level60_phase1_synthetic_arms_hit-1 (10 less gear hit rating, traded at the budget prices by orchestration/tools/hit_steps.py). Dwarf 1069.7 with the preset's gear, 1076.2 with the swap; gain.se is the paired error (the same seeded fights), 0.67 unpaired."
+ "note": "Alliance: wears level60_phase0_arms_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_arms. It wears level60_phase0_arms_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
 }
