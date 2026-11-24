@@ -1,75 +1,68 @@
 {
- "gearSet": "level60_phase1_synthetic_ranged_hit-1",
+ "gearSet": "level60_phase0_hunter_bm_alliance",
  "equipment": {
   "items": [
    {
-    "id": 993001,
-    "enchant": 1508
+    "id": 226887,
+    "enchant": 2543
    },
    {
-    "id": 993002,
+    "id": 22340,
     "enchant": 1249059
    },
    {
-    "id": 993003
+    "id": 271956
    },
    {
-    "id": 993004,
+    "id": 13340,
     "enchant": 1219587
    },
    {
-    "id": 993005,
+    "id": 252483,
     "enchant": 1891
    },
    {
-    "id": 993300,
-    "enchant": 1248497
+    "id": 226885,
+    "enchant": 1248599
    },
    {
-    "id": 993007,
+    "id": 15063,
+    "enchant": 931
+   },
+   {
+    "id": 272397
+   },
+   {
+    "id": 15062,
+    "enchant": 2543
+   },
+   {
+    "id": 226881,
     "enchant": 1887
    },
    {
-    "id": 993008
+    "id": 272408
    },
    {
-    "id": 993009,
-    "enchant": 1508
+    "id": 260217
    },
    {
-    "id": 993010,
-    "enchant": 1887
+    "id": 10455
    },
    {
-    "id": 993011
+    "id": 13965
    },
    {
-    "id": 993012
-   },
-   {
-    "id": 993015
-   },
-   {
-    "id": 993016
-   },
-   {
-    "id": 993013,
-    "enchant": 2646
+    "id": 279910,
+    "enchant": 34
    },
    {},
    {
-    "id": 993014,
+    "id": 284587,
     "enchant": 664
    }
   ]
  },
- "note": "1% hit over the cap traded through the set's hit -1 step",
- "gain": {
-  "dps": 7.22,
-  "se": 0.04,
-  "iterations": 20000,
-  "seed": 1,
-  "duration": 180
- },
- "how": "race_gear.py: Dwarf hit 9% against the 8% yellow cap. The preset wears level60_phase1_synthetic_ranged (hit step +0); Dwarf wears the set's step -1, level60_phase1_synthetic_ranged_hit-1 (10 less gear hit rating, traded at the budget prices by orchestration/tools/hit_steps.py). Dwarf 1169.8 with the preset's gear, 1177.0 with the swap; gain.se is the paired error (the same seeded fights), 0.33 unpaired."
+ "note": "Alliance: wears level60_phase0_hunter_bm_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_hunter_bm. It wears level60_phase0_hunter_bm_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
 }
