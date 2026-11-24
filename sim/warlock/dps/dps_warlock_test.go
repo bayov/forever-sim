@@ -58,7 +58,7 @@ func TestWarlockDestructionFire(t *testing.T) {
 // Forever tree (tools/forever_talents/client/warlock.json).
 var TalentsDemonology = "051-0305003131221001351-0550004"
 var TalentsDestruction = "255000000351--055030500310035"
-var TalentsAffliction = "05500021035001351-0050003201-005004"
+var TalentsAffliction = "05500023035001351-0050003201-034"
 var TalentsAfflictionShadowBolt = "2550102003520005--0550305003"
 var TalentsDestructionFire = "252-0050003201-0050345003101351"
 

@@ -293,9 +293,12 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruct
 // twice as fast under it, Soul Siphon on those three) the talent search at 180 sec on the new
 // rotation moved nothing and Undead stays: 1075.5 / 1076.9 / 1064.0 at 120 / 180 / 300 sec (20,000
 // iterations), against 1015.1 for Shadow Bolt Affliction at 180. Without Wrack cast it is 815.
+// Phase 0 gear (2026-11-24, step 4): the talent search at 180 sec on the Phase 0 set (6% spell hit), no Immolate,
+// moved Fel Concentration 1 to 3 and Aftermath 4 into Improved Shadow Bolt 3: +3.7 / +3.4 / +2.8 at 120 / 180 / 300 sec
+// (20,000 iterations), was 05500021035001351-0050003201-005004.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	'Affliction',
-	SavedTalents.create({ talentsString: '05500021035001351-0050003201-005004' }),
+	SavedTalents.create({ talentsString: '05500023035001351-0050003201-034' }),
 	{
 		group: 'Synthetic',
 		tooltip: 'Deep Affliction with Wrack and Siphon Life, the Imp sacrificed for 15% Shadow damage.',
