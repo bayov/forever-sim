@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261124-1: Blizzard's November 23 hotfix halves the Darkmoon Faire buffs; the sim still gives Sayge's fortunes 10%
+- severity: low (no Level 60 preset or report request sets `saygesFortune`, checked over tools/dps_report/req/*.json; a user who ticks Sayge's Dark Fortune of Damage gets about 5% more DPS than the game, if the halving reaches it)
+- affects: shared raid buffs (sim/core/buffs.go `ApplySaygesFortunes`, all five fortunes); any class with the buff ticked
+- found: 2026-11-24, master eceb09019
+- evidence: hotfix post t/2403040/15 (2026-11-24, notes dated November 23, tier 1): "Fixed an issue where Darkmoon Faire buffs were granting twice as much power as intended." Client 1.60.1.71091 still reads 23768 Sayge's Dark Fortune of Damage aura 79 bp 10 (misc 127), so the fix is server side and gives no number. Sim: buffs.go:2464 `DamageDealtMultiplier *= 1.10`, and the stat fortunes at 10%. TASKS.md (2026-11-24, "Find the corrected Darkmoon Faire buff values") tracks the number.
+- proposed fix: once wago.tools hotfixes (spells 23735-23738, 23766-23769) or a log give the value, set every fortune to it (5% if "twice as much" means exactly halved) and cite the hotfix in the comment. Until then, a comment saying the value is pre-hotfix.
+- needs: orchestrator fix
+
 ### mechanics-20261123-1: Robe of the Archmage's Replenish Mana shares the 60 s spell category cooldown with mana gems, healthstones and Demonic Rune; the sim gives it none
 - severity: low (estimate, not measured: no preset or gear set wears item 14152; it only touches mage builds the Phase 0 gear search tries, where pressing the robe can delay a mana gem or rune by up to 60 s)
 - affects: mage (any build wearing Robe of the Archmage); shared item code

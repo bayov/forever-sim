@@ -2,6 +2,23 @@
 
 ## Open
 
+### healer_fairness-20261124-1: the raid role's filler is the DPS report's Frost mage, so its move to Phase 0 gear cut every raid healer's carry 1-3%, unevenly, and put the shaman last
+- severity: high (raid shaman 1.390 -> 1.344, second-to-last to last; raid druid 1.385 -> 1.372, last to third)
+- affects: every raid healer preset in healbench's raid role (`tools/healbench/req/*_raid.json`); the tank role has no fillers
+- found: 2026-11-24, master eceb09019
+- evidence: healbench's `-filler` defaults to `tools/dps_report/req/mage__frost.json` (7 copies), and 058a07457 moved that
+  request off the synthetic set (996001-...) onto Phase 0 items. Bench at eceb09019 (seed 101, 1,000 it,
+  `ref/healer_fairness/bench_eceb090.tsv`): raid Holy 1.432, paladin 1.387, druid 1.372, shaman 1.344. Same binary with
+  `-filler` set to a6677362f's mage__frost.json (`ref/healer_fairness/raid_oldfiller_eceb090.tsv`): Holy 1.473, paladin
+  1.418, shaman 1.395, druid 1.390, i.e. pass 21's row within 0.005. Per file the shift runs from +0.042 (druid Onyxia) to
+  -0.152 (paladin Golemagg); shaman -0.046 mean, Holy -0.041, paladin -0.031, druid -0.018. Why the filler's gear moves
+  carry (its health and armor against raid damage, presumably) is not measured. Sure of the cause (one variable, same binary).
+- proposed fix: give healbench its own filler request (e.g. `tools/healbench/req/filler_mage.json` on the standards 35
+  synthetic set, or whatever set the user rules raid members wear) and make it `-filler`'s default, so DPS report gear
+  changes stop moving the healer ranking; then re-bench the raid row. Or rule that the filler should track the report's
+  gear, and keep this row.
+- needs: user ruling
+
 ### healer_fairness-20261115-1: Wild Growth's doubled tick (0.033 -> 0.066) lowers the raid druid's carry, 1.414 -> 1.392, from third to last; the preset isn't re-tuned for it
 - severity: high (the raid druid drops from third to last in the raid role, 0.020 behind the shaman's 1.412)
 - affects: Restoration druid raid preset (`tools/healbench/req/druid_restoration_raid.json`, and its `ui/` twin); the tank preset casts no Wild Growth
@@ -22,6 +39,8 @@
 - needs: worker fix
 - 2026-11-18, master a6677362f (pass 21): still open; after 7199c8f9c (healers react on time) the raid druid is
   1.385, last, 0.005 behind the shaman's 1.390 (`ref/healer_fairness/bench_a667736.tsv`).
+- 2026-11-24, master eceb09019 (pass 28): still not re-tuned. With the Phase 0 filler (-20261124-1) the raid druid is
+  1.372, third, ahead of the shaman's 1.344; with the old filler 1.390, last again behind the shaman's 1.395.
 
 ### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
 - severity: low (blocks a check; moves no number)

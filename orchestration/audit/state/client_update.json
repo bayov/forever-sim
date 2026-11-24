@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "e29cfe00f6f7e9f987f892e2165166272ce11067"
+  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
  },
- "last_pass_at": "2026-11-20T18:55:13Z",
- "client_build": "1.60.1.71037",
+ "last_pass_at": "2026-11-24T18:56:33Z",
+ "client_build": "1.60.1.71091",
  "result": "findings",
- "note": "71037 = client copy of the 11-17 hotfixes + push 114097/114065. New: Execute dummy Always Hit (low, verify). Ret 2H spec all Holy (11-19), rogue T1 5P Death Mark, Flurry vs WF totem already filed by mechanics. Blue Dragon resolved.",
- "pass": 15,
- "checked_at": "2026-11-24T06:51:05Z"
+ "note": "71091 = client copy of pushes 114268-114320 (Nov 19-23) + NPC druid encounter. New: Darkmoon Faire buff values unverified (low). Fengus, Feralheart energy, Chastise in flight; Execute WF rolls still ambiguous.",
+ "pass": 16,
+ "checked_at": "2026-11-24T19:15:51Z"
 }

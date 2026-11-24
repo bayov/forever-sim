@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "e29cfe00f6f7e9f987f892e2165166272ce11067"
+  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
  },
- "last_pass_at": "2026-11-24T01:02:49Z",
- "pass": 74,
+ "last_pass_at": "2026-11-24T18:56:37Z",
+ "pass": 75,
  "result": "quiet",
- "note": "Pass 74: no APL change. Sim changes reach presets: Rip/Rake AP shares from Forever logs (feral cat -15.0, -1.3%), warrior Flurry/Unbridled Wrath/Reckless Swings rework (Fury -1.5 to -5.5), hunter pet summoned with Hawk (BM/MM +0.7 to +1.4). A/B on the new CLI: feral drop Rip/Rake, Rip/Rake end gates, Fury HS 50/70 all lose or sit under the bar; no new findings.",
- "client_build": "1.60.1.70938",
- "checked_at": "2026-11-24T06:51:05Z",
- "baseline": "baseline_566067a_3000it_seed424242.tsv"
+ "note": "Pass 75: Phase 0 regear (step 4) moved every caster and most melee presets -6 to -20%; APL changes (Smite rank 3 fallback and 60% mana gates, Affliction/Demonology without Immolate, Fury Execute ahead of Bloodthirst, prot racials) all beat the previous APLs on both seed sets (Smite +7.6, Affliction +34.6, Demonology +14.0, Fury +3.8 at 180 s). No new findings; rotations of mage, paladin, shaman, feral, arms, shadow not re-searched on Phase 0 gear (open item).",
+ "client_build": "1.60.1.71091",
+ "checked_at": "2026-11-24T19:15:51Z",
+ "baseline": "baseline_eceb090_3000it_seed424242.tsv"
 }

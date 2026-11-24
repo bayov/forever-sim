@@ -240,9 +240,9 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 //   180 / 300 sec (20000 iterations, seeds 1 and 1000003 within 0.4), a cost of 1.1 / 0.9 / 1.0.
 //   Taking all 3 points from Meditation instead costs 61 at 300 sec (mana), and the 180 sec search's
 //   Meditation 1 build costs 9.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Shadow', SavedTalents.create({ talentsString: '00530400102-3-50052101231302251' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Shadow', SavedTalents.create({ talentsString: '02530100103-3-50042201231302251' }), {
 	tooltip:
-		'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Mental Strength, Inner Focus and Twilight Focus.',
+		'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Wand Specialization 2, Mental Strength 1, Meditation 1, Inner Focus and Twilight Focus.',
 	group: 'Synthetic',
 });
 

@@ -4,7 +4,71 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 566067a39: Rip and Rake tick attack power shares from Forever logs (be773f5eb); warrior Flurry, Reckless Swings and Unbridled Wrath from Forever logs (cd71e78c2); hunter pet summoned with Aspect of the Hawk (b82ad9a1e); no re-sim yet; pass 53, 2026-11-24)
+## 1. Cross-spec table (master eceb09019: Phase 0 step 4 regear of druid, mage, paladin, priest, shaman, warlock and warrior; Skyborne base offsets (e19d2df85), Blood Fury spell damage (9c08e16a2), Troll Regeneration, Innervate MP5; client 1.60.1.71091; pass 55, 2026-11-24)
+
+Full pass: 5k race sweep (seed 1, every race, report requests with only the race changed) on the eceb09019 CLI, plus paired 20k checks (seeds 1 / 1000003) for every race flag. "Report's published" is meta `published.dps`; builds.json is still the Phase 1 publication for every class. "Before" is the 8b5137c6d sweep at the report race. This sweep is the new baseline.
+
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (8b5137c6d) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Lone Wolf (hunter) | High Order | 1292.0 | Windshaper 1287.3 / High Order | Night Elf (1291.8) | 1313.7 | -21.9 | 1291.8 (+0.0%) |
+| 2 | Marksmanship | Night Elf | 1201.6 | Orc 1200.6 / Night Elf | Orc (1200.6) | 1201.3 | -0.7 | 1202.3 (-0.1%) |
+| 3 | Beast Mastery | Orc | 1112.7 | Orc / High Order 1110.8 | Orc (1112.7) | 1115.4 | -2.7 | 1115.5 (-0.3%) |
+| 4 | Feral | Night Elf | 1055.4 | Windshaper 1038.9 / Night Elf | Night Elf (1055.4) | 1054.8 | +0.7 | 1186.0 (-11.0%) |
+| 5 | Arms | Orc | 1016.5 | Orc / Night Elf 1013.3 | Orc (1016.5) | 1014.8 | +1.7 | 1079.0 (-5.8%) |
+| 6 | Fury (dual wield) | High Order | 1009.7 | Windshaper 1007.7 / High Order | Orc (1007.5) | 1007.1 | +0.4 | 1104.6 (-8.6%) |
+| 7 | Survival | Orc | 1007.3 | Orc / High Order 1005.4 | Orc (1007.3) | 1012.1 | -4.8 | 1012.9 (-0.6%) |
+| 8 | Fury (two-hand) | Orc | 992.8 | Orc / Night Elf 984.6 | Orc (992.8) | 990.3 | +2.5 | 1113.4 (-10.8%) |
+| 9 | Enhancement | Orc | 989.9 | Orc / Dwarf 983.0 | Orc (989.9) | 990.7 | -0.8 | 1080.0 (-8.3%) |
+| 10 | Affliction | Undead | 965.7 | Undead / Human 965.2 | Undead (965.7) | 965.7 | +0.0 | 1076.8 (-10.3%) |
+| 11 | Retribution | Undead | 957.0 | Undead / Human 955.8 | Undead (957.0) | 956.9 | +0.1 | 1027.0 (-6.8%) |
+| 12 | Rogue Combat Swords | Undead | 948.5 | Undead / Gnome 945.3 | Undead (948.5) | 963.5 | -15.0 | 948.5 (+0.0%) |
+| 13 | Rogue Seal Fate Swords | Undead | 942.6 | Undead / Night Elf 941.9 | Undead (942.6) | 957.0 | -14.4 | 942.6 (+0.0%) |
+| 14 | Rogue Combat Daggers | Undead | 941.2 | Undead / Gnome 940.8 | Undead (941.2) | 946.6 | -5.4 | 941.2 (+0.0%) |
+| 15 | Fire | Undead | 923.3 | Undead / Human 920.4 | Human (920.4) | 920.1 | +0.3 | 1054.2 (-12.4%) |
+| 16 | Rogue Seal Fate Daggers | Undead | 907.9 | Undead / Gnome 904.9 | Undead (907.9) | 920.7 | -12.8 | 907.9 (+0.0%) |
+| 17 | Demonology | Human | 894.8 | Orc 894.4 / Human | Orc (894.4) | 893.6 | +0.8 | 1056.6 (-15.3%) |
+| 18 | Destruction | Orc | 881.5 | Orc / Human 879.3 | Orc (881.5) | 880.5 | +1.0 | 1069.1 (-17.5%) |
+| 19 | Rogue Subtlety | Night Elf | 875.6 | Undead 873.8 / Night Elf | Night Elf (875.6) | 872.2 | +3.4 | 875.6 (+0.0%) |
+| 20 | Frostfire | Gnome | 874.9 | Undead 870.1 / Gnome | Human (874.2) | 873.5 | +0.7 | 1066.1 (-17.9%) |
+| 21 | Rogue Mutilate | Undead | 870.0 | Undead / Gnome 866.2 | Undead (870.0) | 866.1 | +3.9 | 870.0 (+0.0%) |
+| 22 | Elemental | Windshaper | 859.8 | Windshaper / Dwarf 850.1 | Windshaper (859.8) | 859.2 | +0.6 | 981.2 (-12.4%) |
+| 23 | Shadow | Troll | 857.3 | Troll / Human 853.6 | Undead (855.5) | 855.2 | +0.3 | 949.3 (-9.7%) |
+| 24 | Arcane | Gnome | 843.4 | Undead 842.8 / Gnome | Gnome (843.4) | 843.1 | +0.3 | 963.6 (-12.5%) |
+| 25 | Destruction Fire | Undead | 835.4 | Undead / Human 832.3 | Undead (835.4) | 835.0 | +0.4 | 997.9 (-16.3%) |
+| 26 | Balance | Night Elf | 822.9 | Windshaper 818.5 / Night Elf | Night Elf (822.9) | 822.1 | +0.8 | 956.3 (-13.9%) |
+| 27 | Frost | High Order | 727.3 | Undead 724.9 / High Order | High Order (727.3) | 726.4 | +0.9 | 945.0 (-23.0%) |
+| 28 | Smite | Undead | 695.7 | Undead / Human 682.6 | Undead (695.7) | 695.3 | +0.4 | 781.0 (-10.9%) |
+
+| Variant | Best race | DPS | Report's published (at its race) | Before |
+|---|---|---|---|---|
+| druid__balance-wrath | High Order | 734.5 | 729.9 (at Night Elf 730.5) | 872.5 |
+| hunter__beast-mastery-tallstrider | Orc | 1055.8 | 1057.1 (at Orc 1055.8) | 1058.1 |
+| hunter__beast-mastery-wolf | Orc | 1064.1 | 1065.6 (at Orc 1064.1) | 1066.3 |
+| hunter__marksmanship-tallstrider | Night Elf | 1174.7 | 1173.8 (at Orc 1172.6) | 1175.4 |
+| hunter__marksmanship-wolf | High Order | 1179.4 | 1179.4 (at Orc 1177.0) | 1179.2 |
+| hunter__survival-tallstrider | Orc | 979.6 | 982.5 (at Orc 979.6) | 983.2 |
+| hunter__survival-wolf | Orc | 984.9 | 989.1 (at Orc 984.9) | 990.3 |
+| paladin__level_60_shock_ret | Undead | 923.9 | 922.4 (at Undead 923.9) | 1017.9 |
+| paladin__level_60_sub_holy | Dwarf | 931.1 | 928.1 (at Undead 930.5) | 1013.8 |
+| priest__shadow-holy | Troll | 819.3 | 818.5 (at Undead 818.8) | 906.8 |
+| shaman__elemental-level60-mana-tide | Windshaper | 844.3 | 844.4 (at Windshaper 844.3) | 964.2 |
+| shaman__enhancement-imp-gw | Orc | 981.0 | 982.4 (at Orc 981.0) | 1068.4 |
+| shaman__enhancement-mana-tide | Orc | 894.5 | 894.2 (at Orc 894.5) | 975.0 |
+| shaman__enhancement-water-shield | Orc | 935.9 | 937.5 (at Orc 935.9) | 1027.0 |
+| warlock__affliction_shadow_bolt | Human | 811.4 | 810.4 (at Orc 809.3) | 1019.6 |
+
+Top over bottom: 1.86x
+
+Top over bottom: 1.86x (Lone Wolf 1292.0 / Smite 695.7). This mixes gear phases (below); among the Phase 0 classes it is 1.52x (Feral 1055.4 / Smite 695.7).
+
+- Pass 55 (eceb09019). **Gear phases are mixed** (fairness-20261124-1, high): hunters and rogues still wear the Phase 1 synthetic sets, every other class now wears real Phase 0 gear. The other classes dropped 5.8% (Arms) to 23% (Frost); hunters and rogues moved 0.0 to -0.6%. The hunter step 4 branch puts Lone Wolf at 1174.0, MM 1090.5, Survival 926.7 (-8 to -9%). Every move is explained by its class's Phase 0 request regear; no class whose requests did not change moved beyond noise.
+- Race: Balance High Order still beats Night Elf by 4.1 to 5.8 with its race rotation on all four builds (fairness-20261118-1). Fire Undead +2.2 over Human, Shadow Troll +1.9 over Undead (fairness-20261124-2). Fury High Order +1.5 on the Orc set but 0.4 below Orc on its own race set; MM Night Elf +1.0 (known, kept). Demonology Human +0.4, Frostfire Gnome +0.7, Lone Wolf High Order +0.2: noise.
+- Gaps against the metas (Lone Wolf -21.9, rogues -5 to -15, hunters -3 to -5) are the meta lag the results auditor tracks (results-20261104-2).
+- Gear: audit1b 19/19 "5a PASS | 1b PASS" (it checks the synthetic sets, which only hunters and rogues still wear in the report).
+
+<details><summary>Previous §1 (566067a39, 2026-11-24)</summary>
+
+### 1 (superseded 2026-11-24, eceb09019) Cross-spec table (master 566067a39: Rip and Rake tick attack power shares from Forever logs (be773f5eb); warrior Flurry, Reckless Swings and Unbridled Wrath from Forever logs (cd71e78c2); hunter pet summoned with Aspect of the Hawk (b82ad9a1e); no re-sim yet; pass 53, 2026-11-24)
 
 Economy pass: the loop's shared run (20,000 iterations, report requests at the report race, 566067a39 CLI) paired against the same requests on the c78d983ac CLI (seed 1), plus a 5k race re-sweep of Feral, BM, MM, Arms, Fury and Fury 2H. "Published" is builds.json at 566067a39. "Baseline" is the 8b5137c6d sweep at the report race (5k, seed 1). Rank in brackets is pass 52's.
 
@@ -44,6 +108,8 @@ Top over bottom: 1.65x
 - Pass 53 (566067a39, 2026-11-24). Every move is in a class whose code changed; the other 53 builds are identical (0.0) on the paired run. be773f5eb: Feral -15.0 (-1.3%), FF duty -14.9. cd71e78c2: Fury -6.2, Fury duties -4.5 / -5.1, Fury 2H -1.0 to -1.5, Arms 0, Arms dragonkin +0.2. b82ad9a1e: BM +1.2 to +1.4, MM +0.7 to +0.8, Survival and Lone Wolf 0. Not re-simmed: builds.json lags Feral (-14.8, -14.6) and Fury (-5.5, -4.6, -4.6), so the published order shows Fury (dual wield) above Beast Mastery where the sim now has BM 3.3 ahead (places 5 and 6 swap). Already raised as results-20261104-2 (update 2026-11-24); confirmed independently, not refiled. Feral keeps 3rd (40.6 over Fury 2H).
 - Race (5k re-sweep of the touched classes): report races still best. Feral Night Elf +18.8 over High Order; BM Orc +3.6; Arms / Fury / Fury 2H Orc +3.3 / +5.5 / +5.9; MM Night Elf +1.0 over Orc at 5k (baseline +0.6, the report keeps Orc), noise-level. Balance High Order (fairness-20261118-1) still open.
 - Gear: no synthetic set or request changed; audit1b last 19/19 PASS at 5518f4873.
+
+</details>
 
 <details><summary>Previous §1 (5518f4873, 2026-11-23)</summary>
 

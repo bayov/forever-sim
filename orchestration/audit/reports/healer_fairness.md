@@ -1,16 +1,45 @@
-# Healer fairness pass 27 (2026-11-24, master 566067a39)
+# Healer fairness pass 28 (2026-11-24, master eceb09019)
 
-Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth),
--20261104-4 (low).
+Result: findings. New: -20261124-1 (high, the raid role's filler mage moved onto Phase 0 gear and reordered the raid
+row). Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth), -20261104-4 (low).
 
-Due because sim/druid/rake.go, rip.go and tuning_70753.go changed (be773f5eb: Rip tick AP share 0.0125 -> 0.0114 a
-combo point, Rake tick 0.06875 -> 0.065, from wowsims/forever's Forever logs). These are cat-form bleeds only; no
-healer request (`tools/healbench/req/*.json`) casts Rip or Rake, and the Restoration druid's heal spells, healbench,
-`tools/encounters/` and `sim/core` are untouched since c78d983ac. Other changes: warrior Flurry/Unbridled Wrath and
-phase 0 gear/db work, none in a healer request. No re-bench needed: pass 25's cells stand
-(`ref/healer_fairness/bench_a667736.tsv`).
+Due because `sim/core/mana.go` changed (ed1df1d51, EV-0114: Innervate and Read Leyline's Energized now scale the MP5
+share that isn't a periodic energize, i.e. gear MP5 but not Blessing of Wisdom or Mana Spring). Among the healer
+requests only the two druid presets cast Innervate (self) and no preset is High Order (Read Leyline). Paired
+(seed 101, 1,000 it) against eceb09019 with ed1df1d51 reverted (scratch worktree): the 14 druid cells are identical
+but the tank druid's Chromaggus, 1.027 -> 1.037 (mean 1.267 -> 1.268). Negligible; no finding.
 
-The rest is pass 21's (master a6677362f), still current:
+Pass 27 kept pass 21's cells without a re-bench; the reverted build's raid druid differed from them (1.385 -> 1.372),
+so this pass re-benched all 63 cells at eceb09019 (`ref/healer_fairness/bench_eceb090.tsv`; healbench built with
+`go build -tags with_db`, `tools/audit/healer_fairness/screen.sh`, seed 101, 1,000 it).
+
+| Preset (role) | Onyxia | Brood | Chrom | Golemagg | Magmadar | Ragnaros | Vael | Mean (pass 21) |
+|---|---|---|---|---|---|---|---|---|
+| shaman_restoration (tank) | 1.391 | 0.944 | 1.010 | 1.984 | 2.111 | 0.598 | 0.922 | 1.280 (1.280) |
+| priest_holy (tank) | 1.378 | 0.931 | 0.970 | 2.000 | 2.154 | 0.600 | 0.910 | 1.278 (1.278) |
+| priest_discipline (tank) | 1.363 | 0.958 | 0.871 | 2.027 | 2.143 | 0.602 | 0.938 | 1.272 (1.272) |
+| druid_restoration (tank) | 1.401 | 0.898 | 1.037 | 1.952 | 2.025 | 0.638 | 0.928 | 1.268 (1.267) |
+| paladin_holy (tank) | 1.241 | 0.883 | 0.908 | 1.806 | 1.867 | 0.568 | 0.789 | 1.152 (1.152) |
+| priest_holy_raid (raid) | 0.980 | 0.924 | 1.057 | 2.512 | 2.014 | 1.339 | 1.197 | 1.432 (1.472) |
+| paladin_holy_raid (raid) | 0.977 | 0.904 | 1.149 | 2.527 | 1.877 | 1.248 | 1.027 | 1.387 (1.418) |
+| druid_restoration_raid (raid) | 0.988 | 0.906 | 1.118 | 2.527 | 1.828 | 1.263 | 0.971 | 1.372 (1.385) |
+| shaman_restoration_raid (raid) | 0.889 | 0.884 | 1.062 | 2.495 | 1.778 | 1.202 | 1.096 | 1.344 (1.390) |
+
+Tank row: pass 21's but for the druid's Chromaggus. Raid row: every preset 0.013 to 0.046 lower, and the shaman drops
+from second-to-last to last. Cause: 058a07457 put `tools/dps_report/req/mage__frost.json`, healbench's default filler
+(7 copies in the raid role), on Phase 0 items instead of the synthetic set. With `-filler` set to a6677362f's version of
+that file, the same binary gives Holy 1.473, paladin 1.418, shaman 1.395, druid 1.390 (`ref/healer_fairness/
+raid_oldfiller_eceb090.tsv`), pass 21's row within 0.005. The shift by file runs +0.042 (druid Onyxia) to -0.152
+(paladin Golemagg). So the raid ranking depends on the DPS report's mage gear, which nobody tunes for the healing
+bench: finding -20261124-1 asks for healbench's own filler or a ruling that it tracks the report.
+
+Same terms (step 1): the 9 healer requests are unchanged since pass 11, so everything but the healer row is still
+identical. Logs (step 2): still blocked by -20261104-4. Roles (step 3): unchanged.
+
+Open item: why the filler's gear moves carry this much (health, armor, fire resistance on Golemagg/Vaelastrasz?) was
+not measured.
+
+The rest is pass 21's (master a6677362f), kept for background:
 
 ## 1. Same terms
 

@@ -63,6 +63,11 @@ at its three weights (most of it the Titans at Max survival).
 - The Warden plays races a Forever shaman can't be: Night Elf at Max threat and Balanced, Undead at Max survival
   (client CharBaseInfo: shaman is Dwarf, Orc, Tauren, Troll or Skyborne Windshaper). Going legal costs about -50 (Orc)
   / -77 (Troll) / -124 (Tauren) (pass 12; finding -20261105-2). The Warden is last at every weight either way.
+- Racial actives: the warrior's APLs name every racial (Blood Fury, Berserking, Elune's Light, Eureka!, and Stoneform
+  from 20 s at Balanced and Max survival, 0f567e196 to dfd015925); the other three tanks rely on autocast, which fires
+  the damage racials but never Stoneform (a survival cooldown) in a scoring run. So the paladin and Warden Dwarf race
+  rows miss Stoneform, about +10 Balanced / +40 Max survival by the warrior's sweep (finding -20261124-1). No preset
+  race moves: every preset is Undead, Night Elf or Tauren, and the warrior presets' new lines are Undead no-ops.
 - Raid-only consumables: settled 2026-11-12 (user ruling, option a): no tank uses a raid-only stone, oil or elixir.
 - Enchants and the bear's Max survival race: settled 2026-11-12 (findings -20261112-2, -3). Every preset carries the
   best legal Phase 1 enchant per slot for its own weight (10,000 iterations, seeds 1 and 2, paired): paladin +75 / +53 /

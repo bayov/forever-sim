@@ -41,17 +41,17 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 
 | Class / system | Rows | Landed | In flight | Missing | Partial | Wrong | Not simulated on purpose | Ambiguous | n/a | Other |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Warrior | 89 | 54 | 0 | 2 | 0 | 3 | 0 | 5 | 25 | 0 |
-| Paladin | 70 | 40 | 5 | 2 | 0 | 3 | 1 | 3 | 14 | 2 superseded |
+| Warrior | 90 | 54 | 0 | 2 | 0 | 3 | 0 | 6 | 25 | 0 |
+| Paladin | 72 | 42 | 5 | 2 | 0 | 3 | 1 | 3 | 14 | 2 superseded |
 | Hunter | 98 | 54 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
-| Rogue | 70 | 39 | 0 | 1 | 2 | 2 | 1 | 3 | 22 | 0 |
-| Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
+| Rogue | 72 | 41 | 0 | 1 | 2 | 2 | 1 | 3 | 22 | 0 |
+| Priest | 57 | 21 | 15 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 114 | 67 | 12 | 4 | 0 | 3 | 2 | 2 | 24 | 0 |
 | Mage | 69 | 19 | 9 | 9 | 0 | 2 | 5 | 7 | 18 | 0 |
-| Warlock | 95 | 50 | 4 | 0 | 0 | 3 | 3 | 1 | 33 | 1 covered by another row |
-| Druid | 76 | 33 | 0 | 2 | 3 | 2 | 2 | 0 | 34 | 0 |
-| Shared (races, mechanics, items) | 83 | 32 | 1 | 5 | 3 | 4 | 4 | 9 | 25 | 0 |
-| **Total** | **819** | **408** | **47** | **35** | **9** | **27** | **22** | **34** | **233** | **4** |
+| Warlock | 96 | 50 | 5 | 0 | 0 | 3 | 3 | 1 | 33 | 1 covered by another row |
+| Druid | 77 | 33 | 1 | 2 | 3 | 2 | 2 | 0 | 34 | 0 |
+| Shared (races, mechanics, items) | 86 | 33 | 2 | 5 | 3 | 4 | 4 | 10 | 25 | 0 |
+| **Total** | **831** | **414** | **51** | **35** | **9** | **27** | **22** | **36** | **233** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -383,6 +383,27 @@ Text, cosmetic or out of scope, no rows: Reagent Economy loses its proc and 5 mi
 | WAR-U-16 | client 71037 | Execute 5308 and 20658/20660/20661/20662 (the dummy that triggers 26651): Attributes_3 adds Suppress Caster Procs, Suppress Target Procs and Always Hit; Attributes_2 +0x100 | yes (every warrior in execute phase) | SpellMisc 317179, 328653, 330569, 330769, 330772 | ambiguous (needs verify) | `sim/warrior/execute.go` models one hit-rolling special that keeps its extra rage when avoided (2ebdc14d6, 70862 logs); whether an always-hitting dummy now spends the rage before the damage roll is server side; finding client_update-20261120-1 |
 | HUN-U-14 | client 71037 | Wildstalker Armor 5P (1301252) reaches Multi-Shot as well as Aimed Shot | yes (hunters on the synthetic set) | SpellEffect 1326293 mask word 0 131072 -> 135168 (push 114065 in the client) | landed | `sim/hunter/item_sets_pve.go:332-344` |
 | SHR-U-25 | Blizzard 11-17 items; client 71037 | Item stats: Whiteout Staff and Crackling Staff the same (25 Sta, 25 Int, 74 spell power); Onyxia Blood Talisman, Old Guard Retaliator (green -> blue), Spiritcaller Kilt/Gloves/Mantle/Boots get stats; Soulforge Armor spell power; 74 new ilvl 55-66 dungeon set pieces (Feralheart, Darkmantle, Heroism, Beastmaster's, Deathmist, Five Thunders, Soulforge...) | minor (no request wears them) | `items_diff.py 70959 71037` | partly landed | Onyxia Blood Talisman (PR #133), the two staves, Soulforge Armor's spell power and the 72 Dungeon Set 1 pieces (PR #134), all merged 2026-11-22. Old Guard Retaliator and the Spiritcaller pieces aren't checked yet; finding client_update-20261117-4 (update) |
+
+## Build 1.60.1.71091 (first seen 2026-11-24)
+
+71091 writes the server hotfixes of November 20 to 23 (pushes 114268, 114283, 114309, 114313, 114314, 114320) into the client, and Blizzard's November 23 hotfix notes (read on foreverchanges.pro; the forum thread returned "performed this action too many times") cover the same lines. `table_summary.py 71037 71091`: 75 spells (SpellEffect 15 added, 5 removed, 42 changed; SpellMisc 34 changed), ItemSparse 1 added and 3 changed, ItemEffect 1 removed and 1 changed; the Trait* tables, SpellItemEnchantment and ChrRaces identical. Diff: `$AUDIT_WORK/diffs/71037-71091.md` (`db2diff.py`). foreverchanges.pro lists 71091 as current: "No item reads differently".
+
+Text, cosmetic or out of scope, no rows: a new druid-themed NPC encounter (Lunar Fire, Lunar Mark, Lunar Rage, Lunar Cascade, Umbral Fire/Collapse/Pull, Eternal Night, Wither, Bloom, Mass Insect Swarm, Starfall, Starsurge, Sunfire, Rejuvenation, Tranquility, NPC Moonfire 1280468/1331079, Wrath 1289451/1331071, Rake/Rip/Ferocious Bite/Maul/Swipe/Tiger's Fury/Berserk/Demoralizing Roar 128xxxx-1331xxx) and NPC hunter, mage and rogue copies (Multi-Shot 1289053, Serpent Sting 1287976, Freezing Trap 1294444, Arcane Wrath 1280471, Rupture 1272982, Ruination, Rain of Arrows, Ricochet, Reployer Malfunction, Healing Wave 11986); Mind Vision 2096/10909 suppresses weapon procs (push 114310); Eye of the Beast 13968 loses its empty dummy effect (ItemEffect 237978, spell 1318846); item 279947 ItemEffect PlayerCondition removed; Ruined Herb Seeds 291874 added; Ingenious Toy and Ti'ik's Head flags, Mote of Unstable Magic binds; Totem of the Storm 272432 renamed Totem of the Maelstrom. Blizzard 11-23 lines with no DPS reading: World Buffs no longer fall off on zone change; Mortal Strike unusable without the talent (the sim already requires it, `sim/warrior/mortal_strike.go:10`); Wisp Form; dungeon, profession and quest fixes. Two-Handed Weapon Specialization 20111 gains Attributes_5 0x10000 (aura affects more than the equipped weapon), the client copy of PAL-HF-07 (landed).
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| WAR-HF-05 | Blizzard 11-23 ("a few spells and abilities were causing more weapon procs than intended"); client 71091 | Execute 5308/20658/20660/20661/20662 (the cast that triggers 26651) drops Suppress Caster Procs and gains Suppress Weapon Procs | yes (every warrior in execute phase) | SpellMisc 317179, 328653, 330569, 330769, 330772: Attributes_3 0x70400 -> 0x60400, Attributes_4 0x200 -> 0x800200 (push 114313, already in the 71037 logs) | ambiguous (needs verify) | `sim/warrior/execute.go:15-28,59`: the cast rolls Windfury Totem a second time (assumption `warr_exec_wf2`, default 1); the 71037 logs after push 114313 still read about 1.81 rolls. Finding client_update-20261120-1 |
+| ROG-HF-07 | push 114313; client 71091 | Mutilate casts 399956/1241582/1241584 suppress weapon procs (the two halves still proc) | yes (Mutilate requests) | SpellMisc 658848, 796164, 796166 Attributes_4 0 -> 0x800000 | landed | `sim/rogue/mutilate.go`: the sim has no separate cast; the main hand half is the cast and procs once |
+| ROG-HF-08 | push 114268 (11-19); client 71091 | Shank procs poisons and weapon effects; its zero-point combo energize effect is gone; Boot Knife becomes a proc aura on the target (aura 42, ProcTypeMask 4112) with the same 1329285 (2 combo points) | yes (off-hand rogue builds with Shank) | SpellMisc 874521/874773 Attributes_3 0x1070000 -> 0x1040000, Attributes_4 0x800000 -> 0; SpellEffect 1368717/1369161 removed; Boot Knife SpellEffect 1368715 aura 4 -> 42, SpellAuraOptions 249271 added | landed | `sim/rogue/shank.go:15-20,72-74` (chance 20% a rank from curve 83008, unchanged) |
+| PAL-HF-08 | push 114313; client 71091 | Judgement 20271 suppresses weapon procs | yes (Retribution) | SpellMisc 328426 Attributes_4 0 -> 0x800000 | landed | `sim/paladin/judgement.go:23` (the cast is ProcMaskEmpty) |
+| PAL-HF-09 | push 114283; client 71091 | Judgement of Light, Wisdom and Justice level-1 copies 25752/25757/25945 last 40 s (was 10) | minor | SpellMisc 325535, 333664, 334781 DurationIndex 1 -> 64 (40000 ms) | landed | `sim/paladin/sow.go:43` (40 s under Forever) |
+| PRI-HF-01 | Blizzard 11-23; client 71091 | Chastise usable in Shadowform | minor (Dwarf Shadow, race table Humanoid variant only) | SpellShapeshift 55853-55857 (ShapeshiftExclude 0x8000000) removed, push 114309 | in flight (`forever-update/2026-11-22` c071d1819, PR #137) | `sim/priest/chastise.go:59-61` still blocks it on master |
+| PRI-HF-02 | Blizzard 11-23 | Dark Inspiration gives the right Spirit percent when Mind Flay triggers it | yes (Shadow) | server | landed | `sim/priest/talents.go:226`: one multiplier for both triggers |
+| WL-HF-06 | Blizzard 11-23; client 71091 | Intensity 18135 covers Incinerate | n/a (pushback) | SpellEffect 695261 mask_1 0 -> 64, push 114320 | in flight (PR #137) | `tools/database/gen_db/main.go` |
+| DRU-HF-03 | Blizzard 11-23; client 71091 | Feralheart 4P and Wildheart 5P: Nature's Bounty 27784 restores 4 Energy a second for 5 s (was mana) | yes (feral Phase 0 Feralheart lists) | SpellEffect 704635 EffectMiscValue 0 -> 3, push 114314 | in flight (`forever-update/2026-11-24-71091` 3f1c2708d) | `sim/common/item_sets/forever_dungeon_sets.go` |
+| SHR-HF-07 | Blizzard 11-23; foreverchanges "Found in the game" (71091) | Fengus' Ferocity 22817: 115 spell damage and healing (was 230), 200 AP unchanged | minor | server | in flight (3f1c2708d) | finding client_update-20261030-4 |
+| SHR-HF-08 | Blizzard 11-23 | "Darkmoon Faire buffs were granting twice as much power as intended", no numbers | minor (no request takes Sayge's fortune) | client 71091 Sayge's 23735-23738, 23766-23769 still 10 | ambiguous (needs verify) | `sim/core/buffs.go:2451` ApplySaygesFortunes, 10%; finding client_update-20261124-1 |
+| SHR-HF-09 | Blizzard 11-20; client 71091 | Stormshroud Armor 3P (Revitalize 23863/23864): 3% for 18 Energy (was 4% for 30) | minor | SpellAuraOptions 134496 ProcChance 4 -> 3, SpellEffect 700855 30 -> 18 | landed | `sim/common/item_sets/crafted.go:263-264` (PR #136) |
 
 ## Per-class ledgers
 

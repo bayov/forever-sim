@@ -2,21 +2,13 @@
 
 ## Open
 
-### tank_mechanics-20261124-1: Troll Regeneration's in-combat health regen is missing; Troll tanks lose about 11 HPS of healing needed
-- severity: high (moves the Troll warrior's place in the race table: Max survival +75, Balanced +25, measured)
-- affects: every Troll tank (Protection warrior, Warden shaman); the warrior race tables in docs/tank_warrior.md and the report
-- found: 2026-11-24, master c7e3b3e
-- evidence: client 1.60.1.71037 Regeneration 20555 is aura 88 (MOD_HEALTH_REGEN_PERCENT) 20 and aura 116 (MOD_REGEN_DURING_COMBAT) 20 (tier 1; forever-wiki/racials.md: "20% of total Health regeneration will continue during combat", 10%/10% in 70338). `applyForeverRaceEffects` (sim/core/racials_forever.go, Troll case) gives Beast Slaying and Berserking only, and a tank fight has no health regen, so a Troll tank regens nothing in combat; docs/tank_warrior.md "The passives all apply" doesn't list it. Measured with a scratch patch ($AUDIT_WORK/tank_mechanics/troll_regen_stoneform.patch: a 2 s tick of `outOfCombatHealthRegen(class, level, Spirit)` x 1.2 x 0.2): warrior_protection_balanced as Troll, 6000 fights, -labeled seed 1: healing needed 384 -> 373, Max threat 3594 -> 3602, Balanced 3018 -> 3043, Max survival 1291 -> 1366. On the 1000-fight race run of the same request that takes Troll past Tauren, Orc and Gnome on Max survival (1265 -> about 1340, second after Night Elf among non-Undead) and level with Orc and Gnome on Balanced. The size rests on the Wrath Spirit-regen tables the leveling sim uses (beta ticks 0.65 to 1.35x them, sim/core/leveling_tables.go), so about +-35%. Related: the leveling sim's `trollHealthRegenMultiplier` 1.1 / `trollCombatHealthRegen` 0.1 are 70338's values; 71037 reads 20% / 20%.
-- proposed fix: in the Troll case, a 2 s tick that heals 20% of 1.2x the Spirit regen (`outOfCombatHealthRegen`) while in combat, reading Spirit, not health (safe for the scoring replay); a DASH_RACIALS_OFF part "regen"; bump the leveling constants to 1.2 / 0.2. Then rerun the warrior and Warden race tables.
-- needs: orchestrator fix
-
-### tank_mechanics-20261124-2: Forever Stoneform (10% less physical damage for 8 s) isn't simmed, and the notes say the score couldn't value it
-- severity: low (+3 Balanced, +7 Max survival on cooldown, measured; Dwarf stays last)
-- affects: Dwarf Protection warrior and Protection paladin; docs/tank_warrior.md racial notes
-- found: 2026-11-24, master c7e3b3e
-- evidence: client 71037 Stoneform 20594: aura 87 (MOD_DAMAGE_PERCENT_TAKEN) -10 misc 1 (Physical), DurationIndex 31 (8 s), 180 s cooldown, 1.5 s GCD (tier 1). The Forever branch has no Stoneform (racials_forever.go: "a defensive cooldown the sim does not measure"; the Classic one in racials.go is +10% armor and Forever skips it). docs/tank_warrior.md says the defensive actives "aren't simmed, and the score couldn't value them anyway", but the score values Shield Wall the same way. Scratch patch (same file as -1), Stoneform on cooldown before Shield Wall, Dwarf balanced request, 6000 fights labeled: healing needed 385 -> 384, Max threat 3560 -> 3561, Balanced 2983 -> 2986, Max survival 1252 -> 1259 (1.5 casts a fight). A better timing may give a little more. Also stale: the Touch of the Grave comment in racials_forever.go still says "'Up to' reads as a cap ... upper bound" and "share a 1 sec cooldown"; the code and the notes now read "equal to" 5% and 15 s.
-- proposed fix: a Forever Stoneform (physical damage taken x0.9, 8 s, 3 min, GCD) as a survival cooldown, an APL line in the tank warrior (and paladin) presets, and the notes' sentence reworded; refresh the Touch of the Grave comment.
-- needs: orchestrator fix
+### tank_mechanics-20261124-4: A Dwarf Protection paladin or Warden never casts Stoneform: their APLs leave it to autocast, which a scoring run never fires
+- severity: low (the warrior's Stoneform is worth -7 / +10 / +44 on the rotopt encounters, dfd015925; Dwarf is the paladin's last race by 100 to 365)
+- affects: Protection paladin (Dwarf), Warden shaman (Dwarf); docs/tank_paladin.md race table
+- found: 2026-11-24, master eceb090
+- evidence: Stoneform registers as a CooldownTypeSurvival major cooldown (sim/core/racials_forever.go registerForeverStoneform). The paladin and Warden requests (tools/tankbench/req/paladin_protection_*.json, shaman_warden_*.json) have no 20594 line and rely on autocastOtherCooldowns, and `survivalCooldownDue` (sim/core/major_cooldown.go:152, apl_idle.go:360) returns false whenever `readsNoHealth()`, i.e. in every scoring run. So the -2 fix reaches the warrior only (its APLs carry an explicit line). Client 71091 leaves 20594 unchanged (tier 1).
+- proposed fix: the warrior's line (castSpell 20594 when currentTime >= 20s) in the paladin and Warden Balanced and Max survival APLs, tuned as dfd015925 did for the warrior; then rerun their race tables.
+- needs: worker fix
 
 ### tank_mechanics-20261124-3: No test pins the tank racial actives (Eureka!'s warrior scope, the level 60 APLs' racial lines)
 - severity: low (all four checked correct this pass)
@@ -25,6 +17,7 @@
 - evidence: no *_test.go names Eureka! for a warrior, Elune's Light, Berserking's Forever 10% or Touch of the Grave; TestP1TankWarrior runs the "protection" APL as Orc (+Human), not the level60_* APLs that carry the racial lines. Eureka!'s warrior list in racials_forever_eureka.go is generated, and a regenerated list that gained or lost Shield Slam, Revenge or Heroic Strike would go unnoticed.
 - proposed fix: a tank_warrior test that sims level60_balanced as Gnome / Night Elf / Orc / Troll and checks each racial is cast (2 / 1.5 / 2 / 1.5 a 180 s fight), and that Eureka! multiplies Shield Slam 23925, Revenge 11601 and Heroic Strike 11567 damage by 1.1 and cost by 0.9, and leaves Sunder 11597 alone.
 - needs: worker fix
+- update 2026-11-24 (pass 31, master eceb090): the new Stoneform and the tank-side Troll Regeneration tick have no test either; the only one is the leveling sim's TestLevelingTrollRegen (sim/shaman/enhancement/leveling_rest_test.go, 20% in combat). A test should check Stoneform's x0.9 Physical taken for 8 s and that a Troll tank's healing needed drops with the regen on.
 
 ### tank_mechanics-20261117-1: Unbridled Wrath after push 114097 skips Sunder Armor (no damage), with no evidence for that limit
 - severity: low (+0.3 to +0.4% objective at stake, measured)
@@ -54,6 +47,24 @@
 - needs: worker fix
 
 ## Resolved
+
+### tank_mechanics-20261124-1: Troll Regeneration's in-combat health regen is missing; Troll tanks lose about 11 HPS of healing needed
+- severity: high (moves the Troll warrior's place in the race table: Max survival +75, Balanced +25, measured)
+- affects: every Troll tank (Protection warrior, Warden shaman); the warrior race tables in docs/tank_warrior.md and the report
+- found: 2026-11-24, master c7e3b3e
+- evidence: client 1.60.1.71037 Regeneration 20555 is aura 88 (MOD_HEALTH_REGEN_PERCENT) 20 and aura 116 (MOD_REGEN_DURING_COMBAT) 20 (tier 1; forever-wiki/racials.md: "20% of total Health regeneration will continue during combat", 10%/10% in 70338). `applyForeverRaceEffects` (sim/core/racials_forever.go, Troll case) gives Beast Slaying and Berserking only, and a tank fight has no health regen, so a Troll tank regens nothing in combat; docs/tank_warrior.md "The passives all apply" doesn't list it. Measured with a scratch patch ($AUDIT_WORK/tank_mechanics/troll_regen_stoneform.patch: a 2 s tick of `outOfCombatHealthRegen(class, level, Spirit)` x 1.2 x 0.2): warrior_protection_balanced as Troll, 6000 fights, -labeled seed 1: healing needed 384 -> 373, Max threat 3594 -> 3602, Balanced 3018 -> 3043, Max survival 1291 -> 1366. On the 1000-fight race run of the same request that takes Troll past Tauren, Orc and Gnome on Max survival (1265 -> about 1340, second after Night Elf among non-Undead) and level with Orc and Gnome on Balanced. The size rests on the Wrath Spirit-regen tables the leveling sim uses (beta ticks 0.65 to 1.35x them, sim/core/leveling_tables.go), so about +-35%. Related: the leveling sim's `trollHealthRegenMultiplier` 1.1 / `trollCombatHealthRegen` 0.1 are 70338's values; 71037 reads 20% / 20%.
+- proposed fix: in the Troll case, a 2 s tick that heals 20% of 1.2x the Spirit regen (`outOfCombatHealthRegen`) while in combat, reading Spirit, not health (safe for the scoring replay); a DASH_RACIALS_OFF part "regen"; bump the leveling constants to 1.2 / 0.2. Then rerun the warrior and Warden race tables.
+- needs: orchestrator fix
+- resolved: 2026-11-24, 8d5fdd664 and 7a2311b36 (registerTrollRegeneration in sim/core/racials_forever.go: 20% of 1.2x the Spirit regen every 2 s from the first damage taken; leveling constants 1.2 / 0.2). Pass 31, Troll balanced request, 3000 fights labeled seed 1: healing needed 384 -> 373 with the regen off/on, Balanced 3022 -> 3047, Max survival 1294 -> 1370, as the finding measured. No tank-side test (see -3).
+
+### tank_mechanics-20261124-2: Forever Stoneform (10% less physical damage for 8 s) isn't simmed, and the notes say the score couldn't value it
+- severity: low (+3 Balanced, +7 Max survival on cooldown, measured; Dwarf stays last)
+- affects: Dwarf Protection warrior and Protection paladin; docs/tank_warrior.md racial notes
+- found: 2026-11-24, master c7e3b3e
+- evidence: client 71037 Stoneform 20594: aura 87 (MOD_DAMAGE_PERCENT_TAKEN) -10 misc 1 (Physical), DurationIndex 31 (8 s), 180 s cooldown, 1.5 s GCD (tier 1). The Forever branch has no Stoneform (racials_forever.go: "a defensive cooldown the sim does not measure"; the Classic one in racials.go is +10% armor and Forever skips it). docs/tank_warrior.md says the defensive actives "aren't simmed, and the score couldn't value them anyway", but the score values Shield Wall the same way. Scratch patch (same file as -1), Stoneform on cooldown before Shield Wall, Dwarf balanced request, 6000 fights labeled: healing needed 385 -> 384, Max threat 3560 -> 3561, Balanced 2983 -> 2986, Max survival 1252 -> 1259 (1.5 casts a fight). A better timing may give a little more. Also stale: the Touch of the Grave comment in racials_forever.go still says "'Up to' reads as a cap ... upper bound" and "share a 1 sec cooldown"; the code and the notes now read "equal to" 5% and 15 s.
+- proposed fix: a Forever Stoneform (physical damage taken x0.9, 8 s, 3 min, GCD) as a survival cooldown, an APL line in the tank warrior (and paladin) presets, and the notes' sentence reworded; refresh the Touch of the Grave comment.
+- needs: orchestrator fix
+- resolved: 2026-11-24, 8d5fdd664 and dfd015925 (registerForeverStoneform: Physical damage taken x0.9, 8 s, 3 min, GCD; warrior Balanced and Max survival cast it from 20 s). The paladin and Dwarf Warden half is left: tank_mechanics-20261124-4.
 
 ### tank_mechanics-20261112-2: Yellow attacks proccing Windfury Totem (mechanics-20261112-1, option b) would move every non-paladin tank preset by 3 to 21%
 - severity: high (a user ruling's size on the tank scores; no sim is wrong until that ruling)

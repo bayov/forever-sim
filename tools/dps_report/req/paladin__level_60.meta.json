@@ -12,18 +12,18 @@
     "Protection",
     "Retribution"
   ],
-  "gearSet": "level60_phase1_synthetic_hit-3",
+  "gearSet": "level60_phase0_ret",
   "apl": "level60",
   "published": {
-    "dps": 1023.0,
-    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
+    "dps": 956.9,
+    "source": "verify.py on the Phase 0 gear set (level60_phase0_ret, the ret Phase 0 list's picks), 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24 (Phase 0 step 4)"
   },
   "verify": {
-    "dps": 1023.0,
-    "stderr": 0.37,
+    "dps": 956.9,
+    "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-15), 180 \u00b1 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py, Phase 0 set level60_phase0_ret, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-24)"
   },
   "summary": "Retribution build that keeps Seal of Righteousness up and swaps to Seal of Command and back to spend its Unsealed Wrath copies.",
   "keyTalents": [
@@ -71,12 +71,12 @@
     "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
     "Unsealed Wrath is new with the October 30 hotfix and unverified: the sim lets landed white swings store and spend the copies, and rolls each stored Seal of Command at its own 7 a minute.",
     "Two-Handed Weapon Specialization raises all Holy damage as well as physical, and Vengeance stacks up to 5 times, as the November 2 development notes announce. Client 1.60.1.70753 still has Physical only and 3 stacks; the sim takes the notes' values until a hotfix or client build says otherwise (standards 37).",
-    "Precision 3 puts melee hit 3% over the 8% cap, though it still adds spell hit. Ret sub-Holy takes Divine Precision instead and ties it.",
+    "On the Phase 0 set (5% hit from gear) Precision 3 brings melee hit to the 8% cap. Ret sub-Holy takes Divine Precision instead and stays 3% under it.",
     "Only one 2% crit elixir. A second (Mongoose) would add 14.9 DPS.",
     "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/paladin.md): talents kept (050050002-503-05233101201301351), on the hit-3 step (level60_phase1_synthetic_hit-3, 30 hit rating traded for 30 crit rating, melee hit 11% to the 8% cap); 1107.7 / 1103.2 / 1093.3 at 120 / 180 / 300 s (+12.2 / +11.1 / +13.0), not yet re-verified here. 2026-11-15 (Judgement of Command melee again, rolling Windfury Totem and on-hit procs): rotation re-searched with tools/rotopt over 120 / 180 / 300 sec, kept only where it won all six cells (seeds 1 and 1000003, 20,000 iterations); see tools/rotopt/paladin_presets.sh. Swap to Seal of Command on 1 Righteousness copy (was 2), both swaps within 2.5 sec of the swing, no mana rule: +4.1 / +4.4 / +5.2 (seed 1), +3.7 / +4.0 / +5.0 (seed 1000003). The published and verify numbers predate it. Re-checked after Two-Handed Weapon Specialization was ruled to reach the seals, Holy Strike, Judgement of Command and Consecration: the same pick wins +5.2 / +5.5 / +6.7 (seed 1), +4.8 / +5.2 / +6.6 (seed 1000003)."
+  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/paladin.md): talents kept (050050002-503-05233101201301351), on the hit-3 step (level60_phase1_synthetic_hit-3, 30 hit rating traded for 30 crit rating, melee hit 11% to the 8% cap); 1107.7 / 1103.2 / 1093.3 at 120 / 180 / 300 s (+12.2 / +11.1 / +13.0), not yet re-verified here. 2026-11-15 (Judgement of Command melee again, rolling Windfury Totem and on-hit procs): rotation re-searched with tools/rotopt over 120 / 180 / 300 sec, kept only where it won all six cells (seeds 1 and 1000003, 20,000 iterations); see tools/rotopt/paladin_presets.sh. Swap to Seal of Command on 1 Righteousness copy (was 2), both swaps within 2.5 sec of the swing, no mana rule: +4.1 / +4.4 / +5.2 (seed 1), +3.7 / +4.0 / +5.0 (seed 1000003). The published and verify numbers predate it. Re-checked after Two-Handed Weapon Specialization was ruled to reach the seals, Holy Strike, Judgement of Command and Consecration: the same pick wins +5.2 / +5.5 / +6.7 (seed 1), +4.8 / +5.2 / +6.6 (seed 1000003). 2026-11-24 (Phase 0 step 4, orchestration/round_notes_2026-11-11/phase0_step4_shaman_ret.md): gear moved from the synthetic set (level60_phase1_synthetic_hit-3, published 1023.0) to the Phase 0 set (level60_phase0_ret); request from mksettings -gear level60_phase0_ret with the same edits as above. Talents re-searched on the Phase 0 set (melee hit 5% from gear) and kept."
 }

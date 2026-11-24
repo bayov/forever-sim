@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85f9fca89b614a650eab0f1065285ead8b03940b"
+  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
  },
- "last_pass_at": "2026-11-24T13:41:12Z",
- "pass": 30,
+ "last_pass_at": "2026-11-24T18:54:33Z",
+ "pass": 31,
  "result": "findings",
- "client_build": "1.60.1.71037",
- "checked_at": "2026-11-24T13:41:12Z",
+ "client_build": "1.60.1.71091",
+ "checked_at": "2026-11-24T19:15:51Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -16,7 +16,12 @@
    "url": "https://us.forums.blizzard.com/en/wow/t/2404092",
    "hotfixes": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026",
    "date": "2026-11-10"
+  },
+  "hotfixes_thread": {
+   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
+   "last_post": 15,
+   "date": "2026-11-24T02:06:52Z"
   }
  },
- "note": "Pass 30 (c7e3b3e): prot warrior racial actives (0f567e196, d757d5d) match client 71037; Eureka! mask leaves Sunder out. Troll in-combat Regeneration missing (20261124-1, high), Forever Stoneform missing (-2), no racial tests (-3)."
+ "note": "Pass 31 (eceb090): client 71091 touches no tank row; Troll Regeneration and warrior Stoneform landed (-1, -2 resolved). Dwarf paladin/Warden never cast Stoneform (20261124-4, low); racial tests still missing (-3)."
 }

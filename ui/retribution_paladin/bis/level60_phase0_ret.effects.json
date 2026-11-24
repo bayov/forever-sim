@@ -3,8 +3,8 @@
   "use_dur": 90,
   "dps": 970.68,
   "iters": 10000,
-  "made": "2026-11-23",
-  "sim": "fa80123cb056+",
+  "made": "2026-11-24",
+  "sim": "c7e3b3e1efda+",
   "items": {
     "647": {"name":"Destiny","dps":33.3},
     "809": {"name":"Bloodrazor","dps":3.5},

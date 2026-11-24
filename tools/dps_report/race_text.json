@@ -90,18 +90,6 @@
    "priority:s1259812": "Why on cooldown? This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
   }
  },
- "shaman__elemental-level60.Troll": {
-  "note": "Berserking waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows.",
-  "why": {
-   "priority:s26297t2": "Why wait for Elemental Mastery to end? During it, Lightning Bolt already casts in one global cooldown, so the haste would be wasted."
-  }
- },
- "shaman__elemental-level60-mana-tide.Troll": {
-  "note": "Berserking waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows.",
-  "why": {
-   "priority:s26297t2": "Why wait for Elemental Mastery to end? During it, Lightning Bolt already casts in one global cooldown, so the haste would be wasted."
-  }
- },
  "warlock__affliction.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
@@ -139,25 +127,13 @@
   "note": "Its gear trades 1% hit it doesn't need (over the cap) for 4.7 Agility, 2.9 attack power, 0.16% crit and 1.6 Strength."
  },
  "paladin__level_60.Dwarf": {
-  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
- },
- "paladin__level_60_shock_ret.Dwarf": {
-  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
- },
- "paladin__level_60_sub_holy.Dwarf": {
-  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 3.0 spell power, 1.9 Strength, 1.8 Intellect and 0.18% crit."
  },
  "priest__shadow.Dwarf": {
   "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.8 spell power, 2.5 Intellect and 0.12% crit."
  },
  "priest__shadow-holy.Dwarf": {
   "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.8 spell power, 2.5 Intellect and 0.12% crit."
- },
- "shaman__elemental-level60.Dwarf": {
-  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.3 spell power, 2.8 Intellect and 0.12% crit."
- },
- "shaman__elemental-level60-mana-tide.Dwarf": {
-  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.3 spell power, 2.8 Intellect and 0.12% crit."
  },
  "warrior__arms.Dwarf": {
   "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.1 Strength, 2.4 Agility, 2.2 attack power and 0.10% crit."

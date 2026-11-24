@@ -35,7 +35,9 @@ func (priestSmite) Knobs() []Knob {
 		// spend Smite's mana: above 40% it is 733.2 / 709.5 / 617.9 at 120 / 180 / 300 sec,
 		// above 60% with Inner Focus on cooldown 727.8 / 714.6 / 642.2 (2026-10-16). Without
 		// Holy Fire (below) 80% is best at 180 sec.
-		{Name: "dpMana", Default: 80, Min: 0, Max: 80, Step: 10},
+		// On the Phase 0 gear (2026-11-24, less mana than the synthetic set) the knob search moved
+		// it to 30, with darkSacrifice 60 and Smite rank 3 below 20 mana a second (below).
+		{Name: "dpMana", Default: 30, Min: 0, Max: 80, Step: 10},
 		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -57,15 +59,18 @@ func (priestSmite) Knobs() []Knob {
 		// make that up: the Night Elf rotation is 741.1 without it, 723.7 / 718.4 with it, and
 		// a knob search started from 1 drops it (2026-10-28).
 		{Name: "starshards", Default: 0, Min: 0, Max: 2, Step: 1},
-		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
+		{Name: "darkSacrifice", Default: 60, Min: 0, Max: 80, Step: 10},
 		// Smite of this rank (0 never) once the mana would no longer last the fight at
 		// smiteManaRate mana a second. Forever's downranking penalty (Blizzard's 2026-10-01
 		// development notes, foreverchanges.pro/downranking: 5% of the coefficient lost per
 		// level past 17 below the caster, sim/priest/priest.go) leaves rank 7 (level 46) its
 		// full coefficient at 60 and ranks 4 and lower none. Rank 7 below 35 mana a second is
 		// 706.5 / 643.8 at 180 / 300 sec against 701.4 / 545.0 for the earlier rank 4 below 20.
-		{Name: "smiteDownrank", Default: 7, Min: 0, Max: 7, Step: 1},
-		{Name: "smiteManaRate", Default: 35, Min: 15, Max: 45, Step: 5},
+		// On the Phase 0 gear (2026-11-24) the search took rank 3 below 20 mana a second, with
+		// dpMana 30 and darkSacrifice 60: 713.6 / 695.5 / 666.7 at 120 / 180 / 300 sec against
+		// 702.2 / 687.9 / 641.5 (20,000 iterations), and 783.2 against 781.0 on the synthetic gear.
+		{Name: "smiteDownrank", Default: 3, Min: 0, Max: 7, Step: 1},
+		{Name: "smiteManaRate", Default: 20, Min: 15, Max: 45, Step: 5},
 		// Wand Shoot from wandLow percent mana up to wandHigh (0 never) with at least wandMinTime
 		// seconds of fight left, to regenerate outside the five second rule, and wandFallback
 		// when nothing else can be cast (out of mana). Shoot gives way to the next cast after
