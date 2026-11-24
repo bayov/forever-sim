@@ -560,6 +560,54 @@ kept until the healing session decides (tank_fairness-20261104-5). It is left as
 `tools/healbench`, `tools/encounters/from_logs.py` and `TestForeverTankScore` read it, and replacing it breaks
 `TestForeverTankScore` (no iteration needs 500 HPS on the synthetic set) and `TestHealingFightHealComm`.
 
+## Racials (2026-11-24)
+
+The prot racials pass (brief `orchestration/round_notes_2026-11-11/briefs/prot_racials_1124.md`; raw output and
+scripts in `orchestration/tank_handoff/warrior/racials_1124/`). `rotopt -eval`, each preset's shipped knobs
+(`orchestration/tank_handoff/windfury_retune/knobs/`), the six scoring bosses at the preset's own weight, 10,000
+iterations, seed 1 (± about 5 / 4 / 8):
+
+| Race | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| Undead | 4,234.2 | **3,459.2** | **1,818.4** |
+| Night Elf | **4,265.0** | 3,443.1 | 1,633.8 |
+| Orc | 4,236.3 | 3,399.3 | 1,531.1 |
+| Gnome | 4,218.2 | 3,395.0 | 1,541.2 |
+| Troll | 4,183.4 | 3,346.9 | 1,513.1 |
+| Tauren | 4,126.9 | 3,329.2 | 1,544.6 |
+| Human | 4,124.8 | 3,296.6 | 1,445.5 |
+| the Skyborne (both) | 4,127.3 | 3,291.8 | 1,458.3 |
+| Dwarf | 4,101.8 | 3,276.5 | 1,432.5 |
+
+- **Every racial works now.** The APLs named no Elune's Light or Eureka!, and an APL casts no major cooldown it doesn't
+  name, so Night Elf and Gnome tanks never used them (Blood Fury and Berserking had the same bug, fixed in 0f567e196).
+  With them cast, Night Elf gains +155 / +148 / +150 (Max threat / Balanced / Max survival) and Gnome +120 / +124 /
+  +118. The passives all apply. Some don't reach the score: Human's Spirit, Dwarf's and Troll's Beast damage and the
+  Skyborne's Elemental damage (no scored boss is a Beast or an Elemental), and Read Leyline for a Rage user. The
+  defensive actives, Stoneform, War Stomp, Will of the Forsaken and Shadowmeld's threat drop, aren't simmed, and the
+  score couldn't value them anyway.
+- **Racial timing** (the `racial` and `racialAt` knobs, `tools/rotopt/warrior_tank.go`): on cooldown from the pull
+  (0, kept) beats every alternative on every preset for Orc and Troll. Syncing with the attack power trinket (1) is
+  the same APL in effect, because the trinket also goes at the pull. Holding for the last 15 to 60 s (2) loses 5 to
+  85. Starting 5 to 45 s in (3) loses 14 to 128. For Night Elf and Gnome the pull also beats a 60 s hold (-7 to -22)
+  and a 5 s delay (-30 to -57). SafeDPS is set by the tank's early lead, so threat at the pull is worth the most.
+  Forever's Berserking is a flat 10% (`racials_forever.go`), and the replay can't read health, so there is no
+  low-health timing to search. A prot build has no Death Wish to sync with.
+- **Touch of the Grave** stays at 5% of max health. The racial's description says "up to 5%", but the drain spell's own
+  tooltip says "Steals life from target enemy equal to $1260189s1% of your maximum Health"
+  (`orchestration/audit/ref/client_update/diffs/70009-70170.md`). Its effect (`forever-wiki/racials.md`) has 5 base
+  points and no coefficient, and it ignores caster and target damage modifiers. Confidence is medium-high: no combat
+  log in the repo shows a drain.
+- **Fears are left out.** Magmadar's Panic (`magmadar.json` notes) and Onyxia's Bellowing Roar (phase 3,
+  `onyxia.json` notes) are the scored bosses' fears. Golemagg, Broodlord, Vaelastrasz and Chromaggus don't fear the
+  tank. The sim has no loss-of-control state, and the boss never leaves the tank (`sim/core/raid_damage.go`; threat is
+  scored against a reference DPS, `sim/core/tank_score.go`). Every Panic and Roar in our logs met an immunity
+  (`logs/anniversary_mc.json`, `logs/sod_mc.json`, `logs/*_onyxia.json`), so nothing calibrates what a landed fear
+  costs. Raids answer with Fear Ward, Tremor Totem or Berserker Rage. Berserker Rage in this sim has no fear immunity
+  and isn't in the APLs (`sim/warrior/berserker_rage.go`). Will of the Forsaken would cover one fear every 2 min on top
+  of those, and that worth is real but unscored. The report's warrior notes say so ("Warrior: Fears"). A fair model
+  needs an incapacitate state, a loose boss and an off-tank, which is out of scope here.
+
 ## Numbers (2026-11-04, round 2)
 
 `tools/tankbench`, 1,000 iterations, the presets' requests on all seven Anniversary encounters (Ragnaros benched, not
@@ -623,7 +671,8 @@ at w = 1, 3,008.5 against 2,877.8 and 2,869.7).
 
 ## Calls for the user
 
-1. **Touch of the Grave's drain** (Undead): modelled at its "up to 5% of max health" cap, which makes Undead the best race
+1. **Touch of the Grave's drain** (Undead): modelled at 5% of max health, the drain's own "equal to" tooltip (Racials
+   (2026-11-24); the racial's description says "up to"), which makes Undead the best race
    at every weight (+150 Max threat, +160 Balanced, +231 Max survival over the next race). Default: Undead. At a lower
    drain the presets would take Tauren (Balanced 2,851.8, Max survival 973.4; Max threat the Skyborne 3,546.3, Tauren
    3,545.1).
