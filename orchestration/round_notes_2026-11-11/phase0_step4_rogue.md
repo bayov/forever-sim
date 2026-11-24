@@ -70,7 +70,7 @@ Phase 0 melee hit, from dashstats on each request, is 8.3% to 11.3%. That is aga
 - The other four builds pick no faction item, so they have no faction set.
 - Race-specific weapon picks don't apply, since Forever's racials give no weapon skill.
 - Removed `rogue__seal-fate-daggers.Dwarf.json`, an old hit trade that now loses.
-- Kept the Gnome rotations of Mutilate and Seal Fate Swords. The Seal Fate Swords Gnome row now also wears the Alliance set. Its rotation gain (+4.7) was measured on the old gear.
+- Kept the Gnome rotations of Mutilate and Seal Fate Swords. The Seal Fate Swords Gnome row now also wears the Alliance set. Its rotation gain, +4.7 on the old gear, is +3.6 on the Alliance Phase 0 set (863.6 against the preset rotation's 860.0, 20,000 iterations, seed 1; seed 1000003 also +3.6), so it stays (2026-11-24 publish check).
 
 ## Problems
 

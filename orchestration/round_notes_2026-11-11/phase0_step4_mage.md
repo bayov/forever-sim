@@ -48,3 +48,17 @@ That is why it isn't picked. The ranking is from the step 3 rerun on current ite
   - Frostfire High Order -26.2 ± 0.4 and Troll -25.5 ± 0.4: deleted, with their `race_text.json` entries. They
     carried `fireBlastMana=0` from when the preset's was 80. The preset is now 40, and with 40 plus only the race
     knob they still lose (-5.5 and -1.3). Both rows now use the preset's rotation.
+
+## Publish checks (2026-11-24)
+
+- **Frost's -23% is the old comparator, not the gear.** The 944.7 it replaces is the 2026-11-02 number, from before the
+  Ice Lance 0.11 fix (fairness pass 49: Frost 945 to 834.6, then the re-tune to 838.6). The old synthetic request
+  sims 838.7 today, so the Phase 0 set costs Frost 13.3% (838.7 to 726.8), with Arcane 12.4%, Fire 12.5% and
+  Frostfire 13.4%. Frostfire's 1064.3 is stale the same way (1007.4 today). Nothing in the set or rotation is broken.
+- **List dps against requests.** A list's `dps` is the set on 180s with every use off plus each use's value on 90s
+  (`use_values.go`), so a use counts for more there than in a 180s fight. Measured on Frost: Chained Essence of
+  Eranikus adds 16.4 on a fixed 90s fight and 8.4 on 180s, Eye of the Beast 14.0 and 9.6. That is 12.5 of the 14.0
+  gap. Each request sims to its list's plain 180s measure (`rotopt -eval`, the `[180]s` line) within noise:
+  Arcane 843.1 / 843.5, Fire 920.1 / 921.1, Frost 726.8 / 727.2, Frostfire 873.5 / 872.4 (verify.py 20,000
+  iterations seed 1 / eval). Nothing to fix. Frost's request reads 726.8 now against its meta's 726.4 (the Skyborne
+  base offsets, e19d2df); the publish re-sim picks it up.

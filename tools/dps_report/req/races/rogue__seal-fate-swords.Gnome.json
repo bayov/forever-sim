@@ -1083,13 +1083,13 @@
  },
  "note": "Rotation tuned for Eureka!: on cooldown (eurekaCp 0) instead of held for a 5 point Eviscerate",
  "gain": {
-  "dps": 4.7,
+  "dps": 3.6,
   "se": 0.4,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "rotopt template rogue_ss, eurekaCp=0 on the preset's knobs, re-made on 2026-11-03 for round 70753 (the reworked tree): 957.3 against the preset rotation's 952.6 at Gnome, -race Gnome -durs 180 -eval -confirm-iters 20000 -seed 1 (seed 1000003: the same sign, +4.2), settings tools/dps_report/req/rogue__seal-fate-swords.json; preset knobs arEnergy=39,arSnd=1,berserkingHoldForBf=0,bfHoldForAr=0,bfPrepull=1,bfSnd=1,bloodFuryHoldForAr=1,bloodFurySnd=0,cbPool=0,cbSnd=6,eluneHoldForAr=1,eurekaCp=5,eurekaSnd=8,evisCp=4,evisEnergy=79,ruptureCp=0,ruptureSnd=6,shankEnergy=75,sndCp=1,sndRefresh=3,sndRefreshCp=5,ssAfterSwing=0,ssEnergy=0,teaEnergy=10,trinketHoldForAr=0,trinketSnd=0. se = sqrt(se_a^2 + se_b^2).",
+ "how": "Gain re-measured on the Phase 0 sets (2026-11-24): 863.63 against the preset rotation's 860.00 at Gnome on level60_phase0_rogue_seal_fate_swords_alliance, verify.py 20000 iterations, seed 1, 180 \u00b1 20 s (seed 1000003: 863.96 against 860.37, +3.6). It was +4.7 on the synthetic set. Made as: rotopt template rogue_ss, eurekaCp=0 on the preset's knobs, re-made on 2026-11-03 for round 70753 (the reworked tree): 957.3 against the preset rotation's 952.6 at Gnome, -race Gnome -durs 180 -eval -confirm-iters 20000 -seed 1 (seed 1000003: the same sign, +4.2), settings tools/dps_report/req/rogue__seal-fate-swords.json; preset knobs arEnergy=39,arSnd=1,berserkingHoldForBf=0,bfHoldForAr=0,bfPrepull=1,bfSnd=1,bloodFuryHoldForAr=1,bloodFurySnd=0,cbPool=0,cbSnd=6,eluneHoldForAr=1,eurekaCp=5,eurekaSnd=8,evisCp=4,evisEnergy=79,ruptureCp=0,ruptureSnd=6,shankEnergy=75,sndCp=1,sndRefresh=3,sndRefreshCp=5,ssAfterSwing=0,ssEnergy=0,teaEnergy=10,trinketHoldForAr=0,trinketSnd=0. se = sqrt(se_a^2 + se_b^2).",
  "gearSet": "level60_phase0_rogue_seal_fate_swords_alliance",
  "equipment": {
   "items": [
