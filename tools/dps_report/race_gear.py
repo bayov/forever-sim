@@ -31,6 +31,10 @@ Otherwise (no steps, or the set can't be found), and for the Dwarf only, the tra
            hit-adjusted rule): shares at the 1b prices over the armor and weapons (trinkets and enchants left out, an
            item's attack power and ranged attack power counted once), each stat's points turned back into its amount.
 
+A Phase 0 set (ADDED 2026-11-24, Phase 0 step 4) holds the preset race's faction rewards. A race of the other faction
+wears `<gearSet>_horde` or `<gearSet>_alliance` from beside it where that file exists (those slots re-ranked at one of its
+races with bis_phase0.sh RANK_ONLY SLOTS), kept by the rule without a sim. Without the file the race wears the preset's set.
+
 A swap that takes hit away (a race over the cap: a lower step, or the bonus stats) is simmed at that race with the
 preset's gear and with the swap (180 s, seed 1, 20,000 iterations, both with the same seed, so the fights pair up: the
 error is the standard error of the per-fight difference) and kept where it gains at least 2 standard errors: dual
@@ -164,6 +168,26 @@ def gear_steps(meta, pl):
     return {'dir': dirs[0], 'base': base, 'steps': steps, 'own': own}
 
 
+# sim/core/racials.go RaceFaction
+FACTION = {'Human': 'Alliance', 'Dwarf': 'Alliance', 'Gnome': 'Alliance', 'NightElf': 'Alliance', 'SkyborneHighOrder': 'Alliance',
+           'Orc': 'Horde', 'Troll': 'Horde', 'Tauren': 'Horde', 'Undead': 'Horde', 'SkyborneWindshaper': 'Horde'}
+
+
+def faction_set(meta, race):
+    """The other faction's copy of the build's gear set, for a race of the other faction from the preset race's: a Phase 0
+    set holds the preset race's faction rewards, which that race can't wear, so `<gearSet>_<horde|alliance>.gear.json`
+    beside it has those slots re-ranked at that faction's race (bis_phase0.sh RANK_ONLY SLOTS, ADDED 2026-11-24, Phase 0
+    step 4). None when the race is the preset's faction or no such file exists."""
+    gs, mine, theirs = meta.get('gearSet'), FACTION.get(meta['race']), FACTION.get(race)
+    if not gs or not mine or not theirs or mine == theirs:
+        return None
+    files = sorted(glob.glob(os.path.join(TREE, 'ui', '*', 'gear_sets', f'{gs}_{theirs.lower()}.gear.json')))
+    if len(files) != 1:
+        return None
+    return {'name': os.path.basename(files[0])[:-len('.gear.json')], 'faction': theirs, 'presetFaction': mine,
+            'equipment': json.load(open(files[0]))}
+
+
 def step_equipment(st, step):
     return json.load(open(os.path.join(st['dir'], st['steps'][step] + '.gear.json')))
 
@@ -208,6 +232,11 @@ def plan(bid, race, to_cap=False):
     p = {'build': bid, 'race': race, 'class': meta['class'], 'spec': meta.get('spec'), 'role': 'caster' if caster else 'melee/ranged',
          'hit': round(hit, 2), 'hitFrom': why, 'cap': cap, 'presetHit': round(_preset_hit[bid], 2), 'target': round(target, 2),
          'gearHit': gear_hit, 'excess': excess}
+    fs = faction_set(meta, race)
+    if fs:  # the other faction's set: the race wears it whatever its hit (the list was ranked at the preset's hit)
+        p.update({'gearSet': meta['gearSet'], 'stepSet': fs['name'], 'faction': fs['faction'],
+                  'presetFaction': fs['presetFaction'], 'equipment': fs['equipment'], 'excess': 0})
+        return p, req, meta
     st = gear_steps(meta, pl)
     if st:
         lo, hi = min(st['steps']), max(st['steps'])
@@ -260,6 +289,8 @@ def describe(p):
 
 
 def describe_step(p):
+    if p.get('faction'):
+        return f"{p['faction']}: wears {p['stepSet']}, the set without the {p['presetFaction']} rewards"
     if p['excess'] > 0:
         return f"{p['excess']:g}% hit over the cap traded through the set's hit {p['step']:+d} step"
     return f"{-p['excess']:g}% hit under the cap made up with the set's hit {p['step']:+d} step"
@@ -301,6 +332,11 @@ def gear_record(p, eq, iters):
     gain = ({'dps': p['gain'], 'se': p['se'], 'iterations': iters, 'seed': 1, 'duration': 180} if 'gain' in p else None)
     pair = (f" {p['race']} {p['dpsPreset']:.1f} with the preset's gear, {p['dpsSwap']:.1f} with the swap; gain.se is the "
             f"paired error (the same seeded fights), {p['seUnpaired']:.2f} unpaired." if gain else '')
+    if eq and p.get('faction'):
+        how = (f"race_gear.py: {p['race']} is {p['faction']}, so it can't wear the {p['presetFaction']} rewards of the preset's "
+               f"{p['gearSet']}. It wears {p['stepSet']}, the same set with those slots re-ranked at a {p['faction']} race "
+               f"(bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim.")
+        return {'gearSet': p['stepSet'], 'equipment': eq}, p['note'], None, how
     if eq:
         more = 'less' if p['excess'] > 0 else 'more'
         how = (f"race_gear.py: {hit_text(p)}. The preset wears {p['gearSet']} (hit step {p['ownStep']:+d}); {p['race']} "
@@ -371,6 +407,8 @@ def main(args):
             path = race_override.own_path(bid, race)
             if p.get('skip'):
                 pass
+            elif p.get('faction'):
+                p.update({'keep': True, 'note': describe_step(p)})  # the other faction's set, by the rule
             elif p['excess'] == 0:
                 p['skip'] = ('the set carries no hit' if p['gearHit'] <= 0 else 'no hit over the cap') if race == DWARF \
                     else 'no hit-trade steps'
@@ -386,7 +424,9 @@ def main(args):
             results[f'{bid}.{race}'] = p
             json.dump(results, open(out_p, 'w'), indent=1)
             line = f"{bid:40s} {race:20s} hit {p['hit']:5.2f} target {p['target']:5.2f} excess {p['excess']:+.2f}"
-            if 'step' in p:
+            if p.get('faction'):
+                line += f" {p['faction']} set {p['stepSet']}"
+            elif 'step' in p:
                 line += f" step {p['ownStep']:+d} -> {p['step']:+d}"
             if 'gain' in p:
                 line += f"  {p['dpsPreset']:8.1f} -> {p['dpsSwap']:8.1f}  gain {p['gain']:+6.2f} ± {p['se']:.2f}  {'KEEP' if p['keep'] else 'drop'}  {p['note']}"
