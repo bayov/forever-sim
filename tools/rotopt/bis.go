@@ -82,6 +82,10 @@ type bisEntry struct {
 	// as while it is on cooldown (-gear-rank-cooldowns, bis_cooldowns.go).
 	Cooldown *bisCooldown `json:"cooldown,omitempty"`
 
+	// Zero marks a trinket that adds nothing on the list's own fight, only with one of its
+	// conditions met (-gear-rank-cooldowns, markZero).
+	Zero bool `json:"zero,omitempty"`
+
 	// use is the item's use value in the set it was scored in, with -use-dur (use_values.go).
 	use float64
 	// noPick is a -gear-no-pick item, which is never BiS under a condition or on cooldown either.
@@ -359,7 +363,8 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 			slots = s.rankConditions(slots, sources, best, base, knobs)
 		}
 		if *gearRankCooldowns {
-			slots = rankCooldowns(slots)
+			zero := s.zeroTrinkets(slots, best, knobs)
+			slots = rankCooldowns(markZero(slots, zero), zero)
 		}
 		s.setGear(best)
 		for _, slot := range slots {
@@ -377,7 +382,10 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				for _, c := range e.Conditional {
 					fmt.Printf("  %s: rank %d (%+.1f)", c.Label, c.Rank, 0-c.Loss)
 				}
-				if c := e.Cooldown; c != nil {
+				if e.Zero {
+					fmt.Print("  adds nothing")
+				}
+				if c := e.Cooldown; c != nil && c.Rank > 0 {
 					fmt.Printf("  on cooldown: rank %d (%+.1f)", c.Rank, 0-c.Loss)
 				}
 				fmt.Println()

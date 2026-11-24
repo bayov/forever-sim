@@ -2134,7 +2134,6 @@
         "dps": 840.11,
         "loss": -0.44,
         "cooldown": {
-          "rank": 27,
           "loss": 20.1
         },
         "avail": "doubtful",
@@ -2161,7 +2160,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 20.5
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2231,7 +2229,6 @@
         "dps": 829.98,
         "loss": 9.69,
         "cooldown": {
-          "rank": 26,
           "loss": 17.34
         },
         "note": "Quest: The Last Barov · Alliance only"
@@ -2242,7 +2239,6 @@
         "dps": 829.8,
         "loss": 9.87,
         "cooldown": {
-          "rank": 21,
           "loss": 16.3
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2260,7 +2256,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 17.34
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2310,7 +2305,6 @@
         "dps": 826.82,
         "loss": 12.84,
         "cooldown": {
-          "rank": 27,
           "loss": 18.03
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2366,7 +2360,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 19.6
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2377,7 +2370,6 @@
         "dps": 824.02,
         "loss": 15.65,
         "cooldown": {
-          "rank": 24,
           "loss": 17.16
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2418,7 +2410,6 @@
           }
         ],
         "cooldown": {
-          "rank": 25,
           "loss": 17.31
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2443,6 +2434,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       },
       {
@@ -2458,7 +2450,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 18.01
         },
         "note": "Pix Xizzix · 125 Reals"

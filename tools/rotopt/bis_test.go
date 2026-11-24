@@ -211,6 +211,33 @@ func TestBisWins(t *testing.T) {
 	}
 }
 
+// A trinket that adds nothing isn't ranked: Barov Peasant Caller on cooldown, Rune of the Dawn
+// except vs Undead, and one that never adds anything isn't listed.
+func TestMarkZero(t *testing.T) {
+	zero := map[int32]bool{10455: true, 14022: true, 19812: true, 99: true}
+	slots := markZero([]bisSlot{{name: "trinket", entries: []bisEntry{
+		{ID: 10455, BiS: true, use: 18},
+		{ID: 14022, Loss: 5.65, use: 7.6},
+		{ID: 1, Loss: 8},
+		{ID: 19812, Loss: 13.5, Conditional: []bisConditional{{Label: "vs Undead", Rank: 1}}},
+		{ID: 99, Loss: 13.5},
+	}}, {name: "neck", entries: []bisEntry{{ID: 99}}}}, zero)
+	var got []int32
+	for _, e := range slots[0].entries {
+		got = append(got, e.ID)
+		if e.Zero != (e.ID == 19812) {
+			t.Errorf("item %d: zero %t", e.ID, e.Zero)
+		}
+	}
+	if want := []int32{10455, 14022, 1, 19812}; !slices.Equal(got, want) || len(slots[1].entries) != 1 {
+		t.Errorf("listed %v, want %v, and %d necks", got, want, len(slots[1].entries))
+	}
+	data, _ := json.Marshal(bisCooldown{Loss: 13.3})
+	if string(data) != `{"loss":13.3}` {
+		t.Errorf("a cooldown without a rank: %s", data)
+	}
+}
+
 // A list is in order of loss, so a no pick item that beats the picks sits above them (user,
 // 2026-11-20). The Phase 0 rings: Don Julio's Band and Warden's Signet need Exalted, so the picks
 // are the next two. The picks stay even when the list is full, and a weaker or stronger roll of a

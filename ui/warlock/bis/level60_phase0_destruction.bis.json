@@ -2204,7 +2204,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 17.57
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2263,7 +2262,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 22.48
         },
         "avail": "doubtful",
@@ -2297,7 +2295,6 @@
         "dps": 898.41,
         "loss": 9.16,
         "cooldown": {
-          "rank": 27,
           "loss": 17
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
@@ -2315,7 +2312,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 16.41
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2333,7 +2329,6 @@
         "dps": 897.1,
         "loss": 10.48,
         "cooldown": {
-          "rank": 26,
           "loss": 16.49
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2369,7 +2364,6 @@
         "dps": 895.92,
         "loss": 11.65,
         "cooldown": {
-          "rank": 27,
           "loss": 17.02
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2443,7 +2437,6 @@
         "dps": 892.26,
         "loss": 15.31,
         "cooldown": {
-          "rank": 27,
           "loss": 16.75
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2480,7 +2473,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 18.77
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2498,7 +2490,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 17.01
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2516,6 +2507,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

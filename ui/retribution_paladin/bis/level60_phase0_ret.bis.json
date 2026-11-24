@@ -2069,7 +2069,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 18.75
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2152,7 +2151,6 @@
         "dps": 968.6,
         "loss": 6.48,
         "cooldown": {
-          "rank": 26,
           "loss": 14.52
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
@@ -2163,7 +2161,6 @@
         "dps": 967.93,
         "loss": 7.15,
         "cooldown": {
-          "rank": 26,
           "loss": 14.53
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2195,7 +2192,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 15.63
         },
         "avail": "doubtful",
@@ -2236,7 +2232,6 @@
         "dps": 965.87,
         "loss": 9.21,
         "cooldown": {
-          "rank": 26,
           "loss": 14.54
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2298,7 +2293,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 14.46
         },
         "avail": "doubtful",
@@ -2325,7 +2319,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 14.22
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2381,7 +2374,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 15.85
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2399,6 +2391,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       },
       {
@@ -2414,6 +2407,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

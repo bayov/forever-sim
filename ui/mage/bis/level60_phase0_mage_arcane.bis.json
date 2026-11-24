@@ -2131,7 +2131,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 15.53
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2201,7 +2200,6 @@
         "dps": 850.44,
         "loss": 4.74,
         "cooldown": {
-          "rank": 27,
           "loss": 12.61
         },
         "note": "Quest: The Last Barov · Alliance only"
@@ -2227,7 +2225,6 @@
         "dps": 849.01,
         "loss": 6.17,
         "cooldown": {
-          "rank": 26,
           "loss": 12.13
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2252,7 +2249,6 @@
         "dps": 848.16,
         "loss": 7.02,
         "cooldown": {
-          "rank": 27,
           "loss": 12.76
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2288,7 +2284,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 14.26
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2344,7 +2339,6 @@
         "dps": 845.61,
         "loss": 9.57,
         "cooldown": {
-          "rank": 28,
           "loss": 15.42
         },
         "avail": "doubtful",
@@ -2391,7 +2385,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 14.01
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2402,7 +2395,6 @@
         "dps": 843.86,
         "loss": 11.32,
         "cooldown": {
-          "rank": 27,
           "loss": 12.75
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2420,7 +2412,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 13.21
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2438,7 +2429,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 13.03
         },
         "note": "Pix Xizzix · 125 Reals"
@@ -2456,6 +2446,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

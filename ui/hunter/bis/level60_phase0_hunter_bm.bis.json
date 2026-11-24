@@ -2108,7 +2108,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 16.33
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2147,7 +2146,6 @@
         "dps": 1019.44,
         "loss": 6.95,
         "cooldown": {
-          "rank": 26,
           "loss": 14.58
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
@@ -2179,7 +2177,6 @@
         "dps": 1018.96,
         "loss": 7.42,
         "cooldown": {
-          "rank": 24,
           "loss": 13.29
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2204,7 +2201,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 15.46
         },
         "avail": "doubtful",
@@ -2216,7 +2212,6 @@
         "dps": 1017.03,
         "loss": 9.36,
         "cooldown": {
-          "rank": 26,
           "loss": 14.58
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2357,7 +2352,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 14.99
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2380,7 +2374,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 15.57
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2391,7 +2384,6 @@
         "dps": 1013.58,
         "loss": 12.8,
         "cooldown": {
-          "rank": 25,
           "loss": 14.27
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2416,6 +2408,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

@@ -2167,7 +2167,6 @@
         "loss": 0,
         "bis": true,
         "cooldown": {
-          "rank": 28,
           "loss": 25.65
         },
         "avail": "doubtful",
@@ -2205,7 +2204,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 22.76
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2271,7 +2269,6 @@
         "dps": 951.2,
         "loss": 15.03,
         "cooldown": {
-          "rank": 28,
           "loss": 22.68
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
@@ -2304,7 +2301,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 22.57
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2315,7 +2311,6 @@
         "dps": 950.33,
         "loss": 15.9,
         "cooldown": {
-          "rank": 22,
           "loss": 21.48
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2356,7 +2351,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 24.36
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2407,7 +2401,6 @@
         "dps": 946.78,
         "loss": 19.46,
         "cooldown": {
-          "rank": 28,
           "loss": 25.64
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2432,7 +2425,6 @@
         "dps": 946.03,
         "loss": 20.2,
         "cooldown": {
-          "rank": 28,
           "loss": 24.38
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2483,7 +2475,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 22.56
         },
         "note": "Pix Xizzix · 125 Reals"
@@ -2501,7 +2492,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 22.65
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2519,6 +2509,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

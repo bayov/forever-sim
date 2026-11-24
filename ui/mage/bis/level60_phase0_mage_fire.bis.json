@@ -2201,7 +2201,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 16.89
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2239,7 +2238,6 @@
           }
         ],
         "cooldown": {
-          "rank": 19,
           "loss": 10.13
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2280,7 +2278,6 @@
         "dps": 926.23,
         "loss": 3.77,
         "cooldown": {
-          "rank": 27,
           "loss": 16.6
         },
         "avail": "doubtful",
@@ -2313,7 +2310,6 @@
         "dps": 924.16,
         "loss": 5.85,
         "cooldown": {
-          "rank": 27,
           "loss": 13.34
         },
         "note": "Quest: The Last Barov · Alliance only"
@@ -2324,7 +2320,6 @@
         "dps": 922.8,
         "loss": 7.21,
         "cooldown": {
-          "rank": 27,
           "loss": 13.7
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2368,7 +2363,6 @@
         "dps": 921.22,
         "loss": 8.78,
         "cooldown": {
-          "rank": 27,
           "loss": 13.6
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2466,7 +2460,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 17.41
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2484,6 +2477,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

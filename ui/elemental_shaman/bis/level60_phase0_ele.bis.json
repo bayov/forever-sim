@@ -2151,7 +2151,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 15.84
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2174,7 +2173,6 @@
         "dps": 870.04,
         "loss": 0.56,
         "cooldown": {
-          "rank": 26,
           "loss": 15.99
         },
         "avail": "doubtful",
@@ -2223,7 +2221,6 @@
         "dps": 866.68,
         "loss": 3.92,
         "cooldown": {
-          "rank": 26,
           "loss": 11.57
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
@@ -2256,7 +2253,6 @@
         "dps": 865.88,
         "loss": 4.71,
         "cooldown": {
-          "rank": 25,
           "loss": 10.76
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2267,7 +2263,6 @@
         "dps": 865.09,
         "loss": 5.51,
         "cooldown": {
-          "rank": 25,
           "loss": 11.38
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2285,7 +2280,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 12.41
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2369,7 +2363,6 @@
         "dps": 860.69,
         "loss": 9.91,
         "cooldown": {
-          "rank": 25,
           "loss": 11.26
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2387,7 +2380,6 @@
           }
         ],
         "cooldown": {
-          "rank": 25,
           "loss": 11.1
         },
         "note": "Pix Xizzix · 125 Reals"
@@ -2410,7 +2402,6 @@
           }
         ],
         "cooldown": {
-          "rank": 26,
           "loss": 13.25
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2446,6 +2437,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

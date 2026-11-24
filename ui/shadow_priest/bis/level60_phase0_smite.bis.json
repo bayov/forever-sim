@@ -2192,7 +2192,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 16.88
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2215,7 +2214,6 @@
         "dps": 696.45,
         "loss": 1.19,
         "cooldown": {
-          "rank": 28,
           "loss": 16.91
         },
         "avail": "doubtful",
@@ -2260,7 +2258,6 @@
         "dps": 693.49,
         "loss": 4.15,
         "cooldown": {
-          "rank": 20,
           "loss": 9.49
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2293,7 +2290,6 @@
         "dps": 691.6,
         "loss": 6.04,
         "cooldown": {
-          "rank": 28,
           "loss": 10.92
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2373,7 +2369,6 @@
           }
         ],
         "cooldown": {
-          "rank": 27,
           "loss": 10.68
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
@@ -2407,7 +2402,6 @@
         "dps": 688.46,
         "loss": 9.17,
         "cooldown": {
-          "rank": 27,
           "loss": 10.66
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2430,7 +2424,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 11.72
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2492,7 +2485,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 10.9
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2510,7 +2502,6 @@
           }
         ],
         "cooldown": {
-          "rank": 28,
           "loss": 10.97
         },
         "note": "Pix Xizzix · 125 Reals"
@@ -2528,6 +2519,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],

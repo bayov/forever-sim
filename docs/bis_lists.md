@@ -186,6 +186,16 @@ picks get it too. It is written in the entry's `cooldown` field, with the rank r
 conditional ranks: it comes after every other entry that loses as little or less, and `bis` says
 it would still be the pick.
 
+A trinket that adds nothing is never ranked (user, 2026-11-24), since its rank would only say where
+an empty slot goes. `zeroTrinkets` scores the set with each listed trinket, its use off, against the
+set with that slot empty. Those that add less than 0.05 DPS add nothing. That includes the ones whose
+stats do nothing for the spec, like Flamebreak Talisman's fire resistance:
+
+- With a use (Barov Peasant Caller), its `cooldown` has only the loss, and no rank.
+- Without one, but with a conditional rank (Rune of the Dawn, vs Undead), the entry is marked
+  `zero`. It keeps its conditional ranks, and its place on the list says nothing.
+- With neither, it isn't listed.
+
 The use values and the effect values below give each kind of roll its own random source
 (`SimOptions.use_labeled_rands`). Without it, one Hand of Justice proc shifts every roll after it
 in the iteration, and the two runs of a pair are about as noisy as two unrelated runs. On
@@ -369,7 +379,9 @@ can be filled in.
 - `cooldown` (only with `-gear-rank-cooldowns`, and only on an item with a use) says where the
   item would go on this list without its use value, as while its use is on cooldown:
   `{"rank":9,"loss":13.7}`, with the same rule as `conditional` (`bis` when it would still be
-  the pick). See On cooldown ranks.
+  the pick). A trinket that adds nothing then has only the loss. See On cooldown ranks.
+- `zero` marks a trinket that adds nothing on the list's own fight, and is only listed for its
+  conditional ranks. See On cooldown ranks.
 - `enchants` (only with `-gear-rank-enchants`) has a list for each slot that takes an enchant,
   keyed like `slots` (`head`, `neck`, `back`, `chest`, `wrist`, `hands`, `legs`, `feet`,
   `mainhand`, ...), in order of `loss` like the item lists, with `bis` on the pick. An enchant

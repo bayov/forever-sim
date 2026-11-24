@@ -2210,7 +2210,6 @@
           }
         ],
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
@@ -2236,7 +2235,6 @@
         "dps": 981.62,
         "loss": 11.4,
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
@@ -2269,7 +2267,6 @@
           }
         ],
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "avail": "doubtful",
@@ -2289,7 +2286,6 @@
         "dps": 979.09,
         "loss": 13.93,
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2300,7 +2296,6 @@
         "dps": 979.02,
         "loss": 13.99,
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Zippie Fizzbolt, Everlook"
@@ -2373,7 +2368,6 @@
           }
         ],
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
@@ -2391,7 +2385,6 @@
           }
         ],
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
@@ -2435,7 +2428,6 @@
         "dps": 975.19,
         "loss": 17.82,
         "cooldown": {
-          "rank": 29,
           "loss": 19.21
         },
         "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
@@ -2484,6 +2476,7 @@
             "loss": 18.56
           }
         ],
+        "zero": true,
         "note": "Drop: General Drakkisath, Upper Blackrock Spire"
       },
       {
@@ -2498,6 +2491,7 @@
             "loss": 16.76
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       },
       {
@@ -2513,6 +2507,7 @@
             "bis": true
           }
         ],
+        "zero": true,
         "note": "Quest: The Active Agent, Stratholme"
       }
     ],
