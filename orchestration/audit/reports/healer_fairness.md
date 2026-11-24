@@ -1,15 +1,14 @@
-# Healer fairness pass 26 (2026-11-23, master 7e0a01a8d)
+# Healer fairness pass 27 (2026-11-24, master 566067a39)
 
 Result: quiet. No new findings. Still open: -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth),
 -20261104-4 (low).
 
-Due because `orchestration/standards.md` changed since 2de7021bf: new standard 42 (phase 0 gear of unsure
-availability is used, with a note, not asked about). It concerns phase 0 gear lists; healer presets wear the
-synthetic healer set (standards 35), so it changes nothing here.
-- Other changes since 2de7021bf: phase 0 content/prices (`tools/rotopt/`), a Fury phase 0 BiS, item db and
-  hidden_items updates. None of the changed item ids appear in any `tools/healbench/req/*.json`; no `sim/`,
-  `tools/healbench/` or `tools/encounters/` change. No re-bench needed: pass 25's cells stand
-  (`ref/healer_fairness/bench_a667736.tsv`).
+Due because sim/druid/rake.go, rip.go and tuning_70753.go changed (be773f5eb: Rip tick AP share 0.0125 -> 0.0114 a
+combo point, Rake tick 0.06875 -> 0.065, from wowsims/forever's Forever logs). These are cat-form bleeds only; no
+healer request (`tools/healbench/req/*.json`) casts Rip or Rake, and the Restoration druid's heal spells, healbench,
+`tools/encounters/` and `sim/core` are untouched since c78d983ac. Other changes: warrior Flurry/Unbridled Wrath and
+phase 0 gear/db work, none in a healer request. No re-bench needed: pass 25's cells stand
+(`ref/healer_fairness/bench_a667736.tsv`).
 
 The rest is pass 21's (master a6677362f), still current:
 

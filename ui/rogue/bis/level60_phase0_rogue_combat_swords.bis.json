@@ -12,7 +12,7 @@
   "use_dur": 90,
   "dps": 855.11,
   "made": "2026-11-23",
-  "sim": "804075da42d5",
+  "sim": "67e56016a8d6",
   "slots": {
     "head": [
       {
@@ -110,7 +110,8 @@
         "id": 287019,
         "name": "Defias Enforcer's Mask",
         "dps": 847.33,
-        "loss": 7.79
+        "loss": 7.79,
+        "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known)"
       },
       {
         "id": 15193,
@@ -197,7 +198,8 @@
         "cooldown": {
           "rank": 25,
           "loss": 14.17
-        }
+        },
+        "note": "Leatherworking craft · Fireball use modelled (step 2 notes)"
       }
     ],
     "neck": [
@@ -405,8 +407,8 @@
         "name": "Defiler's Leather Shoulders",
         "dps": 851.8,
         "loss": 3.31,
-        "avail": "doubtful",
-        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 12927,
@@ -608,8 +610,8 @@
         "name": "Deathguard's Cloak",
         "dps": 853.76,
         "loss": 1.35,
-        "avail": "doubtful",
-        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 18511,
@@ -1911,43 +1913,43 @@
       {
         "id": 19325,
         "name": "Don Julio's Band",
-        "dps": 855.11,
-        "loss": 0,
-        "bis": true,
-        "avail": "doubtful",
-        "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
+        "dps": 853.82,
+        "loss": -3.37,
+        "avail": "infeasible",
+        "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 275981,
         "name": "Warden's Signet of Ferocity",
-        "dps": 855.11,
-        "loss": 0,
+        "dps": 852.79,
+        "loss": -2.34,
         "unsourced": true,
-        "bis": true,
-        "avail": "doubtful",
-        "note": "Watchers Exalted · no rep source found yet · unsure, used by standards 42"
+        "avail": "infeasible",
+        "note": "Watchers Exalted · no rep source found yet · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 275976,
         "name": "Watcher's Signet of Ferocity",
-        "dps": 853.89,
-        "loss": 1.22,
+        "dps": 850.45,
+        "loss": 0,
         "unsourced": true,
+        "bis": true,
         "avail": "doubtful",
         "note": "Watchers Revered · no rep source found yet"
       },
       {
         "id": 272408,
         "name": "Cutthroat's Signet",
-        "dps": 852.73,
-        "loss": 2.39,
+        "dps": 850.45,
+        "loss": 0,
+        "bis": true,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 275972,
         "name": "Tracker's Signet of Ferocity",
-        "dps": 852.05,
-        "loss": 3.06,
+        "dps": 849.75,
+        "loss": 0.69,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Honored · no rep source found yet"
@@ -1955,8 +1957,8 @@
       {
         "id": 275968,
         "name": "Initiate's Signet of Ferocity",
-        "dps": 850.8,
-        "loss": 4.31,
+        "dps": 848.55,
+        "loss": 1.9,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Watchers Friendly · no rep source found yet"
@@ -1964,147 +1966,147 @@
       {
         "id": 17713,
         "name": "Blackstone Ring",
-        "dps": 850.7,
-        "loss": 4.42
+        "dps": 848.41,
+        "loss": 2.04
       },
       {
         "id": 18500,
         "name": "Tarnished Elven Ring",
-        "dps": 850.33,
-        "loss": 4.79
+        "dps": 848.1,
+        "loss": 2.35
       },
       {
         "id": 13098,
         "name": "Painweaver Band",
-        "dps": 849.76,
-        "loss": 5.35,
+        "dps": 847.69,
+        "loss": 2.76,
         "avail": "infeasible",
         "note": "483g per DPS"
       },
       {
         "id": 19510,
         "name": "Legionnaire's Band",
-        "dps": 849.49,
-        "loss": 5.62,
+        "dps": 847.24,
+        "loss": 3.21,
         "note": "Warsong Outriders Honored, Kelm Hargunth, Barrens"
       },
       {
         "id": 11980,
         "suffix": 699,
         "name": "Opal Ring of the Tiger",
-        "dps": 848.95,
-        "loss": 6.16,
+        "dps": 846.71,
+        "loss": 3.74,
         "note": "Random world drop"
       },
       {
         "id": 12017,
         "suffix": 697,
         "name": "Prismatic Band of the Tiger",
-        "dps": 848.65,
-        "loss": 6.46,
+        "dps": 846.41,
+        "loss": 4.04,
         "note": "Random world drop"
+      },
+      {
+        "id": 22255,
+        "name": "Magma Forged Band",
+        "dps": 846.26,
+        "loss": 4.19,
+        "note": "Drop: Watchman Doomgrip and Secret Safe, Blackrock Depths"
       },
       {
         "id": 11980,
         "suffix": 1562,
         "name": "Opal Ring of Power",
-        "dps": 848.58,
-        "loss": 6.54,
+        "dps": 846.24,
+        "loss": 4.21,
         "note": "Random world drop"
       },
       {
         "id": 12017,
         "suffix": 1562,
         "name": "Prismatic Band of Power",
-        "dps": 848.58,
-        "loss": 6.54,
+        "dps": 846.24,
+        "loss": 4.21,
         "note": "Random world drop"
-      },
-      {
-        "id": 22255,
-        "name": "Magma Forged Band",
-        "dps": 848.5,
-        "loss": 6.62,
-        "note": "Drop: Watchman Doomgrip and Secret Safe, Blackrock Depths"
       },
       {
         "id": 12005,
         "suffix": 696,
         "name": "Granite Ring of the Tiger",
-        "dps": 848.12,
-        "loss": 7,
+        "dps": 845.89,
+        "loss": 4.55,
         "note": "Random world drop · other suffixes on AH ~3.3g"
       },
       {
         "id": 12016,
         "suffix": 696,
         "name": "Jungle Ring of the Tiger",
-        "dps": 848.12,
-        "loss": 7,
+        "dps": 845.89,
+        "loss": 4.55,
         "note": "Random world drop"
       },
       {
         "id": 11979,
         "suffix": 696,
         "name": "Peridot Circle of the Tiger",
-        "dps": 848.12,
-        "loss": 7,
+        "dps": 845.89,
+        "loss": 4.55,
         "note": "Random world drop"
       },
       {
         "id": 11992,
         "suffix": 696,
         "name": "Vermilion Band of the Tiger",
-        "dps": 848.12,
-        "loss": 7,
-        "note": "Random world drop"
-      },
-      {
-        "id": 12005,
-        "suffix": 1561,
-        "name": "Granite Ring of Power",
-        "dps": 847.98,
-        "loss": 7.13,
-        "note": "Random world drop · other suffixes on AH ~3.3g"
-      },
-      {
-        "id": 12016,
-        "suffix": 1561,
-        "name": "Jungle Ring of Power",
-        "dps": 847.98,
-        "loss": 7.13,
-        "note": "Random world drop"
-      },
-      {
-        "id": 11979,
-        "suffix": 1561,
-        "name": "Peridot Circle of Power",
-        "dps": 847.98,
-        "loss": 7.13,
-        "note": "Random world drop"
-      },
-      {
-        "id": 11992,
-        "suffix": 1561,
-        "name": "Vermilion Band of Power",
-        "dps": 847.98,
-        "loss": 7.13,
+        "dps": 845.89,
+        "loss": 4.55,
         "note": "Random world drop"
       },
       {
         "id": 11980,
         "suffix": 358,
         "name": "Opal Ring of Agility",
-        "dps": 847.95,
-        "loss": 7.16,
+        "dps": 845.85,
+        "loss": 4.6,
         "note": "Random world drop"
       },
       {
         "id": 12017,
         "suffix": 358,
         "name": "Prismatic Band of Agility",
-        "dps": 847.95,
-        "loss": 7.16,
+        "dps": 845.85,
+        "loss": 4.6,
+        "note": "Random world drop"
+      },
+      {
+        "id": 12005,
+        "suffix": 1561,
+        "name": "Granite Ring of Power",
+        "dps": 845.65,
+        "loss": 4.79,
+        "note": "Random world drop · other suffixes on AH ~3.3g"
+      },
+      {
+        "id": 12016,
+        "suffix": 1561,
+        "name": "Jungle Ring of Power",
+        "dps": 845.65,
+        "loss": 4.79,
+        "note": "Random world drop"
+      },
+      {
+        "id": 11979,
+        "suffix": 1561,
+        "name": "Peridot Circle of Power",
+        "dps": 845.65,
+        "loss": 4.79,
+        "note": "Random world drop"
+      },
+      {
+        "id": 11992,
+        "suffix": 1561,
+        "name": "Vermilion Band of Power",
+        "dps": 845.65,
+        "loss": 4.79,
         "note": "Random world drop"
       }
     ],
@@ -2507,7 +2509,7 @@
         "loss": 9.07,
         "with": 279261,
         "avail": "doubtful",
-        "note": "Frostwolf Clan Revered · AV queue unconfirmed"
+        "note": "Frostwolf Clan Revered · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 250618,
@@ -2635,7 +2637,8 @@
         "name": "Iceblade Hacker",
         "dps": 833.39,
         "loss": 21.73,
-        "with": 279261
+        "with": 279261,
+        "note": "Ras Frostwhisper (Scholo)"
       },
       {
         "id": 13246,
@@ -2930,7 +2933,7 @@
         "dps": 854.51,
         "loss": 0.6,
         "avail": "doubtful",
-        "note": "Alterac Valley quest · AV queue unconfirmed"
+        "note": "Alterac Valley quest · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 20722,
