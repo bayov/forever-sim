@@ -158,9 +158,11 @@ func applyForeverRaceEffects(agent Agent) {
 // regeneration by 50% (was 100%), with a 15-second duration", 2026-10-26; 70630 to 70707 read
 // 100% for 30 sec). Used at a Ley Line it also grants Attuned (1259691) for an hour, which
 // raises it to 100%; the sim fights away from Ley Lines, so it never gets that. Aura 110 is the
-// one Innervate and Evocation use, so it raises the Spirit part of the regen by half and leaves
-// mp5 alone, and it adds nothing inside the five second rule unless some of the Spirit regen
-// goes on while casting. The sim leaves it to the APL.
+// one Innervate and Evocation use. Under Forever, Innervate's aura 110 multiplies the MP5 as well
+// as the Spirit regen and leaves periodic energize ticks (Blessing of Wisdom, Mana Spring) alone
+// (wowsims/forever EV-0114, a 1.60.1.70938 ledger), so Energized raises the Spirit regen and that
+// MP5 by half. Inside the five second rule it adds half the MP5 and half of whatever Spirit regen
+// goes on while casting. No log has measured Energized itself. The sim leaves it to the APL.
 //
 // "This ability cannot be used while Innervate is active, and will be replaced by Innervate as a
 // more powerful effect" (development notes 2026-11-02): it can't be cast under an Innervate, and
@@ -173,10 +175,12 @@ func (character *Character) registerReadLeyline() {
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier += 0.5
+			character.PseudoStats.MP5RegenMultiplier += 0.5
 			character.UpdateManaRegenRates()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier -= 0.5
+			character.PseudoStats.MP5RegenMultiplier -= 0.5
 			character.UpdateManaRegenRates()
 		},
 	})

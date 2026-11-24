@@ -449,6 +449,8 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 			updateStats = updateStats.Multiply(1.2)
 		}
 		character.AddStats(updateStats)
+		// A periodic energize aura, which Innervate leaves unscaled (EV-0114).
+		character.PseudoStats.EnergizeMP5 += updateStats[stats.MP5]
 	}
 
 	// Under Forever a raid can have both Blessing of Wisdom and another shaman's Mana Spring
@@ -459,6 +461,8 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 			mp5 *= 1.25
 		}
 		character.AddStat(stats.MP5, mp5)
+		// Mana Spring 10491 is a periodic energize too, unscaled by Innervate (EV-0114).
+		character.PseudoStats.EnergizeMP5 += mp5
 	}
 
 	if raidBuffs.BattleSquawk > 0 {
@@ -1463,17 +1467,31 @@ func InnervateAura(character *Character, actionTag int32) *Aura {
 		Duration: InnervateDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier += 4
+			character.PseudoStats.MP5RegenMultiplier += innervateMP5Bonus(character)
 			character.PseudoStats.ForceFullSpiritRegen = true
 			character.UpdateManaRegenRates()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier -= 4
+			character.PseudoStats.MP5RegenMultiplier -= innervateMP5Bonus(character)
 			// A mage's Evocation still channeling keeps its full regen.
 			evocation := character.GetAura(EvocationRegenLabel)
 			character.PseudoStats.ForceFullSpiritRegen = evocation != nil && evocation.IsActive()
 			character.UpdateManaRegenRates()
 		},
 	})
+}
+
+// Under Forever, Innervate's aura 110 multiplies the MP5 as well as the Spirit regen: a Tauren
+// druid's ledger (wowsims/forever EV-0114, 1.60.1.70938) reads the regen under it as 5 × (Spirit
+// regen + MP5) on 31 of 31 lines, and with Warchief's Blessing's MP5 up on 10 of 10, while
+// Blessing of Wisdom's periodic energize ticks the same 30 mana under it (12 of 12). Classic's
+// Innervate leaves MP5 alone.
+func innervateMP5Bonus(character *Character) float64 {
+	if character.Env != nil && character.Env.IsForever() {
+		return 4
+	}
+	return 0
 }
 
 // EvocationRegenLabel is the mage's Evocation regen aura (sim/mage/evocation.go), which an Innervate ending
