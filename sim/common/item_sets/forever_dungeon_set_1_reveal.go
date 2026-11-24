@@ -29,15 +29,15 @@ func foreverDungeonVitality(_ core.Agent) {}
 
 // https://www.wowhead.com/forever/item-set=1667/feralheart-raiment
 //
-// 4 pieces (450608) is Wildheart's 5-piece row: we model the spell cast's 200 mana only (see
-// foreverWildheartRaiment). 6 pieces has two rows, 40 attack power and 23 spell power.
+// 4 pieces (450608) is Wildheart's 5-piece row: we model the spell cast's 200 mana and, since the
+// November 23 hotfix, a Cat Form swing's 4 Energy a sec for 5 sec (foreverDruidEnergizeTrigger). 6 pieces has two rows, 40 attack power and 23 spell power.
 var ItemSetFeralheartRaimentForever = core.NewItemSet(core.ItemSet{
 	ID:   1667,
 	Name: "Feralheart Raiment",
 	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
 		2: foreverDungeonResistances,
 		3: foreverDungeonManaRegen,
-		4: foreverSpellCastMana(450608, 27782, "Feralheart Raiment - 4pc"),
+		4: foreverDruidEnergizeTrigger(450608, "Feralheart Raiment - 4pc"),
 		6: func(agent core.Agent) {
 			foreverDungeonAttackPower40(agent)
 			foreverDungeonSpellPower23(agent)

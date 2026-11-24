@@ -56,6 +56,67 @@ func foreverSpellCastMana(procID int32, manaID int32, name string) core.ApplyEff
 	}
 }
 
+// The druid row 450608 ("S03 - Druid Energize Trigger": Wildheart Raiment's 5 pieces, Feralheart
+// Raiment's 4 pieces in set 1667). Its proc flags (0x1402C) take magic spell casts, the wearer's
+// melee swings and melee hits taken, and the server picks the spell. A cast restores 200 mana
+// (foreverSpellCastMana). A melee swing gives Nature's Bounty 27784, which client 1.60.1.71091
+// makes an Energy aura: 4 Energy every 1 sec for 5 sec (effect 0 aura 24, misc 0 -> 3 (Energy),
+// period 1000, DurationIndex 28 = 5 sec). The realms' hotfix of November 23 put that in game
+// (Blizzard's hotfixes of November 23, 2026: "Feralheart set now correctly grants 4 Energy
+// regeneration every 1 second for 5 seconds"; foreverchanges.pro "Found in the game" for build
+// 71091: "when the bonus returns energy, it now restores energy over 5 sec. It restored mana
+// instead"). The sim gives it on a landed white swing in Cat Form, at the row's 5% (its effect
+// 0 base points, the chance the cast branch takes too); a new proc starts the 5 sec over. The
+// rage on a melee hit taken (27783) needs an attacker, which a boss fight does not model.
+func foreverDruidEnergizeTrigger(procID int32, name string) core.ApplyEffect {
+	castMana := foreverSpellCastMana(procID, 27782, name)
+	return func(agent core.Agent) {
+		castMana(agent)
+		c := agent.GetCharacter()
+		if !c.HasEnergyBar() {
+			return
+		}
+		actionID := core.ActionID{SpellID: 27784}
+		energyMetrics := c.NewEnergyMetrics(actionID)
+		energyAura := c.RegisterAura(core.Aura{
+			Label:    "Nature's Bounty (Energy)",
+			ActionID: actionID,
+			Duration: time.Second * 5,
+		})
+		var ticks *core.PendingAction
+		energize := func(sim *core.Simulation) {
+			if ticks != nil {
+				ticks.Cancel(sim)
+			}
+			ticks = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period:   time.Second,
+				NumTicks: 5,
+				OnAction: func(sim *core.Simulation) {
+					c.AddEnergy(sim, 4, energyMetrics)
+				},
+			})
+			energyAura.Activate(sim)
+		}
+		c.RegisterResetEffect(func(_ *core.Simulation) {
+			ticks = nil
+		})
+		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+			ActionID:   core.ActionID{SpellID: procID},
+			Name:       name + " (Melee)",
+			Callback:   core.CallbackOnSpellHitDealt,
+			Outcome:    core.OutcomeLanded,
+			ProcMask:   core.ProcMaskMeleeWhiteHit,
+			ProcChance: 0.05,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				if c.GetCurrentPowerBar() != core.EnergyBar {
+					return
+				}
+				energize(sim)
+			},
+		})
+	}
+}
+
 // The 5-piece procs of Lightforge (450625, Crusader's Wrath 27499) and The Elements (450626, The
 // Furious Storm 27775): +65 spell damage and healing for 10 sec, on melee swings and magic spell
 // casts (proc flags 0x14004). The rows state 100% and no rate, so the server sets one. We keep the
@@ -170,16 +231,16 @@ func foreverWarriorsResolve(name string) core.ApplyEffect {
 
 // https://www.wowhead.com/forever/item-set=185/wildheart-raiment
 //
-// 4 pieces (1302708): movement speed when struck. The 5-piece row (450608) also answers a melee
-// swing with mana over time (27784) and a melee hit taken with rage (27783); like wowsims/forever we
-// model only the spell cast's mana.
+// 4 pieces (1302708): movement speed when struck. The 5-piece row (450608) answers a spell cast
+// with 200 mana, a melee swing with Energy over time (27784) and a melee hit taken with rage (27783);
+// the sim models the first two (foreverDruidEnergizeTrigger).
 var foreverWildheartRaiment = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: func(agent core.Agent) {
 		foreverDungeonSpellPower(agent)
 		foreverDungeonAttackPower(agent)
 	},
-	5: foreverSpellCastMana(450608, 27782, "Wildheart Raiment - 5pc"),
+	5: foreverDruidEnergizeTrigger(450608, "Wildheart Raiment - 5pc"),
 	6: foreverDungeonManaRegen,
 }
 

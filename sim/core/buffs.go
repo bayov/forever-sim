@@ -2402,6 +2402,12 @@ func ApplyWarchiefsBlessing(unit *Unit, category string) {
 	})
 }
 
+// Fengus' Ferocity: 200 attack power and ranged attack power. Under Forever it also gives 115
+// spell damage and healing: the Forever client adds a 230 spell damage and healing row to 22817
+// (dummy auras since 70707, so a script applies them), and the realms' hotfix of November 23
+// halved it (foreverchanges.pro "Found in the game" for build 1.60.1.71091: "Fengus' Ferocity now
+// increases spell damage and healing by up to 115 (was 230). Its 200 attack power is unchanged.";
+// Blizzard's hotfixes of November 23, 2026: "was granting twice as much Spell Power as intended").
 func ApplyFengusFerocity(unit *Unit) {
 	aura := MakePermanent(unit.RegisterAura(Aura{
 		Label:      "Fengus' Ferocity",
@@ -2409,12 +2415,16 @@ func ApplyFengusFerocity(unit *Unit) {
 		BuildPhase: CharacterBuildPhaseBuffs,
 	}))
 
+	buffStats := []StatConfig{
+		{stats.AttackPower, 200, false},
+		{stats.RangedAttackPower, 200, false},
+	}
+	if unit.Env.IsForever() {
+		buffStats = append(buffStats, StatConfig{stats.SpellPower, 115, false})
+	}
 	makeExclusiveBuff(aura, BuffConfig{
 		Category: "FengusFerocity",
-		Stats: []StatConfig{
-			{stats.AttackPower, 200, false},
-			{stats.RangedAttackPower, 200, false},
-		},
+		Stats:    buffStats,
 	})
 }
 
