@@ -278,6 +278,49 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 1259799
+                      }
+                    }
+                  },
+                  "notes": "Elune's Light on cooldown. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259812
+                      }
+                    }
+                  },
+                  "notes": "Eureka! on cooldown. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20594
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentTime": {}
+                        },
+                        "op": "OpGe",
+                        "rhs": {
+                          "const": {
+                            "val": "20s"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Stoneform on cooldown, after the opening, for its 10% less Physical damage. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "itemId": 10646
                       }
                     }

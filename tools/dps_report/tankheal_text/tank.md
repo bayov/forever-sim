@@ -63,9 +63,23 @@ Balanced's talents and rotation with the armor on-use trinket in place of the at
 # Notes
 
 ## Warrior, Paladin: Why Undead
-Undead comes out on top because of Touch of the Grave: your attacks sometimes drain the boss and heal you. Blizzard
-only says it drains "up to" 5% of your health, and we count the full amount. If it heals for less in game, the gap
-to the other races shrinks, and another race may be as good.
+Undead comes out on top because of Touch of the Grave: your attacks sometimes drain the boss and heal you, at most
+once every 15 seconds. The racial's tooltip says "up to" 5% of your health, but the drain itself says "equal to" 5%,
+so we count the full 5%. We haven't seen it in a combat log yet: if it heals for less in game, the gap to the other
+races shrinks, and another race may be as good.
+
+## Warrior: Fears
+Magmadar's Panic and Onyxia's Bellowing Roar aren't in the fights, so Will of the Forsaken, and Berserker Rage in
+Berserker Stance, aren't worth anything here. In the raid logs we have, every one of those fears met an immunity, as
+raids plan for: Fear Ward, Tremor Totem or your own Berserker Rage. Without them, a fear costs you seconds of threat
+and can let the boss loose, and Undead's Will of the Forsaken covers one fear every 2 minutes on top of Berserker
+Rage. We can't put a fair number on that, so the race tables leave it out.
+
+## Warrior: Racial buttons
+Blood Fury, Berserking, Elune's Light and Eureka! are used on cooldown from the pull. Waiting for the end of the fight
+or a few seconds in always scored lower: early threat is what lets your DPS start. Stoneform is different: it costs a global
+cooldown and some Rage from the hits it softens, so Balanced and Max survival use it on cooldown from 20 seconds in,
+after your opening, and Max threat skips it. In game, save it for a big hit or a bleed if you can.
 
 ## Warrior: Low-health buttons
 The sim doesn't wait for you to get low. Shield Wall is used near the end of the fight, and Last Stand and health

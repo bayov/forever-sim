@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "e29cfe00f6f7e9f987f892e2165166272ce11067"
+  "master": "85f9fca89b614a650eab0f1065285ead8b03940b"
  },
- "last_pass_at": "2026-11-24T00:52:21Z",
- "pass": 29,
- "result": "quiet",
+ "last_pass_at": "2026-11-24T13:41:12Z",
+ "pass": 30,
+ "result": "findings",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-24T06:51:05Z",
+ "checked_at": "2026-11-24T13:41:12Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 29 (566067a394): cd71e78c2 drops Shield Slam/Revenge/Shield Bash from Unbridled Wrath (matches EV-0148 prot log), HS/Cleave spend Reckless Swings charges landed or not (EV-0138); be773f5eb cat-only. Tests pass. No new findings; EV-0148 evidence added to 20261117-1 (leans to keeping Sunder out)."
+ "note": "Pass 30 (c7e3b3e): prot warrior racial actives (0f567e196, d757d5d) match client 71037; Eureka! mask leaves Sunder out. Troll in-combat Regeneration missing (20261124-1, high), Forever Stoneform missing (-2), no racial tests (-3)."
 }

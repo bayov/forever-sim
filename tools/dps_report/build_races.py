@@ -37,6 +37,8 @@ PART_INFO = {
     'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 2 min cooldown.'),
     'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 15s, and it cannot crit.'),
     'endurance': ('Endurance', 'Health increased by 5%.'),
+    'regen': ('Regeneration', 'Health regeneration increased by 20%, and 20% of it continues in combat.'),
+    'stoneform': ('Stoneform', 'Physical damage taken reduced by 10% for 8s, and removes Bleed, Poison and Disease, 3 min cooldown.'),
     'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 15s, 3 min cooldown.'),
     'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 2%.'),
     'beast_dwarf': ('Big Game Hunter', 'Damage dealt versus Beasts increased by 5%.'),
@@ -61,6 +63,7 @@ PART_ICON = {
     'spirit': 'inv_enchant_shardbrilliantsmall', 'ruthless': 'ability_meleedamage', 'precision': 'ability_marksmanship', 'beast_dwarf': 'inv_weapon_rifle_05',
     'elune': 'spell_nature_moonglow', 'shadowmeld': 'ability_ambush', 'leyline': 'ability_mage_incantersabsorbtion', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'command': 'ability_warrior_warcry',
     'bloodfury': 'racial_orc_berserkerstrength', 'touch': 'spell_shadow_fingerofdeath', 'endurance': 'spell_nature_unyeildingstamina',
+    'regen': 'spell_nature_regenerate', 'stoneform': 'spell_shadow_unholystrength',
     'berserking': 'racial_troll_berserk', 'beast_troll': 'inv_misc_pelt_bear_ruin_02', 'windblessed': 'inv_misc_volatileair',
     'insight': 'achievement_raidprimalist_windelemental', 'starshards': 'spell_arcane_starfire', 'chastise': 'spell_holy_chastise', 'shadowguard': 'spell_nature_lightningshield',
 }

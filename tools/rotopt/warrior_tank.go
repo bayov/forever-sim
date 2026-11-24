@@ -23,6 +23,7 @@ var (
 	thunderClap       = spellIDRank(11581, 6)
 	demoralizingShout = spellIDRank(11556, 5)
 	shieldWall        = spellID(871)
+	stoneform         = spellID(20594)
 )
 
 func (warriorTank) Knobs() []Knob {
@@ -77,6 +78,14 @@ func (warriorTank) Knobs() []Knob {
 		// The on-use trinket (the synthetic set's armor one or the DPS set's attack power one): 0 on
 		// cooldown, else held for the last trinketAt seconds when the wait costs no use.
 		{Name: "trinketAt", Default: 0, Min: 0, Max: 60, Step: 5},
+		// Blood Fury, Berserking and Elune's Light (15 sec; 2, 3 and 3 min) and Eureka! (8 sec, 2 min): 0 on cooldown from
+		// the pull, 1 with the on-use trinket (cast while its buff is up, or when waiting for it would lose
+		// a use), 2 held for the last racialAt seconds unless the wait costs a use, 3 from racialAt seconds
+		// into the fight. Forever's Berserking is a flat 10% (racials_forever.go) and the score's replay
+		// can't read health, so there is no low-health timing to search.
+		{Name: "racial", Default: 0, Min: 0, Max: 3, Step: 1},
+		{Name: "racialAt", Default: 30, Min: 5, Max: 60, Step: 5},
+		{Name: "stoneformAt", Default: 0, Min: 0, Max: 60, Step: 10},
 	}
 }
 
@@ -111,6 +120,42 @@ func tankTrinketLines(k Knobs) []*proto.APLListItem {
 	return items
 }
 
+// tankRacialLines cast the offensive racial actives (Orc, Troll, Night Elf, Gnome) under the racial knob: an
+// APL casts no major cooldown it doesn't name, so without these lines a tank never used them.
+func tankRacialLines(k Knobs) []*proto.APLListItem {
+	var items []*proto.APLListItem
+	for _, r := range []struct {
+		spell *proto.ActionID
+		name  string
+		buff  float64
+	}{{bloodFury, "Blood Fury", 15}, {berserking, "Berserking", 15}, {elunesLight, "Elune's Light", 15}, {eureka, "Eureka!", 8}} {
+		var when value
+		note := r.name + " on cooldown."
+		switch k["racial"] {
+		case 1:
+			// The attack power trinket only: the armor one moves nothing the racials scale.
+			when = or(auraIsActive(battleTrinket),
+				gt(spellUsesLostByDelay(r.spell, spellTimeToReady(battleTrinket), seconds(r.buff)), num(0)))
+			note = r.name + " with the attack power trinket's buff, unless waiting for it costs a use."
+		case 2:
+			when = heldForLast(r.spell, k["racialAt"], r.buff)
+			note = fmt.Sprintf("%s held for the last %d sec unless the wait costs a use.", r.name, int(k["racialAt"]))
+		case 3:
+			when = ge(currentTime(), seconds(k["racialAt"]))
+			note = fmt.Sprintf("%s from %d sec into the fight.", r.name, int(k["racialAt"]))
+		}
+		items = append(items, cast(r.spell, when, note+" Other races can ignore the warning on this line."))
+	}
+	// The Dwarf's Stoneform (10% less Physical damage for 8 sec, 3 min, on the GCD): never at 0 (a
+	// GCD at the pull costs more early threat than it saves healing), else on cooldown from stoneformAt
+	// sec into the fight, on a timer since the score can't follow health.
+	if k["stoneformAt"] > 0 {
+		items = append(items, cast(stoneform, ge(currentTime(), seconds(k["stoneformAt"])),
+			"Stoneform on cooldown, after the opening, for its 10% less Physical damage. Other races can ignore the warning on this line."))
+	}
+	return items
+}
+
 func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	var items []*proto.APLListItem
 	if k["bloodrageRage"] > 0 {
@@ -131,11 +176,7 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(potion, lt(currentRage(), num(k["potionRage"])), "Mighty Rage Potion when short of Rage."))
 	}
 	items = append(items, tankTrinketLines(k)...)
-	// The Orc's and Troll's actives on cooldown: an APL casts no major cooldown it doesn't name, so
-	// without these lines Blood Fury and Berserking never went off on a tank.
-	items = append(items,
-		cast(bloodFury, nil, "Blood Fury on cooldown. Other races can ignore the warning on this line."),
-		cast(berserking, nil, "Berserking on cooldown. Other races can ignore the warning on this line."))
+	items = append(items, tankRacialLines(k)...)
 	// The presets' Goblin Sapper Charge (standards 11, round 4): right after the trinkets, once a fight.
 	items = append(items, cast(tankSapper, nil, "Goblin Sapper Charge on cooldown (once a fight): its threat at the pull (docs/tank_warrior.md, Round 4 consumables)."))
 	switch k["shieldWall"] {

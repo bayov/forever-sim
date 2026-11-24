@@ -170,6 +170,26 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 1259799
+                      }
+                    }
+                  },
+                  "notes": "Elune's Light on cooldown. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259812
+                      }
+                    }
+                  },
+                  "notes": "Eureka! on cooldown. Other races can ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "itemId": 10646
                       }
                     }
