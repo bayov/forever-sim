@@ -6,24 +6,24 @@
   "isDefault": false,
   "pr": 5,
   "race": "Orc",
-  "talents": "5021201505021241-00510504005",
+  "talents": "5021201505011251-00520503005",
   "treeNames": [
     "Beast Mastery",
     "Marksmanship",
     "Survival"
   ],
-  "gearSet": "level60_phase1_synthetic_ranged",
+  "gearSet": "level60_phase0_hunter_bm",
   "apl": "bm",
   "published": {
-    "dps": 1057.1,
-    "source": "the DPS report's main run of this request after the hunter fixes of 2026-11-17 (pet white swings without the hunter's crit, Predator's Edge twice on Raptor Strike, a queued Raptor Strike's off-hand miss penalty, traps on spell hit) and Beast Mastery weaving every main hand swing (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 955.14,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1057.1,
-    "stderr": 0.23,
+    "dps": 955.14,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Beast Mastery with a Tallstrider, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [
@@ -73,7 +73,7 @@
     "Intimidation is talented but not cast.",
     "Major Frenzy Potion is 17.1 DPS behind Major Mana Potion at 180s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
-    "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Ranged slot is the Phase 0 list's pick, Ankle Slicers (a 1.8s thrown weapon). The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2.5 DPS (Savage Rend), but none that fast is known.",
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (0.0 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
