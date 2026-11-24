@@ -1,0 +1,70 @@
+{
+ "gearSet": "level60_phase0_fury_dw_alliance",
+ "equipment": {
+  "items": [
+   {
+    "id": 12640,
+    "enchant": 1506
+   },
+   {
+    "id": 15411,
+    "enchant": 1249019
+   },
+   {
+    "id": 271956
+   },
+   {
+    "id": 272414,
+    "enchant": 1219587
+   },
+   {
+    "id": 252484,
+    "enchant": 1891
+   },
+   {
+    "id": 12936,
+    "enchant": 1885
+   },
+   {
+    "id": 226861,
+    "enchant": 1248640
+   },
+   {
+    "id": 19044
+   },
+   {
+    "id": 22385,
+    "enchant": 2543
+   },
+   {
+    "id": 287033,
+    "enchant": 1887
+   },
+   {
+    "id": 260219
+   },
+   {
+    "id": 275976
+   },
+   {
+    "id": 13965
+   },
+   {
+    "id": 19289
+   },
+   {
+    "id": 11684,
+    "enchant": 1900
+   },
+   {
+    "id": 12590,
+    "enchant": 1900
+   },
+   {
+    "id": 18323
+   }
+  ]
+ },
+ "note": "Alliance: wears level60_phase0_fury_dw_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: NightElf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_fury_dw. It wears level60_phase0_fury_dw_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}
