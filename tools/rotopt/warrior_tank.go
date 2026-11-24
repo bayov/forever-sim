@@ -85,6 +85,7 @@ func (warriorTank) Knobs() []Knob {
 		// can't read health, so there is no low-health timing to search.
 		{Name: "racial", Default: 0, Min: 0, Max: 3, Step: 1},
 		{Name: "racialAt", Default: 30, Min: 5, Max: 60, Step: 5},
+		{Name: "stoneformAt", Default: 0, Min: 0, Max: 60, Step: 10},
 	}
 }
 
@@ -145,9 +146,13 @@ func tankRacialLines(k Knobs) []*proto.APLListItem {
 		}
 		items = append(items, cast(r.spell, when, note+" Other races can ignore the warning on this line."))
 	}
-	// The Dwarf's Stoneform (10% less Physical damage for 8 sec, 3 min), on cooldown like Shield Block:
-	// the score can't follow health, and early use gives the most uses.
-	items = append(items, cast(stoneform, nil, "Stoneform on cooldown for its 10% less Physical damage. Other races can ignore the warning on this line."))
+	// The Dwarf's Stoneform (10% less Physical damage for 8 sec, 3 min, on the GCD): never at 0 (a
+	// GCD at the pull costs more early threat than it saves healing), else on cooldown from stoneformAt
+	// sec into the fight, on a timer since the score can't follow health.
+	if k["stoneformAt"] > 0 {
+		items = append(items, cast(stoneform, ge(currentTime(), seconds(k["stoneformAt"])),
+			"Stoneform on cooldown, after the opening, for its 10% less Physical damage. Other races can ignore the warning on this line."))
+	}
 	return items
 }
 
