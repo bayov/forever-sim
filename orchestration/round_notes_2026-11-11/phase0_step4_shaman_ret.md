@@ -18,7 +18,9 @@ meta's earlier published number. Each Phase 0 number matches `-eval` of its set 
 - Mana Tide: Elemental Weapons 3 out for Improved Stormstrike 1, Totemic Focus 4 out for Healing Focus 3. It wears
   the Phase 0 set with Burning Totem (the set's own totem pick is Totem of the Storm, the two tie within 2).
 - Rotation knobs held (Fire Nova 16, Mana Tide 20 mana a second).
-- Level 60's talents beat the list's (the user's) by about 9 on the Phase 0 set. ENH_CHECK
+- Level 60's talents beat the list's (the user's) by about 9 on the Phase 0 set. A RANK_ONLY of the list on
+  the Level 60 talents (quick-check iterations: 300, confirm 2000, enchants 1000) keeps all 16 picks and enchants,
+  list dps 1002.5 against 993.2, so the list stays on the user's talents and every build wears its set.
 - Searches: rotopt `-talent-search` with the build's pins, mean of 120/180/300s, confirmed at 20000 iterations.
 
 ## Elemental (set `level60_phase0_ele`, Windshaper)
