@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_arms",
   "apl": "level60_arms_sunder",
   "published": {
-    "dps": 1032.2,
-    "source": "the DPS report's main run of this request after hotfix push 114097 (Unbridled Wrath on melee abilities except Whirlwind, one Reckless Swings charge a Cleave) and an avoided Execute keeping its extra Rage (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 964.87,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1032.2,
-    "stderr": 0.48,
+    "dps": 964.87,
+    "stderr": 0.41,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [
@@ -75,7 +75,7 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings with the same arguments as warrior__arms except -apl level60_arms_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++1.4 / +0.5 / +1.2 and +1.2 / +1.8 / +2.0 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms.",
+  "notes": "Request from mksettings with the same arguments as warrior__arms except -apl level60_arms_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++1.4 / +0.5 / +1.2 and +1.2 / +1.8 / +2.0 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_arms, Phase 0 step 4), was the synthetic level60_phase1_synthetic_arms (1032.2 at 180s).",
   "duty": "Sunder Armor",
   "baseBuild": "warrior__arms"
 }

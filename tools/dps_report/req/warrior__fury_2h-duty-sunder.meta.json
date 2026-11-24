@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_fury",
   "apl": "level60_fury_2h_sunder",
   "published": {
-    "dps": 1074.4,
-    "source": "the DPS report's main run of this request after hotfix push 114097 (Unbridled Wrath on melee abilities except Whirlwind, one Reckless Swings charge a Cleave) and an avoided Execute keeping its extra Rage (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 956.12,
+    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1074.4,
-    "stderr": 0.53,
+    "dps": 956.12,
+    "stderr": 0.48,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-17), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [
@@ -74,7 +74,7 @@
     "Saving Death Wish for the last 36s adds 17.4 DPS at 180s and 28.4 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings with the same arguments as warrior__fury_2h except -apl level60_fury_2h_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
+  "notes": "Request from mksettings with the same arguments as warrior__fury_2h except -apl level60_fury_2h_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_fury, Phase 0 step 4), was the synthetic level60_phase1_synthetic_arms (1074.4 at 180s).",
   "duty": "Sunder Armor",
   "baseBuild": "warrior__fury_2h"
 }
