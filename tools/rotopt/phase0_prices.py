@@ -514,18 +514,27 @@ def main():
         print(f'\n{spec}')
         priced[spec] = {}
         for slot, entries in bis['slots'].items():
+            in_slot = {}
             for r in price_slot(slot, entries, content, prices, recipes, args.max, effort):
                 if not r['gold']:
                     continue
-                # an item on two slots (Felstriker mainhand and offhand) keeps its dearest slot's number: the offhand
-                # row, often unpriced, used to overwrite the mainhand's, so the mainhand pick was never marked out
-                prev = priced[spec].get(str(r['id']))
-                if prev is None or (r['gpd'] or 0) > (prev['gpd'] or 0):
-                    priced[spec][str(r['id'])] = r
+                # random suffixes of one item in one slot keep the cheapest number (a suffix with no number only when
+                # none has one): the line drops an item by its ID, so Lunar Wand of Magic's 107g per DPS used to drop
+                # Demonology's pick, Lunar Wand of Shadow Wrath
+                prev = in_slot.get(str(r['id']))
+                key = lambda x: (x['gpd'] is None, x['gpd'] or 0)
+                if prev is None or key(r) < key(prev):
+                    in_slot[str(r['id'])] = r
                 over = r['gpd'] is not None and r['gpd'] > args.max
                 if r['gpd'] is not None:
                     print(f"{slot:9s} {r['name'][:30]:30s} {r['gold']:8.1f}g {r['gpd']:8.1f}g/DPS over "
                           f"{r['over'][:28]:28s}{' PICK' if r['pick'] else '     '}{' OUT' if over else '    '}  {r['how']}")
+            for iid, r in in_slot.items():
+                # an item on two slots (Felstriker mainhand and offhand) keeps its dearest slot's number: the offhand
+                # row, often unpriced, used to overwrite the mainhand's, so the mainhand pick was never marked out
+                prev = priced[spec].get(iid)
+                if prev is None or (r['gpd'] or 0) > (prev['gpd'] or 0):
+                    priced[spec][iid] = r
     if unknown:
         print(f"\ndrops with no known chance, so no effort price: {', '.join(sorted(unknown))}")
 
