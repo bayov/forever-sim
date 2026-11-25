@@ -8,7 +8,7 @@ import (
 
 func (warrior *Warrior) registerBerserkerRageSpell() {
 	// Forever trains it at 30 (Classic 32).
-	if warrior.Level < core.TernaryInt32(warrior.Env.IsForever(), 30, 32) {
+	if !warrior.KnowsRank(18499, core.TernaryInt32(warrior.Env.IsForever(), 30, 32)) {
 		return
 	}
 

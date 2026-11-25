@@ -125,6 +125,8 @@ type Warrior struct {
 	DemoralizingShoutAuras core.AuraArray
 	SunderArmorAuras       core.AuraArray
 	ThunderClapAuras       core.AuraArray
+
+	areaBuffer []*core.Unit
 }
 
 func (warrior *Warrior) GetCharacter() *core.Character {
@@ -152,6 +154,11 @@ func (warrior *Warrior) RegisterSpell(stanceMask Stance, config core.SpellConfig
 			return false
 		}
 		return castConditionOld == nil || castConditionOld(sim, target)
+	}
+
+	// In a leveling session a melee ability only reaches a mob that's on us.
+	if config.MaxRange == 0 && config.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+		config.MaxRange = meleeReach
 	}
 
 	ws.Spell = warrior.Unit.RegisterSpell(config)

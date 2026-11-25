@@ -12,9 +12,10 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 	}
 
 	// Ranks at 40, 48, 54 and 60 (client 70338, the same as Classic).
-	rank := max(1, core.HighestRankAt(warrior.Level, []int{0, 40, 48, 54, 60}))
+	spellIDs := []int32{0, 12294, 21551, 21552, 21553}
+	rank := max(1, warrior.knownRank([]int32{0, 40, 48, 54, 60}, spellIDs))
 	bonusDamage := []float64{0, 85, 110, 135, 160}[rank]
-	spellID := []int32{0, 12294, 21551, 21552, 21553}[rank]
+	spellID := spellIDs[rank]
 
 	warrior.MortalStrike = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorMortalStrike,

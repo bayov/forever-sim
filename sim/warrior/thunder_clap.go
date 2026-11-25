@@ -7,8 +7,14 @@ import (
 )
 
 func (warrior *Warrior) registerThunderClapSpell() {
-	spellID := int32(11581)
-	baseDamage := 103.0
+	spellIDs := []int32{0, 6343, 8198, 8204, 8205, 11580, 11581}
+	rank := warrior.knownRank([]int32{0, 6, 18, 28, 38, 48, 58}, spellIDs)
+	if rank == 0 {
+		return
+	}
+	spellID := spellIDs[rank]
+	baseDamage := []float64{0, 10, 23, 37, 55, 82, 103}[rank]
+	slowDuration := time.Second * []time.Duration{0, 10, 14, 18, 22, 26, 30}[rank]
 	has5pcConq := warrior.HasSetBonus(ItemSetConquerorsBattleGear, 5)
 	attackSpeedReduction := core.TernaryInt32(has5pcConq, 15, 10)
 	stanceMask := BattleStance
@@ -25,7 +31,11 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	}
 
 	warrior.ThunderClapAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.ThunderClapAura(target, spellID, attackSpeedReduction)
+		aura := core.ThunderClapAura(target, spellID, attackSpeedReduction)
+		if aura.Duration != core.NeverExpires { // the raid's, which stays up
+			aura.Duration = slowDuration
+		}
+		return aura
 	})
 
 	results := make([]*core.SpellResult, min(4, warrior.Env.GetNumTargets()))
@@ -36,6 +46,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagAPL | SpellFlagOffensive,
+		MaxRange:    thunderClapRadius,
 
 		RageCost: core.RageCostOptions{
 			Cost: 20 - []float64{0, 2, 4, 6}[warrior.Talents.ImprovedThunderClap],
@@ -60,10 +71,10 @@ func (warrior *Warrior) registerThunderClapSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Only living targets, each one once.
-			hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
-			for idx := range hits {
+			targets := warrior.areaTargets(sim, target, thunderClapRadius, len(results))
+			hits := results[:len(targets)]
+			for idx, target := range targets {
 				results[idx] = spell.CalcDamage(sim, target, baseDamage+apCoef*spell.MeleeAttackPower(target), spell.OutcomeMagicHitAndCrit)
-				target = sim.Environment.NextTargetUnit(target)
 			}
 
 			for _, result := range hits {
