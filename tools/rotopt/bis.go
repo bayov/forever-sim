@@ -359,7 +359,10 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				fmt.Printf("    %s: %s %s\n", c.slot, c.ranked.option.name, c.ranked.result)
 			}
 		}
-		if *gearRankConditions {
+		if *gearRankConditions && healSlots != nil {
+			// The healer objective's fight is its boss files, which a condition doesn't reach.
+			fmt.Println("  -gear-rank-conditions: skipped, a condition doesn't reach the healer objective's boss files")
+		} else if *gearRankConditions {
 			slots = s.rankConditions(slots, sources, best, base, knobs)
 		}
 		if *gearRankCooldowns {

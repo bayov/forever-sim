@@ -646,6 +646,32 @@ paladin 1.430, druid 1.414, shaman 1.412. The tank presets are unchanged. Enchan
 Arcanum of Voracity, Intellect), legs, chest and feet (Mystic Rugged Armor Kit) stay; Spirit or Rumination on the
 head, Voracity on the legs, Greater Stats on the chest and a kit on the bare hands moved no mean past 0.006.
 
+## The rotopt objective (2026-11-25)
+
+The gear search (`tools/rotopt -gear-search`) can score a healer by the score the Tanking and Healing report
+publishes, the damage carried. `-heal-roles tank`, `raid` or `tank,raid` turns it on, with one slot per role and
+boss (`-heal-encounter`, the 7 boss files by default) in place of the fight lengths. A set's score is 100 times
+the mean carry over the slots, so in percent of the boss's damage, and with both roles each role weighs half.
+The bench is healbench's, moved into `tools/healscore`: the same raid (`-heal-tank`, `-heal-filler`, their
+defaults), healers, fight lengths and seed (`-heal-seed 101`). The tank slots sim the setup's player with its
+rotation. The raid slots sim the raid preset's player (`-heal-raid-settings`, the `_raid` request: its talents,
+rotation, consumes and buffs) in the gear under test. The setup's rotation knobs reach only the tank slots,
+so the healer objective is for the gear search.
+
+A full carry is about 10 sims, too slow to score every candidate. So the first set scored, the starting set,
+gets the full carry k on each slot (at `-heal-ref-iters`, 1000 by default) and the slope s of the failure f
+(deaths over their line) between the two closest scales the carry simmed. Every set after is one sim per slot
+at k, on the same seed, and its carry is the linear estimate k + (1 - f)/s. When f is under 0.3 or over 3 (no
+deaths, or far past the line) the slope can't be trusted that far, and the slot brackets the line from k
+instead: steps of 10% until f crosses 1, two bisections and the interpolation, as the full carry does. The
+error is the binomial error of the share of fights failed, over the line and the slope. Two sets pair fight by
+fight on the same seed, so the noise a gain is tested against is the error of the difference in failed fights.
+
+The uses count inside the fights, so the objective wants `-use-dur 0` (`-use-aoe-targets 0`), and refuses a
+`-use-dur` above 0. That leaves out `-gear-rank-cooldowns` and `-gear-effects-out`, which need it. The boss
+files are the fight, so a condition (vs Undead and the like) can't reach it, and `-gear-rank-conditions` is
+skipped.
+
 ## Milestones
 
 **H1: the groundwork** (engine, no healer spec). Done 2026-11-02, see above.

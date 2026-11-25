@@ -5,40 +5,41 @@ import (
 
 	"github.com/wowsims/classic/sim"
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/tools/tankscore"
+	"github.com/wowsims/classic/tools/healscore"
 )
 
 func init() { sim.RegisterAll() }
 
 // raidBench is the bench's -role raid on a boss for a healer from req, with the defaults.
-func raidBench(t *testing.T, healer, boss string) *bench {
+func raidBench(t *testing.T, healer, boss string) *healscore.Bench {
 	t.Helper()
-	path := "../encounters/" + boss + ".json"
-	enc, err := tankscore.LoadEncounter(path)
+	f, err := healscore.LoadFight("../encounters/" + boss + ".json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	f := encounterFight(enc)
-	f.killSeconds = killSeconds(path)
-	o := options{stopCast: 0.5, reaction: 0.3, role: "raid", scale: 1, healers: 2, fillers: 7, duration: f.killSeconds}
+	o := healscore.Options{StopCast: 0.5, Reaction: 0.3, Role: "raid", Scale: 1, Healers: 2, Fillers: 7, Duration: f.KillSeconds}
 	rsr := read("req/" + healer + ".json")
-	return &bench{o: o, fight: f, tank: firstPlayer(read("../tankbench/req/warrior_protection.json")), healer: firstPlayer(rsr),
-		filler: firstPlayer(read("../dps_report/req/mage__frost.json")), buffs: rsr.Raid.Buffs, debuffs: rsr.Raid.Debuffs}
+	return &healscore.Bench{O: o, Fight: f, Tank: healscore.FirstPlayer(read("../tankbench/req/warrior_protection.json")), Healer: healscore.FirstPlayer(rsr),
+		Filler: healscore.FirstPlayer(read("../dps_report/req/mage__frost.json")), Buffs: rsr.Raid.Buffs, Debuffs: rsr.Raid.Debuffs}
 }
 
 // fightHps sims n fights from seed in one sim (one split of a concurrent run) and gives each
 // fight's healing per second of the healers.
-func fightHps(t *testing.T, b *bench, seed int64, n int) []float64 {
+func fightHps(t *testing.T, b *healscore.Bench, seed int64, n int) []float64 {
 	t.Helper()
-	b.o.seed, b.o.iterations, b.o.allValues = seed, n, true
-	res := core.RunRaidSim(b.request(1, false))
+	b.O.Seed, b.O.Iterations, b.O.AllValues = seed, n, true
+	req, err := b.Request(1, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := core.RunRaidSim(req)
 	if res.Error != nil {
 		t.Fatal(res.Error.Message)
 	}
 	hps := make([]float64, n)
 	for pi, party := range res.RaidMetrics.Parties {
 		for si, m := range party.Players {
-			if b.slots[pi][si] == roleHealer {
+			if b.Slots[pi][si] == healscore.RoleHealer {
 				for i := range hps {
 					hps[i] += m.Hps.AllValues[i]
 				}

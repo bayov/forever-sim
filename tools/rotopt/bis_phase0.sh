@@ -474,6 +474,12 @@ if [ -n "$bench" ]; then
 	iters="-iters 1000 -gear-screen-iters 300 -gear-screen-keep 15"
 	confirm="-gear-rank-confirm-iters 5000 -gear-rank-enchant-iters 3000"
 fi
+# The conditional and cooldown ranks need the uses valued on their own (USE_DUR), and a boss file
+# sets the fight a condition would change, so a tank or healer list has neither.
+rank_extra="-gear-rank-conditions -gear-rank-cooldowns"
+if [ -n "$bench" ]; then
+	rank_extra=""
+fi
 # shellcheck disable=SC2046,SC2086
 go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" $iters \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
@@ -481,7 +487,7 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-rank-name "Phase 0" -gear-rank-keep 25 $(weapon_flags "$spec") $(bench_flags "$spec") \
 	-gear-rank-spec "$(rank_spec "$spec")" -gear-rank-sim "$sim" \
 	-gear-rank-enchants tools/rotopt/phase0_enchants.json $confirm \
-	-gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters 10000 \
+	$rank_extra -gear-effects-iters 10000 \
 	-use-dur "$use_dur" -use-iters 20000 -use-aoe-targets "$aoe_targets" $outputs $rank_only "$@"
 
 if [ -n "$EFFECTS_ONLY" ]; then

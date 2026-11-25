@@ -124,6 +124,10 @@ type result struct {
 	tank      *tankscore.Score
 	tankParts []tankPart
 
+	// With -heal-roles, each slot's share of the score (heal.go), which pairs two results fight by
+	// fight (gainNoise).
+	healParts []healPart
+
 	// Each iteration's DPS, in the order of the run's seeds, when the searcher asks for them
 	// (saveValues). Two results of one fight length pair iteration by iteration (gainNoise).
 	values []float64
@@ -142,6 +146,9 @@ type tankPart struct {
 // Over several encounters (or fight lengths) the score is their mean, so the paired error is the
 // root of the summed paired variances over their count: the encounters' runs are independent.
 func gainNoise(a, b result) float64 {
+	if noise, ok := healGainNoise(a, b); ok {
+		return noise
+	}
 	if n := len(a.tankParts); n > 0 && n == len(b.tankParts) {
 		variance := 0.0
 		ok := true
@@ -227,12 +234,27 @@ func (r result) String() string {
 // One sim run. The random seed is fixed so two rotations see the same crit rolls and
 // the difference between them is far less noisy than either number alone.
 func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) (result, error) {
-	return simulate(s.runRequest(rot, duration, iterations), objectiveFor(duration))
+	return simulateAt(s.runRequest(rot, duration, iterations), duration)
+}
+
+// simulateAt runs a request runRequest made for this fight length (or slot index).
+func simulateAt(request *proto.RaidSimRequest, duration float64) (result, error) {
+	if healSlots != nil {
+		return simulateHeal(request, healSlots[int(duration)])
+	}
+	return simulate(request, objectiveFor(duration))
 }
 
 // The request for one sim run.
 func (s *setup) runRequest(rot *proto.APLRotation, duration float64, iterations int32) *proto.RaidSimRequest {
 	request := s.clone()
+	if healSlots != nil {
+		// The healer in its slot's raid and fight at damage scale 1 (heal.go). The first request
+		// is the starting set's, which measures every slot's reference carry.
+		setRotation(request, rot)
+		healRefOnce.Do(func() { healReference(request) })
+		return healSlots[int(duration)].healRequest(request, iterations)
+	}
 	if tankSlots != nil {
 		// The encounter's own fight and healing on a clone of the setup, so a gear or talent
 		// search's changes to the setup reach every encounter.

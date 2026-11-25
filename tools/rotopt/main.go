@@ -285,6 +285,17 @@ func main() {
 			*tankThreatMembers, w, *tankDpsSlot, 100**tankDeath, healing.HpsEach)
 	}
 
+	if *healRoles != "" {
+		if *tankPreset != "" {
+			fmt.Fprintln(os.Stderr, "-heal-roles and -tank are two objectives, pick one")
+			os.Exit(2)
+		}
+		if err := setupHeal(durs, combined); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(2)
+		}
+	}
+
 	var durations []float64
 	for _, d := range strings.Split(*durs, ",") {
 		v, _ := strconv.ParseFloat(d, 64)

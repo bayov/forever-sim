@@ -156,7 +156,7 @@ func TestApplyWeaponRules(t *testing.T) {
 	}
 }
 
-// The spec table names a report build, a weapon setup and weapon types that exist for every
+// The spec table names a report build (a tank or healer spec its bench preset), a weapon setup and weapon types that exist for every
 // spec, and two specs never write the same list.
 func TestPhase0SpecTable(t *testing.T) {
 	data, err := os.ReadFile("phase0_specs.json")
@@ -165,7 +165,7 @@ func TestPhase0SpecTable(t *testing.T) {
 	}
 	var table struct {
 		Specs map[string]struct {
-			Req, Weapons, MhTypes, OhTypes, Dir, Out string
+			Req, ReqFile, RaidReqFile, Bench, Weapons, MhTypes, OhTypes, Dir, Out string
 			Start                                    []any
 		}
 	}
@@ -174,8 +174,20 @@ func TestPhase0SpecTable(t *testing.T) {
 	}
 	outs := map[string]string{}
 	for name, s := range table.Specs {
-		if _, err := os.Stat("../dps_report/req/" + s.Req + ".json"); err != nil {
+		req := "../dps_report/req/" + s.Req + ".json"
+		if s.Bench != "" {
+			req = "../../" + s.ReqFile
+			if s.Bench != "tank" && s.Bench != "heal" {
+				t.Errorf("%s: bench %q", name, s.Bench)
+			}
+		}
+		if _, err := os.Stat(req); err != nil {
 			t.Errorf("%s: %v", name, err)
+		}
+		if s.RaidReqFile != "" {
+			if _, err := os.Stat("../../" + s.RaidReqFile); err != nil {
+				t.Errorf("%s: %v", name, err)
+			}
 		}
 		if !slices.Contains(weaponRules, s.Weapons) {
 			t.Errorf("%s: weapons %q", name, s.Weapons)

@@ -162,7 +162,7 @@ func (s *searcher) scoreAll(pending []*pendingScore) []result {
 		slots <- struct{}{}
 		go func() {
 			defer wg.Done()
-			r.p.results[r.i], r.err = simulate(r.p.requests[r.i], objectiveFor(s.durations[r.i]))
+			r.p.results[r.i], r.err = simulateAt(r.p.requests[r.i], s.durations[r.i])
 			<-slots
 		}()
 	}
@@ -202,8 +202,10 @@ func (s *searcher) scoreAll(pending []*pendingScore) []result {
 func (s *searcher) combine(p *pendingScore) result {
 	var sum, variance, mana, manaVariance, tto float64
 	var parts []tankPart
+	var healParts []healPart
 	for _, r := range p.results {
 		parts = append(parts, r.tankParts...)
+		healParts = append(healParts, r.healParts...)
 		sum += r.dps
 		variance += r.stderr * r.stderr
 		mana += r.mana
@@ -216,7 +218,7 @@ func (s *searcher) combine(p *pendingScore) result {
 		mana: mana / n, manaStderr: math.Sqrt(manaVariance) / n,
 		tto:    tto / n,
 		health: p.health, armor: p.armor,
-		tankParts: parts,
+		tankParts: parts, healParts: healParts,
 	}
 	if len(tankSlots) > 1 {
 		// The tank encounters' runs share their seed, so their scores correlate and the mean's
