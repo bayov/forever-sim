@@ -199,10 +199,7 @@ func (p *planner) request(job levelJob, iterations int32, seed int64) *proto.Rai
 	request.SimOptions.Iterations = iterations
 	player := request.Raid.Parties[0].Players[0]
 	player.Level = level
-	player.BonusTalentPoints = 0
-	if level >= bonusTalentPointsLevel {
-		player.BonusTalentPoints = plan.BonusTalentPoints
-	}
+	player.BonusTalentPoints = talentPointsOf(plan).bonusAt(level)
 	player.TalentsString = talents
 	player.UntrainedSpells = untrainedAt(plan, level)
 	if job.ownUntrained {

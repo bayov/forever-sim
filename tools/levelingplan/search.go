@@ -73,7 +73,7 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 		return &routeSearch{
 			shape:    p.shape,
 			levels:   levels,
-			bonus:    plan.BonusTalentPoints,
+			points:   talentPointsOf(plan),
 			required: plan.RequiredTalents,
 			ctx:      ctx,
 			cache:    map[string]levelHours{},

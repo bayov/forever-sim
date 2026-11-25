@@ -26,7 +26,7 @@ func routeProblem(plan *proto.LevelingPlanSettings, shape *proto.LevelingTalentS
 			start = plan.FromLevel
 		}
 		for i, reason := range pickReasons(picksFromProto(build.Picks), shape) {
-			level := pickLevel(i, start, plan.BonusTalentPoints)
+			level := talentPointsOf(plan).pickLevel(i, start)
 			if level >= plan.ToLevel {
 				break
 			}

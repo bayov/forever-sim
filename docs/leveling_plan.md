@@ -28,7 +28,9 @@ part has the session's options). The mode comes from the encounter like the othe
   stat weights of that level, and the item we pick becomes one of ours from that level on.
 - **Talents.** A build is the order we put its points in, and at each level we have as many of
   them as the level gives (one a level from 10, plus any extra points from 25, none by
-  default).
+  default). "First talent point at" moves the first point earlier for the Legacy perk Talented
+  (`LevelingPlanSettings.first_talent_level`, 5 with all its 5 ranks). The cap stays 51 points,
+  so a plan with a first point at 5 has them all at 55.
   The talent trees edit the order: a click puts the next point in a talent, and a right click
   takes its last point out. Each talent in the trees shows the level of its first point. The
   Order list has a row for each talent we put points in one after the other, with a pip for
