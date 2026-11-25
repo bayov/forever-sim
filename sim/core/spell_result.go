@@ -23,6 +23,11 @@ type SpellResult struct {
 	// (crit, crush, block) and absorbs.
 	AttackerDamage float64
 
+	// PreAbsorbDamage is the damage that landed, after armor and resists, damage taken modifiers,
+	// the outcome (crit, block) and flat reductions, before absorbs. Forever's Rage from a physical
+	// special taken reads it (ForeverDamageTakenRage).
+	PreAbsorbDamage float64
+
 	inUse bool
 }
 
@@ -36,6 +41,7 @@ func (spell *Spell) NewResult(target *Unit) *SpellResult {
 	result.Damage = 0
 	result.Threat = 0
 	result.AttackerDamage = 0
+	result.PreAbsorbDamage = 0
 	result.Outcome = OutcomeEmpty // for blocks
 	result.inUse = true
 
@@ -347,6 +353,7 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 	}
 	result.Damage += spell.TargetBonusDamageTakenAfterModifiers(attackTable)
 	result.Damage = max(0, result.Damage)
+	result.PreAbsorbDamage = result.Damage
 	result.Target.absorbDamage(sim, spell, result)
 }
 

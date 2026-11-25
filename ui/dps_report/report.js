@@ -2560,6 +2560,10 @@ export function startReport(dash, events) {
     const by = new Map(gear.map((g) => [g.slot, g]));
     const twoHand = (g) => /Two-Hand|Staff|Polearm/i.test(arr(ttRow('i' + g.itemId)?.lines).map((l) => l[1]).join(' '));
     const sets = d3.rollup(gear, (v) => v.length, (g) => ttRow('i' + g.itemId)?.set || null);
+    // A tank or healer still on the synthetic set (its pieces are named "... Synthetic ... (Phase 1)") shows the card's
+    // synthetic note and about text; one on its Phase 0 list, the Phase 0 ones. The DPS card has neither.
+    const synthSet = gear.some((g) => /Synthetic/.test(g.item));
+    host.closest('.fv-card')?.querySelectorAll('[data-gear]').forEach((n) => { n.hidden = n.dataset.gear !== (synthSet ? 'synth' : 'phase0'); });
     const icons = iconMap();
     const iconUrl = (name) => (icons && name ? icons.get(name) || null : null);
     const slot = (name) => {
@@ -2577,9 +2581,9 @@ export function startReport(dash, events) {
       const q = r?.quality || g.quality || 'common';
       const set = r?.set ? r.set : null;
       const use = arr(r?.lines).some((l) => /^Use:/.test(String(l[1])));
-      // The tanks' and healers' made-up trinkets ("... Synthetic ... (Phase 1)") get a tag for their kind, and their
-      // names lose the suffix. The DPS presets' Phase 0 items are real, so neither touches them.
-      const synth = /Synthetic/.test(g.item) && /^Trinket/.test(name);
+      // On the synthetic set, the made-up trinkets ("... Synthetic ... (Phase 1)") get a tag for their kind, and the
+      // names lose the suffix. Phase 0 items (every DPS list, and the tank and healer lists) are real: no tag.
+      const synth = synthSet && /Synthetic/.test(g.item) && /^Trinket/.test(name);
       return tt(el('div', { class: 'item-picker-root', 'data-key': `${enc(b.id)},${enc(name)}` },
         el('div', { class: 'item-picker-icon-wrapper' },
           g.ilvl ? mark(el('span', { class: 'item-picker-ilvl', text: String(g.ilvl) }), D.gear, 'ilvl', W) : null,

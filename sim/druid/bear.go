@@ -248,6 +248,9 @@ func (druid *Druid) applyBearTalentProcs() {
 	}
 	reactionMetrics := druid.NewRageMetrics(core.ActionID{SpellID: 417053})
 	frenzyMetrics := druid.NewRageMetrics(core.ActionID{SpellID: 16959})
+	// EV-0035: Blood Frenzy's Rage threatens 5 a Rage without the form's multiplier (5 Rage read 24.7
+	// and 25.0 in Dire Bear Form, never the form-scaled 53.75).
+	frenzyMetrics.UnscaledThreat = true
 	core.MakePermanent(druid.RegisterAura(core.Aura{
 		Label: "Bear Talent Rage",
 		OnSpellHitTaken: func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
@@ -305,6 +308,14 @@ func (druid *Druid) registerEnrageSpell() {
 	actionID := core.ActionID{SpellID: 5229}
 	rageMetrics := druid.NewRageMetrics(actionID)
 	armorScale := core.TernaryFloat64(druid.Level >= direBearForm.level, 0.84, 0.73)
+	// EV-0109, EV-0032, EV-0034: the cut takes the same share of the bonus armor and of the 2 armor
+	// a point of Agility as of the form-scaled item armor, leaving buff armor whole (Bear Form 0.27 x
+	// (2.8 x (item + bonus armor) + 2 x Agility) on 40 of 40 sheet pairs; Dire Bear Form 16% of each
+	// part, 153 of 153 and 145 sheets). The sim's form doesn't scale the bonus armor, so the cut
+	// takes its share of what the sim has.
+	cut := 1 - armorScale
+	agilityArmorCut := druid.NewDynamicStatDependency(stats.Agility, stats.Armor, -2*cut)
+	bonusArmorCut := druid.NewDynamicStatDependency(stats.BonusArmor, stats.Armor, -cut)
 	var tick *core.PendingAction
 
 	druid.EnrageAura = druid.RegisterAura(core.Aura{
@@ -313,6 +324,8 @@ func (druid *Druid) registerEnrageSpell() {
 		Duration: time.Second * 10,
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
 			druid.ApplyDynamicEquipScaling(sim, stats.Armor, armorScale)
+			druid.EnableDynamicStatDep(sim, agilityArmorCut)
+			druid.EnableDynamicStatDep(sim, bonusArmorCut)
 			tick = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:   time.Second,
 				NumTicks: 10,
@@ -323,6 +336,8 @@ func (druid *Druid) registerEnrageSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.RemoveDynamicEquipScaling(sim, stats.Armor, armorScale)
+			druid.DisableDynamicStatDep(sim, agilityArmorCut)
+			druid.DisableDynamicStatDep(sim, bonusArmorCut)
 			// The tenth tick lands as the aura runs out, so it's only cut short by an early end.
 			if tick != nil && sim.CurrentTime < aura.StartedAt()+aura.Duration {
 				tick.Cancel(sim)

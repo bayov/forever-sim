@@ -10,6 +10,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-11-24, master eceb09019
 - evidence: hotfix post t/2403040/15 (2026-11-24, notes dated November 23, tier 1): "Fixed an issue where Darkmoon Faire buffs were granting twice as much power as intended." Client 1.60.1.71091 still reads 23768 Sayge's Dark Fortune of Damage aura 79 bp 10 (misc 127), so the fix is server side and gives no number. Sim: buffs.go:2464 `DamageDealtMultiplier *= 1.10`, and the stat fortunes at 10%. TASKS.md (2026-11-24, "Find the corrected Darkmoon Faire buff values") tracks the number.
 - proposed fix: once wago.tools hotfixes (spells 23735-23738, 23766-23769) or a log give the value, set every fortune to it (5% if "twice as much" means exactly halved) and cite the hotfix in the comment. Until then, a comment saying the value is pre-hotfix.
+- update 2026-11-25 (pass 105, master 0404484fb): since 3275a60b1 every Forever fight that isn't leveling, outdoor, PvP or `outside_raid` drops Sayge's fortunes entirely (client aura text "No effect while in a raid instance"), so the 10% now reaches only those fights. Still open for them.
 - needs: orchestrator fix
 
 ### mechanics-20261123-1: Robe of the Archmage's Replenish Mana shares the 60 s spell category cooldown with mana gems, healthstones and Demonic Rune; the sim gives it none

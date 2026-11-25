@@ -34,6 +34,7 @@ const (
 	IcebladeHacker              = 13952
 	WarbladeOfCaerDarrow        = 13982
 	ShimmeringPlatinumWarhammer = 15418
+	ForceOfWill                 = 11810
 	Windreaper                  = 15853
 	DarkIronRifle               = 16004
 	IchorSpitter                = 17002
@@ -373,5 +374,41 @@ func init() {
 		}
 		registerForeverStatTrinket(character, SerenityField, stats.Stats{stats.Spirit: 72},
 			time.Second*15, time.Minute*6, time.Second*15)
+	})
+
+	// Force of Will: equip aura 15594 rolls 6.2% on each melee hit taken that deals damage, a white
+	// swing or a melee ability, on a 30 sec cooldown; its buff 15595 takes 51 off each Physical hit
+	// for 10 sec, before armor, at most half the hit (EV-0154: 11,914 procs on 192,506 isolated
+	// landed swings, 845 on 13,780 abilities, none on misses, dodges, parries or hits for 0; the
+	// cut is 51 x the share armor lets through).
+	core.NewItemEffect(ForceOfWill, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+		buff := character.RegisterAura(core.Aura{
+			Label:    "Force of Will",
+			ActionID: core.ActionID{SpellID: 15595},
+			Duration: time.Second * 10,
+			OnGain: func(aura *core.Aura, _ *core.Simulation) {
+				aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor -= 51
+			},
+			OnExpire: func(aura *core.Aura, _ *core.Simulation) {
+				aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor += 51
+			},
+		})
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Force of Will Trigger",
+			ActionID:   core.ActionID{SpellID: 15594},
+			Callback:   core.CallbackOnSpellHitTaken,
+			ProcMask:   core.ProcMaskMelee,
+			Outcome:    core.OutcomeLanded,
+			Harmful:    true,
+			ProcChance: 0.062,
+			ICD:        time.Second * 30,
+			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+				buff.Activate(sim)
+			},
+		})
 	})
 }

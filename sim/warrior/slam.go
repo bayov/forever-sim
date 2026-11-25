@@ -72,7 +72,9 @@ func (warrior *Warrior) registerSlamSpell() {
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  140, // Should this be 54 or the old 140 value from before SoD?
+		// EV-0004: under Forever Slam adds 1.5 threat a spell level beyond its damage, times the stance
+		// (Rank 1 read 30 at spell level 20); 81 for rank 5 (level 54). Classic keeps 140.
+		FlatThreatBonus:  core.TernaryFloat64(warrior.Env.IsForever(), 1.5*float64(requiredLevel), 140),
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

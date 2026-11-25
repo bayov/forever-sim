@@ -64,9 +64,11 @@ func warchiefsSim(ruleset proto.Ruleset) *Simulation {
 			}},
 			Buffs: &proto.PartyBuffs{},
 		}}},
+		// Outside a raid instance, where Forever's world buffs work (ForeverRaidInstance).
 		Encounter: &proto.Encounter{
-			Targets:  []*proto.Target{{Name: "target", Level: 63, MobType: proto.MobType_MobTypeDemon}},
-			Duration: 180,
+			Targets:     []*proto.Target{{Name: "target", Level: 63, MobType: proto.MobType_MobTypeDemon}},
+			Duration:    180,
+			OutsideRaid: true,
 		},
 	}, simsignals.CreateSignals())
 	sim.Reset()

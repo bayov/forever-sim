@@ -16,7 +16,8 @@ import (
 // for rank 3 at level 30 and 30 for rank 6 at 60. On the beta our rank 3 totem's 11 fit the
 // hits we took in two logs. With 572 armor it fit only before armor. Guardian Totems adds
 // 10% a point, so 2 points make it 13.2. Another shaman's totem in the raid buffs gives the top
-// rank at our level too. A hit smaller than the reduction still deals 1, and the reduction
+// rank at our level too. The reduction takes at most half of a hit (EV-0154), a hit it cuts
+// still deals 1, and the reduction
 // goes when a Tremor Totem takes the earth slot. We wear 512 armor, which makes 572 at level 30
 // with our Agility, as in the first log.
 func TestOrcShamanStoneskinTotem(t *testing.T) {
@@ -61,8 +62,13 @@ func TestOrcShamanStoneskinTotem(t *testing.T) {
 				if got, want := hit(sim, 100), (100-c.reduction)*throughArmor; math.Abs(got-want) > 1e-9 {
 					t.Errorf("a 100 damage hit dealt %.3f through %.0f armor, want %.3f (%.1f off before armor)", got, armor, want, c.reduction)
 				}
-				if got := hit(sim, c.reduction-1); got != 1 {
-					t.Errorf("a %.1f damage hit dealt %.3f, want 1", c.reduction-1, got)
+				// EV-0154: a flat reduction takes at most half of the hit, and a hit it cuts still
+				// deals at least 1 after armor (our beta's raw 3 and 4 swings under rank 1's 4).
+				if got, want := hit(sim, c.reduction-1), max(1, (c.reduction-1)/2*throughArmor); math.Abs(got-want) > 1e-9 {
+					t.Errorf("a %.1f damage hit dealt %.3f, want %.3f (half of it before armor)", c.reduction-1, got, want)
+				}
+				if got := hit(sim, 1); got != 1 {
+					t.Errorf("a 1 damage hit dealt %.3f, want 1", got)
 				}
 				if !c.raid {
 					castNow(t, sim, enh, enh.TremorTotem)

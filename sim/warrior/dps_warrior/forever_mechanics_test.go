@@ -42,6 +42,12 @@ func newForeverWarriorArmed(t *testing.T, talents string, mainHand, offHand int3
 
 // newForeverWarriorTargets is newForeverWarriorArmed against numTargets bosses.
 func newForeverWarriorTargets(t *testing.T, talents string, mainHand, offHand int32, numTargets int) (*core.Simulation, *warrior.Warrior) {
+	return newForeverWarriorRaidDamage(t, talents, mainHand, offHand, numTargets, nil)
+}
+
+// newForeverWarriorRaidDamage is newForeverWarriorTargets with these raid damage events on the
+// first boss and, with any, the warrior tanking it.
+func newForeverWarriorRaidDamage(t *testing.T, talents string, mainHand, offHand int32, numTargets int, raidDamage []*proto.RaidDamageEvent) (*core.Simulation, *warrior.Warrior) {
 	// Bosses that swing, for Rage from damage taken.
 	targets := make([]*proto.Target, numTargets)
 	for i := range targets {
@@ -64,9 +70,14 @@ func newForeverWarriorTargets(t *testing.T, talents string, mainHand, offHand in
 		Rotation:      &proto.APLRotation{},
 		Spec:          &proto.Player_Warrior{Warrior: &proto.Warrior{Options: &proto.Warrior_Options{}}},
 	}
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	if raidDamage != nil {
+		// The boss attacks the warrior, so it has a white melee hit to take.
+		raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	}
 	sim := core.NewSim(&proto.RaidSimRequest{
-		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter:  &proto.Encounter{Duration: 60, Targets: targets},
+		Raid:       raid,
+		Encounter:  &proto.Encounter{Duration: 60, Targets: targets, RaidDamage: raidDamage},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
 	sim.Reset()
@@ -151,49 +162,103 @@ func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
 	}
 }
 
-// TestForeverWarriorDamageTakenRage checks Forever's Rage from taking damage (standards 21):
-// 2.5 × (1 − A) × damage / the Rage conversion at the attacker's level, with A the armor assumed
-// for a level 60 attacker (39.5%, between 38% at 50 and 40% at 63), so 6.6 Rage for 1000 damage,
-// where Classic's damage × 2.5 / the same conversion gives 10.8 (wowsims/forever ee2d69b16a,
-// 73b317c7cf, de550b7df9). The damage is the attacker's, before anything of ours: our damage
-// taken modifiers (Defensive Stance, Shield Wall), a block and an absorb take no Rage away
-// (report assumption warr_dt_rage_mods, None). A crushing blow counts at 1.5, a periodic tick
-// like a hit, and Berserker Rage doubles it. The damage comes from a level 60 special attack,
-// which gives no Rage for dealing it.
+// TestForeverWarriorDamageTakenRage checks Forever's Rage from taking damage (standards 21). A
+// boss's white melee hit gives 2.5 × (1 − A) × damage / the Rage conversion at the attacker's
+// level, with A the armor assumed for a level 63 attacker (40%), so 6.2 Rage for 1000 damage
+// (wowsims/forever ee2d69b16a, 73b317c7cf, de550b7df9). The damage is the attacker's, times our
+// stance's damage taken modifier and nothing else of ours: Defensive Stance gives 0.9 of Battle
+// Stance's Rage and Berserker Stance 1.1, as our Forever logs show
+// (orchestration/rage_taken_by_stance.md: 0.878, 1.109 and 1.017 of the formula). Shield Wall, a
+// block and an absorb take no Rage away (report assumption warr_dt_rage_mods, the stance rule). A
+// crushing blow counts at 1.5, and Berserker Rage doubles it.
+//
+// Every other hit gives twice that (wowsims/forever EV-0052, EV-0118): a Fire hit and every tick,
+// Physical ones too, on the same damage, and a Physical special (a melee ability of the raid damage
+// model) on the damage that landed, after armor, the stance and the block, before absorbs, with our
+// modifiers other than the stance's (Shield Wall) taken out again.
 func TestForeverWarriorDamageTakenRage(t *testing.T) {
-	perPoint := 2.5 * (1 - (0.38 + 0.02*10/13)) / core.GetRageConversion(60)
+	perPoint := 2.5 * (1 - 0.40) / core.GetRageConversion(63)
+	const (
+		battle = iota
+		defensive
+		berserker
+	)
+	const (
+		white   = iota // the boss's white melee hit
+		fire           // a direct Fire hit of the raid damage model
+		special        // a Physical melee ability of the raid damage model
+		fireTick
+		physicalTick
+	)
 	cases := []struct {
 		name       string
+		kind       int
+		stance     int
 		outcome    core.HitOutcome
-		taken      float64 // the damage after all of our mitigation
-		takenMulti float64 // our damage taken multiplier while the hit lands
-		periodic   bool
+		landed     float64 // the damage after all of our mitigation, before absorbs
+		takenMulti float64 // our damage taken multiplier past the stance's while the hit lands
+		absorbed   bool    // an absorb takes all that landed
 		berserker  bool    // Berserker Rage up
 		want       float64 // Rage, for 1000 attacker damage
 	}{
-		{"a hit", core.OutcomeHit, 1000, 1, false, false, 1000 * perPoint},
-		{"a hit in Defensive Stance", core.OutcomeHit, 900, 0.9, false, false, 1000 * perPoint},
-		{"a hit under Shield Wall", core.OutcomeHit, 250, 0.25, false, false, 1000 * perPoint},
-		{"a hit fully absorbed", core.OutcomeHit, 0, 1, false, false, 1000 * perPoint},
-		{"a blocked hit", core.OutcomeBlock, 700, 1, false, false, 1000 * perPoint},
-		{"a crushing blow", core.OutcomeCrush, 1500, 1, false, false, 1500 * perPoint},
-		{"a dodge", core.OutcomeDodge, 0, 1, false, false, 0},
-		{"a periodic tick", core.OutcomeHit, 1000, 1, true, false, 1000 * perPoint},
-		{"a hit under Berserker Rage", core.OutcomeHit, 1000, 1, false, true, 2 * 1000 * perPoint},
+		{"a hit in Battle Stance", white, battle, core.OutcomeHit, 600, 1, false, false, 1000 * perPoint},
+		{"a hit in Defensive Stance", white, defensive, core.OutcomeHit, 540, 1, false, false, 0.9 * 1000 * perPoint},
+		{"a hit in Berserker Stance", white, berserker, core.OutcomeHit, 660, 1, false, false, 1.1 * 1000 * perPoint},
+		{"a hit under Shield Wall", white, battle, core.OutcomeHit, 240, 0.4, false, false, 1000 * perPoint},
+		{"a hit under Shield Wall in Defensive Stance", white, defensive, core.OutcomeHit, 216, 0.4, false, false, 0.9 * 1000 * perPoint},
+		{"a hit fully absorbed", white, battle, core.OutcomeHit, 600, 1, true, false, 1000 * perPoint},
+		{"a blocked hit", white, battle, core.OutcomeBlock, 300, 1, false, false, 1000 * perPoint},
+		{"a blocked hit in Defensive Stance", white, defensive, core.OutcomeBlock, 240, 1, false, false, 0.9 * 1000 * perPoint},
+		{"a crushing blow", white, battle, core.OutcomeCrush, 900, 1, false, false, 1500 * perPoint},
+		{"a dodge", white, battle, core.OutcomeDodge, 0, 1, false, false, 0},
+		{"a hit under Berserker Rage", white, battle, core.OutcomeHit, 600, 1, false, true, 2 * 1000 * perPoint},
+		{"a Fire hit in Battle Stance", fire, battle, core.OutcomeHit, 1000, 1, false, false, 2 * 1000 * perPoint},
+		{"a Fire hit in Berserker Stance", fire, berserker, core.OutcomeHit, 1100, 1, false, false, 2 * 1.1 * 1000 * perPoint},
+		{"a Fire hit under Shield Wall in Defensive Stance", fire, defensive, core.OutcomeHit, 360, 0.4, false, false, 2 * 0.9 * 1000 * perPoint},
+		{"a Fire tick", fireTick, battle, core.OutcomeHit, 1000, 1, false, false, 2 * 1000 * perPoint},
+		{"a Physical tick in Defensive Stance", physicalTick, defensive, core.OutcomeHit, 900, 1, false, false, 2 * 0.9 * 1000 * perPoint},
+		{"a special in Battle Stance", special, battle, core.OutcomeHit, 600, 1, false, false, 2 * 600 * perPoint},
+		{"a special in Defensive Stance", special, defensive, core.OutcomeHit, 540, 1, false, false, 2 * 540 * perPoint},
+		{"a special under Shield Wall in Defensive Stance", special, defensive, core.OutcomeHit, 216, 0.4, false, false, 2 * 540 * perPoint},
+		{"a special partly blocked", special, battle, core.OutcomeBlock, 400, 1, false, false, 2 * 400 * perPoint},
+		{"a special blocked in full", special, battle, core.OutcomeBlock, 0, 1, false, false, 0},
+		{"a special fully absorbed", special, battle, core.OutcomeHit, 600, 1, true, false, 2 * 600 * perPoint},
+	}
+	// The raid damage events never come on their own here: their first is past the fight.
+	raidDamage := []*proto.RaidDamageEvent{
+		{School: proto.SpellSchool_SpellSchoolFire, MinDamage: 1000, Who: proto.RaidDamageEvent_BossTarget, FirstAt: 1000},
+		{School: proto.SpellSchool_SpellSchoolPhysical, MinDamage: 1000, Who: proto.RaidDamageEvent_BossTarget, FirstAt: 1000, Melee: true},
+		{School: proto.SpellSchool_SpellSchoolFire, MinDamage: 1000, Who: proto.RaidDamageEvent_BossTarget, FirstAt: 1000, Ticks: 3, TickSeconds: 1},
+		{School: proto.SpellSchool_SpellSchoolPhysical, MinDamage: 1000, Who: proto.RaidDamageEvent_BossTarget, FirstAt: 1000, Ticks: 3, TickSeconds: 1},
 	}
 	for _, c := range cases {
-		sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
+		sim, war := newForeverWarriorRaidDamage(t, "", 991014, 991015, 1, raidDamage)
+		boss := war.CurrentTarget
+		eventSpell := func(i int) *core.Spell {
+			return boss.GetSpell(core.ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken, Tag: int32(i + 1)})
+		}
+		attack := map[int]*core.Spell{
+			white: boss.AutoAttacks.MHAuto(), fire: eventSpell(0), special: eventSpell(1),
+			fireTick: eventSpell(2), physicalTick: eventSpell(3),
+		}[c.kind]
+		if attack == nil {
+			t.Fatalf("%s: no spell", c.name)
+		}
+		[]*core.Aura{war.BattleStanceAura, war.DefensiveStanceAura, war.BerserkerStanceAura}[c.stance].Activate(sim)
 		if c.berserker {
 			war.BerserkerRageAura.Activate(sim)
 		}
 		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
 		war.PseudoStats.DamageTakenMultiplier *= c.takenMulti
-		attack := war.Hamstring.Spell
 		result := attack.NewResult(&war.Unit)
 		result.Outcome = c.outcome
 		result.AttackerDamage = 1000
-		result.Damage = c.taken
-		if c.periodic {
+		result.PreAbsorbDamage = c.landed
+		result.Damage = c.landed
+		if c.absorbed {
+			result.Damage = 0
+		}
+		if c.kind == fireTick || c.kind == physicalTick {
 			attack.DealPeriodicDamage(sim, result)
 		} else {
 			attack.DealDamage(sim, result)
@@ -556,7 +621,7 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 		}
 	}
 	check("Revenge", war.Revenge.Spell, 97, 145, 0.25)
-	check("Shield Slam", war.ShieldSlam.Spell, 625+war.BlockValue(), 685+war.BlockValue(), 0)
+	check("Shield Slam", war.ShieldSlam.Spell, 625+2*war.BlockValue(), 685+2*war.BlockValue(), 0) // EV-0004
 	check("Thunder Clap", war.ThunderClap.Spell, 103, 103, 0.07)
 
 	if got := war.Revenge.FlatThreatBonus; got != 0 {
