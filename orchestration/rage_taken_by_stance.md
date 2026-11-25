@@ -1,5 +1,7 @@
 # Rage from hits taken, by stance
 
+**Implemented 2026-11-25 in b4cab8498:** the sim's Rage from a hit taken is the formula on the unmitigated hit times the stance's damage taken modifier only (`ForeverDamageTakenRageModsStance`, report assumption `warr_dt_rage_mods`), on every hit that gives Rage, spells and ticks included. The thin points below are To Verify lines in notes.md.
+
 Checked 2026-11-25. Question for whoever takes this: should the raid sim's Rage from damage taken
 follow the stance? Today it doesn't (`warr_dt_rage_mods` = None, standards 21).
 
