@@ -304,10 +304,15 @@ exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | 
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
 # The most gold an item may cost for each DPS it adds (user, 2026-11-22). An item over it is
 # infeasible like an Exalted reputation item: ranked, but never a pick. tools/rotopt/phase0_prices.py
-# writes each item's goldPerDps into the content check from our auction house scans, and
-# should run again after a rerun moves the picks.
+# writes each item's goldPerDps into the content check from our auction house scans, one number
+# per spec's list ({"mage_fire": 160}, since an item adds different DPS on each), and should run
+# again after a rerun moves the picks. nopick_of gives a spec's no-pick items.
 max_gpd="${MAX_GOLD_PER_DPS:-30}"
-nopick="$(jq -r --argjson max "$max_gpd" '[to_entries[] | select(.value.avail == "infeasible" or (.value.goldPerDps // 0) > $max) | .key] | join(",")' "$content")"
+nopick_of() {
+	jq -r --arg s "$1" --argjson max "$max_gpd" '[to_entries[] | select(.value.avail == "infeasible"
+		or ((.value.goldPerDps | if type == "object" then .[$s] else null end) // 0) > $max) | .key] | join(",")' "$content"
+}
+nopick="$(nopick_of "$spec")"
 # The gear search's pool, without the search: DRY_RUN=1 (see above).
 if [ -n "$DRY_RUN" ]; then
 	dry_dir="${DRY_RUN_DIR:-orchestration/round_notes_2026-11-11/phase0_pool}"
@@ -319,7 +324,7 @@ if [ -n "$DRY_RUN" ]; then
 		# shellcheck disable=SC2046
 		"$tmp/rotopt" -apl "$tmp/$s.apl.json" -settings "$tmp/$s.json" -durs "$dur" \
 			-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
-			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
+			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$(nopick_of "$s")" \
 			$(weapon_flags "$s") -gear-pool-spec "$s" \
 			-gear-content "$content" -gear-pool-report "$dry_dir/$s.json" "$@" >/dev/null
 		jq -r '"\(.spec): \(.items) items, \(.unmodelled | length) unmodelled, \(.hiddenStats | length) hidden stats, \(.unlisted) unlisted, \(.factionDropped | length) left out as \(if .faction == "Horde" then "Alliance" else "Horde" end) only"' "$dry_dir/$s.json"
@@ -423,10 +428,11 @@ fi
 
 # The content check's status on every entry. An item over the gold line is infeasible, and
 # its note says what a DPS costs on it.
-jq --slurpfile content "$content" --argjson max "$max_gpd" '.slots |= map_values(map(
+jq --slurpfile content "$content" --argjson max "$max_gpd" --arg spec "$spec" '.slots |= map_values(map(
 	. as $e | ($content[0][$e.id | tostring] // {}) as $c
-	| (($c.goldPerDps // 0) > $max) as $costly
-	| ([$c.note // empty] + (if $c.goldPerDps then ["\($c.goldPerDps | round)g per DPS"] else [] end) | join(" · ")) as $note
+	| ($c.goldPerDps | if type == "object" then .[$spec] else null end) as $gpd
+	| (($gpd // 0) > $max) as $costly
+	| ([$c.note // empty] + (if $gpd then ["\($gpd | round)g per DPS"] else [] end) | join(" · ")) as $note
 	| $e + (if $c.avail then {avail: $c.avail} elif $costly then {avail: "infeasible"} else {} end)
 		+ (if $note != "" then {note: $note} else {} end)))' \
 	"$out" >"$tmp/list.json"
