@@ -6,8 +6,8 @@ import (
 )
 
 // WarriorLeveling is a warrior's leveling rotation, for any of the weapon styles. It plays the
-// Protection Warrior spec, which is the sim's warrior with Shield Block and Shield Wall, so one
-// spec has every ability with a shield and with a two-hander.
+// Protection Warrior spec, which is the DPS spec's warrior with Shield Block and Shield Wall on
+// top. So one spec has every ability with a shield and with a two-hander, and the builds compare.
 //
 // This is only a start, so the plan tools run for a warrior: rest, walk up or Charge, Battle
 // Shout and Heroic Strike.
@@ -36,7 +36,7 @@ type warriorLevelingTemplate struct{}
 
 func init() {
 	RegisterLevelingTemplate("warrior_leveling", warriorLevelingTemplate{}, func(player *proto.Player) bool {
-		return player.GetTankWarrior() != nil || player.GetWarrior() != nil
+		return player.GetTankWarrior() != nil
 	})
 }
 
@@ -87,7 +87,10 @@ func (t WarriorLeveling) Build(k Knobs) *proto.APLRotation {
 	if shout := top(warriorBattleShout); k["battleShout"] == 1 {
 		items = append(items, Cast(shout, And(inCombat, Not(AuraIsActive(shout))), "Battle Shout when it's down."))
 	}
-	items = append(items, Cast(top(warriorHeroicStrike), And(inCombat, Ge(CurrentRage(), Num(k["heroicStrikeRage"]))), "Heroic Strike with rage to spare."))
+	// Tag 1 is the press that queues it for the next swing.
+	heroicStrike := top(warriorHeroicStrike)
+	heroicStrike.Tag = 1
+	items = append(items, Cast(heroicStrike, And(inCombat, Ge(CurrentRage(), Num(k["heroicStrikeRage"]))), "Heroic Strike with rage to spare."))
 	items = append(items, AutocastOtherCooldowns(inCombat, "Racials and trinkets in combat."))
 	return Rotation(items...)
 }

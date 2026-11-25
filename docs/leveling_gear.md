@@ -68,7 +68,9 @@ We don't take the best item for each level. While leveling we gear up as we go:
   A weapon kind from the weapon master counts as trained. `TestGearPlanMatchesTS` plays the same
   plans with the Go and the TS code, for a shaman and a warrior in each style.
 
-The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
+The stat weights come from the leveling sim, by mobs killed in a session. `levelingplan -weights`
+measures them for a plan and a weapon style (docs/leveling_plan.md, Measuring stat weights). The
+enhancement shaman
 has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from
 ui/enhancement_shaman/leveling_weights.json), measured on the Leveling 1-60 plan at that level:
 its gear, talents, rotation and trained ranks. Between two of those levels we blend them by

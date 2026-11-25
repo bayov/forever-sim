@@ -16,10 +16,12 @@ type weightsFile struct {
 }
 
 type weightsRow struct {
-	Level   int32              `json:"level"`
-	Mobs    float64            `json:"mobs,omitempty"`
-	Deaths  float64            `json:"deaths,omitempty"`
-	Weights map[string]float64 `json:"weights"`
+	Level  int32   `json:"level"`
+	Mobs   float64 `json:"mobs,omitempty"`
+	Deaths float64 `json:"deaths,omitempty"`
+	// The mobs a session one attack power adds, which every weight is next to.
+	MobsPerAP float64            `json:"mobsPerAP,omitempty"`
+	Weights   map[string]float64 `json:"weights"`
 	// How far off each weight can be (one standard error), from the sessions of the probes.
 	Errors map[string]float64 `json:"errors,omitempty"`
 }
