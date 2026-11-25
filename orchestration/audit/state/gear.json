@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
+  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 77,
+ "last_pass_at": "2026-11-25T13:04:10Z",
+ "pass": 78,
  "result": "quiet",
- "note": "Phase 0 sets on every DPS request and live trinket lines checked; no finding.",
+ "note": "No gear files changed; standards.md changes (gold line ends with Phase 0 note, warrior rage from hits taken) add no gear ruling for Phase 0.",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-25T06:50:52Z"
+ "checked_at": "2026-11-25T13:10:47Z"
 }

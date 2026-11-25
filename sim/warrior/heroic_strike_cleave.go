@@ -11,11 +11,11 @@ func (warrior *Warrior) registerHeroicStrikeSpell(realismICD *core.Cooldown) {
 	spellID := core.TernaryInt32(aq, 25286, 11567)
 	// No known equation under Classic.
 	threat := core.TernaryFloat64(aq, 173, 145)
-	// Under Forever its flat threat is 2.54 a spell level, 142.2 for rank 8 (level 56):
-	// wowsims/forever's threat capture of ranks 3 and 4 read the damage + 40.6 at level 16 and + 61
-	// at level 24, times the stance (spell_overrides.go, 2026-10-07). The client states none.
+	// Under Forever its flat threat is 2.5 a spell level, 140 for rank 8 (level 56), times the
+	// stance: EV-0004 (Rank 4 +60.08 over 104 clean windows), EV-0048 (Rank 5 +80.5) and EV-0174
+	// (Rank 6 +100.06, the user's own log). The client states none.
 	if warrior.Env.IsForever() {
-		threat = 2.54 * core.TernaryFloat64(aq, 60, 56)
+		threat = 2.5 * core.TernaryFloat64(aq, 60, 56)
 	}
 
 	warrior.HeroicStrike = warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -58,11 +58,11 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 	flatDamageBonus := 50.0
 	spellID := int32(20569)
 	threat := 100.0
-	// Under Forever 1.53 a spell level, 91.8 for rank 5 (level 60): wowsims/forever's threat
-	// capture of rank 2 read about 46 beyond its damage at level 30 on one target
-	// (spell_overrides.go, 2026-10-07).
+	// Under Forever 96 for rank 5 (level 60), split over the targets it lands on: EV-0050 measured
+	// Rank 3 at 62 and Rank 4 at 80 (1.6 a spell level), and Rank 5 carries Rank 4's 1.6 until a level
+	// 60 log measures it.
 	if warrior.Env.IsForever() {
-		threat = 1.53 * 60
+		threat = 96
 	}
 
 	// Improved Cleave is gone from the Forever tree. Raging Blows, which took 3 Rage off Cleave and
