@@ -10,6 +10,9 @@ Lists in `ui/protection_paladin/bis/level60_phase0_paladin_protection_<preset>.b
 - All three: full search, then RANK_ONLY over all slots on the final sim batches.
 - Max threat: feet re-ranked after the Premier drop, then RANK_ONLY over all slots again on the new talents.
 - No Premier item was a pick in Balanced or Max survival.
+- Balanced, Max survival and the Alliance row: off hand re-ranked after Force Reactive Disk went out
+  (Molten Core schematic). Evergreen Shield takes it in all three. In Max survival The Immovable Object is
+  8.3 ahead in the list ranking, inside the noise of about 11, and the confirm kept Evergreen Shield.
 
 ## Picks
 
@@ -30,7 +33,7 @@ Flags: D doubtful. Everything else is open.
 | Rings | Watcher's Signets of Brilliance and Vigilance (D, no rep source) | Watcher's and Tracker's Signets of Vigilance (D) | same as Max threat |
 | Trinkets | Chained Essence of Eranikus, Adaptive Combat Assistant | same | same |
 | Main hand | Hand of Edward the Odd (world drop) | same | same |
-| Off hand | Force Reactive Disk (D, schematic has no source) | Evergreen Shield (D, BS plans with no source, may need raid essence) | Force Reactive Disk (D) |
+| Off hand | Evergreen Shield (D, BS plans with no source, may need raid essence) | Evergreen Shield | Evergreen Shield |
 | Libram | Steadfast Libram (D, formula has no source) | same | same |
 
 - Nacreous Shell Necklace 22403 shows "infeasible" in the list from its DPS price (the price restored on
@@ -40,11 +43,12 @@ Flags: D doubtful. Everything else is open.
 ## Tags added
 
 - phase0_content.json: the searches' unlisted picks and top 5s, mostly dungeon drops and crafts (open).
-  Doubtful: Steadfast Libram, Evergreen Shield, Force Reactive Disk, Heavy Thorium Gauntlets, Depleted
+  Doubtful: Steadfast Libram, Evergreen Shield, Heavy Thorium Gauntlets, Depleted
   Thorium Sabatons, Warder's Sabatons, Stronghold Gauntlets, Frostwolf Advisor's Cloak (Horde AV, like the
   other AV items). Out: Quel'Serrar, Lord Blackwood's Buckler, Core Armor Kit. Legplates of Vigilance is
   included with the Dungeon Set 2 note, as the file does for that chain. Energized Chestplate added open
-  (Alzzin, Dire Maul).
+  (Alzzin, Dire Maul), and Spaulders of Valor and Barrier Shield from the Alliance rows. Force Reactive
+  Disk is out on the base branch (Molten Core schematic).
 - phase0_enchants.json: the enchants the searches ranked, open (trainer, vendor, Merchant's Favor, Dire Maul
   librams). Core Armor Kit is out (Core Leather).
 
@@ -56,7 +60,7 @@ bench at 1000 iterations, sets swapped into the list, then any close call at 100
 - Max threat (list 3686.7): Imperial 2pc 3458.8, Blessed 8pc 3091.3, Valor 8pc 3255.0. List kept. After the
   re-rank Storm Gauntlets (3858.7) beat Soulforge hands for 6pc (3791.5 and 3783.5), and the feet then moved
   to Depleted Thorium Sabatons, so it is Soulforge 4pc.
-- Max survival (list 822.7): Soulforge 4pc 785.8, Soulforge 6pc 836.3, Imperial 8pc -608.8, Blessed 8pc
+- Max survival (list 822.7, with Force Reactive Disk, before the off hand re-rank): Soulforge 4pc 785.8, Soulforge 6pc 836.3, Imperial 8pc -608.8, Blessed 8pc
   -653.5. At 10000 iterations Soulforge 6pc is 775.0 against the list's 788.5. List kept (Soulforge 2pc).
 
 ## Hand check
@@ -78,10 +82,10 @@ iterations, two seeds:
 ## Faction row
 
 Only Max survival has a faction pick (Darkspear Mantle, Horde).
-Alliance row (Human, RANK_ONLY on the shoulder): Theramore Mantle (Theramore rep, Alliance), 4.1 ahead of
-Soulforge Spaulders. The list scores 563.6 against the Horde list's 822.8, the rest of the set unchanged, so
-most of the gap is the race. Dwarf was not tried. Files: `..._max_survival_alliance.bis.json` and
-`.gear.json`.
+Alliance row (RANK_ONLY on the shoulder and off hand): Theramore Mantle (Theramore rep, Alliance) and
+Evergreen Shield. Dwarf 591.5 against Human 548.1 on the list's measure (534.4 against 523.5 on the final
+measure), so the row is Dwarf. Horde (Undead) is 800.2 on the same measure. Files:
+`..._max_survival_alliance.bis.json` and `.gear.json`.
 
 No faction enchant was picked. Balanced and Max threat have no row.
 
@@ -93,8 +97,8 @@ vaelastrasz and chromaggus. Synthetic is the request on origin/master.
 | Preset | Phase 0 | Synthetic | Gap |
 |---|---|---|---|
 | Max threat | 3912.5 | 3280.3 | +632.2 |
-| Balanced | 2940.7 | 2857.7 | +83.0 |
-| Max survival | 822.7 | 1858.0 | -1035.3 |
+| Balanced | 2914.8 | 2857.7 | +57.1 |
+| Max survival | 800.2 | 1858.0 | -1057.8 |
 
-Max survival falls short on Broodlord (-1053 against 336) and Chromaggus (-2084 against -583). The cause is
+Max survival falls short on Broodlord (-1093 against 336) and Chromaggus (-2113 against -583). The cause is
 not traced.
