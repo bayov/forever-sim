@@ -2,13 +2,13 @@
 
 Follow `orchestration/audit/PASS.md` around this doc. Keep it current when the method changes.
 
-Since 2026-11-24 every DPS preset in the report wears its spec's Phase 0 list: real items obtainable before Forever's first raids open on 2026-12-09 (`orchestration/standards.md` 43). This pass checks that each list is legal and obtainable, that the search behind it is sound, and that the report sims the list it says it does. Tank and healer synthetic sets have their own passes (`tank_gear`, `healer_gear`). The synthetic DPS method this pass used until then (budget lines, `lin2.py`, `wepcheck.py`) is in this file's git history and in `tools/audit/gear/`, for synthetic pieces that come back.
+Since 2026-11-24 every DPS preset in the report wears its spec's Phase 0 list: real items obtainable before Forever's first raids open on 2026-12-09 (`orchestration/standards.md` 43). This pass checks that each list is legal and obtainable, that the search behind it is sound, and that the report sims the list it says it does. Tanks and healers wear Phase 0 lists too since 2026-11-25, scored by their report's own score, and have their own passes (`tank_gear`, `healer_gear`). The synthetic DPS method this pass used until then (budget lines, `lin2.py`, `wepcheck.py`) is in this file's git history and in `tools/audit/gear/`, for synthetic pieces that come back.
 
 The auditor never changes code, presets, lists or docs, and doesn't commit (the audit run commits its files). No PR comments. Don't run the gear search (`tools/rotopt/bis_phase0.sh`) except its dry run (`DRY_RUN=1`), and don't put model names in anything you write. Findings go to `orchestration/audit/findings/gear.md`.
 
 ## What is audited
 
-- **The spec table:** `tools/rotopt/phase0_specs.json`, one row per DPS spec (23): the report build the search fights as (`req`), talents, start gear, weapon setup (`weapons`, `mhTypes`, `ohTypes`), and where the list and gear set go.
+- **The spec table:** `tools/rotopt/phase0_specs.json`, one row per DPS spec (23; the rows with a `bench` field are the tanks' and healers', for their passes): the report build the search fights as (`req`), talents, start gear, weapon setup (`weapons`, `mhTypes`, `ohTypes`), and where the list and gear set go.
 - **The lists:** `ui/<dir>/bis/level60_phase0_<spec>.bis.json` (or the row's `out`), with its `.effects.json`. Each slot ranks up to 25 items on the final set, in order of loss. `bis: true` marks the picks. `dps` is the final set's, `sim` the sim commit it ran on, `faction` and `race` the build's.
 - **The gear sets:** `ui/<dir>/gear_sets/level60_phase0_<spec>.gear.json` (or `gearOut`), the picks with their enchants.
 - **The content checks:** `tools/rotopt/phase0_content.json` (items: `avail` out, infeasible or doubtful, `faction`, `include`, `note`, `goldPerDps`) and `tools/rotopt/phase0_enchants.json` (enchants by spell ID, the same tags).

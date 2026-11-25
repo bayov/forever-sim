@@ -45,7 +45,9 @@ func (priest *Priest) newMindFlaySpellConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolShadow,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL,
+		// Binary, and its ticks take the Spell Piercing bonus at the full share where other channels'
+		// ticks meet a tenth (EV-0142: 483 of 5,398 ticks of 10 priests against 388 expected).
+		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL | core.SpellFlagFullResistanceTicks,
 
 		RequiredLevel: MindFlayLevel[rank],
 		Rank:          rank,

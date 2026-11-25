@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
+  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
  },
- "last_pass_at": "2026-11-25T06:50:08Z",
- "pass": 108,
+ "last_pass_at": "2026-11-25T08:00:00Z",
+ "pass": 109,
  "result": "findings",
- "note": "assumptions_def.py only; natural flask desc stale (low).",
+ "note": "elixir overwrite by AB/DS; world buffs off in raids (no preset uses them).",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T06:50:52Z"
+ "checked_at": "2026-11-25T13:10:47Z"
 }

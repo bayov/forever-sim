@@ -143,11 +143,12 @@ func testClearcastingSpells(t *testing.T) {
 	}
 }
 
-// White swings use Flurry's charges, at most one per 0.5 sec. Stormstrike and Windfury
-// Weapon's attacks don't. A white crit uses a charge and then gives all 3 back. The buff
+// White swings and Windfury Weapon's attacks use Flurry's charges, at most one per 0.5 sec;
+// Stormstrike and Windfury Totem's swing don't (EV-0010). A crit uses none and gives all 3 back;
+// a Windfury Weapon attack in its instant uses one, but not after a Windfury Weapon crit. The buff
 // runs out after 15 sec when we don't swing (clients 70291 and 1.15.9).
 func testFlurryCharges(t *testing.T) {
-	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 25}.start()
+	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 30}.start()
 	sim.PrePull()
 	// Combat start turns the swings on, so we turn them off after it.
 	at(sim, 0.5, enh.AutoAttacks.CancelAutoSwing)
@@ -166,25 +167,49 @@ func testFlurryCharges(t *testing.T) {
 			}
 		})
 	}
+	totemSwing := func(outcome core.HitOutcome) func() {
+		return func() {
+			restore := enh.AutoAttacks.SetExtraAttackSourceForTest(core.ActionID{SpellID: core.WindfuryBuffSpellId[3]})
+			roll(white, outcome)
+			restore()
+		}
+	}
 	check(1, func() {
 		flurryAura.Activate(sim)
 		flurryAura.SetStacks(sim, 3)
 		roll(enh.Stormstrike, core.OutcomeHit)
-		roll(enh.WindfuryWeaponMH, core.OutcomeHit)
+		totemSwing(core.OutcomeHit)()
+		totemSwing(core.OutcomeDodge)()
 	}, 3)
-	check(1.1, func() { roll(white, core.OutcomeHit) }, 2)
+	check(1.1, func() { roll(enh.WindfuryWeaponMH, core.OutcomeHit) }, 2)
 	check(1.4, func() { roll(white, core.OutcomeHit) }, 2)
 	check(2, func() { roll(white, core.OutcomeCrit) }, 3)
 	check(3, func() { roll(white, core.OutcomeHit) }, 2)
-	check(4, func() { roll(white, core.OutcomeHit) }, 1)
+	check(4, func() { roll(white, core.OutcomeDodge) }, 1)
 	check(5, func() { roll(white, core.OutcomeHit) }, 0)
 
+	// A white crit spends none and a Windfury Weapon attack in its instant spends one.
 	check(6, func() {
+		roll(white, core.OutcomeCrit)
+		roll(enh.WindfuryWeaponMH, core.OutcomeHit)
+		roll(enh.WindfuryWeaponMH, core.OutcomeHit)
+	}, 2)
+	// After a Windfury Weapon crit the next one in its instant spends none, nor does a white swing.
+	check(7, func() {
+		roll(enh.WindfuryWeaponMH, core.OutcomeCrit)
+		roll(enh.WindfuryWeaponMH, core.OutcomeHit)
+		roll(white, core.OutcomeHit)
+	}, 3)
+	// The totem's crit gives the charges back.
+	check(8, func() { roll(white, core.OutcomeHit) }, 2)
+	check(9, func() { totemSwing(core.OutcomeCrit)() }, 3)
+
+	check(10, func() {
 		flurryAura.Activate(sim)
 		flurryAura.SetStacks(sim, 3)
 	}, 3)
-	check(20.9, func() {}, 3)
-	check(21.1, func() {}, 0)
+	check(24.9, func() {}, 3)
+	check(25.1, func() {}, 0)
 	runSim(sim)
 }
 

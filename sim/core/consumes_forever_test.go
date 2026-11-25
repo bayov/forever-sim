@@ -318,6 +318,10 @@ func TestForeverOpenExplosives(t *testing.T) {
 			t.Errorf("%s: school %v, cast %v, shared cooldown %v; want %v, 1s, 1m", c.explosive, spell.SpellSchool, spell.DefaultCast.CastTime, spell.SharedCD.Duration, c.school)
 		}
 		spell.Flags |= SpellFlagIgnoreResists
+		// Targets that can be stunned, below a raid boss's level (TestForeverStunExplosivesOnBosses).
+		for i := range 2 {
+			sim.GetTargetUnit(int32(i)).StunImmune = false
+		}
 		lo, hi := 1e9, 0.0
 		for range 2000 {
 			before := spell.SpellMetrics()[0]
@@ -341,6 +345,49 @@ func TestForeverOpenExplosives(t *testing.T) {
 	_, engineerless := newForeverConsumeSim(t, &proto.Consumes{FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine}, &proto.Encounter{}, 1, proto.Profession_ProfessionUnknown)
 	if engineerless.GetMajorCooldown(GoblinLandMineActionID) != nil {
 		t.Errorf("Goblin Land Mine without Engineering")
+	}
+}
+
+// EV-0088: throwing an explosive leaves the melee swing timer running, and an explosive whose row
+// states the stun mechanic (the Thorium Grenades, EZ-Thro Dark Bomb) misses a raid boss in full,
+// its damage included, while one with no mechanic (Holy Hand Grenade, dynamite) hits it.
+func TestForeverStunExplosivesOnBosses(t *testing.T) {
+	cases := []struct {
+		explosive  proto.Explosive
+		actionID   ActionID
+		profession proto.Profession
+		stun       bool
+	}{
+		{proto.Explosive_ExplosiveEZThroDarkBomb, EZThroDarkBombActionID, proto.Profession_ProfessionUnknown, true},
+		{proto.Explosive_ExplosiveEZThroThoriumGrenade, EZThroThoriumGrenadeActionID, proto.Profession_ProfessionUnknown, true},
+		{proto.Explosive_ExplosiveThoriumGrenade, ThoriumGrenadeActionID, proto.Profession_Engineering, true},
+		{proto.Explosive_ExplosiveHolyHandGrenade, HolyHandGrenadeActionID, proto.Profession_ProfessionUnknown, false},
+		{proto.Explosive_ExplosiveDenseDynamite, DenseDynamiteActionID, proto.Profession_Engineering, false},
+	}
+	for _, c := range cases {
+		sim, character := newForeverConsumeSim(t, &proto.Consumes{FillerExplosive: c.explosive}, &proto.Encounter{}, 1, c.profession)
+		boss := sim.GetTargetUnit(0)
+		if !boss.StunImmune {
+			t.Fatalf("a level %d target is not stun-immune", boss.Level)
+		}
+		mcd := character.GetMajorCooldown(c.actionID)
+		if mcd == nil {
+			t.Fatalf("%s: no cooldown", c.explosive)
+		}
+		spell := mcd.Spell
+		if spell.resetsSwingOnCast(sim) {
+			t.Errorf("%s: its cast resets the swing timer", c.explosive)
+		}
+		for range 100 {
+			spell.ApplyEffects(sim, boss, spell)
+		}
+		m := spell.SpellMetrics()[0]
+		if c.stun && (m.TotalDamage != 0 || m.Misses != 100) {
+			t.Errorf("%s: %.0f damage and %d misses in 100 throws on a boss, want none and 100", c.explosive, m.TotalDamage, m.Misses)
+		}
+		if !c.stun && m.TotalDamage == 0 {
+			t.Errorf("%s: no damage on a boss", c.explosive)
+		}
 	}
 }
 

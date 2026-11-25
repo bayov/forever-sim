@@ -4,6 +4,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/wowsims/classic/sim/common/item_sets"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
@@ -101,37 +102,12 @@ var ItemSetTheFiveThundersForever = core.NewItemSet(core.ItemSet{
 			agent.GetCharacter().AddStat(stats.MP5, 8)
 		},
 		// 450626: a chance on a melee auto attack or a magic spell cast (proc flags 0x14004) to
-		// gain 65 spell damage and healing for 10 sec (The Furious Storm, 27775).
-		//
-		// The client row says 100% with no rate, so the server sets the real one. We use 5% on
-		// each, the rate NickTew's pre-raid guide quotes (unconfirmed). Windfury's extra attacks
-		// are auto attack swings in the game and in the sim, so they roll too. Stormstrike and
-		// other melee specials don't. The Elements' 5-piece uses the same proc spell, but we give
-		// it 3 per minute on swings and 4% on casts (sim/common/item_sets/forever_dungeon_sets.go).
-		4: func(agent core.Agent) {
-			c := agent.GetCharacter()
-			buff := c.NewTemporaryStatsAura("The Furious Storm", core.ActionID{SpellID: 27775}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
-			handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				buff.Activate(sim)
-			}
-			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-				ActionID:   core.ActionID{SpellID: 450626},
-				Name:       "The Five Thunders - 4pc (Melee)",
-				Callback:   core.CallbackOnSpellHitDealt,
-				Outcome:    core.OutcomeLanded,
-				ProcMask:   core.ProcMaskMeleeWhiteHit,
-				ProcChance: 0.05,
-				Handler:    handler,
-			})
-			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-				ActionID:   core.ActionID{SpellID: 450626},
-				Name:       "The Five Thunders - 4pc (Spell)",
-				Callback:   core.CallbackOnCastComplete,
-				ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
-				ProcChance: 0.05,
-				Handler:    handler,
-			})
-		},
+		// gain 65 spell damage and healing for 10 sec (The Furious Storm, 27775), the row The
+		// Elements' 5-piece uses too. The row says 100% with no rate, so the server sets the real
+		// one: EV-0144 measured about 1 a minute on landed white swings (Windfury Totem swings
+		// included) priced on the weapon's speed and on casts priced on their cast time, with no
+		// Stormstrike or other melee special rolling (sim/common/item_sets/forever_dungeon_sets.go).
+		4: item_sets.ForeverSpellPowerProc(450626, 27775, "The Furious Storm", item_sets.FuriousStormPPM),
 		// 14047: increases damage and healing done by magical spells and effects by up to 23.
 		6: func(agent core.Agent) {
 			agent.GetCharacter().AddStat(stats.SpellPower, 23)

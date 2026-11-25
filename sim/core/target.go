@@ -46,6 +46,8 @@ type Encounter struct {
 	// The kind of outdoor area the fight is in, for the item effects that grow there (Golden
 	// Banana, Frozen Heart of the Mountain). None in a dungeon or raid.
 	OutdoorTerrain proto.OutdoorTerrain
+	// The fight isn't in a raid instance (Encounter.outside_raid), see Environment.ForeverRaidInstance.
+	OutsideRaid bool
 
 	// A healing fight: every player's health is tracked and a player can die (health.go,
 	// player_death.go). docs/healing_sim.md.
@@ -72,6 +74,7 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
 		NaturalFlaskZone:        options.NaturalFlaskZone,
 		OutdoorTerrain:          options.OutdoorTerrain,
+		OutsideRaid:             options.OutsideRaid,
 		TrackHealth:             options.TrackHealth,
 		RaidDamage:              options.RaidDamage,
 	}
@@ -183,6 +186,10 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	if target.Level == 0 {
 		target.Level = defaultRaidBossLevel
 	}
+	// A raid boss can't be stunned: a stun explosive comes back immune under Forever, its damage
+	// included (wowsims/forever EV-0088: Thorium Grenade 7 of 7 immune with no damage on bosses).
+	// Like theirs, a target at the raid boss level or above counts as one.
+	target.StunImmune = target.Level >= defaultRaidBossLevel
 
 	target.AddStatDependency(stats.Defense, stats.Dodge, MissDodgeParryBlockCritChancePerDefense)
 	target.AddStatDependency(stats.Defense, stats.Parry, MissDodgeParryBlockCritChancePerDefense)

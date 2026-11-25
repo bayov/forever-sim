@@ -9,6 +9,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - affects: hunter__marksmanship (report race Orc), hunter__marksmanship-wolf, hunter__marksmanship-tallstrider
 - found: 2026-11-25, master 63129ce35
 - evidence: paired 20k, seeds 1 / 1000003, CLI /tmp/audit-cache/cli/63129ce35290: hunter__marksmanship Orc 1090.4 / 1090.3, High Order on its committed race file req/races/hunter__marksmanship.SkyborneHighOrder.json (Alliance set) 1096.4 / 1096.5 (+6.1; the same on the Horde set); hunter__marksmanship-wolf Orc 1070.4, High Order 1077.4 (+7.0, seed 1). 5k sweep: MM High Order 1096.3 vs Orc 1090.0, tallstrider +6.8, wolf +7.5. Beast Mastery is a tie (Orc 1009.5 / 1009.4, High Order 1009.5 / 1009.1). Came with the hunter Phase 0 regear (8e04994c5, merged 3fdc2dca4); on the synthetic set Orc was within 1.0 of the best. Script: $AUDIT_WORK/fairness/paired/p.py (scratch). Standards 16 says presets use the best race.
+- 2026-11-25 (pass 59, 0404484fb): 5k sweep MM High Order 1088.8 vs Orc 1082.2 (+6.6) after the elixir overwrite; variants +7.1 / +7.7. Still open.
 - proposed fix: move the three Marksmanship requests, metas and preset to Skyborne High Order on level60_phase0_hunter_mm_alliance (or check a High Order race rotation first, standards 29) and re-sim; or record why Orc stays.
 - needs: orchestrator fix
 
@@ -18,6 +19,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-11-24, master eceb09019
 - evidence: paired 20k, seeds 1 / 1000003, report request with only the race changed (no race rotation exists for these races): Fire Human 920.8 / 920.2, Undead 922.8 / 922.5 (+2.2), High Order with req/races/mage__fire.SkyborneHighOrder 906.4 / 906.6; Shadow Undead 855.2 / 855.2, Troll 857.3 / 856.9 (+1.9). The 5k sweep agrees (Fire Undead 923.3 vs Human 920.4, Shadow Troll 857.3 vs Undead 855.5). Both came with the Phase 0 regear (8b5137c6d sweep: Fire Human best, Shadow Undead best). Scripts: $AUDIT_WORK/fairness/paired/run.py (scratch).
 - 2026-11-25 (pass 56, 63129ce35): Shadow on its new talents (a2d195d46): paired 20k Undead 857.6 / 857.7, Troll 859.5 / 859.4 (+1.8). Fire unchanged (5k sweep Undead 923.3, Human 920.4). Still open.
+- 2026-11-25 (pass 59, 0404484fb): 5k sweep after the elixir overwrite: Fire Undead 913.9 vs Human 913.1 (+0.8, now near noise; needs a paired check); Shadow Troll 856.0 vs Undead 854.3 (+1.7). Still open.
 - proposed fix: re-pick the report race (standards 16 / 29), Fire to Undead and Shadow to Troll, with a race rotation check; or note in the metas why Human / Undead stay.
 - needs: orchestrator fix
 
@@ -32,6 +34,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-11-24 (pass 53, 566067a39): no druid Balance or race change in range (be773f5eb touches Rip and Rake only); shared 20k run Balance 956.1 unchanged. Still open.
 - 2026-11-24 (pass 55, eceb09019): the four Balance requests moved to the Phase 0 set (still Night Elf). Paired 20k, seeds 1 / 1000003, report request with only the race changed, race rotation where req/races has one: Balance NE 822.3 / 822.1, High Order (race rotation) 826.5 / 826.1 (+4.1), Windshaper 825.7 / 825.4; Wrath NE 730.1 / 730.4, High Order 735.1 / 736.0 (+5.3); Balance FF duty NE 789.0 / 788.3, High Order (race rotation) 793.5 / 793.5 (+4.9); Wrath FF duty NE 702.8 / 702.7, High Order 708.5 / 708.5 (+5.8). The 5k sweep (base rotation only) shows Night Elf best for default Balance, but with the committed race rotation High Order still wins all four. Still open.
 - 2026-11-25 (pass 56, 63129ce35): no druid change in range; 5k sweep Balance unchanged (Night Elf 822.9, Wrath High Order 734.5 vs Night Elf 730.5). Still open.
+- 2026-11-25 (pass 59, 0404484fb): no druid Balance change; 5k sweep (base rotation) Balance Night Elf 818.8, Wrath High Order 732.4 vs Night Elf 727.7. Still open.
 - proposed fix: set the four Balance requests' and presets' race to Skyborne High Order (Balance and Balance FF duty with the race-tuned rotation the race table already uses) and re-sim them; or record in standards why Night Elf stays.
 - needs: orchestrator fix
 

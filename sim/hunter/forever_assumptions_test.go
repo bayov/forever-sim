@@ -516,20 +516,20 @@ func TestForeverHunterCritPerAgility(t *testing.T) {
 	}
 }
 
-// Summon Hawk's hawk, wowsims/forever's log fit (81651da664, b89878e6f9, 0fc13fcb30): a 2.5 sec swing
-// of 0.0815 of the creature dps over the swing before Unleashed Fury, a third either side, on 80% of
-// the hunter's ranged attack power at 112 × 1.15 a point of dps; half the hunter's crit plus
-// Ferocity whole, its hit; Unleashed Fury, the announced +80% melee damage of 2026-11-10 (notes-only)
-// and the hunter's damage done at the summon. It swings on
-// arrival and follows the hunter's ranged speed but not its attack speed, and a third hawk replaces
-// the one with the least time left.
+// Summon Hawk's hawk, wowsims/forever's log fit after the 2026-11-10 hotfix (EV-0073): a 2.5 sec swing
+// of 0.153 of the creature dps over the swing before Unleashed Fury 5/5 and Focused Fire 2/2, 22%
+// either side, at 60 × 1.15 × 1.02 attack power a point of dps, on 80% of the hunter's ranged attack
+// power plus 14 a point of the main hand's dps; half the hunter's crit plus Ferocity whole, its hit;
+// Unleashed Fury and the hunter's damage done at the summon. The dive lands and the hawk appears
+// 1 sec after the cast and swings at once, also when it replaces another (EV-0127). It follows the
+// hunter's ranged speed but not its attack speed, and a third hawk replaces the one with the least
+// time left.
 func TestSummonHawkHawks(t *testing.T) {
 	sim, hunter := newHunterSim(t, BeastMasteryHawkTalents, &proto.Debuffs{})
 	if !hunter.Talents.SummonHawk || len(hunter.hawks) != 2 {
 		t.Fatalf("Summon Hawk %v with %d hawks, want 2", hunter.Talents.SummonHawk, len(hunter.hawks))
 	}
 	target := hunter.CurrentTarget
-	summon := func() { hunter.SummonHawk.ApplyEffects(sim, target, hunter.SummonHawk) }
 	stepTo := func(at time.Duration) {
 		for sim.CurrentTime < at && !sim.Step() {
 		}
@@ -537,22 +537,40 @@ func TestSummonHawkHawks(t *testing.T) {
 	lifetime := func(i int) *core.Dot {
 		return hunter.GetSpell(core.ActionID{SpellID: 1293527, Tag: int32(i + 1)}).AOEDot()
 	}
+	// Casts Summon Hawk and steps until the hawk lands in its slot, before anything else at that time.
+	summon := func(slot int) {
+		cast := sim.CurrentTime
+		hunter.SummonHawk.ApplyEffects(sim, target, hunter.SummonHawk)
+		if hunter.hawks[slot].IsEnabled() && lifetime(slot).RemainingDuration(sim) == hawkDuration {
+			t.Fatalf("hawk %d is out at the cast, want it 1 sec later", slot+1)
+		}
+		for !(lifetime(slot).IsActive() && lifetime(slot).RemainingDuration(sim) == hawkDuration) && !sim.Step() {
+		}
+		if got := sim.CurrentTime - cast; got != time.Second {
+			t.Errorf("hawk %d lands %v after the cast, want 1s", slot+1, got)
+		}
+	}
 	hawk1, hawk2 := hunter.hawks[0], hunter.hawks[1]
 
 	mh := hawk1.AutoAttacks.MH()
-	if avg := 0.0815 * 60.4529 * 2.5 / 1.15; math.Abs(mh.BaseDamageMin-avg*2/3) > 1e-9 || math.Abs(mh.BaseDamageMax-avg*4/3) > 1e-9 {
-		t.Errorf("hawk swing %.2f to %.2f, want %.2f to %.2f", mh.BaseDamageMin, mh.BaseDamageMax, avg*2/3, avg*4/3)
+	if avg := 0.153 * 60.4529 * 2.5 / (1.15 * 1.02); math.Abs(mh.BaseDamageMin-avg*0.78) > 1e-9 || math.Abs(mh.BaseDamageMax-avg*1.22) > 1e-9 {
+		t.Errorf("hawk swing %.2f to %.2f, want %.2f to %.2f", mh.BaseDamageMin, mh.BaseDamageMax, avg*0.78, avg*1.22)
 	}
-	if mh.SwingSpeed != 2.5 || math.Abs(mh.AttackPowerPerDPS-112*1.15) > 1e-9 {
-		t.Errorf("hawk swings every %v sec at %v attack power a point of dps, want 2.5 and 128.8", mh.SwingSpeed, mh.AttackPowerPerDPS)
+	if mh.SwingSpeed != 2.5 || math.Abs(mh.AttackPowerPerDPS-60*1.15*1.02) > 1e-9 {
+		t.Errorf("hawk swings every %v sec at %v attack power a point of dps, want 2.5 and 70.38", mh.SwingSpeed, mh.AttackPowerPerDPS)
 	}
 
-	summon()
+	summon(0)
 	if !hawk1.IsEnabled() || hawk2.IsEnabled() {
 		t.Fatalf("after one Summon Hawk the hawks are out %v %v, want the first only", hawk1.IsEnabled(), hawk2.IsEnabled())
 	}
-	if got, want := hawk1.GetStat(stats.AttackPower), 0.8*hunter.GetStat(stats.RangedAttackPower); math.Abs(got-want) > 1e-6 {
-		t.Errorf("hawk attack power %.2f, want %.2f", got, want)
+	mainHand := hunter.WeaponFromMainHand()
+	weaponAP := 14 * mainHand.DPS()
+	if hunter.GetMHWeapon() == nil || weaponAP < 100 {
+		t.Fatalf("the test hunter's main hand adds %.2f, want a level 60 weapon", weaponAP)
+	}
+	if got, want := hawk1.GetStat(stats.AttackPower), 0.8*(hunter.GetStat(stats.RangedAttackPower)+weaponAP); math.Abs(got-want) > 1e-6 {
+		t.Errorf("hawk attack power %.2f, want 80%% of ranged attack power and 14 x the main hand's dps, %.2f", got, want)
 	}
 	if got, want := hawk1.GetStat(stats.MeleeCrit), 0.5*hunter.GetStat(stats.MeleeCrit)+10*core.CritRatingPerCritChance; math.Abs(got-want) > 1e-6 {
 		t.Errorf("hawk crit %.4f, want half the hunter's plus Ferocity's 10%%, %.4f", got, want)
@@ -560,15 +578,15 @@ func TestSummonHawkHawks(t *testing.T) {
 	if got, want := hawk1.GetStat(stats.MeleeHit), hunter.GetStat(stats.MeleeHit); got != want {
 		t.Errorf("hawk hit %.4f, want the hunter's %.4f", got, want)
 	}
-	if got, want := hawk1.PseudoStats.DamageDealtMultiplier, 1.15*1.8*hunter.PseudoStats.DamageDealtMultiplier; math.Abs(got-want) > 1e-9 {
-		t.Errorf("hawk damage multiplier %.4f, want Unleashed Fury times the 2026-11-10 +80%% times the hunter's, %.4f", got, want)
+	if got, want := hawk1.PseudoStats.DamageDealtMultiplier, 1.15*hunter.PseudoStats.DamageDealtMultiplier; math.Abs(got-want) > 1e-9 {
+		t.Errorf("hawk damage multiplier %.4f, want Unleashed Fury times the hunter's, %.4f", got, want)
 	}
 	if hawk1.AutoAttacks.MainhandSwingAt() > sim.CurrentTime {
 		t.Errorf("the hawk first swings at %v, want on arrival at %v", hawk1.AutoAttacks.MainhandSwingAt(), sim.CurrentTime)
 	}
 	rap := hunter.GetStat(stats.RangedAttackPower)
 	hunter.AddStatDynamic(sim, stats.RangedAttackPower, 100)
-	if got := hawk1.GetStat(stats.AttackPower) - 0.8*rap; math.Abs(got-80) > 1e-6 {
+	if got := hawk1.GetStat(stats.AttackPower) - 0.8*(rap+weaponAP); math.Abs(got-80) > 1e-6 {
 		t.Errorf("100 hunter ranged attack power gives the hawk %.2f attack power, want 80", got)
 	}
 	hunter.AddStatDynamic(sim, stats.RangedAttackPower, -100)
@@ -586,8 +604,8 @@ func TestSummonHawkHawks(t *testing.T) {
 		t.Errorf("hawk speed %.4f with Quick Shots and Berserking, want the ranged %.4f", got, quiver*1.3)
 	}
 
-	stepTo(time.Second)
-	summon()
+	stepTo(2 * time.Second)
+	summon(1)
 	if got := hawk2.SwingSpeed(); !hawk2.IsEnabled() || math.Abs(got-quiver*1.3) > 1e-9 {
 		t.Errorf("second hawk out %v at speed %.4f, want out at %.4f", hawk2.IsEnabled(), got, quiver*1.3)
 	}
@@ -599,9 +617,9 @@ func TestSummonHawkHawks(t *testing.T) {
 		}
 	}
 
-	stepTo(2 * time.Second)
-	left2 := lifetime(1).RemainingDuration(sim)
-	summon()
+	stepTo(4 * time.Second)
+	left2 := lifetime(1).RemainingDuration(sim) - time.Second
+	summon(0)
 	if got := lifetime(0).RemainingDuration(sim); got != hawkDuration || lifetime(1).RemainingDuration(sim) != left2 {
 		t.Errorf("a third hawk left %v and %v, want the first replaced (18s) and the second at %v", got, lifetime(1).RemainingDuration(sim), left2)
 	}
@@ -617,15 +635,15 @@ func TestSummonHawkHawks(t *testing.T) {
 		if got := hawk.SwingSpeed(); math.Abs(got-1) > 1e-9 {
 			t.Errorf("hawk %d keeps speed %.4f once gone, want 1", i+1, got)
 		}
-		if got := hawk.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.15*1.8) > 1e-9 {
-			t.Errorf("hawk %d keeps damage multiplier %.4f once gone, want Unleashed Fury's 1.15 times 1.8", i+1, got)
+		if got := hawk.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.15) > 1e-9 {
+			t.Errorf("hawk %d keeps damage multiplier %.4f once gone, want Unleashed Fury's 1.15", i+1, got)
 		}
 	}
 }
 
-// Under Forever Explosive Trap's ten ticks take 1% of ranged attack power each on top of rank 3's
-// 33, read when the trap goes off (wowsims/forever 3993d79540, the same share as Immolation Trap's).
-func TestForeverExplosiveTrapScalesWithRangedAttackPower(t *testing.T) {
+// Under Forever Explosive Trap's ten ticks take no ranged attack power, rank 3's 33 alone (EV-0068),
+// while its hit takes 10% of it.
+func TestForeverExplosiveTrapTicksTakeNoAttackPower(t *testing.T) {
 	sim, hunter := newHunterSim(t, "502-005005-500230230250122151", &proto.Debuffs{})
 	hunter.DistanceFromTarget = 0
 	trap := hunter.ExplosiveTrap
@@ -636,7 +654,7 @@ func TestForeverExplosiveTrapScalesWithRangedAttackPower(t *testing.T) {
 	if !dot.IsActive() {
 		t.Fatal("Explosive Trap's ticks never started")
 	}
-	if got, want := dot.SnapshotBaseDamage, 33+0.01*hunter.GetStat(stats.RangedAttackPower); math.Abs(got-want) > 1e-6 {
+	if got, want := dot.SnapshotBaseDamage, 33.0; math.Abs(got-want) > 1e-6 {
 		t.Errorf("Explosive Trap ticks for %.2f before modifiers, want %.2f", got, want)
 	}
 }
@@ -734,10 +752,56 @@ func TestForeverPetAutocastPassesAnAbilityShortOfFocus(t *testing.T) {
 	}
 }
 
-// Under Forever the pet's white swing crits at the pet's own crit, none of the hunter's it inherits,
-// while its abilities take all of the hunter's (wowsims/forever 7e0e0c2e46, EV-0134), through
-// changes to the hunter's crit in the fight.
-func TestForeverPetWhiteSwingTakesNoInheritedCrit(t *testing.T) {
+// Under Forever autocast decides in 0.8 sec steps, two after a cast (EV-0187): a decision that casts
+// puts the next 1.6 sec on, one with nothing to cast 0.8 sec. It picks evenly among what it can cast
+// (Bite or Claw about half each) and casts Savage Rend 11.3% of the times it could.
+func TestForeverPetAutocastStepsAndPicks(t *testing.T) {
+	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Raptor, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+	pet := hunter.pet
+	rend, bite, claw := foreverPetSpell(hunter, 1265069), foreverPetSpell(hunter, 17261), foreverPetSpell(hunter, 3009)
+	if rend == nil || bite == nil || claw == nil {
+		t.Fatal("the Raptor lacks Savage Rend, Bite or Claw")
+	}
+	metrics := pet.NewFocusMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionNone})
+
+	pet.nextAutocast = sim.CurrentTime
+	pet.foreverRotation(sim)
+	if got := pet.nextAutocast - sim.CurrentTime; got != 1600*time.Millisecond {
+		t.Errorf("after a cast the next autocast decision is %v on, want 1.6s", got)
+	}
+	pet.SpendFocus(sim, pet.CurrentFocus(), metrics)
+	pet.GCD.Reset()
+	pet.nextAutocast = sim.CurrentTime
+	pet.foreverRotation(sim)
+	if got := pet.nextAutocast - sim.CurrentTime; got != 800*time.Millisecond {
+		t.Errorf("with nothing to cast the next autocast decision is %v on, want 0.8s", got)
+	}
+
+	casts := func(spell *core.Spell) int { return int(spell.SpellMetrics()[0].Casts) }
+	rend0, bite0, claw0 := casts(rend), casts(bite), casts(claw)
+	const n = 20000
+	for i := 0; i < n; i++ {
+		pet.AddFocus(sim, 100, metrics)
+		for _, spell := range []*core.Spell{rend, bite, claw} {
+			if spell.CD.Timer != nil {
+				spell.CD.Reset()
+			}
+		}
+		pet.GCD.Reset()
+		pet.foreverCastRandomReady(sim, pet.CurrentTarget)
+	}
+	rends, bites, claws := casts(rend)-rend0, casts(bite)-bite0, casts(claw)-claw0
+	if got := float64(rends) / n; math.Abs(got-0.113) > 0.012 {
+		t.Errorf("Savage Rend cast %.3f of the times it could, want 0.113", got)
+	}
+	if got := float64(bites) / float64(bites+claws); math.Abs(got-0.5) > 0.02 {
+		t.Errorf("Bite %.3f of Bite and Claw picks, want 0.5", got)
+	}
+}
+
+// Under Forever the pet's white swing and its abilities both take the crit the pet inherits from the
+// hunter, since the 2026-11-24 hotfix (EV-0134), through changes to the hunter's crit in the fight.
+func TestForeverPetWhiteSwingTakesInheritedCrit(t *testing.T) {
 	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Wolf, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
 	pet := hunter.pet
 	target := sim.GetTargetUnit(0)
@@ -752,8 +816,8 @@ func TestForeverPetWhiteSwingTakesNoInheritedCrit(t *testing.T) {
 		white.ApplyEffects(sim, target, white)
 		inherited := hunter.GetStat(stats.MeleeCrit) / (core.CritRatingPerCritChance * 100)
 		own := (pet.GetStat(stats.MeleeCrit) - hunter.GetStat(stats.MeleeCrit)) / (core.CritRatingPerCritChance * 100)
-		if got, want := white.PhysicalCritChance(attackTable), own-attackTable.MeleeCritSuppression; math.Abs(got-want) > 1e-9 {
-			t.Errorf("hunter crit %.2f: white swing crit %.4f, want the pet's own %.4f", inherited, got, want)
+		if got, want := white.PhysicalCritChance(attackTable), own+inherited-attackTable.MeleeCritSuppression; math.Abs(got-want) > 1e-9 {
+			t.Errorf("hunter crit %.2f: white swing crit %.4f, want %.4f with the hunter's", inherited, got, want)
 		}
 		if got, want := bite.PhysicalCritChance(attackTable), own+inherited-attackTable.MeleeCritSuppression; math.Abs(got-want) > 1e-9 {
 			t.Errorf("hunter crit %.2f: Bite crit %.4f, want %.4f with the hunter's", inherited, got, want)

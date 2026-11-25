@@ -56,8 +56,11 @@ type Warrior struct {
 	Stance          Stance
 	PreviousStance  Stance // Used for Warrior T1 DPS 4P
 	revengeProcAura *core.Aura
-	OverpowerAura   *core.Aura
-	BloodthrillAura *core.Aura
+	// twoHandSpecPhysical is Two-Handed Weapon Specialization's Physical damage multiplier under
+	// Forever, 0 without the talent or a two-hander.
+	twoHandSpecPhysical float64
+	OverpowerAura       *core.Aura
+	BloodthrillAura     *core.Aura
 
 	// Enrage Auras
 	BerserkerRageAura  *core.Aura
