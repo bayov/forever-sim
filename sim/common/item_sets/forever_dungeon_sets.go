@@ -33,9 +33,58 @@ func foreverDungeonManaRegen(agent core.Agent) {
 	agent.GetCharacter().AddStat(stats.MP5, 8)
 }
 
-// A 5-piece bonus whose row procs on 5% of magic spell casts, harmful or helpful (proc flags
-// 0x14000), and restores mana: Sudden Insight (450554) for Magister's and Devout, Nature's Bounty
-// (27782) for Wildheart, 200 mana each.
+// The rates wowsims/forever measured for the dungeon set procs whose rows state 100% and no rate
+// (EV-0144, Warcraft Logs 2026-11-11 to 17): procs per minute, a white swing priced on its weapon's
+// base speed and a spell cast on its cast time, at least 1.5 sec. Crusader's Wrath reads 0.92 fitted
+// to swings and casts together, The Furious Storm and Nature's Bounty about 1, Rogue Armor Energize
+// 0.83 (sim rate 0.8) and Warrior's Resolve 0.94 (sim rate 1).
+const (
+	CrusadersWrathPPM     = 0.9
+	FuriousStormPPM       = 1.0
+	naturesBountyPPM      = 1.0
+	rogueArmorEnergizePPM = 0.8
+	warriorsResolvePPM    = 1.0
+)
+
+// foreverCastRolls says whether a cast rolls a dungeon set's spell row (EV-0144): a damaging or
+// healing spell, or any other cast that costs its caster a resource (a seal, a totem, Judgement,
+// Counterspell), but no melee or ranged ability (Holy Strike, Stormstrike). A cast that costs
+// nothing rolls nothing, on the global cooldown or off it.
+func foreverCastRolls(spell *core.Spell) bool {
+	if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+		return false
+	}
+	if spell.ProcMask.Matches(core.ProcMaskSpellDamage | core.ProcMaskSpellHealing) {
+		return true
+	}
+	return spell.Cost != nil && spell.Cost.BaseCost > 0
+}
+
+// foreverCastTimePPMChance is a rate's chance on a cast that took castTime, priced on at least the
+// global cooldown's 1.5 sec, so an instant rolls 2.5% at 1 a minute and a 3 sec cast 5% (EV-0144).
+func foreverCastTimePPMChance(ppm float64, castTime time.Duration) float64 {
+	return ppm * max(castTime, core.GCDDefault).Seconds() / 60
+}
+
+// foreverOnCast calls handler on each cast foreverCastRolls takes, at chance(cast time).
+func foreverOnCast(c *core.Character, label string, chance func(castTime time.Duration) float64, handler func(sim *core.Simulation)) {
+	core.MakePermanent(c.RegisterAura(core.Aura{
+		Label: label,
+		OnCastComplete: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.Flags.Matches(core.SpellFlagNoProcs) || !foreverCastRolls(spell) {
+				return
+			}
+			if sim.Proc(chance(spell.CurCast.CastTime), label) {
+				handler(sim)
+			}
+		},
+	}))
+}
+
+// A 5-piece bonus whose row procs on 5% of magic spell casts (proc flags 0x14000) and restores
+// 200 mana: Sudden Insight (450554) for Magister's and Devout. The rows that state a chance fire at
+// it on the casts foreverCastRolls takes (EV-0144: Sudden Insight follows 6.99% of Counterspells and
+// none of Arcane Power, Presence of Mind or Evocation; Devout's 4.91% of Renews).
 func foreverSpellCastMana(procID int32, manaID int32, name string) core.ApplyEffect {
 	return func(agent core.Agent) {
 		c := agent.GetCharacter()
@@ -43,34 +92,81 @@ func foreverSpellCastMana(procID int32, manaID int32, name string) core.ApplyEff
 			return
 		}
 		manaMetrics := c.NewManaMetrics(core.ActionID{SpellID: manaID})
-		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-			ActionID:   core.ActionID{SpellID: procID},
-			Name:       name,
-			Callback:   core.CallbackOnCastComplete,
-			ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
-			ProcChance: 0.05,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				c.AddMana(sim, 200, manaMetrics)
-			},
+		foreverOnCast(c, name, func(time.Duration) float64 { return 0.05 }, func(sim *core.Simulation) {
+			c.AddMana(sim, 200, manaMetrics)
 		})
+	}
+}
+
+// Nature's Bounty (450608): Wildheart's 5-piece and Feralheart's 4-piece. EV-0144 measured three
+// parts at about 1 a minute each: a spell cast restores 200 mana (27782) priced on its cast time; a
+// landed white swing 20 energy over 5 sec (27784, 4 a sec), priced on the form's paw speed and
+// restored in any form; and a landed melee swing taken 10 rage (27783), priced on the attacker's
+// swing interval. Each energy proc ticks on its own, so one during the ticks adds five more.
+func foreverNaturesBounty(name string) core.ApplyEffect {
+	return func(agent core.Agent) {
+		c := agent.GetCharacter()
+		if c.HasManaBar() {
+			manaMetrics := c.NewManaMetrics(core.ActionID{SpellID: 27782})
+			foreverOnCast(c, name+" (Mana)", func(castTime time.Duration) float64 {
+				return foreverCastTimePPMChance(naturesBountyPPM, castTime)
+			}, func(sim *core.Simulation) {
+				c.AddMana(sim, 200, manaMetrics)
+			})
+		}
+		if c.HasEnergyBar() {
+			energyMetrics := c.NewEnergyMetrics(core.ActionID{SpellID: 27784})
+			core.MakePermanent(c.RegisterAura(core.Aura{
+				Label: name + " (Energy)",
+				OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+						return
+					}
+					// The swing's own weapon, read at the roll: a paw changes with the form.
+					weapon := core.Ternary(spell.ProcMask.Matches(core.ProcMaskMeleeOH), c.AutoAttacks.OH(), c.AutoAttacks.MH())
+					if !sim.Proc(naturesBountyPPM*weapon.SwingSpeed/60, name+" (Energy)") {
+						return
+					}
+					core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+						Period:   time.Second,
+						NumTicks: 5,
+						OnAction: func(sim *core.Simulation) {
+							c.AddEnergy(sim, 4, energyMetrics)
+						},
+					})
+				},
+			}))
+		}
+		if c.HasRageBar() {
+			rageMetrics := c.NewRageMetrics(core.ActionID{SpellID: 27783})
+			core.MakePermanent(c.RegisterAura(core.Aura{
+				Label: name + " (Rage)",
+				OnSpellHitTaken: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+						return
+					}
+					speed := spell.Unit.AutoAttacks.MainhandSwingSpeed().Seconds()
+					if sim.Proc(naturesBountyPPM*speed/60, name+" (Rage)") {
+						c.AddRage(sim, 10, rageMetrics)
+					}
+				},
+			}))
+		}
 	}
 }
 
 // The 5-piece procs of Lightforge (450625, Crusader's Wrath 27499) and The Elements (450626, The
 // Furious Storm 27775): +65 spell damage and healing for 10 sec, on melee swings and magic spell
-// casts (proc flags 0x14004). The rows state 100% and no rate, so the server sets one. We keep the
-// Classic rates of the same buffs as literals: 3 per minute on swings (our Classic Lightforge) and
-// 4% of spell casts (Classic's The Furious Storm row, 27774). Soulforge's 4-piece (set 1673) uses
-// the Lightforge row too. Two sets that proc the same buff share it, since 4 + 4 pieces fit.
-func foreverSpellPowerProc(procID int32, buffID int32, buffName string) core.ApplyEffect {
+// casts (proc flags 0x14004). The rows state 100% and no rate, so the server sets one: EV-0144
+// measured it as procs per minute on landed white swings and on the casts foreverCastRolls takes,
+// priced on their cast time. Soulforge's 4-piece (set 1673) uses the Lightforge row too. Two sets
+// that proc the same buff share it, since 4 + 4 pieces fit.
+func ForeverSpellPowerProc(procID int32, buffID int32, buffName string, ppm float64) core.ApplyEffect {
 	return func(agent core.Agent) {
 		c := agent.GetCharacter()
 		buff := c.GetAura(buffName)
 		if buff == nil {
 			buff = c.NewTemporaryStatsAura(buffName, core.ActionID{SpellID: buffID}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
-		}
-		handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-			buff.Activate(sim)
 		}
 		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
 			ActionID: core.ActionID{SpellID: procID},
@@ -78,26 +174,25 @@ func foreverSpellPowerProc(procID int32, buffID int32, buffName string) core.App
 			Callback: core.CallbackOnSpellHitDealt,
 			Outcome:  core.OutcomeLanded,
 			ProcMask: core.ProcMaskMeleeWhiteHit,
-			PPM:      3,
-			Handler:  handler,
+			PPM:      ppm,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				buff.Activate(sim)
+			},
 		})
-		core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-			ActionID:   core.ActionID{SpellID: procID},
-			Name:       buffName + " (Spell)",
-			Callback:   core.CallbackOnCastComplete,
-			ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
-			ProcChance: 0.04,
-			Handler:    handler,
+		foreverOnCast(c, buffName+" (Spell)", func(castTime time.Duration) float64 {
+			return foreverCastTimePPMChance(ppm, castTime)
+		}, func(sim *core.Simulation) {
+			buff.Activate(sim)
 		})
 	}
 }
 
 // Rogue Armor Energize (27787 → 27788), Shadowcraft's 5-piece bonus under Forever (and Darkmantle's
 // 4-piece, in sim/rogue): a melee swing restores 20 Energy (Classic: 35). The row states 100% on
-// every swing (proc flags 0x4) and no rate, so we keep 1 per minute as a literal, as
-// wowsims/forever does. Each set names its own proc aura, since Darkmantle's 4-piece (set 512) and
-// Forever Darkmantle's 4-piece (set 1676) fit together.
-func foreverRogueArmorEnergize(name string) core.ApplyEffect {
+// every swing (proc flags 0x4) and no rate; EV-0144 measured 0.83 a minute on 70,840 swings, priced
+// on the weapon's base speed (0.8 in their sim). Each set names its own proc aura, since
+// Darkmantle's 4-piece (set 512) and Forever Darkmantle's 4-piece (set 1676) fit together.
+func ForeverRogueArmorEnergize(name string) core.ApplyEffect {
 	return func(agent core.Agent) {
 		c := agent.GetCharacter()
 		if !c.HasEnergyBar() {
@@ -110,7 +205,7 @@ func foreverRogueArmorEnergize(name string) core.ApplyEffect {
 			Callback: core.CallbackOnSpellHitDealt,
 			Outcome:  core.OutcomeLanded,
 			ProcMask: core.ProcMaskMeleeWhiteHit,
-			PPM:      1,
+			PPM:      rogueArmorEnergizePPM,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				c.AddEnergy(sim, 20, energyMetrics)
 			},
@@ -143,7 +238,7 @@ func foreverAutoAttackMana(name string) core.ApplyEffect {
 
 // 450587: a melee swing (proc flags 0x4) heals for 88 to 132 (110 with 0.4 variance) and gives 10
 // Rage (Warrior's Resolve, 450589). Valor's 5-piece and Heroism's 4-piece. The row states 100% and
-// no rate, so we keep our Classic Valor's 1 per minute. Each set names its own proc aura, since
+// no rate; EV-0144 measured 0.94 a minute on 21,667 swings, and we keep 1, as wowsims/forever does. Each set names its own proc aura, since
 // Classic Heroism's 4-piece (set 511) and Forever Heroism's 4-piece (set 1778) fit together.
 func foreverWarriorsResolve(name string) core.ApplyEffect {
 	return func(agent core.Agent) {
@@ -157,7 +252,7 @@ func foreverWarriorsResolve(name string) core.ApplyEffect {
 			Callback: core.CallbackOnSpellHitDealt,
 			Outcome:  core.OutcomeLanded,
 			ProcMask: core.ProcMaskMeleeWhiteHit,
-			PPM:      1,
+			PPM:      warriorsResolvePPM,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				c.GainHealth(sim, sim.Roll(88, 132), healthMetrics)
 				if c.HasRageBar() {
@@ -170,16 +265,15 @@ func foreverWarriorsResolve(name string) core.ApplyEffect {
 
 // https://www.wowhead.com/forever/item-set=185/wildheart-raiment
 //
-// 4 pieces (1302708): movement speed when struck. The 5-piece row (450608) also answers a melee
-// swing with mana over time (27784) and a melee hit taken with rage (27783); like wowsims/forever we
-// model only the spell cast's mana.
+// 4 pieces (1302708): movement speed when struck. 5 pieces: Nature's Bounty (450608), see
+// foreverNaturesBounty.
 var foreverWildheartRaiment = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: func(agent core.Agent) {
 		foreverDungeonSpellPower(agent)
 		foreverDungeonAttackPower(agent)
 	},
-	5: foreverSpellCastMana(450608, 27782, "Wildheart Raiment - 5pc"),
+	5: foreverNaturesBounty("Wildheart Raiment - 5pc"),
 	6: foreverDungeonManaRegen,
 }
 
@@ -210,7 +304,7 @@ var foreverMagistersRegalia = map[int32]core.ApplyEffect{
 var foreverLightforgeArmor = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: foreverDungeonSpellPower,
-	5: foreverSpellPowerProc(450625, 27499, "Crusader's Wrath"),
+	5: ForeverSpellPowerProc(450625, 27499, "Crusader's Wrath", CrusadersWrathPPM),
 	6: foreverDungeonManaRegen,
 }
 
@@ -231,7 +325,7 @@ var foreverVestmentsOfTheDevout = map[int32]core.ApplyEffect{
 var foreverShadowcraftArmor = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: foreverDungeonAttackPower,
-	5: foreverRogueArmorEnergize("Rogue Armor Energize"),
+	5: ForeverRogueArmorEnergize("Rogue Armor Energize"),
 }
 
 // https://www.wowhead.com/forever/item-set=187/the-elements
@@ -240,7 +334,7 @@ var foreverShadowcraftArmor = map[int32]core.ApplyEffect{
 var foreverTheElements = map[int32]core.ApplyEffect{
 	2: foreverDungeonResistances,
 	3: foreverDungeonSpellPower,
-	5: foreverSpellPowerProc(450626, 27775, "The Furious Storm"),
+	5: ForeverSpellPowerProc(450626, 27775, "The Furious Storm", FuriousStormPPM),
 	6: foreverDungeonManaRegen,
 }
 

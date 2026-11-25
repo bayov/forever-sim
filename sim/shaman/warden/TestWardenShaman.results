@@ -246,8 +246,8 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheFiveThunders-1679"
  value: {
-  dps: 265.32983
-  tps: 510.11374
+  dps: 263.2285
+  tps: 505.72609
  }
 }
 dps_results: {
