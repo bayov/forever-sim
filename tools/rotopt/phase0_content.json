@@ -1104,6 +1104,7 @@
   "228190": {"name": "Knowledge of the Timbermaw", "include": true, "note": "Needs Tailoring to wear, the search checks it · Meilosh · Wisdom of the Timbermaw + Mooncloth + 20 Winterfall Spirit Beads"},
   "249237": {"name": "Greater Eternal Wand", "avail": "doubtful", "note": "Enchanting craft, formula Greater Eternal Wand has no known source"},
   "250553": {"name": "Warder's Gloves", "note": "Blacksmithing 175 · Forever craft · plans (251420) from Gor'mak (Barrens, 60 Merchant's Favor, Friendly) · reagents not in data"},
+  "250563": {"name": "Warder's Sabatons", "avail": "doubtful", "note": "Blacksmithing · Forever craft (spell 1252312) · plans not found in the data, the other Warder's plans are from Gor'mak (Barrens, Merchant's Favor)"},
   "250573": {"name": "Warder's Waistguard", "note": "Blacksmithing 250 · Forever craft · plans (251425) from Gor'mak (Barrens, 90 Merchant's Favor, Honored) · reagents not in data"},
   "250575": {"name": "Justicar's Waistguard", "note": "Blacksmithing 250 · Forever craft · plans (251427) from Gor'mak (Barrens, 90 Merchant's Favor, Honored) · reagents not in data"},
   "250583": {"name": "Warder's Wristguards", "note": "Blacksmithing 225 · Forever craft · plans (251435) from Gor'mak (Barrens, 90 Merchant's Favor, Honored) · reagents not in data"},
