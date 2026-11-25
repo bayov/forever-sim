@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
+  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 103,
- "result": "findings",
- "note": "results-20261125-1 found and resolved: 49 metas rewritten from 20k runs after the trinket fix; 16 builds re-simmed; stale 0 of 68.",
+ "last_pass_at": "2026-11-25T06:49:53Z",
+ "pass": 104,
+ "result": "quiet",
+ "note": "pass 104: only sim/compsearch/drops.json (cache drop table) changed; shared run 0 of 68 moved vs published.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T03:50:00Z",
+ "checked_at": "2026-11-25T06:50:52Z",
  "baseline": "0facd9428"
 }

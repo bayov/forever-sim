@@ -17,7 +17,8 @@
   synthetic set, or whatever set the user rules raid members wear) and make it `-filler`'s default, so DPS report gear
   changes stop moving the healer ranking; then re-bench the raid row. Or rule that the filler should track the report's
   gear, and keep this row.
-- needs: user ruling
+- ruling (user, 2026-11-25): the raid filler wears Phase 0 gear like the reports, so it tracks the DPS report's
+  set. Keep the filler on the report request. The raid row is re-benched when the healer report moves to Phase 0.
 
 ### healer_fairness-20261115-1: Wild Growth's doubled tick (0.033 -> 0.066) lowers the raid druid's carry, 1.414 -> 1.392, from third to last; the preset isn't re-tuned for it
 - severity: high (the raid druid drops from third to last in the raid role, 0.020 behind the shaman's 1.412)

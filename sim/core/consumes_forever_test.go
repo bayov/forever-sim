@@ -443,3 +443,30 @@ func TestForeverOffensivePotions(t *testing.T) {
 		}
 	}
 }
+
+// Arcane Intellect and Divine Spirit overwrite the elixirs of their stat (wowsims/forever EV-0185, an
+// in-game sheet check): under Arcane Brilliance's 31 and Divine Spirit's 40, Elixir of Greater
+// Intellect, Elixir of Cunning's Intellect and Elixir of Sages' Spirit add nothing, while Sages' crit
+// and Cunning's Agility count in full. Below the buff's rank an elixir adds what it gives above it.
+func TestForeverElixirUnderRaidBuffs(t *testing.T) {
+	crit := stats.Stats{stats.MeleeCrit: 2 * CritRatingPerCritChance, stats.SpellCrit: 2 * SpellCritRatingPerCritChance}
+	raidBuffs := &proto.RaidBuffs{ArcaneBrilliance: true, DivineSpirit: true}
+	consumes := &proto.Consumes{IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
+		SpiritElixir: proto.SpiritElixir_ElixirOfSages, AgilityElixir: proto.AgilityElixir_ElixirOfCunning}
+	character := foreverTestCharacter()
+	applyPhysicalBuffConsumes(character, consumes)
+	applySpellBuffConsumes(character, consumes, raidBuffs)
+	applyForeverElixirCrit(character, consumes)
+	expectStats(t, "level 60 under Arcane Brilliance and Divine Spirit", character.GetStats(), crit.Add(stats.Stats{stats.Agility: 25}))
+
+	// Level 50: Arcane Intellect rank 4's 22 and Divine Spirit rank 3's 33.
+	character = foreverTestCharacter()
+	character.Level = 50
+	applySpellBuffConsumes(character, consumes, raidBuffs)
+	expectStats(t, "level 50 under Arcane Brilliance and Divine Spirit", character.GetStats(), stats.Stats{stats.Intellect: 2 * (25 - 22)})
+
+	// Classic keeps stacking them.
+	character = &Character{Unit: Unit{Env: &Environment{Ruleset: proto.Ruleset_RulesetClassic}, Level: 60}}
+	applySpellBuffConsumes(character, consumes, raidBuffs)
+	expectStats(t, "Classic", character.GetStats(), stats.Stats{stats.Intellect: 50, stats.Spirit: 25})
+}

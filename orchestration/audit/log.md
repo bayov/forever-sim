@@ -597,3 +597,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 03:50 | tank_gear | pass 16 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
 2026-11-25 03:50 | tank_rotations | pass 29 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
 2026-11-25 03:50 | tank_fairness | pass 31 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 06:50 | results | pass 104 | master 5536db4bc | quiet | Only drops.json changed (compsearch cache); 0 of 68 builds moved more than 0.5 DPS vs published.
+2026-11-25 06:50 | rotations | pass 78 | master 5536db4bc | quiet | No APL or request changes; drops.json isn't read by rotations.
+2026-11-25 06:50 | consumables | pass 108 | master 5536db4bc | 1 new findings | natural_flask_zone description in assumptions_def.py still says 60 Stamina and 4-5% (sim uses 30 and 2%).
+2026-11-25 06:50 | mechanics | pass 104 | master 5536db4bc | quiet | Only drops.json changed; hunter pet buff drops fit the settled rule; no new client build or Blizzard notes.
+2026-11-25 06:50 | fairness | pass 58 | master 5536db4bc | quiet | drops.json isn't read by any report request; baseline unchanged.
