@@ -134,8 +134,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1041.79733
-  tps: 848.80381
+  dps: 1031.88817
+  tps: 840.87418
  }
 }
 dps_results: {
@@ -162,8 +162,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 802.3985
-  tps: 657.24512
+  dps: 796.05117
+  tps: 652.16647
  }
 }
 dps_results: {
@@ -190,8 +190,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1098.642
-  tps: 783.86403
+  dps: 1095.54733
+  tps: 781.46562
  }
 }
 dps_results: {

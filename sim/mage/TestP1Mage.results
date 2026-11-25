@@ -99,8 +99,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-ArcanistRegalia"
  value: {
-  dps: 799.85617
-  tps: 606.63976
+  dps: 802.93267
+  tps: 609.02329
  }
 }
 dps_results: {
@@ -127,8 +127,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-EnigmaVestments"
  value: {
-  dps: 936.63967
-  tps: 812.00803
+  dps: 937.652
+  tps: 813.04724
  }
 }
 dps_results: {
@@ -141,8 +141,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-FrostfireRegalia"
  value: {
-  dps: 972.09767
-  tps: 709.74768
+  dps: 976.66033
+  tps: 713.13903
  }
 }
 dps_results: {
@@ -155,8 +155,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 635.91333
-  tps: 553.70931
+  dps: 635.84217
+  tps: 553.83001
  }
 }
 dps_results: {
@@ -197,15 +197,15 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Sorcerer'sRegalia"
  value: {
-  dps: 748.70383
-  tps: 650.18446
+  dps: 741.1835
+  tps: 643.89527
  }
 }
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Sorcerer'sRegalia-1671"
  value: {
-  dps: 774.19583
-  tps: 674.90525
+  dps: 766.303
+  tps: 668.26394
  }
 }
 dps_results: {

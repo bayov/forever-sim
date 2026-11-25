@@ -97,7 +97,7 @@ func swings(sim *core.Simulation, ret *RetributionPaladin, n int, mana float64) 
 }
 
 // Seal of Wisdom (client 1.60.1.70685): rank 3 at 58 for 200 mana, 30 sec, a melee hit gives the
-// paladin 90 mana on our assumed 50%. Its judgement puts Judgement of Wisdom (20355) on the target
+// paladin 90 mana at 15 a minute (EV-0018), 95% on the Arcanite Reaper's 3.8 sec. Its judgement puts Judgement of Wisdom (20355) on the target
 // for 40 sec, 59 mana to an attacker on half its hits, and the paladin's melee hits refresh it.
 func TestSealOfWisdom(t *testing.T) {
 	sim, ret := sowSim(t, sowRotation(), &proto.Debuffs{})
@@ -122,8 +122,8 @@ func TestSealOfWisdom(t *testing.T) {
 	}
 
 	// The seal's own mana, with nothing on the target.
-	if rate := float64(swings(sim, ret, 4000, 90)) / 4000; math.Abs(rate-0.5) > 0.03 {
-		t.Errorf("Seal of Wisdom gave 90 mana on %.1f%% of hits, want 50%%", rate*100)
+	if rate := float64(swings(sim, ret, 4000, 90)) / 4000; math.Abs(rate-0.95) > 0.02 {
+		t.Errorf("Seal of Wisdom gave 90 mana on %.1f%% of hits, want 95%% (15 a minute at 3.8 sec)", rate*100)
 	}
 
 	// The judgement.
@@ -140,11 +140,24 @@ func TestSealOfWisdom(t *testing.T) {
 		t.Error("the judgement took Seal of Wisdom off")
 	}
 
-	// The paladin's melee hits refresh it.
-	sim.CurrentTime += 20 * time.Second
+	// The paladin's white swings refresh it; a melee ability, a seal's hit or a judgement doesn't
+	// (EV-0117).
+	sim.CurrentTime += 10 * time.Second
+	special := ret.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 9117},
+		DefenseType: core.DefenseTypeMelee,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+	})
+	hit := special.NewResult(ret.CurrentTarget)
+	hit.Outcome = core.OutcomeHit
+	ret.CurrentTarget.OnSpellHitTaken(sim, special, hit)
+	if got := jow.RemainingDuration(sim); got != 30*time.Second {
+		t.Errorf("Judgement of Wisdom has %s left after a melee ability, want 30s", got)
+	}
+	sim.CurrentTime += 10 * time.Second
 	swings(sim, ret, 1, 0)
 	if got := jow.RemainingDuration(sim); got != 40*time.Second {
-		t.Errorf("Judgement of Wisdom has %s left after a melee hit, want 40s", got)
+		t.Errorf("Judgement of Wisdom has %s left after a white swing, want 40s", got)
 	}
 
 	// Judgement of Wisdom's mana: 59 on half the hits, with no seal up.
