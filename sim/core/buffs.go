@@ -470,14 +470,14 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		BattleSquawkAura(&character.Unit, numBattleSquawks)
 	}
 
-	// World Buffs. Under Forever all but Spirit of Zandalar do nothing in a raid instance.
+	// World Buffs. Under Forever they all do nothing in a raid instance.
 	worldBuffsWork := !character.Env.ForeverRaidInstance()
 
 	if worldBuffsWork {
 		ApplyDragonslayerBuffs(&character.Unit, individualBuffs)
 	}
 
-	if individualBuffs.SpiritOfZandalar {
+	if individualBuffs.SpiritOfZandalar && worldBuffsWork {
 		ApplySpiritOfZandalar(&character.Unit)
 	}
 
@@ -2306,7 +2306,8 @@ func windfuryTotemRollsOnForever(spell *Spell) bool {
 // the auras of Rallying Cry of the Dragonslayer (22888, Onyxia's and Nefarian's heads), Warchief's
 // Blessing (16609), Songflower Serenade (15366), Fengus' Ferocity (22817), Mol'dar's Moxie (22818),
 // Slip'kik's Savvy (22820) and every Sayge's Dark Fortune (23735 to 23738, 23766 to 23769) read
-// "No effect while in a raid instance". Spirit of Zandalar (24425) doesn't, so it still works.
+// "No effect while in a raid instance". Spirit of Zandalar (24425) has no such text, but it is cut on
+// the user's ruling that no world buff works in a raid (2026-11-25).
 // No spell attribute or zone flag marks them, so the encounter says where the fight is: a leveling
 // session, an outdoor fight (outdoor_terrain), a PvP fight or one marked outside_raid is outside a
 // raid instance, and every other fight is a raid boss. Other rulesets have no such rule.

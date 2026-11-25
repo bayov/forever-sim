@@ -57,7 +57,10 @@ func TestSearchMatchesBruteForce(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	got := res.Scenarios[0].Comps[0].Dps
+	// The tie rule (showSimplest, docs/raid_sim.md, Confirmation) may show a simpler comp within 2 SE of
+	// the top one first, so Comps[0] needn't be the top scorer. Every comp's Gap is measured from the top
+	// score (compProto's best is the search's top contender), so Dps + Gap is that top comp's exact score.
+	got := res.Scenarios[0].Comps[0].Dps + res.Scenarios[0].Comps[0].Gap
 
 	// Every multiset of 4 from the builds and their duty variants.
 	var items []*Build

@@ -15,6 +15,7 @@ var worldBuffLabels = []string{
 	"Moldar's Moxie",
 	"Slip'kik's Savvy",
 	"Sayge's Dark Fortune of Damage",
+	"Spirit of Zandalar",
 }
 
 func worldBuffsSim(ruleset proto.Ruleset, encounter *proto.Encounter) *Character {
@@ -49,7 +50,8 @@ func worldBuffsSim(ruleset proto.Ruleset, encounter *proto.Encounter) *Character
 }
 
 // Under Forever the world buffs whose auras read "No effect while in a raid instance" do nothing
-// in a raid fight, and work outside one. Spirit of Zandalar has no such text and works in both.
+// in a raid fight, and work outside one. Spirit of Zandalar has no such text but follows the same
+// rule, on the user's ruling that no world buff works in a raid.
 // Classic keeps them all in a raid.
 func TestWorldBuffsInRaidInstance(t *testing.T) {
 	for _, c := range []struct {
@@ -69,9 +71,6 @@ func TestWorldBuffsInRaidInstance(t *testing.T) {
 			if got := character.GetAura(label) != nil; got != c.want {
 				t.Errorf("%s: %s registered %v, want %v", c.name, label, got, c.want)
 			}
-		}
-		if character.GetAura("Spirit of Zandalar") == nil {
-			t.Errorf("%s: Spirit of Zandalar missing", c.name)
 		}
 	}
 }
