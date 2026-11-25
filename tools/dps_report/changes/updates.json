@@ -6659,7 +6659,7 @@
    "title": "Phase 0 gear: what you can get at level 60 today",
    "date": "2026-11-25",
    "baselineData": "4ccf4d90bc581be86633252b326614a3122efd3e",
-   "endData": null,
+   "endData": "226ada86b09bc6bd5ec28f695c68bd550befbb34",
    "lines": [
     {
      "title": "DPS presets now wear real Phase 0 gear instead of synthetic gear",
@@ -6801,6 +6801,16 @@
      "why": "bulk sim progress reporting; no sim result reads it"
     }
    ]
+  },
+  {
+   "id": "2026-11-25-phase0-prices",
+   "type": "sim",
+   "title": "Phase 0 gear priced for every spec",
+   "date": "2026-11-25",
+   "baselineData": "226ada86b09bc6bd5ec28f695c68bd550befbb34",
+   "endData": null,
+   "lines": [],
+   "internal": []
   }
  ]
 }
