@@ -175,7 +175,7 @@ Give each the brief in `tools/audit/rotations/brief.txt`, with its "What changed
 - `auraRemainingTime` on an expired aura returns −currentTime, not 0. Guard with `auraIsActive`.
 - APL `Duration × fractional constant` truncates to 0. Use integer arithmetic (×4 then ÷5).
 - Seeds iterate as seed+i inside a run, so spread blocks out (3e6 apart).
-- Warrior Land Mine: its 1 s cast restarts swing timers, so throw it right after a main-hand swing.
+- Warrior Land Mine: until 2026-11-25 its 1 s cast restarted swing timers, so it was thrown right after a main-hand swing. Since then a throw keeps the swing timer (EV-0088, the user's ruling of 2026-11-25).
 - Shaman totems use a 1 s GCD, so pre-pull totems 1 s apart are fine.
 - Mana gems and runes share a cooldown. Potions have their own 2-minute cooldown. Sapper and Land Mine
   share a 1-minute cooldown.

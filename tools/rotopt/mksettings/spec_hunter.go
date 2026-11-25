@@ -118,17 +118,19 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		consumes.DefaultConjured = proto.Conjured_ConjuredDemonicRune
 		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
 		consumes.Flask = proto.Flask_FlaskOfNaturalAggression
-		// Only the ranged specs take a filler explosive: on Survival its cast resets the swing and
-		// loses (standards 11, 2026-10-23, ui/hunter/presets.ts). Since 2026-11-01 the Goblin Land
+		// Only the ranged specs take a filler explosive: on Survival its cast reset the swing and
+		// lost (standards 11, 2026-10-23, ui/hunter/presets.ts; since 2026-11-25 a throw keeps the
+		// swing, EV-0088, due a re-check). Since 2026-11-01 the Goblin Land
 		// Mine and the Goblin Sapper Charge only reach 10 yd, and the ranged specs stand at 12 yd
-		// (Beast Mastery) or 25 yd (Marksmanship, Lone Wolf), so they throw the EZ-Thro Dark Bomb:
-		// +2.8 Beast Mastery, +3.0 Marksmanship and +3.9 Lone Wolf over none at 180 sec, 1.0 to 1.4
-		// ahead of Dense Dynamite and the Thorium Grenade. Laying the Land Mine in a weave loses 1.0
+		// (Beast Mastery) or 25 yd (Marksmanship, Lone Wolf), so they throw Dense Dynamite: since
+		// 2026-11-25 the EZ-Thro Dark Bomb, a stun, does nothing to a raid boss (EV-0088), and Dense
+		// Dynamite is +7.9 to +11.9 over it and +2.6 to +8.4 over none at 180 sec (ui/hunter/presets.ts).
+		// Laying the Land Mine in a weave loses 1.0
 		// to 1.7 (its 1 sec cast costs Auto Shots). They take no Sapper (consumables-20261101-1): it
 		// goes off only when a melee weave has the hunter within its 10 yd at its cooldown (in about
 		// a third of Beast Mastery's fights), worth 0.4 Beast Mastery, 0.1 Marksmanship and 0.0 Lone
 		// Wolf at 180 sec (0.7 to 0.9 at 120 sec, 20000 iterations, seed 1).
-		consumes.FillerExplosive = proto.Explosive_ExplosiveEZThroDarkBomb
+		consumes.FillerExplosive = proto.Explosive_ExplosiveDenseDynamite
 	}
 	return consumes
 }
