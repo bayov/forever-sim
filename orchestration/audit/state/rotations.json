@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T13:03:47Z",
- "pass": 79,
- "result": "quiet",
- "note": "5536db4bc..0404484fb: no APL/req change; sim changed (rage from hits taken by stance, no world buffs in raids, buff scope, elixir overwrite). Baseline refreshed; Fury HS 60 re-checked, holds.",
+ "last_pass_at": "2026-11-25T19:13:46Z",
+ "pass": 80,
+ "result": "findings",
+ "note": "c3bbe33ea..85691655a: no APL/req change; EV-* sim batches. Baseline refreshed; EV-0088 explosive swing gates measured (feral APL names dropped Dark Bomb: rotations-20261125-1). Caster-rule rechecks, Phase 0 trinkets, WF timing still open.",
  "client_build": "1.60.1.71091",
- "baseline": "baseline_0404484_3000it_seed424242.tsv",
- "checked_at": "2026-11-25T13:10:47Z"
+ "baseline": "baseline_8569165_3000it_seed424242.tsv",
+ "checked_at": "2026-11-25T19:23:36Z"
 }

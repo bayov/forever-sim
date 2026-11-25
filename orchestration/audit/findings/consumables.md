@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### consumables-20261125-3: DPS Report requests still throw the EZ-Thro Dark Bomb that does nothing to a raid boss
+- severity: medium (the report's hunter and feral cat numbers; presets.ts say +7.9 to +11.9 hunter, +8.7 feral at 180 sec, taken from the preset comments, not re-measured here)
+- affects: tools/dps_report/req/hunter__{beast-mastery,beast-mastery-tallstrider,beast-mastery-wolf,marksmanship,marksmanship-tallstrider,marksmanship-wolf,lone-wolf}.json, druid__feral-cat.json, druid__feral-cat-duty-ff.json
+- found: 2026-11-25, master 85691655a
+- evidence: sim/core/consumes.go stunExplosives (new, EV-0088, user ruling 2026-11-25): Dark Bomb and Thorium Grenades are fully immune on a stun-immune boss. ui/hunter/presets.ts and spec_hunter.go moved to ExplosiveDenseDynamite and ui/feral_druid/presets.ts and spec_feral.go to ExplosiveGoblinLandMine, but `git grep fillerExplosive origin/master -- tools/dps_report/req` still shows ExplosiveEZThroDarkBomb in all nine files (line 77 or 79). Also spec_feral.go still lacks the Goblin Sapper Charge (see 20261105-1).
+- proposed fix: set the hunter requests to ExplosiveDenseDynamite and the feral ones to ExplosiveGoblinLandMine, then regenerate the report.
+- needs: orchestrator fix
+
 ### consumables-20261125-2: Intellect and Spirit elixirs in every preset now add nothing under the raid's Arcane Brilliance and Divine Spirit
 - severity: medium (estimate, not sim-measured; the elixir slot is wasted for mana users, up to about 17 DPS on Marksmanship per the sim comment)
 - affects: ui/{balance_druid,elemental_shaman,enhancement_shaman,hunter,mage,warlock,shadow_priest,retribution_paladin}/presets.ts and the matching tools/rotopt/mksettings spec files (Greater Intellect, Owl, Sages, Greater Spirit); rogue, warrior, feral carry AB and DS too
