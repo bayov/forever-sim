@@ -1,46 +1,58 @@
-# tank_fairness pass 30: 2026-11-24, master eceb09019
+# tank_fairness pass 32: 2026-11-25, master 0404484fb
 
-Due: 7 watched files changed since e29cfe00f, all the Protection warrior's racials (0f567e196, d757d5dd6, 8d5fdd664,
-ae99ebd00, dfd015925): the three warrior requests and level 60 APLs gain Blood Fury, Berserking, Elune's Light and
-Eureka! on cooldown, and Stoneform from 20 s at Balanced and Max survival (none at Max threat); rotopt's warrior_tank
-template gains racialAt / stoneformAt knobs. No change to the paladin, bear or Warden requests, tools/tankbench or the
-encounters. No sims this pass (gate: sims false, no shared run).
+Due: 6 watched files changed since 5536db4: `sim/core/rage.go` and `sim/warrior/stances.go` (b4cab8498: Rage from hits
+taken carries the warrior stance's damage taken modifier, Defensive 0.9 / Berserker 1.1, and twice the Rage from spell
+hits, periodic ticks and Physical specials), `sim/core/target.go` (Encounter `outside_raid` for the world-buff rule),
+`sim/shaman/{air,fire}_totems.go` (Windfury / Flametongue Totem raid scope, comments), `orchestration/standards.md` (43,
+Phase 0 gold line). Also in range since the last sims (pass 29): Arcane Intellect / Divine Spirit overwrite their stat's
+elixirs (f1942793d), world buffs and Spirit of Zandalar do nothing in a raid instance, Armor Shatter / Puncture Armor share
+a slot. No change to the tank requests, `tools/tankbench` or `tools/encounters`.
 
-## Same terms
+## Method
 
-| tank | preset races | racial casts in APL | how racials fire in a score |
+tankbench built in the shared master worktree (/tmp/audit-cache/cli/0404484fb68f/tree, `--tags=with_db`), `bench.sh` on
+the 12 preset requests x six scoring bosses, 3,000 iterations, seed 1; `summary.py --tsv` diffed against the old
+baseline. Baseline refreshed (ref/tank_fairness/summary.tsv).
+
+## What moved (six-boss mean at own weight, Max threat / Balanced / Max survival)
+
+| tank | old | new | why |
 |---|---|---|---|
-| Warrior | Undead x3 | all five named (Stoneform not at Max threat) | explicit lines; Undead's are no-ops |
-| Paladin | Undead x3 | none | autocastOtherCooldowns |
-| Bear | Night Elf / Tauren / Night Elf | none | autocastOtherCooldowns |
-| Warden | Night Elf / Undead / Night Elf | none | autocastOtherCooldowns |
+| Warrior | 4232 / 3469 / 1815 | 4229 / 3459 / 1814 | Defensive Stance's 0.9 on melee Rage, about offset by 2x on spells/specials; TPS -3 to -5 |
+| Paladin | 3240 / 2797 / 1778 | identical | no Rage, no affected consumable |
+| Bear | 3128 / 2130 / 347 | 3129 / 2151 / 455 | 2x Rage from spell hits and specials, no stance modifier; Onyxia +272, Magmadar +119, Broodlord +136, Vael +102 at w 3 |
+| Warden | 2628 / 1272 / -2252 | 2600 / 1234 / -2306 | Arcane Brilliance overwrites its Elixir of Greater Intellect; TPS -13 to -17 |
 
-Autocast fires DPS-type racials (Blood Fury, Berserking, Elune's Light, Eureka!) but never a survival cooldown in a
-scoring run (`survivalCooldownDue`, major_cooldown.go:152). Forever Stoneform is registered as survival type, so the
-paladin's and Warden's Dwarf race rows never cast it while the warrior's does: new finding -20261124-1 (low; about
-+10 Balanced / +40 Max survival per row, from the warrior's 10k sweep in racials_1124/stoneform_i10000_s1.tsv; no preset
-race moves). Everything else on the requests is unchanged since pass 29.
-
-## Numbers
-
-The warrior presets are Undead, so every new racial line is a no-op for them (tank_rotations pass 27 found the warrior
-baseline bit-identical after the first racial lines). The Troll regen and Stoneform code in racials_forever.go touches
-only Troll and Dwarf, which no preset plays. Ranking and spreads stand as pass 29 measured them (baseline
-ref/tank_fairness/summary.tsv kept, not re-simmed):
+Warden check: the Balanced request without `intellectElixir` scores 1234.2, the same as with it (seed 1): the elixir is
+dead. That is the ruled Forever mechanic, already open as consumables-20261125-2 for every preset; not a tank finding.
+The bear's Max survival gain (+31%) is a Rage rule from wowsims/forever's logs that the warrior shares; Bear Form has
+no damage taken modifier to divide out, so no asymmetry in the rule itself (tank_mechanics owns its correctness).
 
 ## Ranking (six-boss mean, own weight, seed 1)
 
 | weight | order | scores |
 |---|---|---|
-| Max threat | Warrior, Paladin, Bear, Warden | 4232 / 3240 / 3128 / 2628 |
-| Balanced | Warrior, Paladin, Bear, Warden | 3469 / 2797 / 2130 / 1272 |
-| Max survival | Warrior, Paladin, Bear, Warden | 1815 / 1778 / 347 / -2252 |
+| Max threat | Warrior, Paladin, Bear, Warden | 4229 / 3240 / 3129 / 2600 |
+| Balanced | Warrior, Paladin, Bear, Warden | 3459 / 2797 / 2151 / 1234 |
+| Max survival | Warrior, Paladin, Bear, Warden | 1814 / 1778 / 455 / -2306 |
 
-The warrior's Max survival lead over the paladin is now 37 (2%), about two standard errors; finding 20261105-1's
-potion (+374) would still reverse it. Warrior builds at w 1/3, 1, 3: Max threat **4232** / 3307 / 533, Balanced
-4115 / **3469** / 1532, Max survival 3421 / 3019 / **1815**: each leads its own weight. Other specs as in pass 27 below.
+Spreads: Max threat warrior +31% over the paladin; Max survival warrior +36 (2%, about two standard errors) over the
+paladin, which finding 20261105-1's potion (+374) would still reverse.
 
-Quiet: no new finding. Open findings unchanged (20261105-2, 20261105-1, 20261104-2, 20261104-5).
+## What a preset rewards (six-boss mean at w 1/3, 1, 3; seed 1)
+
+| spec | Max threat build | Balanced build | Max survival build |
+|---|---|---|---|
+| Warrior | **4229** / 3308 / 542 | 4106 / **3458** / 1514 | 3407 / 3009 / **1814** |
+| Paladin | **3240** / 2787 / 1428 | 3205 / **2797** / 1575 | 3088 / 2760 / **1778** |
+| Bear | **3128** / 1973 / -1492 | 3001 / **2151** / -400 | 2434 / 1939 / **455** |
+| Warden | **2600** / 1027 / -3693 | 2458 / **1234** / -2436 | 2375 / 1205 / **-2306** |
+
+Each preset leads its own weight; the three builds stay distinct.
+
+Quiet: no new finding. Open findings re-checked, not fixed: 20261124-1 (no Stoneform outside the warrior),
+20261105-2 (Warden Night Elf / Night Elf / Undead), 20261105-1 (paladin potion action), 20261104-2 (user calls),
+20261104-5 (legacy warrior request).
 
 ## Earlier pass 27 (method and tables still current)
 

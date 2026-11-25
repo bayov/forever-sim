@@ -46,6 +46,8 @@ type Encounter struct {
 	// The kind of outdoor area the fight is in, for the item effects that grow there (Golden
 	// Banana, Frozen Heart of the Mountain). None in a dungeon or raid.
 	OutdoorTerrain proto.OutdoorTerrain
+	// The fight isn't in a raid instance (Encounter.outside_raid), see Environment.ForeverRaidInstance.
+	OutsideRaid bool
 
 	// A healing fight: every player's health is tracked and a player can die (health.go,
 	// player_death.go). docs/healing_sim.md.
@@ -72,6 +74,7 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
 		NaturalFlaskZone:        options.NaturalFlaskZone,
 		OutdoorTerrain:          options.OutdoorTerrain,
+		OutsideRaid:             options.OutsideRaid,
 		TrackHealth:             options.TrackHealth,
 		RaidDamage:              options.RaidDamage,
 	}

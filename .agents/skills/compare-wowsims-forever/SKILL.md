@@ -32,6 +32,9 @@ Reference files here:
   so you can tell what is new. Update it when one is settled or a new one found.
 - `converter.md`: everything the converter and `cmpsim` translate. Read it when a result looks
   off for a new class, rotation or synthetic item, and when adding a class.
+- `evidence_coverage.md`: every rule and ruling theirs measured (`$WSF/docs/evidence`,
+  `$WSF/docs/rulings`), checked against our code. Running builds only finds a rule some build
+  exercises (Rage from hits taken was missed that way), so this list is checked directly.
 
 ## 1. Set up
 
@@ -43,6 +46,9 @@ About 3 min the first time. Rerun it whenever either sim changes, since every bi
 from a commit. Needs protoc (`/root/tools/protoc/bin`). Note both commits it prints. If you
 patched their checkout (step 4), save and revert the patch first, or the update stops:
 `git -C $WSF diff > $WSF_WORK/<name>.patch && git -C $WSF checkout -- .`
+
+Then check their evidence added since the last sweep, as `evidence_coverage.md` says at its top,
+before any run: a new measured rule is often the gap you'd otherwise hunt for.
 
 ## 2. Run the builds aligned
 

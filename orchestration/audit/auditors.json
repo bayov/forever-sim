@@ -285,7 +285,7 @@
   },
   {
    "id": "healer_gear",
-   "title": "Healer synthetic gear",
+   "title": "Healer Phase 0 gear",
    "brief": "orchestration/brief_healers.md",
    "model": "sonnet",
    "watch": [
@@ -294,6 +294,8 @@
     "ui/holy_paladin/gear_sets/**",
     "ui/restoration_druid/gear_sets/**",
     "ui/healing_priest/gear_sets/**",
+    "tools/healbench/req/**",
+    "tools/rotopt/phase0_specs.json",
     "orchestration/gear_targets.md",
     "orchestration/standards.md",
     "orchestration/tools/healers/**"
@@ -414,7 +416,7 @@
   },
   {
    "id": "tank_gear",
-   "title": "Tank synthetic gear",
+   "title": "Tank Phase 0 gear",
    "brief": "orchestration/brief_tanks.md",
    "model": "sonnet",
    "watch": [
@@ -423,6 +425,8 @@
     "ui/protection_paladin/gear_sets/**",
     "ui/feral_tank_druid/gear_sets/**",
     "ui/warden_shaman/gear_sets/**",
+    "tools/tankbench/req/**",
+    "tools/rotopt/phase0_specs.json",
     "orchestration/gear_targets.md",
     "orchestration/standards.md"
    ],

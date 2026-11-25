@@ -19,8 +19,11 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	apCoef := 0.15
 	blockValueCoef := 2.0
 	procMask := core.ProcMaskMeleeMHSpecial
-	// Forever's rank 4 deals 655 ± 4.57% (625 to 685) plus the block value once, with no attack
-	// power (client 70425, spell 23925; wowsims/forever's Shield Slam).
+	// Forever's rank 4 deals 655 ± 4.57% (625 to 685) plus twice the block value, with no attack
+	// power (client 70425, spell 23925). EV-0004: Rank 1 at block value 28 reads 481.1 against 481.1
+	// for 2 x and 453.4 for 1 x, and no hit in 205 tops the 2 x ceiling at block values 40 to 48.
+	// EV-0050: its threat is the damage plus the rank's own flat, added once on a crit (Ranks 1 to 3
+	// 178, 203, 229), so Rank 4 takes 255 on that line until a level 60 log measures it.
 	//
 	// It is struck with the shield, so it is an off-hand special: no Windfury Totem or main hand
 	// weapon procs (wowsims/forever b6ce30c972). With no off-hand weapon behind it, it takes none
@@ -28,9 +31,11 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	if warrior.Env.IsForever() {
 		damageLow, damageHigh = 625, 685
 		apCoef = 0
-		blockValueCoef = 1
+		threat = 255
 		procMask = core.ProcMaskMeleeOHSpecial
 	}
+
+	threatBonus := core.TernaryFloat64(warrior.Env.IsForever(), threat, threat*2)
 
 	warrior.ShieldSlam = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorShieldSlam,
@@ -62,7 +67,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  threat * 2,
+		FlatThreatBonus:  threatBonus,
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
