@@ -214,5 +214,26 @@ class ApplyPrices(unittest.TestCase):
         self.assertEqual(text, '{\n  "1263": {"name": "Brain Hacker"},\n  "22403": {"name": "Nacreous Shell Necklace"}\n}\n')
 
 
+class FactionSets(unittest.TestCase):
+    def test_set_paths_and_gold(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = os.path.join(root, 'ui', 'rogue', 'gear_sets')
+            os.makedirs(folder)
+            row = {'dir': 'rogue', 'gearOut': 'ui/rogue/gear_sets/level60_phase0_x.gear.json'}
+            for name in ('level60_phase0_x', 'level60_phase0_x_alliance'):
+                open(os.path.join(folder, name + '.gear.json'), 'w').close()
+            self.assertEqual(phase0_prices.set_paths(root, 'x', row), [
+                ('x', os.path.join(root, row['gearOut'])),
+                ('x_alliance', os.path.join(folder, 'level60_phase0_x_alliance.gear.json'))])
+            # no gearOut: the default path, and no copies when none are written
+            self.assertEqual(phase0_prices.set_paths(root, 'y', {'dir': 'rogue'}),
+                             [('y', os.path.join(folder, 'level60_phase0_y.gear.json'))])
+        items = [{'id': 1}, {'id': 2}, {'id': 3}]
+        total, parts = phase0_prices.set_gold(items, {1: 10.0}, {2: [(1, 2)]}, {3: (5.0, 'effort: run')},
+                                              names={'1': 'A'})
+        self.assertEqual(total, 35.0)
+        self.assertEqual(parts, ['A 10g (AH)', '2 20g (materials)', '3 5g (effort)'])
+
+
 if __name__ == '__main__':
     unittest.main()
