@@ -292,7 +292,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		cast(earthstrike, and(sndAtLeast(k["trinketSnd"]), holdFor(earthstrike, adrenalineRush, k["trinketHoldForAr"] == 1)),
 			timedBuffNotes("Earthstrike", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
 		cast(synthTrinket, and(sndAtLeast(k["trinketSnd"]), holdFor(synthTrinket, adrenalineRush, k["trinketHoldForAr"] == 1)),
-			timedBuffNotes("The synthetic on-use trinket", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
+			timedBuffNotes("The on-use trinket", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
 
 		cast(thistleTea, le(energy(), num(k["teaEnergy"])),
 			"Thistle Tea when there is room for the 100 energy."),

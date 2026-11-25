@@ -578,7 +578,7 @@ func main() {
 				name = *templateName
 			}
 			path := filepath.Join(*outDir, name+j.suffix+".apl.json")
-			if err := os.WriteFile(path, []byte(rotationJSON(template.Build(best))), 0644); err != nil {
+			if err := os.WriteFile(path, []byte(rotationJSON(withRealTrinket(template.Build(best), setup.request))), 0644); err != nil {
 				fmt.Fprintf(os.Stderr, "writing %s: %v\n", path, err)
 				os.Exit(1)
 			}

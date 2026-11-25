@@ -242,7 +242,7 @@ func (s *setup) runRequest(rot *proto.APLRotation, duration float64, iterations 
 	} else {
 		request.Encounter.Duration = duration
 	}
-	request.Raid.Parties[0].Players[0].Rotation = rot
+	setRotation(request, rot)
 	request.SimOptions.Iterations = iterations
 	request.SimOptions.RandomSeed = simSeed
 	if tankSlots != nil || tankObjective != nil {
@@ -283,7 +283,7 @@ func simulate(request *proto.RaidSimRequest, objective *tankscore.Objective) (re
 // targets. For seeing where the damage of a rotation comes from.
 func (s *setup) breakdown(rot *proto.APLRotation, duration float64, iterations int32) (string, error) {
 	request := s.clone()
-	request.Raid.Parties[0].Players[0].Rotation = rot
+	setRotation(request, rot)
 	request.Encounter.Duration = duration
 	request.SimOptions.Iterations = iterations
 	request.SimOptions.RandomSeed = 1
@@ -359,7 +359,7 @@ func (s *setup) breakdown(rot *proto.APLRotation, duration float64, iterations i
 // and finishers. For eyeballing whether a rotation does what its knobs say.
 func (s *setup) timeline(rot *proto.APLRotation, duration float64) string {
 	request := s.clone()
-	request.Raid.Parties[0].Players[0].Rotation = rot
+	setRotation(request, rot)
 	request.Encounter.Duration = duration
 	request.Encounter.DurationVariation = 0
 	request.SimOptions.Iterations = 1
@@ -436,7 +436,7 @@ func compactJSON(m goproto.Message) string {
 // The player's final stats as the sim sees them, one per line.
 func (s *setup) finalStats(rot *proto.APLRotation) string {
 	request := s.clone()
-	request.Raid.Parties[0].Players[0].Rotation = rot
+	setRotation(request, rot)
 	stats := core.ComputeStats(&proto.ComputeStatsRequest{Raid: request.Raid, Encounter: request.Encounter, Ruleset: request.SimOptions.Ruleset})
 	var sb strings.Builder
 	for i, v := range stats.RaidStats.Parties[0].Players[0].FinalStats.Stats {
@@ -481,7 +481,7 @@ func (s *setup) save(path string) error {
 func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations int32) string {
 	request := s.clone()
 	player := request.Raid.Parties[0].Players[0]
-	player.Rotation = rot
+	setRotation(request, rot)
 	request.Encounter.Duration = duration
 	res := core.StatWeights(&proto.StatWeightsRequest{
 		Player:     player,

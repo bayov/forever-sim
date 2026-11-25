@@ -25,6 +25,9 @@ func warriorAuraGains(t *testing.T, k Knobs, id string) []float64 {
 	if err := protojson.Unmarshal(data, rsr); err != nil {
 		t.Fatal(err)
 	}
+	// The synthetic battle trinket (15 sec, 2 min cooldown) in the first trinket slot, so it
+	// gets a second use in the fight: the set's Blackhand's Breadth has a 5 min cooldown.
+	rsr.Raid.Parties[0].Players[0].Equipment.Items[proto.ItemSlot_ItemSlotTrinket1] = &proto.ItemSpec{Id: 991018}
 	rsr.Raid.Parties[0].Players[0].Rotation = warriorFury{}.Build(k)
 	rsr.Encounter.Duration = 180
 	rsr.Encounter.DurationVariation = 0
