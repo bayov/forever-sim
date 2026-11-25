@@ -577,3 +577,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-24 19:15 | tank_mechanics | pass 31 | master eceb090 | 1 new finding | Dwarf paladin/Warden never cast Stoneform (low)
 2026-11-24 19:15 | tank_rotations | pass 28 | master eceb090 | quiet | baseline refreshed; Windfury wait loses for warrior
 2026-11-24 19:15 | tank_fairness | pass 30 | master eceb090 | 1 new finding | Stoneform missing on paladin/Warden rows (low)
+2026-11-25 00:59 | results | pass 102 | master 63129ce | quiet | Phase 0 hunter/rogue/priest metas match the shared run; builds.json awaits re-sim
+2026-11-25 00:59 | rotations | pass 76 | master 63129ce | quiet | no APL or sim change; rotopt tooling only
+2026-11-25 00:59 | gear | pass 76 | master 63129ce | quiet | Phase 0 real-item sets only, no synthetic gear changed
+2026-11-25 00:59 | consumables | pass 106 | master 63129ce | quiet | no consumes/buffs change; enchants resolve
+2026-11-25 00:59 | fairness | pass 56 | master 63129ce | 1 new finding | MM report race Orc trails Skyborne High Order by 6.1 (medium)

@@ -1,27 +1,19 @@
-# Consumables pass 105 (master eceb090196, client 1.60.1.71091)
+# Consumables pass 106 (master 63129ce35, client 1.60.1.71091)
 
 Result: quiet. No new findings. Open: consumables-20261110-1 and consumables-20261105-1 (both low, still open).
 
-## Moved since e29cfe00f
+## Moved since eceb09019
 | File | Change | Verdict |
 |---|---|---|
-| sim/core/buffs.go | Innervate multiplies MP5 (+4), Mana Spring and Innervate-scaled regen marked EnergizeMP5 (EV-0114) | sim mechanic from a log ledger, no client table value; nothing to check |
-| sim/common/item_effects.go | Brain Hacker comment 9 to 30 sec, Second Wind category note | comments only |
-| ui/warlock/presets.ts | Affliction and Destruction Fire talent strings | DPS tuning only; Consumes and buffs untouched |
-| ui/*/gear_sets/level60_phase0_* (23 new) | Phase 0 gear sets | see below |
-| tools/rotopt/* | Phase 0 search tooling | no mksettings raid or consumes change |
+| ui/shadow_priest/presets.ts | Level 60 talent string and tooltip only | no Consumes, RaidBuffs or Debuffs change |
+| ui/rogue/gear_sets/level60_phase0_* | new Combat Daggers, Seal Fate Daggers/Swords, Alliance sets; weapon swaps | enchants checked below |
+| ui/hunter/gear_sets/level60_phase0_* | new Lone Wolf sets, BM/MM weapon changes | enchants checked below |
 
-No presets.ts Consumes, RaidBuffs or Debuffs objects, mksettings files, consumes.go, debuffs.go or forever_enchants.go moved.
+No mksettings, consumes.go, buffs.go, debuffs.go, forever_enchants.go or assumptions file moved. Latest wago probe is still 71091.
 
-## Client
-Latest probe 71091. builddiff 71037 to 71091: 0 consumable spell changes, 58 Forever enchants checked, 0 changed.
-
-## scan.sh (origin/master 9470bae6a)
-Multi-crit elixirs: none. Revelation outside shamans: none. Minor-armor exclusive count 3 vs expected 2 (unchanged from earlier passes' counts? not re-verified; no debuffs.go change since last pass, so not new). Air and weapon totem lines as expected. The "banned" and "non-synthetic trinket" lists now hit only the new Phase 0 gear sets.
-
-## Phase 0 gear sets (new regime, standards 42)
-- Enchant 2544 (Arcanum of Focus) on balance, ele, mage, shadow priest, warlock: tools/rotopt/phase0_enchants.json sources it to a Dire Maul libram quest plus Pristine Black Diamond (spell 22844), not Zul'Gurub. Not raid-only; the pass doc's "2544 (ZG)" line is stale for Phase 0. 2568 (Mighty Intellect, warlock) is marked doubtful there, allowed borderline.
-- 1248805 Revelation: enchant id on Phase 0 caster weapons, a Merchant's Favor vendor enchant per phase0_enchants.json, sold by Beneris; the scan's "Revelation outside shamans" item check is empty.
-- Real trinkets (10455, 13968, 13965, 11815, 19289, 19812, 22678, 272437, 272438) are by design in Phase 0 sets. 11815 Hand of Justice and 13965 Blackhand's Breadth are named absent in standards 8a (70338 ItemSparse), but ItemSparse.csv in 71091 lacks many Era items that exist (10455, 13209, 14332 are in Item.csv only), so absence there proves nothing; phase0_content.json sources both (Wowhead Forever). Wowhead returned empty from this container, so not re-checked. Left as is under standards 42.
+## Enchants in the new sets
+All ids resolve against the 71091 db2 or tools/database/forever_enchants.go: 1248599 bracer Superior Agility, 1249059 neck Agility, 1219587 cloak Agility, 1248640 gloves, 1887, 1891, 2543, 1508, 1900, 2564, 664, 34, 931, 803.
+Each has a source in tools/rotopt/phase0_enchants.json, except gloves Superior Agility (spell 25080) behind 2564. The sets use 2564 on an off-hand weapon, which is the Enchant Weapon - Agility (spell 23800, Timbermaw rep, tier not in data) variant and is listed. Not new: it was already on the Subtlety and Survival sets.
+The pass doc's note that bracer Superior Agility (1248599) is unused is stale: master's Phase 0 sets and req files use it, and the db and test carry it. Cosmetic doc nit, not raised.
 
 ## No open items beyond the two lows above.

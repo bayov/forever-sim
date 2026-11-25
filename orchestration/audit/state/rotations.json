@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
+  "master": "63129ce35290604315618746edd5a35123520089"
  },
- "last_pass_at": "2026-11-24T18:56:37Z",
- "pass": 75,
+ "last_pass_at": "2026-11-25T00:50:47Z",
+ "pass": 76,
  "result": "quiet",
- "note": "Pass 75: Phase 0 regear (step 4) moved every caster and most melee presets -6 to -20%; APL changes (Smite rank 3 fallback and 60% mana gates, Affliction/Demonology without Immolate, Fury Execute ahead of Bloodthirst, prot racials) all beat the previous APLs on both seed sets (Smite +7.6, Affliction +34.6, Demonology +14.0, Fury +3.8 at 180 s). No new findings; rotations of mage, paladin, shaman, feral, arms, shadow not re-searched on Phase 0 gear (open item).",
+ "note": "Pass 76: quiet. 9470bae..63129ce changed no APL file, no sim .go; req rotations unchanged (key order only, checked with jq -S); new race rows for hunter and rogue are gear copies. Hunter (new talents) and rogue Phase 0 sets not re-searched (gear/talent change, not rotation).",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-24T19:15:51Z",
+ "checked_at": "2026-11-25T00:59:33Z",
  "baseline": "baseline_eceb090_3000it_seed424242.tsv"
 }

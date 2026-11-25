@@ -4,20 +4,21 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261125-1: Marksmanship's report race (Orc) is no longer its best on the Phase 0 set; Skyborne High Order sims 6.1 higher
+- severity: medium (0.56% on hunter__marksmanship, 0.65% on the wolf variant; MM keeps 2nd place)
+- affects: hunter__marksmanship (report race Orc), hunter__marksmanship-wolf, hunter__marksmanship-tallstrider
+- found: 2026-11-25, master 63129ce35
+- evidence: paired 20k, seeds 1 / 1000003, CLI /tmp/audit-cache/cli/63129ce35290: hunter__marksmanship Orc 1090.4 / 1090.3, High Order on its committed race file req/races/hunter__marksmanship.SkyborneHighOrder.json (Alliance set) 1096.4 / 1096.5 (+6.1; the same on the Horde set); hunter__marksmanship-wolf Orc 1070.4, High Order 1077.4 (+7.0, seed 1). 5k sweep: MM High Order 1096.3 vs Orc 1090.0, tallstrider +6.8, wolf +7.5. Beast Mastery is a tie (Orc 1009.5 / 1009.4, High Order 1009.5 / 1009.1). Came with the hunter Phase 0 regear (8e04994c5, merged 3fdc2dca4); on the synthetic set Orc was within 1.0 of the best. Script: $AUDIT_WORK/fairness/paired/p.py (scratch). Standards 16 says presets use the best race.
+- proposed fix: move the three Marksmanship requests, metas and preset to Skyborne High Order on level60_phase0_hunter_mm_alliance (or check a High Order race rotation first, standards 29) and re-sim; or record why Orc stays.
+- needs: orchestrator fix
+
 ### fairness-20261124-2: On the Phase 0 sets, Fire's best race is Undead (+2.2 over Human) and Shadow's is Troll (+1.9 over Undead)
 - severity: low (0.2% each; no place in the ranking changes)
 - affects: mage__fire (report race Human), priest__shadow (report race Undead)
 - found: 2026-11-24, master eceb09019
 - evidence: paired 20k, seeds 1 / 1000003, report request with only the race changed (no race rotation exists for these races): Fire Human 920.8 / 920.2, Undead 922.8 / 922.5 (+2.2), High Order with req/races/mage__fire.SkyborneHighOrder 906.4 / 906.6; Shadow Undead 855.2 / 855.2, Troll 857.3 / 856.9 (+1.9). The 5k sweep agrees (Fire Undead 923.3 vs Human 920.4, Shadow Troll 857.3 vs Undead 855.5). Both came with the Phase 0 regear (8b5137c6d sweep: Fire Human best, Shadow Undead best). Scripts: $AUDIT_WORK/fairness/paired/run.py (scratch).
+- 2026-11-25 (pass 56, 63129ce35): Shadow on its new talents (a2d195d46): paired 20k Undead 857.6 / 857.7, Troll 859.5 / 859.4 (+1.8). Fire unchanged (5k sweep Undead 923.3, Human 920.4). Still open.
 - proposed fix: re-pick the report race (standards 16 / 29), Fire to Undead and Shadow to Troll, with a race rotation check; or note in the metas why Human / Undead stay.
-- needs: orchestrator fix
-
-### fairness-20261124-1: Report requests mix Phase 0 real gear (7 classes) with Phase 1 synthetic sets (hunter, rogue); hunters and rogues rank about 8 to 9% too high
-- severity: high (moves hunters and rogues by 8 to 9% and reorders the ranking: Lone Wolf, MM and BM sit 1 to 3 only because they still wear the stronger set)
-- affects: all 10 hunter requests (993xxx / 9931xx synthetic items) and all 6 rogue requests (994xxx); against every other class's request
-- found: 2026-11-24, master eceb09019
-- evidence: first equipment ids in tools/dps_report/req at eceb09019: hunter__* 993001.., hunter__survival* 993101.., rogue__* 994001.. / 994101.. (the 1b synthetic sets); druid, mage, paladin, priest, shaman, warlock and warrior now wear real Phase 0 items (e.g. mage__fire 226935, warrior__fury 12640). The Phase 0 regear cut those classes 5.8% to 23% against the 8b5137c6d baseline (Feral -11.0%, Fury -8.6%, Destruction -17.5%, Frost -23.0%; 5k sweep, seed 1, report race), while hunters and rogues moved 0.0 to -0.6%. The unmerged origin/phase0-step4-hunter metas give the hunters' Phase 0 numbers: Lone Wolf 1291.8 -> 1174.0 (-9.1%), MM 1200.6 -> 1090.5 (-9.2%), Survival 1007.3 -> 926.7 (-8.0%). origin/phase0-step4-rogue has not regeared the rogue requests yet. builds.json is still the Phase 1 publication for every class, so the published page is consistent today; a re-sim and republish from current master would not be. Sure of the gear state; the rogue size is an estimate from the other classes.
-- proposed fix: merge phase0-step4-hunter and phase0-step4-rogue (rogue requests regeared) before any report re-sim or republish of master; or, if the report republishes first, re-sim only from a tree where every class wears the same phase.
 - needs: orchestrator fix
 
 ### fairness-20261118-1: Balance's report race (Night Elf) is no longer its best; High Order sims 3.7 to 6.1 higher since haste shortens the GCD
@@ -30,10 +31,21 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-11-23 (pass 51, 2de7021bf): no druid or race change in range; builds.json race table unchanged. Still open.
 - 2026-11-24 (pass 53, 566067a39): no druid Balance or race change in range (be773f5eb touches Rip and Rake only); shared 20k run Balance 956.1 unchanged. Still open.
 - 2026-11-24 (pass 55, eceb09019): the four Balance requests moved to the Phase 0 set (still Night Elf). Paired 20k, seeds 1 / 1000003, report request with only the race changed, race rotation where req/races has one: Balance NE 822.3 / 822.1, High Order (race rotation) 826.5 / 826.1 (+4.1), Windshaper 825.7 / 825.4; Wrath NE 730.1 / 730.4, High Order 735.1 / 736.0 (+5.3); Balance FF duty NE 789.0 / 788.3, High Order (race rotation) 793.5 / 793.5 (+4.9); Wrath FF duty NE 702.8 / 702.7, High Order 708.5 / 708.5 (+5.8). The 5k sweep (base rotation only) shows Night Elf best for default Balance, but with the committed race rotation High Order still wins all four. Still open.
+- 2026-11-25 (pass 56, 63129ce35): no druid change in range; 5k sweep Balance unchanged (Night Elf 822.9, Wrath High Order 734.5 vs Night Elf 730.5). Still open.
 - proposed fix: set the four Balance requests' and presets' race to Skyborne High Order (Balance and Balance FF duty with the race-tuned rotation the race table already uses) and re-sim them; or record in standards why Night Elf stays.
 - needs: orchestrator fix
 
 ## Resolved
+
+### fairness-20261124-1: Report requests mix Phase 0 real gear (7 classes) with Phase 1 synthetic sets (hunter, rogue); hunters and rogues rank about 8 to 9% too high
+- severity: high (moves hunters and rogues by 8 to 9% and reorders the ranking: Lone Wolf, MM and BM sit 1 to 3 only because they still wear the stronger set)
+- affects: all 10 hunter requests (993xxx / 9931xx synthetic items) and all 6 rogue requests (994xxx); against every other class's request
+- found: 2026-11-24, master eceb09019
+- evidence: first equipment ids in tools/dps_report/req at eceb09019: hunter__* 993001.., hunter__survival* 993101.., rogue__* 994001.. / 994101.. (the 1b synthetic sets); druid, mage, paladin, priest, shaman, warlock and warrior now wear real Phase 0 items (e.g. mage__fire 226935, warrior__fury 12640). The Phase 0 regear cut those classes 5.8% to 23% against the 8b5137c6d baseline (Feral -11.0%, Fury -8.6%, Destruction -17.5%, Frost -23.0%; 5k sweep, seed 1, report race), while hunters and rogues moved 0.0 to -0.6%. The unmerged origin/phase0-step4-hunter metas give the hunters' Phase 0 numbers: Lone Wolf 1291.8 -> 1174.0 (-9.1%), MM 1200.6 -> 1090.5 (-9.2%), Survival 1007.3 -> 926.7 (-8.0%). origin/phase0-step4-rogue has not regeared the rogue requests yet. builds.json is still the Phase 1 publication for every class, so the published page is consistent today; a re-sim and republish from current master would not be. Sure of the gear state; the rogue size is an estimate from the other classes.
+- proposed fix: merge phase0-step4-hunter and phase0-step4-rogue (rogue requests regeared) before any report re-sim or republish of master; or, if the report republishes first, re-sim only from a tree where every class wears the same phase.
+- needs: orchestrator fix
+- resolved: 2026-11-25, 63129ce35 (hunter requests 8e04994c5 / ea670f170 merged 3fdc2dca4; rogue requests a82c8ce6a merged 6fdbcc951). No request in tools/dps_report/req carries a 99xxxx synthetic item now; every meta's published.dps is within 1.0 of the 5k sweep at its report race. Hunters moved -8.0% to -9.3%, rogues -5.7% to -11.0%.
+
 
 ### fairness-20261122-1: Published report lags five classes' fixes after the 30314ad60 re-sim; 28 of 68 builds off by 1.7 to 111 DPS and six specs change place
 - severity: high (Fury 2H +2.5%, Frost -11.7%; the published order is wrong in six places)

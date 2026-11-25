@@ -1,14 +1,8 @@
-# Results pass 101, master eceb090196 (2026-11-24)
+# Results pass 102, master 63129ce35
 
-Shared run (68 builds, 20k, seed 1, `/tmp/audit-work/runs/master`). Cause of the big change: the Phase 0 gear reset (step 4 regears of every class) plus the racial and regen fixes (7a2311b36, ed1df1d51, 9c08e16a2, e19d2df85, 0352d95dd).
+Quiet. Since eceb090196 only Phase 0 step 4 requests/metas/presets changed (hunters, shadow priest, rogues); no sim, proto, mksettings or database change.
 
-| Check | Result |
-|---|---|
-| Run vs meta published.dps | 16 of 68 within 0.15, 32 off by more than 0.5 (metas not all refreshed) |
-| Largest meta lags | Lone Wolf -22.4, rogues -15.1 (combat-swords), -14.0, -12.7, -5.9; mutilate +4.2, subtlety +3.2; hunters -1.0 to -4.6; rest <= 1.1 |
-| Run vs builds.json | 53 of 68 differ by 1.5 or more; builds.json still holds Phase 1 numbers (warlock -160 to -210, fury 2H -140, Balance/mage/feral -110 to -135, Ret -69 to -100, Arms -64 to -92) |
-| Drift report vs reference | only the known feral sapper line (results-20261105-1) |
-| Unread fields | none |
-
-Conclusion: no sim error found. The dashboard needs the full re-sim and republish for Phase 0, and the metas of hunters and rogues need refreshing. Ranking by the run: Lone Wolf 1291, Marksmanship 1200, BM 1113, Survival 1007 lead; warriors (Fury 1007, Arms 1016, Fury 2H 991) and rogue Combat 948 follow; Demonology 894, Fire 921, Arcane 843, Frost 727, Smite 695 are lowest of the casters. Not re-analysed in depth this pass.
-Result: no new finding; update added to results-20261104-2.
+- Shared run (68 requests, 20k, seed 1) vs metas: 24 within 0.15, 17 off by 0.5 to 1.1, none worse. Rogue and hunter metas now match the run (was -22 to +4).
+- builds.json (Phase 1 publication) is 1.5 or more from the run on all 68 (-64 to -188): the Phase 0 gear drop, waiting on the full report re-sim (results-20261104-2).
+- Drift vs reference: only the feral sapper line (results-20261105-1); the reference lists it for duty-ff only, the regen shows it on feral-cat too.
+- Hunter, rogue and priest requests match mksettings output.

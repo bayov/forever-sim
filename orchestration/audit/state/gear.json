@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
+  "master": "63129ce35290604315618746edd5a35123520089"
  },
- "last_pass_at": "2026-11-24T18:49:05Z",
- "pass": 75,
+ "last_pass_at": "2026-11-25T00:49:34Z",
+ "pass": 76,
  "result": "quiet",
- "note": "Pass 75: the only watched changes are 28 level60_phase0_*.gear.json sets (Phase 0 real items), not Phase 1 synthetic. No synthetic item, set, trinket, enchant, standards.md or gear_targets.md change.",
+ "note": "Pass 76: the only watched changes are 13 hunter/rogue level60_phase0_*.gear.json sets (Phase 0 real items), not Phase 1 synthetic. No synthetic item, set, trinket, enchant, standards.md or gear_targets.md change.",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-24T19:15:51Z"
+ "checked_at": "2026-11-25T00:59:33Z"
 }
