@@ -183,8 +183,8 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 402.45117
-  tps: 820.07862
+  dps: 402.17483
+  tps: 820.29266
  }
 }
 dps_results: {
@@ -218,8 +218,8 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 269.50983
-  tps: 518.1079
+  dps: 268.64217
+  tps: 516.25372
  }
 }
 dps_results: {
