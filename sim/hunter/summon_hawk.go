@@ -19,25 +19,40 @@ import (
 // the first and crits 2% more a rank of the second.
 const hawkDuration = time.Second * 18
 
+// The dive bomb lands, and the hawk appears, 1 sec after the cast (EV-0127).
+const summonHawkDiveTime = time.Second
+
 // The hawk is a guardian the client does not describe; the row that scales it, Hunter Guardian Hawk
-// Pet Scaling 01 (1293586), is not in the client. wowsims/forever fitted it to level 30 combat logs
-// (81651da664: 2,862 swings at 407 to 1,023 owner ranged attack power; b89878e6f9: 4,340 swings with
-// Ferocity 5/5), all with Unleashed Fury 5/5. A swing before armor is 3.3 to 6.7 plus 0.0179 a point
-// of the owner's ranged attack power, the same line in every log: the hawk has 80% of the owner's
-// ranged attack power and none of its own at 112 attack power a point of dps over its 2.5 sec swing,
-// and the fixed part is 0.0815 of the creature auto attack dps for its level over the 2.5 sec, a
-// third either side. Both are stated here before the logs' Unleashed Fury. The sim takes the level
-// 60 creature dps at every level, as the tamed pet does (pet.go): about 12.3 a swing after the
-// talent at 60, where the level 30 logs read 5.0.
-const hawkLogUnleashedFury = 1.15
+// Pet Scaling 01 (1293586), is not in the client, so its swing is fitted to combat logs taken after
+// Blizzard's 2026-11-10 hotfix, which raised it by about 80% (EV-0073, wowsims/forever: 7,352 swings
+// of 24 level 60 hunters, 114 reports in all). A swing before armor at level 60 is 0.153 of the
+// creature auto attack dps over its 2.5 sec swing, 22% either side, plus 2.5/60 of the hawk's attack
+// power (60 attack power a point of dps). The logs' hunters had Unleashed Fury 5/5 and Focused Fire
+// 2/2, which reach the hawk, so both are stated here before them. The sim takes the level 60
+// creature dps at every level, as the tamed pet does (pet.go). Before, the sim took the level 30
+// pre-hotfix fit (0.0815 of the creature dps, 112 attack power a point of dps, 80% of ranged attack
+// power alone) times the announced 1.8.
+const hawkLogDamageMultiplier = 1.15 * 1.02
 
-// Blizzard's hotfix post of 2026-11-10 raises the hawk's melee damage "by about 80%". No server row
-// carries it (it is creature data or a server script; wago hotfixes through push 113944 show none), so
-// the sim takes the announced 80% on top of the log fit above (standards 37, notes-only). Logs after
-// 2026-11-10 should show a swing of about 1.8 times the line above at the same ranged attack power.
-const hawkMeleeDamageHotfix20261110 = 1.8
+var hawkSwingAverage = 0.153 * creatureAutoAttackDps60 * 2.5 / hawkLogDamageMultiplier
 
-var hawkSwingAverage = 0.0815 * creatureAutoAttackDps60 * 2.5 / hawkLogUnleashedFury
+// The hawk takes 80% of its owner's attack power as the log shows it: the ranged attack power plus 14
+// a point of the main hand's dps, or 7 with no main-hand weapon; the ranged weapon and the off hand
+// add nothing (EV-0073: 17 main-hand swaps read 1.01 of 14 x the dps change, 12 ranged swaps 0.21
+// and 9 off-hand swaps -0.02; a hawk's own attack power moved by 0.97 of 0.8 x 14 x it over 19 more).
+// The tamed pet takes none of this weapon part (EV-0134).
+const (
+	hawkOwnerAPPerMainHandDPS = 14.0
+	hawkOwnerUnarmedWeaponAP  = 7.0
+)
+
+func (hunter *Hunter) hawkWeaponAP() float64 {
+	if hunter.GetMHWeapon() == nil {
+		return hawkOwnerUnarmedWeaponAP
+	}
+	mainHand := hunter.WeaponFromMainHand()
+	return hawkOwnerAPPerMainHandDPS * mainHand.DPS()
+}
 
 // A hawk swings on arrival and every 2.5 sec after at its owner's ranged speed, the quiver, Quick
 // Shots and Rapid Fire included, following each change while it is up; attack speed (Berserking)
@@ -50,9 +65,9 @@ var hawkSwingAverage = 0.0815 * creatureAutoAttackDps60 * 2.5 / hawkLogUnleashed
 // (81651da664). 30% of the hunter's armor, as the tamed pet; its health (5% of the creature's) is
 // left out, as nothing hits it. The hunter's ranged attack power, crit and hit reach it live; Hunter's
 // Mark, a bonus to ranged attackers of the target, does not, as the hawk attacks in melee.
-func hawkStatInheritance(ownerStats stats.Stats) stats.Stats {
+func (hunter *Hunter) hawkStatInheritance(ownerStats stats.Stats) stats.Stats {
 	return stats.Stats{
-		stats.AttackPower: 0.8 * ownerStats[stats.RangedAttackPower],
+		stats.AttackPower: 0.8 * (ownerStats[stats.RangedAttackPower] + hunter.hawkWeaponAP()),
 		stats.MeleeCrit:   0.5 * ownerStats[stats.MeleeCrit],
 		stats.MeleeHit:    ownerStats[stats.MeleeHit],
 		stats.Expertise:   ownerStats[stats.Expertise],
@@ -94,28 +109,27 @@ func (hunter *Hunter) newHawks() []*HawkPet {
 	hawks := make([]*HawkPet, 2)
 	for i := range hawks {
 		hawk := &HawkPet{
-			Pet: core.NewPet("Hawk "+strconv.Itoa(i+1), &hunter.Character, stats.Stats{}, hawkStatInheritance, false, true),
+			Pet: core.NewPet("Hawk "+strconv.Itoa(i+1), &hunter.Character, stats.Stats{}, hunter.hawkStatInheritance, false, true),
 		}
 		hawk.FollowsOwnerRangedSpeed = true
 		hawk.EnableAutoAttacks(hawk, core.AutoAttackOptions{
 			MainHand: core.Weapon{
-				BaseDamageMin:     hawkSwingAverage * (1 - 1.0/3),
-				BaseDamageMax:     hawkSwingAverage * (1 + 1.0/3),
+				BaseDamageMin:     hawkSwingAverage * (1 - 0.22),
+				BaseDamageMax:     hawkSwingAverage * (1 + 0.22),
 				SwingSpeed:        2.5,
-				AttackPowerPerDPS: 112 * hawkLogUnleashedFury,
+				AttackPowerPerDPS: 60 * hawkLogDamageMultiplier,
 			},
 			AutoSwingMelee: true,
 		})
 
 		hawk.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(hunter.Talents.UnleashedFury)
-		hawk.PseudoStats.DamageDealtMultiplier *= hawkMeleeDamageHotfix20261110
 		hawk.AddStat(stats.MeleeCrit, 2*float64(hunter.Talents.Ferocity)*core.CritRatingPerCritChance)
 
 		inherited := 1.0
 		hawk.OnPetEnable = func(sim *core.Simulation) {
 			inherited = hunter.PseudoStats.DamageDealtMultiplier
 			hawk.PseudoStats.DamageDealtMultiplier *= inherited
-			hawk.EnableDynamicStats(hawkStatInheritance)
+			hawk.EnableDynamicStats(hunter.hawkStatInheritance)
 			hawk.AutoAttacks.ResetMeleeSwingAt()
 		}
 		hawk.OnPetDisable = func(sim *core.Simulation) {
@@ -196,21 +210,32 @@ func (hunter *Hunter) registerSummonHawkSpell(timer *core.Timer) {
 		DamageMultiplier: unleashedFury,
 		ThreatMultiplier: 1,
 
+		// EV-0127: the dive flies the row's minimum of 1 sec at any distance in range (160 summons in
+		// five advanced logs: 0.912 to 1.129 sec, 0.999 sec plus nothing a yard). Its damage lands
+		// then, and the hawk appears with it and swings at once, on a fresh swing timer also when it
+		// replaces another.
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			damage := baseDamage + 0.05*spell.RangedAttackPower(target, false)
-			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeRangedCritOnly)
+			result := spell.CalcDamage(sim, target, damage, spell.OutcomeRangedCritOnly)
 
-			// A free slot, or else the hawk with the least time left.
-			slot := 0
-			for i, l := range lifetimes[1:] {
-				cur, dot := lifetimes[slot].AOEDot(), l.AOEDot()
-				if cur.IsActive() && (!dot.IsActive() || dot.RemainingDuration(sim) < cur.RemainingDuration(sim)) {
-					slot = i + 1
-				}
-			}
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt: sim.CurrentTime + summonHawkDiveTime,
+				OnAction: func(sim *core.Simulation) {
+					spell.DealDamage(sim, result)
 
-			hunter.hawks[slot].CurrentTarget = target
-			lifetimes[slot].AOEDot().Apply(sim)
+					// A free slot, or else the hawk with the least time left.
+					slot := 0
+					for i, l := range lifetimes[1:] {
+						cur, dot := lifetimes[slot].AOEDot(), l.AOEDot()
+						if cur.IsActive() && (!dot.IsActive() || dot.RemainingDuration(sim) < cur.RemainingDuration(sim)) {
+							slot = i + 1
+						}
+					}
+
+					hunter.hawks[slot].CurrentTarget = target
+					lifetimes[slot].AOEDot().Apply(sim)
+				},
+			})
 		},
 	})
 }

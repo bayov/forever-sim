@@ -145,7 +145,7 @@ func TestForeverFeralheartRaiment(t *testing.T) {
 	checkStatBonus(t, set, 2, resist8)
 	checkStatBonus(t, set, 3, mp5)
 	checkStatBonus(t, set, 6, ap40.Add(sp23))
-	checkProc(t, set, "Feralheart Raiment - 4pc")
+	checkProc(t, set, "Feralheart Raiment - 4pc (Mana)")
 }
 
 func TestForeverBeastmasterArmor(t *testing.T) {
