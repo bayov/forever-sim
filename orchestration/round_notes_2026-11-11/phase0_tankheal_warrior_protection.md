@@ -104,8 +104,8 @@ New tags this round:
 ## Set trap
 
 Two max threat searches started from full Battlegear of Heroism: 6 pieces with Heroism waist, and 4 pieces.
-- The 6-piece start ended at 4695.7 with Heroism boots, bracers and waist.
-- The 4-piece start ended near 4682.
+- The 6-piece start ended at 4695.7 with Heroism boots and bracers and Valiant's Waistguard.
+- The 4-piece start ended at 4682.7.
 - The main list scores 4733.2 with 1 Heroism piece and keeps its picks.
 
 Balanced and max survival already pick 6 or more Heroism pieces.
