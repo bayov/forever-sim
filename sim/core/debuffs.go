@@ -862,15 +862,27 @@ func spellSchoolResistanceEffect(aura *Aura, school stats.SchoolIndex, amount fl
 	})
 }
 
+// GiftOfArthasAura: 8 more Physical damage taken. EV-0154: under Forever it lands before the
+// target's armor, 8 times the share that gets through (a crit leaves 10.71 over twice the swing at a
+// mean share of 0.655, against 10.48 for 8 doubled before armor).
 func GiftOfArthasAura(target *Unit) *Aura {
+	forever := target.Env != nil && target.Env.IsForever()
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Gift of Arthas",
 		ActionID: ActionID{SpellID: 11374},
 		Duration: time.Minute * 3,
 		OnGain: func(aura *Aura, sim *Simulation) {
+			if forever {
+				aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor += 8
+				return
+			}
 			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexPhysical] += 8
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
+			if forever {
+				aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor -= 8
+				return
+			}
 			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexPhysical] -= 8
 		},
 	})

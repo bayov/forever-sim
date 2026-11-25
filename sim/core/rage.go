@@ -187,18 +187,25 @@ const ForeverSpellDamageTakenRageMultiplier = 2.0
 // warr_dt_rage_k).
 const ForeverDamageTakenRageFactor = 2.5
 
-// The armor ForeverDamageTakenRage assumes, by the attacker's level: 20% up to 42, 30% at 44, 36%
-// at 46 and 38% at 50 from the logs (wowsims/forever 73b317c7cf: k 1.993 on 187 melee hits from
-// attackers 16 to 42, 1.752 at 44, 1.611 at 46, 1.552 from 50 to 60), and 40% at 63, the top of
-// the notes' "20% to 40% range, varying by level" (de550b7df9). Levels in between interpolate.
+// The armor ForeverDamageTakenRage assumes, by the attacker's level, as wowsims/forever measured it
+// on warriors' and bears' logs of melee hits from Rage-using mobs: 21.8% up to 38 and 23.9% at 42
+// (EV-0048: k 1.956 on the pooled hits up to 38, 1.903 at 42), 31% at 44 and 36% at 46 (EV-0048),
+// .377 at 47 (EV-0034: .377, .381 and .379 at 47 to 49 on about 300 pairs each), 38% at 50 and .381
+// at 55 (EV-0035: .369 to .382 at 50 to 55), 38% at 59 (EV-0050: k 1.544 to 1.559 at 55 to 59) and
+// 40% at 63, the top of the notes' "20% to 40% range, varying by level" (de550b7df9; no log covers
+// 60 to 63). Levels in between interpolate.
 var foreverDamageTakenRageArmorRows = []struct {
 	level     int32
 	reduction float64
 }{
-	{42, 0.20},
-	{44, 0.30},
+	{38, 0.218},
+	{42, 0.239},
+	{44, 0.31},
 	{46, 0.36},
+	{47, 0.377},
 	{50, 0.38},
+	{55, 0.381},
+	{59, 0.38},
 	{63, 0.40},
 }
 
@@ -483,7 +490,7 @@ func (rb *rageBar) addRage(sim *Simulation, amount float64, metrics *ResourceMet
 	metrics.AddEvent(amount, newRage-rb.currentRage)
 
 	if gain := newRage - rb.currentRage; gain > 0 && threat && sim.IsForever() {
-		rb.foreverRageGainThreat(sim, gain)
+		rb.foreverRageGainThreat(sim, gain, metrics)
 	}
 
 	if sim.Log != nil {
@@ -533,12 +540,23 @@ func (rb *rageBar) reset(_ *Simulation) {
 // combat at the time. wowsims/forever 913a5bcf69 and c48ea6cea3 have it from the owner's in-game
 // threat measurements; Classic gives 5 a Rage to every target, with no multiplier, at the end of the
 // iteration (doneIteration).
-func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64) {
+//
+// EV-0044: Rage gained before the pull makes no threat. EV-0043, EV-0044, EV-0045, EV-0174 and
+// EV-0035: a source marked UnscaledThreat (Bloodrage's instant Rage, Shield Specialization, Master
+// of Defense, Unbridled Wrath, Blood Frenzy) makes 5 a Rage without the multiplier; Bloodrage's
+// ticks read 5 x stance x Defiance (10.8 a Rage in Defensive Stance with Defiance 3).
+func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64, metrics *ResourceMetrics) {
+	if sim.CurrentTime < 0 {
+		return
+	}
 	targets := sim.Encounter.ActiveTargetUnits
 	if len(targets) == 0 {
 		return
 	}
-	threat := gain * ThreatPerRageGained * rb.unit.PseudoStats.ThreatMultiplier / float64(len(targets))
+	threat := gain * ThreatPerRageGained / float64(len(targets))
+	if !metrics.UnscaledThreat {
+		threat *= rb.unit.PseudoStats.ThreatMultiplier
+	}
 	for _, target := range targets {
 		rb.rageGainSpell.SpellMetrics()[target.UnitIndex].TotalThreat += threat
 		rb.unit.watchThreat(sim, target, threat)
