@@ -16,7 +16,7 @@ for f in sorted(glob.glob(B+'*.txt')):
     rows.append(dict(request=req,boss=boss,weight=w+('' if k else '*'),score=sc,score_err=err,safe_dps=sd,tps=num(c[7])[0],dtps=num(c[9])[0],healing_needed=hn,death_floor=df,tmi=num(c[10])[0],death_pct=num(c[11])[0],biggest_hit=num(c[14])[0],dps=num(c[8])[0]))
 cols=['request','boss','weight','score','score_err','safe_dps','tps','dtps','healing_needed','death_floor','tmi','death_pct','biggest_hit','dps']
 def fmt(v): return '' if v is None else (f'{v:.1f}' if isinstance(v,float) else str(v))
-out=['# master f62bfc74, 1000 iterations, default seed, date 2026-11-04. tankbench -iters 1000 -encounter tools/encounters/<boss>.json tools/tankbench/req/<request>.json','# weight = the request name\'s preset (Max threat 1/3, Balanced 1, Max survival 3); score = tankbench\'s column at that weight, raid DPS; * = legacy request, Balanced assumed. scoring_mean = mean of the 6 bosses without ragnaros; "none" = no healing saves it.','\t'.join(cols)]
+out=['# phase0-tankheal 95962a7d3, 1000 iterations, default seed, date 2026-11-25. tankbench -iters 1000 -encounter tools/encounters/<boss>.json tools/tankbench/req/<request>.json','# weight = the request name\'s preset (Max threat 1/3, Balanced 1, Max survival 3); score = tankbench\'s column at that weight, raid DPS; * = legacy request, Balanced assumed. scoring_mean = mean of the 6 bosses without ragnaros; "none" = no healing saves it.','\t'.join(cols)]
 order=['broodlord','chromaggus','golemagg','magmadar','onyxia','vaelastrasz','ragnaros']
 for req in sorted({r['request'] for r in rows}):
     rr=sorted([r for r in rows if r['request']==req],key=lambda r:order.index(r['boss']) if r['boss'] in order else 9)

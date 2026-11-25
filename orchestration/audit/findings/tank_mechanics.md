@@ -49,6 +49,16 @@
 
 ## Resolved
 
+### tank_mechanics-20261125-1: Lacerate's hit counted the stacks before the cast, so the first Lacerate hit for nothing
+- severity: medium (bear presets +170 to +185 score at their weights, +45 to +51 TPS; 1000 iterations, six scoring bosses, default seed)
+- affects: Feral tank (bear), all three presets; the bear report rows and round notes scores
+- found: 2026-11-25, phase0-tankheal 1624c3d56
+- evidence: sim/druid/bear_attacks.go Lacerate hit was 0.1 x existing stacks x weapon (the tooltip's "per existing application"). wowsims/forever EV-0040 (in-game test, rank 1, 15 landed hits; tier: their in-game measurement) reads 1:2:3:4:5 with the stacks after the cast, 7.80 and 8.57 a stack against 7.84 and 8.61 predicted. Our evidence_coverage.md had it as "match (shallow)".
+- proposed fix: 0.1 x min(existing + 1, 5) x weapon (theirs).
+- needs: worker fix
+- fixed: 2026-11-25, 95962a7d3 (TestLacerate expects the stacks after the cast)
+- resolved: 2026-11-25, 95962a7d3
+
 ### tank_mechanics-20261124-1: Troll Regeneration's in-combat health regen is missing; Troll tanks lose about 11 HPS of healing needed
 - severity: high (moves the Troll warrior's place in the race table: Max survival +75, Balanced +25, measured)
 - affects: every Troll tank (Protection warrior, Warden shaman); the warrior race tables in docs/tank_warrior.md and the report

@@ -616,3 +616,5 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 13:10 | tank_rotations | pass 30 | master 0404484fb | quiet | Rage thresholds re-tested, all hold; Warden down from the elixir overwrite.
 2026-11-25 13:10 | tank_gear | pass 17 | master 0404484fb | quiet | Only standards.md changed; tank gear untouched.
 2026-11-25 13:10 | tank_fairness | pass 32 | master 0404484fb | quiet | Ranking unchanged at every weight; bear Max survival 347 to 455.
+2026-11-25 17:38 | tank_mechanics | pass 34 | phase0-tankheal 1624c3d56 | 1 new finding (fixed) | Bear threat batch matches wowsims/forever; Lacerate hit fixed 95962a7d3; Phase 0 survival gap is gear.
+2026-11-25 17:38 | tank_rotations | pass 31 | phase0-tankheal 1624c3d56 | 1 new finding | Baseline on Phase 0 requests; report Tanking mode stale; FF and Shield Slam-first both lose.
