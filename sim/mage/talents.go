@@ -918,7 +918,10 @@ func (mage *Mage) personalCritRating(spell *core.Spell, target *core.Unit) float
 
 // applyShatter gives every mage damage spell Shatter's crit while it rolls, as theirs does
 // (wowsims/forever talents_frost.go: the bonus is on each matching spell for its own effects).
-// Blizzard's ticks take it too: theirs are a spell of their own.
+// Blizzard's ticks take none from Fingers of Frost's charges (EV-0029: wowsims/forever's
+// foreverlogs.gg count, 18 of 267 ticks crit with charges up against 29 of 438 without, while the
+// same five mages' direct spells crit 38.8% and 7.5%): the ticks roll their crit live in
+// Blizzard's OnTick, outside these wrapped effects.
 func (mage *Mage) applyShatter() {
 	if mage.Talents.Shatter == 0 {
 		return

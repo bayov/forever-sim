@@ -44,12 +44,14 @@ func (mage *Mage) newArcaneWrathSpellConfig(rank int, cdTimer *core.Timer) core.
 	baseDamageHigh := ArcaneWrathScaling[rank].At(ArcaneWrathBaseDamage[rank][1], mage.Level)
 
 	return core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: ArcaneWrathSpellId[rank]},
-		SpellCode:    SpellCode_MageArcaneWrath,
-		SpellSchool:  core.SpellSchoolArcane,
-		DefenseType:  core.DefenseTypeMagic,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | core.SpellFlagAPL,
+		ActionID:    core.ActionID{SpellID: ArcaneWrathSpellId[rank]},
+		SpellCode:   SpellCode_MageArcaneWrath,
+		SpellSchool: core.SpellSchoolArcane,
+		DefenseType: core.DefenseTypeMagic,
+		ProcMask:    core.ProcMaskSpellDamage,
+		// EV-0142: binary on the live realms (its row carries an E_DUMMY), 0 of 511 landed with a
+		// partial resist against 486.1 expected.
+		Flags:        SpellFlagMage | core.SpellFlagAPL | core.BinaryUnderForever(mage.Env),
 		MissileSpeed: 24,
 
 		RequiredLevel: ArcaneWrathLevel[rank],

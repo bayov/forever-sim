@@ -2615,7 +2615,9 @@ func init() {
 			SpellSchool: core.SpellSchoolNature,
 			DefenseType: core.DefenseTypeMagic,
 			ProcMask:    core.ProcMaskEmpty,
-			Flags:       core.SpellFlagPoison | core.SpellFlagPureDot,
+			// Its ticks meet the target's full resistance (EV-0142: 156 of 156 partly resisted, 0.99 of
+			// the share).
+			Flags: core.SpellFlagPoison | core.SpellFlagPureDot | core.SpellFlagFullResistanceTicks,
 			Dot: core.DotConfig{
 				Aura: core.Aura{
 					Label: "Seeping Willow Poison",

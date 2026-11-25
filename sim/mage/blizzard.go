@@ -99,10 +99,9 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
-					// Shatter's crit, as on the mage's other damage spells.
-					mage.withPersonalCrit(dot.Spell, aoeTarget, func() {
-						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
-					})
+					// No Shatter crit from Fingers of Frost's charges (EV-0029: five mages whose direct
+					// spells crit 38.8% with charges up and 7.5% without; their ticks 6.7% and 6.6%).
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
 
 					if improvedBlizzardProcApplication != nil {
 						improvedBlizzardProcApplication.Cast(sim, aoeTarget)

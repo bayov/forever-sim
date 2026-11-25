@@ -43,7 +43,9 @@ func (warlock *Warlock) getBaneOfAgonyBaseConfig(rank int) core.SpellConfig {
 		ActionID:      core.ActionID{SpellID: data.SpellID},
 		SpellSchool:   core.SpellSchoolShadow,
 		DefenseType:   core.DefenseTypeMagic,
-		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagPureDot | WarlockFlagAffliction,
+		// EV-0142: binary on the live realms (its row's aura beside the damage), 0 of 439 ticks partly
+		// resisted against 149 expected, and no Spell Piercing bonus on its ticks.
+		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagPureDot | WarlockFlagAffliction | core.BinaryUnderForever(warlock.Env),
 		ProcMask:      core.ProcMaskSpellDamage,
 		RequiredLevel: data.Level,
 		Rank:          rank,
