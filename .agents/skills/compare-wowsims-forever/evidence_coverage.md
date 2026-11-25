@@ -269,3 +269,28 @@ R-0045 | match | - | pending evidence | sim/core/consumes.go:386-440: Shadow/Fro
 | R-0052 | missing | core(items) | in-game sheet (EV-0176) | same as EV-0176 | tanks only |
 | R-0053 | n/a | - | replaced by R-0054 | | - |
 | R-0054 | match | core(consumables) | owner in-game check | same as EV-0185 (partial, gaps listed there) | <0.5% |
+
+## Fixed and still open (2026-11-25)
+
+The gaps above were fixed in five batches; the rows above are the verdicts from before the fixes.
+
+- Tank (bf863e2d2): EV-0004, 0032, 0034, 0035, 0037 (threat), 0043, 0044, 0045, 0048, 0050, 0109,
+  0154 (Force of Will, half-swing cap, Gift of Arthas before armor), 0174.
+- Hunter (62cff9526): EV-0068, 0073, 0127, 0134, 0187.
+- Items (db86a18dc): EV-0003, 0021, 0022 (items), 0025, 0108, 0119 (items), 0120, 0121, 0125,
+  0126 (rates), 0132, 0133, 0136 (rates and 49 generated weapons), 0141, 0144, 0146, 0151, 0152,
+  0153 (rates), 0164, R-0001, 0167, 0168, 0175, 0177, 0178, 0179, 0183, 0184, 0186.
+- Procs (aed8856d1): EV-0007, R-0042, 0018, 0022 (Redoubt), 0028, 0065, 0066, 0116, 0117,
+  0119 (Judgement of Command), 0145, R-0040, 0149, 0155, 0156, 0161, 0165, R-0048, R-0051.
+- Casters (becbcd30d): EV-0010, 0029, 0091, 0092, 0137, 0138 (shaman), 0142, 0180.
+
+Their log against the user's ruling, waiting on the user: EV-0088 (throws keep the swing timer),
+EV-0081 (demon crit), EV-0008 (Windfury Totem on extra attacks), EV-0004 (Shield Slam block value
+2x, adopted, against the 10-23 approval), R-0010/R-0041 (Shield Slam main-hand mask) and EV-0182
+(Sweeping Strikes copy damage bonuses), both 10-23 user-approved, fixes saved unapplied. Ours kept on
+the user's log: EV-0011 (Searing Totem 2.5 s), Earth Shock partials (EV-0142), Frightskull Shaft
+(EV-0183), Fire Nova Revelation (EV-0149), 2H Weapon Spec Holy (EV-0022, EV-0064).
+
+Not done: sets EV-0160, 0166, 0169, 0170, 0173; about 40 complex weapons from EV-0136/0153; EV-0115,
+0124, 0131, 0150, 0157, 0163; EV-0176/R-0052 (needs a DB regeneration); EV-0047; EV-0033; Siphon Life
+partials (EV-0142); variance spread EV-0106/R-0034 (a choice, the mean doesn't change).

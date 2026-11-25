@@ -22,9 +22,11 @@ func shadowSpell(attacker *Unit, flags SpellFlag) *Spell {
 	return &Spell{Unit: attacker, SpellSchool: SpellSchoolShadow, SchoolIndex: stats.SchoolIndexShadow, Flags: flags}
 }
 
-// TestForeverAverageResist: R / (|R| + 9L) for the caster's level, a tenth of it on a DoT's tick
-// but not on a channel's or Insect Swarm's, and nothing for the target's level.
+// TestForeverAverageResist: R / (|R| + 8L + 19) for the caster's level (EV-0091), a tenth of it on
+// any tick, a channel's included, but not on a spell flagged SpellFlagFullResistanceTicks (EV-0142),
+// and nothing for the target's level.
 func TestForeverAverageResist(t *testing.T) {
+	const k = 8*60 + 19
 	for _, c := range []struct {
 		name       string
 		resistance float64
@@ -34,12 +36,13 @@ func TestForeverAverageResist(t *testing.T) {
 	}{
 		{"no resistance", 0, false, 0, 0},
 		{"no resistance, tick", 0, true, 0, 0},
-		{"100 resistance", 100, false, 0, 100.0 / 640},
-		{"100 resistance, binary", 100, false, SpellFlagBinary, 100.0 / 640},
-		{"100 resistance, tick", 100, true, 0, 100.0 / 640 / 10},
-		{"100 resistance, pure DoT tick", 100, true, SpellFlagPureDot, 100.0 / 640 / 10},
-		{"100 resistance, channel tick", 100, true, SpellFlagChanneled, 100.0 / 640},
-		{"100 resistance, full resistance tick", 100, true, SpellFlagFullResistanceTicks, 100.0 / 640},
+		{"100 resistance", 100, false, 0, 100.0 / (100 + k)},
+		{"100 resistance, binary", 100, false, SpellFlagBinary, 100.0 / (100 + k)},
+		{"100 resistance, tick", 100, true, 0, 100.0 / (100 + k) / 10},
+		{"100 resistance, pure DoT tick", 100, true, SpellFlagPureDot, 100.0 / (100 + k) / 10},
+		{"100 resistance, channel tick", 100, true, SpellFlagChanneled, 100.0 / (100 + k) / 10},
+		{"100 resistance, full resistance tick", 100, true, SpellFlagFullResistanceTicks, 100.0 / (100 + k)},
+		{"100 resistance, full resistance channel tick", 100, true, SpellFlagChanneled | SpellFlagFullResistanceTicks, 100.0 / (100 + k)},
 	} {
 		attacker, defender := foreverResistUnits(c.resistance)
 		if got := defender.foreverAverageResist(shadowSpell(attacker, c.flags), attacker, c.tick); math.Abs(got-c.want) > 1e-12 {
@@ -48,7 +51,7 @@ func TestForeverAverageResist(t *testing.T) {
 	}
 
 	attacker, defender := foreverResistUnits(100)
-	if got, want := defender.binaryHitChance(shadowSpell(attacker, SpellFlagBinary), attacker), 1-100.0/640; math.Abs(got-want) > 1e-12 {
+	if got, want := defender.binaryHitChance(shadowSpell(attacker, SpellFlagBinary), attacker), 1-100.0/(100+k); math.Abs(got-want) > 1e-12 {
 		t.Errorf("binary hit chance against 100 resistance = %v, want %v", got, want)
 	}
 
@@ -57,17 +60,22 @@ func TestForeverAverageResist(t *testing.T) {
 	if got := defender.foreverAverageResist(holy, attacker, false); got != 0 {
 		t.Errorf("a Holy spell with 50 Spell Penetration: average resist %v, want 0", got)
 	}
+	// Searing and Magma Totem's attacks take none of the caster's Spell Piercing (EV-0142).
+	if got, want := defender.foreverAverageResist(shadowSpell(attacker, SpellFlagNoSpellPiercing), attacker, false), 100.0/(100+k); math.Abs(got-want) > 1e-12 {
+		t.Errorf("a spell flagged SpellFlagNoSpellPiercing with 50 Spell Penetration: average resist %v, want %v", got, want)
+	}
 }
 
 // TestForeverSpellPenetrationAddsDamage: Spell Penetration beyond the target's resistance makes the
 // average negative, and the roll adds 10% or 20% damage, never a resisted outcome. A target
-// resistance below 0 counts as 0.
+// resistance below 0 counts as 0. A share under 1% gives nothing, and neither does a tick at a
+// tenth, while a tick at the full share takes it whole (EV-0142).
 func TestForeverSpellPenetrationAddsDamage(t *testing.T) {
 	attacker, defender := foreverResistUnits(0)
 	attacker.stats[stats.SpellPenetration] = 15
 	spell := shadowSpell(attacker, 0)
 
-	a := 15.0 / (15 + 540)
+	a := 15.0 / (15 + 8*60 + 19)
 	if got := defender.foreverAverageResist(spell, attacker, false); math.Abs(got+a) > 1e-12 {
 		t.Errorf("15 Spell Penetration against no resistance: average resist %v, want %v", got, -a)
 	}
@@ -75,25 +83,44 @@ func TestForeverSpellPenetrationAddsDamage(t *testing.T) {
 	if got := debuffed.foreverAverageResist(spell, attacker, false); math.Abs(got+a) > 1e-12 {
 		t.Errorf("15 Spell Penetration against -75 resistance: average resist %v, want %v", got, -a)
 	}
+	if got := defender.foreverAverageResist(spell, attacker, true); got != 0 {
+		t.Errorf("15 Spell Penetration on a tick: average resist %v, want 0", got)
+	}
+	if got := defender.foreverAverageResist(shadowSpell(attacker, SpellFlagFullResistanceTicks), attacker, true); math.Abs(got+a) > 1e-12 {
+		t.Errorf("15 Spell Penetration on a full share tick: average resist %v, want %v", got, -a)
+	}
+	// 5 piercing at level 60 is a share of 0.99%, under the cut; 6 is 1.19%.
+	attacker.stats[stats.SpellPenetration] = 5
+	if got := defender.foreverAverageResist(spell, attacker, false); got != 0 {
+		t.Errorf("5 Spell Penetration at level 60: average resist %v, want 0", got)
+	}
+	attacker.stats[stats.SpellPenetration] = 6
+	if got, want := defender.foreverAverageResist(spell, attacker, false), -6.0/(6+8*60+19); math.Abs(got-want) > 1e-12 {
+		t.Errorf("6 Spell Penetration at level 60: average resist %v, want %v", got, want)
+	}
+	attacker.stats[stats.SpellPenetration] = 15
 
-	sim := &Simulation{rand: NewSplitMix(1)}
 	attackTable := NewAttackTable(attacker, defender, nil)
 	const n = 100_000
-	counts := map[float64]int{}
-	for range n {
-		multiplier, outcome := spell.ResistanceMultiplier(sim, false, attackTable)
-		if outcome != OutcomeEmpty {
-			t.Fatalf("a Spell Penetration bonus came with outcome %v", outcome)
+	for _, flags := range []SpellFlag{0, SpellFlagBinary} {
+		spell := shadowSpell(attacker, flags)
+		sim := &Simulation{rand: NewSplitMix(1)}
+		counts := map[float64]int{}
+		for range n {
+			multiplier, outcome := spell.ResistanceMultiplier(sim, false, attackTable)
+			if outcome != OutcomeEmpty {
+				t.Fatalf("a Spell Penetration bonus came with outcome %v", outcome)
+			}
+			counts[math.Round(multiplier*10)/10]++
 		}
-		counts[math.Round(multiplier*10)/10]++
-	}
-	for multiplier, want := range map[float64]float64{1: 1 - 7.5*a, 1.1: 5 * a, 1.2: 2.5 * a} {
-		if got := float64(counts[multiplier]) / n; math.Abs(got-want) > 0.005 {
-			t.Errorf("share of hits at x%v = %.4f, want %.4f", multiplier, got, want)
+		for multiplier, want := range map[float64]float64{1: 1 - 7.5*a, 1.1: 5 * a, 1.2: 2.5 * a} {
+			if got := float64(counts[multiplier]) / n; math.Abs(got-want) > 0.005 {
+				t.Errorf("flags %b: share of hits at x%v = %.4f, want %.4f", flags, multiplier, got, want)
+			}
 		}
-	}
-	if len(counts) != 3 {
-		t.Errorf("multipliers rolled: %v, want only 1, 1.1 and 1.2", counts)
+		if len(counts) != 3 {
+			t.Errorf("flags %b: multipliers rolled: %v, want only 1, 1.1 and 1.2", flags, counts)
+		}
 	}
 }
 
@@ -113,8 +140,9 @@ func TestForeverResistRollSteps(t *testing.T) {
 		const n = 100_000
 		counts := map[int]int{}
 		total := 0
+		chances := resistTenthsChances(c.a)
 		for range n {
-			tenths := rollResistTenths(sim, c.a)
+			tenths := rollResistTenths(sim, chances)
 			counts[tenths]++
 			total += tenths
 		}
@@ -134,8 +162,41 @@ func TestForeverResistRollSteps(t *testing.T) {
 	}
 }
 
-// TestForeverBinaryPartialResists: against 150 resistance a binary spell that lands rolls partial
-// resists on its hits and ticks as any other spell does, and one flagged SpellFlagNoPartialResist
+// TestForeverResistStopsAt75: no partial resist takes more than 75% of a hit; the roll's 80, 90 and
+// 100% steps take 75% and log as a 75% resist (EV-0142).
+func TestForeverResistStopsAt75(t *testing.T) {
+	attacker, defender := foreverResistUnits(4000) // a = 0.89
+	spell := shadowSpell(attacker, 0)
+	attackTable := NewAttackTable(attacker, defender, nil)
+	sim := &Simulation{rand: NewSplitMix(3)}
+	capped := 0
+	for range 10_000 {
+		multiplier, outcome := spell.ResistanceMultiplier(sim, false, attackTable)
+		if multiplier < 0.25-1e-12 {
+			t.Fatalf("a hit kept %v of its damage, under 25%%", multiplier)
+		}
+		if multiplier == 0.25 {
+			capped++
+			if outcome != OutcomePartial3_4 || (OutcomeHit|outcome).String() != "Hit (75% Resist)" {
+				t.Fatalf("a 75%% resist has outcome %v", outcome)
+			}
+		}
+	}
+	if capped == 0 {
+		t.Errorf("no hit at a share of 0.89 lost 75%%")
+	}
+
+	spell.expecting = true
+	a := defender.foreverAverageResist(spell, attacker, false)
+	chances := resistTenthsChances(a)
+	want := 1 - (0.6*chances[6] + 0.7*chances[7] + 0.75*(chances[8]+chances[9]+chances[10]))
+	if got, _ := spell.ResistanceMultiplier(sim, false, attackTable); math.Abs(got-want) > 1e-12 {
+		t.Errorf("expected multiplier at a share of %.3f = %v, want %v", a, got, want)
+	}
+}
+
+// TestForeverBinaryPartialResists: against 150 resistance a binary spell that lands takes no partial
+// resist on its hits or ticks (EV-0142), a plain spell does, and one flagged SpellFlagNoPartialResist
 // never does. Classic keeps a binary spell's hits whole.
 func TestForeverBinaryPartialResists(t *testing.T) {
 	partials := func(attacker, defender *Unit, flags SpellFlag, isPeriodic bool) int {
@@ -155,14 +216,17 @@ func TestForeverBinaryPartialResists(t *testing.T) {
 	if n := partials(attacker, defender, 0, false); n == 0 {
 		t.Errorf("a plain shadow spell was never partially resisted in 1000 hits")
 	}
-	if n := partials(attacker, defender, SpellFlagBinary, false); n == 0 {
-		t.Errorf("a binary spell's hit was never partially resisted in 1000")
+	if n := partials(attacker, defender, 0, true); n == 0 {
+		t.Errorf("a plain shadow spell's tick was never partially resisted in 1000")
 	}
-	if n := partials(attacker, defender, SpellFlagBinary, true); n == 0 {
-		t.Errorf("a binary spell's tick was never partially resisted in 1000")
+	if n := partials(attacker, defender, SpellFlagBinary, false); n != 0 {
+		t.Errorf("a binary spell's hit was partially resisted %d times in 1000", n)
 	}
-	if n := partials(attacker, defender, SpellFlagBinary|SpellFlagNoPartialResist, false); n != 0 {
-		t.Errorf("a binary spell flagged SpellFlagNoPartialResist was partially resisted %d times in 1000", n)
+	if n := partials(attacker, defender, SpellFlagBinary, true); n != 0 {
+		t.Errorf("a binary spell's tick was partially resisted %d times in 1000", n)
+	}
+	if n := partials(attacker, defender, SpellFlagNoPartialResist, false); n != 0 {
+		t.Errorf("a spell flagged SpellFlagNoPartialResist was partially resisted %d times in 1000", n)
 	}
 
 	classicAttacker := &Unit{Type: PlayerUnit, Level: 60}
@@ -192,40 +256,47 @@ func TestForeverPartialResistOutcome(t *testing.T) {
 	}
 }
 
-// TestForeverFullResistIsAMiss: a hit the target resists in full is a miss. It lands nothing and
-// counts one miss, and expected damage takes the average resist instead of rolling it.
-func TestForeverFullResistIsAMiss(t *testing.T) {
+// TestForeverNoFullResistOnPlainSpells: a spell that is not binary never resists whole: against
+// any resistance a hit lands and loses at most 75% (EV-0142: Arcane Explosion RESIST 0 of 16,264). A
+// binary spell's hit roll resists it whole at the average share, which is a miss that lands nothing.
+// Expected damage takes the average resist instead of rolling it.
+func TestForeverNoFullResistOnPlainSpells(t *testing.T) {
 	sim, character := setupProcSim(t, proto.Ruleset_RulesetForever, nil)
 	target := sim.GetTargetUnit(0)
-	spell := character.RegisterSpell(SpellConfig{
-		ActionID:         ActionID{SpellID: 999_002},
-		SpellSchool:      SpellSchoolShadow,
-		DefenseType:      DefenseTypeMagic,
-		ProcMask:         ProcMaskSpellDamage,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		ExpectedInitialDamage: func(sim *Simulation, target *Unit, spell *Spell, _ bool) *SpellResult {
-			return spell.CalcDamage(sim, target, 100, spell.OutcomeExpectedMagicAlwaysHit)
-		},
-	})
+	newSpell := func(id int32, flags SpellFlag) *Spell {
+		return character.RegisterSpell(SpellConfig{
+			ActionID:         ActionID{SpellID: id},
+			SpellSchool:      SpellSchoolShadow,
+			DefenseType:      DefenseTypeMagic,
+			ProcMask:         ProcMaskSpellDamage,
+			Flags:            flags,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+			ExpectedInitialDamage: func(sim *Simulation, target *Unit, spell *Spell, _ bool) *SpellResult {
+				return spell.CalcDamage(sim, target, 100, spell.OutcomeExpectedMagicAlwaysHit)
+			},
+		})
+	}
+	spell := newSpell(999_002, 0)
+	binary := newSpell(999_003, SpellFlagBinary)
 
 	target.stats[stats.ShadowResistance] = 1e12
 	for range 200 {
 		result := spell.CalcDamage(sim, target, 100, spell.OutcomeMagicHitAndCrit)
-		if result.Landed() || result.Outcome != OutcomeMiss || result.Damage != 0 {
-			t.Fatalf("a fully resisted hit landed %v with outcome %v and %v damage, want a miss with none",
-				result.Landed(), result.Outcome, result.Damage)
+		if result.Landed() && result.ResistanceMultiplier != 0.25 {
+			t.Fatalf("a hit against 1e12 resistance kept %v of its damage, want 0.25", result.ResistanceMultiplier)
+		}
+		if result := binary.CalcDamage(sim, target, 100, binary.OutcomeMagicHitAndCrit); result.Landed() || result.Damage != 0 {
+			t.Fatalf("a binary hit against 1e12 resistance landed with %v damage", result.Damage)
 		}
 	}
-	metrics := spell.SpellMetrics()[target.UnitIndex]
-	if metrics.Misses != 200 || metrics.Hits != 0 || metrics.Crits != 0 || metrics.ResistedHits != 0 {
-		t.Errorf("200 fully resisted hits counted %d misses, %d hits, %d crits and %d resisted hits, want 200 misses only",
-			metrics.Misses, metrics.Hits, metrics.Crits, metrics.ResistedHits)
+	if metrics := spell.SpellMetrics()[target.UnitIndex]; metrics.Hits+metrics.Crits < 190 {
+		t.Errorf("a plain spell landed %d of 200 hits against 1e12 resistance", metrics.Hits+metrics.Crits)
 	}
 
 	target.stats[stats.ShadowResistance] = 100
 	want := 100 * spell.AttackerDamageMultiplier(spell.Unit.AttackTables[target.UnitIndex][spell.CastType], false) *
-		(1 - 100.0/(100+9*float64(character.Level)))
+		(1 - 100.0/(100+8*float64(character.Level)+19))
 	if got := spell.ExpectedInitialDamage(sim, target); math.Abs(got-want) > 1e-6 {
 		t.Errorf("expected damage against 100 resistance = %v, want %v", got, want)
 	}

@@ -139,9 +139,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 996.23483
-  tps: 787.42081
-  hps: 2.5175
+  dps: 996.8745
+  tps: 787.92416
+  hps: 2.51733
  }
 }
 dps_results: {
@@ -171,9 +171,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 728.98833
-  tps: 585.19655
-  hps: 1.78033
+  dps: 729.0105
+  tps: 585.21323
+  hps: 1.75667
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1012.65067
-  tps: 748.38185
+  dps: 1009.502
+  tps: 745.95517
   hps: 2.15517
  }
 }
