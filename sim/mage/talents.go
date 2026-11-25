@@ -303,6 +303,12 @@ func (mage *Mage) applyArcaneConcentration() {
 			aura.Activate(sim)
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			// EV-0116: a Blizzard cast rolls the talent once, however many enemies it hits, and its
+			// ticks never do (in 769 casts and 5,258 tick batches of 35 mages' Forever logs).
+			if forever && spell.SpellCode == SpellCode_MageBlizzard {
+				roll(sim, procChance)
+				return
+			}
 			if !forever || spell.SpellCode != SpellCode_MageArcaneMissiles {
 				return
 			}
