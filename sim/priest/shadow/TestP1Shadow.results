@@ -101,7 +101,7 @@ dps_results: {
  value: {
   dps: 837.60017
   tps: 603.00293
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -109,7 +109,7 @@ dps_results: {
  value: {
   dps: 794.39283
   tps: 573.60838
-  dtps: 1.6455
+  dtps: 1.63617
  }
 }
 dps_results: {
@@ -117,7 +117,7 @@ dps_results: {
  value: {
   dps: 828.58767
   tps: 596.96892
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -125,7 +125,7 @@ dps_results: {
  value: {
   dps: 815.39767
   tps: 588.77809
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -133,7 +133,7 @@ dps_results: {
  value: {
   dps: 834.12217
   tps: 600.49563
-  dtps: 1.66017
+  dtps: 1.65083
  }
 }
 dps_results: {
@@ -141,7 +141,7 @@ dps_results: {
  value: {
   dps: 808.11317
   tps: 582.90966
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -149,23 +149,23 @@ dps_results: {
  value: {
   dps: 844.61267
   tps: 608.93586
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-GarmentsoftheOracle"
  value: {
-  dps: 897.242
-  tps: 644.90118
-  dtps: 1.77167
+  dps: 898.52117
+  tps: 645.80332
+  dtps: 1.75983
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 761.937
-  tps: 550.98715
-  dtps: 1.73667
+  dps: 763.9195
+  tps: 552.38012
+  dtps: 1.748
  }
 }
 dps_results: {
@@ -173,7 +173,7 @@ dps_results: {
  value: {
   dps: 794.39283
   tps: 573.60838
-  dtps: 1.6455
+  dtps: 1.63617
  }
 }
 dps_results: {
@@ -181,7 +181,7 @@ dps_results: {
  value: {
   dps: 815.39767
   tps: 588.77809
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -189,7 +189,7 @@ dps_results: {
  value: {
   dps: 932.4015
   tps: 669.564
-  dtps: 1.6095
+  dtps: 1.60017
  }
 }
 dps_results: {
@@ -197,7 +197,7 @@ dps_results: {
  value: {
   dps: 924.44283
   tps: 663.8383
-  dtps: 1.75317
+  dtps: 1.74383
  }
 }
 dps_results: {
@@ -205,7 +205,7 @@ dps_results: {
  value: {
   dps: 728.36817
   tps: 525.58646
-  dtps: 1.76617
+  dtps: 1.75683
  }
 }
 dps_results: {
@@ -213,7 +213,7 @@ dps_results: {
  value: {
   dps: 751.06867
   tps: 542.0722
-  dtps: 1.66417
+  dtps: 1.64683
  }
 }
 dps_results: {
@@ -221,7 +221,7 @@ dps_results: {
  value: {
   dps: 743.53317
   tps: 535.30501
-  dtps: 1.64683
+  dtps: 1.63767
  }
 }
 dps_results: {
@@ -229,7 +229,7 @@ dps_results: {
  value: {
   dps: 795.623
   tps: 573.20393
-  dtps: 1.733
+  dtps: 1.71767
  }
 }
 dps_results: {
@@ -237,7 +237,7 @@ dps_results: {
  value: {
   dps: 795.45267
   tps: 574.08809
-  dtps: 1.733
+  dtps: 1.71767
  }
 }
 dps_results: {
@@ -245,7 +245,7 @@ dps_results: {
  value: {
   dps: 808.11317
   tps: 582.90966
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -253,7 +253,7 @@ dps_results: {
  value: {
   dps: 844.61267
   tps: 608.93586
-  dtps: 1.6805
+  dtps: 1.67117
  }
 }
 dps_results: {
@@ -261,7 +261,7 @@ dps_results: {
  value: {
   dps: 947.06169
   tps: 680.32536
-  dtps: 2.33157
+  dtps: 2.31183
  }
 }
 dps_results: {
@@ -437,6 +437,6 @@ dps_results: {
  value: {
   dps: 933.8055
   tps: 670.54697
-  dtps: 1.6095
+  dtps: 1.60017
  }
 }

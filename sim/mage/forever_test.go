@@ -273,8 +273,8 @@ func TestMageFireVulnerability(t *testing.T) {
 	}
 }
 
-// Shatter's crit comes with Fingers of Frost, on every spell. Winter's Chill gives no crit since
-// 1.60.1.70425.
+// Shatter's crit comes with Fingers of Frost, on every spell's cast but not on Blizzard's ticks.
+// Winter's Chill gives no crit since 1.60.1.70425.
 func TestMageShatter(t *testing.T) {
 	// Frost to Winter's Chill 2, with Shatter 3 and Fingers of Frost 2.
 	sim, mage := newMageSim(t, "--05350003010130122")
@@ -294,6 +294,22 @@ func TestMageShatter(t *testing.T) {
 	}
 	if got := mage.personalCritRating(blizzard, target); got != 50*rating {
 		t.Errorf("Blizzard gets %.1f crit rating with Fingers of Frost, want %.1f", got, 50*rating)
+	}
+
+	// EV-0029: Blizzard's ticks take no Shatter crit from the charges. With the spell's own crit
+	// taken to 0, Shatter's 50% would crit half of them.
+	blizzard.BonusCritRating -= 100 * blizzard.SpellCritChance(target) * rating
+	blizzard.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+	blizzard.ApplyEffects(sim, target, blizzard)
+	dot := blizzard.AOEDot()
+	const ticks = 400
+	for range ticks {
+		mage.FingersOfFrostAura.SetStacks(sim, 2)
+		dot.TickOnce(sim)
+	}
+	metrics := blizzard.SpellMetrics()[target.UnitIndex]
+	if crits := metrics.CritTicks + metrics.ResistedCritTicks; crits != 0 || metrics.Ticks+crits < ticks/2 {
+		t.Errorf("%d of %d Blizzard ticks crit at 0%% crit with Fingers of Frost up, want none (%d ticks landed)", crits, ticks, metrics.Ticks)
 	}
 }
 
@@ -700,8 +716,9 @@ func TestMageConeOfColdAndWintersChill(t *testing.T) {
 	if got, want := cone.Cost.GetCurrentCost(), 555*0.85; math.Abs(got-want) > 1e-6 {
 		t.Errorf("Cone of Cold costs %.1f with Frost Channeling 3, want %.1f", got, want)
 	}
-	if !cone.Flags.Matches(core.SpellFlagBinary) || iceLance.Flags.Matches(core.SpellFlagBinary) {
-		t.Errorf("Cone of Cold binary %v, Ice Lance binary %v, want true and false",
+	// Ice Lance is binary too (EV-0142).
+	if !cone.Flags.Matches(core.SpellFlagBinary) || !iceLance.Flags.Matches(core.SpellFlagBinary) {
+		t.Errorf("Cone of Cold binary %v, Ice Lance binary %v, want both binary",
 			cone.Flags.Matches(core.SpellFlagBinary), iceLance.Flags.Matches(core.SpellFlagBinary))
 	}
 	if low, high := ConeOfColdScaling[5].At(ConeOfColdBaseDamage[5][0], 60), ConeOfColdScaling[5].At(ConeOfColdBaseDamage[5][1], 60); low != 328 || high != 358 {
