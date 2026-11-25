@@ -7,14 +7,14 @@
     "enchant": 2543
    },
    {
-    "id": 22340,
+    "id": 22150,
     "enchant": 1249059
    },
    {
     "id": 271956
    },
    {
-    "id": 13340,
+    "id": 18511,
     "enchant": 1219587
    },
    {
@@ -58,26 +58,26 @@
    },
    {},
    {
-    "id": 284587,
+    "id": 279273,
     "enchant": 664
    }
   ]
  },
  "bonusStats": {
   "MeleeHit": -0.6,
-  "Agility": 3.548,
-  "Intellect": 0.771,
-  "MeleeCrit": 0.062,
-  "AttackPower": 1.635,
-  "RangedAttackPower": 1.635
+  "Agility": 3.456,
+  "Intellect": 0.778,
+  "AttackPower": 1.526,
+  "RangedAttackPower": 1.853,
+  "MeleeCrit": 0.062
  },
- "note": "Alliance: wears level60_phase0_hunter_bm_alliance, the set without the Horde rewards; 0.6% hit over the cap re-spent as 3.5 Agility, 1.6 attack power, 0.06% crit and 0.8 Intellect",
+ "note": "Alliance: wears level60_phase0_hunter_bm_alliance, the set without the Horde rewards; 0.6% hit over the cap re-spent as 3.5 Agility, 1.9 ranged attack power, 1.5 attack power and 0.06% crit",
  "gain": {
-  "dps": 3.41,
+  "dps": 3.66,
   "se": 0.02,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_hunter_bm. It wears level60_phase0_hunter_bm_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 8.6% against the 8% yellow cap, the set's own hit 5.6%: 0.6% (6 budget points) re-spent over the set's shares at the 1b prices (Agility 59.1%, CritRating 14.4%, AttackPowerBoth 13.6%, Intellect 12.9%). Hit and crit are one pool for the gear, so each is written once. Dwarf 995.1 with the set, 998.5 with the swap; gain.se is the paired error (the same seeded fights), 0.27 unpaired."
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_hunter_bm. It wears level60_phase0_hunter_bm_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 8.6% against the 8% yellow cap, the set's own hit 5.6%: 0.6% (6 budget points) re-spent over the set's shares at the 1b prices (Agility 57.6%, CritRating 14.5%, Intellect 13.0%, AttackPowerBoth 12.7%, RangedAttackPower 2.2%). Hit and crit are one pool for the gear, so each is written once. Dwarf 973.2 with the set, 976.9 with the swap; gain.se is the paired error (the same seeded fights), 0.27 unpaired."
 }
