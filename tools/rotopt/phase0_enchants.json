@@ -60,6 +60,7 @@
   "20034": {"name": "Enchant Weapon - Crusader", "note": "Formula on AH ~400g", "source": "0.42% Scarlet Spellbinder (W. Plaguelands)"},
   "20035": {"name": "Enchant 2H Weapon - Major Spirit", "note": "Formula on AH ~10g", "source": "1.32% Scholomance Adept (Scholomance)"},
   "20036": {"name": "Enchant 2H Weapon - Major Intellect", "note": "Formula on AH ~69g", "source": "1.83% Crimson Sorcerer (Stratholme)"},
+  "22725": {"name": "Core Armor Kit", "avail": "out", "note": "Core Leather (Molten Core) · raid opens Dec 9", "source": "Leatherworking Core Armor Kit (pattern 18252), 3 Core Leather from Molten Core"},
   "22749": {"name": "Enchant Weapon - Spell Power", "avail": "out", "note": "Molten Core drop only", "source": "Molten Core bosses only (1%)"},
   "22840": {"name": "Arcanum of Rapidity", "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
   "22844": {"name": "Arcanum of Focus", "note": "Libram ~18g · Pristine Black Diamond ~75g on AH", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
