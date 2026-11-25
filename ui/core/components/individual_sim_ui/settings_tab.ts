@@ -288,18 +288,18 @@ export class SettingsTab extends SimTab {
 		this.buildIconSubsections(contentBlock.bodyElement, relevant);
 	}
 
-	// The world buffs are off for now. Forever has no world buffs that we know of, and it may have
-	// something else in their place, like buffs from a camp. We show the section dimmed, with a
-	// note, and Player.setBuffs turns them off, so saved settings or an import with them don't
+	// The world buffs are off. In Forever they have no effect in a raid instance (Blizzard, 2026-11-25;
+	// the sim's ForeverRaidInstance), and these presets are raid fights. We show the section dimmed,
+	// with a note, and Player.setBuffs turns them off, so saved settings or an import with them don't
 	// count them either.
 	private buildWorldBuffsSettings() {
 		const contentBlock = new ContentBlock(this.column3, 'world-buffs-settings', {
-			header: { title: 'World Buffs / Camp', tooltip: Tooltips.WORLD_BUFFS_SECTION },
+			header: { title: 'World Buffs', tooltip: Tooltips.WORLD_BUFFS_SECTION },
 		});
 		contentBlock.rootElem.classList.add('buffs-section');
 		turnSectionOff(
 			contentBlock,
-			"Off for now. Forever has no world buffs that we know of. It may have camp buffs or something like them in their place, and they'd go here.",
+			'Off. In Forever, world buffs have no effect in a raid instance.',
 		);
 
 		const saygesOptions = relevantStatOptions(BuffDebuffInputs.SAYGES_CONFIG, this.simUI);
