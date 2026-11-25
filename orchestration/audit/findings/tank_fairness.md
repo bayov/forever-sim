@@ -9,6 +9,7 @@
 - evidence: 8d5fdd664 / dfd015925 register Forever Stoneform 20594 as a `CooldownTypeSurvival` MajorCooldown (sim/core/racials_forever.go, registerForeverStoneform) and add an explicit `currentTime >= 20s` Stoneform line to the warrior's Balanced and Max survival requests and APLs. The paladin, bear and Warden presets have no racial lines and lean on `autocastOtherCooldowns`, which never fires a survival cooldown in a scoring run (`survivalCooldownDue`, sim/core/major_cooldown.go:152: HpPercentForDefensives 0 or readsNoHealth means never). So bench_races.py's Dwarf rows for paladin (Balanced 2657, Max survival 1481) and Warden (Balanced 1133, Max survival -2548) carry Stoneform as a part that is never cast, while the warrior's Dwarf row gets it. Size from the warrior's own sweep (tools/.../racials_1124/stoneform_i10000_s1.tsv, 10k, seed 1: never -> from 20 s, Balanced 3276.5 -> 3286.7, Max survival 1432.5 -> 1476.0); not re-measured on the paladin or Warden (no sims this pass). Elune's Light, Blood Fury, Berserking and Eureka! are DPS-type and do fire under autocast, so only Stoneform is lopsided. It doesn't move a preset race: Undead paladin leads Dwarf by about 300 at Max survival, and Dwarf trails Troll and Tauren for the Warden.
 - proposed fix: add the warrior's Stoneform line (castSpell 20594 when currentTime >= 20 s, Balanced and Max survival; none at Max threat, per dfd015925's sweep) to the paladin and Warden level 60 APLs and tankbench requests (the bear can't be a Dwarf), then re-run bench_races for those two. Or, more general: let autocast fire survival-type racials on a fixed timer in scoring runs, which would also cover any future defensive racial.
 - needs: worker fix
+- pass 32 (2026-11-25, master 0404484fb): not fixed; no paladin or Warden request or APL casts Stoneform (20594).
 
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
@@ -28,6 +29,7 @@
 - pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2628 / 1272 / -2252, still last at every weight.
 - pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
 - pass 29 (2026-11-24, master 566067a39): not fixed; requests still Night Elf / Night Elf / Undead, Warden rows identical.
+- pass 32 (2026-11-25, master 0404484fb): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2600 / 1234 / -2306 (Greater Intellect now overwritten by Arcane Brilliance), still last at every weight.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -49,6 +51,7 @@
 - pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests unchanged. Max survival warrior 1836.7 ± 11.9, paladin 1778.0 ± 15.9 (seed 1); the potion (+374 last measured) would still reverse it.
 - pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
 - pass 29 (2026-11-24, master 566067a39): not fixed; requests unchanged. The warrior's Max survival fell to 1814.7 ± 12.2 (Unbridled Wrath off Shield Slam and Revenge) against the paladin's 1778.0 ± 15.9, seed 1; the potion (+374 last measured) would reverse it.
+- pass 32 (2026-11-25, master 0404484fb): not fixed; all three requests still Major Mana Potion, no potion action. Max survival warrior 1813.5 against paladin 1778.0 (seed 1); the potion (+374 last measured) would reverse it.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)

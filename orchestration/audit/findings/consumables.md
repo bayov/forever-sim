@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### consumables-20261125-2: Intellect and Spirit elixirs in every preset now add nothing under the raid's Arcane Brilliance and Divine Spirit
+- severity: medium (estimate, not sim-measured; the elixir slot is wasted for mana users, up to about 17 DPS on Marksmanship per the sim comment)
+- affects: ui/{balance_druid,elemental_shaman,enhancement_shaman,hunter,mage,warlock,shadow_priest,retribution_paladin}/presets.ts and the matching tools/rotopt/mksettings spec files (Greater Intellect, Owl, Sages, Greater Spirit); rogue, warrior, feral carry AB and DS too
+- found: 2026-11-25, master 0404484fb
+- evidence: sim/core/consumes.go elixirStatsOverwritten (new, from wowsims/forever EV-0185): under Forever Arcane Intellect (Brilliance rank 5 = 31) overwrites the Intellect elixirs (Greater Intellect and Owl 25, consumes.go:1054-1055) and Divine Spirit (40) overwrites the Spirit elixirs (Sages 25, Greater Spirit 18, :1062-1063). Every Level 60 raid has arcaneBrilliance and divineSpirit true (mksettings main.go:56,60; each presets.ts). So those elixir picks give 0 Intellect/Spirit; only their crit or other effects, if any, remain. Mark of the Wild still stacks.
+- proposed fix: re-pick the elixir in those slots (a stat or damage elixir that is not overwritten, e.g. Fire/Shadow/Frost Power for casters, Mongoose or Giants for melee), or rule that the raid drops AB/DS; sim paired against the current pick. Also scan.sh's "minor-armor exclusive effects (expect 2)" now reads 3 by design (Puncture Armor and Armor Shatter joined the slot); update the expected count.
+- needs: orchestrator fix
+
 ### consumables-20261125-1: DPS Report assumption natural_flask_zone still describes the pre-70862 flasks (60 Stamina, 4-5%)
 - severity: low
 - affects: tools/dps_report/assumptions_def.py (natural_flask_zone desc, line ~108)
