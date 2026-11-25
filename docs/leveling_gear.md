@@ -112,6 +112,11 @@ the boss loot stay random:
   to" steps, and each section starts at least at the level its name says. It doesn't count
   the mobs we kill on the way, so it can be up to a level behind the guide.
 
+The warrior has its own route, walked as an Undead Warrior (`ui/warrior/leveling_route.json`,
+`route.py --race undead --class warrior`). It starts in RestedXP's own Tirisfal Glades and Silverpine
+Forest guides (1 to 14) and joins our route at 13-14 The Barrens, so it has our dungeons and the
+warrior class quests, like Whirlwind Weapon and Trial at the Field of Giants.
+
 The Gear part's Quest route switch makes the plan make them up again. On the 10 to 60 plan, four
 seeds took 97.1 to 98.6 hours with the route (98.0 on average) and 98.5 to 101.7 without it
 (100.4), with the plan's own talents and rotations.
