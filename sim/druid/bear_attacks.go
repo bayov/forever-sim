@@ -117,8 +117,10 @@ func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *cor
 // Lacerate (Feral row 4 talent; client 1.60.1.70753, ranks 1328617 at 25, 1328616 at 34, 414644 at
 // 42, 1235826 at 50 and 1235827 at 58, a tick of 4, 6, 10, 12 and 15): 15 Rage (Shredding Attacks 1
 // a point less), a bleed of the rank's tick a stack every 3 sec for 15 sec, up to 5 stacks, and a hit
-// of 10% of weapon damage for each stack already on the target (the tree's "plus 10% weapon damage
-// per existing application", so the first one hits for nothing). Rend and Tear raises the ticks as it
+// of 10% of weapon damage for each stack on the target after the cast: the tree says "plus 10% weapon
+// damage per existing application", but in game the hits grow 1:2:3:4:5 with the stacks the cast
+// leaves, so the first one hits for 10% and a refresh at 5 stacks for 50% (wowsims/forever EV-0040,
+// an in-game test of rank 1: 15 landed hits, 7.80 and 8.57 a stack against 7.84 and 8.61 predicted). Rend and Tear raises the ticks as it
 // does Rake's and Rip's (wowsims/forever has the same). Idol of the Ursine Twins: a Lacerate that
 // lands resets Primal Bite's cooldown 10% of the time (1306483, ProcChance 10).
 func (druid *Druid) registerLacerateSpell() {
@@ -187,7 +189,7 @@ func (druid *Druid) registerLacerateSpell() {
 				existing = dot.GetStacks()
 			}
 			weapon := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
-			damage := 0.1 * float64(existing) * weapon * druid.RendAndTearMultiplier(target)
+			damage := 0.1 * float64(min(existing+1, 5)) * weapon * druid.RendAndTearMultiplier(target)
 			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			if !result.Landed() {
 				spell.IssueRefund(sim)
