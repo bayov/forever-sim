@@ -295,7 +295,7 @@ func TestCompValues(t *testing.T) {
 	}
 	p := loadTestPool(t)
 	sim, _ := NewSimmer(p, "")
-	comp := &proto.RaidComp{Size: 5, SimOptions: &proto.SimOptions{Iterations: 60},
+	comp := &proto.RaidComp{Size: 5, SimOptions: &proto.SimOptions{Iterations: 600},
 		Encounter: &proto.Encounter{Duration: 90, NaturalFlaskZone: true},
 		Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetProtectionWarrior),
 			slotOf(2, 0, 1, p, "mage__fire"), slotOf(3, 0, 2, p, "mage__fire"), slotOf(4, 0, 3, p, "warlock__demonology"),

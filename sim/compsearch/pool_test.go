@@ -77,7 +77,7 @@ func TestPoolGifts(t *testing.T) {
 			}
 		}
 	}
-	if p.Builds["hunter__beast-mastery"].Race[proto.Faction_Alliance] != proto.Race_RaceNightElf {
+	if p.Builds["hunter__beast-mastery"].Race[proto.Faction_Alliance] != proto.Race_RaceSkyborneHighOrder { // the report's best Alliance race since its Phase 0 set
 		t.Errorf("Beast Mastery's Alliance race: %v", p.Builds["hunter__beast-mastery"].Race[proto.Faction_Alliance])
 	}
 	if p.Builds["shaman__elemental-level60-mana-tide"].Pkg != proto.RaidPackage_RaidPackageManaSpringTide {
