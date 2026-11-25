@@ -209,7 +209,25 @@ Spirit regen goes on top of food and water, for health and mana alike:
 | Sitting (eating, drinking or just resting) | A third more health from Spirit, for every class (the beta measurement saw about 30%). Mana regen isn't changed by sitting. |
 | Mana from Spirit | The sim's Forever formula, outside the five-second rule (notes.md). |
 | Troll Regeneration | 10% more health regen, and 10% of it in combat. |
-| In combat | No health regen from Spirit (Troll aside). |
+| In combat | No health regen from Spirit (Troll aside). Health per 5 sec gear works (below). |
+
+#### Healing while we fight
+
+A tank that pulls a pack lives off these. All of them are off by default, so we can test a plan with
+and without each (`sim/core/leveling_heals.go`, `sim/common/leveling_enchants.go`). Values are from
+client 71091 and our logs.
+
+| What | How to turn it on | Model |
+|---|---|---|
+| Recovery enchant (8721) | The weapon's enchant | 5% of max health when our melee attack is dodged or parried, with a 10 sec cooldown. It can crit. Enchanting 140. Attacks that we dodge or parry don't trigger it (`recoveryFromOurAttacks`). |
+| Thrill of Adventure (1225472) | `thrillOfAdventure`, 0 to 5 points | A kill that gives experience heals 1% of max health a point over 10 sec, in 5 ticks, and as much mana. The next kill starts the 10 sec over, and what was left is lost. |
+| Krol'dok Resolve (1324298) | Wear 4 pieces of set 2135, or `krolDokSetFromLevel` | A block heals 13.5 to 22.5, with a 1 sec cooldown. It can crit. The pieces need level 41 (the gloves 40). The option only adds the bonus, not the pieces' stats. |
+| Iron, Mithril and Thorium Shield Spike (43, 463, 1704) | The shield's enchant | 8 to 12, 16 to 20 or 20 to 30 damage to a mob whose attack we block, every time. It ignores armor and can't crit. Only a Blacksmith (150, 215 or 250) can put one on. |
+| Health per 5 sec gear | `healthRegenPer5` | That much health every 5 sec, in combat and out of it. The sim has no such stat, so it's a number for the whole session. |
+| Thorns | The raid buff | The rank of our level hurts every mob that hits us in melee. It worked already. |
+
+`krolDokSetFromLevel` is the first level that has the bonus (0 is never), so one set of options does
+for a whole 1 to 60 plan. The three options are fields of `encounter.leveling` in the settings.
 
 The best vendor food and water for our level (amounts and durations from
 `assets/db_inputs/wowhead_item_tooltips.csv`):

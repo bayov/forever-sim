@@ -70,6 +70,7 @@ func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, rule
 		Ruleset: ruleset,
 	}
 
+	raidProto = prepareLevelingRaid(raidProto, encounterProto)
 	encounterProto = prepareLevelingEncounter(raidProto, encounterProto)
 	env.construct(raidProto, encounterProto)
 	raidStats := env.initialize(raidProto, encounterProto)

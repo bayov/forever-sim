@@ -101,6 +101,7 @@ type levelingSession struct {
 	pullMobs   int
 	pulls      int
 	mobsPulled int
+	onUs       levelingOnUs
 	// How many searches and chain searches the session has made, for the random sources'
 	// reseed at each, and at the mob each finds (Simulation.reseedWithin).
 	searches, chainSearches int
@@ -123,6 +124,7 @@ type levelingSession struct {
 
 	healthMetrics, reviveHealthMetrics *ResourceMetrics
 	drinkMetrics, reviveManaMetrics    *ResourceMetrics
+	gearRegenMetrics                   *ResourceMetrics
 	// The food, water and bandage as spells of ours, with their auras (registerRestSpells).
 	foodSpell, drinkSpell, bandageSpell                    *Spell
 	foodAura, drinkAura, bandageAura, recentlyBandagedAura *Aura
@@ -132,6 +134,7 @@ type levelingSession struct {
 		n                                int
 		kills, kills2, xp, deaths        float64
 		pulls, pulled                    float64
+		onUsSeconds, contact, peaks      float64
 		combat, resting, searching, dead float64
 		foods, drinks, bandages          float64
 		// Each session's kills, kept only when the sim saves all values (stat weights).
@@ -174,6 +177,10 @@ type levelingOptions struct {
 	campMobs              int
 	campOutside           float64
 	respawnTime, lootTime time.Duration
+
+	// Heals (leveling_heals.go).
+	thrillOfAdventure, krolDokFromLevel int32
+	healthRegenPer5                     float64
 }
 
 func resolveLevelingOptions(o *proto.LevelingOptions, level int32) levelingOptions {
@@ -210,6 +217,10 @@ func resolveLevelingOptions(o *proto.LevelingOptions, level int32) levelingOptio
 		campOutside:       7,
 		respawnTime:       seconds(o.Respawn, 300),
 		lootTime:          time.Second,
+
+		thrillOfAdventure: o.ThrillOfAdventure,
+		krolDokFromLevel:  o.KrolDokSetFromLevel,
+		healthRegenPer5:   o.HealthRegenPer5,
 	}
 	if o.CampMobs < 0 {
 		camp := usualCampAt(level)
@@ -303,6 +314,31 @@ func prepareLevelingEncounter(raidProto *proto.Raid, encounterProto *proto.Encou
 	return prepared
 }
 
+// recoveryEnchant is Forever's Enchant Weapon - Recovery, by the game's own enchant ID.
+const recoveryEnchant = 8721
+
+// prepareLevelingRaid gives the player the enchant the session's options ask for. The gear a
+// leveling plan finds has no enchants.
+func prepareLevelingRaid(raidProto *proto.Raid, encounterProto *proto.Encounter) *proto.Raid {
+	from := encounterProto.GetLeveling().GetRecoveryFromLevel()
+	if from <= 0 || levelingPlayerLevel(raidProto) < from {
+		return raidProto
+	}
+	raid := googleProto.Clone(raidProto).(*proto.Raid)
+	for _, party := range raid.Parties {
+		for _, player := range party.Players {
+			items := player.GetEquipment().GetItems()
+			if len(items) <= int(proto.ItemSlot_ItemSlotMainHand) {
+				continue
+			}
+			if weapon := items[proto.ItemSlot_ItemSlotMainHand]; weapon.GetId() != 0 && weapon.Enchant == 0 {
+				weapon.Enchant = recoveryEnchant
+			}
+		}
+	}
+	return raid
+}
+
 // levelingMobLevels are the mob levels of the session: the spread around our level plus the
 // offset, kept within the mob table.
 func levelingMobLevels(level int32, opts levelingOptions) []int32 {
@@ -386,6 +422,7 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.state, s.stateSince = levelingSearching, 0
 	s.seconds = [levelingStateCount]time.Duration{}
 	s.pullMobs, s.pulls, s.mobsPulled = 0, 0, 0
+	s.onUs = levelingOnUs{}
 	s.searches, s.chainSearches = 0, 0
 	s.kills, s.xp, s.deaths = 0, 0, 0
 	s.bandageReadyAt = 0
@@ -551,6 +588,9 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 		s.move(sim, goalNone, Vec2{}, 0, nil)
 	}
 	s.campReturned(mob)
+	if m.state == mobArrived {
+		s.countOnUs(sim, -1)
+	}
 	*m = levelingMob{}
 	mob.enabled = false
 	if s.found == mob {
@@ -626,6 +666,7 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 			healed = s.heal(sim, regen*trollCombatHealthRegen, s.healthMetrics)
 		}
 	}
+	healed = s.gearRegen(sim, seconds) || healed
 
 	switch s.state {
 	case levelingBandaging, levelingResting:
@@ -715,6 +756,8 @@ func (s *levelingSession) revive(sim *Simulation) {
 func (s *levelingSession) doneIteration(sim *Simulation) {
 	s.seconds[s.state] += sim.CurrentTime - s.stateSince
 	s.stateSince = sim.CurrentTime
+	s.countOnUs(sim, 0)
+	s.endPeak()
 	kills, xp := s.kills, s.xp
 	for _, mob := range s.env.Encounter.ActiveTargetUnits {
 		share := 1 - mob.CurrentHealth()/mob.MaxHealth()
@@ -734,6 +777,9 @@ func (s *levelingSession) doneIteration(sim *Simulation) {
 	a.deaths += float64(s.deaths)
 	a.pulls += float64(s.pulls)
 	a.pulled += float64(s.mobsPulled)
+	a.onUsSeconds += s.onUs.mobSeconds
+	a.contact += s.onUs.contact
+	a.peaks += s.onUs.peaks
 	a.combat += s.seconds[levelingCombat].Seconds()
 	a.resting += (s.seconds[levelingResting] + s.seconds[levelingBandaging]).Seconds()
 	a.searching += (s.seconds[levelingSearching] + s.seconds[levelingPulling] + s.seconds[levelingReady]).Seconds()
@@ -767,6 +813,41 @@ func (s *levelingSession) metrics() *proto.LevelingMetrics {
 	}
 	if a.pulls > 0 {
 		m.MobsPerPull = a.pulled / a.pulls
+		m.PeakMobs = a.peaks / a.pulls
+	}
+	if a.contact > 0 {
+		m.MobsOnUs = a.onUsSeconds / a.contact
 	}
 	return m
+}
+
+// levelingOnUs counts the mobs swinging at us. MobsPerPull counts every mob of a fight, the chain
+// pulled ones too, so this is what says how many we fight at once.
+type levelingOnUs struct {
+	mobs  int
+	since time.Duration
+	// The most at once this pull, and the sum of that over the pulls before it.
+	peak  int
+	peaks float64
+	// Mobs times seconds, and the seconds with at least one mob on us.
+	mobSeconds, contact float64
+}
+
+// countOnUs: a mob reached us (1) or left us (-1), and 0 just brings the time up to now.
+func (s *levelingSession) countOnUs(sim *Simulation, change int) {
+	o := &s.onUs
+	seconds := (sim.CurrentTime - o.since).Seconds()
+	o.mobSeconds += float64(o.mobs) * seconds
+	if o.mobs > 0 {
+		o.contact += seconds
+	}
+	o.since = sim.CurrentTime
+	o.mobs += change
+	o.peak = max(o.peak, o.mobs)
+}
+
+// endPeak: a new pull starts, or the session ends.
+func (s *levelingSession) endPeak() {
+	s.onUs.peaks += float64(s.onUs.peak)
+	s.onUs.peak = s.onUs.mobs
 }

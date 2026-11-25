@@ -504,6 +504,7 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
 		s.pulls++
+		s.endPeak()
 		s.pullMobs = 0
 		// One that noticed us while we had no target.
 		if target := s.player.CurrentTarget; target == nil || target.Type != EnemyUnit || s.mobs[target.Index].state == mobInPool {
@@ -566,6 +567,7 @@ func (s *levelingSession) arrive(sim *Simulation, mob *Unit) {
 		return
 	}
 	m.state = mobArrived
+	s.countOnUs(sim, 1)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: %s reached us", mob.Label)
 	}

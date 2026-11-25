@@ -405,6 +405,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyWeaponSkills()
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
+	character.applyLevelingHeals()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
 	playerStats.GearStats = measureStats()
 
