@@ -127,7 +127,7 @@ Thunder Clap check (code 3aeced173, Thunder Clap threat now 1x): Balanced on the
 | 1 | 3301.5 (4.1) | 3266.1 (4.4) | -35.4 |
 | 1000003 | 3295.1 (3.9) | 3269.0 (4.3) | -26.1 |
 
-Dropping Thunder Clap loses on both seeds, well beyond noise, so it stays. The Phase 0 set has less mitigation than the synthetic one, so Thunder Clap's attack speed slow is worth more than the threat it lost. The rotation and the Horde Balanced row are unchanged. The scores and race rows above are from code before 3aeced173.
+Dropping Thunder Clap loses on both seeds, well beyond noise, so it stays. A likely reason, not measured: the Phase 0 set has less mitigation than the synthetic one, so Thunder Clap's attack speed slow counts for more. The rotation and the Horde Balanced row are unchanged. The scores and race rows above are from code before 3aeced173.
 
 ## Faction row (step 8)
 
