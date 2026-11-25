@@ -78,7 +78,10 @@ iterations, two seeds:
 ## Faction row
 
 Only Max survival has a faction pick (Darkspear Mantle, Horde).
-ALLIANCE_ROW
+Alliance row (Human, RANK_ONLY on the shoulder): Theramore Mantle (Theramore rep, Alliance), 4.1 ahead of
+Soulforge Spaulders. The list scores 563.6 against the Horde list's 822.8, the rest of the set unchanged, so
+most of the gap is the race. Dwarf was not tried. Files: `..._max_survival_alliance.bis.json` and
+`.gear.json`.
 
 No faction enchant was picked. Balanced and Max threat have no row.
 
