@@ -369,7 +369,6 @@ func TestLevelingVictoryRush(t *testing.T) {
 	if war.GetAura("Victorious").IsActive() {
 		t.Error("Victory Rush left Victorious up")
 	}
-	// Level 41 mobs would be gray to a level 60: none of their kills count.
 	if sim, war := (levelingWarrior{level: 30}).start(t); war.VictoryRush.CanCast(sim, war.CurrentTarget) {
 		t.Error("Victory Rush is usable before the first kill")
 	}
@@ -499,6 +498,31 @@ func TestLevelingRageDecay(t *testing.T) {
 	advance(sim, 4*time.Second)
 	if war.CurrentRage() < rage+1 {
 		t.Errorf("Rage went from %.2f to %.2f in combat, want Anger Management's", rage, war.CurrentRage())
+	}
+}
+
+// TestLevelingDamageTakenRage: a mob's hit gives 2.5 x 0.8 x damage / conversion (level 42 and under,
+// TestForeverWarriorDamageTakenRage), 10% less in Defensive Stance and 10% more in Berserker Stance.
+func TestLevelingDamageTakenRage(t *testing.T) {
+	for stance, factor := range map[proto.WarriorStance]float64{
+		proto.WarriorStance_WarriorStanceBattle:    1,
+		proto.WarriorStance_WarriorStanceDefensive: 0.9,
+		proto.WarriorStance_WarriorStanceBerserker: 1.1,
+	} {
+		sim, war := levelingWarrior{level: 30, stance: stance}.start(t)
+		toCombat(t, sim, war)
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		mob := war.CurrentTarget
+		swing := mob.AutoAttacks.MHAuto()
+		result := swing.NewResult(&war.Unit)
+		result.Outcome = core.OutcomeHit
+		result.AttackerDamage, result.Damage = 100, 100
+		swing.DealDamage(sim, result)
+		l := float64(mob.Level)
+		want := factor * 2.5 * 0.8 * 100 / (0.0091107836*l*l + 3.225598133*l + 4.2652911)
+		if got := war.CurrentRage(); math.Abs(got-want) > 1e-6 {
+			t.Errorf("in stance %v a hit for 100 gave %.3f Rage, want %.3f", stance, got, want)
+		}
 	}
 }
 

@@ -197,6 +197,15 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * To Verify (2026-11-25): Battle Stance at 1 above level 40 rests on the formula: 8 of its 99 hits came from mobs above 40 (0.950), none from 50 to 63, where the raid sim needs it. Plain hits from a level 50 to 63 mob in Battle Stance settle it.
 * To Verify (2026-11-25): Rage from mana and energy users. wowsims/forever's logs (EV-0048, EV-0052) give about half as much from mobs that use mana (Physical swings 1.058, Arcane swings 2.06, Fireball 2.10, Lightning Bolt 2.08) as from Rage users. Neither sim models the attacker's power, and a raid boss may use mana, which would halve the raid hits' Rage. A log of a warrior taking a mana-using boss's hits settles it.
 * To Verify (2026-11-25): a melee swing blocked in full. Ours gives its full Rage (a block cuts none), wowsims/forever's none, with no log for either; our logs' 373 blocked hits all let some through. A log of full blocks (a low-level mob against a shield) settles it. A Physical special blocked in full gives none in both, as its Rage follows the damage that lands. Also open from EV-0118: an absorbed special and attackers above level 40.
+* To Verify in-game: Charge and Intercept run at 42 yards a second in a leveling session (cmangos SPEED_CHARGE, the client doesn't hold it). A combat log settles it: the time from the cast to the first swing at a known distance.
+* To Verify in-game: Victory Rush (402927, leveling session only) heals its 10% on a miss and its damage can crit. The sim has both. The client doesn't say either (71091).
+* To Verify in-game: Retaliation (20230) answers every melee hit that lands on us, blocked ones too, and its strike (20240) is a plain weapon hit that can crit. The sim has both (client 71091).
+* To Verify in-game: Gore Drinker (1323967) counts every landed melee hit of ours, abilities and both hands, for its 3 charges. The sim has that, from the buff 1323969's proc types (client 71091).
+* To Verify in-game: Cannibalize is used out of combat only. A hit ends it, and the sim's rotations never try it in combat (client 71091, 20577).
+* To Verify in-game: how much rage Intercept's and Charge's stuns stop. A mob's swing timer goes on while stunned and a swing that came due lands as the stun ends. The sim does this for Concussion Blow, Charge and Intercept in a leveling session.
+* Rage decay out of combat is 1.25 a second (client 71091, PowerType RAGE, RegenPeace -12.5 tenths). The same logs agree. To Verify: whether it starts the moment combat ends, and whether the bar empties on death.
+* To Verify in-game: 5% of attack power as threat on every Sunder Armor rank and 0.02 x attack power a tick on every Rend rank, below rank 5 too. Both were measured on one rank each (rank 1 and rank 2), and leveling uses the low ones more.
+* To Verify in-game: the attack power the combat log shows for an ungeared level 1 and 2 warrior is 12 to 23 above ours. Most likely the log adds weapon damage per second times 6, since Battle Shout adds exactly 9 on top as rank 1 says.
 
 
 ## Hunter
