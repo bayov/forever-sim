@@ -118,5 +118,6 @@
   "20015": {"name": "Enchant Cloak - Superior Defense", "source": "Vendor: Lorelae Wintersong (Moonglade), 2g, skill 285"},
   "20017": {"name": "Enchant Shield - Greater Stamina", "source": "Vendor: Daniel Bartlett (Undercity), 1g 14s, skill 265"},
   "20026": {"name": "Enchant Chest - Major Health", "note": "Forever renamed it Major Stamina (+10 Stamina)", "source": "Vendor: Qia (Winterspring), 1g 60s, skill 275; or 0.73% Blackrock Sorcerer (Formula 16221)"},
-  "463871": {"name": "Enchant Shield - Law of Nature", "note": "Timbermaw Hold Honored · Wowhead delisted the formula on 2026-11-04, the game may still have it", "source": "Vendor: Meilosh (Felwood, Timbermaw Hold Honored), Formula 228982, skill 300"}
+  "463871": {"name": "Enchant Shield - Law of Nature", "note": "Timbermaw Hold Honored · Wowhead delisted the formula on 2026-11-04, the game may still have it", "source": "Vendor: Meilosh (Felwood, Timbermaw Hold Honored), Formula 228982, skill 300"},
+  "13945": {"name": "Enchant Bracer - Greater Stamina", "note": "Formula 11225 drop, AH price not checked", "source": "Formula 11225: 5.3% Lord Captain Wyrmak (Swamp of Sorrows), 0.6% Sandfury Firecaller, 0.6% Ironpatch; skill 245"}
 }
