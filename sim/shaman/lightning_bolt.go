@@ -99,6 +99,7 @@ func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
 	spell.BonusCoefficient = spellCoeff
 
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		shaman.noteClearcastingKept(spell)
 		baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
 		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		shaman.applyStormstrike(spell, target, result)

@@ -223,10 +223,16 @@ type Shaman struct {
 	ClearcastingAura     *core.Aura
 	LightningShieldAuras []*core.Aura
 	MaelstromWeaponAura  *core.Aura
-	WaterShieldAura      *core.Aura
+	// Maelstrom Ready! (408501), up from the fifth Maelstrom Weapon stack under Forever (EV-0180).
+	MaelstromReadyAura *core.Aura
+	WaterShieldAura    *core.Aura
 
 	// Set by Forever's Totem of the Storm, Lightning Bolt then also triggers Maelstrom Weapon at half the chance.
 	lightningBoltTriggersMaelstrom bool
+	// Whether the latest melee crit that gave Flurry its charges was a Windfury Weapon hit (EV-0010).
+	flurryGainedByImbue bool
+	// The Lightning Bolt or Chain Lightning cast that keeps Clearcasting as it completes (EV-0180).
+	clearcastingKeptBy *core.Spell
 
 	// Totems
 	ActiveTotems     [4]*core.Spell

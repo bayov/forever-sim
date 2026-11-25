@@ -76,7 +76,14 @@ func (shaman *Shaman) newEarthShockSpellConfig(rank int, shockTimer *core.Timer)
 	// Serpents fully resisted 3 of 9 Earth Shocks (logged RESIST) and took 30% off every one that
 	// landed, as they did with our other Nature spells, where no orb or Lightning Bolt was fully
 	// resisted (shaman_audit.md 5.2 and 7.8). wowsims/forever's logs show the same (78adad9607).
+	//
+	// EV-0142 (live realms, 2026-11-19 to 21) has binary spells take no partial when they land,
+	// Earth Shock 0 of 310 against 306.6 expected, and the sim now does that for the others. Earth
+	// Shock keeps the partial here, since it rests on the user's own beta log; the user decides.
 	spell.Flags |= core.SpellFlagBinary
+	if shaman.Env.IsForever() {
+		spell.Flags |= core.SpellFlagBinaryPartialResist
+	}
 
 	spell.SpellCode = SpellCode_ShamanEarthShock
 	spell.RequiredLevel = level

@@ -73,12 +73,11 @@ func (mage *Mage) newIceLanceSpellConfig(rank int, cdTimer *core.Timer) core.Spe
 	baseDamageLow := IceLanceScaling[rank].At(IceLanceBaseDamage[rank][0], mage.Level)
 	baseDamageHigh := IceLanceScaling[rank].At(IceLanceBaseDamage[rank][1], mage.Level)
 
-	// Under Forever it is not binary: the 1240047 row has no slow or other non-damage effect, and
-	// wowsims/forever's Ice Lance rolls partial resists.
-	flags := SpellFlagMage | core.SpellFlagAPL
-	if !mage.Env.IsForever() {
-		flags |= core.SpellFlagBinary
-	}
+	// Binary under Forever too: EV-0142 (wowsims/forever, live-realm Warcraft Logs reports to
+	// 2026-11-21) has no landed Ice Lance take a partial resist on mobs with a share of 0.1 or more,
+	// 0 of 74 against 72.7 expected, and its full resists run at the share (1.01); its row carries
+	// three E_DUMMY effects beside the damage.
+	flags := SpellFlagMage | core.SpellFlagAPL | core.SpellFlagBinary
 
 	return core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: IceLanceSpellId[rank]},

@@ -48,7 +48,9 @@ func (priest *Priest) getShadowWordDeathConfig(rank int, cdTimer *core.Timer) co
 		SpellSchool: core.SpellSchoolShadow,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagPriest | core.SpellFlagAPL,
+		// EV-0142: binary on the live realms (E_SCRIPT_EFFECT and E_DUMMY beside the damage), 0 of 145
+		// landed with a partial resist against 144.9 expected.
+		Flags:       SpellFlagPriest | core.SpellFlagAPL | core.BinaryUnderForever(priest.Env),
 
 		RequiredLevel: ShadowWordDeathLevel[rank],
 		Rank:          rank,
