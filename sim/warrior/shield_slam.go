@@ -25,14 +25,19 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	// EV-0050: its threat is the damage plus the rank's own flat, added once on a crit (Ranks 1 to 3
 	// 178, 203, 229), so Rank 4 takes 255 on that line until a level 60 log measures it.
 	//
-	// It is struck with the shield, so it is an off-hand special: no Windfury Totem or main hand
-	// weapon procs (wowsims/forever b6ce30c972). With no off-hand weapon behind it, it takes none
-	// of the off-hand weapon modifiers (isShieldStrike), and its attack table stays the main hand's.
+	// It is a main-hand special (R-0010): the main-hand weapon's equip procs hear it, as measured
+	// in game (wowsims/forever EV-0012), and the main hand's table sets its miss and parry. Its row
+	// needs the shield, so no weapon proc or combat enchant hears it (R-0041, EV-0021), and it
+	// rolls no Windfury Totem (Blizzard's 2026-11-13 hotfix; EV-0155: no totem hit off Shield Slam
+	// on 2026-11-20). It took the off-hand mask from 2026-10-23 to 2026-11-25, on wowsims/forever's
+	// reading b6ce30c972 ("struck with the shield"), which their measurement replaced (the user's
+	// ruling of 2026-11-25). The off-hand weapon modifiers pass it by (isShieldStrike).
+	flags := core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOffensive
 	if warrior.Env.IsForever() {
 		damageLow, damageHigh = 625, 685
 		apCoef = 0
 		threat = 255
-		procMask = core.ProcMaskMeleeOHSpecial
+		flags |= core.SpellFlagSuppressWeaponProcs | core.SpellFlagNoWindfuryTotem
 	}
 
 	threatBonus := core.TernaryFloat64(warrior.Env.IsForever(), threat, threat*2)
@@ -43,7 +48,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOffensive,
+		Flags:       flags,
 
 		RageCost: core.RageCostOptions{
 			Cost:   20,
