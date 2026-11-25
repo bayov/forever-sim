@@ -6760,7 +6760,18 @@
      ],
      "note": "Warlocks no longer press Talisman of Ascendance before the pull, which held back their other on-use trinket; it is used on cooldown in the fight. Dual-wield Fury presses Blackhand's Breadth on cooldown instead of saving it for the last 30 seconds.",
      "commits": [
-      "67fe28cf0"
+      "67fe28cf0",
+      "86fbcf456e98b4957271ca73f42479a4d038358f",
+      "226ada86b09bc6bd5ec28f695c68bd550befbb34"
+     ]
+    },
+    {
+     "title": "Four assumptions are settled and offer no other settings",
+     "kind": "sim",
+     "moves": false,
+     "note": "Four assumptions are settled and no longer offer other settings: the Hyjal and Barrow Deeps flasks give their full bonus, Blood Fury raises weapon damage (as logs show), Execute rolls Windfury Totem twice (as logs show), and Firestone or Spellstone stack with Wizard Oil (Blizzard's warlock preview).",
+     "commits": [
+      "06ebb52bf3798b27c0fbde5a62eceb92434342de"
      ]
     }
    ],

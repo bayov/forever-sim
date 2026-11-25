@@ -16,9 +16,9 @@ race_notes: 49 rows, 12 KB
 weights: 266 rows, 53 KB
 mana: 5044 rows, 391 KB
 mana_summary: 52 rows, 16 KB
-assumptions: 58 rows, 63 KB
+assumptions: 58 rows, 59 KB
 WARNING assumptions: 6 texts name the project's process, e.g. "Blizzard's post says a shaman can benefit from both at once, with a chance to activate both, but not whether one proc blocks the other. The sim rolls "
-assumption_dps: 263 rows, 43 KB
+assumption_dps: 132 rows, 20 KB
 rotation: 647 rows, 208 KB
 race_rotation: 221 rows, 79 KB
 WARNING race_rotation: 7 changed lines with no why in race_text.json, e.g. priest__smite Dwarf priority:s10934

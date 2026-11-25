@@ -281,7 +281,7 @@
   "title": "Assumptions",
   "description": "Every value Forever hasn't confirmed that the presets depend on, by class, in plain words: a question-style label, one short line for the panel, a description and its source for Method, the presets it touches, its Low / Expected / High settings (each with a label that says what it means, its numbers and a short rationale), which one the presets use, and each setting's effect on each preset at 180 s.",
   "updated": {
-   "at": "2026-11-25T03:45:28.943Z",
+   "at": "2026-11-25T06:15:45.371Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -289,7 +289,7 @@
   "title": "DPS under each assumption",
   "description": "Per preset an assumption touches: mean DPS with no setting changed, with each other setting alone (180 s at 20,000 fights, 120 and 300 s at 5,000), and with combinations of settings at 180 s (every combination where a preset has 3 or fewer assumptions, 12 random ones otherwise, which check the multiplied estimate the page uses for the rest). Seed 1, the preset's own request.",
   "updated": {
-   "at": "2026-11-25T03:45:28.943Z",
+   "at": "2026-11-25T06:14:32.811Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -313,7 +313,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-11-25T03:46:27.938Z",
+   "at": "2026-11-25T06:14:51.239Z",
    "by": "Claude (forever-sim)"
   }
  },

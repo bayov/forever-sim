@@ -106,7 +106,7 @@ A = [
  dict(key='natural_flask_zone', cls='All', group='fight', label='Is the boss in Hyjal or Barrow Deeps?',
       short="Yes, so some flasks give their full bonus.",
       desc="The Flasks of Natural Accuracy, Aggression, Precision and Swiftness give 60 Stamina anywhere. In Hyjal and the Barrow Deeps they also give 5% hit, 4% crit, 5% less chance to be dodged or parried, or 5% haste. Elsewhere, hunters and cat druids would switch to the Flask of Distilled Wisdom and the rest keep theirs for the Stamina, which cost these presets 1.2% to 3% when it was simmed.",
-      src="Forever client (spells 1293740 to 1293743). wowsims/forever. The user's ruling (Nov 25) that the report's raids are there.",
+      src="Forever client (spells 1293740 to 1293743). wowsims/forever. The raids the report sims are in these zones.",
       builds=WARR + R(ROGUE) + ['hunter__beast-mastery', 'hunter__marksmanship', 'hunter__lone-wolf', 'hunter__survival', 'druid__feral-cat'],
       settings=[S('expected', 'Hyjal or Barrow Deeps', "the flask's full bonus", "Where the report's raids are.")],
       default='expected', expected='expected'),
