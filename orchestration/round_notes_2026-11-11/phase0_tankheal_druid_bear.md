@@ -18,6 +18,9 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
 - Lacerate first-hit fix (95962a7d3): Max survival now refreshes Lacerate under 10s, not 6 (+69 ± 11, +88 ± 12
   on seeds 1 and 2; 10 is past rotopt's knob range of 1 to 9). Balanced and Max threat keep 4. RANK_ONLY over all
   slots on the fix: no pick changed.
+- No Demoralizing Roar for Balanced and Max threat (audit tank_rotations-20261125-1, roarRefresh 0, 09709d8):
+  paired +46 ± 6 and +52 ± 6 (Balanced), +143 ± 3 and +150 ± 3 (Max threat) on seeds 1 and 2. Max survival keeps
+  Roar (-120 ± 22 without). Equipment unchanged, lists not re-ranked. The Tauren row's score is from before this.
 
 ## Tags added
 
@@ -66,8 +69,8 @@ with origin/master's gear.
 
 | Preset | Phase 0 | Synthetic | Gap | TPS Phase 0 / synthetic |
 |---|---|---|---|---|
-| Balanced | 3645.8 | 3620.3 | +25.5 | 2410 / 2447 |
-| Max threat | 5386.8 | 4849.0 | +537.8 | 2591 / 2574 |
+| Balanced | 3686.2 | 3701.2 | -15.0 | 2477 / 2519 |
+| Max threat | 5545.5 | 4959.7 | +585.8 | 2677 / 2645 |
 | Max survival | 1048.0 | 1618.3 | -570.3 | 1905 / 1972 |
 
 Max survival loses 570 because the synthetic set has 10159 armor and 437 defense against 9473 and 370.
