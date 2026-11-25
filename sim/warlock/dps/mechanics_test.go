@@ -499,3 +499,40 @@ func TestWarlockImpFireboltTravel(t *testing.T) {
 		t.Errorf("Imp's distance %.0f, want %.0f", got, want)
 	}
 }
+
+// TestWarlockRainOfFireJudgementOfWisdom checks that a Rain of Fire cast pays Judgement of Wisdom
+// (half the time, once for the debuffed enemy) and that its waves pay none (EV-0116).
+func TestWarlockRainOfFireJudgementOfWisdom(t *testing.T) {
+	player := &proto.Player{
+		Race:      proto.Race_RaceOrc,
+		Class:     proto.Class_ClassWarlock,
+		Level:     60,
+		Equipment: &proto.EquipmentSpec{},
+		Rotation:  &proto.APLRotation{},
+		Spec:      &proto.Player_Warlock{Warlock: &proto.Warlock{Options: &proto.WarlockOptions{}}},
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{JudgementOfWisdom: true}),
+		Encounter:  &proto.Encounter{Duration: 4000, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	lock := sim.Raid.Parties[0].Players[0].(*DpsWarlock)
+	rof := last(lock.RainOfFire)
+	rof.Cost.Multiplier = 0
+
+	const casts = 400
+	for i := range casts {
+		at(sim, float64(i)*9+1, func(sim *core.Simulation) { castNow(t, sim, lock, rof) })
+	}
+	at(sim, casts*9+1, func(sim *core.Simulation) {})
+	for sim.CurrentTime < core.DurationFromSeconds(casts*9) && !sim.Step() {
+	}
+	if lock.JowManaMetrics == nil {
+		t.Fatal("Rain of Fire never paid Judgement of Wisdom")
+	}
+	if paid := float64(lock.JowManaMetrics.Events) / casts; paid < 0.4 || paid > 0.6 {
+		t.Errorf("Judgement of Wisdom paid %.2f times a cast, want about 0.5 (the cast's roll, no waves)", paid)
+	}
+}

@@ -139,9 +139,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 940.80417
-  tps: 806.96432
-  hps: 1.846
+  dps: 941.80283
+  tps: 807.76325
+  hps: 1.86017
  }
 }
 dps_results: {
@@ -171,9 +171,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 705.39817
-  tps: 618.53514
-  hps: 2.22283
+  dps: 706.0945
+  tps: 619.09317
+  hps: 2.12017
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 958.275
-  tps: 764.27228
+  dps: 954.298
+  tps: 761.17275
   hps: 1.82817
  }
 }

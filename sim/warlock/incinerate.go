@@ -21,7 +21,9 @@ func (warlock *Warlock) getIncinerateConfig(rank int) core.SpellConfig {
 		SpellSchool:   core.SpellSchoolFire,
 		DefenseType:   core.DefenseTypeMagic,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | WarlockFlagDestruction,
+		// EV-0142: binary on the live realms (an E_DUMMY beside the damage), none of 386 landed hits
+		// on resistant mobs partly resisted.
+		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | WarlockFlagDestruction | core.BinaryUnderForever(warlock.Env),
 		Rank:          rank,
 		RequiredLevel: data.Level,
 		MissileSpeed:  20,

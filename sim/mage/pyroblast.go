@@ -55,12 +55,15 @@ func (mage *Mage) newPyroblastSpellConfig(rank int) core.SpellConfig {
 	actionID := core.ActionID{SpellID: spellId}
 
 	spellConfig := core.SpellConfig{
-		ActionID:     actionID,
-		SpellCode:    SpellCode_MagePyroblast,
-		SpellSchool:  core.SpellSchoolFire,
-		DefenseType:  core.DefenseTypeMagic,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | core.SpellFlagAPL,
+		ActionID:    actionID,
+		SpellCode:   SpellCode_MagePyroblast,
+		SpellSchool: core.SpellSchoolFire,
+		DefenseType: core.DefenseTypeMagic,
+		ProcMask:    core.ProcMaskSpellDamage,
+		// EV-0092, EV-0142: its DoT's ticks meet the target's full resistance and take the Spell
+		// Piercing bonus in full (175 of 632 ticks binned against the casters' 27.3% direct rate;
+		// resisted share 0.98 of the target's), where other DoTs meet a tenth.
+		Flags:        SpellFlagMage | core.SpellFlagAPL | core.SpellFlagFullResistanceTicks,
 		MissileSpeed: 24,
 
 		RequiredLevel: level,

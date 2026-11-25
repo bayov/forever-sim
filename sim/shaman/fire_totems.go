@@ -55,6 +55,9 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskEmpty,
+		// EV-0142: the totem's attacks take none of the shaman's Spell Piercing (3 bonuses in 3,160
+		// hits of 58 shamans with piercing against 334 expected; 6 of 4,088 without it).
+		Flags: core.SpellFlagNoSpellPiercing,
 
 		DamageMultiplier: shaman.callOfFlameMultiplier(),
 		BonusCoefficient: spellCoeff,
@@ -168,6 +171,9 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskEmpty,
+		// EV-0142: the totem's pulses take none of the shaman's Spell Piercing (186 bonuses in 26,257
+		// hits of 76 shamans with piercing against 3,042 expected, the floor without it).
+		Flags: core.SpellFlagNoSpellPiercing,
 
 		DamageMultiplier: shaman.callOfFlameMultiplier(),
 		BonusCoefficient: spellCoeff,
