@@ -237,36 +237,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 9898
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "auraRemainingTime": {
-                            "auraId": {
-                              "spellId": 9898
-                            },
-                            "sourceUnit": {
-                              "type": "CurrentTarget"
-                            }
-                          }
-                        },
-                        "op": "OpLt",
-                        "rhs": {
-                          "const": {
-                            "val": "3s"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout)."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 22812
                       }
                     },
