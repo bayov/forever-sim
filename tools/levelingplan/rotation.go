@@ -43,47 +43,6 @@ const (
 
 var halvingSessions = []int32{50, 200, 800}
 
-// A rotation template the plan search can tune (tools/rotopt/aplkit).
-type levelTemplate interface {
-	Knobs() []aplkit.Knob
-	Build(level int32, k aplkit.Knobs) *proto.APLRotation
-	Abilities(level int32, hasTalent func(name string) bool) []string
-	NewRank(level int32) bool
-}
-
-type shamanEnhTemplate struct{}
-
-func (shamanEnhTemplate) Knobs() []aplkit.Knob { return aplkit.ShamanEnhLeveling{}.Knobs() }
-
-func (shamanEnhTemplate) Build(level int32, k aplkit.Knobs) *proto.APLRotation {
-	return aplkit.ShamanEnhLeveling{Level: level}.Build(k)
-}
-
-func (shamanEnhTemplate) Abilities(level int32, hasTalent func(string) bool) []string {
-	return aplkit.ShamanEnhLeveling{Level: level}.Abilities(hasTalent)
-}
-
-func (shamanEnhTemplate) NewRank(level int32) bool {
-	return aplkit.ShamanEnhLeveling{Level: level}.NewRank()
-}
-
-func templateFor(player *proto.Player) (levelTemplate, error) {
-	if _, ok := player.GetSpec().(*proto.Player_EnhancementShaman); ok {
-		return shamanEnhTemplate{}, nil
-	}
-	return nil, fmt.Errorf("The rotation search has a leveling rotation template only for Enhancement shamans.")
-}
-
-// The imbues an ability name stands for, in the order we list them.
-var imbueAbilities = []struct {
-	ability string
-	imbue   proto.WeaponImbue
-}{
-	{"rockbiterWeapon", proto.WeaponImbue_RockbiterWeapon},
-	{"flametongueWeapon", proto.WeaponImbue_FlametongueWeapon},
-	{"windfuryWeapon", proto.WeaponImbue_WindfuryWeapon},
-}
-
 // One level range of the rotation search.
 type rotationBand struct {
 	level  int32
@@ -113,7 +72,7 @@ func (b *rotationBand) kind() string {
 type rotationSearch struct {
 	p        *planner
 	ctx      context.Context
-	template levelTemplate
+	template aplkit.LevelingTemplate
 	shape    *proto.LevelingTalentShape
 	levels   []int32
 	progress func(string)
@@ -216,11 +175,16 @@ func (rs *rotationSearch) imbueKnobs(b *rotationBand) []aplkit.Knob {
 	return out
 }
 
+// The imbues the range can have, none for a template without imbues (aplkit.ImbueTemplate).
 func (rs *rotationSearch) imbues(b *rotationBand) []proto.WeaponImbue {
+	template, ok := rs.template.(aplkit.ImbueTemplate)
+	if !ok {
+		return nil
+	}
 	var out []proto.WeaponImbue
-	for _, x := range imbueAbilities {
-		if slices.Contains(b.abilities, x.ability) {
-			out = append(out, x.imbue)
+	for _, x := range template.Imbues() {
+		if slices.Contains(b.abilities, x.Ability) {
+			out = append(out, x.Imbue)
 		}
 	}
 	return out

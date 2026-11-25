@@ -582,6 +582,9 @@ message LevelingPlanSearchRequest {
 	bool rotation_search = 13;
 	// The spec's leveling route, when the gear plan takes it (LevelingGearPlanSettings.ignore_route).
 	LevelingRoute route = 14;
+	// The rotation template the search tunes (tools/rotopt/aplkit, like "warrior_leveling"). Empty
+	// for the first one that plays the player's spec.
+	string rotation_template = 15;
 }
 
 message LevelingGearWeights {
