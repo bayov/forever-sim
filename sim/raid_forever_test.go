@@ -360,6 +360,7 @@ func TestRaidForeverHealthFightVariation(t *testing.T) {
 // without Libram of Fervor (161 instead of 194): the bonus on the boss is the last judge's.
 func TestRaidForeverJudgementOfTheCrusader(t *testing.T) {
 	strong := raidPlayer(t, "paladin__level_60_shock_ret-duty-crusader")
+	strong.Equipment.Items[proto.ItemSlot_ItemSlotRanged] = &proto.ItemSpec{Id: 23203} // Libram of Fervor (the preset may wear another)
 	weak := raidPlayer(t, "paladin__level_60_shock_ret-duty-crusader")
 	weak.Equipment.Items[proto.ItemSlot_ItemSlotRanged] = &proto.ItemSpec{}
 	for _, order := range [][2]float64{{194, 161}, {161, 194}} {
