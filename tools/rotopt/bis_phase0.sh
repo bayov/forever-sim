@@ -369,6 +369,18 @@ include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$
 # should run again after a rerun moves the picks.
 max_gpd="${MAX_GOLD_PER_DPS:-30}"
 nopick="$(jq -r --argjson max "$max_gpd" '[to_entries[] | select(.value.avail == "infeasible" or (.value.goldPerDps // 0) > $max) | .key] | join(",")' "$content")"
+# A tank or healer list's line is in its score (2026-11-25): 30g per DPS on a build near 1000 DPS
+# is about 3000g per 1% of DPS, so an item over MAX_GOLD_PER_PCT (3000) for each 1% of the spec's
+# score it adds is infeasible. 1% is of the table's scoreRef: a tank class's Balanced score on the
+# synthetic set for all three of its presets (Max survival scores can be near 0 or below), a
+# healer's damage carried on it. Only a price made for the spec's own list counts (goldPerDps by
+# spec, phase0_prices.py), since a DPS list's gold per DPS says nothing about a tank score.
+max_gold_per_pct="${MAX_GOLD_PER_PCT:-3000}"
+if [ -n "$bench" ]; then
+	max_gpd="$(jq -n --argjson g "$max_gold_per_pct" --argjson r "$(field "$(echo "$spec" | cut -d, -f1)" scoreRef)" '$g * 100 / $r')"
+	nopick="$(jq -r --argjson max "$max_gpd" --arg s "$(echo "$spec" | cut -d, -f1)" '[to_entries[] | select(.value.avail == "infeasible"
+		or ((.value.goldPerDps | if type == "object" then .[$s] else null end) // 0) > $max) | .key] | join(",")' "$content")"
+fi
 # The gear search's pool, without the search: DRY_RUN=1 (see above).
 if [ -n "$DRY_RUN" ]; then
 	dry_dir="${DRY_RUN_DIR:-orchestration/round_notes_2026-11-11/phase0_pool}"
