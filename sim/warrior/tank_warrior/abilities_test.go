@@ -144,9 +144,9 @@ func TestForeverTankShieldBlockSpends(t *testing.T) {
 
 // TestForeverTankThreat checks each threat button's threat per landed hit in Defensive Stance with
 // Defiance 3/3 (x1.8 x1.2, the November 2 notes): Sunder Armor 206 + 5% of attack power (client E_THREAT, wowsims/forever's
-// capture), Heroic Strike its damage + 2.54 a spell level (142.24), Cleave + 1.53 a level (91.8),
-// Revenge 2.25 x its damage, Thunder Clap 2.5 x (Classic's), Shield Slam its damage + 508 (the sim's,
-// unconfirmed), Demoralizing Shout 47 (client E_THREAT at 60).
+// capture), Heroic Strike its damage + 2.5 a spell level (140; EV-0004, EV-0048, EV-0174), Cleave
+// + 96 (EV-0050), Revenge 2.25 x its damage, Thunder Clap 1 x its damage (EV-0048), Shield Slam its
+// damage + 255 (EV-0050), Demoralizing Shout 47 (client E_THREAT at 60), Battle Shout none (EV-0043).
 func TestForeverTankThreat(t *testing.T) {
 	sim, war := newTank(t, P1Talents, bulwark)
 	war.AddStatDynamic(sim, stats.AttackPower, 1000)
@@ -160,11 +160,11 @@ func TestForeverTankThreat(t *testing.T) {
 		flat       float64
 	}{
 		{"Sunder Armor", war.SunderArmor.Spell, 0, 206 + 0.05*ap},
-		{"Heroic Strike", war.HeroicStrike.Spell, 1, 2.54 * 56},
-		{"Cleave", war.Cleave.Spell, 1, 1.53 * 60},
+		{"Heroic Strike", war.HeroicStrike.Spell, 1, 2.5 * 56},
+		{"Cleave", war.Cleave.Spell, 1, 96},
 		{"Revenge", war.Revenge.Spell, 2.25, 0},
-		{"Thunder Clap", war.ThunderClap.Spell, 2.5, 0},
-		{"Shield Slam", war.ShieldSlam.Spell, 1, 508},
+		{"Thunder Clap", war.ThunderClap.Spell, 1, 0},
+		{"Shield Slam", war.ShieldSlam.Spell, 1, 255},
 		{"Demoralizing Shout", war.DemoralizingShout.Spell, 0, 47},
 	}
 	target := war.CurrentTarget
@@ -189,6 +189,94 @@ func TestForeverTankThreat(t *testing.T) {
 		if landed < 50 {
 			t.Errorf("%s landed %d times of 200", c.name, landed)
 		}
+	}
+	if got := war.BattleShout.FlatThreatBonus; got != 0 {
+		t.Errorf("Battle Shout makes %.0f flat threat a receiver, want none (EV-0043)", got)
+	}
+}
+
+// TestForeverTankRageThreat checks a Rage gain's threat (EV-0043, EV-0044, EV-0045, EV-0174): 5 a
+// Rage times the stance and Defiance for Bloodrage's ticks, 5 a Rage unscaled for its instant Rage,
+// Shield Specialization and Master of Defense (Unbridled Wrath's metrics are marked the same way),
+// and none before the pull.
+func TestForeverTankRageThreat(t *testing.T) {
+	sim, war := newTank(t, P1Talents, bulwark)
+	rageGain := war.GetSpell(core.ActionID{OtherID: proto.OtherAction_OtherActionRageGain})
+	target := war.CurrentTarget
+	threat := func() float64 { return rageGain.SpellMetrics()[target.UnitIndex].TotalThreat }
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+
+	before := threat()
+	if !war.Bloodrage.Cast(sim, target) {
+		t.Fatal("Bloodrage didn't cast")
+	}
+	instant := 10 * (1 + 0.25*float64(war.Talents.ImprovedBloodrage))
+	near(t, "Bloodrage's instant Rage threat", threat()-before, 5*instant, 1e-6)
+	before = threat()
+	advance(sim, 11*time.Second)
+	near(t, "Bloodrage's ticks' threat", threat()-before, 5*instant*p1Stance, 1e-6)
+
+	// Shield Specialization on a block, Master of Defense on a dodge: 5 Rage, 25 threat.
+	for _, c := range []struct {
+		label   string
+		outcome core.HitOutcome
+	}{{"Shield Specialization", core.OutcomeBlock}, {"Master of Defense", core.OutcomeDodge}} {
+		aura := war.GetAura(c.label)
+		if aura == nil {
+			t.Errorf("the P1 build has no %s", c.label)
+			continue
+		}
+		procs := 0
+		for i := 0; i < 100 && procs < 3; i++ {
+			war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+			before = threat()
+			aura.OnSpellHitTaken(aura, sim, nil, &core.SpellResult{Outcome: c.outcome})
+			if war.CurrentRage() == 0 {
+				continue
+			}
+			procs++
+			near(t, c.label+"'s 5 Rage threat (unscaled)", threat()-before, 25, 1e-6)
+		}
+		if procs == 0 {
+			t.Errorf("%s never procced", c.label)
+		}
+	}
+
+	now := sim.CurrentTime
+	sim.CurrentTime = -time.Second
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	before = threat()
+	war.AddRage(sim, 10, war.NewRageMetrics(core.ActionID{SpellID: 29131}))
+	sim.CurrentTime = now
+	near(t, "Rage gained before the pull (EV-0044)", threat()-before, 0, 1e-9)
+}
+
+// TestForeverTankShieldBlockBatch checks Shield Block's last charge (EV-0004, EV-0047): the block
+// that spends it leaves the aura up to the end of its spell batch, so another attack landing in
+// that batch is blocked too and spends nothing, and the aura goes 10 ms later.
+func TestForeverTankShieldBlockBatch(t *testing.T) {
+	sim, war := newTank(t, P1Talents, bulwark)
+	ready(sim, war, war.ShieldBlock.Spell)
+	if !war.ShieldBlock.Cast(sim, war.CurrentTarget) {
+		t.Fatal("Shield Block didn't cast")
+	}
+	aura := war.ShieldBlockAura
+	block := &core.SpellResult{Outcome: core.OutcomeBlock}
+	aura.OnSpellHitTaken(aura, sim, nil, block)
+	if !aura.IsActive() || aura.GetStacks() != 1 {
+		t.Fatalf("after one block: active %v with %d charges, want 1 left", aura.IsActive(), aura.GetStacks())
+	}
+	aura.OnSpellHitTaken(aura, sim, nil, block)
+	if !aura.IsActive() {
+		t.Fatal("the last charge's block took the aura down at once, want it up to the end of the batch")
+	}
+	aura.OnSpellHitTaken(aura, sim, nil, block) // another attack in the same batch
+	if !aura.IsActive() {
+		t.Fatal("a block in the last charge's batch took the aura down")
+	}
+	advance(sim, core.SpellBatchWindow+time.Millisecond)
+	if aura.IsActive() {
+		t.Error("Shield Block outlasted its last charge's batch")
 	}
 }
 

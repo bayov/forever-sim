@@ -9,7 +9,11 @@ import (
 
 func (warrior *Warrior) registerBloodrageCD() {
 	actionID := core.ActionID{SpellID: 2687}
-	rageMetrics := warrior.NewRageMetrics(actionID)
+	// EV-0044: the instant Rage makes 5 threat a Rage in every stance and Defiance doesn't scale it;
+	// the Rage over time (29131) takes the stance and Defiance.
+	instantRageMetrics := warrior.NewRageMetrics(actionID)
+	instantRageMetrics.UnscaledThreat = true
+	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 29131})
 
 	// Improved Bloodrage scales all of the Rage the ability makes now, not just the instant hit.
 	rageMultiplier := 1 + 0.25*float64(warrior.Talents.ImprovedBloodrage)
@@ -45,7 +49,7 @@ func (warrior *Warrior) registerBloodrageCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.BloodrageAura.Activate(sim)
-			warrior.AddRage(sim, instantRage, rageMetrics)
+			warrior.AddRage(sim, instantRage, instantRageMetrics)
 			// Only a tank's: the sim heals no DPS, so the cost would only run a DPS warrior's health
 			// down to 0, where its survival cooldowns (Berserker Rage) fire.
 			if healthCost > 0 && warrior.IsTanking() {

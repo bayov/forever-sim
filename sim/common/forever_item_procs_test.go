@@ -114,3 +114,68 @@ func TestForeverItemUses(t *testing.T) {
 		}
 	}
 }
+
+// Force of Will (EV-0154): its buff 15595 takes 51 off a Physical hit before armor, at most half of
+// the hit; a 6.2% roll on a landed melee hit taken that deals damage, on a 30 sec cooldown.
+func TestForeverForceOfWill(t *testing.T) {
+	specs := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotRanged+1)
+	for i := range specs {
+		specs[i] = &proto.ItemSpec{}
+	}
+	specs[proto.ItemSlot_ItemSlotTrinket1].Id = common.ForceOfWill
+	player := &proto.Player{
+		Race:      proto.Race_RaceGnome,
+		Class:     proto.Class_ClassMage,
+		Level:     60,
+		Equipment: &proto.EquipmentSpec{Items: specs},
+		Spec:      &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}}},
+		Rotation:  &proto.APLRotation{},
+	}
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       raid,
+		Encounter:  &proto.Encounter{Duration: 600, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	m := sim.Raid.Parties[0].Players[0].(*mage.Mage)
+	buff := m.GetAura("Force of Will")
+	if buff == nil {
+		t.Fatal("no Force of Will buff")
+	}
+	boss := m.CurrentTarget
+	swing := boss.AutoAttacks.MHAuto()
+	hit := func(raw float64) float64 {
+		return swing.CalcDamage(sim, &m.Unit, raw, func(_ *core.Simulation, result *core.SpellResult, _ *core.AttackTable) {
+			result.Outcome = core.OutcomeHit
+		}).Damage
+	}
+	through := hit(1000) / 1000
+	buff.Activate(sim)
+	for _, raw := range []float64{1000, 102, 60} {
+		want := (raw - min(51, raw/2)) * through
+		if got := hit(raw); got < want-1e-6 || got > want+1e-6 {
+			t.Errorf("under Force of Will a %.0f hit dealt %.3f, want %.3f", raw, got, want)
+		}
+	}
+	buff.Deactivate(sim)
+
+	procs, hits := 0, 0
+	for i := 0; i < 20000; i++ {
+		sim.CurrentTime += 31 * time.Second // past the cooldown every time
+		buff.Deactivate(sim)
+		result := swing.CalcAndDealDamage(sim, &m.Unit, 100, func(_ *core.Simulation, result *core.SpellResult, _ *core.AttackTable) {
+			result.Outcome = core.OutcomeHit
+		})
+		m.GainHealth(sim, result.Damage, m.NewHealthMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionHealingModel}))
+		hits++
+		if buff.IsActive() {
+			procs++
+		}
+	}
+	if rate := float64(procs) / float64(hits); rate < 0.055 || rate > 0.069 {
+		t.Errorf("Force of Will procced on %.2f%% of landed hits, want 6.2%%", 100*rate)
+	}
+}
