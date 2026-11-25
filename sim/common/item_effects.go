@@ -5143,8 +5143,16 @@ func thornsArcaneDamageEffect(agent core.Agent, itemID int32, itemName string, d
 
 var minorArmorReductionEffectCategory = "MinorArmorReduction"
 
+// PunctureArmorAura is Bashguuder's and Rivenspike's debuff (17315), in the minor armor slot with
+// Faerie Fire and Curse of Recklessness. Under Forever it takes 100 a stack (client 1.60.1.70938,
+// SpellEffect aura 674 at -100; Classic took 200), so even three stacks lose that slot to either,
+// as the logs have it: Puncture Armor never lands while Faerie Fire or Curse of Recklessness is on
+// the target, and either one landing removes it (wowsims/forever EV-0147).
 func PunctureArmorAura(target *core.Unit) *core.Aura {
 	arpen := float64(200)
+	if target.Env.IsForever() {
+		arpen = 100
+	}
 
 	var effect *core.ExclusiveEffect
 	aura := target.GetOrRegisterAura(core.Aura{
@@ -5185,16 +5193,18 @@ func PhantomStrikeAura(target *core.Unit) *core.Aura {
 	})
 }
 
-// Forever's Armor Shatter takes 165 a stack and bids in a category of its own, so it stacks
-// with Faerie Fire and Curse of Recklessness (wowsims/forever's client store 16928, and
-// 4f557cea22, which bids it in the Armor Shatter category apart from the minor armor debuffs).
+// ArmorShatterAuras is Annihilator's debuff (16928), in the minor armor slot with Faerie Fire and
+// Curse of Recklessness. Forever's takes 165 a stack (client 16928), so with either of them up it
+// adds nothing, and it stays beside Sunder Armor and Expose Armor. The logs settle the slot: Armor
+// Shatter never lands while Faerie Fire or Curse of Recklessness is on the target, and Curse of
+// Recklessness landing removes it (wowsims/forever EV-0147, 178 reports). Until 2026-11-25 it bid in
+// a category of its own and stacked with both (their 4f557cea22, which EV-0147 overturned).
 func ArmorShatterAuras(target *core.Unit) *core.Aura {
 	arpen := float64(200)
-	category := minorArmorReductionEffectCategory
 	if target.Env.IsForever() {
 		arpen = 165
-		category = "ArmorShatter"
 	}
+	category := minorArmorReductionEffectCategory
 
 	var effect *core.ExclusiveEffect
 	aura := target.GetOrRegisterAura(core.Aura{
