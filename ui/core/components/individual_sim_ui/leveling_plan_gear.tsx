@@ -12,17 +12,26 @@ import {
 	LevelingGearPlan,
 	LevelingGearRoute,
 	planLevelingGear,
+	sortedWeaponStyles,
+	weaponStyleAt,
 } from '../../leveling_gear';
 import { Player } from '../../player';
 import { ItemSlot, ItemSpec, Spec } from '../../proto/common';
-import { LevelingGearPin, LevelingGearPlanSettings, LevelingRoute } from '../../proto/ui';
+import { LevelingGearPin, LevelingGearPlanSettings, LevelingRoute, LevelingWeaponStyle } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
 import { Database } from '../../proto_utils/database';
 import { EquippedItem } from '../../proto_utils/equipped_item';
 import { Gear } from '../../proto_utils/gear';
 import { slotNames } from '../../proto_utils/names';
 import { Stats } from '../../proto_utils/stats';
-import { classToEligibleRangedWeaponTypes, classToEligibleWeaponTypes, dualWieldClasses, maxArmorTypeAt, raceToFaction } from '../../proto_utils/utils';
+import {
+	classToEligibleRangedWeaponTypes,
+	classToEligibleWeaponTypes,
+	dualWieldClasses,
+	dualWieldLevels,
+	maxArmorTypeAt,
+	raceToFaction,
+} from '../../proto_utils/utils';
 import { TypedEvent } from '../../typed_event';
 import { ContentBlock } from '../content_block';
 import GearPicker from '../gear_picker/gear_picker';
@@ -30,6 +39,14 @@ import { SelectorModalTabs } from '../gear_picker/selector_modal';
 import { BooleanPicker } from '../boolean_picker';
 import { NumberPicker } from '../number_picker';
 import { LevelingPlanCharacter } from './leveling_plan_character';
+
+// The group of each weapon style's stat weights presets.
+const STYLE_WEIGHTS_GROUP: Record<LevelingWeaponStyle, string> = {
+	[LevelingWeaponStyle.LevelingWeaponStyleFree]: 'Leveling Gear Plan',
+	[LevelingWeaponStyle.LevelingWeaponStyleTwoHand]: 'Leveling Gear Plan Two-Hand',
+	[LevelingWeaponStyle.LevelingWeaponStyleDualWield]: 'Leveling Gear Plan Dual Wield',
+	[LevelingWeaponStyle.LevelingWeaponStyleOneHandShield]: 'Leveling Gear Plan Shield',
+};
 
 // The Gear part of the Leveling Plan tab shows the leveling gear plan (leveling_gear.ts): what
 // we wear at each level from 1 to 60 when we gear up as we go.
@@ -281,11 +298,17 @@ export class LevelingGearSection {
 			TypedEvent.onAny([this.player.levelingGearPlanChangeEmitter, this.player.raceChangeEmitter, this.player.epWeightsChangeEmitter]).on(() =>
 				this.rebuild(),
 			);
-			// The plan also changes with its talents and rotations, and only the shield changes the gear.
-			let oneHandAndShield = this.player.getLevelingPlan().oneHandAndShield;
+			// The plan also changes with its talents and rotations, and only the weapons we level with
+			// change the gear.
+			const weaponsKey = () => {
+				const plan = this.player.getLevelingPlan();
+				return JSON.stringify([plan.oneHandAndShield, plan.weaponStyles]);
+			};
+			let weapons = weaponsKey();
 			this.player.levelingPlanChangeEmitter.on(() => {
-				if (this.player.getLevelingPlan().oneHandAndShield == oneHandAndShield) return;
-				oneHandAndShield = !oneHandAndShield;
+				const key = weaponsKey();
+				if (key == weapons) return;
+				weapons = key;
 				this.rebuild();
 			});
 		});
@@ -312,13 +335,17 @@ export class LevelingGearSection {
 	// The spec's stat weights presets for the plan by their level, lowest first.
 	//
 	// They're the "Leveling Gear Plan" presets, measured on the plan's own gear, or the "Leveling
-	// Gear Plan Shield" ones when we level with a shield. A spec without them falls back to its
-	// "Leveling" presets.
-	weightPresets(): Array<{ level: number; weights: Stats }> {
+	// Gear Plan Shield" ones when we level with a shield. A plan with weapon styles takes the
+	// presets of the style (STYLE_WEIGHTS_GROUP), or the "Leveling Gear Plan" ones for a style that
+	// has none. A spec without any falls back to its "Leveling" presets.
+	weightPresets(style = LevelingWeaponStyle.LevelingWeaponStyleFree): Array<{ level: number; weights: Stats }> {
 		const presets = this.simUI.individualConfig.presets.epWeights ?? [];
-		const shield = this.player.getLevelingPlan().oneHandAndShield;
-		const planPresets = shield ? this.shieldWeightPresets() : presets.filter(preset => preset.group == 'Leveling Gear Plan');
-		return (planPresets.length ? planPresets : presets.filter(preset => preset.group == 'Leveling'))
+		const plan = this.player.getLevelingPlan();
+		const shield = plan.oneHandAndShield && !plan.weaponStyles.length;
+		const ofGroup = (group: string) => presets.filter(preset => preset.group == group);
+		let planPresets = shield ? this.shieldWeightPresets() : ofGroup(STYLE_WEIGHTS_GROUP[style]);
+		if (!planPresets.length && !shield) planPresets = ofGroup('Leveling Gear Plan');
+		return (planPresets.length ? planPresets : ofGroup('Leveling'))
 			.map(preset => ({ level: Number(/Level (\d+)/.exec(preset.name)?.[1] ?? 60), weights: preset.epWeights }))
 			.sort((a, b) => a.level - b.level);
 	}
@@ -327,14 +354,21 @@ export class LevelingGearSection {
 		return (this.simUI.individualConfig.presets.epWeights ?? []).filter(preset => preset.group == 'Leveling Gear Plan Shield');
 	}
 
+	// The presets of every style the plan has, for the talent search's request. A plan without
+	// weapon styles has the presets of its one set of weights.
+	allWeightPresets(): Array<{ level: number; weights: Stats; style: LevelingWeaponStyle }> {
+		const styles = new Set([LevelingWeaponStyle.LevelingWeaponStyleFree, ...this.player.getLevelingPlan().weaponStyles.map(range => range.style)]);
+		return [...styles].flatMap(style => this.weightPresets(style).map(preset => ({ ...preset, style })));
+	}
+
 	// The stat weights the plan judges items by at a level.
 	//
 	// They come from the leveling sim, which measures them at a few levels. Between two of those levels we blend them by how close we are to
 	// each, so a level 22 judges items mostly by the level 20 weights and a bit by the level 25
 	// ones. Below the lowest and above the highest we take that one. A spec without leveling
 	// presets uses the Current EP.
-	private weightsAt(level: number): Stats {
-		const presets = this.weightPresets();
+	private weightsAt(level: number, style = this.styleAt(level)): Stats {
+		const presets = this.weightPresets(style);
 		if (!presets.length) return this.player.getEpWeights();
 		const above = presets.findIndex(preset => preset.level >= level);
 		if (above == -1) return presets[presets.length - 1].weights;
@@ -345,8 +379,12 @@ export class LevelingGearSection {
 		return lo.weights.scale(1 - t).add(hi.weights.scale(t));
 	}
 
+	private styleAt(level: number): LevelingWeaponStyle {
+		return weaponStyleAt(sortedWeaponStyles(this.player.getLevelingPlan().weaponStyles), level);
+	}
+
 	private weightsNote(): string {
-		const levels = this.weightPresets().map(preset => preset.level);
+		const levels = this.weightPresets(this.styleAt(this.selectedLevel)).map(preset => preset.level);
 		if (!levels.length) return 'We judge items by the Current EP.';
 		if (levels.length == 1) return `We judge items by the Level ${levels[0]} Leveling stat weights.`;
 		return `We judge items by the leveling sim's stat weights at levels ${levels.slice(0, -1).join(', ')} and ${
@@ -382,13 +420,15 @@ export class LevelingGearSection {
 				weaponTypes: classToEligibleWeaponTypes[playerClass],
 				rangedWeaponTypes: classToEligibleRangedWeaponTypes[playerClass],
 				canDualWield: dualWieldClasses.includes(playerClass),
+				dualWieldLevel: dualWieldLevels[playerClass],
 			},
 			faction: raceToFaction[this.player.getRace()],
 			seed: this.player.getLevelingGearPlan().seed,
 			pins,
 			route: this.gearRoute(db),
 			oneHandAndShield: this.player.getLevelingPlan().oneHandAndShield,
-			weightsAt: level => this.weightsAt(level),
+			weaponStyles: this.player.getLevelingPlan().weaponStyles,
+			weightsAt: (level, style) => this.weightsAt(level, style),
 			zoneName: zoneId => db.getZone(zoneId)?.name,
 		});
 		this.weightsElem.textContent = this.weightsNote();
@@ -600,6 +640,8 @@ function sourceText(piece: LevelingGearPiece): string {
 			return piece.quest ?? 'quest reward';
 		case 'dungeon':
 			return piece.dungeon ?? 'dungeon';
+		case 'vendor':
+			return 'plain, from a vendor';
 		default:
 			return isPlainItemId(piece.item.id) ? 'plain drop' : 'drop';
 	}

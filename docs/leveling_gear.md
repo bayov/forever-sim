@@ -48,6 +48,26 @@ We don't take the best item for each level. While leveling we gear up as we go:
   enhancement shaman's are its regular weights plus those two (docs/leveling_plan.md, One-hand +
   shield).
 
+- **Weapon styles.** A plan can have a list of weapon styles by level instead
+  (`LevelingPlanSettings.weapon_styles`): two-hander, dual wield, or one-hander and shield. The
+  lowest range counts below its level too. Without the list the plan is as it always was.
+  - A plan with styles keeps every weapon, shield and held off-hand in a bag, and wears the best
+    set of its level's style from it. So a warrior who switches to a shield at 25 wears the best
+    shield it came across before.
+  - The finds and the dungeon rolls don't depend on the styles, so two plans with the same seed
+    find the same items. A quest reward for a later style wins only when no reward helps now.
+  - When a style's set isn't full, we buy the white pieces it misses from level 5, so a two-hand
+    plan never goes on with a one-hander because it found no two-hander. Below level 5 we wear
+    the weapon and the white shield we started with.
+  - A dual wield plan wears the best set of any style below the class's Dual Wield level (warrior
+    13, rogue 10, hunter 20). The warrior's 13 is a guess (notes.md, Need to Verify).
+  - Each style can have its own weights ("Leveling Gear Plan Two-Hand", "Dual Wield" and
+    "Shield" presets). A style without them takes the "Leveling Gear Plan" ones.
+- **Class rules.** What a class can wear and wield comes from the UI's class tables, and from
+  `classGears` in tools/levelingplan/class_rules.go for the requests we make without the browser.
+  A weapon kind from the weapon master counts as trained. `TestGearPlanMatchesTS` plays the same
+  plans with the Go and the TS code, for a shaman and a warrior in each style.
+
 The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
 has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from
 ui/enhancement_shaman/leveling_weights.json), measured on the Leveling 1-60 plan at that level:

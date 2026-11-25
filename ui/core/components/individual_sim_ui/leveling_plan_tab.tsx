@@ -31,7 +31,14 @@ import { Consumes, Debuffs, EquipmentSpec, IndividualBuffs, PartyBuffs, RaidBuff
 import { LevelingGearClassRules, LevelingGearWeights, LevelingPlanSearchRequest, LevelingPlanSettings, LevelingTalentShape } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
 import { Database } from '../../proto_utils/database';
-import { classToEligibleRangedWeaponTypes, classToEligibleWeaponTypes, dualWieldClasses, maxArmorTypeAt, raceToFaction } from '../../proto_utils/utils';
+import {
+	classToEligibleRangedWeaponTypes,
+	classToEligibleWeaponTypes,
+	dualWieldClasses,
+	dualWieldLevels,
+	maxArmorTypeAt,
+	raceToFaction,
+} from '../../proto_utils/utils';
 import { encounterMode } from '../../sim_mode';
 import { TypedEvent } from '../../typed_event';
 import { BooleanPicker } from '../boolean_picker';
@@ -397,7 +404,9 @@ export class LevelingPlanTab extends SimTab {
 			plan,
 			gearPlan: this.player.getLevelingGearPlan(),
 			route: this.gear.route(),
-			gearWeights: this.gear.weightPresets().map(preset => LevelingGearWeights.create({ level: preset.level, weights: preset.weights.toProto() })),
+			gearWeights: this.gear
+				.allWeightPresets()
+				.map(preset => LevelingGearWeights.create({ level: preset.level, weights: preset.weights.toProto(), style: preset.style })),
 			gearDefaultWeights: this.player.getEpWeights().toProto(),
 			classRules: LevelingGearClassRules.create({
 				maxArmorType: Array.from({ length: LEVELING_PLAN_MAX_LEVEL }, (_, i) => maxArmorTypeAt(playerClass, i + 1)),
@@ -405,6 +414,7 @@ export class LevelingPlanTab extends SimTab {
 				twoHandWeaponTypes: classToEligibleWeaponTypes[playerClass].filter(wt => wt.canUseTwoHand).map(wt => wt.weaponType),
 				rangedWeaponTypes: classToEligibleRangedWeaponTypes[playerClass],
 				canDualWield: dualWieldClasses.includes(playerClass),
+				dualWieldLevel: dualWieldLevels[playerClass] ?? 0,
 			}),
 			faction: raceToFaction[this.player.getRace()],
 			talentShape: LevelingTalentShape.create({

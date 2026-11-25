@@ -98,6 +98,10 @@ func gearInputs(req *proto.LevelingPlanSearchRequest, db *proto.UIDatabase) *gea
 		route:     req.Route,
 
 		oneHandAndShield: req.GetPlan().GetOneHandAndShield(),
+		weaponStyles:     sortedStyles(req.GetPlan().GetWeaponStyles()),
+	}
+	if in.styled() {
+		in.oneHandAndShield = false
 	}
 	if player := req.Base.GetRaid().GetParties()[0].GetPlayers()[0]; player != nil {
 		in.playerClass = player.Class
@@ -108,11 +112,19 @@ func gearInputs(req *proto.LevelingPlanSearchRequest, db *proto.UIDatabase) *gea
 	for _, item := range db.Items {
 		in.itemsByID[item.Id] = item
 	}
-	presets := req.GearWeights
+	presetsOf := map[proto.LevelingWeaponStyle][]*proto.LevelingGearWeights{}
+	for _, preset := range req.GearWeights {
+		presetsOf[preset.Style] = append(presetsOf[preset.Style], preset)
+	}
 	fallback := weightsFromProto(req.GearDefaultWeights)
 	// Between two presets we blend them by level, and outside them we take the nearest
-	// (weightsAt in leveling_plan_gear.tsx).
-	in.weightsAt = func(level int32) weights {
+	// (weightsAt in leveling_plan_gear.tsx). A style with no presets of its own takes those of no
+	// style.
+	in.weightsAt = func(level int32, style proto.LevelingWeaponStyle) weights {
+		presets := presetsOf[style]
+		if len(presets) == 0 {
+			presets = presetsOf[proto.LevelingWeaponStyle_LevelingWeaponStyleFree]
+		}
 		if len(presets) == 0 {
 			return fallback
 		}
