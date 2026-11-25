@@ -98,6 +98,8 @@ type levelingMob struct {
 	// A spell that attacks it is on its way (a bolt in flight): it's pulled, and no longer
 	// the rotation's Pull Target.
 	incoming bool
+	// Its place in the camp, counted from 1 (leveling_camp.go), 0 without a camp.
+	camp int
 }
 
 // Why we're moving.
@@ -188,7 +190,11 @@ func (s *levelingSession) inRangeNotBefore(sim *Simulation, mob *Unit, yards flo
 
 // aggroRadius is how close we can get to a mob before it notices us.
 func (s *levelingSession) aggroRadius(mob *Unit) float64 {
-	levelDiff := max(s.level-mob.Level, -25)
+	return s.aggroRadiusAt(mob.Level)
+}
+
+func (s *levelingSession) aggroRadiusAt(mobLevel int32) float64 {
+	levelDiff := max(s.level-mobLevel, -25)
 	return max(20-float64(levelDiff), levelingMeleeRange)
 }
 
@@ -202,12 +208,19 @@ func (s *levelingSession) setVelocity(sim *Simulation, vel Vec2) {
 	if s.vel.IsZero() && s.player.Hardcast.Expires > sim.CurrentTime {
 		s.player.interruptHardcast(sim)
 	}
+	if s.vel.IsZero() {
+		s.startRun(sim)
+	}
 	s.vel = vel
 	s.logPosition(sim)
 	s.player.MovementHandler.Moving = !vel.IsZero()
 	s.chase(sim)
-	if s.found != nil && s.found == s.player.CurrentTarget {
-		s.player.DistanceFromTarget = s.distance(sim, s.found)
+	if target := s.player.CurrentTarget; target != nil && target.Type == EnemyUnit {
+		if target == s.found {
+			s.player.DistanceFromTarget = s.distance(sim, s.found)
+		} else if s.mobs[target.Index].state == mobArrived {
+			s.setPlayerDistance(sim, s.targetDistance(sim, target))
+		}
 	}
 	s.scheduleProximity(sim)
 }
@@ -222,6 +235,7 @@ func (s *levelingSession) move(sim *Simulation, goal levelingGoal, toward Vec2, 
 		return
 	}
 	speed := s.player.MovementHandler.MoveSpeed
+	s.runSpeed = speed
 	if goal == goalSearch {
 		heading := vec2FromAngle(2 * math.Pi * sim.RandomFloat("Leveling Search Heading"))
 		s.setVelocity(sim, heading.Scale(speed))
@@ -280,6 +294,7 @@ func (s *levelingSession) chase(sim *Simulation) {
 // aggro radius.
 func (s *levelingSession) scheduleProximity(sim *Simulation) {
 	cancel(sim, &s.proximity)
+	s.scheduleNotice(sim)
 	mob := s.found
 	if mob == nil || s.mobs[mob.Index].incoming {
 		return
@@ -330,6 +345,10 @@ func (s *levelingSession) search(sim *Simulation) {
 	s.searches++
 	sim.reseedWithin("Leveling Search", s.searches)
 	s.setState(sim, levelingSearching)
+	if s.camp != nil {
+		s.campSearch(sim)
+		return
+	}
 	s.move(sim, goalSearch, Vec2{}, 0, nil)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: searching for a mob")
@@ -349,6 +368,9 @@ func (s *levelingSession) search(sim *Simulation) {
 // find picks a mob from the pool to stand in a random direction from us, waiting to be
 // pulled. A mob we find while standing is further away.
 func (s *levelingSession) find(sim *Simulation, stood bool) *Unit {
+	if s.camp != nil {
+		return s.campFind(sim)
+	}
 	level := s.levels[int(sim.RandomFloat("Leveling Mob Level")*float64(len(s.levels)))%len(s.levels)]
 	mob := s.idleMob(level)
 	if mob == nil {
@@ -360,19 +382,30 @@ func (s *levelingSession) find(sim *Simulation, stood bool) *Unit {
 	}
 	distance := math.Round(lo + sim.RandomFloat("Leveling Mob Distance")*(hi-lo))
 	direction := vec2FromAngle(2 * math.Pi * sim.RandomFloat("Leveling Mob Direction"))
+	s.place(sim, mob, s.playerPosition(sim).Add(direction.Scale(distance)))
+	s.foundMob(sim, mob)
+	return mob
+}
+
+// place takes a mob out of the pool and puts it at x, with full health.
+func (s *levelingSession) place(sim *Simulation, mob *Unit, x Vec2) {
 	mob.dead = false
 	mob.enabled = true
 	mob.healthBar.currentHealth = mob.MaxHealth()
 	mob.auraTracker.expireAll(sim) // Anything cast at it while it lay in the pool.
 	mob.auraTracker.respawn(sim)
-	s.mobs[mob.Index] = levelingMob{state: mobFound, x: s.playerPosition(sim).Add(direction.Scale(distance)), xAt: sim.CurrentTime}
-	s.found, s.foundAt = mob, sim.CurrentTime
+	s.mobs[mob.Index] = levelingMob{state: mobFound, x: x, xAt: sim.CurrentTime}
 	s.logMobPosition(sim, mob)
+}
+
+// foundMob makes the mob the one we found.
+func (s *levelingSession) foundMob(sim *Simulation, mob *Unit) {
+	s.found, s.foundAt = mob, sim.CurrentTime
 	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away, bearing %.0f°", mob.Label, mob.Level, distance, math.Mod(math.Atan2(direction.Y, direction.X)*180/math.Pi+360, 360))
+		rel := s.mobs[mob.Index].x.Sub(s.playerPosition(sim))
+		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away, bearing %.0f°", mob.Label, mob.Level, rel.Len(), math.Mod(math.Atan2(rel.Y, rel.X)*180/math.Pi+360, 360))
 	}
 	s.scheduleProximity(sim)
-	return mob
 }
 
 // startPull: out of combat with a mob found. It's our target, and the rotation pulls it.
@@ -422,6 +455,7 @@ func (s *levelingSession) walkToFound(sim *Simulation, within float64) {
 // it lands (onHit), and until then the rotation shouldn't cast another. A spell that never
 // lands (no damage, no miss) pulls it once its travel time is over.
 func (s *levelingSession) onCast(sim *Simulation, mob *Unit, spell *Spell) {
+	s.areaTarget = mob
 	m := &s.mobs[mob.Index]
 	if m.state != mobFound || m.incoming || !spell.attacksTarget() {
 		return
@@ -460,16 +494,28 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 		s.move(sim, goalNone, Vec2{}, 0, nil)
 	}
 	if s.state != levelingCombat {
+		// A mob that comes by while we sit or walk on ends that.
+		if s.sitting() {
+			s.player.SetGCDTimer(sim, sim.CurrentTime)
+		}
+		searching := s.state == levelingSearching
 		s.setState(sim, levelingCombat)
-		if s.goal == goalSearch {
+		if s.goal == goalSearch || searching {
 			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
 		s.pulls++
 		s.pullMobs = 0
+		// One that noticed us while we had no target.
+		if target := s.player.CurrentTarget; target == nil || target.Type != EnemyUnit || s.mobs[target.Index].state == mobInPool {
+			s.player.CurrentTarget = mob
+			for _, pet := range s.character.Pets {
+				pet.CurrentTarget = mob
+			}
+		}
 	}
 	s.pullMobs++
 	s.mobsPulled++
-	s.mobs[mob.Index] = levelingMob{state: mobRunning, x: x, xAt: sim.CurrentTime}
+	s.mobs[mob.Index] = levelingMob{state: mobRunning, x: x, xAt: sim.CurrentTime, camp: s.mobs[mob.Index].camp}
 	s.env.Encounter.addActiveTarget(mob)
 	if mob == s.player.CurrentTarget {
 		s.setPlayerDistance(sim, max(distance, levelingMeleeRange))
@@ -482,6 +528,7 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 			s.player.Log(sim, "Leveling: pulled %s (level %d) from %.0f yards, chasing us", mob.Label, mob.Level, distance)
 		}
 	}
+	s.campPulled(sim, x)
 }
 
 // chainSearch: while fighting, the rotation looks for another mob (LevelingLookForMob). It
@@ -493,7 +540,8 @@ func (s *levelingSession) chainSearch(sim *Simulation, stand bool) {
 	lo, hi := s.opts.chainSearchMin, s.opts.chainSearchMax
 	if stand {
 		lo, hi = s.opts.standingSearchMin, s.opts.standingSearchMax
-	} else {
+	} else if s.camp == nil {
+		// Where each mob has its own place, we look for the nearest one from where we are.
 		s.move(sim, goalSearch, Vec2{}, 0, nil)
 	}
 	if sim.Log != nil {
@@ -525,9 +573,44 @@ func (s *levelingSession) arrive(sim *Simulation, mob *Unit) {
 	swing := DurationFromSeconds(aa.MH().SwingSpeed / mob.SwingSpeed())
 	aa.mh.swingAt = sim.CurrentTime + time.Duration(sim.RandomFloat("Leveling First Swing")*float64(swing))
 	aa.EnableAutoSwing(sim)
-	if s.player.CurrentTarget == mob {
-		s.setPlayerDistance(sim, levelingMeleeRange)
+	if target := s.player.CurrentTarget; target == mob {
+		s.setPlayerDistance(sim, s.targetDistance(sim, mob))
+	} else if target != nil && target.Type == EnemyUnit && s.mobs[target.Index].state != mobArrived {
+		// Our target is still on its way, so we fight the one that's here.
+		s.retarget(sim, mob)
 	}
+}
+
+// How far a Cleave or a Chain Lightning jump reaches from the mob it's cast at (Chain
+// Lightning's jump is 10 yards).
+const levelingAreaReach = 10
+
+// inArea is whether the mob is close enough to the one our last spell went at for the spell to
+// hit it too. A mob we haven't pulled never is, and one that's still far off isn't either.
+func (s *levelingSession) inArea(mob *Unit) bool {
+	if !s.pulled(mob) {
+		return false
+	}
+	center := s.playerPosition(s.env.sim)
+	if s.areaTarget != nil {
+		center = s.mobPosition(s.env.sim, s.areaTarget)
+	}
+	return s.mobPosition(s.env.sim, mob).Dist(center) <= levelingAreaReach+levelingYardTolerance
+}
+
+// areaTargetCount is how many mobs a spell that went at areaTarget reaches.
+func (s *levelingSession) areaTargetCount() int32 {
+	n := int32(0)
+	for _, mob := range s.env.Encounter.ActiveTargetUnits {
+		if s.inArea(mob) {
+			n++
+		}
+	}
+	// The mob it opens on isn't pulled yet.
+	if s.areaTarget != nil && s.areaTarget.Type == EnemyUnit && s.mobs[s.areaTarget.Index].state == mobFound {
+		n++
+	}
+	return n
 }
 
 // The leveling session's view of where things are, for spells, totems and the rotation.

@@ -377,10 +377,11 @@ func (env *Environment) GetTargetUnit(index int32) *Unit {
 }
 
 // NextTarget is the next living target after target, wrapping around, or target itself when
-// no other one is alive.
+// no other one is alive. In a leveling session it's the next one an area ability reaches.
 func (env *Environment) NextTarget(target *Unit) *Target {
 	next := env.Encounter.Targets[target.Index].NextTarget()
-	for next.dead && &next.Unit != target {
+	leveling := env.Encounter.leveling
+	for &next.Unit != target && (next.dead || (leveling != nil && !leveling.inArea(&next.Unit))) {
 		next = next.NextTarget()
 	}
 	return next

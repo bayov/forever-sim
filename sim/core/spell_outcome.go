@@ -670,7 +670,10 @@ func (spell *Spell) outcomeEnemyMeleeWhite(sim *Simulation, result *SpellResult,
 	chance := 0.0
 
 	didHit := !result.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance, countHits)
-	if !result.Target.IsCasting(sim) {
+	// We can't avoid a swing that comes from behind (leveling_facing.go).
+	leveling := sim.Encounter.leveling
+	behind := leveling != nil && result.Target == leveling.player && leveling.swingFromBehind(sim)
+	if !behind && !result.Target.IsCasting(sim) {
 		didHit = didHit &&
 			!result.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance, countHits) &&
 			!result.applyEnemyAttackTableParry(spell, attackTable, roll, &chance, countHits) &&

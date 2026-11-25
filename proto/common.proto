@@ -1247,8 +1247,9 @@ message LevelingOptions {
 	// Scales the level's average armor. Default 1.
 	double armor_multiplier = 5;
 
-	// The most mobs we can ever have on us (default 5). The rotation decides when to look for
-	// another mob while fighting (Look For Mob), and how to pull it.
+	// The most mobs we look for (default 5). The rotation decides when to look for another mob
+	// while fighting (Look For Mob), and how to pull it. Mobs that notice us on their own (see
+	// camp_mobs) come on top of these.
 	int32 max_pack_size = 7;
 
 	// Seconds to find the next mob out of combat (default 0 to 10), and to find one to
@@ -1290,6 +1291,31 @@ message LevelingOptions {
 	// The UI's Leveling mode, which sims a leveling plan level by level (ui/core/leveling_plan.ts),
 	// in place of the Grinding mode's one session. The sim itself never reads it.
 	bool plan = 24;
+
+	// A player turns so that up to three mobs are in front, but more of them surround us, and
+	// the ones that chase us are behind when we run looking ahead. A swing from behind can't be
+	// dodged, parried or blocked, and can daze us (half speed for 4 sec). This turns all of it
+	// off, so every mob is always in front.
+	bool ignore_facing = 25;
+	// Scales the share of swings that come from behind while we stand with four mobs or more on
+	// us (default 1). 0 keeps them all in front of us, as with our back against a wall.
+	optional double surround = 26;
+	// The share of our runs with mobs on us that we run looking ahead, with the mobs behind us
+	// and out of reach of our swings (default 0.5). On the others we strafe, with them in front.
+	optional double run_forward = 31;
+
+	// The mobs within 100 yards of the spot we grind at. Each mob then has its own place, and
+	// the next one we find is the nearest one, so every mob is further away than the last, and
+	// a dead one is missing until it respawns. Mobs also notice us as we pass, and bring the
+	// ones within 10 yards along. The search times and found distances above then only matter
+	// when they're set. Default 0: there is always another mob at found_min to found_max yards.
+	int32 camp_mobs = 27;
+	// How many mobs there are per circle of 100 yards outside that camp (default 7).
+	optional double camp_outside_mobs = 28;
+	// Seconds until a dead mob stands at its place again (default 300), and the seconds that
+	// looting each one takes after the fight (default 1). Both only with camp_mobs.
+	double respawn = 29;
+	optional double loot_time = 30;
 }
 
 message PresetTarget {
