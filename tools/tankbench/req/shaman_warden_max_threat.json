@@ -8,7 +8,7 @@
       "race": "RaceNightElf",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "05350002-050032313251012201-05",
+      "talentsString": "0535-051031303351012201-050002",
       "equipment": {
        "items": [
         {
@@ -293,12 +293,25 @@
                 }
                }
               }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "80s"
+                }
+               }
+              }
              }
             ]
            }
           }
          },
-         "notes": "The fire totem whenever it's down."
+         "notes": "The fire totem whenever it's down in the last 80 sec: earlier its mana is Earth Shock's."
         },
         {
          "action": {
@@ -308,20 +321,39 @@
            }
           },
           "condition": {
-           "cmp": {
-            "lhs": {
-             "currentManaPercent": {}
-            },
-            "op": "OpGe",
-            "rhs": {
-             "const": {
-              "val": "0.4"
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "currentManaPercent": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "0.4"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "80s"
+                }
+               }
+              }
              }
-            }
+            ]
            }
           }
          },
-         "notes": "Fire Nova around the fire totem: our own threat."
+         "notes": "Fire Nova around the fire totem in the last 80 sec: our own threat, with mana we'd otherwise end on."
         },
         {
          "action": {

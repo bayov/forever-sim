@@ -224,7 +224,7 @@
          "action": {
           "castSpell": {
            "spellId": {
-            "itemId": 999216
+            "itemId": 272437
            }
           },
           "condition": {
@@ -266,7 +266,7 @@
                   }
                  },
                  "spellId": {
-                  "itemId": 999216
+                  "itemId": 272437
                  }
                 }
                },
