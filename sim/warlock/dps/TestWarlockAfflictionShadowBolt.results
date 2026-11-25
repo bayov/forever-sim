@@ -1,11 +1,11 @@
 character_stats_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 123
-  final_stats: 184
-  final_stats: 426
-  final_stats: 431
-  final_stats: 333
+  final_stats: 107
+  final_stats: 160
+  final_stats: 370
+  final_stats: 375
+  final_stats: 290
   final_stats: 735
   final_stats: 0
   final_stats: 10
@@ -15,27 +15,27 @@ character_stats_results: {
   final_stats: 61
   final_stats: 91.25
   final_stats: 16
-  final_stats: 21.59721
+  final_stats: 20.67321
   final_stats: 0
   final_stats: 0
-  final_stats: 246
+  final_stats: 230
   final_stats: 16
-  final_stats: 23.98571
+  final_stats: 22.78571
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 7935.9
+  final_stats: 7053.9
   final_stats: 0
   final_stats: 0
-  final_stats: 2138
+  final_stats: 2090
   final_stats: 0
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 11.2
+  final_stats: 10
   final_stats: 5
   final_stats: 0
-  final_stats: 5494
+  final_stats: 4934
   final_stats: 27
   final_stats: 60
   final_stats: 60
@@ -53,18 +53,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.21385
+  weights: 0.30052
   weights: 0
-  weights: 0.79582
-  weights: 0
-  weights: 0
+  weights: 0.78551
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 2.64022
-  weights: 10.64235
+  weights: 0
+  weights: 0
+  weights: 4.85398
+  weights: 9.81812
   weights: 0
   weights: 0
   weights: 0
@@ -99,168 +99,168 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 902.97117
-  tps: 720.91859
-  hps: 2.135
+  dps: 880.33233
+  tps: 704.06773
+  hps: 1.919
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Champion'sThreads"
  value: {
-  dps: 829.76883
-  tps: 664.52159
-  hps: 1.871
+  dps: 823.38317
+  tps: 660.7392
+  hps: 1.62183
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 822.413
-  tps: 655.53807
+  dps: 815.361
+  tps: 651.93612
   hps: 1.92117
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-DeathmistRaiment-1681"
  value: {
-  dps: 822.3635
-  tps: 655.05512
-  hps: 2.032
+  dps: 813.47033
+  tps: 649.46729
+  hps: 2.09333
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Demoniac'sThreads"
  value: {
-  dps: 913.57267
-  tps: 729.42171
-  hps: 1.98917
+  dps: 898.56633
+  tps: 718.27412
+  hps: 2.32083
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1015.51983
-  tps: 801.05069
-  hps: 2.37417
+  dps: 996.23483
+  tps: 787.42081
+  hps: 2.5175
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 840.0405
-  tps: 663.53166
-  hps: 2.4085
+  dps: 828.50383
+  tps: 655.57153
+  hps: 1.6425
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 875.54317
-  tps: 699.21583
-  hps: 1.9665
+  dps: 853.61267
+  tps: 682.9569
+  hps: 1.56267
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
  value: {
-  dps: 1000.413
-  tps: 795.29043
-  hps: 2.7655
+  dps: 973.499
+  tps: 775.34895
+  hps: 2.0775
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 740.9245
-  tps: 593.65755
-  hps: 1.68733
+  dps: 728.98833
+  tps: 585.19655
+  hps: 1.78033
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 902.97117
-  tps: 720.91859
-  hps: 2.135
+  dps: 880.33233
+  tps: 704.06773
+  hps: 1.919
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-LieutenantCommander'sThreads"
  value: {
-  dps: 829.76883
-  tps: 664.52159
-  hps: 1.871
+  dps: 823.38317
+  tps: 660.7392
+  hps: 1.62183
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 883.0955
-  tps: 616.21922
-  hps: 2.016
+  dps: 873.55583
+  tps: 611.0431
+  hps: 1.05883
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1021.15617
-  tps: 752.02882
-  hps: 2.99433
+  dps: 1012.65067
+  tps: 748.38185
+  hps: 2.15517
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-TheBlackBook-19337"
  value: {
-  dps: 999.8215
-  tps: 789.19809
-  hps: 2.7655
+  dps: 972.81067
+  tps: 769.30553
+  hps: 2.0775
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1013.5435
-  tps: 805.59437
-  hps: 2.38433
+  dps: 985.6885
+  tps: 785.13489
+  hps: 1.90483
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 875.54317
-  tps: 699.21583
-  hps: 1.9665
+  dps: 853.61267
+  tps: 682.9569
+  hps: 1.56267
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-Average-Default"
  value: {
-  dps: 1024.5122
-  tps: 814.05064
-  hps: 2.20406
+  dps: 1007.37025
+  tps: 801.63967
+  hps: 1.95499
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Shadow Bolt Warlock-level60_affliction_shadow_bolt-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 1019.08183
-  tps: 810.26241
-  hps: 1.93467
+  dps: 993.74517
+  tps: 790.96655
+  hps: 2.03817
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Shadow Bolt Warlock-level60_affliction_shadow_bolt-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 1019.08183
-  tps: 810.26241
-  hps: 1.93467
+  dps: 993.74517
+  tps: 790.96655
+  hps: 2.03817
  }
 }
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Shadow Bolt Warlock-level60_affliction_shadow_bolt-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 1055.055
-  tps: 815.95876
+  dps: 1047.17667
+  tps: 810.32805
   hps: 12.985
  }
 }
@@ -291,8 +291,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1017.496
-  tps: 808.64059
-  hps: 2.7655
+  dps: 989.292
+  tps: 787.66177
+  hps: 2.0775
  }
 }
