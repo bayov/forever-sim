@@ -36,6 +36,7 @@
   "Death Wish is up or no more Death Wish this fight, or as soon as holding it for Death Wish and the last 33s of the fight would mean one fewer use": "With Death Wish, unless waiting for it would cost a use",
   "Rage of the Farseer is up or no more Rage of the Farseer this fight, or as soon as holding it for Rage of the Farseer would mean one fewer use": "With Rage of the Farseer, unless waiting for it would cost a use",
   "Adrenaline Rush is up or no more Adrenaline Rush this fight, or as soon as holding it for Adrenaline Rush would mean one fewer use": "With Adrenaline Rush, unless waiting for it would cost a use",
+  "No Bane of Agony on the boss and over 60s of the fight left and ({trinket} is ready within 59s or over 60s until the trinket is ready)": "No Bane of Agony on the boss and over 60s of the fight left, but not while {trinket} is 59 to 60s from ready, so Bane of Doom's hit lands after the trinket is back",
   "{trinket} is up or the trinket won't be ready again before the last 15s of the fight": "With {trinket} up, unless it won't be back before the last 15s",
   "In the first 1s of the fight or boss under 20% health, or as soon as holding it would mean one fewer use": "At the pull, then held for the boss under 20% health unless that would cost a use",
   "No melee weave fits before the next Auto Shot, Arcane Shot or Multi-Shot or time to cast Sniper Shot and reach melee before the next melee swing": "When no melee weave fits before the next shot, or Sniper Shot's cast and the run in both fit before the next swing",
