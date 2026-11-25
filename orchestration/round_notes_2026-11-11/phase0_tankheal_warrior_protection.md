@@ -120,6 +120,15 @@ No change. The knob search (tools/rotopt warrior_tank, 1000 iterations, 3000 to 
 
 The talents are unchanged.
 
+Thunder Clap check (code 3aeced173, Thunder Clap threat now 1x): Balanced on the Phase 0 request, paired evals at 20000 iterations, six bosses.
+
+| Seed | Shipped (with Thunder Clap) | tc=0 | Delta |
+|---|---|---|---|
+| 1 | 3301.5 (4.1) | 3266.1 (4.4) | -35.4 |
+| 1000003 | 3295.1 (3.9) | 3269.0 (4.3) | -26.1 |
+
+Dropping Thunder Clap loses on both seeds, well beyond noise, so it stays. A likely reason, not measured: the Phase 0 set has less mitigation than the synthetic one, so Thunder Clap's attack speed slow counts for more. The rotation and the Horde Balanced row are unchanged. The scores and race rows above are from code before 3aeced173.
+
 ## Faction row (step 8)
 
 Max threat's hands, Raider Gauntlets, need Darkspear Raiders Revered (Horde). The Alliance row is ranked at RaceHuman over the hands slot.
