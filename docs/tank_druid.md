@@ -356,6 +356,32 @@ knobs, 1,000 a candidate, 3,000 to confirm, then `-talent-search -require feralS
 - Talent searches: every swap within the noise (the best, at Max survival, +22.5 with noise 43.6); all three keep
   their talents.
 
+## Re-searched on the tank threat fixes (2026-11-25)
+
+origin/phase0-tankheal 33792b77d fixed the bear's threat: Lacerate's threat 10/3 of its damage, Primal Bite's and
+Faerie Fire's threat in the bear forms, Rage's threat 5 a Rage (Balanced TPS 1,628 → 2,372). Each preset was searched
+again the 2026-11-12 way (`rotopt -template druid_tank -tank <preset>` on the six scoring bosses from the shipped
+knobs, 1,000 a candidate, 3,000 to confirm; `-talent-search -require feralSwiftness` on the knobs it found; paired
+`abtest` at 3,000 on seed 1, taken only at 10,000 on seeds 1 and 2), the gear left as the requests have it.
+
+| Preset | Change | Seed 1 | Seed 2 | Seed 3 | Taken |
+|---|---|---|---|---|---|
+| Max threat | Enrage under 80 Rage, not 70 (`enrageRage=80`) | **+2.9 ± 0.3** | **+3.6 ± 0.3** | | yes |
+| Max survival | Lacerate refreshed under 6 sec, not 4 (`lacerateRefresh=6`) | **+18.6 ± 9.4** | **+13.8 ± 9.5** | **+27.6 ± 9.9** | yes |
+| Max survival | that and Roar refreshed at 0 sec | +28.6 ± 18.6 (3,000) | | | no: the Roar adds nothing |
+| Balanced | Barkskin from 20 sec in (`barkskinAfter=20`) | +7.7 ± 7.9 (3,000) | | | no |
+
+Balanced kept every knob (the search's best move was `barkskinAfter=20`, +14.0 with noise 13.4). The talent searches kept all three talent
+strings (Balanced and Max threat `-5022233202310212551-055`, Max survival `-5023133202310212551-055`); every swap
+lost or tied. Knob strings: Max threat as 2026-11-12 with `enrageRage=80`; Max survival as 2026-11-12 plus
+`lacerateRefresh=6`. With Lacerate's threat now 10/3 its damage, keeping the stacks up longer is worth the earlier
+GCD at Max survival, where Swipe at 80 Rage takes the filler.
+
+Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval -apl`): Max threat 4,530.5 → **4,533.4**, Balanced
+**3,344.8** (unchanged), Max survival 1,298.8 → **1,317.4**. Tankbench, 3,000, seed 1, six-boss mean (score / SafeDPS /
+TPS): Max threat 4,536 / 2,559 / 2,561 → 4,539 / 2,561 / 2,561; Balanced 3,334 / 2,309 / 2,371; Max survival 1,289 /
+1,763 / 1,794 → 1,329 / 1,775 / 1,817.
+
 ## Flask after the Natural flask cut (2026-11-12)
 
 Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +115.9 ± 7.8 / +111.6 ± 7.6, -594.3 → **-478.3** (seed 1).

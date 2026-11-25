@@ -139,13 +139,13 @@
                         "op": "OpLt",
                         "rhs": {
                           "const": {
-                            "val": "70"
+                            "val": "80"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Enrage in the fight under 70 Rage (off the GCD; 16% less armor from items for 10 sec)."
+                  "notes": "Enrage in the fight under 80 Rage (off the GCD; 16% less armor from items for 10 sec)."
                 },
                 {
                   "action": {
