@@ -456,6 +456,19 @@ func main() {
 			fmt.Fprintln(os.Stderr, "-use-dur needs one fight length in -durs")
 			os.Exit(2)
 		}
+		if *gearEpKeep > 0 {
+			effect, err := poolEffects()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "-gear-ep-keep: %v\n", err)
+				os.Exit(2)
+			}
+			weights := s.epWeights(pool, start)
+			trimmed := keepByEP(pool, weights, *gearEpKeep, equipmentSlots(setup.player().Equipment), include, effect)
+			for slot := range pool {
+				fmt.Printf("%s: %d options, %d after the EP trim\n", gearSlotNames[slot], len(pool[slot]), len(trimmed[slot]))
+			}
+			pool = trimmed
+		}
 		if *slotTradeoffs {
 			s.survival = true
 			s.slotTradeoffs(pool, start)

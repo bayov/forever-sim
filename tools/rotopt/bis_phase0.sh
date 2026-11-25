@@ -212,10 +212,13 @@
 # The bosses' index takes the fight length's place (DUR 0), and the uses count inside the boss
 # fights (USE_DUR 0, no "vs 4 mobs" lines). There's no effects file, since BayovCore's stat
 # score is DPS. A score is six or fourteen boss runs, so the search runs 1000 iterations (the
-# report's), screens at 300 and keeps 15 for the full sims, and confirms at 5000.
-# The tanks start from real sets of their armor with no weapons (the one hander and shield come
-# in one slot at a time): Valor for the warrior, and the Phase 0 sets of Retribution, Feral and
-# Enhancement for the paladin, bear and Warden. The healers start from the Phase 0 sets of Smite
+# report's), screens at 300 and keeps 15 for the full sims, and confirms at 5000. Before that the
+# pool keeps each slot's best 25 by the score's own stat weights, measured on the preset's
+# synthetic set (-gear-ep-keep, docs/bis_lists.md), with every item with an effect or of a set.
+# The tanks start from real sets of their armor: Valor for the warrior, and the Phase 0 sets of
+# Retribution, Feral and Enhancement for the paladin, bear and Warden, with a one hander and
+# Draconian Deflector for the shield tanks (Vilerend Slicer, Annihilator for the Warden). With no
+# weapon a tank dies past what healing saves on some bosses, and the score is the reject value. The healers start from the Phase 0 sets of Smite
 # (priests), Elemental (paladin and shaman) and Balance (druid).
 #
 # Each round of the search screens a slot's items at 300 iterations and keeps the best 40 for the
@@ -471,7 +474,7 @@ fi
 iters="-iters 2000 -gear-screen-iters 300 -gear-screen-keep 40"
 confirm="-gear-rank-confirm-iters 20000 -gear-rank-enchant-iters 10000"
 if [ -n "$bench" ]; then
-	iters="-iters 1000 -gear-screen-iters 300 -gear-screen-keep 15"
+	iters="-iters 1000 -gear-screen-iters 300 -gear-screen-keep 15 -gear-ep-keep 25 -gear-ep-settings $req"
 	confirm="-gear-rank-confirm-iters 5000 -gear-rank-enchant-iters 3000"
 fi
 # The conditional and cooldown ranks need the uses valued on their own (USE_DUR), and a boss file

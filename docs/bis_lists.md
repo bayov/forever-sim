@@ -72,6 +72,26 @@ kept Wildheart Bracers while its own wrist ranking had Windtalker's Wristguards 
 We used to ask for the `-confidence` margin at `-iters` too, but then Don Julio's Band stayed
 2.3 DPS ahead of the rings on the next run, and it was 2.4 ahead at 20000 iterations.
 
+### The EP trim for tanks and healers
+
+A tank set's score is six boss sims and a healer's is fourteen (seven bosses in two roles), and
+a slot's pool holds 500 to 2500 options, most of them random suffix rolls. A DPS search can
+afford to screen them all, a tank or healer search can't. So `-gear-ep-keep N` trims the pool
+before the search and the ranking (`tools/rotopt/ep.go`). It measures linear stat weights of the
+search's own objective on a reference set (`-gear-ep-settings`, the starting set by default):
+each stat the pool has goes on the player as a bonus stat, about an item's worth of it, and
+its weight is the score it adds over the score without, per point. The runs share their seed
+and go through the same scoring as the search, so a tank's weights are in its tank score over
+all its bosses and a healer's in damage carried. A healer's reference carries are still measured
+on the starting set. Hit and crit count as one stat each, since Forever pays an item's hit and
+crit to melee and spells alike. Each slot then keeps its best N options by the weights, from the
+item's and the suffix's stats. Set bonuses and enchants don't count there. What the weights
+can't judge is always kept: every item with a use or proc effect, modelled or not (so the hand
+check still sees the unmodelled ones), every set piece, items with weapon skill, the starting
+items and the `-gear-include` items. A weapon slot also keeps the best N of each weapon class
+(one hander, two hander, shield, held in off hand) by the weights and by weapon DPS. The run
+prints the weights and each slot's count before and after.
+
 ### Items we rank but never pick
 
 `-gear-no-pick` takes item IDs the search never picks, but every list still ranks. The Phase 0

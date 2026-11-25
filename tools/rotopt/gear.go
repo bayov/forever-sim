@@ -102,10 +102,12 @@ func armorTypesFor(class proto.Class, level int32) []proto.ArmorType {
 	}
 }
 
+// The warrior holds a shield as a tank (2026-11-25). Arms and Fury keep their two-hand and dual-wield rules, which
+// leave shields out.
 var weaponTypesFor = map[proto.Class][]proto.WeaponType{
 	// The rogue gets axes under Forever, its Hack and Slash reads "Axe/Sword".
 	proto.Class_ClassRogue:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe},
-	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
+	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeShield},
 	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
 	proto.Class_ClassPaladin: {proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
 	proto.Class_ClassHunter:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},

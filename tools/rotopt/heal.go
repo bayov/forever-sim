@@ -124,6 +124,24 @@ func (slot *healSlot) healRequest(setupReq *proto.RaidSimRequest, iterations int
 	if slot.raid != nil {
 		player := goproto.Clone(healscore.FirstPlayer(slot.raid)).(*proto.Player)
 		player.Equipment = setupReq.Raid.Parties[0].Players[0].Equipment
+		// The setup's bonus stats go along too (-bonus, the EP weights of -gear-ep-keep).
+		if bonus := setupReq.Raid.Parties[0].Players[0].BonusStats; bonus != nil {
+			if player.BonusStats == nil {
+				player.BonusStats = &proto.UnitStats{}
+			}
+			for len(player.BonusStats.Stats) < len(bonus.Stats) {
+				player.BonusStats.Stats = append(player.BonusStats.Stats, 0)
+			}
+			for i, v := range bonus.Stats {
+				player.BonusStats.Stats[i] += v
+			}
+			for len(player.BonusStats.PseudoStats) < len(bonus.PseudoStats) {
+				player.BonusStats.PseudoStats = append(player.BonusStats.PseudoStats, 0)
+			}
+			for i, v := range bonus.PseudoStats {
+				player.BonusStats.PseudoStats[i] += v
+			}
+		}
 		setupReq.Raid.Parties[0].Players[0] = player
 		setupReq.Raid.Buffs, setupReq.Raid.Debuffs = slot.raid.Raid.Buffs, slot.raid.Raid.Debuffs
 		// The raid preset's own rotation, with a synthetic trinket's use moved to the one worn.
