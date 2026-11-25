@@ -10,23 +10,23 @@
     180
   ],
   "use_dur": 90,
-  "dps": 887.95,
+  "dps": 889.44,
   "made": "2026-11-25",
-  "sim": "ac75336346de",
+  "sim": "34fe148a589e",
   "slots": {
     "head": [
       {
         "id": 22267,
         "name": "Spellweaver's Turban",
-        "dps": 891.4,
+        "dps": 892.89,
         "loss": -3.45,
         "avail": "infeasible",
-        "note": "General Drakkisath (Upper Blackrock Spire) · 38g per DPS"
+        "note": "General Drakkisath (Upper Blackrock Spire) · 50g per DPS"
       },
       {
         "id": 226909,
         "name": "Deathmist Mask",
-        "dps": 888.65,
+        "dps": 890.14,
         "loss": -0.7,
         "avail": "doubtful",
         "note": "Forever's Dungeon Set 2 copy (set 1681) · quest · Dreadmist Mask + Robe · end of the Valthalak chain, step gold unknown · or bought from the set vendor after"
@@ -35,17 +35,17 @@
         "id": 14332,
         "suffix": 1865,
         "name": "Eternal Crown of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 2544,
-        "note": "Random world drop · BoE · also Ghansurok (Hyjal)"
+        "note": "Random world drop · BoE · also Ghansurok (Hyjal) · 4g per DPS"
       },
       {
         "id": 14312,
         "suffix": 1864,
         "name": "Celestial Crown of Shadow Wrath",
-        "dps": 887.27,
+        "dps": 888.76,
         "loss": 0.68,
         "note": "Random world drop · BoE"
       },
@@ -53,7 +53,7 @@
         "id": 10139,
         "suffix": 1864,
         "name": "High Councillor's Circlet of Shadow Wrath",
-        "dps": 887.27,
+        "dps": 888.76,
         "loss": 0.68,
         "note": "Random world drop · BoE"
       },
@@ -61,15 +61,15 @@
         "id": 10250,
         "suffix": 1864,
         "name": "Master's Hat of Shadow Wrath",
-        "dps": 887.27,
+        "dps": 888.76,
         "loss": 0.68,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 1g per DPS"
       },
       {
         "id": 14322,
         "suffix": 1864,
         "name": "Resplendent Circlet of Shadow Wrath",
-        "dps": 887.27,
+        "dps": 888.76,
         "loss": 0.68,
         "note": "Random world drop · BoE · also Dire Maul"
       },
@@ -77,15 +77,15 @@
         "id": 14307,
         "suffix": 1862,
         "name": "Bonecaster's Crown of Shadow Wrath",
-        "dps": 885.21,
+        "dps": 886.7,
         "loss": 2.74,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 1g per DPS"
       },
       {
         "id": 10219,
         "suffix": 1862,
         "name": "Elegant Circlet of Shadow Wrath",
-        "dps": 885.21,
+        "dps": 886.7,
         "loss": 2.74,
         "note": "Random world drop · BoE"
       },
@@ -93,7 +93,7 @@
         "id": 14293,
         "suffix": 1861,
         "name": "Arachnidian Circlet of Shadow Wrath",
-        "dps": 884.53,
+        "dps": 886.02,
         "loss": 3.42,
         "note": "Random world drop · BoE · 0g per DPS"
       },
@@ -101,7 +101,7 @@
         "id": 10097,
         "suffix": 1861,
         "name": "Councillor's Circlet of Shadow Wrath",
-        "dps": 884.53,
+        "dps": 886.02,
         "loss": 3.42,
         "note": "Random world drop · BoE"
       },
@@ -109,21 +109,21 @@
         "id": 10175,
         "suffix": 1861,
         "name": "Mystical Headwrap of Shadow Wrath",
-        "dps": 884.53,
+        "dps": 886.02,
         "loss": 3.42,
         "note": "Random world drop · BoE"
       },
       {
         "id": 18727,
         "name": "Crimson Felt Hat",
-        "dps": 884.17,
+        "dps": 885.66,
         "loss": 3.78,
         "note": "Magistrate Barthilas (Stratholme)"
       },
       {
         "id": 14111,
         "name": "Felcloth Hood",
-        "dps": 883.11,
+        "dps": 884.6,
         "loss": 4.84,
         "note": "Tailoring 245 · pattern from Scarshield Grunt (Burning Steppes) 6% drop"
       },
@@ -131,37 +131,37 @@
         "id": 14332,
         "suffix": 990558,
         "name": "Eternal Crown of Magic",
-        "dps": 882.81,
+        "dps": 884.3,
         "loss": 5.14,
-        "note": "Random world drop · BoE · also Ghansurok (Hyjal)"
+        "note": "Random world drop · BoE · also Ghansurok (Hyjal) · 4g per DPS"
       },
       {
         "id": 10250,
         "suffix": 990558,
         "name": "Master's Hat of Magic",
-        "dps": 882.81,
+        "dps": 884.3,
         "loss": 5.14,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 1g per DPS"
       },
       {
         "id": 14281,
         "suffix": 1859,
         "name": "Opulent Crown of Shadow Wrath",
-        "dps": 882.48,
+        "dps": 883.97,
         "loss": 5.47,
         "note": "0g per DPS"
       },
       {
         "id": 276877,
         "name": "Brewmancer Nightcap",
-        "dps": 882.31,
+        "dps": 883.8,
         "loss": 5.64
       },
       {
         "id": 14312,
         "suffix": 990568,
         "name": "Celestial Crown of Magic",
-        "dps": 882.12,
+        "dps": 883.61,
         "loss": 5.83,
         "note": "Random world drop · BoE"
       },
@@ -169,7 +169,7 @@
         "id": 10139,
         "suffix": 990568,
         "name": "High Councillor's Circlet of Magic",
-        "dps": 882.12,
+        "dps": 883.61,
         "loss": 5.83,
         "note": "Random world drop · BoE"
       },
@@ -177,7 +177,7 @@
         "id": 14322,
         "suffix": 990568,
         "name": "Resplendent Circlet of Magic",
-        "dps": 882.12,
+        "dps": 883.61,
         "loss": 5.83,
         "note": "Random world drop · BoE · also Dire Maul"
       },
@@ -185,29 +185,29 @@
         "id": 9940,
         "suffix": 1858,
         "name": "Abjurer's Hood of Shadow Wrath",
-        "dps": 881.11,
+        "dps": 882.6,
         "loss": 6.84
       },
       {
         "id": 10061,
         "suffix": 1858,
         "name": "Duskwoven Turban of Shadow Wrath",
-        "dps": 881.11,
+        "dps": 882.6,
         "loss": 6.84
       },
       {
         "id": 14307,
         "suffix": 990537,
         "name": "Bonecaster's Crown of Magic",
-        "dps": 880.73,
+        "dps": 882.22,
         "loss": 7.22,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 1g per DPS"
       },
       {
         "id": 10219,
         "suffix": 990537,
         "name": "Elegant Circlet of Magic",
-        "dps": 880.73,
+        "dps": 882.22,
         "loss": 7.22,
         "note": "Random world drop · BoE"
       }
@@ -216,23 +216,23 @@
       {
         "id": 22403,
         "name": "Nacreous Shell Necklace",
-        "dps": 889.38,
+        "dps": 890.87,
         "loss": -1.43,
         "avail": "infeasible",
-        "note": "price restored 2026-11-24 (warlock step 4): the Enhancement price pass of 5e556ff1e dropped it, not being on that list · 84g per DPS"
+        "note": "price restored 2026-11-24 (warlock step 4): the Enhancement price pass of 5e556ff1e dropped it, not being on that list · 112g per DPS"
       },
       {
         "id": 18691,
         "name": "Dark Advisor's Pendant",
-        "dps": 888.04,
+        "dps": 889.53,
         "loss": -0.09,
         "avail": "infeasible",
-        "note": "Drop: Vectus, Scholomance · 2465g per DPS"
+        "note": "Drop: Vectus, Scholomance · 11229g per DPS"
       },
       {
         "id": 19426,
         "name": "Orb of the Darkmoon",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 1249057,
@@ -241,13 +241,13 @@
       {
         "id": 12103,
         "name": "Star of Mystaria",
-        "dps": 886.31,
+        "dps": 887.8,
         "loss": 1.64
       },
       {
         "id": 22657,
         "name": "Amulet of the Dawn",
-        "dps": 885.05,
+        "dps": 886.54,
         "loss": 2.9,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -255,7 +255,7 @@
       {
         "id": 14558,
         "name": "Lady Maye's Pendant",
-        "dps": 884.84,
+        "dps": 886.33,
         "loss": 3.11,
         "unsourced": true,
         "avail": "doubtful",
@@ -264,13 +264,13 @@
       {
         "id": 12929,
         "name": "Emberfury Talisman",
-        "dps": 884.84,
+        "dps": 886.33,
         "loss": 3.11
       },
       {
         "id": 270126,
         "name": "Conqueror's Pendant",
-        "dps": 884.1,
+        "dps": 885.59,
         "loss": 3.85,
         "avail": "doubtful",
         "note": "Quest: Operation: Death to Angerforge (Horde), Blackrock Depths"
@@ -278,27 +278,27 @@
       {
         "id": 18317,
         "name": "Tempest Talisman",
-        "dps": 883.63,
+        "dps": 885.12,
         "loss": 4.32
       },
       {
         "id": 22149,
         "name": "Beads of Ogre Mojo",
-        "dps": 883.62,
+        "dps": 885.11,
         "loss": 4.33,
         "note": "Quest: Falrin's Vendetta · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 15856,
         "name": "Archlight Talisman",
-        "dps": 883.13,
+        "dps": 884.62,
         "loss": 4.82,
         "note": "Quest: Hidden Treasures, Eastern Plaguelands"
       },
       {
         "id": 275736,
         "name": "Horn of Ve'han",
-        "dps": 882.92,
+        "dps": 884.41,
         "loss": 5.03,
         "avail": "doubtful",
         "note": "Quest: Work Well Done"
@@ -306,21 +306,21 @@
       {
         "id": 281636,
         "name": "Museum Keeper's Chain",
-        "dps": 882.43,
+        "dps": 883.92,
         "loss": 5.52,
         "note": "Quest: Greater Friend of the Library (Forever quest, giver not in our data)"
       },
       {
         "id": 287035,
         "name": "Demon Worshipper's Necklace",
-        "dps": 882.26,
+        "dps": 883.75,
         "loss": 5.69,
         "note": "On AH ~20g"
       },
       {
         "id": 274384,
         "name": "Illegible Dogtags",
-        "dps": 881.8,
+        "dps": 883.28,
         "loss": 6.16,
         "avail": "doubtful",
         "note": "Quest: Soldier's Solace"
@@ -328,28 +328,28 @@
       {
         "id": 1443,
         "name": "Jeweled Amulet of Cainwyn",
-        "dps": 881.6,
+        "dps": 883.09,
         "loss": 6.35,
         "note": "On AH ~125g"
       },
       {
         "id": 18728,
         "name": "Anastari Heirloom",
-        "dps": 881.33,
+        "dps": 882.82,
         "loss": 6.62,
         "note": "Drop: Baroness Anastari, Stratholme"
       },
       {
         "id": 284097,
         "name": "Everstaring Abomination Eye",
-        "dps": 880.88,
+        "dps": 882.36,
         "loss": 7.08,
         "unsourced": true
       },
       {
         "id": 281281,
         "name": "Frost's Whisper Pendant",
-        "dps": 880.77,
+        "dps": 882.26,
         "loss": 7.18,
         "avail": "doubtful",
         "note": "Quest: Halt the Hail"
@@ -357,14 +357,14 @@
       {
         "id": 15411,
         "name": "Mark of Fordring",
-        "dps": 880.63,
+        "dps": 882.12,
         "loss": 7.32,
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
         "id": 22659,
         "name": "Medallion of the Dawn",
-        "dps": 880.63,
+        "dps": 882.12,
         "loss": 7.32,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -372,28 +372,28 @@
       {
         "id": 279833,
         "name": "Courier's Clasp",
-        "dps": 880.23,
+        "dps": 881.72,
         "loss": 7.72,
         "note": "Quest: Thrall Needs to Know (Horde)"
       },
       {
         "id": 18723,
         "name": "Animated Chain Necklace",
-        "dps": 880.18,
+        "dps": 881.67,
         "loss": 7.77,
         "note": "Drop: Ramstein the Gorger, Stratholme"
       },
       {
         "id": 22150,
         "name": "Beads of Ogre Might",
-        "dps": 879.9,
+        "dps": 881.39,
         "loss": 8.05,
         "note": "Quest: Falrin's Vendetta (Dire Maul) · 25 Ogre Warbeads from Dire Maul or Blackrock Spire ogres · step of Mokvar's Five Thunders chain"
       },
       {
         "id": 22340,
         "name": "Pendant of Celerity",
-        "dps": 879.9,
+        "dps": 881.39,
         "loss": 8.05,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       }
@@ -402,7 +402,7 @@
       {
         "id": 227808,
         "name": "Rugged Mantle of the Timbermaw",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -411,7 +411,7 @@
       {
         "id": 19050,
         "name": "Mantle of the Timbermaw",
-        "dps": 880.86,
+        "dps": 882.35,
         "loss": 7.09,
         "avail": "doubtful",
         "note": "BoE · Loom + Timbermaw Revered · station blueprint not seen dropping yet · not on our AH yet"
@@ -420,7 +420,7 @@
         "id": 14335,
         "suffix": 1857,
         "name": "Eternal Spaulders of Shadow Wrath",
-        "dps": 877.27,
+        "dps": 878.76,
         "loss": 10.68,
         "note": "Random world drop · BoE"
       },
@@ -428,7 +428,7 @@
         "id": 10142,
         "suffix": 1857,
         "name": "High Councillor's Mantle of Shadow Wrath",
-        "dps": 877.27,
+        "dps": 878.76,
         "loss": 10.68,
         "note": "Random world drop · BoE"
       },
@@ -436,7 +436,7 @@
         "id": 10253,
         "suffix": 1857,
         "name": "Master's Mantle of Shadow Wrath",
-        "dps": 877.27,
+        "dps": 878.76,
         "loss": 10.68,
         "note": "Random world drop · BoE"
       },
@@ -444,7 +444,7 @@
         "id": 14325,
         "suffix": 1857,
         "name": "Resplendent Epaulets of Shadow Wrath",
-        "dps": 877.27,
+        "dps": 878.76,
         "loss": 10.68,
         "note": "Random world drop · BoE"
       },
@@ -452,7 +452,7 @@
         "id": 14316,
         "suffix": 1856,
         "name": "Celestial Pauldrons of Shadow Wrath",
-        "dps": 876.57,
+        "dps": 878.06,
         "loss": 11.38,
         "note": "Random world drop · BoE"
       },
@@ -460,34 +460,34 @@
         "id": 10210,
         "suffix": 1856,
         "name": "Elegant Mantle of Shadow Wrath",
-        "dps": 876.57,
+        "dps": 878.06,
         "loss": 11.38,
         "note": "Random world drop · BoE"
       },
       {
         "id": 14112,
         "name": "Felcloth Shoulders",
-        "dps": 875.8,
+        "dps": 877.29,
         "loss": 12.15,
         "note": "Tailoring 265 · pattern from Gruff (Un'Goro) 6% drop · or Quel'Lithien Protector (Eastern Plaguelands)"
       },
       {
         "id": 19059,
         "name": "Argent Shoulders",
-        "dps": 875.6,
+        "dps": 877.09,
         "loss": 12.35,
         "note": "Tailoring 290 · pattern ~40g from Argent Dawn quartermasters, Revered · 5 Mooncloth"
       },
       {
         "id": 18681,
         "name": "Burial Shawl",
-        "dps": 875.23,
+        "dps": 876.72,
         "loss": 12.72
       },
       {
         "id": 18720,
         "name": "Shroud of the Nathrezim",
-        "dps": 874.63,
+        "dps": 876.12,
         "loss": 13.32,
         "note": "Hel'nurath (Dire Maul East, summoned)"
       },
@@ -495,7 +495,7 @@
         "id": 14298,
         "suffix": 1854,
         "name": "Bonecaster's Spaulders of Shadow Wrath",
-        "dps": 874.49,
+        "dps": 875.98,
         "loss": 13.46,
         "note": "Random world drop · BoE"
       },
@@ -503,7 +503,7 @@
         "id": 10100,
         "suffix": 1854,
         "name": "Councillor's Shoulders of Shadow Wrath",
-        "dps": 874.49,
+        "dps": 875.98,
         "loss": 13.46,
         "note": "Random world drop · BoE"
       },
@@ -511,7 +511,7 @@
         "id": 10172,
         "suffix": 1854,
         "name": "Mystical Mantle of Shadow Wrath",
-        "dps": 874.49,
+        "dps": 875.98,
         "loss": 13.46,
         "note": "Random world drop · BoE"
       },
@@ -519,7 +519,7 @@
         "id": 14335,
         "suffix": 990447,
         "name": "Eternal Spaulders of Magic",
-        "dps": 874.06,
+        "dps": 875.55,
         "loss": 13.89,
         "note": "Random world drop · BoE"
       },
@@ -527,7 +527,7 @@
         "id": 10253,
         "suffix": 990447,
         "name": "Master's Mantle of Magic",
-        "dps": 874.06,
+        "dps": 875.55,
         "loss": 13.89,
         "note": "Random world drop · BoE"
       },
@@ -535,13 +535,13 @@
         "id": 14296,
         "suffix": 1853,
         "name": "Arachnidian Pauldrons of Shadow Wrath",
-        "dps": 873.1,
+        "dps": 874.59,
         "loss": 14.85
       },
       {
         "id": 226912,
         "name": "Deathmist Mantle",
-        "dps": 872.69,
+        "dps": 874.18,
         "loss": 15.26,
         "note": "Forever's Dungeon Set 2 copy (set 1681) · quest · Dreadmist Mantle, Leggings and Sandals · Anthion chain (Strat, Dire Maul), step gold unknown · or bought from the set vendor after"
       },
@@ -549,7 +549,7 @@
         "id": 10210,
         "suffix": 990454,
         "name": "Elegant Mantle of Magic",
-        "dps": 872.65,
+        "dps": 874.14,
         "loss": 15.3,
         "note": "Random world drop · BoE"
       },
@@ -557,7 +557,7 @@
         "id": 10142,
         "suffix": 990454,
         "name": "High Councillor's Mantle of Magic",
-        "dps": 872.65,
+        "dps": 874.14,
         "loss": 15.3,
         "note": "Random world drop · BoE"
       },
@@ -565,7 +565,7 @@
         "id": 14325,
         "suffix": 990454,
         "name": "Resplendent Epaulets of Magic",
-        "dps": 872.65,
+        "dps": 874.14,
         "loss": 15.3,
         "note": "Random world drop · BoE"
       },
@@ -573,20 +573,20 @@
         "id": 10063,
         "suffix": 1852,
         "name": "Duskwoven Amice of Shadow Wrath",
-        "dps": 872.41,
+        "dps": 873.9,
         "loss": 15.54
       },
       {
         "id": 14278,
         "suffix": 1852,
         "name": "Opulent Mantle of Shadow Wrath",
-        "dps": 872.41,
+        "dps": 873.9,
         "loss": 15.54
       },
       {
         "id": 272103,
         "name": "Darkspear Shoulderpads",
-        "dps": 872.14,
+        "dps": 873.63,
         "loss": 15.81,
         "note": "Darkspear Raiders Revered · Revered per the item data · Creeg Bothunk (Barrens)"
       }
@@ -595,7 +595,7 @@
       {
         "id": 272411,
         "name": "Arcanoweave Cloak",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "note": "Pix Xizzix · 75 Reals"
@@ -603,7 +603,7 @@
       {
         "id": 279269,
         "name": "Fel Cape",
-        "dps": 883.48,
+        "dps": 884.97,
         "loss": 4.47,
         "avail": "doubtful",
         "note": "Tailoring 300 · pattern (279318) has no known source · its sibling crafts (Robes of Fiery Devastation, Rime-encrusted Boots) need raid essence"
@@ -612,7 +612,7 @@
         "id": 10258,
         "suffix": 1851,
         "name": "Adventurer's Cape of Shadow Wrath",
-        "dps": 879.93,
+        "dps": 881.42,
         "loss": 8.02,
         "note": "Random world drop · other suffixes on AH ~2.6g"
       },
@@ -620,7 +620,7 @@
         "id": 14331,
         "suffix": 1851,
         "name": "Eternal Cloak of Shadow Wrath",
-        "dps": 879.93,
+        "dps": 881.42,
         "loss": 8.02,
         "note": "Random world drop"
       },
@@ -628,7 +628,7 @@
         "id": 10138,
         "suffix": 1851,
         "name": "High Councillor's Cloak of Shadow Wrath",
-        "dps": 879.93,
+        "dps": 881.42,
         "loss": 8.02,
         "note": "Random world drop"
       },
@@ -636,7 +636,7 @@
         "id": 10249,
         "suffix": 1851,
         "name": "Master's Cloak of Shadow Wrath",
-        "dps": 879.93,
+        "dps": 881.42,
         "loss": 8.02,
         "note": "Random world drop"
       },
@@ -644,7 +644,7 @@
         "id": 10267,
         "suffix": 1851,
         "name": "Masterwork Cape of Shadow Wrath",
-        "dps": 879.93,
+        "dps": 881.42,
         "loss": 8.02,
         "note": "Random world drop"
       },
@@ -652,7 +652,7 @@
         "id": 15437,
         "suffix": 1851,
         "name": "Supreme Cape of Shadow Wrath",
-        "dps": 879.93,
+        "dps": 881.42,
         "loss": 8.02,
         "note": "Random world drop"
       },
@@ -660,7 +660,7 @@
         "id": 10212,
         "suffix": 1850,
         "name": "Elegant Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71,
         "note": "Random world drop"
       },
@@ -668,7 +668,7 @@
         "id": 15671,
         "suffix": 1850,
         "name": "Magnificent Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71,
         "note": "Random world drop"
       },
@@ -676,7 +676,7 @@
         "id": 10159,
         "suffix": 1850,
         "name": "Mercurial Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71,
         "note": "Random world drop"
       },
@@ -684,7 +684,7 @@
         "id": 10148,
         "suffix": 1850,
         "name": "Mighty Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71,
         "note": "Random world drop"
       },
@@ -692,7 +692,7 @@
         "id": 10224,
         "suffix": 1850,
         "name": "Nightshade Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71,
         "note": "Random world drop"
       },
@@ -700,14 +700,14 @@
         "id": 14321,
         "suffix": 1850,
         "name": "Resplendent Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71
       },
       {
         "id": 15681,
         "suffix": 1850,
         "name": "Triumphant Cloak of Shadow Wrath",
-        "dps": 879.24,
+        "dps": 880.73,
         "loss": 8.71,
         "note": "Random world drop"
       },
@@ -715,7 +715,7 @@
         "id": 13386,
         "suffix": 1851,
         "name": "Archivist Cape of Shadow Wrath",
-        "dps": 878.96,
+        "dps": 880.45,
         "loss": 8.99,
         "note": "Drop: Archivist Galford, Stratholme"
       },
@@ -723,14 +723,14 @@
         "id": 14300,
         "suffix": 1849,
         "name": "Bonecaster's Cape of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41
       },
       {
         "id": 14313,
         "suffix": 1849,
         "name": "Celestial Cape of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41,
         "note": "Random world drop"
       },
@@ -738,7 +738,7 @@
         "id": 10098,
         "suffix": 1849,
         "name": "Councillor's Cloak of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41,
         "note": "Random world drop"
       },
@@ -746,7 +746,7 @@
         "id": 10231,
         "suffix": 1849,
         "name": "Engraved Cape of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41,
         "note": "Random world drop"
       },
@@ -754,7 +754,7 @@
         "id": 15190,
         "suffix": 1849,
         "name": "Grand Cloak of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41,
         "note": "Random world drop"
       },
@@ -762,28 +762,28 @@
         "id": 15661,
         "suffix": 1849,
         "name": "Impenetrable Cloak of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41
       },
       {
         "id": 10174,
         "suffix": 1849,
         "name": "Mystical Cape of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41
       },
       {
         "id": 10120,
         "suffix": 1849,
         "name": "Ornate Cloak of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41
       },
       {
         "id": 15427,
         "suffix": 1849,
         "name": "Peerless Cloak of Shadow Wrath",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41
       }
     ],
@@ -791,7 +791,7 @@
       {
         "id": 14153,
         "name": "Robe of the Void",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 1254966,
@@ -800,14 +800,14 @@
       {
         "id": 14136,
         "name": "Robe of Winter Night",
-        "dps": 884.15,
+        "dps": 885.64,
         "loss": 3.8,
         "note": "Tailoring 245 · pattern from Cobalt Mageweaver (Winterspring) 0.8% drop · BoP · 12 Felcloth, 10 Runecloth bolts and elemental essences"
       },
       {
         "id": 280057,
         "name": "Robes of Dark Summons",
-        "dps": 883.15,
+        "dps": 884.64,
         "loss": 4.8,
         "avail": "doubtful",
         "note": "Impaan the Imprisoner · Blackmaw Hold · not in guides yet"
@@ -816,7 +816,7 @@
         "id": 14328,
         "suffix": 1865,
         "name": "Eternal Chestguard of Shadow Wrath",
-        "dps": 881.04,
+        "dps": 882.53,
         "loss": 6.91,
         "unsourced": true,
         "note": "Random world drop · BoE"
@@ -825,7 +825,7 @@
         "id": 14336,
         "suffix": 1865,
         "name": "Eternal Wraps of Shadow Wrath",
-        "dps": 881.04,
+        "dps": 882.53,
         "loss": 6.91,
         "note": "Random world drop · BoE · also Azuregos"
       },
@@ -833,7 +833,7 @@
         "id": 10143,
         "suffix": 1865,
         "name": "High Councillor's Robe of Shadow Wrath",
-        "dps": 881.04,
+        "dps": 882.53,
         "loss": 6.91,
         "note": "Random world drop · BoE"
       },
@@ -841,7 +841,7 @@
         "id": 10135,
         "suffix": 1865,
         "name": "High Councillor's Tunic of Shadow Wrath",
-        "dps": 881.04,
+        "dps": 882.53,
         "loss": 6.91,
         "note": "Random world drop · BoE"
       },
@@ -849,7 +849,7 @@
         "id": 10254,
         "suffix": 1865,
         "name": "Master's Robe of Shadow Wrath",
-        "dps": 881.04,
+        "dps": 882.53,
         "loss": 6.91,
         "note": "Random world drop · BoE · also Eternium Lockbox"
       },
@@ -857,7 +857,7 @@
         "id": 10246,
         "suffix": 1865,
         "name": "Master's Vest of Shadow Wrath",
-        "dps": 881.04,
+        "dps": 882.53,
         "loss": 6.91,
         "note": "Random world drop · BoE · also General Drakkisath (Upper Blackrock Spire)"
       },
@@ -865,7 +865,7 @@
         "id": 14317,
         "suffix": 1864,
         "name": "Celestial Silk Robes of Shadow Wrath",
-        "dps": 880.34,
+        "dps": 881.83,
         "loss": 7.61,
         "note": "Random world drop · BoE · also Dire Maul"
       },
@@ -873,7 +873,7 @@
         "id": 14308,
         "suffix": 1864,
         "name": "Celestial Tunic of Shadow Wrath",
-        "dps": 880.34,
+        "dps": 881.83,
         "loss": 7.61,
         "note": "Random world drop · BoE"
       },
@@ -881,14 +881,14 @@
         "id": 10215,
         "suffix": 1864,
         "name": "Elegant Robes of Shadow Wrath",
-        "dps": 880.34,
+        "dps": 881.83,
         "loss": 7.61
       },
       {
         "id": 10218,
         "suffix": 1864,
         "name": "Elegant Tunic of Shadow Wrath",
-        "dps": 880.34,
+        "dps": 881.83,
         "loss": 7.61,
         "note": "Random world drop · BoE"
       },
@@ -896,7 +896,7 @@
         "id": 14326,
         "suffix": 1864,
         "name": "Resplendent Robes of Shadow Wrath",
-        "dps": 880.34,
+        "dps": 881.83,
         "loss": 7.61,
         "note": "Random world drop · BoE · also Dire Maul"
       },
@@ -904,28 +904,28 @@
         "id": 14318,
         "suffix": 1864,
         "name": "Resplendent Tunic of Shadow Wrath",
-        "dps": 880.34,
+        "dps": 881.83,
         "loss": 7.61,
         "unsourced": true
       },
       {
         "id": 13314,
         "name": "Alanna's Embrace",
-        "dps": 878.54,
+        "dps": 880.03,
         "loss": 9.41
       },
       {
         "id": 14303,
         "suffix": 1862,
         "name": "Bonecaster's Shroud of Shadow Wrath",
-        "dps": 878.23,
+        "dps": 879.72,
         "loss": 9.72
       },
       {
         "id": 14306,
         "suffix": 1862,
         "name": "Bonecaster's Vest of Shadow Wrath",
-        "dps": 878.23,
+        "dps": 879.72,
         "loss": 9.72,
         "note": "Random world drop · BoE"
       },
@@ -933,49 +933,49 @@
         "id": 10102,
         "suffix": 1862,
         "name": "Councillor's Robes of Shadow Wrath",
-        "dps": 878.23,
+        "dps": 879.72,
         "loss": 9.72
       },
       {
         "id": 10104,
         "suffix": 1862,
         "name": "Councillor's Tunic of Shadow Wrath",
-        "dps": 878.23,
+        "dps": 879.72,
         "loss": 9.72
       },
       {
         "id": 10181,
         "suffix": 1862,
         "name": "Mystical Armor of Shadow Wrath",
-        "dps": 878.23,
+        "dps": 879.72,
         "loss": 9.72
       },
       {
         "id": 10178,
         "suffix": 1862,
         "name": "Mystical Robe of Shadow Wrath",
-        "dps": 878.23,
+        "dps": 879.72,
         "loss": 9.72
       },
       {
         "id": 14288,
         "suffix": 1861,
         "name": "Arachnidian Armor of Shadow Wrath",
-        "dps": 877.53,
+        "dps": 879.02,
         "loss": 10.42
       },
       {
         "id": 14297,
         "suffix": 1861,
         "name": "Arachnidian Robes of Shadow Wrath",
-        "dps": 877.53,
+        "dps": 879.02,
         "loss": 10.42
       },
       {
         "id": 10065,
         "suffix": 1861,
         "name": "Duskwoven Robe of Shadow Wrath",
-        "dps": 877.53,
+        "dps": 879.02,
         "loss": 10.42
       }
     ],
@@ -983,7 +983,7 @@
       {
         "id": 19595,
         "name": "Dryad's Wrist Bindings",
-        "dps": 891.91,
+        "dps": 893.4,
         "loss": -3.96,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -991,7 +991,7 @@
       {
         "id": 19596,
         "name": "Dryad's Wrist Bindings",
-        "dps": 890.55,
+        "dps": 892.04,
         "loss": -2.6,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1000,17 +1000,17 @@
         "id": 10213,
         "suffix": 1851,
         "name": "Elegant Bracers of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 1220624,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 1g per DPS"
       },
       {
         "id": 14330,
         "suffix": 1851,
         "name": "Eternal Bindings of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1018,7 +1018,7 @@
         "id": 11766,
         "suffix": 1851,
         "name": "Flameweave Cuffs of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Lord Incendius (Blackrock Depths)"
       },
@@ -1026,7 +1026,7 @@
         "id": 10136,
         "suffix": 1851,
         "name": "High Councillor's Bracers of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1034,7 +1034,7 @@
         "id": 10248,
         "suffix": 1851,
         "name": "Master's Bracers of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1042,7 +1042,7 @@
         "id": 13409,
         "suffix": 1851,
         "name": "Tearfall Bracers of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "The Unforgiven (Stratholme)"
       },
@@ -1050,15 +1050,15 @@
         "id": 14311,
         "suffix": 1850,
         "name": "Celestial Bindings of Shadow Wrath",
-        "dps": 887.25,
+        "dps": 888.74,
         "loss": 0.7,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 0g per DPS"
       },
       {
         "id": 14320,
         "suffix": 1850,
         "name": "Resplendent Bracelets of Shadow Wrath",
-        "dps": 887.25,
+        "dps": 888.74,
         "loss": 0.7,
         "note": "Random world drop · BoE"
       },
@@ -1066,7 +1066,7 @@
         "id": 14301,
         "suffix": 1849,
         "name": "Bonecaster's Bindings of Shadow Wrath",
-        "dps": 886.54,
+        "dps": 888.03,
         "loss": 1.41,
         "note": "Random world drop · BoE"
       },
@@ -1074,22 +1074,22 @@
         "id": 10096,
         "suffix": 1849,
         "name": "Councillor's Cuffs of Shadow Wrath",
-        "dps": 886.54,
+        "dps": 888.03,
         "loss": 1.41,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 0g per DPS"
       },
       {
         "id": 10173,
         "suffix": 1849,
         "name": "Mystical Bracers of Shadow Wrath",
-        "dps": 886.54,
+        "dps": 888.03,
         "loss": 1.41
       },
       {
         "id": 14330,
         "suffix": 990410,
         "name": "Eternal Bindings of Magic",
-        "dps": 886.03,
+        "dps": 887.52,
         "loss": 1.92,
         "note": "Random world drop · BoE"
       },
@@ -1097,7 +1097,7 @@
         "id": 10136,
         "suffix": 990410,
         "name": "High Councillor's Bracers of Magic",
-        "dps": 886.03,
+        "dps": 887.52,
         "loss": 1.92,
         "note": "Random world drop · BoE"
       },
@@ -1105,50 +1105,50 @@
         "id": 10248,
         "suffix": 990410,
         "name": "Master's Bracers of Magic",
-        "dps": 886.03,
+        "dps": 887.52,
         "loss": 1.92,
         "note": "Random world drop · BoE"
       },
       {
         "id": 254067,
         "name": "Netherpearl Cuffs",
-        "dps": 885.46,
+        "dps": 886.95,
         "loss": 2.49
       },
       {
         "id": 14291,
         "suffix": 1848,
         "name": "Arachnidian Bracelets of Shadow Wrath",
-        "dps": 885.13,
+        "dps": 886.62,
         "loss": 2.82
       },
       {
         "id": 10059,
         "suffix": 1848,
         "name": "Duskwoven Bracers of Shadow Wrath",
-        "dps": 885.13,
+        "dps": 886.62,
         "loss": 2.82
       },
       {
         "id": 10213,
         "suffix": 990225,
         "name": "Elegant Bracers of Magic",
-        "dps": 884.6,
+        "dps": 886.09,
         "loss": 3.35,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 1g per DPS"
       },
       {
         "id": 14320,
         "suffix": 990225,
         "name": "Resplendent Bracelets of Magic",
-        "dps": 884.6,
+        "dps": 886.09,
         "loss": 3.35,
         "note": "Random world drop · BoE"
       },
       {
         "id": 18497,
         "name": "Sublime Wristguards",
-        "dps": 883.98,
+        "dps": 885.47,
         "loss": 3.97,
         "note": "Guard Mol'dar and Guard Slip'kik (Dire Maul North)"
       },
@@ -1156,7 +1156,7 @@
         "id": 14301,
         "suffix": 990235,
         "name": "Bonecaster's Bindings of Magic",
-        "dps": 883.88,
+        "dps": 885.37,
         "loss": 4.07,
         "note": "Random world drop · BoE"
       },
@@ -1164,24 +1164,24 @@
         "id": 14311,
         "suffix": 990235,
         "name": "Celestial Bindings of Magic",
-        "dps": 883.88,
+        "dps": 885.37,
         "loss": 4.07,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 0g per DPS"
       },
       {
         "id": 10096,
         "suffix": 990235,
         "name": "Councillor's Cuffs of Magic",
-        "dps": 883.88,
+        "dps": 885.37,
         "loss": 4.07,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 0g per DPS"
       }
     ],
     "hands": [
       {
         "id": 226911,
         "name": "Deathmist Wraps",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 1254966,
@@ -1190,16 +1190,16 @@
       {
         "id": 18407,
         "name": "Felcloth Gloves",
-        "dps": 887.84,
+        "dps": 889.33,
         "loss": 0.11,
         "avail": "infeasible",
-        "note": "Tailoring 280 · pattern from Knot Thimblejack's Cache (Dire Maul) 16% · BoP · 12 Runecloth bolts · 20 Felcloth · 8 Essence of Undeath · 64g per DPS"
+        "note": "Tailoring 280 · pattern from Knot Thimblejack's Cache (Dire Maul) 16% · BoP · 12 Runecloth bolts · 20 Felcloth · 8 Essence of Undeath"
       },
       {
         "id": 14333,
         "suffix": 1857,
         "name": "Eternal Gloves of Shadow Wrath",
-        "dps": 885.82,
+        "dps": 887.31,
         "loss": 2.13,
         "note": "Random world drop · BoE"
       },
@@ -1207,14 +1207,14 @@
         "id": 10251,
         "suffix": 1857,
         "name": "Master's Gloves of Shadow Wrath",
-        "dps": 885.82,
+        "dps": 887.31,
         "loss": 2.13,
         "note": "Random world drop · BoE"
       },
       {
         "id": 20716,
         "name": "Sandworm Skin Gloves",
-        "dps": 885.81,
+        "dps": 887.3,
         "loss": 2.14,
         "avail": "doubtful",
         "note": "Quest: Armaments of War · end of the Roman'khan chain (Geologist Larksbane) · no badges"
@@ -1223,7 +1223,7 @@
         "id": 10140,
         "suffix": 1856,
         "name": "High Councillor's Gloves of Shadow Wrath",
-        "dps": 885.14,
+        "dps": 886.63,
         "loss": 2.81,
         "note": "Random world drop · BoE"
       },
@@ -1231,14 +1231,14 @@
         "id": 14323,
         "suffix": 1856,
         "name": "Resplendent Gauntlets of Shadow Wrath",
-        "dps": 885.14,
+        "dps": 886.63,
         "loss": 2.81,
         "note": "Random world drop · BoE"
       },
       {
         "id": 13253,
         "name": "Hands of Power",
-        "dps": 884.29,
+        "dps": 885.78,
         "loss": 3.66,
         "note": "Quartermaster Zigris (Lower Blackrock Spire)"
       },
@@ -1246,7 +1246,7 @@
         "id": 14314,
         "suffix": 1855,
         "name": "Celestial Handwraps of Shadow Wrath",
-        "dps": 883.8,
+        "dps": 885.29,
         "loss": 4.15,
         "note": "Random world drop · BoE"
       },
@@ -1254,7 +1254,7 @@
         "id": 10214,
         "suffix": 1855,
         "name": "Elegant Gloves of Shadow Wrath",
-        "dps": 883.8,
+        "dps": 885.29,
         "loss": 4.15,
         "note": "Random world drop · BoE"
       },
@@ -1262,14 +1262,14 @@
         "id": 14302,
         "suffix": 1854,
         "name": "Bonecaster's Gloves of Shadow Wrath",
-        "dps": 883.12,
+        "dps": 884.61,
         "loss": 4.83
       },
       {
         "id": 10099,
         "suffix": 1854,
         "name": "Councillor's Gloves of Shadow Wrath",
-        "dps": 883.12,
+        "dps": 884.61,
         "loss": 4.83,
         "note": "Random world drop · BoE"
       },
@@ -1277,7 +1277,7 @@
         "id": 14333,
         "suffix": 990447,
         "name": "Eternal Gloves of Magic",
-        "dps": 882.71,
+        "dps": 884.2,
         "loss": 5.24,
         "note": "Random world drop · BoE"
       },
@@ -1285,35 +1285,35 @@
         "id": 10251,
         "suffix": 990447,
         "name": "Master's Gloves of Magic",
-        "dps": 882.71,
+        "dps": 884.2,
         "loss": 5.24,
         "note": "Random world drop · BoE"
       },
       {
         "id": 287018,
         "name": "Compound Gloves",
-        "dps": 882.46,
+        "dps": 883.94,
         "loss": 5.5,
         "note": "On AH ~26g"
       },
       {
         "id": 254101,
         "name": "Black Gloves",
-        "dps": 882,
+        "dps": 883.49,
         "loss": 5.95
       },
       {
         "id": 10176,
         "suffix": 1853,
         "name": "Mystical Gloves of Shadow Wrath",
-        "dps": 881.78,
+        "dps": 883.27,
         "loss": 6.17
       },
       {
         "id": 10140,
         "suffix": 990454,
         "name": "High Councillor's Gloves of Magic",
-        "dps": 881.34,
+        "dps": 882.83,
         "loss": 6.61,
         "note": "Random world drop · BoE"
       },
@@ -1321,14 +1321,14 @@
         "id": 14323,
         "suffix": 990454,
         "name": "Resplendent Gauntlets of Magic",
-        "dps": 881.34,
+        "dps": 882.83,
         "loss": 6.61,
         "note": "Random world drop · BoE"
       },
       {
         "id": 22256,
         "name": "Mana Shaping Handwraps",
-        "dps": 881.17,
+        "dps": 882.66,
         "loss": 6.78,
         "note": "Watchman Doomgrip and the Secret Safe (Blackrock Depths)"
       },
@@ -1336,35 +1336,35 @@
         "id": 14294,
         "suffix": 1852,
         "name": "Arachnidian Gloves of Shadow Wrath",
-        "dps": 881.1,
+        "dps": 882.59,
         "loss": 6.85
       },
       {
         "id": 10062,
         "suffix": 1852,
         "name": "Duskwoven Gloves of Shadow Wrath",
-        "dps": 881.1,
+        "dps": 882.59,
         "loss": 6.85
       },
       {
         "id": 14282,
         "suffix": 1852,
         "name": "Opulent Gloves of Shadow Wrath",
-        "dps": 881.1,
+        "dps": 882.59,
         "loss": 6.85
       },
       {
         "id": 14314,
         "suffix": 990392,
         "name": "Celestial Handwraps of Magic",
-        "dps": 880.66,
+        "dps": 882.15,
         "loss": 7.29,
         "note": "Random world drop · BoE"
       },
       {
         "id": 21318,
         "name": "Earth Warder's Gloves",
-        "dps": 880.66,
+        "dps": 882.15,
         "loss": 7.29,
         "note": "Quest: Winterfall Activity (Timbermaw Hold)"
       }
@@ -1373,7 +1373,7 @@
       {
         "id": 228190,
         "name": "Knowledge of the Timbermaw",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "note": "Needs Tailoring to wear, the search checks it · Meilosh · Wisdom of the Timbermaw + Mooncloth + 20 Winterfall Spirit Beads"
@@ -1381,7 +1381,7 @@
       {
         "id": 18405,
         "name": "Belt of the Archmage",
-        "dps": 880.54,
+        "dps": 882.03,
         "loss": 7.41,
         "note": "Tailoring 295 · pattern on AH ~131g · Loom on AH ~10g"
       },
@@ -1389,7 +1389,7 @@
         "id": 14337,
         "suffix": 1856,
         "name": "Eternal Cord of Shadow Wrath",
-        "dps": 875.91,
+        "dps": 877.4,
         "loss": 12.04,
         "note": "Random world drop · BoE"
       },
@@ -1397,7 +1397,7 @@
         "id": 10144,
         "suffix": 1856,
         "name": "High Councillor's Sash of Shadow Wrath",
-        "dps": 875.91,
+        "dps": 877.4,
         "loss": 12.04,
         "note": "Random world drop · BoE"
       },
@@ -1405,21 +1405,21 @@
         "id": 10255,
         "suffix": 1856,
         "name": "Master's Belt of Shadow Wrath",
-        "dps": 875.91,
+        "dps": 877.4,
         "loss": 12.04,
         "note": "Random world drop · BoE"
       },
       {
         "id": 11662,
         "name": "Ban'thok Sash",
-        "dps": 875.78,
+        "dps": 877.27,
         "loss": 12.17
       },
       {
         "id": 10216,
         "suffix": 1855,
         "name": "Elegant Belt of Shadow Wrath",
-        "dps": 874.53,
+        "dps": 876.02,
         "loss": 13.42,
         "note": "Random world drop · BoE"
       },
@@ -1427,7 +1427,7 @@
         "id": 14327,
         "suffix": 1855,
         "name": "Resplendent Belt of Shadow Wrath",
-        "dps": 874.53,
+        "dps": 876.02,
         "loss": 13.42,
         "note": "Random world drop · BoE"
       },
@@ -1435,7 +1435,7 @@
         "id": 14304,
         "suffix": 1854,
         "name": "Bonecaster's Belt of Shadow Wrath",
-        "dps": 873.83,
+        "dps": 875.32,
         "loss": 14.12,
         "note": "Random world drop · BoE"
       },
@@ -1443,7 +1443,7 @@
         "id": 14309,
         "suffix": 1854,
         "name": "Celestial Belt of Shadow Wrath",
-        "dps": 873.83,
+        "dps": 875.32,
         "loss": 14.12,
         "note": "Random world drop · BoE"
       },
@@ -1451,7 +1451,7 @@
         "id": 10103,
         "suffix": 1853,
         "name": "Councillor's Sash of Shadow Wrath",
-        "dps": 872.45,
+        "dps": 873.94,
         "loss": 15.5,
         "note": "Random world drop · BoE"
       },
@@ -1459,13 +1459,13 @@
         "id": 10180,
         "suffix": 1853,
         "name": "Mystical Belt of Shadow Wrath",
-        "dps": 872.45,
+        "dps": 873.94,
         "loss": 15.5
       },
       {
         "id": 20163,
         "name": "Defiler's Cloth Girdle",
-        "dps": 872.31,
+        "dps": 873.8,
         "loss": 15.64,
         "avail": "doubtful",
         "note": "Defilers Honored · Rutherford Twing · Arathi Basin in Forever unconfirmed"
@@ -1474,7 +1474,7 @@
         "id": 14337,
         "suffix": 990454,
         "name": "Eternal Cord of Magic",
-        "dps": 871.99,
+        "dps": 873.48,
         "loss": 15.96,
         "note": "Random world drop · BoE"
       },
@@ -1482,7 +1482,7 @@
         "id": 10144,
         "suffix": 990454,
         "name": "High Councillor's Sash of Magic",
-        "dps": 871.99,
+        "dps": 873.48,
         "loss": 15.96,
         "note": "Random world drop · BoE"
       },
@@ -1490,7 +1490,7 @@
         "id": 10255,
         "suffix": 990454,
         "name": "Master's Belt of Magic",
-        "dps": 871.99,
+        "dps": 873.48,
         "loss": 15.96,
         "note": "Random world drop · BoE"
       },
@@ -1498,21 +1498,21 @@
         "id": 14289,
         "suffix": 1852,
         "name": "Arachnidian Girdle of Shadow Wrath",
-        "dps": 871.76,
+        "dps": 873.25,
         "loss": 16.19
       },
       {
         "id": 14286,
         "suffix": 1852,
         "name": "Opulent Belt of Shadow Wrath",
-        "dps": 871.76,
+        "dps": 873.25,
         "loss": 16.19
       },
       {
         "id": 10216,
         "suffix": 990392,
         "name": "Elegant Belt of Magic",
-        "dps": 871.29,
+        "dps": 872.78,
         "loss": 16.66,
         "note": "Random world drop · BoE"
       },
@@ -1520,7 +1520,7 @@
         "id": 14327,
         "suffix": 990392,
         "name": "Resplendent Belt of Magic",
-        "dps": 871.29,
+        "dps": 872.78,
         "loss": 16.66,
         "note": "Random world drop · BoE"
       },
@@ -1528,7 +1528,7 @@
         "id": 14304,
         "suffix": 990428,
         "name": "Bonecaster's Belt of Magic",
-        "dps": 870.59,
+        "dps": 872.08,
         "loss": 17.36,
         "note": "Random world drop · BoE"
       },
@@ -1536,7 +1536,7 @@
         "id": 14309,
         "suffix": 990428,
         "name": "Celestial Belt of Magic",
-        "dps": 870.59,
+        "dps": 872.08,
         "loss": 17.36,
         "note": "Random world drop · BoE"
       },
@@ -1544,7 +1544,7 @@
         "id": 10103,
         "suffix": 990433,
         "name": "Councillor's Sash of Magic",
-        "dps": 869.89,
+        "dps": 871.38,
         "loss": 18.06,
         "note": "Random world drop · BoE"
       },
@@ -1552,13 +1552,13 @@
         "id": 10180,
         "suffix": 990433,
         "name": "Mystical Belt of Magic",
-        "dps": 869.89,
+        "dps": 871.38,
         "loss": 18.06
       },
       {
         "id": 19090,
         "name": "Frostwolf Cloth Belt",
-        "dps": 869.62,
+        "dps": 871.11,
         "loss": 18.33,
         "avail": "doubtful",
         "note": "Frostwolf Honored · AV queue unconfirmed · unsure, used by standards 42"
@@ -1568,7 +1568,7 @@
       {
         "id": 22342,
         "name": "Leggings of Torment",
-        "dps": 888.33,
+        "dps": 889.82,
         "loss": -0.38,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 479g per DPS",
         "avail": "infeasible"
@@ -1577,7 +1577,7 @@
         "id": 14334,
         "suffix": 1864,
         "name": "Eternal Sarong of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 2544,
@@ -1587,7 +1587,7 @@
         "id": 10141,
         "suffix": 1864,
         "name": "High Councillor's Pants of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1595,7 +1595,7 @@
         "id": 10252,
         "suffix": 1864,
         "name": "Master's Leggings of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1603,14 +1603,14 @@
         "id": 10217,
         "suffix": 1863,
         "name": "Elegant Leggings of Shadow Wrath",
-        "dps": 887.25,
+        "dps": 888.74,
         "loss": 0.7,
         "note": "Random world drop · BoE"
       },
       {
         "id": 22747,
         "name": "Outrider's Silk Leggings",
-        "dps": 886.9,
+        "dps": 888.39,
         "loss": 1.05,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1619,7 +1619,7 @@
         "id": 14315,
         "suffix": 1862,
         "name": "Celestial Kilt of Shadow Wrath",
-        "dps": 885.84,
+        "dps": 887.33,
         "loss": 2.11,
         "note": "Random world drop · BoE"
       },
@@ -1627,14 +1627,14 @@
         "id": 14324,
         "suffix": 1862,
         "name": "Resplendent Sarong of Shadow Wrath",
-        "dps": 885.84,
+        "dps": 887.33,
         "loss": 2.11,
         "note": "Random world drop · BoE"
       },
       {
         "id": 226910,
         "name": "Deathmist Leggings",
-        "dps": 885.44,
+        "dps": 886.93,
         "loss": 2.51,
         "note": "Forever's Dungeon Set 2 copy (set 1681) · quest · Dreadmist Mantle, Leggings and Sandals · Anthion chain (Strat, Dire Maul), step gold unknown · or bought from the set vendor after"
       },
@@ -1642,7 +1642,7 @@
         "id": 14305,
         "suffix": 1861,
         "name": "Bonecaster's Sarong of Shadow Wrath",
-        "dps": 885.13,
+        "dps": 886.62,
         "loss": 2.82,
         "note": "Random world drop · BoE"
       },
@@ -1650,14 +1650,14 @@
         "id": 10101,
         "suffix": 1861,
         "name": "Councillor's Pants of Shadow Wrath",
-        "dps": 885.13,
+        "dps": 886.62,
         "loss": 2.82,
         "note": "Random world drop · BoE"
       },
       {
         "id": 13170,
         "name": "Skyshroud Leggings",
-        "dps": 883.9,
+        "dps": 885.39,
         "loss": 4.05,
         "note": "Highlord Omokk (Lower Blackrock Spire)"
       },
@@ -1665,7 +1665,7 @@
         "id": 14295,
         "suffix": 1860,
         "name": "Arachnidian Legguards of Shadow Wrath",
-        "dps": 883.73,
+        "dps": 885.22,
         "loss": 4.22,
         "note": "Random world drop · BoE"
       },
@@ -1673,14 +1673,14 @@
         "id": 10177,
         "suffix": 1860,
         "name": "Mystical Leggings of Shadow Wrath",
-        "dps": 883.73,
+        "dps": 885.22,
         "loss": 4.22
       },
       {
         "id": 14334,
         "suffix": 990558,
         "name": "Eternal Sarong of Magic",
-        "dps": 883.37,
+        "dps": 884.86,
         "loss": 4.58,
         "note": "Prince Tortheldrin (Dire Maul West) · also random world drop · BoE"
       },
@@ -1688,7 +1688,7 @@
         "id": 10141,
         "suffix": 990558,
         "name": "High Councillor's Pants of Magic",
-        "dps": 883.37,
+        "dps": 884.86,
         "loss": 4.58,
         "note": "Random world drop · BoE"
       },
@@ -1696,7 +1696,7 @@
         "id": 10252,
         "suffix": 990558,
         "name": "Master's Leggings of Magic",
-        "dps": 883.37,
+        "dps": 884.86,
         "loss": 4.58,
         "note": "Random world drop · BoE"
       },
@@ -1704,7 +1704,7 @@
         "id": 10064,
         "suffix": 1859,
         "name": "Duskwoven Pants of Shadow Wrath",
-        "dps": 883.02,
+        "dps": 884.51,
         "loss": 4.93,
         "note": "Random world drop · BoE"
       },
@@ -1712,14 +1712,14 @@
         "id": 14283,
         "suffix": 1859,
         "name": "Opulent Leggings of Shadow Wrath",
-        "dps": 883.02,
+        "dps": 884.51,
         "loss": 4.93
       },
       {
         "id": 10217,
         "suffix": 990568,
         "name": "Elegant Leggings of Magic",
-        "dps": 882.65,
+        "dps": 884.14,
         "loss": 5.3,
         "note": "Random world drop · BoE"
       },
@@ -1727,14 +1727,14 @@
         "id": 14274,
         "suffix": 1858,
         "name": "Gaea's Leggings of Shadow Wrath",
-        "dps": 881.61,
+        "dps": 883.1,
         "loss": 6.34
       },
       {
         "id": 14315,
         "suffix": 990537,
         "name": "Celestial Kilt of Magic",
-        "dps": 881.22,
+        "dps": 882.71,
         "loss": 6.73,
         "note": "Random world drop · BoE"
       },
@@ -1742,7 +1742,7 @@
         "id": 14324,
         "suffix": 990537,
         "name": "Resplendent Sarong of Magic",
-        "dps": 881.22,
+        "dps": 882.71,
         "loss": 6.73,
         "note": "Random world drop · BoE"
       },
@@ -1750,13 +1750,13 @@
         "id": 9942,
         "suffix": 1857,
         "name": "Abjurer's Pants of Shadow Wrath",
-        "dps": 880.91,
+        "dps": 882.4,
         "loss": 7.04
       },
       {
         "id": 14144,
         "name": "Ghostweave Pants",
-        "dps": 880.88,
+        "dps": 882.37,
         "loss": 7.07,
         "note": "Tailoring 245 · pattern from Spectral Citizen (Stratholme) 4.8% drop · 6 Runecloth bolts · 4 Ghost Dye"
       }
@@ -1766,7 +1766,7 @@
         "id": 10247,
         "suffix": 1857,
         "name": "Master's Boots of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "enchant": 1254966,
@@ -1776,7 +1776,7 @@
         "id": 14329,
         "suffix": 1857,
         "name": "Eternal Boots of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1784,7 +1784,7 @@
         "id": 10137,
         "suffix": 1857,
         "name": "High Councillor's Boots of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "note": "Random world drop · BoE"
       },
@@ -1792,7 +1792,7 @@
         "id": 14310,
         "suffix": 1856,
         "name": "Celestial Slippers of Shadow Wrath",
-        "dps": 887.25,
+        "dps": 888.74,
         "loss": 0.7,
         "note": "Random world drop · BoE"
       },
@@ -1800,7 +1800,7 @@
         "id": 10211,
         "suffix": 1856,
         "name": "Elegant Boots of Shadow Wrath",
-        "dps": 887.25,
+        "dps": 888.74,
         "loss": 0.7,
         "note": "Random world drop · BoE"
       },
@@ -1808,7 +1808,7 @@
         "id": 14319,
         "suffix": 1856,
         "name": "Resplendent Boots of Shadow Wrath",
-        "dps": 887.25,
+        "dps": 888.74,
         "loss": 0.7,
         "note": "Random world drop · BoE"
       },
@@ -1816,7 +1816,7 @@
         "id": 10095,
         "suffix": 1854,
         "name": "Councillor's Boots of Shadow Wrath",
-        "dps": 885.13,
+        "dps": 886.62,
         "loss": 2.82,
         "note": "Random world drop · BoE"
       },
@@ -1824,14 +1824,14 @@
         "id": 10247,
         "suffix": 990447,
         "name": "Master's Boots of Magic",
-        "dps": 884.69,
+        "dps": 886.18,
         "loss": 3.26,
         "note": "Random world drop · BoE"
       },
       {
         "id": 22231,
         "name": "Kayser's Boots of Precision",
-        "dps": 884.61,
+        "dps": 886.1,
         "loss": 3.34,
         "avail": "infeasible",
         "note": "408g per DPS"
@@ -1839,27 +1839,27 @@
       {
         "id": 18102,
         "name": "Dragonrider Boots",
-        "dps": 884.27,
+        "dps": 885.76,
         "loss": 3.68
       },
       {
         "id": 254113,
         "name": "Black Sandals",
-        "dps": 883.91,
+        "dps": 885.4,
         "loss": 4.04,
         "note": "Tailoring 235 · pattern from Jim'bek for 90 Merchant's Favor (Honored) · 14 Black Pearl · BoP"
       },
       {
         "id": 11822,
         "name": "Omnicast Boots",
-        "dps": 883.8,
+        "dps": 885.29,
         "loss": 4.15
       },
       {
         "id": 14299,
         "suffix": 1853,
         "name": "Bonecaster's Boots of Shadow Wrath",
-        "dps": 883.73,
+        "dps": 885.22,
         "loss": 4.22,
         "note": "Random world drop · BoE"
       },
@@ -1867,13 +1867,13 @@
         "id": 10179,
         "suffix": 1853,
         "name": "Mystical Boots of Shadow Wrath",
-        "dps": 883.73,
+        "dps": 885.22,
         "loss": 4.22
       },
       {
         "id": 275606,
         "name": "Venomspew Footpads",
-        "dps": 883.52,
+        "dps": 885.01,
         "loss": 4.43,
         "note": "Tailoring 295 · pattern from Mishta (Silithus) 7.5g"
       },
@@ -1881,7 +1881,7 @@
         "id": 14329,
         "suffix": 990454,
         "name": "Eternal Boots of Magic",
-        "dps": 883.26,
+        "dps": 884.75,
         "loss": 4.69,
         "note": "Random world drop · BoE"
       },
@@ -1889,7 +1889,7 @@
         "id": 10137,
         "suffix": 990454,
         "name": "High Councillor's Boots of Magic",
-        "dps": 883.26,
+        "dps": 884.75,
         "loss": 4.69,
         "note": "Random world drop · BoE"
       },
@@ -1897,14 +1897,14 @@
         "id": 14290,
         "suffix": 1852,
         "name": "Arachnidian Footpads of Shadow Wrath",
-        "dps": 883.02,
+        "dps": 884.51,
         "loss": 4.93
       },
       {
         "id": 10058,
         "suffix": 1852,
         "name": "Duskwoven Sandals of Shadow Wrath",
-        "dps": 883.02,
+        "dps": 884.51,
         "loss": 4.93,
         "note": "Random world drop · BoE"
       },
@@ -1912,14 +1912,14 @@
         "id": 14285,
         "suffix": 1852,
         "name": "Opulent Boots of Shadow Wrath",
-        "dps": 883.02,
+        "dps": 884.51,
         "loss": 4.93
       },
       {
         "id": 14310,
         "suffix": 990392,
         "name": "Celestial Slippers of Magic",
-        "dps": 882.55,
+        "dps": 884.04,
         "loss": 5.4,
         "note": "Random world drop · BoE"
       },
@@ -1927,7 +1927,7 @@
         "id": 10211,
         "suffix": 990392,
         "name": "Elegant Boots of Magic",
-        "dps": 882.55,
+        "dps": 884.04,
         "loss": 5.4,
         "note": "Random world drop · BoE"
       },
@@ -1935,7 +1935,7 @@
         "id": 14319,
         "suffix": 990392,
         "name": "Resplendent Boots of Magic",
-        "dps": 882.55,
+        "dps": 884.04,
         "loss": 5.4,
         "note": "Random world drop · BoE"
       },
@@ -1943,7 +1943,7 @@
         "id": 10095,
         "suffix": 990428,
         "name": "Councillor's Boots of Magic",
-        "dps": 881.83,
+        "dps": 883.32,
         "loss": 6.12,
         "note": "Random world drop · BoE"
       },
@@ -1951,7 +1951,7 @@
         "id": 14299,
         "suffix": 990433,
         "name": "Bonecaster's Boots of Magic",
-        "dps": 881.12,
+        "dps": 882.61,
         "loss": 6.83,
         "note": "Random world drop · BoE"
       }
@@ -1960,7 +1960,7 @@
       {
         "id": 275982,
         "name": "Warden's Signet of Brilliance",
-        "dps": 889.38,
+        "dps": 890.87,
         "loss": -1.43,
         "unsourced": true,
         "avail": "infeasible",
@@ -1969,7 +1969,7 @@
       {
         "id": 22339,
         "name": "Rune Band of Wizardry",
-        "dps": 888.3,
+        "dps": 889.79,
         "loss": -0.35,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 65g per DPS",
         "avail": "infeasible"
@@ -1977,7 +1977,7 @@
       {
         "id": 275977,
         "name": "Watcher's Signet of Brilliance",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "unsourced": true,
         "bis": true,
@@ -1987,7 +1987,7 @@
       {
         "id": 272406,
         "name": "Channeler's Ring",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "note": "Pix Xizzix · 75 Reals · owned"
@@ -1995,7 +1995,7 @@
       {
         "id": 19325,
         "name": "Don Julio's Band",
-        "dps": 887.13,
+        "dps": 888.62,
         "loss": 0.82,
         "avail": "infeasible",
         "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
@@ -2003,14 +2003,14 @@
       {
         "id": 12545,
         "name": "Eye of Orgrimmar",
-        "dps": 885.72,
+        "dps": 887.21,
         "loss": 2.23,
         "note": "Quest: The Princess Saved? (Horde), Blackrock Depths"
       },
       {
         "id": 22433,
         "name": "Don Mauricio's Band of Domination",
-        "dps": 885.09,
+        "dps": 886.58,
         "loss": 2.86,
         "avail": "infeasible",
         "note": "731g per DPS"
@@ -2018,14 +2018,14 @@
       {
         "id": 13001,
         "name": "Maiden's Circle",
-        "dps": 884.99,
+        "dps": 886.48,
         "loss": 2.96,
         "note": "On AH ~80g"
       },
       {
         "id": 275973,
         "name": "Tracker's Signet of Brilliance",
-        "dps": 884.38,
+        "dps": 885.87,
         "loss": 3.57,
         "unsourced": true,
         "avail": "doubtful",
@@ -2034,20 +2034,20 @@
       {
         "id": 18314,
         "name": "Ring of Demonic Guile",
-        "dps": 883.4,
+        "dps": 884.89,
         "loss": 4.55
       },
       {
         "id": 276073,
         "name": "Band of the Damned",
-        "dps": 882.95,
+        "dps": 884.44,
         "loss": 5,
         "note": "Drop: Vectus, Scholomance"
       },
       {
         "id": 275969,
         "name": "Initiate's Signet of Brilliance",
-        "dps": 882.95,
+        "dps": 884.44,
         "loss": 5,
         "unsourced": true,
         "avail": "doubtful",
@@ -2056,7 +2056,7 @@
       {
         "id": 275738,
         "name": "Jereman's Bauble",
-        "dps": 882.94,
+        "dps": 884.43,
         "loss": 5.01,
         "avail": "doubtful",
         "note": "Quest: Return to Jereman"
@@ -2064,7 +2064,7 @@
       {
         "id": 21563,
         "name": "Don Rodrigo's Band",
-        "dps": 881.82,
+        "dps": 883.31,
         "loss": 6.13,
         "avail": "infeasible",
         "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
@@ -2072,14 +2072,14 @@
       {
         "id": 17045,
         "name": "Blood of the Martyr",
-        "dps": 880.38,
+        "dps": 881.87,
         "loss": 7.57,
         "note": "Quest: Aurius' Reckoning, Stratholme"
       },
       {
         "id": 19109,
         "name": "Deep Rooted Ring",
-        "dps": 880.38,
+        "dps": 881.87,
         "loss": 7.57,
         "unsourced": true,
         "avail": "doubtful",
@@ -2088,27 +2088,27 @@
       {
         "id": 280015,
         "name": "Venomvessel Ring",
-        "dps": 880.23,
+        "dps": 881.72,
         "loss": 7.72
       },
       {
         "id": 13345,
         "name": "Seal of Rivendare",
-        "dps": 880.02,
+        "dps": 881.51,
         "loss": 7.93,
         "note": "Drop: Baron Rivendare, Stratholme"
       },
       {
         "id": 16058,
         "name": "Fordring's Seal",
-        "dps": 879.95,
+        "dps": 881.44,
         "loss": 8,
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
         "id": 275983,
         "name": "Warden's Signet of Resolve",
-        "dps": 879.85,
+        "dps": 881.34,
         "loss": 8.1,
         "unsourced": true,
         "avail": "infeasible",
@@ -2117,14 +2117,14 @@
       {
         "id": 13392,
         "name": "The Postmaster's Seal",
-        "dps": 879.78,
+        "dps": 881.27,
         "loss": 8.17,
         "note": "Drop: Postmaster Malown, Stratholme"
       },
       {
         "id": 22326,
         "name": "Amalgam's Band",
-        "dps": 879.67,
+        "dps": 881.16,
         "loss": 8.28,
         "avail": "infeasible",
         "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
@@ -2132,21 +2132,21 @@
       {
         "id": 19518,
         "name": "Advisor's Ring",
-        "dps": 879.35,
+        "dps": 880.84,
         "loss": 8.6,
         "note": "Warsong Outriders Honored, Kelm Hargunth, Barrens"
       },
       {
         "id": 22334,
         "name": "Band of Mending",
-        "dps": 879.31,
+        "dps": 880.8,
         "loss": 8.64,
         "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 22681,
         "name": "Band of Piety",
-        "dps": 879.14,
+        "dps": 880.63,
         "loss": 8.81,
         "avail": "doubtful",
         "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
@@ -2156,11 +2156,11 @@
       {
         "id": 22678,
         "name": "Talisman of Ascendance",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "cooldown": {
-          "loss": 22.52
+          "loss": 23.3
         },
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -2168,85 +2168,85 @@
       {
         "id": 13968,
         "name": "Eye of the Beast",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
         "cooldown": {
-          "rank": 14,
-          "loss": 11.57
+          "rank": 17,
+          "loss": 13.91
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
       },
       {
-        "id": 272438,
-        "name": "Weakness Analyzer",
-        "dps": 886.63,
-        "loss": 1.32,
-        "cooldown": {
-          "rank": 5,
-          "loss": 5.62
-        },
-        "note": "Pix Xizzix · 125 Reals · unique with ACA"
-      },
-      {
         "id": 10455,
         "name": "Chained Essence of Eranikus",
-        "dps": 886.62,
-        "loss": 1.33,
+        "dps": 886.7,
+        "loss": 2.74,
         "conditional": [
           {
             "label": "vs Trolls",
             "rank": 1,
-            "loss": -15.95,
+            "loss": -14.54,
             "bis": true
           },
           {
             "label": "vs 4 mobs",
             "rank": 1,
-            "loss": -50.98,
+            "loss": -50,
             "bis": true
           }
         ],
         "cooldown": {
-          "loss": 18.34
+          "loss": 19.35
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
       },
       {
+        "id": 272438,
+        "name": "Weakness Analyzer",
+        "dps": 885.97,
+        "loss": 3.47,
+        "cooldown": {
+          "rank": 5,
+          "loss": 7.14
+        },
+        "note": "Pix Xizzix · 125 Reals · unique with ACA"
+      },
+      {
         "id": 18467,
         "name": "Royal Seal of Eldre'Thalas",
-        "dps": 882.36,
-        "loss": 5.59,
+        "dps": 882.35,
+        "loss": 7.08,
         "note": "Quest: Harnessing Shadows (Warlock), Dire Maul"
       },
       {
         "id": 11819,
         "name": "Second Wind",
-        "dps": 880.43,
-        "loss": 7.52,
+        "dps": 881.72,
+        "loss": 7.72,
         "conditional": [
           {
             "label": "in mountains",
-            "rank": 5,
-            "loss": 1.47
+            "rank": 3,
+            "loss": 0.39
           }
         ],
         "cooldown": {
-          "rank": 20,
-          "loss": 14.88
+          "rank": 21,
+          "loss": 16.14
         },
         "note": "Drop: Golem Lord Argelmach, Blackrock Depths"
       },
       {
         "id": 12930,
         "name": "Briarwood Reed",
-        "dps": 880.24,
-        "loss": 7.71,
+        "dps": 880.27,
+        "loss": 9.17,
         "conditional": [
           {
             "label": "in marsh or swamp",
             "rank": 1,
-            "loss": -2.89,
+            "loss": -1.29,
             "bis": true
           }
         ],
@@ -2255,241 +2255,241 @@
       {
         "id": 13213,
         "name": "Smolderweb's Eye",
-        "dps": 879.63,
-        "loss": 8.32,
+        "dps": 879.26,
+        "loss": 10.18,
         "note": "Drop: Mother Smolderweb, Lower Blackrock Spire"
       },
       {
         "id": 270225,
         "name": "Jewel of the Guard Captain",
-        "dps": 879.16,
-        "loss": 8.79,
+        "dps": 878.97,
+        "loss": 10.47,
         "conditional": [
           {
             "label": "in forest or grassland",
             "rank": 1,
-            "loss": -3.03,
+            "loss": -0.8,
             "bis": true
           }
         ],
         "note": "Quest: Job Opening: Guard Captain of Revantusk Village (Horde), Hinterlands"
       },
       {
-        "id": 276744,
-        "name": "Zarla's Snack Pouch",
-        "dps": 877.41,
-        "loss": 10.54,
-        "note": "Drop: Blazeroar (Forever rare, zone not in our data)"
-      },
-      {
-        "id": 14022,
-        "name": "Barov Peasant Caller",
-        "dps": 877.37,
-        "loss": 10.58,
-        "cooldown": {
-          "loss": 18.32
-        },
-        "note": "Quest: The Last Barov (Horde), Western Plaguelands"
-      },
-      {
-        "id": 13965,
-        "name": "Blackhand's Breadth",
-        "dps": 877.33,
-        "loss": 10.62,
+        "id": 274759,
+        "name": "Everlook Pathcarver",
+        "dps": 877.91,
+        "loss": 11.52,
         "conditional": [
           {
-            "label": "vs Orcs and Ogres",
-            "rank": 5,
-            "loss": 3.05
+            "label": "vs 4 mobs",
+            "rank": 8,
+            "loss": 9.77
           }
         ],
         "cooldown": {
-          "loss": 17.49
-        },
-        "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
-      },
-      {
-        "id": 11832,
-        "name": "Burst of Knowledge",
-        "dps": 877.1,
-        "loss": 10.85,
-        "cooldown": {
-          "rank": 21,
-          "loss": 15.61
-        },
-        "note": "Drop: Ambassador Flamelash, Blackrock Depths"
-      },
-      {
-        "id": 274759,
-        "name": "Everlook Pathcarver",
-        "dps": 877,
-        "loss": 10.95,
-        "cooldown": {
-          "loss": 16.96
+          "loss": 18.32
         },
         "note": "Zippie Fizzbolt, Everlook"
       },
       {
+        "id": 14022,
+        "name": "Barov Peasant Caller",
+        "dps": 877.6,
+        "loss": 11.84,
+        "cooldown": {
+          "loss": 19.59
+        },
+        "note": "Quest: The Last Barov (Horde), Western Plaguelands"
+      },
+      {
+        "id": 276744,
+        "name": "Zarla's Snack Pouch",
+        "dps": 877.5,
+        "loss": 11.94,
+        "note": "Drop: Blazeroar (Forever rare, zone not in our data)"
+      },
+      {
+        "id": 13965,
+        "name": "Blackhand's Breadth",
+        "dps": 877.44,
+        "loss": 12,
+        "conditional": [
+          {
+            "label": "vs Orcs and Ogres",
+            "rank": 5,
+            "loss": 4.88
+          }
+        ],
+        "cooldown": {
+          "loss": 18.65
+        },
+        "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
+      },
+      {
+        "id": 274760,
+        "name": "Everlook Delivery Bot",
+        "dps": 876.79,
+        "loss": 12.65,
+        "cooldown": {
+          "loss": 19.47
+        },
+        "note": "Zippie Fizzbolt, Everlook"
+      },
+      {
+        "id": 11832,
+        "name": "Burst of Knowledge",
+        "dps": 876.22,
+        "loss": 13.22,
+        "cooldown": {
+          "rank": 25,
+          "loss": 18.41
+        },
+        "note": "Drop: Ambassador Flamelash, Blackrock Depths"
+      },
+      {
         "id": 19120,
         "name": "Rune of the Guard Captain",
-        "dps": 876.37,
-        "loss": 11.58,
+        "dps": 876.11,
+        "loss": 13.32,
         "conditional": [
           {
             "label": "in forest or grassland",
-            "rank": 16,
-            "loss": 12.22
+            "rank": 15,
+            "loss": 12.82
           }
         ],
         "note": "Quest: Job Opening: Guard Captain of Revantusk Village, Hinterlands"
       },
       {
-        "id": 22268,
-        "name": "Draconic Infused Emblem",
-        "dps": 875.91,
-        "loss": 12.04,
-        "conditional": [
-          {
-            "label": "vs Dragonkin",
-            "rank": 6,
-            "loss": 5.74
-          }
-        ],
-        "note": "Drop: General Drakkisath, Upper Blackrock Spire"
-      },
-      {
-        "id": 274760,
-        "name": "Everlook Delivery Bot",
-        "dps": 875.37,
-        "loss": 12.58,
-        "cooldown": {
-          "loss": 18.07
-        },
-        "note": "Zippie Fizzbolt, Everlook"
-      },
-      {
-        "id": 272439,
-        "name": "Serenity Field",
-        "dps": 874.58,
-        "loss": 13.37,
-        "cooldown": {
-          "rank": 18,
-          "loss": 13.37
-        },
-        "note": "Pix Xizzix · 125 Reals"
-      },
-      {
-        "id": 11302,
-        "name": "Uther's Strength",
-        "dps": 873.87,
-        "loss": 14.08,
-        "avail": "doubtful",
-        "note": "No known source"
-      },
-      {
-        "id": 13382,
-        "name": "Cannonball Runner",
-        "dps": 873.67,
-        "loss": 14.28,
-        "note": "Drop: Cannon Master Willey, Stratholme"
-      },
-      {
         "id": 280032,
         "name": "Bolt's Charged Eyeball",
-        "dps": 873.04,
-        "loss": 14.91,
+        "dps": 876.03,
+        "loss": 13.4,
         "conditional": [
           {
             "label": "vs Dinosaurs",
-            "rank": 15,
-            "loss": 11.41
+            "rank": 7,
+            "loss": 8.61
           }
         ],
         "avail": "doubtful",
         "note": "Drop: Bolt · zone unknown"
       },
       {
+        "id": 22268,
+        "name": "Draconic Infused Emblem",
+        "dps": 875.43,
+        "loss": 14.01,
+        "conditional": [
+          {
+            "label": "vs Dragonkin",
+            "rank": 7,
+            "loss": 8.17
+          }
+        ],
+        "note": "Drop: General Drakkisath, Upper Blackrock Spire"
+      },
+      {
+        "id": 272439,
+        "name": "Serenity Field",
+        "dps": 874.72,
+        "loss": 14.72,
+        "cooldown": {
+          "rank": 19,
+          "loss": 14.72
+        },
+        "note": "Pix Xizzix · 125 Reals"
+      },
+      {
+        "id": 13382,
+        "name": "Cannonball Runner",
+        "dps": 874.2,
+        "loss": 15.24,
+        "note": "Drop: Cannon Master Willey, Stratholme"
+      },
+      {
+        "id": 11302,
+        "name": "Uther's Strength",
+        "dps": 874.03,
+        "loss": 15.41,
+        "avail": "doubtful",
+        "note": "No known source"
+      },
+      {
         "id": 19288,
         "name": "Darkmoon Card: Blue Dragon",
-        "dps": 871.54,
-        "loss": 16.41,
+        "dps": 872.19,
+        "loss": 17.25,
         "avail": "doubtful",
         "note": "Darkmoon Faire deck · Forever card drops unconfirmed"
       },
       {
-        "id": 11905,
-        "name": "Linken's Boomerang",
-        "dps": 871.44,
-        "loss": 16.51,
-        "cooldown": {
-          "loss": 18
-        },
-        "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
-      },
-      {
-        "id": 280060,
-        "name": "Lucky Shovelnose Tuft",
-        "dps": 871.34,
-        "loss": 16.61,
-        "avail": "doubtful",
-        "note": "Bonesnout the Unbroken · Blackmaw Hold · not in guides yet"
-      },
-      {
-        "id": 18354,
-        "name": "Pimgib's Collar",
-        "dps": 871.27,
-        "loss": 16.68,
-        "note": "Drop: Pimgib, Dire Maul (Warlock)"
-      },
-      {
         "id": 13171,
         "name": "Smokey's Lighter",
-        "dps": 871.15,
-        "loss": 16.8,
+        "dps": 871.86,
+        "loss": 17.57,
         "conditional": [
           {
             "label": "vs Plants",
             "rank": 22,
-            "loss": 15.26
+            "loss": 15.99
           },
           {
             "label": "vs 4 mobs",
-            "rank": 9,
-            "loss": 8.78
+            "rank": 4,
+            "loss": 2.97
           }
         ],
         "cooldown": {
-          "loss": 19.5
+          "loss": 21.11
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
       },
       {
+        "id": 11905,
+        "name": "Linken's Boomerang",
+        "dps": 871.67,
+        "loss": 17.76,
+        "cooldown": {
+          "loss": 19.25
+        },
+        "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
+      },
+      {
+        "id": 280074,
+        "name": "Scalding Flamehoof",
+        "dps": 871.57,
+        "loss": 17.87,
+        "avail": "doubtful",
+        "note": "Drop: Varrox Bleakhoof, Blackmaw Hold · not in guides yet"
+      },
+      {
         "id": 272437,
         "name": "Adaptive Combat Assistant",
-        "dps": 870.51,
-        "loss": 17.44,
+        "dps": 870.73,
+        "loss": 18.71,
         "conditional": [
           {
             "label": "vs 4 mobs",
             "rank": 22,
-            "loss": 16.32
+            "loss": 16.07
           }
         ],
         "cooldown": {
-          "loss": 18.29
+          "loss": 19.72
         },
         "note": "Pix Xizzix · 125 Reals"
       },
       {
         "id": 19812,
         "name": "Rune of the Dawn",
-        "dps": 869.62,
-        "loss": 18.33,
+        "dps": 869.86,
+        "loss": 19.58,
         "conditional": [
           {
             "label": "vs Undead",
             "rank": 1,
-            "loss": -12.96,
+            "loss": -11.18,
             "bis": true
           }
         ],
@@ -2501,205 +2501,205 @@
       {
         "id": 20214,
         "name": "Mindfang",
-        "dps": 897.64,
-        "loss": -9.69,
-        "with": 18316,
+        "dps": 897.96,
+        "loss": -8.52,
+        "with": 15989,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
       {
         "id": 20220,
         "name": "Ironbark Staff",
-        "dps": 889.42,
-        "loss": -1.47,
+        "dps": 889.66,
+        "loss": -0.22,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed"
       },
       {
         "id": 18372,
         "name": "Blade of the New Moon",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
-        "with": 18316,
+        "with": 15989,
         "bis": true,
         "enchant": 1248805,
         "note": "Immol'thar · Dire Maul · 20g per DPS"
       },
       {
-        "id": 13964,
-        "name": "Witchblade",
-        "dps": 883.14,
-        "loss": 4.81,
-        "with": 18316,
-        "note": "Darkmaster Gandling · Scholomance"
-      },
-      {
         "id": 287034,
         "name": "Grove Subjugator's Blade",
-        "dps": 881.76,
-        "loss": 6.19,
-        "with": 18316,
+        "dps": 882.74,
+        "loss": 6.7,
+        "with": 15989,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
         "id": 22688,
         "name": "Verimonde's Last Resort",
-        "dps": 881.52,
-        "loss": 6.43,
-        "with": 18316,
+        "dps": 881.73,
+        "loss": 7.71,
+        "with": 15989,
         "avail": "doubtful",
         "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 272083,
         "name": "Darkspear Insurgent's Spellblade",
-        "dps": 880.39,
-        "loss": 7.56,
-        "with": 18316,
+        "dps": 881.4,
+        "loss": 8.04,
+        "with": 15989,
         "note": "Vendor Creeg Bothunk · The Barrens"
       },
       {
-        "id": 17780,
-        "name": "Blade of Eternal Darkness",
-        "dps": 879.22,
-        "loss": 8.73,
-        "with": 18316,
-        "note": "Princess Theradras · Maraudon"
+        "id": 13964,
+        "name": "Witchblade",
+        "dps": 880.32,
+        "loss": 9.12,
+        "with": 15989,
+        "note": "Darkmaster Gandling · Scholomance"
       },
       {
         "id": 22332,
         "name": "Blade of Necromancy",
-        "dps": 877.44,
-        "loss": 10.51,
-        "with": 18316,
+        "dps": 879.15,
+        "loss": 10.29,
+        "with": 15989,
         "avail": "doubtful",
         "note": "Kormok · Scholomance, summoned boss, summon not confirmed open"
       },
       {
         "id": 18396,
         "name": "Mind Carver",
-        "dps": 877.44,
-        "loss": 10.51,
-        "with": 18316
+        "dps": 879.15,
+        "loss": 10.29,
+        "with": 15989
       },
       {
         "id": 17719,
         "name": "Inventor's Focal Sword",
-        "dps": 877.43,
-        "loss": 10.52,
-        "with": 18316
-      },
-      {
-        "id": 11784,
-        "name": "Arbiter's Blade",
-        "dps": 877.35,
-        "loss": 10.6,
-        "with": 18316
+        "dps": 878.17,
+        "loss": 11.27,
+        "with": 15989
       },
       {
         "id": 13937,
         "name": "Headmaster's Charge",
-        "dps": 875.99,
-        "loss": 11.96,
+        "dps": 877.81,
+        "loss": 11.63,
         "cooldown": {
-          "rank": 16,
-          "loss": 15.01
+          "rank": 15,
+          "loss": 14.21
         },
         "note": "Darkmaster Gandling · Scholomance"
       },
       {
+        "id": 11784,
+        "name": "Arbiter's Blade",
+        "dps": 877.7,
+        "loss": 11.74,
+        "with": 15989
+      },
+      {
+        "id": 17780,
+        "name": "Blade of Eternal Darkness",
+        "dps": 877.56,
+        "loss": 11.88,
+        "with": 15989,
+        "note": "Princess Theradras · Maraudon"
+      },
+      {
         "id": 22335,
         "name": "Lord Valthalak's Staff of Command",
-        "dps": 873.69,
-        "loss": 14.26,
+        "dps": 876,
+        "loss": 13.43,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 11922,
-        "name": "Blood-Etched Blade",
-        "dps": 873.15,
-        "loss": 14.8,
-        "with": 18316
-      },
-      {
-        "id": 18534,
-        "name": "Rod of the Ogre Magi",
-        "dps": 873.1,
-        "loss": 14.85,
-        "note": "Tribute run, King Gordok · Dire Maul"
       },
       {
         "id": 280082,
         "name": "Staff of Sorrow",
-        "dps": 872.86,
-        "loss": 15.09,
+        "dps": 875.39,
+        "loss": 14.05,
         "note": "Mopes · Blackmaw Hold"
+      },
+      {
+        "id": 11922,
+        "name": "Blood-Etched Blade",
+        "dps": 874.95,
+        "loss": 14.49,
+        "with": 15989
       },
       {
         "id": 280023,
         "name": "Nanaya's Control Spire",
-        "dps": 871.63,
-        "loss": 16.32,
+        "dps": 873.25,
+        "loss": 16.18,
         "note": "Nanaya"
       },
       {
-        "id": 18353,
-        "name": "Stoneflower Staff",
-        "dps": 871.51,
-        "loss": 16.44,
-        "note": "Tendris Warpwood · Dire Maul"
+        "id": 18534,
+        "name": "Rod of the Ogre Magi",
+        "dps": 873.24,
+        "loss": 16.2,
+        "note": "Tribute run, King Gordok · Dire Maul"
       },
       {
         "id": 272084,
         "name": "Darkspear Insurgent's Spellblade",
-        "dps": 870.91,
-        "loss": 17.04,
-        "with": 18316
+        "dps": 872.2,
+        "loss": 17.24,
+        "with": 15989
       },
       {
-        "id": 15247,
-        "suffix": 990637,
-        "name": "Bloodstrike Dagger of the Sorcerer",
-        "dps": 869.67,
-        "loss": 18.28,
-        "with": 18316,
-        "note": "Random world drop"
-      },
-      {
-        "id": 15221,
-        "suffix": 990637,
-        "name": "Holy War Sword of the Sorcerer",
-        "dps": 869.67,
-        "loss": 18.28,
-        "unsourced": true,
-        "with": 18316
+        "id": 18353,
+        "name": "Stoneflower Staff",
+        "dps": 871.03,
+        "loss": 18.41,
+        "note": "Tendris Warpwood · Dire Maul"
       },
       {
         "id": 15247,
         "suffix": 990634,
         "name": "Bloodstrike Dagger of Magic",
-        "dps": 869.35,
-        "loss": 18.6,
-        "with": 18316,
+        "dps": 870.68,
+        "loss": 18.76,
+        "with": 15989,
         "note": "Random world drop"
       },
       {
         "id": 15221,
         "suffix": 990634,
         "name": "Holy War Sword of Magic",
-        "dps": 869.35,
-        "loss": 18.6,
+        "dps": 870.68,
+        "loss": 18.76,
         "unsourced": true,
-        "with": 18316
+        "with": 15989
       },
       {
         "id": 15247,
         "suffix": 990631,
         "name": "Bloodstrike Dagger of the Elder",
-        "dps": 869.22,
-        "loss": 18.73,
-        "with": 18316,
+        "dps": 870,
+        "loss": 19.44,
+        "with": 15989,
+        "note": "Random world drop"
+      },
+      {
+        "id": 15221,
+        "suffix": 990631,
+        "name": "Holy War Sword of the Elder",
+        "dps": 870,
+        "loss": 19.44,
+        "unsourced": true,
+        "with": 15989
+      },
+      {
+        "id": 15247,
+        "suffix": 990637,
+        "name": "Bloodstrike Dagger of the Sorcerer",
+        "dps": 869.79,
+        "loss": 19.64,
+        "with": 15989,
         "note": "Random world drop"
       }
     ],
@@ -2707,8 +2707,8 @@
       {
         "id": 19309,
         "name": "Tome of Shadow Force",
-        "dps": 893.43,
-        "loss": -5.48,
+        "dps": 894.96,
+        "loss": -5.52,
         "with": 18372,
         "avail": "infeasible",
         "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
@@ -2716,26 +2716,17 @@
       {
         "id": 19315,
         "name": "Therazane's Touch",
-        "dps": 892.35,
-        "loss": -4.4,
+        "dps": 893.88,
+        "loss": -4.44,
         "with": 18372,
         "avail": "infeasible",
         "note": "Frostwolf Exalted · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
-        "id": 18316,
-        "name": "Obsidian Bauble",
-        "dps": 889.28,
-        "loss": -1.33,
-        "with": 18372,
-        "avail": "infeasible",
-        "note": "Pusillin · Dire Maul · 69g per DPS"
-      },
-      {
         "id": 15989,
         "suffix": 1852,
         "name": "Eternal Rod of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "unsourced": true,
         "with": 18372,
@@ -2747,7 +2738,7 @@
         "id": 15941,
         "suffix": 1852,
         "name": "High Councillor's Scepter of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "with": 18372,
         "note": "Gyth · Blackrock Spire"
@@ -2756,51 +2747,43 @@
         "id": 15942,
         "suffix": 1852,
         "name": "Master's Rod of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "unsourced": true,
         "with": 18372,
         "note": "Random world drop"
       },
       {
-        "id": 13353,
-        "name": "Book of the Dead",
-        "dps": 887.88,
-        "loss": 0.07,
+        "id": 18316,
+        "name": "Obsidian Bauble",
+        "dps": 888.52,
+        "loss": 0.92,
         "with": 18372,
         "avail": "infeasible",
-        "note": "Grand Crusader Dathrohan and Balnazzar · Stratholme · 1887g per DPS"
-      },
-      {
-        "id": 22253,
-        "name": "Tome of the Lost",
-        "dps": 887.4,
-        "loss": 0.56,
-        "with": 18372,
-        "note": "General Drakkisath · Blackrock Spire"
+        "note": "Pusillin · Dire Maul · 76g per DPS"
       },
       {
         "id": 11904,
         "name": "Spirit of Aquementas",
-        "dps": 886.8,
-        "loss": 1.15,
+        "dps": 888.28,
+        "loss": 1.16,
         "with": 18372,
         "note": "Quest: It's Dangerous to Go Alone"
       },
       {
-        "id": 22329,
-        "name": "Scepter of Interminable Focus",
-        "dps": 886.64,
-        "loss": 1.31,
+        "id": 13353,
+        "name": "Book of the Dead",
+        "dps": 888.12,
+        "loss": 1.32,
         "with": 18372,
-        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "note": "Grand Crusader Dathrohan and Balnazzar · Stratholme"
       },
       {
         "id": 15987,
         "suffix": 1851,
         "name": "Astral Orb of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372,
         "note": "Tar Lurker"
       },
@@ -2808,8 +2791,8 @@
         "id": 15986,
         "suffix": 1851,
         "name": "Bonecaster's Star of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372,
         "note": "Random world drop"
       },
@@ -2817,8 +2800,8 @@
         "id": 15939,
         "suffix": 1851,
         "name": "Councillor's Scepter of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372,
         "note": "Random world drop"
       },
@@ -2826,8 +2809,8 @@
         "id": 10796,
         "suffix": 1851,
         "name": "Drakestone of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372,
         "note": "Dreamscythe, Weaver, Hazzas, Morphaz · Sunken Temple"
       },
@@ -2835,8 +2818,8 @@
         "id": 15940,
         "suffix": 1851,
         "name": "Elegant Scepter of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372,
         "note": "Random world drop"
       },
@@ -2844,25 +2827,33 @@
         "id": 15938,
         "suffix": 1851,
         "name": "Mystical Orb of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372
       },
       {
         "id": 15988,
         "suffix": 1851,
         "name": "Resplendent Orb of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "with": 18372,
         "note": "Gordok Warlock · Dire Maul"
+      },
+      {
+        "id": 22253,
+        "name": "Tome of the Lost",
+        "dps": 887.95,
+        "loss": 1.49,
+        "with": 18372,
+        "note": "General Drakkisath · Blackrock Spire"
       },
       {
         "id": 15985,
         "suffix": 1850,
         "name": "Arachnidian Branch of Shadow Wrath",
-        "dps": 885.9,
-        "loss": 2.05,
+        "dps": 887.37,
+        "loss": 2.07,
         "with": 18372,
         "note": "Random world drop"
       },
@@ -2870,24 +2861,24 @@
         "id": 15936,
         "suffix": 1850,
         "name": "Duskwoven Branch of Shadow Wrath",
-        "dps": 885.9,
-        "loss": 2.05,
+        "dps": 887.37,
+        "loss": 2.07,
         "with": 18372
       },
       {
         "id": 15984,
         "suffix": 1850,
         "name": "Opulent Scepter of Shadow Wrath",
-        "dps": 885.9,
-        "loss": 2.05,
+        "dps": 887.37,
+        "loss": 2.07,
         "with": 18372
       },
       {
         "id": 15989,
         "suffix": 990400,
         "name": "Eternal Rod of Magic",
-        "dps": 885.41,
-        "loss": 2.54,
+        "dps": 886.88,
+        "loss": 2.56,
         "unsourced": true,
         "with": 18372,
         "note": "Random world drop"
@@ -2896,8 +2887,8 @@
         "id": 15941,
         "suffix": 990400,
         "name": "High Councillor's Scepter of Magic",
-        "dps": 885.41,
-        "loss": 2.54,
+        "dps": 886.88,
+        "loss": 2.56,
         "with": 18372,
         "note": "Gyth · Blackrock Spire"
       },
@@ -2905,8 +2896,8 @@
         "id": 15942,
         "suffix": 990400,
         "name": "Master's Rod of Magic",
-        "dps": 885.41,
-        "loss": 2.54,
+        "dps": 886.88,
+        "loss": 2.56,
         "unsourced": true,
         "with": 18372,
         "note": "Random world drop"
@@ -2915,8 +2906,8 @@
         "id": 9944,
         "suffix": 1849,
         "name": "Abjurer's Crystal of Shadow Wrath",
-        "dps": 885.21,
-        "loss": 2.74,
+        "dps": 886.68,
+        "loss": 2.76,
         "with": 18372,
         "note": "Random world drop"
       },
@@ -2924,204 +2915,211 @@
         "id": 15983,
         "suffix": 1849,
         "name": "Gaea's Scepter of Shadow Wrath",
-        "dps": 885.21,
-        "loss": 2.74,
+        "dps": 886.68,
+        "loss": 2.76,
         "with": 18372
+      },
+      {
+        "id": 15987,
+        "suffix": 990410,
+        "name": "Astral Orb of Magic",
+        "dps": 886.18,
+        "loss": 3.26,
+        "with": 18372,
+        "note": "Tar Lurker"
       }
     ],
     "ranged": [
       {
         "id": 13396,
         "name": "Skul's Ghastly Touch",
-        "dps": 888.64,
+        "dps": 890.13,
         "loss": -0.69,
         "avail": "infeasible",
-        "note": "Skul · Stratholme · 151g per DPS"
-      },
-      {
-        "id": 13938,
-        "name": "Bonecreeper Stylus",
-        "dps": 888.36,
-        "loss": -0.41,
-        "avail": "infeasible",
-        "note": "Darkmaster Gandling · Scholomance · 1710g per DPS"
-      },
-      {
-        "id": 18761,
-        "name": "Oblivion's Touch",
-        "dps": 887.99,
-        "loss": -0.04,
-        "avail": "doubtful",
-        "note": "Death Knight Darkreaver · Scholomance, summoned boss, summon not confirmed open"
+        "note": "Skul · Stratholme · 153g per DPS"
       },
       {
         "id": 15283,
         "suffix": 1845,
         "name": "Lunar Wand of Shadow Wrath",
-        "dps": 887.95,
+        "dps": 889.44,
         "loss": 0,
         "bis": true,
-        "note": "Random world drop"
+        "note": "Random world drop · 9g per DPS"
+      },
+      {
+        "id": 13938,
+        "name": "Bonecreeper Stylus",
+        "dps": 889.29,
+        "loss": 0.15,
+        "avail": "infeasible",
+        "note": "Darkmaster Gandling · Scholomance · 876g per DPS"
+      },
+      {
+        "id": 18761,
+        "name": "Oblivion's Touch",
+        "dps": 888.54,
+        "loss": 0.9,
+        "avail": "doubtful",
+        "note": "Death Knight Darkreaver · Scholomance, summoned boss, summon not confirmed open"
       },
       {
         "id": 15283,
         "suffix": 990144,
         "name": "Lunar Wand of Magic",
-        "dps": 886.69,
-        "loss": 1.26,
-        "note": "Random world drop"
+        "dps": 888.17,
+        "loss": 1.27,
+        "note": "Random world drop · 9g per DPS"
       },
       {
         "id": 22408,
         "name": "Ritssyn's Wand of Bad Mojo",
-        "dps": 886.69,
-        "loss": 1.26,
+        "dps": 888.17,
+        "loss": 1.27,
         "note": "Baron Rivendare · Stratholme"
       },
       {
         "id": 15282,
         "suffix": 1844,
         "name": "Dragon Finger of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
-        "note": "Random world drop"
+        "dps": 888.06,
+        "loss": 1.38,
+        "note": "Random world drop · 2g per DPS"
       },
       {
         "id": 15281,
         "suffix": 1844,
         "name": "Glowstar Rod of Shadow Wrath",
-        "dps": 886.58,
-        "loss": 1.37,
+        "dps": 888.06,
+        "loss": 1.38,
         "note": "Random world drop"
-      },
-      {
-        "id": 275837,
-        "name": "Felflick's Fire Flicker",
-        "dps": 886.53,
-        "loss": 1.42,
-        "avail": "doubtful",
-        "note": "Quest: A Revenge Now Bitter · Hyjal, zone not confirmed open"
       },
       {
         "id": 15279,
         "suffix": 1843,
         "name": "Ivory Wand of Shadow Wrath",
-        "dps": 885.9,
-        "loss": 2.05,
-        "note": "Random world drop"
+        "dps": 887.37,
+        "loss": 2.07,
+        "note": "Random world drop · 0g per DPS"
       },
       {
         "id": 15280,
         "suffix": 1843,
         "name": "Wizard's Hand of Shadow Wrath",
-        "dps": 885.9,
-        "loss": 2.05,
+        "dps": 887.37,
+        "loss": 2.07,
         "note": "Random world drop"
       },
       {
         "id": 15282,
         "suffix": 990148,
         "name": "Dragon Finger of Magic",
-        "dps": 885.31,
-        "loss": 2.64,
-        "note": "Random world drop"
+        "dps": 886.77,
+        "loss": 2.67,
+        "note": "Random world drop · 2g per DPS"
       },
       {
         "id": 15281,
         "suffix": 990148,
         "name": "Glowstar Rod of Magic",
-        "dps": 885.31,
-        "loss": 2.64,
+        "dps": 886.77,
+        "loss": 2.67,
         "note": "Random world drop"
       },
       {
         "id": 249237,
         "name": "Greater Eternal Wand",
-        "dps": 885.31,
-        "loss": 2.64,
+        "dps": 886.77,
+        "loss": 2.67,
         "avail": "doubtful",
         "note": "Enchanting craft, formula Greater Eternal Wand has no known source"
       },
       {
         "id": 18301,
         "name": "Lethtendris's Wand",
-        "dps": 885.31,
-        "loss": 2.64,
+        "dps": 886.77,
+        "loss": 2.67,
         "note": "Lethtendris · Dire Maul"
+      },
+      {
+        "id": 275837,
+        "name": "Felflick's Fire Flicker",
+        "dps": 886.07,
+        "loss": 3.37,
+        "avail": "doubtful",
+        "note": "Quest: A Revenge Now Bitter · Hyjal, zone not confirmed open"
       },
       {
         "id": 15279,
         "suffix": 990189,
         "name": "Ivory Wand of Magic",
-        "dps": 884.61,
-        "loss": 3.34,
-        "note": "Random world drop"
+        "dps": 886.07,
+        "loss": 3.37,
+        "note": "Random world drop · 0g per DPS"
       },
       {
         "id": 249232,
         "name": "Lesser Eternal Wand",
-        "dps": 884.61,
-        "loss": 3.34
+        "dps": 886.07,
+        "loss": 3.37,
+        "note": "2g per DPS"
       },
       {
         "id": 15280,
         "suffix": 990189,
         "name": "Wizard's Hand of Magic",
-        "dps": 884.61,
-        "loss": 3.34,
+        "dps": 886.07,
+        "loss": 3.37,
         "note": "Random world drop"
+      },
+      {
+        "id": 287036,
+        "name": "Satyr's Touch",
+        "dps": 885.32,
+        "loss": 4.11
+      },
+      {
+        "id": 279246,
+        "name": "Torch of Light",
+        "dps": 885.18,
+        "loss": 4.26
       },
       {
         "id": 276735,
         "name": "Tidesong Wand",
-        "dps": 884.51,
-        "loss": 3.45
+        "dps": 885.12,
+        "loss": 4.32
+      },
+      {
+        "id": 15282,
+        "suffix": 990194,
+        "name": "Dragon Finger of the Elder",
+        "dps": 884.61,
+        "loss": 4.83,
+        "note": "Random world drop · 2g per DPS"
+      },
+      {
+        "id": 15281,
+        "suffix": 990194,
+        "name": "Glowstar Rod of the Elder",
+        "dps": 884.61,
+        "loss": 4.83,
+        "note": "Random world drop"
+      },
+      {
+        "id": 280031,
+        "name": "Sparklance Wand",
+        "dps": 884.52,
+        "loss": 4.92,
+        "note": "Drop: Bolt or Vitrix (AtlasLoot) · Forever rares, zone not in our data · seen in game Nov 21"
       },
       {
         "id": 15283,
         "suffix": 990229,
         "name": "Lunar Wand of the Elder",
         "dps": 884.44,
-        "loss": 3.51,
-        "note": "Random world drop"
-      },
-      {
-        "id": 15282,
-        "suffix": 990194,
-        "name": "Dragon Finger of the Elder",
-        "dps": 884.27,
-        "loss": 3.68,
-        "note": "Random world drop"
-      },
-      {
-        "id": 15281,
-        "suffix": 990194,
-        "name": "Glowstar Rod of the Elder",
-        "dps": 884.27,
-        "loss": 3.68,
-        "note": "Random world drop"
-      },
-      {
-        "id": 15283,
-        "suffix": 990147,
-        "name": "Lunar Wand of the Sorcerer",
-        "dps": 883.81,
-        "loss": 4.14,
-        "note": "Random world drop"
-      },
-      {
-        "id": 15283,
-        "suffix": 990231,
-        "name": "Lunar Wand of the Prophet",
-        "dps": 883.74,
-        "loss": 4.21,
-        "note": "Random world drop"
-      },
-      {
-        "id": 22254,
-        "name": "Wand of Eternal Light",
-        "dps": 883.68,
-        "loss": 4.27
+        "loss": 5,
+        "note": "Random world drop · 9g per DPS"
       }
     ]
   },
@@ -3133,7 +3131,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
@@ -3144,7 +3142,7 @@
         "item": 11648,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Intellect",
-        "dps": 884.76,
+        "dps": 885.57,
         "loss": 2.49
       },
       {
@@ -3153,7 +3151,7 @@
         "item": 11622,
         "name": "Lesser Arcanum of Rumination",
         "effect": "+150 mana",
-        "dps": 883.14,
+        "dps": 883.95,
         "loss": 4.11
       },
       {
@@ -3162,7 +3160,7 @@
         "item": 11649,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Spirit",
-        "dps": 882.57,
+        "dps": 883.38,
         "loss": 4.68
       }
     ],
@@ -3173,7 +3171,7 @@
         "spell": 1249057,
         "name": "Enchant Necklace - Spell Power",
         "effect": "+6 spell power",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "120 Merchant's Favor"
@@ -3184,7 +3182,7 @@
         "spell": 1249058,
         "name": "Enchant Necklace - Healing Power",
         "effect": "+11 healing, +4 spell damage",
-        "dps": 885.86,
+        "dps": 886.67,
         "loss": 1.39,
         "note": "120 Merchant's Favor"
       }
@@ -3196,7 +3194,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "90 Merchant's Favor, Honored"
@@ -3207,7 +3205,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 886.54,
+        "dps": 887.35,
         "loss": 0.71
       },
       {
@@ -3216,7 +3214,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 885.82,
+        "dps": 886.63,
         "loss": 1.43
       },
       {
@@ -3225,7 +3223,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 884.39,
+        "dps": 885.2,
         "loss": 2.86
       },
       {
@@ -3233,7 +3231,7 @@
         "spell": 20025,
         "name": "Enchant Chest - Greater Stats",
         "effect": "+4 all stats",
-        "dps": 884.3,
+        "dps": 885.11,
         "loss": 2.95,
         "note": "Formula on AH ~351g"
       },
@@ -3242,7 +3240,7 @@
         "spell": 13941,
         "name": "Enchant Chest - Stats",
         "effect": "+3 all stats",
-        "dps": 883.81,
+        "dps": 884.62,
         "loss": 3.44
       },
       {
@@ -3250,7 +3248,7 @@
         "spell": 13917,
         "name": "Enchant Chest - Superior Mana",
         "effect": "+65 mana",
-        "dps": 883.55,
+        "dps": 884.36,
         "loss": 3.7
       },
       {
@@ -3258,7 +3256,7 @@
         "spell": 13700,
         "name": "Enchant Chest - Lesser Stats",
         "effect": "+2 all stats",
-        "dps": 883.49,
+        "dps": 884.3,
         "loss": 3.76
       },
       {
@@ -3266,7 +3264,7 @@
         "spell": 20028,
         "name": "Enchant Chest - Major Mana",
         "effect": "+100 mana",
-        "dps": 883.47,
+        "dps": 884.28,
         "loss": 3.78,
         "note": "1.1% formula drop (Major Intellect +10)"
       },
@@ -3275,7 +3273,7 @@
         "spell": 13626,
         "name": "Enchant Chest - Minor Stats",
         "effect": "+1 all stats",
-        "dps": 883.37,
+        "dps": 884.18,
         "loss": 3.88
       }
     ],
@@ -3286,7 +3284,7 @@
         "spell": 1220624,
         "name": "Enchant Bracer - Greater Spellpower",
         "effect": "+16 spell power",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3297,7 +3295,7 @@
         "spell": 1248498,
         "name": "Enchant Bracer - Lesser Healing Power",
         "effect": "+16 healing, +6 spell damage",
-        "dps": 880.05,
+        "dps": 880.86,
         "loss": 7.2
       },
       {
@@ -3306,7 +3304,7 @@
         "spell": 1248661,
         "name": "Enchant Bracer - Superior Intellect",
         "effect": "+9 Intellect",
-        "dps": 878.42,
+        "dps": 879.23,
         "loss": 8.83,
         "note": "Merchant's Favor Honored"
       },
@@ -3316,7 +3314,7 @@
         "spell": 1248459,
         "name": "Enchant Bracer - Minor Healing Power",
         "effect": "+8 healing, +3 spell damage",
-        "dps": 877.93,
+        "dps": 878.74,
         "loss": 9.32,
         "avail": "doubtful",
         "note": "One drop sample only"
@@ -3326,7 +3324,7 @@
         "spell": 20008,
         "name": "Enchant Bracer - Greater Intellect",
         "effect": "+7 Intellect",
-        "dps": 877.77,
+        "dps": 878.58,
         "loss": 9.48,
         "note": "Formula on AH ~9g"
       },
@@ -3335,7 +3333,7 @@
         "spell": 13822,
         "name": "Enchant Bracer - Intellect",
         "effect": "+5 Intellect",
-        "dps": 877.03,
+        "dps": 877.84,
         "loss": 10.22
       },
       {
@@ -3343,7 +3341,7 @@
         "spell": 20009,
         "name": "Enchant Bracer - Superior Spirit",
         "effect": "+9 Spirit",
-        "dps": 876.62,
+        "dps": 877.43,
         "loss": 10.63,
         "note": "Formula on AH ~0.6g"
       },
@@ -3353,7 +3351,7 @@
         "spell": 13622,
         "name": "Enchant Bracer - Lesser Intellect",
         "effect": "+3 Intellect",
-        "dps": 876.47,
+        "dps": 877.28,
         "loss": 10.78
       },
       {
@@ -3362,7 +3360,7 @@
         "spell": 1248458,
         "name": "Enchant Bracer - Minor Intellect",
         "effect": "+3 Intellect",
-        "dps": 876.47,
+        "dps": 877.28,
         "loss": 10.78,
         "avail": "doubtful",
         "note": "Forever formula, source unchecked"
@@ -3372,7 +3370,7 @@
         "spell": 13846,
         "name": "Enchant Bracer - Greater Spirit",
         "effect": "+7 Spirit",
-        "dps": 876.46,
+        "dps": 877.27,
         "loss": 10.79,
         "note": "Formula on AH ~0.4g"
       }
@@ -3384,7 +3382,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "90 Merchant's Favor, Honored"
@@ -3395,7 +3393,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 886.56,
+        "dps": 887.37,
         "loss": 0.69
       },
       {
@@ -3404,7 +3402,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 885.86,
+        "dps": 886.67,
         "loss": 1.39
       },
       {
@@ -3413,7 +3411,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 884.47,
+        "dps": 885.28,
         "loss": 2.78
       }
     ],
@@ -3424,7 +3422,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
@@ -3435,7 +3433,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 885.82,
+        "dps": 886.63,
         "loss": 1.43,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3445,7 +3443,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 885.11,
+        "dps": 885.92,
         "loss": 2.14
       },
       {
@@ -3454,7 +3452,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 884.39,
+        "dps": 885.2,
         "loss": 2.86
       },
       {
@@ -3463,7 +3461,7 @@
         "item": 11648,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Intellect",
-        "dps": 883.82,
+        "dps": 884.63,
         "loss": 3.43
       },
       {
@@ -3472,7 +3470,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 882.96,
+        "dps": 883.77,
         "loss": 4.29
       },
       {
@@ -3481,7 +3479,7 @@
         "item": 11622,
         "name": "Lesser Arcanum of Rumination",
         "effect": "+150 mana",
-        "dps": 882.89,
+        "dps": 883.7,
         "loss": 4.36
       },
       {
@@ -3490,7 +3488,7 @@
         "item": 11649,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Spirit",
-        "dps": 882.19,
+        "dps": 883,
         "loss": 5.06
       }
     ],
@@ -3501,7 +3499,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "90 Merchant's Favor, Honored"
@@ -3512,7 +3510,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 886.54,
+        "dps": 887.35,
         "loss": 0.71
       },
       {
@@ -3521,7 +3519,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 885.82,
+        "dps": 886.63,
         "loss": 1.43
       },
       {
@@ -3530,7 +3528,7 @@
         "spell": 1255124,
         "name": "Mystic Medium Armor Kit",
         "effect": "+2 spell power, +16 armor",
-        "dps": 884.39,
+        "dps": 885.2,
         "loss": 2.86
       },
       {
@@ -3538,7 +3536,7 @@
         "spell": 20024,
         "name": "Enchant Boots - Spirit",
         "effect": "+5 Spirit",
-        "dps": 883.52,
+        "dps": 884.33,
         "loss": 3.73,
         "note": "Formula on AH ~0.9g"
       },
@@ -3548,7 +3546,7 @@
         "spell": 13687,
         "name": "Enchant Boots - Lesser Spirit",
         "effect": "+4 Spirit",
-        "dps": 883.39,
+        "dps": 884.2,
         "loss": 3.86,
         "note": "Formula on AH ~0.1g"
       }
@@ -3559,7 +3557,7 @@
         "game": 8217,
         "spell": 1248805,
         "name": "Enchant Weapon - Revelation",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "45 Merchant's Favor"
@@ -3569,8 +3567,8 @@
         "spell": 23804,
         "name": "Enchant Weapon - Mighty Intellect",
         "effect": "+22 Intellect",
-        "dps": 861.38,
-        "loss": 25.87,
+        "dps": 855.36,
+        "loss": 32.7,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
       },
@@ -3579,8 +3577,8 @@
         "spell": 23803,
         "name": "Enchant Weapon - Mighty Spirit",
         "effect": "+20 Spirit",
-        "dps": 856.47,
-        "loss": 30.78,
+        "dps": 850.73,
+        "loss": 37.33,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
       }
@@ -3592,7 +3590,7 @@
         "spell": 1219579,
         "name": "Enchant Off-Hand - Wisdom",
         "effect": "+6 Intellect, +5 Spirit",
-        "dps": 887.25,
+        "dps": 888.06,
         "loss": 0,
         "bis": true,
         "note": "Forever only, formula 274393 vendor for 240 of currency 3402"
