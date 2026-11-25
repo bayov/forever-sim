@@ -4,6 +4,7 @@
     python3 tools/rotopt/phase0_prices.py                     # print the tables of every spec
     python3 tools/rotopt/phase0_prices.py --write             # save gold and goldPerDps in phase0_content.json
     python3 tools/rotopt/phase0_prices.py --spec mage_fire    # one spec, or a comma list
+    python3 tools/rotopt/phase0_prices.py --sets              # each spec's gear set's total gold
 
 One run prices every spec's list in tools/rotopt/phase0_specs.json (the one
 bis_phase0.sh writes for it). An item's gold is the same on every list, but its
@@ -428,6 +429,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--write', action='store_true', help='save gold and goldPerDps in phase0_content.json')
     ap.add_argument('--spec', help='the specs of phase0_specs.json to price, comma separated (default: all)')
+    ap.add_argument('--sets', action='store_true',
+                    help="print each spec's gear set (gearOut) and its total gold, items only, and stop")
     ap.add_argument('--list', help='a list to read in place of the spec\'s own, with one --spec')
     ap.add_argument('--ah', help="a BayovAuctionData.lua (default: the main account's newest under --wow)")
     ap.add_argument('--wow', default=os.environ.get('WOW_DIR', '/mnt/d/Gaming/World of Warcraft'))
@@ -472,22 +475,40 @@ def main():
     drops = load_drops(gear) if gear else {}
     bosses = load_bosses(dungeons) if dungeons else {}
     rates = load_droprates(atlas) if atlas else {}
+    sets = {}
+    if args.sets:
+        for spec in specs:
+            row = table[spec]
+            path = os.path.join(ROOT, row.get('gearOut') or f"ui/{row['dir']}/gear_sets/level60_phase0_{spec}.gear.json")
+            with open(path) as f:
+                sets[spec] = [i for i in json.load(f)['items'] if i and i.get('id')]
     effort, unknown = {}, set()
-    for bis in lists.values():
-        for entries in bis['slots'].values():
-            for e in entries:
-                if e['id'] not in drops or e['id'] in effort:
-                    continue
-                r = drop_effort(drop_sources(e['id'], drops, bosses, rates),
-                                args.gold_per_hour, args.roll_share, args.run_overhead)
-                if r:
-                    effort[e['id']] = r
-                elif content.get(str(e['id']), {}).get('avail') not in SKIP_AVAIL:
-                    unknown.add(e['name'])
+    for e in ([e for bis in lists.values() for es in bis['slots'].values() for e in es]
+              + [{'id': i['id'], 'name': str(i['id'])} for items in sets.values() for i in items]):
+        if e['id'] not in drops or e['id'] in effort:
+            continue
+        r = drop_effort(drop_sources(e['id'], drops, bosses, rates),
+                        args.gold_per_hour, args.roll_share, args.run_overhead)
+        if r:
+            effort[e['id']] = r
+        elif content.get(str(e['id']), {}).get('avail') not in SKIP_AVAIL:
+            unknown.add(e['name'])
 
     print(f'prices from {ah}, recipes from {wago}, line {args.max:g}g per DPS')
     print(f'drops from {gear[0] if gear else None}, wings from {dungeons}, AtlasLoot rates from {atlas}')
     print(f'effort at {args.gold_per_hour:g}g per hour, roll share {args.roll_share:g}, run overhead {args.run_overhead:g} min')
+    if args.sets:
+        names = {str(e['id']): e['name'] for bis in lists.values() for es in bis['slots'].values() for e in es}
+        for spec, items in sets.items():
+            total, parts = 0, []
+            for i in items:
+                gold, how = item_gold(i['id'], prices, recipes, effort)
+                if gold:
+                    total += gold
+                    name = names.get(str(i['id'])) or content.get(str(i['id']), {}).get('name') or i['id']
+                    parts.append(f"{name} {gold:.0f}g ({how.split(':')[0]})")
+            print(f"{spec:24s} {total:8.0f}g  {', '.join(parts)}")
+        return
     priced = {}
     for spec, bis in lists.items():
         print(f'\n{spec}')
