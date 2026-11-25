@@ -11,7 +11,7 @@
     "legs": 2106,
     "mainhand": 738,
     "neck": 521,
-    "offhand": 0,
+    "offhand": 1094,
     "ranged": 328,
     "shoulder": 1752,
     "trinket1": 103,
@@ -19,7 +19,7 @@
     "waist": 1758,
     "wrist": 1524
   },
-  "items": 2503,
+  "items": 2591,
   "unmodelled": [
     {
       "id": 833,
@@ -384,6 +384,12 @@
       "kind": "classic"
     },
     {
+      "id": 13254,
+      "name": "Astral Guard",
+      "slot": "offhand",
+      "kind": "classic"
+    },
+    {
       "id": 13950,
       "name": "Detention Strap",
       "slot": "waist",
@@ -472,10 +478,16 @@
       "name": "Lord Blackwood's Blade",
       "slot": "mainhand",
       "kind": "classic"
+    },
+    {
+      "id": 23139,
+      "name": "Lord Blackwood's Buckler",
+      "slot": "offhand",
+      "kind": "classic"
     }
   ],
-  "foreverNoTooltip": 539,
-  "unlisted": 1591,
+  "foreverNoTooltip": 554,
+  "unlisted": 1670,
   "faction": "Horde",
   "factionDropped": [
     {
