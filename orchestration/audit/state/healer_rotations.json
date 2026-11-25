@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
+  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
  },
  "last_pass_at": "2026-11-25T03:50:00Z",
  "pass": 26,
@@ -8,5 +8,5 @@
  "note": "Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-25T03:50:00Z"
+ "checked_at": "2026-11-25T06:50:52Z"
 }

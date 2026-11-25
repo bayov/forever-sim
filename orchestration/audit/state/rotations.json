@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
+  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 77,
- "result": "findings",
- "note": "rotations-20261125-1 found and fixed in 67fe28cf0 (warlock Talisman pre-pull, Fury DW Blackhand held); rotation card conditions worded.",
+ "last_pass_at": "2026-11-25T06:50:16Z",
+ "pass": 78,
+ "result": "quiet",
+ "note": "226ada86b..5536db4bc: no APL logic, no sim .go, no req changes (drops.json, DPS Report assumptions data, audit files only).",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T03:50:00Z",
+ "checked_at": "2026-11-25T06:50:52Z",
  "baseline": "baseline_eceb090_3000it_seed424242.tsv"
 }

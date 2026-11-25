@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
+  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 103,
+ "last_pass_at": "2026-11-25T06:50:23Z",
+ "pass": 104,
  "result": "quiet",
- "note": "Only sim change 1fed43cbf (Auto Time To Next with a pending extra attack), pinned by a test.",
+ "note": "No sim code changes; only sim/compsearch/drops.json regenerated (hunter drops of melee-AP/weapon buffs, consistent with the pet-buff ruling). No new Forever blue, dev-notes or hotfix posts; client 71091 still newest.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T03:50:00Z",
+ "checked_at": "2026-11-25T06:50:52Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

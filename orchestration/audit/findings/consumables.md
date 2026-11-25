@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### consumables-20261125-1: DPS Report assumption natural_flask_zone still describes the pre-70862 flasks (60 Stamina, 4-5%)
+- severity: low
+- affects: tools/dps_report/assumptions_def.py (natural_flask_zone desc, line ~108)
+- found: 2026-11-25, master 5536db4bc
+- evidence: the desc says "give 60 Stamina anywhere ... 5% hit, 4% crit, 5% less chance to be dodged or parried, or 5% haste". sim/core/consumes.go applyNaturalFlask (since 032692409, client 70862) gives 30 Stamina and 2% for all four. The "1.2% to 3%" cost quoted in the same desc was simmed with the old values and may be stale too (not re-measured).
+- proposed fix: change the desc to 30 Stamina and 2% hit, crit, expertise or haste; re-sim the cost figure.
+- needs: orchestrator fix
+
 ### consumables-20261110-1: Chest/bracer enchant 41 is named "Minor Health" but the client calls spells 7420/7418 "Inferior Stamina"
 - severity: low
 - affects: tools/database/forever_enchants.go (lines 77, 81); tools/database/enchant_overrides.go:97,120 still carry the old +5 Health stats for effect 41

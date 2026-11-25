@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
+  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 107,
- "result": "quiet",
- "note": "Consumes and buffs unchanged in every request; Enhancement pairings recorded.",
+ "last_pass_at": "2026-11-25T06:50:08Z",
+ "pass": 108,
+ "result": "findings",
+ "note": "assumptions_def.py only; natural flask desc stale (low).",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T03:50:00Z"
+ "checked_at": "2026-11-25T06:50:52Z"
 }
