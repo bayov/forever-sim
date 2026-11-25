@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
+  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
  },
- "last_pass_at": "2026-11-25T06:49:53Z",
- "pass": 104,
+ "last_pass_at": "2026-11-25T08:30:00Z",
+ "pass": 105,
  "result": "quiet",
- "note": "pass 104: only sim/compsearch/drops.json (cache drop table) changed; shared run 0 of 68 moved vs published.",
+ "note": "pass 105: elixir overwrite (f1942793d) and rage-taken (b4cab8498) moved 60 of 68 vs metas, all explained by paired runs; no new finding.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T06:50:52Z",
+ "checked_at": "2026-11-25T13:10:47Z",
  "baseline": "0facd9428"
 }
