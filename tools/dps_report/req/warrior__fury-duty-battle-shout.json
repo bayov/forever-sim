@@ -740,66 +740,13 @@
                 },
                 {
                   "action": {
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "cmp": {
-                              "op": "OpLe",
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "30s"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "itemId": 13965
-                                  },
-                                  "delay": {
-                                    "math": {
-                                      "op": "OpSub",
-                                      "lhs": {
-                                        "remainingTime": {}
-                                      },
-                                      "rhs": {
-                                        "const": {
-                                          "val": "30s"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 13965
                       }
                     }
-                  }
+                  },
+                  "notes": "Blackhand's Breadth on cooldown: its mark beats holding it for the last 30 s."
                 },
                 {
                   "action": {

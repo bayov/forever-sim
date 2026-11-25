@@ -139,20 +139,6 @@
                       "val": "-2.5s"
                     }
                   }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 22678
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-0.1s"
-                    }
-                  }
                 }
               ],
               "priorityList": [
