@@ -110,5 +110,6 @@
   "15394": {"name": "Lesser Arcanum of Resilience", "source": "Dire Maul libram quest + Black Diamond (sources not in data)"},
   "20015": {"name": "Enchant Cloak - Superior Defense", "note": "Formula 16224 vendor 2g", "source": "Vendor: Lorelae Wintersong (Moonglade), Formula 16224 for 2g, skill 285; 0.54% Gordok Mage-Lord (Dire Maul)"},
   "22846": {"name": "Arcanum of Protection", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
-  "1248665": {"name": "Enchant Bracer - Superior Deflection", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored), Formula 249539, skill 300"}
+  "1248665": {"name": "Enchant Bracer - Superior Deflection", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored), Formula 249539, skill 300"},
+  "13746": {"name": "Enchant Cloak - Greater Defense", "source": "Trainer: enchanting trainers, 42s, skill 205"}
 }
