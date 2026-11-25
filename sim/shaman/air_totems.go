@@ -28,8 +28,8 @@ var WindfuryTotemSpellId = core.WindfuryTotemSpellId
 
 // The rotations ask for this aura to see whether the totem stands.
 //
-// It's the party aura each rank gives in the Forever client (70338), which procs the attack
-// power buff. We used Classic's 8514, 10607 and 10611 before, which the Forever client doesn't
+// It's the area aura each rank gives in the Forever client, a party one in 70338 and a raid one
+// since 70425 (effect 65), which procs the totem's attack. We used Classic's 8514, 10607 and 10611 before, which the Forever client doesn't
 // have (shaman_audit.md 7.1).
 var WindfuryBuffAuraId = [WindfuryTotemRanks + 1]int32{0, 8515, 10609, 10612}
 

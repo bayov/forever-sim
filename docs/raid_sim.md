@@ -325,8 +325,9 @@ The resolver works from a table that says, for each buff and debuff:
 - how long it lasts and whether it costs GCDs in the fight
 - the settings field that gives it, and its spell ids
 
-**It's written by hand**, checked against client 70685. The client's scope rule is in the appendix, for
-checking a row.
+**It's written by hand**, checked against client 70685, and its scopes again against 70938 and 71091 on
+2026-11-25 (every one matched; see [Scope check](#scope-check-client-71091)). The client's scope rule is in
+the appendix, for checking a row.
 
 **In Go** (as built, 2026-10-30) the table is one file, `sim/compsearch/table.go`. The search, the
 resolver and the page read everything they know about classes from it:
@@ -347,7 +348,8 @@ with the Who gives what text built from the presets, the pool and the duties. A 
 stale.
 
 So a class change is an edit of these rows. What stays in code is the three ways a raid shares effects: a
-paladin's blessings go to each class, a shaman's totems go to its party, and warriors Sunder at the pull. The
+paladin's blessings go to each class, a shaman's water totems go to its party (its other totems reach the raid),
+and warriors Sunder at the pull. The
 heuristics that pick automatic assignments (Kings first, Might for a melee class, Windfury for a melee raid)
 also name their effects. A new kind of sharing needs code. The scopes, the stacking and the exclusions live
 in the engine (M1b). Nothing yet flags a spell id that changes in a new client build.
@@ -2049,6 +2051,43 @@ For checking a row of the provider table against a new client:
 - **Totem slots:** a totem summon (Effect 28) names a creature through SummonProperties, whose slot is its
   element (fire 1, water 3, air 4). The client has no link from a totem to the buff spell it casts.
 - The client has no stacking or spell-group table.
+
+### Scope check, client 71091
+
+2026-11-25, after the user asked whether buffs that were party-only went raid-wide. Each buff's top rank in
+clients 70938 and 71091 (the same in both), against the raid sim. Every one matched, so nothing moved.
+
+| Buff | Client (spell, how it's built) | Raid sim |
+|---|---|---|
+| Battle Shout | 11551 and 25289, apply aura on the caster's raid (56) | raid (`NewRaidPlayerAuraArray`) |
+| Furious Howl | 24597, apply aura on the caster's raid (56) | raid |
+| Strength of Earth Totem | 25362, raid area aura (65) | raid (`newTotemBuffReceivers`) |
+| Grace of Air Totem | 10626 and 25360, raid area aura (65) | raid |
+| Windfury Totem | 10612, raid area aura (65) | raid; one weapon totem per receiver |
+| Flametongue Totem | 15036, raid area aura (65) | raid; one weapon totem per receiver |
+| Mana Spring Totem | 10494, party area aura (35) | party (the package) |
+| Mana Tide Totem | 1325257, party area aura (35) | party (the package) |
+| Healing Stream Totem | 10461, party area aura (35) | party |
+| Tranquil Air, Stoneskin, Windwall Totems | 25909, 10405, 15110, party area aura (35) | not modelled (no DPS) |
+| Fire, Frost, Nature Resistance Totems | 10535, 10477, 10599, raid area aura (65) | not modelled (no DPS) |
+| Devotion, Retribution, Concentration Aura | 10293, 10301, 19746, party area aura (35) | not given; a paladin's own Retribution Aura is its own |
+| Shadow, Frost, Fire Resistance Aura | 19896, 19898, 19900, raid area aura (65) | not modelled (no DPS) |
+| Trueshot Aura | 20906, raid area aura (65) | raid |
+| Leader of the Pack | 24932, raid area aura (65) | raid |
+| Moonkin Aura | 24907, raid area aura (65) | raid |
+| Blood Pact | 11767, party area aura (35) | party (`PartyBuffs.blood_pact`; Stamina only) |
+| Atiesh | 28142 to 28145, party area aura (35) | party (no request uses it) |
+| Aspect of the Wild, Aspect of the Pack | 20190 raid (65), 13159 party (35) | not modelled (no DPS) |
+| Prayer of Spirit, Prayer of Fortitude, Arcane Brilliance, Gift of the Wild | 27681, 21564, 23028, 21850, apply aura on the caster's raid (56) | raid |
+| Greater Blessings of Kings, Might, Wisdom | 25898, 25916, 25918, the raid members of a class (153) | a class across the raid |
+| Dark Inspiration | 1326168, apply aura on the caster's party (20) | party |
+| Shadow Weaving | 15258, the caster's own debuff on the target (6; stacks per caster, Attributes_3 0x80) | the priest's own, no party effect |
+| Divine Spirit, Power Infusion, Innervate | 27841, 10060, 29166, one target (21) | one target |
+
+Two shamans' copies of one totem share one buff on each receiver. None of the totem auras has the
+Attributes_3 0x80 bit that lets different casters' copies stack, which fits that rule, but the server decides
+(notes.md, Need to Verify, Shaman). Client 70959 also made Windfury Totem's proc a weapon-damage strike
+(10610: Effect 58 on the enemy), which isn't a scope change (SHR-HF-01 in `orchestration/update_ledger.md`).
 
 ### What the engine has today
 
