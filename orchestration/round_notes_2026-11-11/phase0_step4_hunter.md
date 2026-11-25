@@ -62,3 +62,12 @@ settings (2,000 iterations, 120, 180 and 300s together):
 race_gear.py puts every other-faction race on its faction set and skips the Dwarf excess-hit trade for them. So the
 Beast Mastery, Marksmanship and Survival Dwarf rows carry 0.6% (ranged) or 1% (Survival) hit over the cap without
 re-spending it, likely a few DPS low (Lone Wolf's trade was worth 5.0). The shared script was left as is.
+
+## Full RANK_ONLY check (publish brief, 2026-11-25)
+
+A full `RANK_ONLY` on Marksmanship (2 cores, the cap while other sims ran) took about 1h to rank every enchant and
+slot once. The only confirmed change was wrist: Beastmaster's Bindings +0.6 ± 0.2 over Bracers of the Eclipse at
+20,000 iterations (the current list has it 0.29 below). Every other slot kept its pick. The script then started its
+second pass on the new set and was stopped at the 2h limit before writing, so nothing was applied: a 0.3 to 0.6
+swing on the wrist is a tie, and the lists, sets and requests stay. Survival was not run (another 1 to 2h); its
+wrist list has Beastmaster's Bindings outside the top 3. Both stay on the head and feet re-rank.
