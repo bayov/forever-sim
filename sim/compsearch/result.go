@@ -443,7 +443,12 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 // providerCost is the member giving a role, the other roles it gives in the set, and its cost: the best
 // filler in its seat less its DPS.
 func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (string, Gift, float64, error) {
-	for _, m := range c.Members {
+	// A provider or fixed member first: a duty variant can also be a filler, there for its DPS.
+	members := append([]*Member{}, c.Members...)
+	sort.SliceStable(members, func(a, b int) bool {
+		return (members[a].Provider || members[a].Fixed) && !(members[b].Provider || members[b].Fixed)
+	})
+	for _, m := range members {
 		if m.B.Gives&g == 0 {
 			continue
 		}

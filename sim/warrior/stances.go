@@ -132,11 +132,13 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			ee.Aura.Unit.PseudoStats.ThreatMultiplier *= warrior.defensiveStanceThreatMultiplier
 			ee.Aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.9
 			ee.Aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.9
+			ee.Aura.Unit.PseudoStats.StanceDamageTakenMultiplier *= 0.9
 		},
 		OnExpire: func(ee *core.ExclusiveEffect, sim *core.Simulation) {
 			ee.Aura.Unit.PseudoStats.ThreatMultiplier /= warrior.defensiveStanceThreatMultiplier
 			ee.Aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.9
 			ee.Aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.9
+			ee.Aura.Unit.PseudoStats.StanceDamageTakenMultiplier /= 0.9
 		},
 	})
 }
@@ -151,11 +153,13 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 		OnGain: func(ee *core.ExclusiveEffect, sim *core.Simulation) {
 			ee.Aura.Unit.PseudoStats.ThreatMultiplier *= 0.8
 			ee.Aura.Unit.PseudoStats.DamageTakenMultiplier *= 1.1
+			ee.Aura.Unit.PseudoStats.StanceDamageTakenMultiplier *= 1.1
 			ee.Aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, core.CritRatingPerCritChance*3)
 		},
 		OnExpire: func(ee *core.ExclusiveEffect, sim *core.Simulation) {
 			ee.Aura.Unit.PseudoStats.ThreatMultiplier /= 0.8
 			ee.Aura.Unit.PseudoStats.DamageTakenMultiplier /= 1.1
+			ee.Aura.Unit.PseudoStats.StanceDamageTakenMultiplier /= 1.1
 			ee.Aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, -core.CritRatingPerCritChance*3)
 		},
 	})
