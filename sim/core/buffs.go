@@ -470,34 +470,40 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		BattleSquawkAura(&character.Unit, numBattleSquawks)
 	}
 
-	// World Buffs
-	ApplyDragonslayerBuffs(&character.Unit, individualBuffs)
+	// World Buffs. Under Forever all but Spirit of Zandalar do nothing in a raid instance.
+	worldBuffsWork := !character.Env.ForeverRaidInstance()
+
+	if worldBuffsWork {
+		ApplyDragonslayerBuffs(&character.Unit, individualBuffs)
+	}
 
 	if individualBuffs.SpiritOfZandalar {
 		ApplySpiritOfZandalar(&character.Unit)
 	}
 
-	if individualBuffs.SongflowerSerenade {
+	if individualBuffs.SongflowerSerenade && worldBuffsWork {
 		ApplySongflowerSerenade(&character.Unit)
 	}
 
-	ApplyWarchiefsBuffs(&character.Unit, individualBuffs, isAlliance, isHorde)
+	if worldBuffsWork {
+		ApplyWarchiefsBuffs(&character.Unit, individualBuffs, isAlliance, isHorde)
+	}
 
 	// Dire Maul Buffs
-	if individualBuffs.FengusFerocity {
+	if individualBuffs.FengusFerocity && worldBuffsWork {
 		ApplyFengusFerocity(&character.Unit)
 	}
 
-	if individualBuffs.MoldarsMoxie {
+	if individualBuffs.MoldarsMoxie && worldBuffsWork {
 		ApplyMoldarsMoxie(&character.Unit)
 	}
 
-	if individualBuffs.SlipkiksSavvy {
+	if individualBuffs.SlipkiksSavvy && worldBuffsWork {
 		ApplySlipkiksSavvy(&character.Unit)
 	}
 
 	// Darkmoon Faire Buffs
-	if individualBuffs.SaygesFortune != proto.SaygesFortune_SaygesUnknown {
+	if individualBuffs.SaygesFortune != proto.SaygesFortune_SaygesUnknown && worldBuffsWork {
 		ApplySaygesFortunes(character, individualBuffs.SaygesFortune)
 	}
 
@@ -2294,6 +2300,23 @@ func windfuryTotemRollsOnForever(spell *Spell) bool {
 ///////////////////////////////////////////////////////////////////////////
 //                            World Buffs
 ///////////////////////////////////////////////////////////////////////////
+
+// ForeverRaidInstance says whether a Forever fight is in a raid instance, where the world buffs do
+// nothing. Blizzard confirmed it (the user, 2026-11-25), and in the Forever client (1.60.1.70959)
+// the auras of Rallying Cry of the Dragonslayer (22888, Onyxia's and Nefarian's heads), Warchief's
+// Blessing (16609), Songflower Serenade (15366), Fengus' Ferocity (22817), Mol'dar's Moxie (22818),
+// Slip'kik's Savvy (22820) and every Sayge's Dark Fortune (23735 to 23738, 23766 to 23769) read
+// "No effect while in a raid instance". Spirit of Zandalar (24425) doesn't, so it still works.
+// No spell attribute or zone flag marks them, so the encounter says where the fight is: a leveling
+// session, an outdoor fight (outdoor_terrain), a PvP fight or one marked outside_raid is outside a
+// raid instance, and every other fight is a raid boss. Other rulesets have no such rule.
+func (env *Environment) ForeverRaidInstance() bool {
+	if !env.IsForever() {
+		return false
+	}
+	enc := &env.Encounter
+	return enc.leveling == nil && !enc.PvP && !enc.OutsideRaid && enc.OutdoorTerrain == proto.OutdoorTerrain_OutdoorTerrainNone
+}
 
 func ApplyDragonslayerBuffs(unit *Unit, buffs *proto.IndividualBuffs) {
 	eeCategory := "DragonslayerBuff"

@@ -1,11 +1,11 @@
 character_stats_results: {
  key: "TestCombatDaggers-Phase5-CharacterStats-Default"
  value: {
-  final_stats: 278
-  final_stats: 552
-  final_stats: 513
-  final_stats: 127
-  final_stats: 242
+  final_stats: 259
+  final_stats: 533
+  final_stats: 427
+  final_stats: 108
+  final_stats: 221
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -13,29 +13,29 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 81.25
+  final_stats: 71.25
   final_stats: 8.3
-  final_stats: 33
+  final_stats: 15
   final_stats: 0
   final_stats: 0
-  final_stats: 1730
+  final_stats: 1352
   final_stats: 8.3
-  final_stats: 50.044
+  final_stats: 39.3885
   final_stats: 0
   final_stats: 0
   final_stats: 2.5
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 2653
-  final_stats: 1204
+  final_stats: 2615
+  final_stats: 845
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 38.088
+  final_stats: 36.777
   final_stats: 11
   final_stats: 0
-  final_stats: 6773
+  final_stats: 5613
   final_stats: 37
   final_stats: 60
   final_stats: 60
@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestCombatDaggers-Phase5-StatWeights-Default"
  value: {
-  weights: 0.36658
-  weights: 0.42375
+  weights: 0.28625
+  weights: 0.48586
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.29326
-  weights: 13.16551
-  weights: 1.52081
+  weights: 0.229
+  weights: 4.54349
+  weights: 4.83743
   weights: 0
   weights: 0
   weights: 0
@@ -99,155 +99,155 @@ stat_weights_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 845.9485
-  tps: 600.62416
+  dps: 582.0485
+  tps: 413.24948
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 925.07983
-  tps: 644.81594
+  dps: 645.894
+  tps: 449.52781
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 790.17367
-  tps: 561.02293
+  dps: 516.44967
+  tps: 366.67323
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Champion'sVestments"
  value: {
-  dps: 726.11767
-  tps: 515.53823
+  dps: 478.96883
+  tps: 340.06235
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Champion'sVestments-522"
  value: {
-  dps: 723.45567
-  tps: 513.6419
+  dps: 479.01833
+  tps: 340.10018
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 824.72567
-  tps: 585.54852
+  dps: 556.43733
+  tps: 395.05935
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 824.76
-  tps: 585.56527
+  dps: 556.23533
+  tps: 394.91559
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 818.86267
-  tps: 581.38776
+  dps: 554.237
+  tps: 393.51005
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 845.587
-  tps: 600.35987
+  dps: 581.03983
+  tps: 412.53374
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 791.09633
-  tps: 561.67642
+  dps: 534.44267
+  tps: 379.45561
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 735.36517
-  tps: 522.09839
+  dps: 493.1625
+  tps: 350.1438
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-GrimstitchArmor"
  value: {
-  dps: 684.6365
-  tps: 486.08994
+  dps: 435.46033
+  tps: 309.17244
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 790.17367
-  tps: 561.02293
+  dps: 516.44967
+  tps: 366.67323
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-LieutenantCommander'sVestments"
  value: {
-  dps: 723.45567
-  tps: 513.6419
+  dps: 479.01833
+  tps: 340.10018
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 787.51933
-  tps: 559.13919
+  dps: 534.29883
+  tps: 379.34773
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 786.5165
-  tps: 558.41903
+  dps: 543.24333
+  tps: 385.6981
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-RogueSyntheticOn-UseTrinket(Phase1)-994202"
  value: {
-  dps: 807.36017
-  tps: 573.22517
+  dps: 546.348
+  tps: 387.90284
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 735.36517
-  tps: 522.09839
+  dps: 493.1625
+  tps: 350.1438
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Average-Default"
  value: {
-  dps: 782.43482
-  tps: 555.52835
+  dps: 527.84535
+  tps: 374.77011
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Human-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 229.85067
-  tps: 163.19465
+  dps: 171.76017
+  tps: 121.94806
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Human-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 190.0645
-  tps: 134.94481
+  dps: 141.6205
+  tps: 100.55198
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Human-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 263.12583
-  tps: 186.81639
+  dps: 198.46333
+  tps: 140.91074
  }
 }
 dps_results: {
@@ -274,22 +274,22 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 231.1895
-  tps: 164.1454
+  dps: 173.8095
+  tps: 123.40412
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 189.70417
-  tps: 134.68939
+  dps: 142.30317
+  tps: 101.03475
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 267.72583
-  tps: 190.0834
+  dps: 202.61083
+  tps: 143.85773
  }
 }
 dps_results: {
@@ -316,7 +316,7 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 328.42433
-  tps: 233.17904
+  dps: 220.80967
+  tps: 156.7732
  }
 }
