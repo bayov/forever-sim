@@ -119,7 +119,8 @@ armor and on the 2 s swing. The damage of a landed swing is within the table's r
 levels, and under it at 27 and 28 (the Thousand Needles mobs hit softer).
 
 We fight from in front, so mobs can parry and block our swings, and we can parry, dodge and block
-theirs (the existing "in front of target" option).
+theirs (the existing "in front of target" option). The swings that still come from behind are in
+"Big pulls" below.
 
 ## Gear
 
@@ -177,7 +178,8 @@ with them still load, and those values are ignored.
 | Face pull | No free damage. We walk up until the mob notices us. Out of combat, when the APL hasn't pulled a mob, isn't casting and hasn't moved for 1 s, we walk up to it. |
 | Buff totem reach | 30 yd (client SpellRadius), checked once a second |
 | A mob's first swing | Random within its swing timer after it arrives |
-| Max pack size | 5 |
+| Max pack size | 5 (it works up to 12 and more) |
+| Swings from behind, daze, mobs with their own places | "Big pulls" below |
 
 ### Mobs
 
@@ -667,6 +669,112 @@ After the groundwork:
     - The Level 30 Leveling preset and the optimizer template already rested, bandaged and
       chain pulled through the rotation, so their score is unchanged: 92.98 mobs (4000
       sessions) before and after.
+
+## Big pulls
+
+A warrior that pulls ten mobs pays for it in ways that a pull of two never shows: the mobs behind
+it, the long walk to the tenth mob, and the empty camp afterwards (2026-11-25).
+
+### From behind
+
+`sim/core/leveling_facing.go`. The numbers come from 38 of our Forever logs. A log holds where we
+and the mob stood and where we looked at each swing.
+
+- A swing from behind can't be dodged, parried or blocked. 1,334 swings from behind had 0.5% dodge,
+  0.4% parry and 0.4% block, against 9.0%, 4.2% and 1.0% from in front.
+- A swing from behind that hurts can daze us (spell 1604): half run speed for 4 s. The chance is
+  cmangos' `Unit::CalculateEffectiveDazeChance`: 20%, or 0.65% a level plus 0.5% under level 30,
+  then 0.16% for each point the mob's weapon skill is over our Defense, from 0% to 40%. Over
+  100,000 swings the daze rate is 0.02% in front and 12 to 16% behind, with the jump at exactly 90
+  degrees. By level it's 1% up to level 5, 4 to 6% at 6 to 12, 8% at 15, 16% at 18, and 13 to 21%
+  from 30 on.
+- While we stand, up to three mobs stay in front. The share from behind was 5% with one to three
+  (turning and stepping), then 7%, 9%, 9%, 17% and 25% with four to eight. The sim takes 0 up to
+  three and 4% more for each mob past that, at most 25%. `surround` scales it, and 0 is our back
+  against a wall.
+- While we run looking ahead, 95% come from behind with one mob and 75% with more, and we don't
+  swing at them (0.03 swings a second). But half of the swings at someone running came from in
+  front: people strafe with the mobs at their side and swing at 0.2 a second, where standing is
+  0.3. So half of the runs with mobs on us are like that (`run_forward`, 0.5), and count as
+  standing.
+- Mobs run faster than us from level 10 on, so they stay on us. Below that they lose a yard a second
+  at most, which we leave out.
+- `ignore_facing` turns all of it off.
+
+| Enhancement plan, mobs in 20 min | Facing ignored | With it |
+|---|---|---|
+| Level 10 | 60.14 | 59.39 |
+| Level 15 | 66.29 | 65.33 |
+| Level 20 | 56.17 | 55.90 |
+| Level 30 | 48.85 | 48.44 |
+| Level 40 | 44.19 | 43.75 |
+| Level 50 | 42.22 | 41.91 |
+| Level 30 solo template (`level30_enh_solo.json`) | 84.59 | 81.15 |
+
+The template loses more because it walks to the next mob with one on it, so it misses swings on the
+way. With every run straight ahead (`run_forward` 1) it loses 7.6%, and the Enhancement plan 1 to 3%.
+Nothing else in "Big pulls" moves these numbers by more than 0.1%.
+
+### Mobs with their own places
+
+`sim/core/leveling_camp.go`, with `camp_mobs`. Without it there's always another mob 10 to 40 yards
+away. With it, each mob has a place: `camp_mobs` of them over a circle of 100 yards around the
+start, and `camp_outside_mobs` (7) over each circle of that size around it. The next mob is the
+nearest one. A dead one stands there again after `respawn` (300 s), so a session can't kill more than
+the place has without walking on. A mob notices us as we pass within its aggro radius, or when it
+respawns next to us, and brings the mobs within 10 yards along (cmangos' call for help). Looting
+takes `loot_time` a kill (1 s, a guess), and looking around 0 to 1 s instead of the search.
+
+`tools/leveling_density.py` measures the places from 1.12's world database: normal melee mobs from 3
+levels under us to 1 over, how many are near each one, and how far we walk for each mob in 20
+minutes of pulls of ten with 60 s fights, with the respawns. Straight lines, without terrain,
+wandering or other players.
+
+| Level | Within 60 yd | Within 100 yd | Walk for each mob | Respawn |
+|---|---|---|---|---|
+| 5 | 13.5 / 9.5 | 30 / 20 | 23 / 28 yd | 250 s |
+| 10 | 9.7 / 5.9 | 21 / 15 | 35 / 39 yd | 275 s |
+| 20 | 8.2 / 5.6 | 18.5 / 12.7 | 40 / 49 yd | 300 s |
+| 30 | 10.1 / 5.8 | 17.9 / 11.4 | 40 / 47 yd | 300 s |
+| 40 | 6.2 / 4.7 | 14.2 / 10.6 | 46 / 48 yd | 300 s |
+| 50 | 6.2 / 3.6 | 14.4 / 9.6 | 44 / 47 yd | 300 s |
+| 60 | 9.0 / 5.7 | 20.1 / 13.2 | 43 / 50 yd | 333 s |
+
+Each pair is a spot that 10% of the spots beat and one that 25% beat. In the sim the mobs are strewn
+at random, which gives about the same walks: 12 in the camp and 7 outside give 46 yards.
+
+A respawn that takes longer than the fights is the real limit: with 60 s fights it's 100 to 115
+kills in 20 minutes at these spots from level 10 on, and 80 to 90 with 90 s fights.
+
+What to set: `camp_mobs` is the "Within 100 yd" number, the second one for a spot that others don't
+fight over. That's 20 at level 5, 15 at 10 and 15, 12 from 20 on, with the table's respawn and 10
+outside up to level 15. `max_pack_size` 10 to 12.
+
+Casters are 0 to 8% of the mobs at these spots, mostly 2 to 5%. They're left out of the numbers.
+
+### Reach and targets
+
+- An area ability with a target cap (Chain Lightning's jumps, Cleave) only hits mobs we pulled
+  within 10 yards of the one it goes at. Before 2026-11-25 it also hit the ones still running in
+  and the one we had found and not pulled. Explosives hit what's in their radius.
+- When our target dies we turn to a mob on us, and when one arrives while our target is still on
+  its way we turn to it. So we swing at once.
+- Parry haste works both ways (`sim/core/attack.go`): a mob we parry swings sooner, and so do we
+  when it parries us.
+
+### Left out
+
+- **Fleeing.** At the spots of the table 17 to 76% of the mobs at level 10 to 45 run at low health,
+  and 5 to 37% from 50 on. We guess that one costs a few seconds of chase, and more when it comes
+  back with friends. Hamstring and stuns help. It's mostly humanoid
+  camps, so picking another spot helps too.
+- Walls, roads, hills, other players and wandering mobs.
+- Elites and casters.
+
+### How long it takes
+
+A session with ten-mob pulls takes 1 to 1.5 times as long to sim as a shaman's normal one (0.9 to
+2.4 ms against 1.3 to 1.8 ms on 16 threads). Camp mobs add about nothing.
 
 ## From the logs
 
