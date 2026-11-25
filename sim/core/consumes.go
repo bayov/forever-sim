@@ -1361,10 +1361,30 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 // the blast's reach. Thrown explosives reach any target in range.
 const explosiveBlastRadius = 10
 
+// The explosives whose client row states the stun mechanic (Mechanic 12 in client 70425): Thorium
+// Grenade 19769, EZ-Thro Thorium Grenade 1269330 and EZ-Thro Dark Bomb 1269334. Under Forever a
+// stun-immune target, a raid boss, is immune to the whole throw, its damage included (wowsims/forever
+// EV-0088: Thorium Grenade 7 of 7 immune with no damage on bosses, Iron and Thorium Grenade 5 of 5 on
+// stun-immune Naxxramas mobs). Dynamite, the Land Mine's Detonation, the Sapper and the Holy Hand
+// Grenade state no mechanic and hit them.
+var stunExplosives = map[int32]bool{
+	ThoriumGrenadeActionID.ItemID:       true,
+	EZThroThoriumGrenadeActionID.ItemID: true,
+	EZThroDarkBombActionID.ItemID:       true,
+}
+
 // Creates a spell object for the common explosive case.
 // TODO: create 10s delay on Goblin Landmine cast to damage
+//
+// Under Forever throwing one leaves the melee swing timer running (SpellFlagKeepsSwingTimer), though
+// no row states Do Not Reset Combat Timers: the next swing lands on its old schedule and a swing due
+// during the 1 sec cast lands in it (wowsims/forever EV-0088: 21 throws in five Forever logs, the
+// next swing within 0.08 sec of its old schedule on 17 and 0.6 to 1.0 sec late on 4, never reset). From 2026-10-23 to
+// 2026-11-25 a cast explosive reset the swing; the user's ruling of 2026-11-25 replaced that with
+// EV-0088's log.
 func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, actionID ActionID, school SpellSchool, minDamage float64, maxDamage float64, cooldown Cooldown, selfMinDamage float64, selfMaxDamage float64) SpellConfig {
 	isSapper := actionID.SameAction(SapperActionID)
+	isStun := stunExplosives[actionID.ItemID]
 	var nearOnly CanCastCondition
 	if isSapper || actionID.SameAction(GoblinLandMineActionID) {
 		nearOnly = func(_ *Simulation, _ *Unit) bool {
@@ -1384,7 +1404,7 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		SpellSchool: school,
 		DefenseType: DefenseTypeMagic,
 		ProcMask:    ProcMaskEmpty,
-		Flags:       SpellFlagCastTimeNoGCD,
+		Flags:       SpellFlagCastTimeNoGCD | SpellFlagKeepsSwingTimer,
 
 		Cast: CastConfig{
 			DefaultCast: defaultCast,
@@ -1411,6 +1431,10 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+				if isStun && aoeTarget.StunImmune && sim.IsForever() {
+					spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeAlwaysMiss)
+					continue
+				}
 				baseDamage := sim.Roll(minDamage, maxDamage) * sim.Encounter.AOECapMultiplier()
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
