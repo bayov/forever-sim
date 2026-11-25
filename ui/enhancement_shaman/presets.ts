@@ -649,7 +649,8 @@ export const DefaultConsumes = Consumes.create({
 	// 1000003 for Level 60 (Imp GW +8.1 / +8.7, Mana Tide +7.9 / +7.6, Water Shield +8.4 / +8.8, and
 	// +6 to +10 at 120 and 300 sec on all four). The EZ-Thro Dark Bomb ties the Land Mine (the same 450
 	// average and the same cast) and the EZ-Thro Thorium Grenade is 0.8 behind it. The Goblin Sapper
-	// Charge needs no cast and stays (+3.6 at 180 sec on Level 60).
+	// Charge needs no cast and stays (+3.6 at 180 sec on Level 60). Since 2026-11-25 a throw keeps the
+	// swing timer (EV-0088, the user's ruling of that day), so this pick is due a re-check.
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 6
 	// behind the Flask of Supreme Power at 180 sec (2 to 6 with Mana Tide or Water Shield; Aggression 13

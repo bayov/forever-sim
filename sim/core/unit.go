@@ -61,6 +61,8 @@ type Unit struct {
 	Label string
 
 	Level int32 // Level of Unit, e.g. Bosses are 63.
+	// StunImmune: a stun misses this unit whole, its damage included: a raid boss (EV-0088).
+	StunImmune bool
 
 	MobType proto.MobType
 	// The target's race or creature family (Orc, Ogre, Troll, Dinosaur), for the item effects

@@ -215,7 +215,9 @@ export const DefaultOptions = FeralDruidOptions.create({
 // 9.5, but its plans only drop in Molten Core), Thistle Tea 8.0 ahead of the
 // Demonic Rune (12.2 drunk at 25 Energy or less, sim/druid/thistle_tea.go), and the Mighty Rage
 // Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
-// sec. EZ-Thro Dark Bomb can be thrown in form: 4.1 / 3.2 / 1.9
+// sec. Since 2026-11-25 the Goblin Land Mine: a throw keeps the swing timer and EZ-Thro Dark Bomb, a stun,
+// does nothing to a raid boss (EV-0088), so on the report requests the mine is +6.5 over none and +8.7
+// over the bomb at 180 sec (Faerie Fire duty +6.6 and +6.5). Before, EZ-Thro Dark Bomb, thrown in form, was 4.1 / 3.2 / 1.9
 // ahead of none at 120 / 180 / 300 sec (standards 11 takes an explosive only when it gains; the Faerie
 // Fire duty build takes it too since 2026-11-03, below). Goblin Sapper Charge and Goblin Land Mine also
 // work in form (tank_mechanics-15), the rest of the Engineering explosives don't. The sapper on top of
@@ -230,7 +232,7 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
-	fillerExplosive: Explosive.ExplosiveEZThroDarkBomb,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseWeightstone,
