@@ -44,7 +44,7 @@ func (druidTank) Knobs() []Knob {
 		// Lacerate: 0 never, 1 build it to 5 stacks and keep them up (again under lacerateRefresh
 		// seconds left), 2 also as the filler whenever the GCD is free.
 		{Name: "lacerate", Default: 2, Min: 0, Max: 2, Step: 1},
-		{Name: "lacerateRefresh", Default: 4, Min: 1, Max: 9, Step: 1},
+		{Name: "lacerateRefresh", Default: 4, Min: 1, Max: 14, Step: 1},
 		// Lacerate's keep-up line ahead of Primal Bite, 0/1.
 		{Name: "lacerateFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Swipe as the filler (single target) at swipeRage Rage or more, 0 never. It goes after

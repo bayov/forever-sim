@@ -435,9 +435,10 @@ func TestLacerate(t *testing.T) {
 		if spent[0] != 15 {
 			t.Errorf("Lacerate spent %.0f Rage, want 15", spent[0])
 		}
-		existing := float64(min(stacks, 6) - 1)
-		if h.outcome == core.OutcomeHit && (h.damage < 0.1*existing*lo-0.5 || h.damage > 0.1*existing*hi+0.5) {
-			t.Errorf("Lacerate with %0.f stacks on hit for %.0f, want 10%% of the weapon's %.0f to %.0f a stack", existing, h.damage, lo, hi)
+		// EV-0040: the hit counts the stacks after the cast, so the first one hits for 10%.
+		after := float64(min(stacks, 5))
+		if h.outcome == core.OutcomeHit && (h.damage < 0.1*after*lo-0.5 || h.damage > 0.1*after*hi+0.5) {
+			t.Errorf("Lacerate leaving %0.f stacks hit for %.0f, want 10%% of the weapon's %.0f to %.0f a stack", after, h.damage, lo, hi)
 		}
 		if got, want := dot.GetStacks(), int32(min(stacks, 5)); got != want {
 			t.Errorf("after %d Lacerates the bleed has %d stacks, want %d", stacks, got, want)

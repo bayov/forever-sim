@@ -25,6 +25,8 @@ func wardenTrinketUses(t *testing.T, k Knobs) []float64 {
 	if err := protojson.Unmarshal(data, rsr); err != nil {
 		t.Fatal(err)
 	}
+	// The rule is tested on the synthetic on-use trinket, whatever the shipped request wears.
+	rsr.Raid.Parties[0].Players[0].Equipment.Items[12] = &proto.ItemSpec{Id: shaman.WardenSyntheticOnUseTrinket}
 	rsr.Raid.Parties[0].Players[0].Rotation = shamanTank{}.Build(k)
 	rsr.Encounter.Duration = 180
 	rsr.Encounter.DurationVariation = 0

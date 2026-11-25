@@ -1,73 +1,39 @@
-# tank_rotations pass 30
+# tank_rotations pass 31 (2026-11-25, phase0-tankheal 1624c3d56, bear rows on 95962a7d3)
 
-Master 0404484fb6 (2026-11-25), against pass 29's master 5536db4bbb and the baseline of eceb090196.
-Quiet: no new finding.
+Forced pass on the Phase 0 tank branch. Baseline: every request on every boss, 1000 iterations, default seed;
+ref/tank_bench/summary.tsv rewritten (bear rows on 95962a7d3, the Lacerate fix).
 
-## What changed
+## Baseline, scoring mean (old = pass 30, master 0404484fb, synthetic gear)
 
-Gate (5536db4 .. 0404484): `sim/core/rage.go` and `sim/warrior/stances.go` (b4cab8498: Rage from hits taken now
-follows the stance's damage taken modifier, 0.9 in Defensive Stance, and twice the Rage for non-Physical hits,
-periodic ticks and Physical specials), `sim/core/target.go` (Encounter.outside_raid, world buffs off in raid
-instances: 3275a60b1, 9701cff08), and comment-only edits to `sim/shaman/air_totems.go` and `fire_totems.go`
-(5dbc01412). Also in range: f1942793d (Arcane Brilliance and Divine Spirit overwrite the elixirs of their stat) and
-75dee7458 (Armor Shatter / Puncture Armor share a slot). No tank request, APL, rotopt template, encounter,
-tankbench or tankscore change. No tank request ticks a world buff.
-
-## Baseline (1,000 iterations, default seed; `ref/tank_bench/summary.tsv` rewritten)
-
-Attributed with a second full baseline from cdd0b2482 (just before the Rage change, `tools/audit/build_cli.sh`).
-
-| request (scoring mean) | old | before Rage change | now | cause |
+| Request | Score old -> new | TPS | Healing needed | SafeDPS |
 |---|---|---|---|---|
-| warrior_protection_balanced | 3454.2 | 3454.2 | 3450.5 | Rage rule, noise |
-| warrior_protection_max_threat | 4233.3 | 4233.3 | 4233.0 | Rage rule, noise |
-| warrior_protection_max_survival | 1832.8 | 1832.8 | 1820.0 | Rage rule (Broodlord -95 ± 70, Vael -70 ± 45, Onyxia +83 ± 60) |
-| warrior_protection (legacy) | -14.2 | -14.2 | -49.0 | Rage rule (TPS -9) |
-| druid_bear_balanced | 2130.0 | 2130.0 | 2152.8 | Rage rule (Onyxia +106, healing needed -1.2%) |
-| druid_bear_max_threat | 3131.8 | 3131.8 | 3133.7 | noise |
-| druid_bear_max_survival | 320.7 | 320.7 | 431.8 | Rage rule (more Rage from specials and ticks: healing needed -3.4%, Onyxia +262, Broodlord +152) |
-| shaman_warden_balanced | 1264.7 | 1238.0 | 1238.0 | f1942793d |
-| shaman_warden_max_threat | 2621.7 | 2599.7 | 2599.7 | f1942793d |
-| shaman_warden_max_survival | -2263.5 | -2283.2 | -2283.2 | f1942793d |
-| paladin (all three) | 2809.0 / 3243.7 / 1787.2 | same | same | bit-identical |
+| druid_bear_balanced | 2153 -> 3646 | 1628 -> 2546 | 467 -> 687 | 1714 -> 2687 |
+| druid_bear_max_survival | 432 -> 1015 | 1315 -> 1815 | 284 -> 340 | 1333 -> 1791 |
+| druid_bear_max_threat | 3134 -> 5387 | 1739 -> 2797 | 635 -> 909 | 1854 -> 3023 |
+| paladin_protection_balanced | 2809 -> 2915 | 1516 -> 1845 | 240 -> 448 | 1707 -> 2080 |
+| paladin_protection_max_survival | 1787 -> 800 | 1446 -> 1623 | 201 -> 344 | 1627 -> 1826 |
+| paladin_protection_max_threat | 3244 -> 3913 | 1543 -> 1972 | 268 -> 572 | 1735 -> 2218 |
+| shaman_warden_balanced | 1238 -> 2026 | 1364 -> 1738 | 662 -> 699 | 1534 -> 1980 |
+| shaman_warden_max_survival | -2283 -> -1337 | 1333 -> 1492 | 637 -> 573 | 1480 -> 1675 |
+| shaman_warden_max_threat | 2600 -> 3418 | 1513 -> 1856 | 858 -> 884 | 1696 -> 2115 |
+| warrior_protection_balanced | 3451 -> 3064 | 2066 -> 2135 | 346 -> 518 | 2215 -> 2301 |
+| warrior_protection_max_survival | 1820 -> 1096 | 1761 -> 1726 | 214 -> 281 | 1804 -> 1771 |
+| warrior_protection_max_threat | 4233 -> 4468 | 2175 -> 2394 | 472 -> 777 | 2348 -> 2623 |
 
-Warden: every boss moves 20 to 30 the same way (TPS -0.7 to -1.0%). The cause is f1942793d: Arcane Brilliance in
-the raid buffs now overwrites the request's Elixir of Greater Intellect. Removing the elixir on master scores
-0.0 ± 0.0 at 1,000 iterations (all bosses identical), so the elixir slot is dead. That is a consumables question,
-not a rotation one, and there's no finding here. The Rage rule moves the warrior and bear rows as it should (an
-intended mechanic change, already ruled on), with no preset's mean moving more than 0.7% except bear Max survival,
-whose small mean (431.8) makes +111 look large.
+Every row moved for a known cause: the Phase 0 gear in the requests (the round notes' Phase 0 against synthetic
+tables), 2f42f4a44 (threat batch: bear TPS +46% from Lacerate and Primal Bite, warrior Shield Slam), the procs and
+items batches, and 95962a7d3 (bear +170 to +185). No unexplained move. The report's Tanking mode has none of this
+yet: tank_rotations-20261125-1.
 
-## Rotation lines (Rage thresholds re-checked under the new Rage rule)
+## Lines tried (paired, 1000 iterations, six scoring bosses)
 
-Paired abtest on the scoring mean, 3,000 iterations, seeds 1 and 2, B minus preset, at the preset's weight:
+| Change | Balanced | Max threat | Max survival | Verdict |
+|---|---|---|---|---|
+| Bear: Faerie Fire (Feral) before the Lacerate filler (258 threat a cast now) | -208.8 ± 18.9 | -312.9 ± 6.9 | -39.9 ± 32.2 | keep out |
+| Warrior: Shield Slam ahead of Revenge (Shield Slam now 2 x block value) | -5.4 ± 6.1 | -4.6 ± 2.1 | -21.8 ± 23.0 | keep |
 
-| change | seed 1 | seed 2 | verdict |
-|---|---|---|---|
-| warrior Balanced Heroic Strike 40 -> 30 | -1.2 ± 5.7 | +7.4 ± 6.1 | noise, keep |
-| warrior Balanced Heroic Strike 40 -> 50 | -9.1 ± 5.7 | -8.3 ± 6.2 | loses |
-| warrior Max threat Heroic Strike 30 -> 20 | -1.0 ± 1.9 | +2.5 ± 2.2 | noise, keep |
-| warrior Max threat Heroic Strike 30 -> 40 | -9.2 ± 2.0 | -7.5 ± 2.2 | loses |
-| warrior Max survival Heroic Strike 40 -> 30 | -8.2 ± 13.4 | -0.6 ± 11.7 | noise, keep |
-| warrior Max survival Heroic Strike 40 -> 50 | -40.4 ± 13.0 | -39.8 ± 11.8 | loses |
-| warrior Balanced Bloodrage under 30 -> 20 | -1.1 ± 2.6 | -0.5 ± 2.8 | noise |
-| warrior Balanced Bloodrage under 30 -> 40 | +0.1 ± 1.0 | -1.8 ± 1.3 | noise |
-| bear Balanced Maul 20 -> 10 | -0.1 ± 3.5 | +0.9 ± 2.8 | noise |
-| bear Balanced Maul 20 -> 30 | -3.0 ± 4.6 | -7.9 ± 3.8 | loses |
-| bear Max survival Maul 40 -> 30 | +14.1 ± 18.0 | -1.4 ± 19.5 | noise |
-| bear Max survival Maul 40 -> 50 | -73.6 ± 18.6 | -125.5 ± 21.4 | loses |
-| bear Max survival Swipe 80 -> 70 | -110.2 ± 17.1 | -125.8 ± 17.7 | loses |
-| bear Max survival Swipe 80 -> 90 | +5.5 ± 17.2 | -13.7 ± 17.5 | noise |
+## Open
 
-Every Rage threshold holds under the new rule. Variants: `$AUDIT_WORK/tank_rotations/v/` (made with
-`mk_warrior.py ... setcond <line> <cond>`; abtest built in the master CLI tree).
-
-## Open findings
-
-- 20261122-1 (paladin Balanced Consecration floor): paladin bit-identical, still open, not re-tested.
-- 20261104-11, 20261104-3 (Broodlord-dependent trinket hold and Bulwark timer): user calls, untouched.
-
-## Left for a later pass
-
-- The Windfury main-hand timing open item in `passes/tank_rotations.md` (user request 2026-11-15) was not done this
-  pass; it stays open.
+- The Windfury main-hand timing item (passes/tank_rotations.md) is still not done.
+- The paladin and Warden lines were not re-tried this pass. Their presets were searched today on the final sim code
+  (the round notes).
