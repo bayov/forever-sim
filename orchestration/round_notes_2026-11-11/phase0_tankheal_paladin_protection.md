@@ -53,6 +53,9 @@ phase0_check.py flagged open items above the picks once the prices landed. RANK_
   lower). Max threat neck (Orb of the Darkmoon -6.1 (2.9)). The list ranking runs fewer iterations, and
   Max survival's spread is wide, so those rows rank above the pick there and not in the confirm.
 - Alliance row re-ranked on the shoulder from the new Max survival list: unchanged.
+- Max survival confirms after the master merge, bench at 5000 iterations against the list's 775.5 (stderr
+  about 15): Warder's Waistguard +6.3, Soulforge Belt -26.3, Talisman of Evasion +0.7. None clears 2 stderr,
+  list kept. Balanced wrist and neck were confirmed above.
 
 ## Tags added
 
