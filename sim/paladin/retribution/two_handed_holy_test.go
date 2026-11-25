@@ -148,3 +148,110 @@ func TestTwoHandedSpecializationItemSwap(t *testing.T) {
 	near("Holy after the reset", reset.holy, start.holy)
 	near("threat after the reset", reset.threat, start.threat)
 }
+
+// TestUnsealedWrathMainHandSwapDropsEchoes checks that swapping the main hand removes every Echo of
+// Unsealed Wrath, which needs a weapon (EV-0065).
+func TestUnsealedWrathMainHandSwapDropsEchoes(t *testing.T) {
+	player := &proto.Player{
+		Race:           proto.Race_RaceHuman,
+		Class:          proto.Class_ClassPaladin,
+		Level:          60,
+		Equipment:      &proto.EquipmentSpec{},
+		TalentsString:  unsealedWrath,
+		Rotation:       &proto.APLRotation{},
+		EnableItemSwap: true,
+		ItemSwap:       &proto.ItemSwap{MhItem: &proto.ItemSpec{Id: thunderfury}},
+		Spec: &proto.Player_RetributionPaladin{RetributionPaladin: &proto.RetributionPaladin{
+			Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness},
+		}},
+	}
+	for slot := range proto.ItemSlot_ItemSlotRanged + 1 {
+		id := int32(0)
+		if slot == proto.ItemSlot_ItemSlotMainHand {
+			id = arcaniteReaper
+		}
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: id})
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	ret := sim.Raid.Parties[0].Players[0].(*RetributionPaladin)
+	uw, righteousness := ret.GetAura("Unsealed Wrath"), ret.GetAura("Echo of Righteousness")
+	castByID(sim, ret, sealOfRighteousness9)
+	whiteHit(sim, ret, uw, core.OutcomeHit)
+	if !righteousness.IsActive() {
+		t.Fatal("a landed swing stored no Echo")
+	}
+	ret.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotRanged})
+	if !righteousness.IsActive() {
+		t.Error("a swap that leaves the main hand removed the Echo")
+	}
+	ret.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand})
+	if righteousness.IsActive() {
+		t.Error("a main-hand swap left the Echo up")
+	}
+}
+
+// TestRetributionAuraTakesNoCrusaderShare checks that Retribution Aura's hit takes no share of the
+// target's flat Holy bonus, Judgement of the Crusader's (EV-0066), where a Holy spell with a
+// coefficient does.
+func TestRetributionAuraTakesNoCrusaderShare(t *testing.T) {
+	sim, ret := retSimOptions(t, "", map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotMainHand: arcaniteReaper}, 1,
+		proto.MobType_MobTypeUnknown, &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness, Aura: proto.PaladinAura_RetributionAura})
+	aura := ret.GetSpell(core.ActionID{SpellID: 10301})
+	if aura == nil || aura.BonusCoefficient <= 0 {
+		t.Fatal("no Retribution Aura rank 5 with a spell power coefficient")
+	}
+	holy := ret.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 9066},
+		SpellSchool:      core.SpellSchoolHoly,
+		DefenseType:      core.DefenseTypeMagic,
+		ProcMask:         core.ProcMaskSpellDamage,
+		DamageMultiplier: 1,
+		BonusCoefficient: aura.BonusCoefficient,
+	})
+	target := ret.CurrentTarget
+	damage := func(spell *core.Spell) float64 {
+		return spell.CalcDamage(sim, target, 20, spell.OutcomeAlwaysHit).Damage
+	}
+	auraBefore, holyBefore := damage(aura), damage(holy)
+	target.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] += 140
+	if got := damage(aura); got != auraBefore {
+		t.Errorf("Retribution Aura deals %.2f under a 140 Holy bonus, want %.2f as without", got, auraBefore)
+	}
+	if got, want := damage(holy), holyBefore+140*aura.BonusCoefficient; got < want-1e-6 || got > want+1e-6 {
+		t.Errorf("a Holy spell with the same coefficient deals %.2f under a 140 Holy bonus, want %.2f", got, want)
+	}
+}
+
+// TestVengeanceSkipsWarblade checks that a crit that reaches none of the wearer's procs, Warblade
+// of Caer Darrow's on-hit crit (sim/common's TestForeverWarbladeSuppressesCasterProcs), gives no
+// Vengeance, where another crit does (EV-0165).
+func TestVengeanceSkipsWarblade(t *testing.T) {
+	sim, ret := retSim(t, "--000000000000003", arcaniteReaper)
+	proc := ret.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 1298499},
+		SpellSchool: core.SpellSchoolFrost,
+		DefenseType: core.DefenseTypeMelee,
+		ProcMask:    core.ProcMaskMeleeSpecial,
+		Flags:       core.SpellFlagPassiveSpell | core.SpellFlagNoProcs,
+	})
+	vengeance, stacks := ret.GetAura("Vengeance"), ret.GetAura("Vengeance Proc")
+	crit := func(spell *core.Spell) {
+		result := spell.NewResult(ret.CurrentTarget)
+		result.Outcome = core.OutcomeCrit
+		vengeance.OnSpellHitDealt(vengeance, sim, spell, result)
+	}
+	crit(proc)
+	if stacks.IsActive() {
+		t.Error("a crit with Suppress Caster Procs gave Vengeance")
+	}
+	crit(ret.AutoAttacks.MHAuto())
+	if !stacks.IsActive() {
+		t.Error("a white crit gave no Vengeance")
+	}
+}

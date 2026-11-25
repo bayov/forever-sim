@@ -72,6 +72,7 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
+		SpellCode:   SpellCode_MageBlizzard,
 
 		RequiredLevel: level,
 		Rank:          rank,
@@ -115,6 +116,7 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.AOEDot().Apply(sim)
+			core.AreaChannelCastHits(sim, spell)
 		},
 	}
 }

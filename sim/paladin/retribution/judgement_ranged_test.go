@@ -44,6 +44,10 @@ func TestJudgementsAreRanged(t *testing.T) {
 			if judge.ProcMask != core.ProcMaskMeleeMHSpecial {
 				t.Errorf("%s proc mask %v, want main hand melee special", c.name, judge.ProcMask)
 			}
+			// EV-0155, EV-0156: its dummy and its damage each roll the weapon's procs.
+			if !judge.Flags.Matches(core.SpellFlagRollsWeaponProcsTwice) {
+				t.Errorf("%s doesn't roll weapon procs twice", c.name)
+			}
 			if judge.CastType != proto.CastType_CastTypeMainHand || judge.DefenseType != core.DefenseTypeMelee {
 				t.Errorf("%s cast type %v, defense %v, want main hand melee", c.name, judge.CastType, judge.DefenseType)
 			}
