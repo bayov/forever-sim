@@ -1,0 +1,1280 @@
+{
+  "spec": "druid_bear_balanced",
+  "options": {
+    "back": 1457,
+    "chest": 1825,
+    "feet": 1087,
+    "finger1": 974,
+    "finger2": 974,
+    "hands": 1156,
+    "head": 1238,
+    "legs": 1303,
+    "mainhand": 863,
+    "neck": 608,
+    "offhand": 717,
+    "ranged": 10,
+    "shoulder": 1096,
+    "trinket1": 103,
+    "trinket2": 103,
+    "waist": 955,
+    "wrist": 951
+  },
+  "items": 1729,
+  "unmodelled": [
+    {
+      "id": 833,
+      "name": "Lifestone",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 1315,
+      "name": "Lei of Lilies",
+      "slot": "neck",
+      "kind": "Use"
+    },
+    {
+      "id": 1973,
+      "name": "Orb of Deception",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 2820,
+      "name": "Nifty Stopwatch",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 4696,
+      "name": "Lapidis Tankard of Tidesippe",
+      "slot": "offhand",
+      "kind": "Use"
+    },
+    {
+      "id": 6660,
+      "name": "Julie's Dagger",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 7734,
+      "name": "Six Demon Bag",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 10697,
+      "name": "Enchanted Azsharite Felbane Dagger",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 10698,
+      "name": "Enchanted Azsharite Felbane Staff",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 10804,
+      "name": "Fist of the Damned",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 11608,
+      "name": "Dark Iron Pulverizer",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 12185,
+      "name": "Bloodsail Admiral's Hat",
+      "slot": "head",
+      "kind": "Use"
+    },
+    {
+      "id": 12528,
+      "name": "The Judge's Gavel",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 12532,
+      "name": "Spire of the Stoneshaper",
+      "slot": "mainhand",
+      "kind": "Use"
+    },
+    {
+      "id": 12781,
+      "name": "Serenity",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 12796,
+      "name": "Hammer of the Titans",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 13143,
+      "name": "Mark of the Dragon Lord",
+      "slot": "finger1",
+      "kind": "Use"
+    },
+    {
+      "id": 13164,
+      "name": "Heart of the Scale",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13198,
+      "name": "Hurd Smasher",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 13353,
+      "name": "Book of the Dead",
+      "slot": "offhand",
+      "kind": "Use"
+    },
+    {
+      "id": 13379,
+      "name": "Piccolo of the Flaming Fire",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13382,
+      "name": "Cannonball Runner",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 13393,
+      "name": "Malown's Slam",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 13515,
+      "name": "Ramstein's Lightning Bolts",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 15867,
+      "name": "Prismcharm",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 15873,
+      "name": "Ragged John's Neverending Cup",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 16022,
+      "name": "Arcanite Dragonling",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 16768,
+      "name": "Furbolg Medicine Pouch",
+      "slot": "offhand",
+      "kind": "Use"
+    },
+    {
+      "id": 17691,
+      "name": "Stormpike Insignia Rank 1",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17733,
+      "name": "Fist of Stone",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 17744,
+      "name": "Heart of Noxxion",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17759,
+      "name": "Mark of Resolution",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17766,
+      "name": "Princess Theradras' Scepter",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 17900,
+      "name": "Stormpike Insignia Rank 2",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17901,
+      "name": "Stormpike Insignia Rank 3",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17902,
+      "name": "Stormpike Insignia Rank 4",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17903,
+      "name": "Stormpike Insignia Rank 5",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17904,
+      "name": "Stormpike Insignia Rank 6",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 17943,
+      "name": "Fist of Stone",
+      "slot": "mainhand",
+      "kind": "Chance on hit"
+    },
+    {
+      "id": 18634,
+      "name": "Gyrofreeze Ice Reflector",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18637,
+      "name": "Major Recombobulator",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18638,
+      "name": "Hyper-Radiant Flame Reflector",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18639,
+      "name": "Ultra-Flash Shadow Reflector",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18984,
+      "name": "Dimensional Ripper - Everlook",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 18986,
+      "name": "Ultrasafe Transporter: Gadgetzan",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 19024,
+      "name": "Arena Grand Master",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 19141,
+      "name": "Luffa",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 19979,
+      "name": "Hook of the Master Angler",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 20084,
+      "name": "Hunting Net",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 20525,
+      "name": "Earthen Sigil",
+      "slot": "trinket1",
+      "kind": "Use"
+    },
+    {
+      "id": 21326,
+      "name": "Defender of the Timbermaw",
+      "slot": "trinket1",
+      "kind": "Use"
+    }
+  ],
+  "hiddenStats": [
+    {
+      "id": 4990,
+      "name": "Scorched Bands",
+      "slot": "wrist",
+      "kind": "classic"
+    },
+    {
+      "id": 11743,
+      "name": "Rockfist",
+      "slot": "mainhand",
+      "kind": "classic"
+    },
+    {
+      "id": 11768,
+      "name": "Incendic Bracers",
+      "slot": "wrist",
+      "kind": "classic"
+    },
+    {
+      "id": 12752,
+      "name": "Cap of the Scarlet Savant",
+      "slot": "head",
+      "kind": "classic"
+    },
+    {
+      "id": 12756,
+      "name": "Leggings of Arcana",
+      "slot": "legs",
+      "kind": "classic"
+    },
+    {
+      "id": 12757,
+      "name": "Breastplate of Bloodthirst",
+      "slot": "chest",
+      "kind": "classic"
+    },
+    {
+      "id": 14543,
+      "name": "Darkshade Gloves",
+      "slot": "hands",
+      "kind": "classic"
+    },
+    {
+      "id": 17982,
+      "name": "Ragnaros Core",
+      "slot": "finger1",
+      "kind": "classic"
+    },
+    {
+      "id": 19105,
+      "name": "Frost Runed Headdress",
+      "slot": "head",
+      "kind": "classic"
+    },
+    {
+      "id": 19113,
+      "name": "Yeti Hide Bracers",
+      "slot": "wrist",
+      "kind": "classic"
+    },
+    {
+      "id": 20694,
+      "name": "Glowing Black Orb",
+      "slot": "offhand",
+      "kind": "classic"
+    },
+    {
+      "id": 20696,
+      "name": "Crystal Spiked Maul",
+      "slot": "mainhand",
+      "kind": "classic"
+    },
+    {
+      "id": 20720,
+      "name": "Dark Whisper Blade",
+      "slot": "mainhand",
+      "kind": "classic"
+    }
+  ],
+  "foreverNoTooltip": 428,
+  "unlisted": 998,
+  "faction": "Alliance",
+  "factionDropped": [
+    {
+      "id": 9649,
+      "name": "Royal Highmark Vestments",
+      "slot": "chest",
+      "kind": "item"
+    },
+    {
+      "id": 9665,
+      "name": "Wingcrest Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 9683,
+      "name": "Strength of the Treant",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 9686,
+      "name": "Spirit of the Faerie Dragon",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 10709,
+      "name": "Pyrestone Orb",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 11120,
+      "name": "Belgrom's Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 11862,
+      "name": "White Bone Band",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 11869,
+      "name": "Sha'ni's Ring",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 12038,
+      "name": "Lagrave's Seal",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 12059,
+      "name": "Conqueror's Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 12109,
+      "name": "Azure Moon Amice",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 12110,
+      "name": "Raincaster Drape",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 12544,
+      "name": "Thrall's Resolve",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 12545,
+      "name": "Eye of Orgrimmar",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 14022,
+      "name": "Barov Peasant Caller",
+      "slot": "trinket1",
+      "kind": "item"
+    },
+    {
+      "id": 15702,
+      "name": "Chemist's Ring",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 15703,
+      "name": "Chemist's Smock",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 15704,
+      "name": "Hunter's Insignia Medal",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 15783,
+      "name": "Beasthunter Dagger",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 15858,
+      "name": "Freewind Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 16994,
+      "name": "Duskwing Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 16995,
+      "name": "Duskwing Mantle",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 17001,
+      "name": "Elemental Circle",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 17003,
+      "name": "Skullstone Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 17004,
+      "name": "Sarah's Guide",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 17690,
+      "name": "Frostwolf Insignia Rank 1",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17905,
+      "name": "Frostwolf Insignia Rank 2",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17906,
+      "name": "Frostwolf Insignia Rank 3",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17907,
+      "name": "Frostwolf Insignia Rank 4",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17908,
+      "name": "Frostwolf Insignia Rank 5",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 17909,
+      "name": "Frostwolf Insignia Rank 6",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 18022,
+      "name": "Royal Seal of Alexis",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 19083,
+      "name": "Frostwolf Legionnaire's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19085,
+      "name": "Frostwolf Advisor's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19089,
+      "name": "Frostwolf Leather Belt",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 19090,
+      "name": "Frostwolf Cloth Belt",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 19095,
+      "name": "Frostwolf Legionnaire's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19096,
+      "name": "Frostwolf Advisor's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19099,
+      "name": "Glacial Blade",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19101,
+      "name": "Whiteout Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19115,
+      "name": "Flask of Forest Mojo",
+      "slot": "offhand",
+      "kind": "item"
+    },
+    {
+      "id": 19116,
+      "name": "Greenleaf Handwraps",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 19119,
+      "name": "Owlbeast Hide Gloves",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 19120,
+      "name": "Rune of the Guard Captain",
+      "slot": "trinket1",
+      "kind": "item"
+    },
+    {
+      "id": 19121,
+      "name": "Deep Woodlands Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19159,
+      "name": "Woven Ivy Necklace",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19308,
+      "name": "Tome of Arcane Domination",
+      "slot": "offhand",
+      "kind": "content"
+    },
+    {
+      "id": 19309,
+      "name": "Tome of Shadow Force",
+      "slot": "offhand",
+      "kind": "content"
+    },
+    {
+      "id": 19310,
+      "name": "Tome of the Ice Lord",
+      "slot": "offhand",
+      "kind": "content"
+    },
+    {
+      "id": 19311,
+      "name": "Tome of Fiery Arcana",
+      "slot": "offhand",
+      "kind": "content"
+    },
+    {
+      "id": 19312,
+      "name": "Lei of the Lifegiver",
+      "slot": "offhand",
+      "kind": "content"
+    },
+    {
+      "id": 19315,
+      "name": "Therazane's Touch",
+      "slot": "offhand",
+      "kind": "content"
+    },
+    {
+      "id": 19323,
+      "name": "The Unstoppable Force",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19324,
+      "name": "The Lobotomizer",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 19325,
+      "name": "Don Julio's Band",
+      "slot": "finger1",
+      "kind": "content"
+    },
+    {
+      "id": 19510,
+      "name": "Legionnaire's Band",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 19511,
+      "name": "Legionnaire's Band",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 19518,
+      "name": "Advisor's Ring",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 19519,
+      "name": "Advisor's Ring",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 19526,
+      "name": "Battle Healer's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19527,
+      "name": "Battle Healer's Cloak",
+      "slot": "back",
+      "kind": "item"
+    },
+    {
+      "id": 19534,
+      "name": "Scout's Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19535,
+      "name": "Scout's Medallion",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 19542,
+      "name": "Scout's Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19543,
+      "name": "Scout's Blade",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19566,
+      "name": "Advisor's Gnarled Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 19567,
+      "name": "Advisor's Gnarled Staff",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 20068,
+      "name": "Deathguard's Cloak",
+      "slot": "back",
+      "kind": "content"
+    },
+    {
+      "id": 20072,
+      "name": "Defiler's Talisman",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 20159,
+      "name": "Defiler's Cloth Boots",
+      "slot": "feet",
+      "kind": "content"
+    },
+    {
+      "id": 20160,
+      "name": "Defiler's Cloth Boots",
+      "slot": "feet",
+      "kind": "content"
+    },
+    {
+      "id": 20163,
+      "name": "Defiler's Cloth Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 20165,
+      "name": "Defiler's Cloth Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 20167,
+      "name": "Defiler's Lizardhide Boots",
+      "slot": "feet",
+      "kind": "content"
+    },
+    {
+      "id": 20170,
+      "name": "Defiler's Lizardhide Boots",
+      "slot": "feet",
+      "kind": "content"
+    },
+    {
+      "id": 20171,
+      "name": "Defiler's Lizardhide Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 20174,
+      "name": "Defiler's Lizardhide Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 20175,
+      "name": "Defiler's Lizardhide Shoulders",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 20176,
+      "name": "Defiler's Epaulets",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 20186,
+      "name": "Defiler's Leather Boots",
+      "slot": "feet",
+      "kind": "content"
+    },
+    {
+      "id": 20189,
+      "name": "Defiler's Leather Boots",
+      "slot": "feet",
+      "kind": "content"
+    },
+    {
+      "id": 20190,
+      "name": "Defiler's Leather Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 20193,
+      "name": "Defiler's Leather Girdle",
+      "slot": "waist",
+      "kind": "content"
+    },
+    {
+      "id": 20194,
+      "name": "Defiler's Leather Shoulders",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 20214,
+      "name": "Mindfang",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 20220,
+      "name": "Ironbark Staff",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 20648,
+      "name": "Cold Forged Hammer",
+      "slot": "mainhand",
+      "kind": "content"
+    },
+    {
+      "id": 21115,
+      "name": "Defiler's Talisman",
+      "slot": "trinket1",
+      "kind": "content"
+    },
+    {
+      "id": 22740,
+      "name": "Outrider's Leather Pants",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 22741,
+      "name": "Outrider's Lizardhide Pants",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 22747,
+      "name": "Outrider's Silk Leggings",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 259892,
+      "name": "Feardred's Cleansed Amulet",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 260166,
+      "name": "Rageroar's Best Club",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 260167,
+      "name": "Adventurer's Lost Boots",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 260172,
+      "name": "Assassin's Dagger",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 260179,
+      "name": "Barkwoven Belt",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 260195,
+      "name": "Headdress of the Damned",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 260196,
+      "name": "Belt of Shadows",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 270104,
+      "name": "Stonewalker's Slippers",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 270108,
+      "name": "Bloodied Longmace",
+      "slot": "mainhand",
+      "kind": "item"
+    },
+    {
+      "id": 270111,
+      "name": "Forest Troll Leggings",
+      "slot": "legs",
+      "kind": "item"
+    },
+    {
+      "id": 270119,
+      "name": "Dark Iron Signet",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 270126,
+      "name": "Conqueror's Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 270225,
+      "name": "Jewel of the Guard Captain",
+      "slot": "trinket1",
+      "kind": "item"
+    },
+    {
+      "id": 272060,
+      "name": "Relentless Raider's Seal",
+      "slot": "trinket1",
+      "kind": "sources"
+    },
+    {
+      "id": 272061,
+      "name": "Darkspear Voodoo Seal",
+      "slot": "trinket1",
+      "kind": "sources"
+    },
+    {
+      "id": 272063,
+      "name": "Darkspear Raider's Cloak",
+      "slot": "back",
+      "kind": "sources"
+    },
+    {
+      "id": 272064,
+      "name": "Insurgent's Band",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 272065,
+      "name": "Insurgent's Band",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 272068,
+      "name": "Darkspear Signet",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 272069,
+      "name": "Darkspear Signet",
+      "slot": "finger1",
+      "kind": "sources"
+    },
+    {
+      "id": 272072,
+      "name": "Darkspear Warding Pendant",
+      "slot": "neck",
+      "kind": "sources"
+    },
+    {
+      "id": 272073,
+      "name": "Darkspear Warding Pendant",
+      "slot": "neck",
+      "kind": "sources"
+    },
+    {
+      "id": 272076,
+      "name": "Darkspear Raider's Cloak",
+      "slot": "back",
+      "kind": "sources"
+    },
+    {
+      "id": 272083,
+      "name": "Darkspear Insurgent's Spellblade",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 272084,
+      "name": "Darkspear Insurgent's Spellblade",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 272087,
+      "name": "Tome of the Darkspear Prophecy",
+      "slot": "offhand",
+      "kind": "sources"
+    },
+    {
+      "id": 272088,
+      "name": "Tome of the Darkspear Prophecy",
+      "slot": "offhand",
+      "kind": "sources"
+    },
+    {
+      "id": 272091,
+      "name": "Darkspear Skirmisher's Bludgeon",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 272092,
+      "name": "Darkspear Skirmisher's Bludgeon",
+      "slot": "mainhand",
+      "kind": "sources"
+    },
+    {
+      "id": 272097,
+      "name": "Raider Handwraps",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 272098,
+      "name": "Raider Handwraps",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 272099,
+      "name": "Raider Gloves",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 272100,
+      "name": "Raider Gloves",
+      "slot": "hands",
+      "kind": "content"
+    },
+    {
+      "id": 272103,
+      "name": "Darkspear Shoulderpads",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 272104,
+      "name": "Darkspear Shoulders",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 272105,
+      "name": "Darkspear Pauldrons",
+      "slot": "shoulder",
+      "kind": "content"
+    },
+    {
+      "id": 274719,
+      "name": "Forgotten Trompers",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 274721,
+      "name": "Tattered Sandals",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 276333,
+      "name": "Sawyer Family Seal",
+      "slot": "finger1",
+      "kind": "item"
+    },
+    {
+      "id": 277215,
+      "name": "Plain Handwraps",
+      "slot": "hands",
+      "kind": "item"
+    },
+    {
+      "id": 277222,
+      "name": "War Painted Cuffs",
+      "slot": "wrist",
+      "kind": "item"
+    },
+    {
+      "id": 279448,
+      "name": "Bloodsplattered Bandana",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 279473,
+      "name": "Makeshift Belt",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 279833,
+      "name": "Courier's Clasp",
+      "slot": "neck",
+      "kind": "content"
+    },
+    {
+      "id": 279906,
+      "name": "Potent Treads",
+      "slot": "feet",
+      "kind": "item"
+    },
+    {
+      "id": 279932,
+      "name": "Slime-Resistant Shroud",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 281260,
+      "name": "Ancestral Waistcord",
+      "slot": "waist",
+      "kind": "item"
+    },
+    {
+      "id": 281275,
+      "name": "Mantle of Scaleslaying",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 281276,
+      "name": "Pauldrons of Scaleslaying",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 281287,
+      "name": "Windshaper Pendant",
+      "slot": "neck",
+      "kind": "item"
+    },
+    {
+      "id": 281538,
+      "name": "Matriarch's Mantle",
+      "slot": "shoulder",
+      "kind": "item"
+    },
+    {
+      "id": 281539,
+      "name": "Bear Fur Cowl",
+      "slot": "head",
+      "kind": "item"
+    },
+    {
+      "id": 281586,
+      "name": "Elderwild Construction Hammer",
+      "slot": "mainhand",
+      "kind": "item"
+    }
+  ]
+}

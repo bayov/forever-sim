@@ -198,6 +198,26 @@
 # enchants that the 2026-11-12 check left open by not listing them are listed now, with only
 # their name (2026-11-22).
 #
+# Tanks and healers (2026-11-25): a spec with bench in the table is one of the Tanking and
+# Healing report's presets (its reqFile in tools/tankbench/req or tools/healbench/req), and its
+# sets are scored by the score that report publishes, not DPS:
+#   - tank: the preset's tank score (tools/tankscore, rotopt -tank with its tankPreset weight),
+#     the mean over the six scored bosses (magmadar to chromaggus in tools/encounters), each at
+#     its own length and healing. The synthetic tank sets differ by preset, so each preset has
+#     its own list (Balanced, Max threat, Max survival).
+#   - heal: the damage carried in percent (tools/healscore, rotopt -heal-roles), the mean over
+#     the seven bosses in each of its roles (healRoles), the roles weighed alike. The raid role
+#     sims the raid preset (raidReqFile) under the set. The synthetic healer sets are one a spec,
+#     so a healer has one list. docs/healing_sim.md has the search's quicker carry estimate.
+# The bosses' index takes the fight length's place (DUR 0), and the uses count inside the boss
+# fights (USE_DUR 0, no "vs 4 mobs" lines). There's no effects file, since BayovCore's stat
+# score is DPS. A score is six or fourteen boss runs, so the search runs 1000 iterations (the
+# report's), screens at 300 and keeps 15 for the full sims, and confirms at 5000.
+# The tanks start from real sets of their armor with no weapons (the one hander and shield come
+# in one slot at a time): Valor for the warrior, and the Phase 0 sets of Retribution, Feral and
+# Enhancement for the paladin, bear and Warden. The healers start from the Phase 0 sets of Smite
+# (priests), Elemental (paladin and shaman) and Balance (druid).
+#
 # Each round of the search screens a slot's items at 300 iterations and keeps the best 40 for the
 # full sims. It used to be 100 and 20, but on 2026-11-14 that kept Devilsaur Gauntlets (the
 # starting item) while Bloodmail Gauntlets were 3.9 DPS better at 20000 iterations: a 100
@@ -239,6 +259,15 @@ done
 # short fights and the 30s equip cooldown a swapped in usable item gets. Revisit both for raids.
 dur="${DUR:-180}"
 use_dur="${USE_DUR:-90}"
+# A tank or healer spec (bench in the table, 2026-11-25, see Tanks and healers below) scores its
+# sets on the report's bosses, each at its own length, so the bosses' index takes the fight
+# length's place (0), and the uses count inside those fights (USE_DUR 0, no mobs).
+bench="$(field "$(echo "$spec" | cut -d, -f1)" bench)"
+if [ -n "$bench" ]; then
+	dur="${DUR:-0}"
+	use_dur="${USE_DUR:-0}"
+	AOE_TARGETS="${AOE_TARGETS:-0}"
+fi
 # How many mobs the uses are also valued against, for the "vs 4 mobs" lines (see above).
 aoe_targets="${AOE_TARGETS:-4}"
 # The weapon flags of a spec (see above).
@@ -263,6 +292,31 @@ rank_spec() {
 	r="$(field "$1" rankSpec)"
 	echo "${r:-$1}"
 }
+# The request a spec's fight comes from: the table's reqFile (a tank or healer spec's preset,
+# tools/tankbench/req or tools/healbench/req), or its report build tools/dps_report/req/<req>.json.
+req_file() {
+	r="$(field "$1" reqFile)"
+	echo "${r:-tools/dps_report/req/$(field "$1" req).json}"
+}
+# The scoring flags of a tank or healer spec (see Tanks and healers above), none for a DPS spec.
+# A tank's score is the tank report's: its preset (tankPreset) on the six scored bosses, the mean.
+# A healer's is the healer report's damage carried, in its roles (healRoles), on the seven bosses,
+# the raid role simmed with the raid preset's request (raidReqFile) under the search's gear.
+tank_bosses="$(for b in magmadar golemagg onyxia broodlord vaelastrasz chromaggus; do printf 'tools/encounters/%s.json,' "$b"; done | sed 's/,$//')"
+heal_bosses="$tank_bosses,tools/encounters/ragnaros.json"
+bench_flags() {
+	case "$(field "$1" bench)" in
+	tank) echo -tank "$(field "$1" tankPreset)" -tank-encounter "$tank_bosses" ;;
+	heal)
+		echo -heal-roles "$(field "$1" healRoles)" -heal-encounter "$heal_bosses"
+		r="$(field "$1" raidReqFile)"
+		if [ -n "$r" ]; then
+			settings "$1" "$r" >"$tmp/$1.raid.json"
+			echo -heal-raid-settings "$tmp/$1.raid.json"
+		fi
+		;;
+	esac
+}
 # The settings a spec starts from: its report build with the table's talents and starting gear.
 # A "req" slot keeps the report's item, and startEnchants keeps the report's enchant on every
 # filled slot but the off hand. TALENTS wins over the table.
@@ -278,10 +332,10 @@ settings() {
 	| [range(17) as $i | if $start[$i] == "req" then $old[$i].id else $start[$i] end] as $ids
 	| .raid.parties[0].players[0].equipment.items = [range(17) as $i
 		| if $ids[$i] == null then {} else {id: $ids[$i]} + (if $ench and $old[$i].enchant and $i != 15 then {enchant: $old[$i].enchant} else {} end) end]' \
-		"tools/dps_report/req/$(field "$1" req).json"
+		"${2:-$(req_file "$1")}"
 }
 
-req=tools/dps_report/req/$(field "$spec" req).json
+req="$(req_file "$spec")"
 dir="$(field "$spec" dir)"
 # Where a spec's list goes: the table's out, or ui/<dir>/bis/level60_phase0_<spec>.bis.json.
 list_path() {
@@ -292,6 +346,10 @@ def_out="$(list_path "$spec")"
 def_effects="$(field "$spec" effectsOut)"
 def_effects="${def_effects:-ui/$dir/bis/level60_phase0_$spec.effects.json}"
 effects_out="${EFFECTS_OUT:-$def_effects}"
+# The effects file values items in DPS for BayovCore's stat score, which has no tank or healer side.
+if [ -n "$bench" ] && [ -z "$EFFECTS_OUT" ]; then
+	effects_out=none
+fi
 # A SLOTS run is a quick rerun of a few lists, so it writes the effects file only when asked.
 if [ -n "$SLOTS" ] && [ -z "$EFFECTS_OUT" ]; then
 	effects_out=none
@@ -314,13 +372,13 @@ if [ -n "$DRY_RUN" ]; then
 	mkdir -p "$dry_dir"
 	go build --tags=with_db -o "$tmp/rotopt" ./tools/rotopt
 	for s in $(echo "$spec" | tr , ' '); do
-		jq '.raid.parties[0].players[0].rotation' "tools/dps_report/req/$(field "$s" req).json" >"$tmp/$s.apl.json"
+		jq '.raid.parties[0].players[0].rotation' "$(req_file "$s")" >"$tmp/$s.apl.json"
 		settings "$s" >"$tmp/$s.json"
 		# shellcheck disable=SC2046
 		"$tmp/rotopt" -apl "$tmp/$s.apl.json" -settings "$tmp/$s.json" -durs "$dur" \
 			-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
 			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
-			$(weapon_flags "$s") -gear-pool-spec "$s" \
+			$(weapon_flags "$s") $(bench_flags "$s") -gear-pool-spec "$s" \
 			-gear-content "$content" -gear-pool-report "$dry_dir/$s.json" "$@" >/dev/null
 		jq -r '"\(.spec): \(.items) items, \(.unmodelled | length) unmodelled, \(.hiddenStats | length) hidden stats, \(.unlisted) unlisted, \(.factionDropped | length) left out as \(if .faction == "Horde" then "Alliance" else "Horde" end) only"' "$dry_dir/$s.json"
 	done
@@ -407,14 +465,23 @@ if [ "$effects_out" != none ]; then
 	outputs="$outputs -gear-effects-out $effects_out"
 fi
 
-go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" -iters 2000 \
+# A tank or healer set's score is many sims (six or fourteen boss runs), each at the report's 1000
+# iterations or more, so it runs fewer iterations and keeps fewer items for the full sims
+# (Tanks and healers above). Arguments after ours still win.
+iters="-iters 2000 -gear-screen-iters 300 -gear-screen-keep 40"
+confirm="-gear-rank-confirm-iters 20000 -gear-rank-enchant-iters 10000"
+if [ -n "$bench" ]; then
+	iters="-iters 1000 -gear-screen-iters 300 -gear-screen-keep 15"
+	confirm="-gear-rank-confirm-iters 5000 -gear-rank-enchant-iters 3000"
+fi
+# shellcheck disable=SC2046,SC2086
+go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs "$dur" $iters \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
 	-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" -gear-content "$content" \
-	-gear-screen-iters 300 -gear-screen-keep 40 \
-	-gear-rank-name "Phase 0" -gear-rank-keep 25 $(weapon_flags "$spec") \
+	-gear-rank-name "Phase 0" -gear-rank-keep 25 $(weapon_flags "$spec") $(bench_flags "$spec") \
 	-gear-rank-spec "$(rank_spec "$spec")" -gear-rank-sim "$sim" \
-	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
-	-gear-rank-confirm-iters 20000 -gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters 10000 \
+	-gear-rank-enchants tools/rotopt/phase0_enchants.json $confirm \
+	-gear-rank-conditions -gear-rank-cooldowns -gear-effects-iters 10000 \
 	-use-dur "$use_dur" -use-iters 20000 -use-aoe-targets "$aoe_targets" $outputs $rank_only "$@"
 
 if [ -n "$EFFECTS_ONLY" ]; then
