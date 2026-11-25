@@ -69,7 +69,12 @@
   "Stops channeling once at least 20% mana": "Stops once back at 20% mana",
   "Seal of Command is up and Echo of Command at 2+ stacks": "Seal of Command is up with 2 Echo of Command copies stored",
   "Seal of Command is up and Echo of Command at 3+ stacks": "Seal of Command is up with 3 Echo of Command copies stored",
-  "Seal of Righteousness is up and Echo of Righteousness at 1+ stacks": "Seal of Righteousness is up with an Echo of Righteousness copy stored"
+  "Seal of Righteousness is up and Echo of Righteousness at 1+ stacks": "Seal of Righteousness is up with an Echo of Righteousness copy stored",
+  "10+ Rage and boss over 20% health and time to the next main-hand swing at most main-hand swing time minus 0.1s": "10+ Rage, the boss over 20% health and at least 0.1s since the last main-hand swing, so it can roll Windfury Totem",
+  "5+ Rage and time to the next main-hand swing at most main-hand swing time minus 0.1s": "5+ Rage and at least 0.1s since the last main-hand swing, so it can roll Windfury Totem",
+  "No Rend on the boss and boss over 20% health and time to the next main-hand swing at most main-hand swing time minus 0.1s": "No Rend on the boss, the boss over 20% health and at least 0.1s since the last main-hand swing, so it can roll Windfury Totem",
+  "Time to the next main-hand swing at most main-hand swing time minus 0.1s": "At least 0.1s since the last main-hand swing, so it can roll Windfury Totem",
+  "Shadowmeld is ready and behind the boss and (fewer than 5 combo points or Clearcasting is up) and (Clearcasting is up or (enough Energy for Ravage and in the last 10s of the fight)) and Windfury Totem can proc again": "Shadowmeld is ready, behind the boss and Windfury Totem can proc again, on Clearcasting, or under 5 combo points in the last 10s of the fight with the Energy for Ravage"
  },
  "why": [
   {
