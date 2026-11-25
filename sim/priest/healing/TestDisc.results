@@ -186,7 +186,7 @@ dps_results: {
 dps_results: {
  key: "TestDisc-Phase1-AllItems-VestmentsoftheVirtuous-1675"
  value: {
-  tps: 53.29169
+  tps: 53.30835
   dtps: 112.41533
   hps: 111.0286
  }
