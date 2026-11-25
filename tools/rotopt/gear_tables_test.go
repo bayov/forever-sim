@@ -36,6 +36,10 @@ func TestGearTablesCoverEveryClass(t *testing.T) {
 			t.Errorf("%v can't hold %v", class, want)
 		}
 	}
+	// Forever's Auto Shot and hunter shots need a bow, gun or crossbow, and the hunter has no Thrown skill.
+	if slices.Contains(rangedTypesFor[proto.Class_ClassHunter], proto.RangedWeaponType_RangedWeaponTypeThrown) {
+		t.Errorf("the hunter can't shoot a thrown weapon")
+	}
 	for _, c := range []struct {
 		class proto.Class
 		can   []proto.WeaponType
