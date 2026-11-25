@@ -118,7 +118,10 @@ var weaponTypesFor = map[proto.Class][]proto.WeaponType{
 var rangedTypesFor = map[proto.Class][]proto.RangedWeaponType{
 	proto.Class_ClassRogue:   {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
 	proto.Class_ClassWarrior: {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
-	proto.Class_ClassHunter:  {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
+	// No thrown for the hunter: Forever's Auto Shot (75) and every hunter shot need a bow, gun or crossbow
+	// (SpellEquippedItems subclass mask 262156, build 71037), and the hunter has no Thrown skill
+	// (SkillRaceClassInfo 143: skill 176, class mask 4, availability 0).
+	proto.Class_ClassHunter:  {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun},
 	proto.Class_ClassShaman:  {proto.RangedWeaponType_RangedWeaponTypeTotem},
 	proto.Class_ClassPaladin: {proto.RangedWeaponType_RangedWeaponTypeLibram},
 	proto.Class_ClassDruid:   {proto.RangedWeaponType_RangedWeaponTypeIdol},
