@@ -1,6 +1,7 @@
 package item_sets
 
 import (
+	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/common/guardians"
@@ -25,6 +26,9 @@ var ItemSetNecropileRaiment = core.NewItemSet(core.ItemSet{
 		3: func(agent core.Agent) {
 			character := agent.GetCharacter()
 			character.AddStat(stats.Intellect, 5)
+			if character.Env.IsForever() {
+				foreverNecropileDrain(character)
+			}
 		},
 		// +15 All Resistances.
 		4: func(agent core.Agent) {
@@ -245,6 +249,9 @@ var ItemSetBloodmailRegalia = core.NewItemSet(core.ItemSet{
 			character := agent.GetCharacter()
 			character.AddStat(stats.AttackPower, 10)
 			character.AddStat(stats.RangedAttackPower, 10)
+			if character.Env.IsForever() {
+				foreverBloodmailBleed(character)
+			}
 		},
 		// +15 All Resistances.
 		4: func(agent core.Agent) {
@@ -564,3 +571,88 @@ var ItemSetBattlegearOfUndeadSlaying = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+// The chance of a Forever Scholomance set's 3-piece proc, which its row does not state.
+const (
+	// EV-0167: Bloodmail Regalia's bleed follows 10.7% of landed white swings and Windfury hits.
+	BloodmailBleedChance = 0.107
+	// EV-0168: Necropile Raiment's drain follows 13.9% of landed harmful spells that are not ticks.
+	NecropileDrainChance = 0.139
+)
+
+// Windfury Weapon's hits (shaman.WindfuryWeaponSpellId), which roll Bloodmail Regalia's bleed.
+var windfuryWeaponHits = []int32{8232, 8235, 10486, 16362}
+
+// EV-0167: under Forever Bloodmail Regalia's 3-piece (1299740) puts Bloodmail (1299739), 7 Physical a
+// second for 10 sec, on the target of 10.7% of landed white swings and Windfury hits, with no hit roll
+// of its own; melee abilities never roll it (wowsims/forever, Warcraft Logs). The +10 attack power
+// our 3-piece gives is the Forever 2-piece's, so from 3 pieces the totals match.
+func foreverBloodmailBleed(character *core.Character) {
+	bleed := character.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 1299739},
+		SpellSchool:      core.SpellSchoolPhysical,
+		DefenseType:      core.DefenseTypeMelee,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagPureDot,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		Dot: core.DotConfig{
+			Aura:          core.Aura{Label: "Bloodmail"},
+			NumberOfTicks: 10,
+			TickLength:    time.Second,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.Snapshot(target, 7, isRollover)
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.Dot(target).Apply(sim)
+		},
+	})
+	core.MakePermanent(character.RegisterAura(core.Aura{
+		Label: "Bloodmail Regalia - 3pc",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !(spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || slices.Contains(windfuryWeaponHits, spell.ActionID.SpellID)) {
+				return
+			}
+			if sim.Proc(BloodmailBleedChance, "Bloodmail") {
+				bleed.Cast(sim, result.Target)
+			}
+		},
+	}))
+}
+
+// EV-0168: under Forever Necropile Raiment's 3-piece (1299737) casts Necropile Drain (1299735), 28
+// Shadow taken from the target and given to the wearer, on 13.9% of landed harmful spells that are
+// not ticks, with no hit roll of its own (wowsims/forever, Warcraft Logs).
+func foreverNecropileDrain(character *core.Character) {
+	healthMetrics := character.NewHealthMetrics(core.ActionID{SpellID: 1299735})
+	var drain *core.Spell
+	drain = character.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 1299735},
+		SpellSchool:      core.SpellSchoolShadow,
+		DefenseType:      core.DefenseTypeMagic,
+		ProcMask:         core.ProcMaskSpellDamageProc,
+		Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcAndDealDamage(sim, target, 28, spell.OutcomeAlwaysHit)
+			character.GainHealth(sim, result.Damage, healthMetrics)
+		},
+	})
+	core.MakePermanent(character.RegisterAura(core.Aura{
+		Label: "Necropile Raiment - 3pc",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || spell == drain ||
+				spell.Flags.Matches(core.SpellFlagPassiveSpell) {
+				return
+			}
+			if sim.Proc(NecropileDrainChance, "Necropile Drain") {
+				drain.Cast(sim, result.Target)
+			}
+		},
+	}))
+}

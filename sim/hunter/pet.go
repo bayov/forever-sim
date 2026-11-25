@@ -21,8 +21,10 @@ type HunterPet struct {
 	focusDump      *core.Spell
 
 	// Under Forever: what the pet casts in melee range, longest cooldown first, and what it casts
-	// to close in (pet_forever.go).
+	// to close in (pet_forever.go). Autocast picks among the actions evenly, in 0.8 sec steps.
 	foreverActions []foreverPetAction
+	autocastReady  []*core.Spell
+	nextAutocast   time.Duration
 	closers        []*core.Spell
 	charge         *core.Spell
 	closerCD       *core.Timer
@@ -225,19 +227,11 @@ func (hp *HunterPet) foreverSwingSpeed() float64 {
 func (hp *HunterPet) applyForeverRules() {
 	hp.AutoAttacks.MH().SwingSpeed = hp.foreverSwingSpeed()
 
-	// The white swing takes none of the crit the pet inherits from the hunter, only its own; the
-	// pet's abilities take all of it (wowsims/forever 7e0e0c2e46, EV-0134: white swings crit 0.6% over
-	// 154,361 landed at Ferocity 0, abilities 0.94). Each swing takes the current inherited crit back
-	// off, by its change since the last swing.
-	whiteSwing := hp.AutoAttacks.MHConfig()
-	applyWhiteSwing := whiteSwing.ApplyEffects
-	inheritedCritTakenOff := 0.0
-	whiteSwing.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		inheritedCrit := hp.InheritedStats()[stats.MeleeCrit]
-		spell.BonusCritRating += inheritedCritTakenOff - inheritedCrit
-		inheritedCritTakenOff = inheritedCrit
-		applyWhiteSwing(sim, target, spell)
-	}
+	// EV-0134: since Blizzard's hotfix of about 02:10 UTC on 2026-11-24 the white swing takes the crit
+	// the pet inherits from the hunter, as its abilities do (wowsims/forever a67b8e36d9: at Ferocity
+	// 5/5 white swings crit 28.7% of 53,245 landed, the 12.8% before plus the owners' 16.1%). From
+	// 2026-11-17 to this hotfix the sim took the inherited crit back off each white swing, from the
+	// logs before it (0.6% of 154,361 at Ferocity 0).
 
 	// The pet swings at its owner's melee and attack speed on top of its own: in wowsims/forever's
 	// Nov 8 combat log (d729b13992) a pet swings every 1.965 sec over its owner's 2% Wind Blessed,
@@ -296,6 +290,7 @@ func (hp *HunterPet) applyForeverRules() {
 
 func (hp *HunterPet) Reset(_ *core.Simulation) {
 	hp.uptimePercent = min(1, max(0, hp.hunterOwner.Options.PetUptime))
+	hp.nextAutocast = 0
 }
 
 func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
