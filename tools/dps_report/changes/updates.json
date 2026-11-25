@@ -6750,9 +6750,46 @@
       "23c0458a8",
       "95a3578f0"
      ]
+    },
+    {
+     "title": "Warlocks and dual-wield Fury use their on-use trinkets better",
+     "kind": "sim",
+     "classes": [
+      "Warlock",
+      "Warrior"
+     ],
+     "note": "Warlocks no longer press Talisman of Ascendance before the pull, which held back their other on-use trinket; it is used on cooldown in the fight. Dual-wield Fury presses Blackhand's Breadth on cooldown instead of saving it for the last 30 seconds.",
+     "commits": [
+      "67fe28cf0"
+     ]
     }
    ],
-   "internal": []
+   "internal": [
+    {
+     "commit": "0cc97a59d",
+     "why": "comp search tests only"
+    },
+    {
+     "commit": "5d1f8bcd5",
+     "why": "test hashes only"
+    },
+    {
+     "commit": "ebe2d78d6",
+     "why": "test goldens only"
+    },
+    {
+     "commit": "4c26b4b66",
+     "why": "tests only"
+    },
+    {
+     "commit": "31aa846ec",
+     "why": "test goldens only"
+    },
+    {
+     "commit": "a1efdca09",
+     "why": "bulk sim progress reporting; no sim result reads it"
+    }
+   ]
   }
  ]
 }

@@ -15,8 +15,8 @@
   "gearSet": "level60_phase0_rogue_subtlety",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 816.06,
-    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 816.21,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
   },
   "verify": {
     "dps": 816.06,
