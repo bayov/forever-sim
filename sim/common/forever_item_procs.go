@@ -158,12 +158,18 @@ func registerForeverOnHitDamage(character *core.Character, name string, spellID 
 	if mask == core.ProcMaskUnknown {
 		return
 	}
+	flags := core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagSuppressEquipProcs | core.SpellFlagSuppressWeaponProcs
+	// EV-0165: Warblade of Caer Darrow's 1298499 states Suppress Caster Procs, and none of its
+	// 3,045 lone crits refreshed the wearer's Vengeance, where 36 to 53% of the other crits did.
+	if spellID == 1298499 {
+		flags |= core.SpellFlagNoProcs
+	}
 	spell := character.RegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: spellID},
 		SpellSchool:      school,
 		DefenseType:      defenseType,
 		ProcMask:         core.Ternary(defenseType == core.DefenseTypeMelee, core.ProcMaskMeleeSpecial, core.ProcMaskEmpty),
-		Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagSuppressEquipProcs | core.SpellFlagSuppressWeaponProcs,
+		Flags:            flags,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

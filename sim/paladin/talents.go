@@ -132,7 +132,7 @@ func (paladin *Paladin) purifyingPower(cd time.Duration) time.Duration {
 	return time.Duration(float64(cd) * []float64{1, 0.83, 0.67}[paladin.Talents.PurifyingPower])
 }
 
-// Redoubt now procs from any damaging melee attack taken (10% chance), Classic needed a
+// Redoubt now procs from any melee attack taken (10% chance), landed or not, Classic needed a
 // crit. The block bonus lasts 10 sec or 5 blocks.
 func (paladin *Paladin) applyRedoubt() {
 	if paladin.Talents.Redoubt == 0 {
@@ -161,10 +161,13 @@ func (paladin *Paladin) applyRedoubt() {
 		},
 	})
 
+	// EV-0022: under Forever every melee swing or ability taken rolls it, dodged, parried, missed
+	// or fully blocked too (152 of 1,394 avoided swings, 364 of 3,501 that dealt damage, on about
+	// forty paladins' logs). Classic's needs the hit to land.
 	core.MakeProcTriggerAura(&paladin.Unit, core.ProcTrigger{
 		Name:       "Redoubt Trigger",
 		Callback:   core.CallbackOnSpellHitTaken,
-		Outcome:    core.OutcomeLanded,
+		Outcome:    core.Ternary(paladin.Env.IsForever(), core.OutcomeEmpty, core.OutcomeLanded),
 		ProcMask:   core.ProcMaskMelee,
 		ProcChance: 0.1,
 		Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -376,7 +379,9 @@ func (paladin *Paladin) applyVengeance() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.DidCrit() {
+			// EV-0165: a hit that reaches none of the caster's procs (Warblade of Caer Darrow's)
+			// doesn't either.
+			if result.DidCrit() && !spell.Flags.Matches(core.SpellFlagNoProcs) {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
 			}

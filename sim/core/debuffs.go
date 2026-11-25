@@ -550,6 +550,24 @@ func SchedulePeriodicDebuffApplication(aura *Aura, options PeriodicActionOptions
 const JudgementAuraTag = "Judgement"
 
 // TODO: Classic verify logic
+// AreaChannelCastHits lands the cast of Blizzard or Rain of Fire, under Forever, on every enemy as
+// a hit that deals no damage, which pays Judgement of Wisdom once for each enemy that has it; the
+// waves pay none, as periodic ticks don't (EV-0116: Rain of Fire paid 67 times in 139 casts on one
+// debuffed enemy, 31 in 29 on two and 16 in 8 on three, and none of 1,406 channel waves paid).
+// Hellfire's cast lands on the warlock and pays none.
+func AreaChannelCastHits(sim *Simulation, spell *Spell) {
+	if !sim.IsForever() {
+		return
+	}
+	for _, target := range sim.Encounter.ActiveTargetUnits {
+		aura := target.GetAura("Judgement of Wisdom")
+		if aura == nil || !aura.IsActive() || aura.OnSpellHitTaken == nil {
+			continue
+		}
+		aura.OnSpellHitTaken(aura, sim, spell, &SpellResult{Target: target, Outcome: OutcomeHit, areaCastHit: true})
+	}
+}
+
 func JudgementOfWisdomAura(target *Unit) *Aura {
 	return judgementOfWisdomAura(target, 59)
 }
@@ -580,6 +598,12 @@ func newJudgementOfWisdomAura(target *Unit, jowMana *float64) *Aura {
 			}
 
 			if !spell.ProcMask.Matches(ProcMaskDirect) {
+				return
+			}
+
+			// EV-0116: an area channel's waves (Rain of Fire's) pay nothing under Forever; its
+			// cast pays (AreaChannelCastHits).
+			if target.Env.IsForever() && spell.Flags.Matches(SpellFlagChanneled) && spell.AOEDot() != nil && spell.ProcMask.Matches(ProcMaskSpellDamage) && !result.areaCastHit {
 				return
 			}
 
@@ -633,7 +657,7 @@ func JudgementOfWisdomCastAura(caster *Unit, target *Unit, mana float64, duratio
 	procs := aura.OnSpellHitTaken
 	aura.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 		procs(aura, sim, spell, result)
-		if jow.caster != nil && spell.Unit == jow.caster && result.Landed() && spell.ProcMask.Matches(ProcMaskMelee) {
+		if jow.caster != nil && spell.Unit == jow.caster && refreshesJudgement(spell, result) {
 			aura.Refresh(sim)
 		}
 	}
@@ -744,11 +768,27 @@ func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, bonus float64, durat
 				// The settings' permanent one, which a paladin's hits refresh for the log only.
 				return
 			}
-			if result.Landed() && spell.ProcMask.Matches(ProcMaskMelee) {
+			if refreshesJudgement(spell, result) {
 				aura.Refresh(sim)
 			}
 		},
 	})
+}
+
+// refreshesJudgement says whether the judging paladin's hit refreshes its Judgement of the
+// Crusader or Wisdom. Under Forever only a landed white swing or Windfury Totem hit does (an extra
+// attack is a white swing); Holy Strike, Seal of Command's hit, the judgements and Hammer of Wrath
+// don't (EV-0117: 408 of 416 lone white swings and 13 of 13 Windfury Totem hits refreshed, none
+// of 186 Holy Strikes, 72 Judgements of Command, 82 of Righteousness or 8 Hammers of Wrath, at
+// levels 43 to 46). In Classic any landed melee hit does.
+func refreshesJudgement(spell *Spell, result *SpellResult) bool {
+	if !result.Landed() {
+		return false
+	}
+	if spell.Unit.Env.IsForever() {
+		return spell.ProcMask.Matches(ProcMaskMeleeWhiteHit)
+	}
+	return spell.ProcMask.Matches(ProcMaskMelee)
 }
 
 // JudgeTheCrusader puts caster's Judgement of the Crusader on aura's target. Another

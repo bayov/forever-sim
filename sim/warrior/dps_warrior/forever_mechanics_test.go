@@ -680,6 +680,19 @@ func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
 	}
 }
 
+// TestForeverWarriorSweepingStrikesNormalizedHitRollsWeaponProcs checks that Sweeping Strikes'
+// normalized hit 26654 is a main-hand special a chance-on-hit weapon rolls on, while the copied hit
+// 12723 rolls none (R-0042, EV-0007).
+func TestForeverWarriorSweepingStrikesNormalizedHitRollsWeaponProcs(t *testing.T) {
+	_, war := newForeverWarriorTargets(t, "00000000000010000", 991016, 0, 2)
+	if got := war.GetSpell(core.ActionID{SpellID: 26654}).ProcMask; got != core.ProcMaskMeleeMHSpecial {
+		t.Errorf("the normalized hit's proc mask is %v, want the main-hand special mask", got)
+	}
+	if got := war.GetSpell(core.ActionID{SpellID: 12723}).ProcMask; got != core.ProcMaskEmpty {
+		t.Errorf("the copied hit's proc mask is %v, want none", got)
+	}
+}
+
 // TestForeverWarriorSweepingStrikesKeepsCharges checks that a hit with no second target to copy to
 // leaves Sweeping Strikes' charges (Blizzard hotfixes of 2026-11-10), and that a copy uses one.
 func TestForeverWarriorSweepingStrikesKeepsCharges(t *testing.T) {

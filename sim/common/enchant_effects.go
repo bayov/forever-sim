@@ -12,13 +12,38 @@ import (
 // new Forever enchants (tools/database/forever_enchants.go).
 const RevelationEffectID = 1248805
 
-// RevelationProcChance is the chance of a direct spell that lands without a crit to give
-// Revelation. Forever has not published it, see the effect below.
-//
-// We default to the middle of the three guesses we simmed on 2026-10-05. On the Level 30 + 5
-// enhancement preset at 120 sec, 0.147 / 0.072 / 0.048 come out at one proc every 1 / 2 / 3
-// minutes.
-var RevelationProcChance = 0.072
+// RevelationProcChance, when 0 or more, replaces Revelation's chance for every class (rotopt's
+// -revelation-chance). Below 0 the sim uses RevelationClassChance.
+var RevelationProcChance = -1.0
+
+// RevelationClassChance is the chance of a landed direct spell hit that does not crit to give
+// Revelation, by class, for a level 60 wearer on spells at most 12 levels under them: the rates
+// wowsims/forever's EV-0149 counts on 1,356 Warcraft Logs reports (mage 27,896 procs of 312,128
+// rolls, warlock 3,385 of 38,274, priest 441 of 5,101, druid 3,328 of 42,144, shaman 2,972 of
+// 40,695, paladin 426 of 6,066). The hunter's rate is not counted and takes the enchant's 8%. No
+// warrior or rogue gains Revelation in those logs, so they have none. The tooltip's fall with the
+// wearer's crit (about 0.27 points a crit percent in the same logs) has no formula yet and is left
+// out. Until 2026-11-25 the sim gave every class 7.2%, a guess.
+var RevelationClassChance = map[proto.Class]float64{
+	proto.Class_ClassMage:    0.0894,
+	proto.Class_ClassWarlock: 0.0884,
+	proto.Class_ClassPriest:  0.0865,
+	proto.Class_ClassDruid:   0.0790,
+	proto.Class_ClassShaman:  0.0730,
+	proto.Class_ClassPaladin: 0.0702,
+	proto.Class_ClassHunter:  0.08,
+}
+
+// revelationLevelShare is the share of Revelation's chance a spell of learnLevel keeps for a
+// wearer of level: all of it down to 12 levels under the wearer, none from 32 under, and a straight
+// line between (EV-0149, clamp((SpellLevel + 32 - level) / 20, 0, 1)). A spell with no level of its
+// own keeps all of it.
+func revelationLevelShare(level int32, learnLevel int) float64 {
+	if learnLevel <= 0 {
+		return 1
+	}
+	return max(0, min(1, float64(learnLevel+32-int(level))/20))
+}
 
 func init() {
 	core.AddEffectsToTest = false
@@ -169,13 +194,15 @@ func init() {
 				if !result.Landed() || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 					return
 				}
-				if ppmm.Proc(sim, spell.ProcMask, "Fiery Weapon") {
-					if spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
-						procSpell.ProcMask = procMaskOnSpecial
-					} else {
-						procSpell.ProcMask = procMaskOnAuto
+				for i := core.WeaponProcRolls(spell); i > 0; i-- {
+					if ppmm.Proc(sim, spell.ProcMask, "Fiery Weapon") {
+						if spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+							procSpell.ProcMask = procMaskOnSpecial
+						} else {
+							procSpell.ProcMask = procMaskOnAuto
+						}
+						procSpell.Cast(sim, result.Target)
 					}
-					procSpell.Cast(sim, result.Target)
 				}
 			},
 		}))
@@ -266,62 +293,148 @@ func init() {
 		})
 	}
 
-	// Forever's Weapon - Revelation (Enchanting 140): a direct spell that lands but does not
-	// crit has a chance to give Revelation, and Revelation gives the next direct spell cast
+	// Forever's Weapon - Revelation (Enchanting 140): a direct spell hit that lands but does not
+	// crit has a chance to give Revelation, whose one charge gives the next spell the wearer casts
 	// +100% crit chance for 15 sec.
 	//
-	// We only know how it behaves for an enhancement shaman (user, 2026-10-05). The shocks
-	// trigger it and use it up. Weapon procs (Windfury, Flametongue Weapon), totems and Fire
-	// Nova do neither, so we take spells cast from the rotation and leave out procs and
-	// spells that go off from a totem. A shock that misses while Revelation is up still uses
-	// it up.
+	// Which hits roll it (wowsims/forever EV-0149, R-0051, on 1,356 Warcraft Logs reports): every
+	// landed direct hit of a magic spell that deals damage, the wearer's own or an item's, each
+	// target of an area spell on its own, and each hit of a channel that casts a spell a tick
+	// (Arcane Missiles' missiles, Blizzard, Rain of Fire, Hellfire, Hurricane: their area ticks
+	// are hits in game). Periodic ticks, damage shields and melee or ranged attacks (the paladin's
+	// judgements) roll nothing. The user saw an enhancement shaman's Windfury and Flametongue
+	// Weapon procs, its totems and Fire Nova neither roll nor spend it (2026-10-05), so the sim
+	// keeps the shaman's imbue procs and the spells that go off from a totem out, though EV-0149
+	// counts Fire Nova at 7.6% (left to the user).
 	//
-	// The tooltip says the chance shrinks as the caster's crit chance grows, but not how, and
-	// we know of no cooldown between procs. So the chance is one flat number,
-	// RevelationProcChance, and rotopt's -revelation-chance sets it.
+	// What spends the charge (EV-0028, EV-0149, R-0048): the cast of a spell it reaches, as the
+	// cast completes, so every target an area spell hits crits and a spell in flight keeps its
+	// crit; a channel keeps the charge to its end and every hit of it crits meanwhile, and a charge
+	// gained during a channel is kept to that channel's end too. Until 2026-11-25 the first target
+	// an area spell hit spent the charge, and channels neither rolled nor spent it.
 	core.AddWeaponEffect(RevelationEffectID, func(agent core.Agent, _ proto.ItemSlot) {
 		character := agent.GetCharacter()
 		if character.HasAura("Revelation Weapon") {
 			return
 		}
-
-		// Channels and spells that only tick are not direct spells: under Forever their ticks
-		// roll crit live, so the buff would make every tick crit until a direct spell used it.
-		isDirectCast := func(spell *core.Spell) bool {
-			return spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.Flags.Matches(core.SpellFlagAPL) &&
-				!spell.Flags.Matches(core.SpellFlagPassiveSpell|core.SpellFlagCastFromTotem|core.SpellFlagChanneled|core.SpellFlagPureDot)
+		chance, ok := RevelationClassChance[character.Class]
+		if RevelationProcChance >= 0 {
+			chance, ok = RevelationProcChance, true
+		}
+		if !ok || chance == 0 {
+			return
 		}
 
-		buff := character.RegisterAura(core.Aura{
+		// The spells the buff reaches: the wearer's own damage spells and a channel's missiles,
+		// not item procs, imbue procs, totems or spells that only tick.
+		buffed := func(spell *core.Spell) bool {
+			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				return false
+			}
+			if spell.Flags.Matches(core.SpellFlagPassiveSpell | core.SpellFlagCastFromTotem) {
+				return false
+			}
+			return spell.Flags.Matches(core.SpellFlagChanneled) || !spell.Flags.Matches(core.SpellFlagPureDot)
+		}
+		// The hits that roll it.
+		rolls := func(spell *core.Spell, result *core.SpellResult) bool {
+			if !result.Landed() || result.DidCrit() || result.Damage <= 0 {
+				return false
+			}
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged | core.ProcMaskSpellHealing) {
+				return false
+			}
+			// Flametongue Weapon's and Flametongue Totem's procs (the imbues), not the item procs
+			// that carry the damage proc mask beside the spell proc one (Thunderfury, Dragonbreath
+			// Chili).
+			if spell.ProcMask.Matches(core.ProcMaskDamageProc) && !spell.ProcMask.Matches(core.ProcMaskSpellProc) {
+				return false
+			}
+			if spell.Flags.Matches(core.SpellFlagCastFromTotem | core.SpellFlagNoPartialResist | core.SpellFlagHelpful) {
+				return false
+			}
+			return spell.ProcMask.Matches(core.ProcMaskSpellDamage) || spell.DefenseType == core.DefenseTypeMagic
+		}
+		learnLevel := func(spell *core.Spell) int {
+			return core.Ternary(spell.Rank > 0, spell.RequiredLevel, 0)
+		}
+		roll := func(sim *core.Simulation, spell *core.Spell) bool {
+			return sim.Proc(chance*revelationLevelShare(character.Level, learnLevel(spell)), "Revelation")
+		}
+
+		var buff *core.Aura
+		// The channel holding the charge, which goes as it ends, clipped or not.
+		var heldBy *core.Dot
+		character.OnSpellRegistered(func(spell *core.Spell) {
+			if !spell.Flags.Matches(core.SpellFlagChanneled) || !buffed(spell) {
+				return
+			}
+			for _, dot := range append([]*core.Dot{spell.AOEDot()}, spell.Dots()...) {
+				if dot == nil {
+					continue
+				}
+				dot.ApplyOnExpire(func(_ *core.Aura, sim *core.Simulation) {
+					if heldBy == dot {
+						heldBy = nil
+						buff.Deactivate(sim)
+					}
+				})
+			}
+		})
+		runningChannel := func() *core.Dot {
+			if dot := character.ChanneledDot; dot != nil && dot.IsActive() && buffed(dot.Spell) {
+				return dot
+			}
+			return nil
+		}
+
+		buff = character.RegisterAura(core.Aura{
 			Label:    "Revelation",
 			ActionID: core.ActionID{SpellID: RevelationEffectID},
 			Duration: time.Second * 15,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				for _, spell := range character.Spellbook {
-					if isDirectCast(spell) {
+					if buffed(spell) {
 						spell.BonusCritRating += 100 * core.SpellCritRatingPerCritChance
 					}
 				}
+				// R-0048: a charge gained during a channel the buff reaches goes at its end.
+				heldBy = runningChannel()
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				heldBy = nil
 				for _, spell := range character.Spellbook {
-					if isDirectCast(spell) {
+					if buffed(spell) {
 						spell.BonusCritRating -= 100 * core.SpellCritRatingPerCritChance
 					}
 				}
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				// The spell that gave Revelation does not use it up.
-				if isDirectCast(spell) && aura.StartedAt() < sim.CurrentTime {
-					aura.Deactivate(sim)
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				// A hit of this cast that gave the charge doesn't spend it, nor does a cast while a
+				// channel holds it.
+				if !spell.Flags.Matches(core.SpellFlagAPL) || !buffed(spell) || aura.StartedAt() == sim.CurrentTime || heldBy != nil {
+					return
 				}
+				if spell.Flags.Matches(core.SpellFlagChanneled) {
+					if dot := runningChannel(); dot != nil && dot.Spell == spell {
+						heldBy = dot
+						return
+					}
+				}
+				aura.Deactivate(sim)
 			},
 		})
 
 		core.MakePermanent(character.RegisterAura(core.Aura{
 			Label: "Revelation Weapon",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if isDirectCast(spell) && result.Landed() && !result.DidCrit() && sim.Proc(RevelationProcChance, "Revelation") {
+				if rolls(spell, result) && roll(sim, spell) {
+					buff.Activate(sim)
+				}
+			},
+			// An area channel's ticks are hits of the spell it casts each tick.
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell.Flags.Matches(core.SpellFlagChanneled) && spell.AOEDot() != nil && rolls(spell, result) && roll(sim, spell) {
 					buff.Activate(sim)
 				}
 			},
@@ -409,11 +522,13 @@ func init() {
 				if !result.Landed() || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 					return
 				}
-				if ppmm.Proc(sim, spell.ProcMask, "Crusader") {
-					if spell.IsMH() {
-						mhAura.Activate(sim)
-					} else {
-						ohAura.Activate(sim)
+				for i := core.WeaponProcRolls(spell); i > 0; i-- {
+					if ppmm.Proc(sim, spell.ProcMask, "Crusader") {
+						if spell.IsMH() {
+							mhAura.Activate(sim)
+						} else {
+							ohAura.Activate(sim)
+						}
 					}
 				}
 			},

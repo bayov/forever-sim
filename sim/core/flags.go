@@ -221,6 +221,7 @@ const (
 	SpellFlagKeepsSwingTimer                               // Under Forever completing its cast leaves the melee swing timer running: the client's Do Not Reset Combat Timers (Attributes[2] 0x20000)
 	SpellFlagNoProcs                                       // Activates no ProcTrigger, on its casts or its hits (Forever's Volley, Blizzard hotfix 2026-11-11)
 	SpellFlagNoWindfuryTotem                               // Under Forever its main hand melee hits don't roll Windfury Totem: an on-hit proc, not a melee ability (the paladin seals' procs), or a shield strike (a Shieldsworn Holy Strike)
+	SpellFlagRollsWeaponProcsTwice                         // Its landed hit rolls each weapon proc and combat enchant twice (Forever's Judgement of Command, EV-0156); see WeaponProcRolls
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1
@@ -269,3 +270,16 @@ rupture -
 wotlk
 shadowflame - requires each 'effect' to have its own school.
 */
+
+// WeaponProcRolls is how many times a weapon's chance-on-hit proc or a combat enchant rolls on a
+// landed hit of spell: twice for a spell flagged SpellFlagRollsWeaponProcsTwice, once otherwise.
+// Forever's Judgement of Command lands a dummy on the melee table before its damage, and each
+// landing rolls the weapon procs: units with a Judgement of Command hold 1.85 times the procs one
+// roll gives (17,148 units, 274 paladins), still 1.75 after hotfix push 114313, while Windfury
+// Totem and Vindication, which hear only the damage, roll once (wowsims/forever EV-0155, EV-0156).
+func WeaponProcRolls(spell *Spell) int {
+	if spell.Flags.Matches(SpellFlagRollsWeaponProcsTwice) {
+		return 2
+	}
+	return 1
+}
