@@ -62,7 +62,7 @@ EV-0036 | match | class | log | cited as EV-0036 in sim/druid | -
 EV-0037 | differs | class | log | sim/druid/bear_attacks.go Lacerate threat 1x damage vs 10/3x at later ranks; sim/core/spell_outcome.go:1063 crit mult 2.0 for all physical vs ability crits 2.2 (listed under "other readings", unverified) | Lacerate threat: ~+2x on that spell's threat, a few % of bear TPS; crit 2.2: ~+1% on ability dmg
 EV-0038 | match (shallow) | class | reasoning+tester reports | Swipe 3% AP, Rake hit unarmored, Rend and Tear present | -
 EV-0039 | match | class | reasoning (level 30 sheet) | druid/bear.go:106 level x rank, cites level 30 | -
-EV-0040 | match (shallow) | class | log (in game) | bear_attacks.go Lacerate hit uses existing stacks, 10% weapon dmg, bleed no AP | -
+EV-0040 | match (fixed 2026-11-25) | class | log (in game) | bear_attacks.go Lacerate hit took 10% weapon dmg a stack already on (first hit 0); theirs and the log count the stacks after the cast (1:2:3:4:5, first hit 10%); ours now the same. Bleed no AP: match | bear presets +170 to +185 score, +45 to +51 TPS (1000 iterations, six bosses)
 EV-0041 | match | class | log | test table sim/druid/imbue_test.go | -
 EV-0042 | match (shallow) | class | log | Sunder 34+0.05AP, HS flat 40, Cleave 46 split in warrior code | -
 EV-0043 | differs | class | log | Battle Shout threat: ours makes threat vs theirs none on ranks 1,2,4,5 | tiny

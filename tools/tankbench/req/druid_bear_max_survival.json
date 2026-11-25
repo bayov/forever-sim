@@ -12,57 +12,57 @@
             "equipment": {
               "items": [
                 {
-                  "id": 990801,
+                  "id": 226801,
                   "enchant": 1508
                 },
                 {
-                  "id": 990802,
+                  "id": 19491,
                   "enchant": 1249059
                 },
                 {
-                  "id": 990803
+                  "id": 226798
                 },
                 {
-                  "id": 990804,
+                  "id": 18511,
                   "enchant": 1219587
                 },
                 {
-                  "id": 990805,
+                  "id": 252483,
                   "enchant": 1891
                 },
                 {
-                  "id": 990806,
+                  "id": 226796,
                   "enchant": 1248665
                 },
                 {
-                  "id": 990807,
+                  "id": 226802,
                   "enchant": 1887
                 },
                 {
-                  "id": 990808
+                  "id": 226797
                 },
                 {
-                  "id": 990809,
+                  "id": 226799,
                   "enchant": 1508
                 },
                 {
-                  "id": 990810,
+                  "id": 21532,
                   "enchant": 1887
                 },
                 {
-                  "id": 990811
+                  "id": 275980
                 },
                 {
-                  "id": 990812
+                  "id": 275975
                 },
                 {
-                  "id": 990814
+                  "id": 10455
                 },
                 {
-                  "id": 998115
+                  "id": 19287
                 },
                 {
-                  "id": 990813,
+                  "id": 18531,
                   "enchant": 2646
                 },
                 {},
@@ -232,7 +232,7 @@
                               "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "4s"
+                                  "val": "6s"
                                 }
                               }
                             }
@@ -241,7 +241,7 @@
                       }
                     }
                   },
-                  "notes": "Lacerate to 5 stacks, and again before they drop (under 4 sec left)."
+                  "notes": "Lacerate to 5 stacks, and again before they drop (under 6 sec left)."
                 },
                 {
                   "action": {
