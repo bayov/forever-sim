@@ -13,8 +13,9 @@ import (
 // versions of them stay without effects. Every value is from client 1.60.1.71037 (ItemEffect,
 // SpellEffect, SpellCategories, SpellMisc and SpellDuration on wago.tools). The client states no
 // rate for these chances on hit (ProcChance 101, no SpellProcsPerMinute row), so a rate is the
-// one the item's chance-on-hit entry carries in wowsims/forever's db.json where it has one, and
-// 1 PPM, the usual rate of a Classic weapon proc, where it has none.
+// one wowsims/forever measured from Warcraft Logs where it has one (the EV id beside it), else the
+// one the item's chance-on-hit entry carries in their db.json, and 1 PPM, the usual rate of a
+// Classic weapon proc, where it has neither.
 //
 // A spell's damage with variance v is its base points times 1 - v/2 to 1 + v/2.
 const (
@@ -173,7 +174,10 @@ func registerForeverOnHitDamage(character *core.Character, name string, spellID 
 			}
 			outcome := spell.OutcomeMagicCrit
 			if defenseType == core.DefenseTypeMelee {
-				outcome = spell.OutcomeMeleeSpecialHitAndCrit
+				// EV-0164: Iceblade Hacker's and Warblade's rows are Always Hit: none of their
+				// events in the logs missed or was dodged, parried or blocked, and they crit at the
+				// wearer's melee crit for twice the damage.
+				outcome = spell.OutcomeMeleeSpecialCritOnly
 			}
 			spell.CalcAndDealDamage(sim, target, damage, outcome)
 		},
@@ -219,7 +223,8 @@ func init() {
 	// Angerforge's Battle Axe: Slaughter (1300783), 109 Physical on the melee table. Trolls and
 	// Orcs take twice as much (effect 2) and are horrified, which a boss shrugs off.
 	core.RegisterItemConditions(AngerforgesBattleAxe, core.ConditionVsTrolls, core.ConditionVsOrcsAndOgres)
-	newForeverWeaponProc(AngerforgesBattleAxe, "Angerforge's Battle Axe", foreverProc{PPM: 1, SpellID: 1300783,
+	// EV-0153: 2 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(AngerforgesBattleAxe, "Angerforge's Battle Axe", foreverProc{PPM: 2, SpellID: 1300783,
 		School: core.SpellSchoolPhysical, DefenseType: core.DefenseTypeMelee, DmgMin: 109,
 		VsMultiplier: 2, Vs: isMobFamily(proto.MobFamily_MobFamilyTroll, proto.MobFamily_MobFamilyOrc)})
 
@@ -233,21 +238,24 @@ func init() {
 		School: core.SpellSchoolFire, DefenseType: core.DefenseTypeMagic, DmgMin: 182})
 
 	// Gargoyle Shredder Talons: Rend (1320824), a bleed of 20 every 2 sec for 14 sec.
-	newForeverWeaponProc(GargoyleShredderTalons, "Gargoyle Shredder Talons", foreverProc{PPM: 1, SpellID: 1320824,
+	// EV-0183: 2.05 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(GargoyleShredderTalons, "Gargoyle Shredder Talons", foreverProc{PPM: 2.05, SpellID: 1320824,
 		School: core.SpellSchoolPhysical, DefenseType: core.DefenseTypeMelee,
 		Tick: 20, Ticks: 7, TickLength: time.Second * 2})
 
 	// Hedgecutter (1302344): 42 Arcane, variance 0.42 (33.2 to 50.8). Plants take three times as
 	// much (effect 2).
 	core.RegisterItemConditions(Hedgecutter, core.ConditionVsPlants)
-	newForeverWeaponProc(Hedgecutter, "Hedgecutter", foreverProc{PPM: 1, SpellID: 1302344,
+	// EV-0183: 1.95 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(Hedgecutter, "Hedgecutter", foreverProc{PPM: 1.95, SpellID: 1302344,
 		School: core.SpellSchoolArcane, DefenseType: core.DefenseTypeMagic, DmgMin: 42 * 0.79, DmgRange: 42 * 0.42,
 		VsMultiplier: 3, Vs: isMobFamily(proto.MobFamily_MobFamilyPlant)})
 
 	// Iceblade Hacker: its Frostbolt (1298416), 105 Frost, variance 0.6 (73.5 to 136.5), and a 50%
 	// slow. Its equip (1298414) deals 40.7 Frost with each melee attack of the axe, on the melee
-	// table.
-	newForeverWeaponProc(IcebladeHacker, "Iceblade Hacker", foreverProc{PPM: 1, SpellID: 1298416,
+	// table, which always lands (EV-0164). Its Frostbolt procs 2 times a minute (EV-0136, Warcraft
+	// Logs).
+	newForeverWeaponProc(IcebladeHacker, "Iceblade Hacker", foreverProc{PPM: 2, SpellID: 1298416,
 		School: core.SpellSchoolFrost, DefenseType: core.DefenseTypeMagic, DmgMin: 73.5, DmgRange: 63,
 		OnEquip: func(character *core.Character) {
 			registerForeverOnHitDamage(character, "Iceblade Hacker Frost", 1298414, core.SpellSchoolFrost, core.DefenseTypeMelee,
@@ -267,7 +275,8 @@ func init() {
 
 	// Shimmering Platinum Warhammer: Lightning Bolt (19874), 252 Nature, variance 0.3256 (211 to
 	// 293).
-	newForeverWeaponProc(ShimmeringPlatinumWarhammer, "Shimmering Platinum Warhammer", foreverProc{PPM: 1, SpellID: 19874,
+	// EV-0177: 1.85 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(ShimmeringPlatinumWarhammer, "Shimmering Platinum Warhammer", foreverProc{PPM: 1.85, SpellID: 19874,
 		School: core.SpellSchoolNature, DefenseType: core.DefenseTypeMagic, DmgMin: 252 * (1 - 0.32558140159/2), DmgRange: 252 * 0.32558140159})
 
 	// Soul Breaker (17506): 10 Shadow every sec for 10 sec, and as much mana.
@@ -278,25 +287,29 @@ func init() {
 	// Sul'thraze the Lasher: Rage of Sul'thraze (1294430), 159 Shadow, variance 0.8 (95.4 to
 	// 222.6), and 180 less attack power on the target for 15 sec. Shadow Lash (1294431) follows 5
 	// sec later with 159 more. Trolls take twice the second part (effect 5), which we leave out.
-	newForeverWeaponProc(SulthrazeTheLasher, "Sul'thraze the Lasher", foreverProc{PPM: 1, SpellID: 1294430,
+	// EV-0136: 1.45 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(SulthrazeTheLasher, "Sul'thraze the Lasher", foreverProc{PPM: 1.45, SpellID: 1294430,
 		School: core.SpellSchoolShadow, DefenseType: core.DefenseTypeMagic, DmgMin: 95.4, DmgRange: 127.2,
 		Tick: 159, Ticks: 1, TickLength: time.Second * 5})
 
 	// Taran Icebreaker: Fireball (16415), 300 Fire, variance 0.2 (270 to 330), then 25 every 2 sec
 	// for 8 sec.
-	newForeverWeaponProc(TaranIcebreaker, "Taran Icebreaker", foreverProc{PPM: 1, SpellID: 16415,
+	// EV-0136: 0.95 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(TaranIcebreaker, "Taran Icebreaker", foreverProc{PPM: 0.95, SpellID: 16415,
 		School: core.SpellSchoolFire, DefenseType: core.DefenseTypeMagic, DmgMin: 270, DmgRange: 60,
 		Tick: 25, Ticks: 4, TickLength: time.Second * 2})
 
 	// The Blackrock Slicer: Wound (17407), 100 Physical, variance 1 (50 to 150), on the melee
 	// table, then 13 every sec for 10 sec.
-	newForeverWeaponProc(TheBlackrockSlicer, "The Blackrock Slicer", foreverProc{PPM: 1, SpellID: 17407,
+	// EV-0136: 1.95 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(TheBlackrockSlicer, "The Blackrock Slicer", foreverProc{PPM: 1.95, SpellID: 17407,
 		School: core.SpellSchoolPhysical, DefenseType: core.DefenseTypeMelee, DmgMin: 50, DmgRange: 100,
 		Tick: 13, Ticks: 10, TickLength: time.Second})
 
 	// Waveslicer (1302166): 70 Nature. Aquatic enemies take three times as much, and no boss we
 	// sim is Aquatic.
-	newForeverWeaponProc(Waveslicer, "Waveslicer", foreverProc{PPM: 1, SpellID: 1302166,
+	// EV-0136: 1.95 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(Waveslicer, "Waveslicer", foreverProc{PPM: 1.95, SpellID: 1302166,
 		School: core.SpellSchoolNature, DefenseType: core.DefenseTypeMagic, DmgMin: 70})
 
 	// Windreaper (20586): 21 Nature every 2 sec for 10 sec.
@@ -311,7 +324,8 @@ func init() {
 		School: core.SpellSchoolShadow, DefenseType: core.DefenseTypeRanged, DmgMin: 26 * (1 - 0.36363637447/2), DmgRange: 26 * 0.36363637447})
 
 	// Dwarven Hand Cannon: Flaming Cannonball (29639), 49 Fire, variance 0.39 (39.4 to 58.6).
-	newForeverWeaponProc(DwarvenHandCannon, "Dwarven Hand Cannon", foreverProc{PPM: 1, SpellID: 29639,
+	// EV-0136: 4 procs a minute (wowsims/forever, Warcraft Logs).
+	newForeverWeaponProc(DwarvenHandCannon, "Dwarven Hand Cannon", foreverProc{PPM: 4, SpellID: 29639,
 		School: core.SpellSchoolFire, DefenseType: core.DefenseTypeRanged, DmgMin: 49 * (1 - 0.3902438879/2), DmgRange: 49 * 0.3902438879})
 
 	// Shell Launcher Shotgun: Flaming Shell (29647), 38.5 Fire, variance 0.364 (31.5 to 45.5).
@@ -340,7 +354,7 @@ func init() {
 	newForeverOnHitDamage(StormGauntlets, "Storm Gauntlets", 16614, core.SpellSchoolNature, core.DefenseTypeMagic, 3, 0, allMeleeMask)
 
 	// Warblade of Caer Darrow (1298499): 27.72 Frost, variance 0.4 (22.2 to 33.3), with each melee
-	// attack of the sword, on the melee table.
+	// attack of the sword, on the melee table, which always lands (EV-0164).
 	newForeverOnHitDamage(WarbladeOfCaerDarrow, "Warblade of Caer Darrow", 1298499, core.SpellSchoolFrost, core.DefenseTypeMelee,
 		27.72*0.8, 27.72*0.4, itemMeleeMask(WarbladeOfCaerDarrow))
 
