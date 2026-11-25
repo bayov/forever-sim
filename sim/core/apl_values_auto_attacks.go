@@ -24,16 +24,17 @@ func (value *APLValueAutoTimeToNext) Type() proto.APLValueType {
 func (value *APLValueAutoTimeToNext) GetDuration(sim *Simulation) time.Duration {
 	switch value.autoType {
 	case proto.APLValueAutoTimeToNext_Melee:
-		return max(0, value.unit.AutoAttacks.NextAttackAt()-sim.CurrentTime)
+		return max(0, min(value.unit.AutoAttacks.MainhandScheduledSwingAt(), value.unit.AutoAttacks.OffhandSwingAt())-sim.CurrentTime)
 	case proto.APLValueAutoTimeToNext_MainHand:
-		return max(0, value.unit.AutoAttacks.MainhandSwingAt()-sim.CurrentTime)
+		return max(0, value.unit.AutoAttacks.MainhandScheduledSwingAt()-sim.CurrentTime)
 	case proto.APLValueAutoTimeToNext_OffHand:
 		return max(0, value.unit.AutoAttacks.OffhandSwingAt()-sim.CurrentTime)
 	case proto.APLValueAutoTimeToNext_Ranged:
 		return max(0, value.unit.AutoAttacks.NextRangedAttackAt()-sim.CurrentTime)
 	}
 	// defaults to Any
-	return max(0, value.unit.AutoAttacks.NextAnyAttackAt()-sim.CurrentTime)
+	aa := value.unit.AutoAttacks
+	return max(0, min(aa.MainhandScheduledSwingAt(), aa.OffhandSwingAt(), aa.NextRangedAttackAt())-sim.CurrentTime)
 }
 func (value *APLValueAutoTimeToNext) String() string {
 	return "Auto Time To Next"

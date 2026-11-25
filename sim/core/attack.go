@@ -212,6 +212,20 @@ func (aa *AutoAttacks) MainhandSwingAt() time.Duration {
 	return aa.mh.swingAt
 }
 
+// MainhandScheduledSwingAt is when the main hand swings next on its own timer, what the rotation
+// sees as the time to the next main hand swing. Under Forever an extra attack swings at once
+// and keeps the schedule (ExtraMHAttack): between its proc and its swing, swingAt points at
+// the extra attack, now or a batch window on, and the swing timer itself is still at keptSwingAt.
+// Read as the next swing it would show a main hand that just swung as one about to swing, so
+// a gate on the time since the last swing (rotopt's wfGate: a Bloodthirst in Windfury Totem's
+// 100 ms after the Heroic Strike that procced it) let a strike through.
+func (aa *AutoAttacks) MainhandScheduledSwingAt() time.Duration {
+	if aa.mh.keepsSchedule {
+		return aa.mh.keptSwingAt
+	}
+	return aa.mh.swingAt
+}
+
 func (aa *AutoAttacks) OffhandSwingAt() time.Duration {
 	return aa.oh.swingAt
 }
