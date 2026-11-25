@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_rotations-20261125-1: The report's Tanking mode predates the Phase 0 requests, the tank threat batch and the Lacerate fix
+- severity: high (every tank row moves: bear Balanced 2153 to 3646, paladin Max survival 1787 to 800, warrior Max survival 1820 to 1096 on the bench's scoring mean)
+- affects: all tank presets in the DPS Report's Tanking mode
+- found: 2026-11-25, phase0-tankheal 95962a7d3
+- evidence: tools/dps_report/raw/bench/tank.tgz was last packed in 01cc70b80 ("Tanking and Healing re-simmed as is"), before the requests moved to Phase 0 gear (c916a72cf, 4c122eae9, 7753b07c6, 970d4bd3b and others), before 2f42f4a44 (threat batch) and 95962a7d3 (Lacerate). ref/tank_bench/summary.tsv has the new bench numbers; the round notes' bear scores (847.5 / 3467.2 / 5202.3) also predate 95962a7d3 (now 1015.3 / 3645.8 / 5386.8).
+- proposed fix: tools/dps_report/pipeline.sh hydrate, then pipeline.sh tankheal tank, then publish and deploy, after the branch merges; update the bear round notes' score table.
+- needs: orchestrator fix
+
 ### tank_rotations-20261122-1: Paladin Balanced's Consecration mana floor (60%) now costs about 4; any mana wins since Judgement of Wisdom pays only on landed swings
 - severity: low
 - affects: Protection paladin Balanced

@@ -1,12 +1,13 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "95962a7d3",
+  "branch": "phase0-tankheal"
  },
- "last_pass_at": "2026-11-25T13:00:00Z",
- "pass": 30,
- "result": "quiet",
+ "last_pass_at": "2026-11-25T17:38:34Z",
+ "pass": 31,
+ "result": "findings",
  "baseline": "ref/tank_bench/summary.tsv",
  "client_build": "1.60.1.70959",
  "checked_at": "2026-11-25T13:10:47Z",
- "note": "Rage from hits taken by stance (b4cab8498) moves warrior/bear rows as intended; every Rage threshold re-checked, all hold. Warden -20 to -27 is f1942793d (Arcane Brilliance overwrites its Elixir of Greater Intellect, now dead). Windfury timing item not done."
+ "note": "Pass on phase0-tankheal, Phase 0 requests; baseline rewritten (bear on 95962a7d3). Report Tanking mode stale (tank_rotations-20261125-1). Windfury timing item not done."
 }
