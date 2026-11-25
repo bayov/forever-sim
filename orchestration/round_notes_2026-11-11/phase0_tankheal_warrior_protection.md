@@ -11,7 +11,7 @@ The mean of the six scored bosses (magmadar, golemagg, onyxia, broodlord, vaelas
 |---|---|---|---|
 | Balanced | 3080.2 | 3262.8 | -182.6 |
 | Max threat | 4470.0 | 4110.0 | +360.0 |
-| Max survival | 1074.0 | 1617.8 | -543.8 |
+| Max survival | 1076.5 | 1617.8 | -541.3 |
 
 The Phase 0 set has more threat than the synthetic set but less mitigation and health. Survival loses most on onyxia, broodlord and chromaggus.
 The search's own figures (3299.4, 4699.7, 1202.2) use the search's scoring, not the bench's.
@@ -77,7 +77,7 @@ enchants: head Lesser Arcanum of Voracity, neck Enchant Necklace - Strength, bac
 | hands | Handguards of Heroism |  | Quest (NPC not in our data yet) · Gauntlets of Valor (Ramstein, Strat) + Belt of Valor (BoE) · after the 20g bracer quest · or 47g at the ve |
 | waist | Valiant's Waistguard |  | Pix Xizzix · 100 Reals · Warrior only |
 | legs | Legguards of Heroism |  | Quest (NPC not in our data yet) · Spaulders of Valor (Rend, UBRS), Legplates of Valor (Rivendare, Strat), Boots of Valor (Kirtonos, Scholo)  |
-| feet | Battleboots of Heroism |  | Quest (NPC not in our data yet) · Spaulders of Valor (Rend, UBRS), Legplates of Valor (Rivendare, Strat), Boots of Valor (Kirtonos, Scholo)  |
+| feet | Sabatons of Heroism |  | Quest (NPC not in our data yet) · Spaulders of Valor (Rend, UBRS), Legplates of Valor (Rivendare, Strat), Boots of Valor (Kirtonos, Scholo)  |
 | finger | Watcher's Signet of Vigilance | doubtful | Watchers Revered · no rep source found yet |
 | finger | Tracker's Signet of Vigilance | doubtful | Watchers Honored · no rep source found yet |
 | trinket | Adaptive Combat Assistant |  | Pix Xizzix · 125 Reals |
@@ -101,6 +101,15 @@ New tags this round:
 - out: Lord Blackwood's Blade (Scholomance summon, like the Buckler);
 - open: Petrified Bark Shield, Avalanchion's Stony Hide, Tunnelweb Pincer, Enchant Weapon Striking (weapon re-rank top 5s)
 - doubtful: Officer's Gloves 250551 (a Forever Blacksmithing recipe, plans source not in our data).
+
+## Price check round (fc39e5000)
+
+tools/audit/gear/phase0_check.py flagged three open items ranked above the pick. The slots were re-ranked with a 20000-iteration confirm. Swaps must clear 2 stderr.
+- Balanced shoulder, Spaulders of Heroism: now ranks 1.3 below Pauldrons of Heroism. Clean.
+- Max survival feet, Sabatons of Heroism: +6.6 (3.6) at 20000 iterations, then +4.3 (1.9) at 80000. Swapped in. The list score is 1218.7.
+- Max survival neck, Talisman of Evasion: -18.6 (4.4) at 20000 iterations, so Amulet of the Darkmoon stays. The flag stands, because the check reads the 1000-iteration screen value (+5.2).
+
+The scores and race rows above are on fc39e5000 code. Synthetic and the other presets did not move.
 
 ## Set trap
 
@@ -166,7 +175,7 @@ All four races wear the preset's gear.
 | | Max survival | 1349.8 | 1418.7 | 1360.7 | **1617.8** |
 | Phase 0 set, after (current code) | Balanced | 2974.2 | 2994.7 | 2941.5 | **3080.2** |
 | | Max threat | 4457.8 | 4451.8 | 4368.3 | **4470.0** |
-| | Max survival | 731.5 | 847.5 | 781.7 | **1074.0** |
+| | Max survival | 731.2 | 846.5 | 782.0 | **1076.5** |
 | Synthetic, rage stance rule off (final go code) | Balanced | 3217.2 | 3199.0 | 3144.7 | 3279.7 |
 | | Max threat | 4124.0 | 4077.7 | 4013.5 | 4120.0 |
 | | Max survival | 1371.3 | 1441.7 | 1380.8 | 1635.7 |
