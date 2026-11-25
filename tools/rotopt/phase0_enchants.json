@@ -121,5 +121,6 @@
   "463871": {"name": "Enchant Shield - Law of Nature", "note": "Timbermaw Hold Honored · Wowhead delisted the formula on 2026-11-04, the game may still have it", "source": "Vendor: Meilosh (Felwood, Timbermaw Hold Honored), Formula 228982, skill 300"},
   "13945": {"name": "Enchant Bracer - Greater Stamina", "note": "Formula 11225 drop, AH price not checked", "source": "Formula 11225: 5.3% Lord Captain Wyrmak (Swamp of Sorrows), 0.6% Sandfury Firecaller, 0.6% Ironpatch; skill 245"},
   "10344": {"name": "Thick Armor Kit", "note": "Leatherworking craft", "source": "Leatherworking recipe (Classic skill 200) from Thick Leather · not verified in Forever data"},
-  "22846": {"name": "Arcanum of Protection", "note": "Libram + Pristine Black Diamond ~75g on AH", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"}
+  "22846": {"name": "Arcanum of Protection", "note": "Libram + Pristine Black Diamond ~75g on AH", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
+  "22725": {"name": "Core Armor Kit", "avail": "out", "note": "Core Leather is a Molten Core material", "source": "Leatherworking recipe needing Core Leather (Molten Core)"}
 }
