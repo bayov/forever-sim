@@ -1,0 +1,74 @@
+{
+ "gearSet": "level60_phase0_shadow_alliance",
+ "equipment": {
+  "items": [
+   {
+    "id": 226957,
+    "enchant": 2544
+   },
+   {
+    "id": 19426,
+    "enchant": 1249057
+   },
+   {
+    "id": 227808
+   },
+   {
+    "id": 272411
+   },
+   {
+    "id": 280057,
+    "enchant": 1254966
+   },
+   {
+    "id": 11766,
+    "randomSuffix": 1851,
+    "enchant": 1220624
+   },
+   {
+    "id": 14333,
+    "randomSuffix": 1857,
+    "enchant": 1254966
+   },
+   {
+    "id": 228190
+   },
+   {
+    "id": 14334,
+    "randomSuffix": 1864,
+    "enchant": 2544
+   },
+   {
+    "id": 10247,
+    "randomSuffix": 1857,
+    "enchant": 1254966
+   },
+   {
+    "id": 275977
+   },
+   {
+    "id": 272406
+   },
+   {
+    "id": 10455
+   },
+   {
+    "id": 13968
+   },
+   {
+    "id": 18372,
+    "enchant": 1248805
+   },
+   {
+    "id": 15989,
+    "randomSuffix": 1852,
+    "enchant": 1219579
+   },
+   {
+    "id": 22408
+   }
+  ]
+ },
+ "note": "Alliance: wears level60_phase0_shadow_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: Human is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_shadow. It wears level60_phase0_shadow_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}

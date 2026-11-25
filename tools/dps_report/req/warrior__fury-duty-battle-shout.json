@@ -36,7 +36,7 @@
                   "enchant": 1248640
                 },
                 {
-                  "id": 19044
+                  "id": 272403
                 },
                 {
                   "id": 22385,
@@ -59,11 +59,11 @@
                   "id": 19289
                 },
                 {
-                  "id": 11684,
+                  "id": 6622,
                   "enchant": 1900
                 },
                 {
-                  "id": 12590,
+                  "id": 279259,
                   "enchant": 1900
                 },
                 {
@@ -77,7 +77,7 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "mainHandImbue": "DenseWeightstone",
+              "mainHandImbue": "DenseSharpeningStone",
               "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MightyRagePotion",
               "dragonBreathChili": true,

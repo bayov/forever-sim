@@ -10,15 +10,15 @@
     180
   ],
   "use_dur": 90,
-  "dps": 1009.88,
-  "made": "2026-11-24",
-  "sim": "347151b491b5+",
+  "dps": 977.91,
+  "made": "2026-11-25",
+  "sim": "fd4ba3ed226a+",
   "slots": {
     "head": [
       {
         "id": 12640,
         "name": "Lionheart Helm",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1506,
@@ -28,46 +28,46 @@
       {
         "id": 284086,
         "name": "Scarlet Executioner's Guise",
-        "dps": 988.4,
+        "dps": 956.43,
         "loss": 21.48
       },
       {
         "id": 250599,
         "name": "Stalwart Helm",
-        "dps": 987.21,
+        "dps": 955.24,
         "loss": 22.67,
         "note": "Blacksmithing 300 · plans (251451) from Bloodaxe Veteran, Blackrock Spire trash 4.9% · reagents unchecked"
       },
       {
         "id": 13404,
         "name": "Mask of the Unforgiven",
-        "dps": 986.84,
+        "dps": 954.87,
         "loss": 23.04
       },
       {
         "id": 12587,
         "name": "Eye of Rend",
-        "dps": 983.52,
+        "dps": 951.55,
         "loss": 26.36
       },
       {
         "id": 22411,
         "name": "Helm of the Executioner",
-        "dps": 981.86,
+        "dps": 949.89,
         "loss": 28.02,
         "note": "Baron Rivendare · Stratholme · looted Nov 9"
       },
       {
         "id": 279253,
         "name": "Outlaw's Collar",
-        "dps": 978.41,
+        "dps": 946.44,
         "loss": 31.47
       },
       {
         "id": 14979,
         "suffix": 723,
         "name": "Exalted Helmet of the Tiger",
-        "dps": 976.93,
+        "dps": 944.96,
         "loss": 32.95,
         "unsourced": true,
         "note": "Random world drop"
@@ -76,21 +76,21 @@
         "id": 15439,
         "suffix": 723,
         "name": "Supreme Crown of the Tiger",
-        "dps": 976.93,
+        "dps": 944.96,
         "loss": 32.95
       },
       {
         "id": 15684,
         "suffix": 723,
         "name": "Triumphant Skullcap of the Tiger",
-        "dps": 976.93,
+        "dps": 944.96,
         "loss": 32.95,
         "unsourced": true
       },
       {
         "id": 226860,
         "name": "Crown of Heroism",
-        "dps": 976.65,
+        "dps": 944.68,
         "loss": 33.23,
         "avail": "doubtful",
         "note": "Quest (NPC not in our data yet) · Helm of Valor (Gandling, Scholo) + Breastplate of Valor (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · or 95g at the vendor after · Forever Battlegear of Heroism, DPS variant"
@@ -98,20 +98,20 @@
       {
         "id": 287019,
         "name": "Defias Enforcer's Mask",
-        "dps": 976.39,
+        "dps": 944.42,
         "loss": 33.49,
         "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known)"
       },
       {
         "id": 11735,
         "name": "Ragefury Eyepatch",
-        "dps": 976.32,
+        "dps": 944.35,
         "loss": 33.56
       },
       {
         "id": 13359,
         "name": "Crown of Tyranny",
-        "dps": 976,
+        "dps": 944.03,
         "loss": 33.88,
         "note": "Trash · Stratholme · looted Nov 13"
       },
@@ -119,7 +119,7 @@
         "id": 10261,
         "suffix": 720,
         "name": "Adventurer's Bandana of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01,
         "note": "Random world drop · other suffixes on AH ~9.9g"
       },
@@ -127,7 +127,7 @@
         "id": 10379,
         "suffix": 720,
         "name": "Commander's Helm of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01,
         "note": "Random world drop"
       },
@@ -135,14 +135,14 @@
         "id": 15193,
         "suffix": 720,
         "name": "Grand Crown of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01
       },
       {
         "id": 10388,
         "suffix": 720,
         "name": "Hyperion Helm of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01,
         "note": "Random world drop"
       },
@@ -150,28 +150,28 @@
         "id": 15670,
         "suffix": 720,
         "name": "Magnificent Helmet of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01
       },
       {
         "id": 10272,
         "suffix": 720,
         "name": "Masterwork Circlet of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01
       },
       {
         "id": 10160,
         "suffix": 720,
         "name": "Mercurial Circlet of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01
       },
       {
         "id": 10150,
         "suffix": 720,
         "name": "Mighty Helmet of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01,
         "note": "Random world drop · BoE"
       },
@@ -179,21 +179,21 @@
         "id": 10226,
         "suffix": 720,
         "name": "Nightshade Helmet of the Tiger",
-        "dps": 975.87,
+        "dps": 943.9,
         "loss": 34.01,
         "note": "Random world drop · BoE"
       },
       {
         "id": 252485,
         "name": "Warbear Helm",
-        "dps": 973.78,
+        "dps": 941.81,
         "loss": 36.1,
         "note": "Leatherworking 300 · pattern 9.4% Eldreth Seether (Dire Maul) · 20 Warbear Leather, 20 Fel Leather, 10 Pristine Scale (cost unchecked)"
       },
       {
         "id": 252482,
         "name": "Blue Suede Hat",
-        "dps": 973.72,
+        "dps": 941.75,
         "loss": 36.16,
         "note": "Leatherworking 280 · pattern from Winterfall Den Watcher (Winterspring) 1.6%"
       }
@@ -202,7 +202,7 @@
       {
         "id": 15411,
         "name": "Mark of Fordring",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1249019,
@@ -211,7 +211,7 @@
       {
         "id": 22659,
         "name": "Medallion of the Dawn",
-        "dps": 1009.21,
+        "dps": 977.24,
         "loss": 0.67,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -219,14 +219,14 @@
       {
         "id": 22150,
         "name": "Beads of Ogre Might",
-        "dps": 1008.34,
+        "dps": 976.37,
         "loss": 1.54,
         "note": "Quest: Falrin's Vendetta (Dire Maul) · 25 Ogre Warbeads from Dire Maul or Blackrock Spire ogres · step of Mokvar's Five Thunders chain"
       },
       {
         "id": 19491,
         "name": "Amulet of the Darkmoon",
-        "dps": 1008.12,
+        "dps": 976.15,
         "loss": 1.76,
         "note": "Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
       },
@@ -234,20 +234,20 @@
         "id": 12048,
         "suffix": 698,
         "name": "Prismatic Pendant of the Tiger",
-        "dps": 1005.12,
+        "dps": 973.15,
         "loss": 4.76,
         "note": "Random world drop"
       },
       {
         "id": 276740,
         "name": "Sentimental Locket",
-        "dps": 1005,
+        "dps": 973.03,
         "loss": 4.88
       },
       {
         "id": 22340,
         "name": "Pendant of Celerity",
-        "dps": 1004.84,
+        "dps": 972.87,
         "loss": 5.04,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
@@ -255,7 +255,7 @@
         "id": 12036,
         "suffix": 696,
         "name": "Granite Necklace of the Tiger",
-        "dps": 1004.45,
+        "dps": 972.48,
         "loss": 5.43,
         "note": "Random world drop · other suffixes on AH ~5.8g"
       },
@@ -263,7 +263,7 @@
         "id": 12027,
         "suffix": 696,
         "name": "Vermilion Necklace of the Tiger",
-        "dps": 1004.45,
+        "dps": 972.48,
         "loss": 5.43,
         "note": "Random world drop"
       },
@@ -271,7 +271,7 @@
         "id": 12046,
         "suffix": 695,
         "name": "Jungle Necklace of the Tiger",
-        "dps": 1003.81,
+        "dps": 971.84,
         "loss": 6.07,
         "note": "Random world drop"
       },
@@ -279,7 +279,7 @@
         "id": 12048,
         "suffix": 308,
         "name": "Prismatic Pendant of Strength",
-        "dps": 1002.76,
+        "dps": 970.79,
         "loss": 7.12,
         "note": "Random world drop"
       },
@@ -287,7 +287,7 @@
         "id": 12034,
         "suffix": 693,
         "name": "Marble Necklace of the Tiger",
-        "dps": 1002.48,
+        "dps": 970.51,
         "loss": 7.4,
         "note": "Random world drop"
       },
@@ -295,7 +295,7 @@
         "id": 12035,
         "suffix": 693,
         "name": "Obsidian Pendant of the Tiger",
-        "dps": 1002.48,
+        "dps": 970.51,
         "loss": 7.4,
         "note": "On AH ~3.5g"
       },
@@ -303,7 +303,7 @@
         "id": 12026,
         "suffix": 693,
         "name": "Quicksilver Pendant of the Tiger",
-        "dps": 1002.48,
+        "dps": 970.51,
         "loss": 7.4,
         "note": "Random world drop"
       },
@@ -311,7 +311,7 @@
         "id": 12025,
         "suffix": 693,
         "name": "Selenium Chain of the Tiger",
-        "dps": 1002.48,
+        "dps": 970.51,
         "loss": 7.4,
         "note": "Random world drop"
       },
@@ -319,7 +319,7 @@
         "id": 12045,
         "suffix": 693,
         "name": "Swamp Pendant of the Tiger",
-        "dps": 1002.48,
+        "dps": 970.51,
         "loss": 7.4,
         "note": "Random world drop"
       },
@@ -327,14 +327,14 @@
         "id": 12036,
         "suffix": 307,
         "name": "Granite Necklace of Strength",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "note": "Random world drop · other suffixes on AH ~5.8g"
       },
       {
         "id": 11933,
         "name": "Imperial Jewel",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "note": "Drop: Emperor Dagran Thaurissan, Blackrock Depths"
       },
@@ -342,7 +342,7 @@
         "id": 12046,
         "suffix": 307,
         "name": "Jungle Necklace of Strength",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "note": "Random world drop"
       },
@@ -350,7 +350,7 @@
         "id": 12048,
         "suffix": 1562,
         "name": "Prismatic Pendant of Power",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "note": "Random world drop"
       },
@@ -358,7 +358,7 @@
         "id": 12026,
         "suffix": 307,
         "name": "Quicksilver Pendant of Strength",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "note": "Random world drop"
       },
@@ -366,14 +366,14 @@
         "id": 12027,
         "suffix": 307,
         "name": "Vermilion Necklace of Strength",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "note": "Random world drop"
       },
       {
         "id": 277202,
         "name": "Artifact Seeker's Pendant",
-        "dps": 1002,
+        "dps": 970.03,
         "loss": 7.88,
         "avail": "doubtful",
         "note": "Quest: Greater Friend of the Library · giver and place unknown"
@@ -382,14 +382,14 @@
         "id": 11946,
         "suffix": 692,
         "name": "Fire Opal Necklace of the Tiger",
-        "dps": 1002,
+        "dps": 970.03,
         "loss": 7.88,
         "note": "Drop: Relic Coffer, Blackrock Depths"
       },
       {
         "id": 12929,
         "name": "Emberfury Talisman",
-        "dps": 1001.51,
+        "dps": 969.54,
         "loss": 8.37
       }
     ],
@@ -397,7 +397,7 @@
       {
         "id": 272106,
         "name": "Darkspear Epaulets",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -406,7 +406,7 @@
       {
         "id": 272105,
         "name": "Darkspear Pauldrons",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "avail": "doubtful",
         "note": "Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens)"
@@ -414,7 +414,7 @@
       {
         "id": 20184,
         "name": "Defiler's Lamellar Spaulders",
-        "dps": 1007.3,
+        "dps": 975.33,
         "loss": 2.58,
         "unsourced": true,
         "avail": "infeasible",
@@ -423,7 +423,7 @@
       {
         "id": 20194,
         "name": "Defiler's Leather Shoulders",
-        "dps": 1005.7,
+        "dps": 973.73,
         "loss": 4.18,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
@@ -431,7 +431,7 @@
       {
         "id": 287022,
         "name": "Spaulders of Containment",
-        "dps": 1005.27,
+        "dps": 973.3,
         "loss": 4.61,
         "note": "No source in our data · revealed Nov 8",
         "avail": "doubtful"
@@ -439,14 +439,14 @@
       {
         "id": 272108,
         "name": "Darkspear Spaulders",
-        "dps": 1004.6,
+        "dps": 972.63,
         "loss": 5.28,
         "note": "Darkspear Raiders rep · Creeg Bothunk"
       },
       {
         "id": 275737,
         "name": "Hermit's Pauldron",
-        "dps": 1004.09,
+        "dps": 972.12,
         "loss": 5.79,
         "avail": "doubtful",
         "note": "Quest: Work Well Done"
@@ -454,7 +454,7 @@
       {
         "id": 12927,
         "name": "Truestrike Shoulders",
-        "dps": 1003.85,
+        "dps": 971.88,
         "loss": 6.03,
         "note": "Pyroguard Emberseer · Blackrock Spire"
       },
@@ -462,7 +462,7 @@
         "id": 10263,
         "suffix": 708,
         "name": "Adventurer's Shoulders of the Tiger",
-        "dps": 1003.01,
+        "dps": 971.04,
         "loss": 6.87,
         "note": "Random world drop · BoE"
       },
@@ -470,7 +470,7 @@
         "id": 10274,
         "suffix": 708,
         "name": "Masterwork Pauldrons of the Tiger",
-        "dps": 1003.01,
+        "dps": 971.04,
         "loss": 6.87,
         "note": "Random world drop"
       },
@@ -478,7 +478,7 @@
         "id": 15441,
         "suffix": 708,
         "name": "Supreme Shoulders of the Tiger",
-        "dps": 1003.01,
+        "dps": 971.04,
         "loss": 6.87,
         "unsourced": true,
         "note": "Random world drop · BoE"
@@ -487,13 +487,13 @@
         "id": 15686,
         "suffix": 708,
         "name": "Triumphant Shoulder Pads of the Tiger",
-        "dps": 1003.01,
+        "dps": 971.04,
         "loss": 6.87
       },
       {
         "id": 22241,
         "name": "Dark Warder's Pauldrons",
-        "dps": 1002.67,
+        "dps": 970.7,
         "loss": 7.21,
         "note": "Warder Stilgiss (Blackrock Depths)"
       },
@@ -501,34 +501,34 @@
         "id": 10383,
         "suffix": 706,
         "name": "Commander's Pauldrons of the Tiger",
-        "dps": 1002.35,
+        "dps": 970.38,
         "loss": 7.53
       },
       {
         "id": 14981,
         "suffix": 706,
         "name": "Exalted Epaulets of the Tiger",
-        "dps": 1002.35,
+        "dps": 970.38,
         "loss": 7.53
       },
       {
         "id": 10390,
         "suffix": 706,
         "name": "Hyperion Pauldrons of the Tiger",
-        "dps": 1002.35,
+        "dps": 970.38,
         "loss": 7.53,
         "note": "Random world drop"
       },
       {
         "id": 14503,
         "name": "Death's Clutch",
-        "dps": 1002.06,
+        "dps": 970.09,
         "loss": 7.82
       },
       {
         "id": 20175,
         "name": "Defiler's Lizardhide Shoulders",
-        "dps": 1001.52,
+        "dps": 969.55,
         "loss": 8.36,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed"
@@ -537,21 +537,21 @@
         "id": 10281,
         "suffix": 705,
         "name": "Emerald Pauldrons of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5
       },
       {
         "id": 10237,
         "suffix": 705,
         "name": "Engraved Pauldrons of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5
       },
       {
         "id": 15693,
         "suffix": 705,
         "name": "Grand Shoulders of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5,
         "note": "Random world drop · BoE"
       },
@@ -559,21 +559,21 @@
         "id": 14937,
         "suffix": 705,
         "name": "Heroic Pauldrons of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5
       },
       {
         "id": 15666,
         "suffix": 705,
         "name": "Impenetrable Pauldrons of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5
       },
       {
         "id": 15677,
         "suffix": 705,
         "name": "Magnificent Shoulders of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5,
         "note": "Random world drop · Wowhead also lists Gordok Warlock (Dire Maul)"
       },
@@ -581,7 +581,7 @@
         "id": 10163,
         "suffix": 705,
         "name": "Mercurial Pauldrons of the Tiger",
-        "dps": 1001.38,
+        "dps": 969.41,
         "loss": 8.5,
         "note": "Random world drop"
       }
@@ -590,7 +590,7 @@
       {
         "id": 272414,
         "name": "Howler's Furs",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1219587,
@@ -599,21 +599,21 @@
       {
         "id": 13340,
         "name": "Cape of the Black Baron",
-        "dps": 1002.91,
+        "dps": 970.94,
         "loss": 6.97,
         "note": "Drop: Baron Rivendare, Stratholme"
       },
       {
         "id": 284866,
         "name": "Windserpent Scaled Cloak",
-        "dps": 1001.71,
+        "dps": 969.74,
         "loss": 8.17,
         "note": "On AH ~5.1g"
       },
       {
         "id": 272411,
         "name": "Arcanoweave Cloak",
-        "dps": 1001.4,
+        "dps": 969.43,
         "loss": 8.48,
         "note": "Pix Xizzix · 75 Reals"
       },
@@ -621,7 +621,7 @@
         "id": 10258,
         "suffix": 696,
         "name": "Adventurer's Cape of the Tiger",
-        "dps": 1001,
+        "dps": 969.03,
         "loss": 8.88,
         "note": "Random world drop · other suffixes on AH ~2.6g"
       },
@@ -629,7 +629,7 @@
         "id": 10249,
         "suffix": 696,
         "name": "Master's Cloak of the Tiger",
-        "dps": 1001,
+        "dps": 969.03,
         "loss": 8.88,
         "note": "Random world drop"
       },
@@ -637,7 +637,7 @@
         "id": 10267,
         "suffix": 696,
         "name": "Masterwork Cape of the Tiger",
-        "dps": 1001,
+        "dps": 969.03,
         "loss": 8.88,
         "note": "Random world drop"
       },
@@ -645,14 +645,14 @@
         "id": 15437,
         "suffix": 696,
         "name": "Supreme Cape of the Tiger",
-        "dps": 1001,
+        "dps": 969.03,
         "loss": 8.88,
         "note": "Random world drop"
       },
       {
         "id": 20068,
         "name": "Deathguard's Cloak",
-        "dps": 1000.91,
+        "dps": 968.94,
         "loss": 8.97,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
@@ -660,7 +660,7 @@
       {
         "id": 3475,
         "name": "Cloak of Flames",
-        "dps": 1000.51,
+        "dps": 968.54,
         "loss": 9.37,
         "unsourced": true,
         "avail": "doubtful",
@@ -669,21 +669,21 @@
       {
         "id": 272415,
         "name": "Stalwart Cloak",
-        "dps": 1000.51,
+        "dps": 968.54,
         "loss": 9.37,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 11626,
         "name": "Blackveil Cape",
-        "dps": 1000.26,
+        "dps": 968.29,
         "loss": 9.62,
         "note": "Drop: High Interrogator Gerstahn, Blackrock Depths"
       },
       {
         "id": 22337,
         "name": "Shroud of Domination",
-        "dps": 999.85,
+        "dps": 967.88,
         "loss": 10.03,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
@@ -691,7 +691,7 @@
         "id": 14313,
         "suffix": 693,
         "name": "Celestial Cape of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -699,7 +699,7 @@
         "id": 10098,
         "suffix": 693,
         "name": "Councillor's Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -707,7 +707,7 @@
         "id": 10212,
         "suffix": 693,
         "name": "Elegant Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -715,7 +715,7 @@
         "id": 10231,
         "suffix": 693,
         "name": "Engraved Cape of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -723,7 +723,7 @@
         "id": 14331,
         "suffix": 693,
         "name": "Eternal Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -731,7 +731,7 @@
         "id": 15190,
         "suffix": 693,
         "name": "Grand Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -739,7 +739,7 @@
         "id": 10138,
         "suffix": 693,
         "name": "High Councillor's Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -747,14 +747,14 @@
         "id": 15661,
         "suffix": 693,
         "name": "Impenetrable Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47
       },
       {
         "id": 15671,
         "suffix": 693,
         "name": "Magnificent Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -762,7 +762,7 @@
         "id": 10159,
         "suffix": 693,
         "name": "Mercurial Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -770,7 +770,7 @@
         "id": 10148,
         "suffix": 693,
         "name": "Mighty Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       },
@@ -778,7 +778,7 @@
         "id": 10224,
         "suffix": 693,
         "name": "Nightshade Cloak of the Tiger",
-        "dps": 999.41,
+        "dps": 967.44,
         "loss": 10.47,
         "note": "Random world drop"
       }
@@ -787,29 +787,30 @@
       {
         "id": 252484,
         "name": "Timbermaw Tunic",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1891,
-        "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 16g per DPS"
+        "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 6g per DPS"
       },
       {
         "id": 252483,
         "name": "Dawn Armor",
-        "dps": 1002.93,
+        "dps": 970.96,
         "loss": 6.95,
         "note": "On AH ~350g · or Leatherworking craft"
       },
       {
         "id": 11726,
         "name": "Savage Gladiator Chain",
-        "dps": 1000.07,
-        "loss": 9.81
+        "dps": 968.1,
+        "loss": 9.81,
+        "note": "16g per DPS"
       },
       {
         "id": 12757,
         "name": "Breastplate of Bloodthirst",
-        "dps": 995.21,
+        "dps": 963.24,
         "loss": 14.67,
         "avail": "doubtful",
         "note": "Quest: Breastplate of Bloodthirst"
@@ -817,7 +818,7 @@
       {
         "id": 226862,
         "name": "Breastplate of Heroism",
-        "dps": 995.1,
+        "dps": 963.13,
         "loss": 14.78,
         "avail": "doubtful",
         "note": "Quest (NPC not in our data yet) · Helm of Valor (Gandling, Scholo) + Breastplate of Valor (Drakkisath, UBRS) · end of the Valthalak chain, step gold unknown · or 95g at the vendor after · Forever Battlegear of Heroism, DPS variant"
@@ -825,7 +826,7 @@
       {
         "id": 15141,
         "name": "Onyxia Scale Breastplate",
-        "dps": 994.82,
+        "dps": 962.85,
         "loss": 15.06,
         "avail": "doubtful",
         "note": "BoE · LW craft · Forever source unknown · Classic recipe takes a Scale of Onyxia (raid)"
@@ -833,20 +834,20 @@
       {
         "id": 13944,
         "name": "Tombstone Breastplate",
-        "dps": 993.87,
+        "dps": 961.9,
         "loss": 16.01
       },
       {
         "id": 18530,
         "name": "Ogre Forged Hauberk",
-        "dps": 990.82,
+        "dps": 958.85,
         "loss": 19.06
       },
       {
         "id": 10264,
         "suffix": 723,
         "name": "Adventurer's Tunic of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68,
         "note": "Random world drop · other suffixes on AH ~10g"
       },
@@ -854,7 +855,7 @@
         "id": 14975,
         "suffix": 723,
         "name": "Exalted Harness of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68,
         "note": "Random world drop · Wowhead lists only Azuregos"
       },
@@ -862,7 +863,7 @@
         "id": 10384,
         "suffix": 723,
         "name": "Hyperion Armor of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68,
         "note": "Random world drop · Wowhead also lists General Drakkisath (UBRS)"
       },
@@ -870,35 +871,35 @@
         "id": 10266,
         "suffix": 723,
         "name": "Masterwork Breastplate of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68
       },
       {
         "id": 10157,
         "suffix": 723,
         "name": "Mercurial Breastplate of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68
       },
       {
         "id": 10151,
         "suffix": 723,
         "name": "Mighty Tunic of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68
       },
       {
         "id": 10220,
         "suffix": 723,
         "name": "Nightshade Tunic of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68
       },
       {
         "id": 15442,
         "suffix": 723,
         "name": "Supreme Breastplate of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68,
         "unsourced": true
       },
@@ -906,7 +907,7 @@
         "id": 15680,
         "suffix": 723,
         "name": "Triumphant Chestpiece of the Tiger",
-        "dps": 990.2,
+        "dps": 958.23,
         "loss": 19.68,
         "unsourced": true
       },
@@ -914,34 +915,34 @@
         "id": 10784,
         "suffix": 1572,
         "name": "Atal'ai Breastplate of Power",
-        "dps": 989.83,
+        "dps": 957.86,
         "loss": 20.05
       },
       {
         "id": 12895,
         "name": "Breastplate of the Chromatic Flight",
-        "dps": 988.96,
+        "dps": 956.99,
         "loss": 20.92
       },
       {
         "id": 10378,
         "suffix": 720,
         "name": "Commander's Armor of the Tiger",
-        "dps": 988.83,
+        "dps": 956.86,
         "loss": 21.05
       },
       {
         "id": 14966,
         "suffix": 720,
         "name": "Glorious Breastplate of the Tiger",
-        "dps": 988.83,
+        "dps": 956.86,
         "loss": 21.05
       },
       {
         "id": 15195,
         "suffix": 720,
         "name": "Grand Breastplate of the Tiger",
-        "dps": 988.83,
+        "dps": 956.86,
         "loss": 21.05,
         "note": "Random world drop · BoE · also Dire Maul"
       },
@@ -949,27 +950,27 @@
         "id": 14931,
         "suffix": 720,
         "name": "Heroic Armor of the Tiger",
-        "dps": 988.83,
+        "dps": 956.86,
         "loss": 21.05
       },
       {
         "id": 15660,
         "suffix": 720,
         "name": "Impenetrable Breastplate of the Tiger",
-        "dps": 988.83,
+        "dps": 956.86,
         "loss": 21.05
       },
       {
         "id": 15669,
         "suffix": 720,
         "name": "Magnificent Breastplate of the Tiger",
-        "dps": 988.83,
+        "dps": 956.86,
         "loss": 21.05
       },
       {
         "id": 286590,
         "name": "Silithid Queen's Husk",
-        "dps": 983.69,
+        "dps": 951.72,
         "loss": 26.19,
         "unsourced": true,
         "conditional": [
@@ -985,23 +986,23 @@
       {
         "id": 12936,
         "name": "Battleborn Armbraces",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1885,
-        "note": "Warchief Rend Blackhand · Upper Blackrock Spire · looted Nov 10"
+        "note": "Warchief Rend Blackhand · Upper Blackrock Spire · looted Nov 10 · 29g per DPS"
       },
       {
         "id": 280061,
         "name": "Spike Crested Bracers",
-        "dps": 1006.15,
+        "dps": 974.18,
         "loss": 3.73,
-        "note": "Bonesnout the Unbroken · Blackmaw Hold · looted Nov 9"
+        "note": "Bonesnout the Unbroken · Blackmaw Hold · looted Nov 9 · 22g per DPS"
       },
       {
         "id": 19578,
         "name": "Berserker Bracers",
-        "dps": 1005.49,
+        "dps": 973.52,
         "loss": 4.39,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1009,7 +1010,7 @@
       {
         "id": 19587,
         "name": "Forest Stalker's Bracers",
-        "dps": 1005.16,
+        "dps": 973.19,
         "loss": 4.72,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1017,7 +1018,7 @@
       {
         "id": 19580,
         "name": "Berserker Bracers",
-        "dps": 1004.38,
+        "dps": 972.41,
         "loss": 5.5,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1025,28 +1026,29 @@
       {
         "id": 280010,
         "name": "Gargantuan Wristguards",
-        "dps": 1004,
+        "dps": 972.03,
         "loss": 5.88,
-        "note": "Titanosaur · Forever rare · looted Nov 8"
+        "note": "Titanosaur · Forever rare · looted Nov 8 · 35g per DPS",
+        "avail": "infeasible"
       },
       {
         "id": 13211,
         "name": "Slashclaw Bracers",
-        "dps": 1003.5,
+        "dps": 971.53,
         "loss": 6.38,
         "note": "Halycon · Lower Blackrock Spire · looted Nov 10"
       },
       {
         "id": 12966,
         "name": "Blackmist Armguards",
-        "dps": 1003.43,
+        "dps": 971.46,
         "loss": 6.45,
         "note": "The Beast · Blackrock Spire"
       },
       {
         "id": 19112,
         "name": "Frozen Steel Vambraces",
-        "dps": 1002.53,
+        "dps": 970.56,
         "loss": 7.35,
         "avail": "doubtful",
         "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"
@@ -1054,14 +1056,14 @@
       {
         "id": 18375,
         "name": "Bracers of the Eclipse",
-        "dps": 1002.13,
+        "dps": 970.16,
         "loss": 7.75,
         "note": "Prince Tortheldrin (Dire Maul)"
       },
       {
         "id": 19589,
         "name": "Forest Stalker's Bracers",
-        "dps": 1002.1,
+        "dps": 970.13,
         "loss": 7.78,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1069,14 +1071,14 @@
       {
         "id": 13400,
         "name": "Vambraces of the Sadist",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05,
         "note": "Timmy the Cruel · Stratholme · looted Nov 13"
       },
       {
         "id": 22668,
         "name": "Bracers of Subterfuge",
-        "dps": 1001.81,
+        "dps": 969.84,
         "loss": 8.07,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -1084,7 +1086,7 @@
       {
         "id": 19582,
         "name": "Windtalker's Wristguards",
-        "dps": 1001.78,
+        "dps": 969.81,
         "loss": 8.1,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1093,14 +1095,14 @@
         "id": 10256,
         "suffix": 696,
         "name": "Adventurer's Bracers of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41
       },
       {
         "id": 11767,
         "suffix": 696,
         "name": "Emberplate Armguards of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41,
         "note": "Lord Incendius · Blackrock Depths"
       },
@@ -1108,62 +1110,62 @@
         "id": 10265,
         "suffix": 696,
         "name": "Masterwork Bracers of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41
       },
       {
         "id": 10156,
         "suffix": 696,
         "name": "Mercurial Bracers of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41
       },
       {
         "id": 10147,
         "suffix": 696,
         "name": "Mighty Armsplints of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41
       },
       {
         "id": 15436,
         "suffix": 696,
         "name": "Supreme Bracers of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41
       },
       {
         "id": 15679,
         "suffix": 696,
         "name": "Triumphant Bracers of the Tiger",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41
       },
       {
         "id": 270124,
         "name": "Warpwood Bracers",
-        "dps": 1001.47,
+        "dps": 969.5,
         "loss": 8.41,
         "note": "Quest: Lethtendris's Web (Dire Maul)"
       },
       {
         "id": 18533,
         "name": "Gordok Bracers of Power",
-        "dps": 1001.13,
+        "dps": 969.16,
         "loss": 8.75
       },
       {
         "id": 10377,
         "suffix": 695,
         "name": "Commander's Vambraces of the Tiger",
-        "dps": 1000.72,
+        "dps": 968.75,
         "loss": 9.16
       },
       {
         "id": 14983,
         "suffix": 695,
         "name": "Exalted Armsplints of the Tiger",
-        "dps": 1000.72,
+        "dps": 968.75,
         "loss": 9.16
       }
     ],
@@ -1171,7 +1173,7 @@
       {
         "id": 272095,
         "name": "Raider Gauntlets",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1248640,
@@ -1180,35 +1182,35 @@
       {
         "id": 272099,
         "name": "Raider Gloves",
-        "dps": 1008.34,
+        "dps": 976.37,
         "loss": 1.54,
         "note": "Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens)"
       },
       {
         "id": 19049,
         "name": "Timbermaw Brawlers",
-        "dps": 1007.58,
+        "dps": 975.61,
         "loss": 2.3,
         "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Revered)"
       },
       {
         "id": 272096,
         "name": "Raider Gauntlets",
-        "dps": 1007.06,
+        "dps": 975.09,
         "loss": 2.82,
         "note": "Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens)"
       },
       {
         "id": 226861,
         "name": "Gauntlets of Heroism",
-        "dps": 1006.84,
+        "dps": 974.87,
         "loss": 3.04,
         "note": "Quest (NPC not in our data yet) · Gauntlets of Valor (Ramstein, Strat) + Belt of Valor (BoE) · after the 20g bracer quest · or 47g at the vendor after · Forever Battlegear of Heroism, DPS variant"
       },
       {
         "id": 18722,
         "name": "Death Grips",
-        "dps": 1005.29,
+        "dps": 973.32,
         "loss": 4.59,
         "note": "Magistrate Barthilas · Stratholme"
       },
@@ -1216,14 +1218,14 @@
         "id": 9640,
         "suffix": 700,
         "name": "Vice Grips of the Tiger",
-        "dps": 1004.5,
+        "dps": 972.53,
         "loss": 5.38,
         "note": "Antu'sul · Zul'Farrak"
       },
       {
         "id": 272100,
         "name": "Raider Gloves",
-        "dps": 1004.25,
+        "dps": 972.28,
         "loss": 5.63,
         "note": "Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens)"
       },
@@ -1231,21 +1233,21 @@
         "id": 13258,
         "suffix": 710,
         "name": "Slaghide Gauntlets of the Tiger",
-        "dps": 1002.89,
+        "dps": 970.92,
         "loss": 6.99,
         "note": "Urok Doomhowl (Blackrock Spire) · random suffix"
       },
       {
         "id": 15063,
         "name": "Devilsaur Gauntlets",
-        "dps": 1002.82,
+        "dps": 970.85,
         "loss": 7.06
       },
       {
         "id": 10260,
         "suffix": 707,
         "name": "Adventurer's Gloves of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55,
         "note": "Random world drop · BoE"
       },
@@ -1253,21 +1255,21 @@
         "id": 14976,
         "suffix": 707,
         "name": "Exalted Gauntlets of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55
       },
       {
         "id": 10386,
         "suffix": 707,
         "name": "Hyperion Gauntlets of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55
       },
       {
         "id": 10268,
         "suffix": 707,
         "name": "Masterwork Gauntlets of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55,
         "note": "Random world drop"
       },
@@ -1275,14 +1277,14 @@
         "id": 10161,
         "suffix": 707,
         "name": "Mercurial Gauntlets of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55
       },
       {
         "id": 10149,
         "suffix": 707,
         "name": "Mighty Gauntlets of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55,
         "note": "Random world drop · BoE"
       },
@@ -1290,7 +1292,7 @@
         "id": 15438,
         "suffix": 707,
         "name": "Supreme Gloves of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55,
         "note": "Random world drop · BoE"
       },
@@ -1298,40 +1300,40 @@
         "id": 15682,
         "suffix": 707,
         "name": "Triumphant Gauntlets of the Tiger",
-        "dps": 1002.33,
+        "dps": 970.36,
         "loss": 7.55
       },
       {
         "id": 14615,
         "name": "Bloodmail Gauntlets",
-        "dps": 1002.15,
+        "dps": 970.18,
         "loss": 7.73
       },
       {
         "id": 13162,
         "name": "Reiver Claws",
-        "dps": 1002.15,
+        "dps": 970.18,
         "loss": 7.73
       },
       {
         "id": 10380,
         "suffix": 705,
         "name": "Commander's Gauntlets of the Tiger",
-        "dps": 1001.66,
+        "dps": 969.69,
         "loss": 8.22
       },
       {
         "id": 10232,
         "suffix": 705,
         "name": "Engraved Gauntlets of the Tiger",
-        "dps": 1001.66,
+        "dps": 969.69,
         "loss": 8.22
       },
       {
         "id": 15192,
         "suffix": 705,
         "name": "Grand Gauntlets of the Tiger",
-        "dps": 1001.66,
+        "dps": 969.69,
         "loss": 8.22,
         "note": "Random world drop · BoE"
       },
@@ -1339,20 +1341,20 @@
         "id": 14933,
         "suffix": 705,
         "name": "Heroic Gauntlets of the Tiger",
-        "dps": 1001.66,
+        "dps": 969.69,
         "loss": 8.22
       },
       {
         "id": 15672,
         "suffix": 705,
         "name": "Magnificent Gauntlets of the Tiger",
-        "dps": 1001.66,
+        "dps": 969.69,
         "loss": 8.22
       },
       {
         "id": 23078,
         "name": "Gauntlets of Undead Slaying",
-        "dps": 993.25,
+        "dps": 961.28,
         "loss": 16.63,
         "conditional": [
           {
@@ -1365,194 +1367,194 @@
     ],
     "waist": [
       {
-        "id": 19044,
-        "name": "Might of the Timbermaw",
-        "dps": 1009.88,
-        "loss": 0,
-        "bis": true,
-        "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Friendly)"
-      },
-      {
         "id": 272403,
         "name": "Valiant's Waistguard",
-        "dps": 1009.13,
-        "loss": 0.75,
+        "dps": 977.91,
+        "loss": 0,
+        "bis": true,
         "note": "Pix Xizzix · 100 Reals · Warrior only"
+      },
+      {
+        "id": 19044,
+        "name": "Might of the Timbermaw",
+        "dps": 977.12,
+        "loss": 0.79,
+        "avail": "infeasible",
+        "note": "Leatherworking 300 · pattern from Meilosh (Timbermaw Hold Friendly) · 106g per DPS"
       },
       {
         "id": 20150,
         "name": "Defiler's Chain Girdle",
-        "dps": 1008.14,
-        "loss": 1.74,
-        "avail": "doubtful",
-        "note": "Defilers Honored · Rutherford Twing · Arathi Basin in Forever unconfirmed"
-      },
-      {
-        "id": 20190,
-        "name": "Defiler's Leather Girdle",
-        "dps": 1008.14,
-        "loss": 1.74,
+        "dps": 976.11,
+        "loss": 1.79,
         "avail": "doubtful",
         "note": "Defilers Honored · Rutherford Twing · Arathi Basin in Forever unconfirmed"
       },
       {
         "id": 20177,
         "name": "Defiler's Lamellar Girdle",
-        "dps": 1007.53,
-        "loss": 2.35,
+        "dps": 976.11,
+        "loss": 1.79,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Defilers Honored (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
       },
       {
-        "id": 13959,
-        "name": "Omokk's Girth Restrainer",
-        "dps": 1006.92,
-        "loss": 2.96,
-        "note": "Highlord Omokk (Classic) · Lower Blackrock Spire · Wowhead lists it as a quest source · looted Nov 13"
+        "id": 20190,
+        "name": "Defiler's Leather Girdle",
+        "dps": 976.11,
+        "loss": 1.79,
+        "avail": "doubtful",
+        "note": "Defilers Honored · Rutherford Twing · Arathi Basin in Forever unconfirmed"
       },
       {
         "id": 22232,
         "name": "Marksman's Girdle",
-        "dps": 1005.6,
-        "loss": 4.28
+        "dps": 975.73,
+        "loss": 2.18
       },
       {
-        "id": 13142,
-        "name": "Brigam Girdle",
-        "dps": 1005.46,
-        "loss": 4.41,
-        "note": "General Drakkisath · Upper Blackrock Spire"
+        "id": 13959,
+        "name": "Omokk's Girth Restrainer",
+        "dps": 975.53,
+        "loss": 2.38,
+        "note": "Highlord Omokk (Classic) · Lower Blackrock Spire · Wowhead lists it as a quest source · looted Nov 13"
       },
       {
         "id": 20179,
         "name": "Defiler's Lamellar Girdle",
-        "dps": 1005.08,
-        "loss": 4.79,
+        "dps": 973.77,
+        "loss": 4.13,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Defilers Honored (by the Highlander's Lamellar pattern) · no source in Forever data · Arathi Basin in Forever unconfirmed · unsure, used by standards 42"
       },
       {
+        "id": 13142,
+        "name": "Brigam Girdle",
+        "dps": 973.2,
+        "loss": 4.7,
+        "note": "General Drakkisath · Upper Blackrock Spire"
+      },
+      {
+        "id": 18393,
+        "name": "Warpwood Binding",
+        "dps": 973.15,
+        "loss": 4.75
+      },
+      {
+        "id": 19087,
+        "name": "Frostwolf Plate Belt",
+        "dps": 972.63,
+        "loss": 5.28,
+        "note": "Frostwolf Honored · AV queue unconfirmed · vendor not in our data · unsure, used by standards 42"
+      },
+      {
         "id": 10259,
-        "suffix": 706,
+        "suffix": 707,
         "name": "Adventurer's Belt of the Tiger",
-        "dps": 1004.38,
-        "loss": 5.5,
+        "dps": 972.36,
+        "loss": 5.54,
         "note": "Random world drop · BoE"
       },
       {
-        "id": 13252,
-        "name": "Cloudrunner Girdle",
-        "dps": 1004.38,
-        "loss": 5.5,
-        "note": "Quartermaster Zigris (Blackrock Spire)"
-      },
-      {
         "id": 13387,
-        "suffix": 706,
+        "suffix": 707,
         "name": "Foresight Girdle of the Tiger",
-        "dps": 1004.38,
-        "loss": 5.5,
+        "dps": 972.36,
+        "loss": 5.54,
         "note": "Archivist Galford · Stratholme"
       },
       {
         "id": 10387,
-        "suffix": 706,
+        "suffix": 707,
         "name": "Hyperion Girdle of the Tiger",
-        "dps": 1004.38,
-        "loss": 5.5,
+        "dps": 972.36,
+        "loss": 5.54,
         "note": "Random world drop"
       },
       {
         "id": 10269,
-        "suffix": 706,
+        "suffix": 707,
         "name": "Masterwork Girdle of the Tiger",
-        "dps": 1004.38,
-        "loss": 5.5,
+        "dps": 972.36,
+        "loss": 5.54,
         "note": "Random world drop"
       },
       {
         "id": 10154,
-        "suffix": 706,
+        "suffix": 707,
         "name": "Mercurial Girdle of the Tiger",
-        "dps": 1004.38,
-        "loss": 5.5,
+        "dps": 972.36,
+        "loss": 5.54,
         "note": "Random world drop"
       },
       {
         "id": 15434,
-        "suffix": 706,
+        "suffix": 707,
         "name": "Supreme Sash of the Tiger",
-        "dps": 1004.38,
-        "loss": 5.5,
+        "dps": 972.36,
+        "loss": 5.54,
         "note": "Random world drop · BoE"
       },
       {
         "id": 20151,
         "name": "Defiler's Chain Girdle",
-        "dps": 1003.86,
-        "loss": 6.02,
+        "dps": 972.02,
+        "loss": 5.89,
         "avail": "doubtful",
         "note": "Defilers Honored · Rutherford Twing · Arathi Basin in Forever unconfirmed"
       },
       {
         "id": 20193,
         "name": "Defiler's Leather Girdle",
-        "dps": 1003.86,
-        "loss": 6.02,
+        "dps": 972.02,
+        "loss": 5.89,
         "avail": "doubtful",
         "note": "Defilers Honored · Rutherford Twing · Arathi Basin in Forever unconfirmed"
       },
       {
-        "id": 19087,
-        "name": "Frostwolf Plate Belt",
-        "dps": 1003.8,
-        "loss": 6.08,
-        "note": "Frostwolf Honored · AV queue unconfirmed · vendor not in our data · unsure, used by standards 42"
+        "id": 226864,
+        "name": "Belt of Heroism",
+        "dps": 972,
+        "loss": 5.91,
+        "note": "Quest (NPC not in our data yet) · Gauntlets of Valor (Ramstein, Strat) + Belt of Valor (BoE) · after the 20g bracer quest · or 23.5g at the vendor after · Forever Battlegear of Heroism, DPS variant"
       },
       {
-        "id": 260196,
-        "name": "Belt of Shadows",
-        "dps": 1003.77,
-        "loss": 6.1
+        "id": 13252,
+        "name": "Cloudrunner Girdle",
+        "dps": 971.87,
+        "loss": 6.03,
+        "note": "Quartermaster Zigris (Blackrock Spire)"
       },
       {
         "id": 10381,
         "suffix": 705,
         "name": "Commander's Girdle of the Tiger",
-        "dps": 1003.64,
-        "loss": 6.24
+        "dps": 971.78,
+        "loss": 6.13
       },
       {
         "id": 14977,
         "suffix": 705,
         "name": "Exalted Girdle of the Tiger",
-        "dps": 1003.64,
-        "loss": 6.24
+        "dps": 971.78,
+        "loss": 6.13
       },
       {
         "id": 15673,
         "suffix": 705,
         "name": "Magnificent Belt of the Tiger",
-        "dps": 1003.64,
-        "loss": 6.24,
+        "dps": 971.78,
+        "loss": 6.13,
         "note": "Random world drop"
       },
       {
         "id": 10145,
         "suffix": 705,
         "name": "Mighty Girdle of the Tiger",
-        "dps": 1003.64,
-        "loss": 6.24,
-        "note": "Random world drop · BoE"
-      },
-      {
-        "id": 10221,
-        "suffix": 705,
-        "name": "Nightshade Girdle of the Tiger",
-        "dps": 1003.64,
-        "loss": 6.24,
+        "dps": 971.78,
+        "loss": 6.13,
         "note": "Random world drop · BoE"
       }
     ],
@@ -1560,7 +1562,7 @@
       {
         "id": 22385,
         "name": "Titanic Leggings",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 2543,
@@ -1570,7 +1572,7 @@
       {
         "id": 22651,
         "name": "Outrider's Plate Legguards",
-        "dps": 995.22,
+        "dps": 963.25,
         "loss": 14.66,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted · Kelm Hargunth (Warsong Outriders)"
@@ -1578,7 +1580,7 @@
       {
         "id": 22673,
         "name": "Outrider's Chain Leggings",
-        "dps": 993.45,
+        "dps": 961.48,
         "loss": 16.43,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1586,14 +1588,15 @@
       {
         "id": 13498,
         "name": "Handcrafted Mastersmith Leggings",
-        "dps": 987.36,
+        "dps": 955.39,
         "loss": 22.52,
-        "note": "Seen in game 2026-11-10 · source not in our data yet"
+        "note": "Seen in game 2026-11-10 · source not in our data yet · 38g per DPS",
+        "avail": "infeasible"
       },
       {
         "id": 14554,
         "name": "Cloudkeeper Legplates",
-        "dps": 985.98,
+        "dps": 954.01,
         "loss": 23.9,
         "unsourced": true,
         "conditional": [
@@ -1613,26 +1616,27 @@
       {
         "id": 15065,
         "name": "Warbear Woolies",
-        "dps": 983.38,
-        "loss": 26.5
+        "dps": 951.41,
+        "loss": 26.5,
+        "note": "4g per DPS"
       },
       {
         "id": 12963,
         "name": "Blademaster Leggings",
-        "dps": 983.32,
+        "dps": 951.35,
         "loss": 26.56
       },
       {
         "id": 18736,
         "name": "Plaguehound Leggings",
-        "dps": 981.81,
+        "dps": 949.84,
         "loss": 28.07,
         "note": "Trash (Stratholme) · Crypt Beast"
       },
       {
         "id": 279265,
         "name": "Azerothium Legplates",
-        "dps": 980.77,
+        "dps": 948.8,
         "loss": 29.11,
         "avail": "doubtful",
         "note": "Blacksmithing 300 · plans (279314) have no source in Forever data"
@@ -1640,7 +1644,7 @@
       {
         "id": 22740,
         "name": "Outrider's Leather Pants",
-        "dps": 979.11,
+        "dps": 947.14,
         "loss": 30.77,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
@@ -1648,21 +1652,21 @@
       {
         "id": 15062,
         "name": "Devilsaur Leggings",
-        "dps": 978.94,
+        "dps": 946.97,
         "loss": 30.94,
         "note": "On AH ~56g · or Leatherworking 290 · pattern on AH ~22g"
       },
       {
         "id": 252606,
         "name": "Pristine Scorpid Leggings",
-        "dps": 978.37,
+        "dps": 946.4,
         "loss": 31.51,
         "note": "Leatherworking 300 · pattern on AH ~134g · Sewing Machine on AH ~14g"
       },
       {
         "id": 226859,
         "name": "Legplates of Heroism",
-        "dps": 978.22,
+        "dps": 946.25,
         "loss": 31.66,
         "note": "Quest (NPC not in our data yet) · Spaulders of Valor (Rend, UBRS), Legplates of Valor (Rivendare, Strat), Boots of Valor (Kirtonos, Scholo) · Anthion chain (Strat, Dire Maul), step gold unknown · or 47g at the vendor after · Forever Battlegear of Heroism, DPS variant"
       },
@@ -1670,14 +1674,14 @@
         "id": 10262,
         "suffix": 723,
         "name": "Adventurer's Legguards of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2
       },
       {
         "id": 10389,
         "suffix": 723,
         "name": "Hyperion Legplates of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2,
         "note": "Random world drop"
       },
@@ -1685,14 +1689,14 @@
         "id": 10273,
         "suffix": 723,
         "name": "Masterwork Legplates of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2
       },
       {
         "id": 10162,
         "suffix": 723,
         "name": "Mercurial Legguards of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2,
         "note": "Random world drop"
       },
@@ -1700,7 +1704,7 @@
         "id": 10152,
         "suffix": 723,
         "name": "Mighty Leggings of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2,
         "note": "Random world drop · BoE"
       },
@@ -1708,7 +1712,7 @@
         "id": 15440,
         "suffix": 723,
         "name": "Supreme Leggings of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2,
         "note": "Random world drop · BoE · also Dire Maul"
       },
@@ -1716,41 +1720,41 @@
         "id": 15685,
         "suffix": 723,
         "name": "Triumphant Legplates of the Tiger",
-        "dps": 977.68,
+        "dps": 945.71,
         "loss": 32.2,
         "note": "Random world drop · Wowhead also lists Gordok Warlock (Dire Maul)"
       },
       {
         "id": 12903,
         "name": "Legguards of the Chromatic Defier",
-        "dps": 976.41,
+        "dps": 944.44,
         "loss": 33.47
       },
       {
         "id": 280024,
         "name": "Legplates of Reinforced Crystal",
-        "dps": 976.32,
+        "dps": 944.35,
         "loss": 33.56
       },
       {
         "id": 10382,
         "suffix": 720,
         "name": "Commander's Leggings of the Tiger",
-        "dps": 976.19,
+        "dps": 944.22,
         "loss": 33.69
       },
       {
         "id": 14980,
         "suffix": 720,
         "name": "Exalted Legplates of the Tiger",
-        "dps": 976.19,
+        "dps": 944.22,
         "loss": 33.69
       },
       {
         "id": 15194,
         "suffix": 720,
         "name": "Grand Legguards of the Tiger",
-        "dps": 976.19,
+        "dps": 944.22,
         "loss": 33.69,
         "note": "Random world drop · BoE · also Dire Maul"
       }
@@ -1759,7 +1763,7 @@
       {
         "id": 287033,
         "name": "Furbolg Berserker's Boots",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "enchant": 1887,
@@ -1769,14 +1773,14 @@
       {
         "id": 226857,
         "name": "Battleboots of Heroism",
-        "dps": 1004.77,
+        "dps": 972.8,
         "loss": 5.11,
         "note": "Quest (NPC not in our data yet) · Spaulders of Valor (Rend, UBRS), Legplates of Valor (Rivendare, Strat), Boots of Valor (Kirtonos, Scholo) · Anthion chain (Strat, Dire Maul), step gold unknown · or 47g at the vendor after · Forever Battlegear of Heroism, DPS variant"
       },
       {
         "id": 14616,
         "name": "Bloodmail Boots",
-        "dps": 1003.18,
+        "dps": 971.21,
         "loss": 6.7,
         "avail": "infeasible",
         "note": "408g per DPS"
@@ -1784,7 +1788,7 @@
       {
         "id": 13967,
         "name": "Windreaver Greaves",
-        "dps": 1000.64,
+        "dps": 968.67,
         "loss": 9.24,
         "avail": "infeasible",
         "note": "251g per DPS"
@@ -1792,7 +1796,7 @@
       {
         "id": 21532,
         "name": "Drudge Boots",
-        "dps": 1000.02,
+        "dps": 968.05,
         "loss": 9.86,
         "avail": "doubtful",
         "note": "Quest: The Nightmare Manifests"
@@ -1801,34 +1805,34 @@
         "id": 10270,
         "suffix": 708,
         "name": "Masterwork Boots of the Tiger",
-        "dps": 999.29,
+        "dps": 967.32,
         "loss": 10.59
       },
       {
         "id": 15435,
         "suffix": 708,
         "name": "Supreme Shoes of the Tiger",
-        "dps": 999.29,
+        "dps": 967.32,
         "loss": 10.59
       },
       {
         "id": 15678,
         "suffix": 708,
         "name": "Triumphant Sabatons of the Tiger",
-        "dps": 999.29,
+        "dps": 967.32,
         "loss": 10.59
       },
       {
         "id": 12555,
         "name": "Battlechaser's Greaves",
-        "dps": 998.96,
+        "dps": 966.99,
         "loss": 10.92
       },
       {
         "id": 14978,
         "suffix": 707,
         "name": "Exalted Sabatons of the Tiger",
-        "dps": 998.96,
+        "dps": 966.99,
         "loss": 10.92,
         "note": "Random world drop · Wowhead also lists Hailspite"
       },
@@ -1836,21 +1840,21 @@
         "id": 10385,
         "suffix": 707,
         "name": "Hyperion Greaves of the Tiger",
-        "dps": 998.96,
+        "dps": 966.99,
         "loss": 10.92,
         "note": "Random world drop"
       },
       {
         "id": 275618,
         "name": "Scalegut Treaders",
-        "dps": 998.84,
+        "dps": 966.87,
         "loss": 11.04,
         "note": "Leatherworking 295 · pattern from Aendel Windspear (Silithus) ~7.9g · reagents unchecked"
       },
       {
         "id": 20715,
         "name": "Dunestalker's Boots",
-        "dps": 998.69,
+        "dps": 966.72,
         "loss": 11.19,
         "avail": "doubtful",
         "note": "Quest: Armaments of War · end of the Roman'khan chain (Geologist Larksbane) · no badges"
@@ -1858,7 +1862,7 @@
       {
         "id": 226871,
         "name": "Sabatons of Heroism",
-        "dps": 998.57,
+        "dps": 966.6,
         "loss": 11.31,
         "note": "Quest (NPC not in our data yet) · Spaulders of Valor (Rend, UBRS), Legplates of Valor (Rivendare, Strat), Boots of Valor (Kirtonos, Scholo) · Anthion chain (Strat, Dire Maul), step gold unknown · or 47g at the vendor after · Forever Battlegear of Heroism, defense variant"
       },
@@ -1866,7 +1870,7 @@
         "id": 10257,
         "suffix": 705,
         "name": "Adventurer's Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59,
         "note": "Random world drop · other suffixes on AH ~5.5g"
       },
@@ -1874,14 +1878,14 @@
         "id": 10376,
         "suffix": 705,
         "name": "Commander's Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 10234,
         "suffix": 705,
         "name": "Engraved Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59,
         "note": "Random world drop · other suffixes on AH ~3.5g"
       },
@@ -1889,56 +1893,56 @@
         "id": 15189,
         "suffix": 705,
         "name": "Grand Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 14932,
         "suffix": 705,
         "name": "Heroic Greaves of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 15658,
         "suffix": 705,
         "name": "Impenetrable Sabatons of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 15674,
         "suffix": 705,
         "name": "Magnificent Greaves of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 10155,
         "suffix": 705,
         "name": "Mercurial Greaves of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 10146,
         "suffix": 705,
         "name": "Mighty Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 10222,
         "suffix": 705,
         "name": "Nightshade Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       },
       {
         "id": 15426,
         "suffix": 705,
         "name": "Peerless Boots of the Tiger",
-        "dps": 998.29,
+        "dps": 966.32,
         "loss": 11.59
       }
     ],
@@ -1946,7 +1950,7 @@
       {
         "id": 19325,
         "name": "Don Julio's Band",
-        "dps": 1015.46,
+        "dps": 983.49,
         "loss": -5.58,
         "avail": "infeasible",
         "note": "Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
@@ -1954,7 +1958,7 @@
       {
         "id": 275981,
         "name": "Warden's Signet of Ferocity",
-        "dps": 1012.93,
+        "dps": 980.96,
         "loss": -3.05,
         "unsourced": true,
         "avail": "infeasible",
@@ -1963,7 +1967,7 @@
       {
         "id": 275972,
         "name": "Tracker's Signet of Ferocity",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "unsourced": true,
         "bis": true,
@@ -1973,7 +1977,7 @@
       {
         "id": 275976,
         "name": "Watcher's Signet of Ferocity",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "unsourced": true,
         "bis": true,
@@ -1983,13 +1987,15 @@
       {
         "id": 17713,
         "name": "Blackstone Ring",
-        "dps": 1008.66,
-        "loss": 1.22
+        "dps": 976.69,
+        "loss": 1.22,
+        "avail": "infeasible",
+        "note": "114g per DPS"
       },
       {
         "id": 275968,
         "name": "Initiate's Signet of Ferocity",
-        "dps": 1008.66,
+        "dps": 976.69,
         "loss": 1.22,
         "unsourced": true,
         "avail": "doubtful",
@@ -1998,21 +2004,21 @@
       {
         "id": 19510,
         "name": "Legionnaire's Band",
-        "dps": 1008.19,
+        "dps": 976.22,
         "loss": 1.69,
         "note": "Warsong Outriders Honored, Kelm Hargunth, Barrens"
       },
       {
         "id": 272408,
         "name": "Cutthroat's Signet",
-        "dps": 1007.86,
+        "dps": 975.9,
         "loss": 2.01,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 275971,
         "name": "Initiate's Signet of Vigilance",
-        "dps": 1007.81,
+        "dps": 975.84,
         "loss": 2.07,
         "unsourced": true,
         "avail": "doubtful",
@@ -2021,7 +2027,7 @@
       {
         "id": 275975,
         "name": "Tracker's Signet of Vigilance",
-        "dps": 1007.81,
+        "dps": 975.84,
         "loss": 2.07,
         "unsourced": true,
         "avail": "doubtful",
@@ -2030,7 +2036,7 @@
       {
         "id": 275984,
         "name": "Warden's Signet of Vigilance",
-        "dps": 1007.81,
+        "dps": 975.84,
         "loss": 2.07,
         "unsourced": true,
         "avail": "infeasible",
@@ -2039,7 +2045,7 @@
       {
         "id": 275980,
         "name": "Watcher's Signet of Vigilance",
-        "dps": 1007.81,
+        "dps": 975.84,
         "loss": 2.07,
         "unsourced": true,
         "avail": "doubtful",
@@ -2048,7 +2054,7 @@
       {
         "id": 260219,
         "name": "Engraved Band",
-        "dps": 1007.66,
+        "dps": 975.7,
         "loss": 2.21,
         "note": "Quest: Blackmaw Reclamation, Blackmaw Hold (as Eagle's Head Signet)"
       },
@@ -2056,14 +2062,14 @@
         "id": 11980,
         "suffix": 699,
         "name": "Opal Ring of the Tiger",
-        "dps": 1007.58,
+        "dps": 975.61,
         "loss": 2.3,
         "note": "Random world drop"
       },
       {
         "id": 284102,
         "name": "Signet of the Soulless Rider",
-        "dps": 1007.31,
+        "dps": 975.35,
         "loss": 2.56,
         "unsourced": true,
         "avail": "doubtful",
@@ -2073,20 +2079,20 @@
         "id": 12017,
         "suffix": 698,
         "name": "Prismatic Band of the Tiger",
-        "dps": 1007.11,
+        "dps": 975.15,
         "loss": 2.76,
         "note": "Random world drop"
       },
       {
         "id": 18500,
         "name": "Tarnished Elven Ring",
-        "dps": 1006.67,
+        "dps": 974.71,
         "loss": 3.2
       },
       {
         "id": 13098,
         "name": "Painweaver Band",
-        "dps": 1006.63,
+        "dps": 974.66,
         "loss": 3.25,
         "avail": "infeasible",
         "note": "2110g per DPS"
@@ -2095,7 +2101,7 @@
         "id": 12005,
         "suffix": 696,
         "name": "Granite Ring of the Tiger",
-        "dps": 1006.5,
+        "dps": 974.54,
         "loss": 3.37,
         "note": "Random world drop · other suffixes on AH ~3.3g"
       },
@@ -2103,7 +2109,7 @@
         "id": 12016,
         "suffix": 696,
         "name": "Jungle Ring of the Tiger",
-        "dps": 1006.5,
+        "dps": 974.54,
         "loss": 3.37,
         "note": "Random world drop"
       },
@@ -2111,7 +2117,7 @@
         "id": 11979,
         "suffix": 696,
         "name": "Peridot Circle of the Tiger",
-        "dps": 1006.5,
+        "dps": 974.54,
         "loss": 3.37,
         "note": "Random world drop"
       },
@@ -2119,7 +2125,7 @@
         "id": 11992,
         "suffix": 696,
         "name": "Vermilion Band of the Tiger",
-        "dps": 1006.5,
+        "dps": 974.54,
         "loss": 3.37,
         "note": "Random world drop"
       },
@@ -2127,21 +2133,21 @@
         "id": 10795,
         "suffix": 694,
         "name": "Drakeclaw Band of the Tiger",
-        "dps": 1005.9,
+        "dps": 973.93,
         "loss": 3.98,
         "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple"
       },
       {
         "id": 284282,
         "name": "Queen Guard's Royal Seal",
-        "dps": 1005.42,
+        "dps": 973.45,
         "loss": 4.46,
         "note": "Drop: Varo'then's Ghost, Azshara"
       },
       {
         "id": 19511,
         "name": "Legionnaire's Band",
-        "dps": 1005.19,
+        "dps": 973.23,
         "loss": 4.68,
         "note": "Warsong Outriders Honored, Kelm Hargunth, Barrens"
       }
@@ -2150,7 +2156,7 @@
       {
         "id": 13965,
         "name": "Blackhand's Breadth",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "conditional": [
@@ -2170,7 +2176,7 @@
       {
         "id": 19289,
         "name": "Darkmoon Card: Maelstrom",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -2179,7 +2185,7 @@
       {
         "id": 10455,
         "name": "Chained Essence of Eranikus",
-        "dps": 1007.05,
+        "dps": 975.08,
         "loss": 2.83,
         "conditional": [
           {
@@ -2203,7 +2209,7 @@
       {
         "id": 272437,
         "name": "Adaptive Combat Assistant",
-        "dps": 1006.14,
+        "dps": 974.17,
         "loss": 3.74,
         "conditional": [
           {
@@ -2221,7 +2227,7 @@
       {
         "id": 11815,
         "name": "Hand of Justice",
-        "dps": 1005.81,
+        "dps": 973.84,
         "loss": 4.07,
         "conditional": [
           {
@@ -2236,7 +2242,7 @@
       {
         "id": 280065,
         "name": "Behemoth Bones",
-        "dps": 1001.7,
+        "dps": 969.73,
         "loss": 8.18,
         "avail": "doubtful",
         "note": "Blackmaw Hold? · no source in db"
@@ -2244,14 +2250,14 @@
       {
         "id": 18537,
         "name": "Counterattack Lodestone",
-        "dps": 1000.38,
+        "dps": 968.41,
         "loss": 9.5,
         "note": "Drop: Gordok Tribute, Dire Maul"
       },
       {
         "id": 19120,
         "name": "Rune of the Guard Captain",
-        "dps": 1000.3,
+        "dps": 968.33,
         "loss": 9.58,
         "conditional": [
           {
@@ -2266,14 +2272,14 @@
       {
         "id": 13213,
         "name": "Smolderweb's Eye",
-        "dps": 999.35,
+        "dps": 967.38,
         "loss": 10.53,
         "note": "Drop: Mother Smolderweb, Lower Blackrock Spire"
       },
       {
         "id": 280060,
         "name": "Lucky Shovelnose Tuft",
-        "dps": 998.39,
+        "dps": 966.42,
         "loss": 11.49,
         "avail": "doubtful",
         "note": "Bonesnout the Unbroken · Blackmaw Hold · not in guides yet"
@@ -2281,14 +2287,14 @@
       {
         "id": 18370,
         "name": "Vigilance Charm",
-        "dps": 997.72,
+        "dps": 965.75,
         "loss": 12.16,
         "note": "Drop: Immol'thar, Dire Maul"
       },
       {
         "id": 14022,
         "name": "Barov Peasant Caller",
-        "dps": 997.63,
+        "dps": 965.66,
         "loss": 12.25,
         "cooldown": {
           "loss": 19.98
@@ -2298,7 +2304,7 @@
       {
         "id": 276337,
         "name": "Thaelemaches' Talisman",
-        "dps": 996.39,
+        "dps": 964.42,
         "loss": 13.49,
         "avail": "doubtful",
         "note": "Quest: Blind Vengeance"
@@ -2306,7 +2312,7 @@
       {
         "id": 280071,
         "name": "Flamebreak Talisman",
-        "dps": 996.19,
+        "dps": 964.22,
         "loss": 13.69,
         "conditional": [
           {
@@ -2329,7 +2335,7 @@
       {
         "id": 270225,
         "name": "Jewel of the Guard Captain",
-        "dps": 996.08,
+        "dps": 964.11,
         "loss": 13.8,
         "conditional": [
           {
@@ -2343,14 +2349,14 @@
       {
         "id": 286556,
         "name": "Winds of Tanaris",
-        "dps": 995.73,
+        "dps": 963.76,
         "loss": 14.15,
         "note": "Drop: Soul of Tanaris, Tanaris"
       },
       {
         "id": 274760,
         "name": "Everlook Delivery Bot",
-        "dps": 995.71,
+        "dps": 963.74,
         "loss": 14.17,
         "cooldown": {
           "loss": 19.46
@@ -2360,7 +2366,7 @@
       {
         "id": 274759,
         "name": "Everlook Pathcarver",
-        "dps": 995.59,
+        "dps": 963.62,
         "loss": 14.29,
         "cooldown": {
           "loss": 19.97
@@ -2370,14 +2376,14 @@
       {
         "id": 13382,
         "name": "Cannonball Runner",
-        "dps": 994.94,
+        "dps": 962.97,
         "loss": 14.94,
         "note": "Drop: Cannon Master Willey, Stratholme"
       },
       {
         "id": 22321,
         "name": "Heart of Wyrmthalak",
-        "dps": 994.88,
+        "dps": 962.91,
         "loss": 15,
         "conditional": [
           {
@@ -2391,7 +2397,7 @@
       {
         "id": 280074,
         "name": "Scalding Flamehoof",
-        "dps": 994.75,
+        "dps": 962.78,
         "loss": 15.13,
         "avail": "doubtful",
         "note": "Drop: Varrox Bleakhoof, Blackmaw Hold · not in guides yet"
@@ -2399,7 +2405,7 @@
       {
         "id": 280032,
         "name": "Bolt's Charged Eyeball",
-        "dps": 994.63,
+        "dps": 962.66,
         "loss": 15.25,
         "conditional": [
           {
@@ -2414,7 +2420,7 @@
       {
         "id": 13171,
         "name": "Smokey's Lighter",
-        "dps": 993.91,
+        "dps": 961.94,
         "loss": 15.97,
         "conditional": [
           {
@@ -2436,7 +2442,7 @@
       {
         "id": 270226,
         "name": "Golden Banana",
-        "dps": 993.78,
+        "dps": 961.81,
         "loss": 16.1,
         "conditional": [
           {
@@ -2453,7 +2459,7 @@
       {
         "id": 272438,
         "name": "Weakness Analyzer",
-        "dps": 992.23,
+        "dps": 960.26,
         "loss": 17.65,
         "cooldown": {
           "rank": 25,
@@ -2464,7 +2470,7 @@
       {
         "id": 12930,
         "name": "Briarwood Reed",
-        "dps": 991.26,
+        "dps": 959.29,
         "loss": 18.62,
         "conditional": [
           {
@@ -2478,7 +2484,7 @@
       {
         "id": 19812,
         "name": "Rune of the Dawn",
-        "dps": 990.42,
+        "dps": 958.45,
         "loss": 19.46,
         "conditional": [
           {
@@ -2493,7 +2499,7 @@
       {
         "id": 13209,
         "name": "Seal of the Dawn",
-        "dps": 990.42,
+        "dps": 958.45,
         "loss": 19.46,
         "conditional": [
           {
@@ -2511,224 +2517,228 @@
       {
         "id": 11684,
         "name": "Ironfoe",
-        "dps": 1009.88,
-        "loss": 0,
-        "with": 12590,
-        "bis": true,
-        "enchant": 1900,
-        "note": "Emperor Dagran Thaurissan · Blackrock Depths"
+        "dps": 1005.71,
+        "loss": -27.8,
+        "with": 279259,
+        "avail": "infeasible",
+        "note": "Emperor Dagran Thaurissan · Blackrock Depths · 156g per DPS"
       },
       {
         "id": 12798,
         "name": "Annihilator",
-        "dps": 999.8,
-        "loss": 10.08,
-        "with": 12590,
+        "dps": 998.77,
+        "loss": -20.86,
+        "with": 279259,
         "avail": "infeasible",
-        "note": "Blacksmithing craft, plans from Quartermaster Zigris · needs 10 Essence of Undeath and 12 Arcanite Bar, over 300g"
+        "note": "Blacksmithing craft, plans from Quartermaster Zigris · needs 10 Essence of Undeath and 12 Arcanite Bar, over 300g · 29g per DPS"
       },
       {
         "id": 1728,
         "name": "Teebu's Blazing Longsword",
-        "dps": 995.01,
-        "loss": 14.87,
+        "dps": 990.1,
+        "loss": -12.19,
         "unsourced": true,
-        "with": 12590,
+        "with": 279259,
         "avail": "infeasible",
-        "note": "Random world drop · epic BoE, about 3500g on Classic AH"
-      },
-      {
-        "id": 6622,
-        "name": "Sword of Zeal",
-        "dps": 985.7,
-        "loss": 24.18,
-        "with": 12590,
-        "note": "Random world drop"
-      },
-      {
-        "id": 279261,
-        "name": "Greenhammer",
-        "dps": 980.74,
-        "loss": 29.14,
-        "with": 12590,
-        "avail": "doubtful",
-        "note": "Blacksmithing craft, plans have no known source"
+        "note": "Random world drop · epic BoE, about 3500g on Classic AH · 516g per DPS"
       },
       {
         "id": 13952,
         "name": "Iceblade Hacker",
-        "dps": 979.89,
-        "loss": 29.99,
-        "with": 12590,
+        "dps": 978.07,
+        "loss": -0.17,
+        "with": 279259,
         "note": "Ras Frostwhisper (Scholo)"
+      },
+      {
+        "id": 6622,
+        "name": "Sword of Zeal",
+        "dps": 977.91,
+        "loss": 0,
+        "with": 279259,
+        "bis": true,
+        "enchant": 1900,
+        "note": "Random world drop · 24g per DPS"
+      },
+      {
+        "id": 279261,
+        "name": "Greenhammer",
+        "dps": 977.29,
+        "loss": 0.62,
+        "with": 279259,
+        "avail": "doubtful",
+        "note": "Blacksmithing craft, plans have no known source"
       },
       {
         "id": 13006,
         "name": "Mass of McGowan",
-        "dps": 979.07,
-        "loss": 30.81,
-        "with": 12590
-      },
-      {
-        "id": 272091,
-        "name": "Darkspear Skirmisher's Bludgeon",
-        "dps": 977.43,
-        "loss": 32.45,
-        "with": 12590
+        "dps": 977.16,
+        "loss": 0.75,
+        "with": 279259,
+        "note": "24g per DPS"
       },
       {
         "id": 2244,
         "name": "Krol Blade",
-        "dps": 977.39,
-        "loss": 32.49,
-        "with": 12590,
+        "dps": 976.55,
+        "loss": 1.35,
+        "with": 279259,
         "note": "Random world drop"
       },
       {
         "id": 12940,
         "name": "Dal'Rend's Sacred Charge",
-        "dps": 977.23,
-        "loss": 32.65,
-        "with": 12590,
+        "dps": 975.76,
+        "loss": 2.15,
+        "with": 279259,
         "note": "Warchief Rend Blackhand · Blackrock Spire"
+      },
+      {
+        "id": 272091,
+        "name": "Darkspear Skirmisher's Bludgeon",
+        "dps": 975.48,
+        "loss": 2.43,
+        "with": 279259
       },
       {
         "id": 250618,
         "name": "Bagh Nakh",
-        "dps": 977.14,
-        "loss": 32.74,
-        "with": 12590,
+        "dps": 974.23,
+        "loss": 3.67,
+        "with": 279259,
         "avail": "infeasible",
         "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g)"
       },
       {
-        "id": 19103,
-        "name": "Frostbite",
-        "dps": 976.64,
-        "loss": 33.24,
-        "with": 12590,
-        "avail": "doubtful",
-        "note": "Frostwolf Clan Revered · AV queue unconfirmed · unsure, used by standards 42"
-      },
-      {
         "id": 279259,
         "name": "Ironwood Blade",
-        "dps": 976.22,
-        "loss": 33.66,
-        "with": 12590,
+        "dps": 972.95,
+        "loss": 4.95,
+        "with": 279259,
         "avail": "doubtful",
         "note": "Blacksmithing craft, plans have no known source"
       },
       {
         "id": 17705,
         "name": "Thrash Blade",
-        "dps": 975.94,
-        "loss": 33.94,
-        "with": 12590,
+        "dps": 972.37,
+        "loss": 5.54,
+        "with": 279259,
         "note": "Maraudon"
+      },
+      {
+        "id": 19103,
+        "name": "Frostbite",
+        "dps": 971.36,
+        "loss": 6.54,
+        "with": 279259,
+        "avail": "doubtful",
+        "note": "Frostwolf Clan Revered · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
         "id": 280068,
         "name": "Bloody Claws of Attack",
-        "dps": 975,
-        "loss": 34.88,
-        "with": 12590
+        "dps": 969.44,
+        "loss": 8.46,
+        "with": 279259
       },
       {
         "id": 811,
         "name": "Axe of the Deep Woods",
-        "dps": 974.44,
-        "loss": 35.44,
-        "with": 12590,
+        "dps": 968.98,
+        "loss": 8.93,
+        "with": 279259,
         "note": "Random world drop · epic BoE, AH price not checked"
-      },
-      {
-        "id": 19550,
-        "name": "Legionnaire's Sword",
-        "dps": 971.61,
-        "loss": 38.27,
-        "with": 12590,
-        "note": "Warsong Outriders Revered · Kelm Hargunth, Ashenvale"
-      },
-      {
-        "id": 284101,
-        "name": "Blade of Senseless Slaughter",
-        "dps": 970.51,
-        "loss": 39.37,
-        "with": 12590,
-        "note": "Duke Ragereaver · Eastern Plaguelands"
       },
       {
         "id": 276419,
         "name": "Lightcrest Hammer",
-        "dps": 969.66,
-        "loss": 40.22,
-        "with": 12590,
+        "dps": 967.54,
+        "loss": 10.37,
+        "with": 279259,
         "conditional": [
           {
             "label": "vs Undead",
             "rank": 4,
-            "loss": 21.07
+            "loss": -8.7,
+            "bis": true
           }
         ],
         "note": "Drop: Crimson Hammersmith, Stratholme"
       },
       {
+        "id": 19550,
+        "name": "Legionnaire's Sword",
+        "dps": 967.03,
+        "loss": 10.88,
+        "with": 279259,
+        "note": "Warsong Outriders Revered · Kelm Hargunth, Ashenvale"
+      },
+      {
+        "id": 284101,
+        "name": "Blade of Senseless Slaughter",
+        "dps": 965.95,
+        "loss": 11.96,
+        "with": 279259,
+        "note": "Duke Ragereaver · Eastern Plaguelands"
+      },
+      {
         "id": 18671,
         "name": "Baron Charr's Sceptre",
-        "dps": 967.21,
-        "loss": 42.67,
-        "with": 12590
+        "dps": 964.52,
+        "loss": 13.39,
+        "with": 279259
+      },
+      {
+        "id": 12590,
+        "name": "Felstriker",
+        "dps": 962.72,
+        "loss": 15.19,
+        "with": 279259,
+        "avail": "infeasible",
+        "note": "Warchief Rend Blackhand · Blackrock Spire · 128g per DPS"
       },
       {
         "id": 12797,
         "name": "Frostguard",
-        "dps": 967.18,
-        "loss": 42.7,
-        "with": 12590,
+        "dps": 961.56,
+        "loss": 16.34,
+        "with": 279259,
         "avail": "infeasible",
         "note": "Blacksmithing craft, plans from Highvale Outrunner · needs 8 Azerothian Diamond and 18 Arcanite Bar, over 300g"
       },
       {
         "id": 22404,
         "name": "Willey's Back Scratcher",
-        "dps": 966.35,
-        "loss": 43.53,
-        "with": 12590
+        "dps": 960.94,
+        "loss": 16.97,
+        "with": 279259
       },
       {
         "id": 18683,
         "name": "Hammer of the Vesper",
-        "dps": 963.83,
-        "loss": 46.05,
-        "with": 12590
-      },
-      {
-        "id": 12590,
-        "name": "Felstriker",
-        "dps": 963.32,
-        "loss": 46.56,
-        "with": 12590,
-        "note": "Warchief Rend Blackhand · Blackrock Spire"
+        "dps": 960.3,
+        "loss": 17.61,
+        "with": 279259
       },
       {
         "id": 18044,
         "name": "Hurley's Tankard",
-        "dps": 962.78,
-        "loss": 47.1,
-        "with": 12590
+        "dps": 958.79,
+        "loss": 19.12,
+        "with": 279259
       },
       {
         "id": 13246,
         "name": "Argent Avenger",
-        "dps": 948.68,
-        "loss": 61.2,
-        "with": 12590,
+        "dps": 948.59,
+        "loss": 29.31,
+        "with": 279259,
         "conditional": [
           {
             "label": "vs Undead",
-            "rank": 24,
-            "loss": 46.35
+            "rank": 25,
+            "loss": 18.51
           }
         ]
       }
@@ -2737,233 +2747,243 @@
       {
         "id": 12798,
         "name": "Annihilator",
-        "dps": 1011.58,
-        "loss": -1.7,
-        "with": 11684,
+        "dps": 989.28,
+        "loss": -11.37,
+        "with": 6622,
         "avail": "infeasible",
-        "note": "Blacksmithing craft, plans from Quartermaster Zigris · needs 10 Essence of Undeath and 12 Arcanite Bar, over 300g"
+        "note": "Blacksmithing craft, plans from Quartermaster Zigris · needs 10 Essence of Undeath and 12 Arcanite Bar, over 300g · 29g per DPS"
       },
       {
         "id": 12590,
         "name": "Felstriker",
-        "dps": 1009.88,
-        "loss": 0,
-        "with": 11684,
-        "bis": true,
-        "enchant": 1900,
-        "note": "Warchief Rend Blackhand · Blackrock Spire"
+        "dps": 988.36,
+        "loss": -10.45,
+        "with": 6622,
+        "avail": "infeasible",
+        "note": "Warchief Rend Blackhand · Blackrock Spire · 128g per DPS"
       },
       {
         "id": 279259,
         "name": "Ironwood Blade",
-        "dps": 1002.33,
-        "loss": 7.55,
-        "with": 11684,
+        "dps": 977.91,
+        "loss": 0,
+        "with": 6622,
+        "bis": true,
+        "enchant": 1900,
         "avail": "doubtful",
         "note": "Blacksmithing craft, plans have no known source"
       },
       {
         "id": 279261,
         "name": "Greenhammer",
-        "dps": 995.36,
-        "loss": 14.52,
-        "with": 11684,
+        "dps": 974.14,
+        "loss": 3.76,
+        "with": 6622,
         "avail": "doubtful",
         "note": "Blacksmithing craft, plans have no known source"
       },
       {
         "id": 19103,
         "name": "Frostbite",
-        "dps": 991.85,
-        "loss": 18.03,
-        "with": 11684,
+        "dps": 969.85,
+        "loss": 8.05,
+        "with": 6622,
         "avail": "doubtful",
         "note": "Frostwolf Clan Revered · AV queue unconfirmed · unsure, used by standards 42"
       },
       {
-        "id": 15806,
-        "name": "Mirah's Song",
-        "dps": 991.49,
-        "loss": 18.39,
-        "with": 11684,
-        "note": "Quest: Kirtonos the Herald"
-      },
-      {
         "id": 280012,
         "name": "Talon of Tor'Rel",
-        "dps": 991.31,
-        "loss": 18.57,
-        "with": 11684,
+        "dps": 968.91,
+        "loss": 9,
+        "with": 6622,
         "note": "Tor'Rel and Izha'Rel"
       },
       {
-        "id": 13036,
-        "name": "Assassination Blade",
-        "dps": 989.72,
-        "loss": 20.16,
-        "with": 11684
-      },
-      {
-        "id": 19550,
-        "name": "Legionnaire's Sword",
-        "dps": 988.59,
-        "loss": 21.29,
-        "with": 11684,
-        "note": "Warsong Outriders Revered · Kelm Hargunth, Ashenvale"
-      },
-      {
-        "id": 280029,
-        "name": "Cinderedge Crescent",
-        "dps": 988.37,
-        "loss": 21.51,
-        "with": 11684,
-        "avail": "doubtful",
-        "note": "Cinder · Shaper's Terrace · only reported"
-      },
-      {
-        "id": 279908,
-        "name": "Crystal-Infused Cleaver",
-        "dps": 988.24,
-        "loss": 21.64,
-        "with": 11684
-      },
-      {
-        "id": 13246,
-        "name": "Argent Avenger",
-        "dps": 987.95,
-        "loss": 21.93,
-        "with": 11684,
-        "conditional": [
-          {
-            "label": "vs Undead",
-            "rank": 4,
-            "loss": 12.1
-          }
-        ]
+        "id": 15806,
+        "name": "Mirah's Song",
+        "dps": 968.12,
+        "loss": 9.79,
+        "with": 6622,
+        "note": "Quest: Kirtonos the Herald"
       },
       {
         "id": 17705,
         "name": "Thrash Blade",
-        "dps": 987.9,
-        "loss": 21.98,
-        "with": 11684,
+        "dps": 967.43,
+        "loss": 10.47,
+        "with": 6622,
         "note": "Maraudon"
       },
       {
-        "id": 18737,
-        "name": "Bone Slicing Hatchet",
-        "dps": 987.19,
-        "loss": 22.69,
-        "with": 11684,
-        "note": "Maleki the Pallid · Stratholme"
+        "id": 13246,
+        "name": "Argent Avenger",
+        "dps": 967,
+        "loss": 10.91,
+        "with": 6622,
+        "conditional": [
+          {
+            "label": "vs Undead",
+            "rank": 4,
+            "loss": 2.98
+          }
+        ]
+      },
+      {
+        "id": 13036,
+        "name": "Assassination Blade",
+        "dps": 966.74,
+        "loss": 11.17,
+        "with": 6622
+      },
+      {
+        "id": 19550,
+        "name": "Legionnaire's Sword",
+        "dps": 966.63,
+        "loss": 11.28,
+        "with": 6622,
+        "note": "Warsong Outriders Revered · Kelm Hargunth, Ashenvale"
+      },
+      {
+        "id": 279908,
+        "name": "Crystal-Infused Cleaver",
+        "dps": 966.21,
+        "loss": 11.7,
+        "with": 6622
       },
       {
         "id": 15221,
         "suffix": 690,
         "name": "Holy War Sword of the Tiger",
-        "dps": 987.02,
-        "loss": 22.86,
+        "dps": 965.88,
+        "loss": 12.03,
         "unsourced": true,
-        "with": 11684
+        "with": 6622
+      },
+      {
+        "id": 280029,
+        "name": "Cinderedge Crescent",
+        "dps": 965.87,
+        "loss": 12.03,
+        "with": 6622,
+        "avail": "doubtful",
+        "note": "Cinder · Shaper's Terrace · only reported"
+      },
+      {
+        "id": 2163,
+        "name": "Shadowblade",
+        "dps": 965.69,
+        "loss": 12.21,
+        "with": 6622,
+        "note": "Random world drop"
       },
       {
         "id": 22322,
         "name": "The Jaw Breaker",
-        "dps": 986.45,
-        "loss": 23.43,
-        "with": 11684,
+        "dps": 965.46,
+        "loss": 12.45,
+        "with": 6622,
         "note": "Mor Grayhoof · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
-        "id": 280068,
-        "name": "Bloody Claws of Attack",
-        "dps": 985.81,
-        "loss": 24.07,
-        "with": 11684
+        "id": 18737,
+        "name": "Bone Slicing Hatchet",
+        "dps": 965.33,
+        "loss": 12.58,
+        "with": 6622,
+        "note": "Maleki the Pallid · Stratholme"
       },
       {
         "id": 12783,
         "name": "Heartseeker",
-        "dps": 985.64,
-        "loss": 24.24,
-        "with": 11684,
+        "dps": 965.13,
+        "loss": 12.77,
+        "with": 6622,
         "avail": "infeasible",
         "note": "Blacksmithing craft, plans from Cannon Master Willey · needs 6 Azerothian Diamond and 6 Large Opal, over 300g"
       },
       {
-        "id": 250618,
-        "name": "Bagh Nakh",
-        "dps": 985.55,
-        "loss": 24.33,
-        "with": 11684,
-        "avail": "infeasible",
-        "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g)"
+        "id": 12774,
+        "name": "Dawn's Edge",
+        "dps": 964.97,
+        "loss": 12.93,
+        "with": 6622
       },
       {
         "id": 18347,
         "name": "Well Balanced Axe",
-        "dps": 984.71,
-        "loss": 25.17,
-        "with": 11684,
+        "dps": 964.88,
+        "loss": 13.03,
+        "with": 6622,
         "note": "Illyanna Ravenoak · Dire Maul"
-      },
-      {
-        "id": 22317,
-        "name": "Lefty's Brass Knuckle",
-        "dps": 984.48,
-        "loss": 25.4,
-        "with": 11684,
-        "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 18310,
-        "name": "Fiendish Machete",
-        "dps": 984.22,
-        "loss": 25.66,
-        "with": 11684,
-        "conditional": [
-          {
-            "label": "vs Elementals",
-            "rank": 9,
-            "loss": 20.5
-          }
-        ]
-      },
-      {
-        "id": 15221,
-        "suffix": 193,
-        "name": "Holy War Sword of Strength",
-        "dps": 984.19,
-        "loss": 25.69,
-        "unsourced": true,
-        "with": 11684
-      },
-      {
-        "id": 18484,
-        "name": "Cho'Rush's Blade",
-        "dps": 984.11,
-        "loss": 25.77,
-        "with": 11684
       },
       {
         "id": 15240,
         "suffix": 690,
         "name": "Demon's Claw of the Tiger",
-        "dps": 983.5,
-        "loss": 26.38,
-        "with": 11684
+        "dps": 964.63,
+        "loss": 13.28,
+        "with": 6622
+      },
+      {
+        "id": 22317,
+        "name": "Lefty's Brass Knuckle",
+        "dps": 963.51,
+        "loss": 14.39,
+        "with": 6622,
+        "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 250618,
+        "name": "Bagh Nakh",
+        "dps": 963.39,
+        "loss": 14.52,
+        "with": 6622,
+        "avail": "infeasible",
+        "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g)"
+      },
+      {
+        "id": 13015,
+        "name": "Serathil",
+        "dps": 963.2,
+        "loss": 14.7,
+        "with": 6622,
+        "note": "Random world drop"
+      },
+      {
+        "id": 15221,
+        "suffix": 173,
+        "name": "Holy War Sword of Agility",
+        "dps": 963.13,
+        "loss": 14.77,
+        "unsourced": true,
+        "with": 6622
+      },
+      {
+        "id": 18310,
+        "name": "Fiendish Machete",
+        "dps": 962.12,
+        "loss": 15.79,
+        "with": 6622,
+        "conditional": [
+          {
+            "label": "vs Elementals",
+            "rank": 12,
+            "loss": 11.49
+          }
+        ]
       },
       {
         "id": 276419,
         "name": "Lightcrest Hammer",
-        "dps": 982.3,
-        "loss": 27.58,
-        "with": 11684,
+        "dps": 959.95,
+        "loss": 17.96,
+        "with": 6622,
         "conditional": [
           {
             "label": "vs Undead",
             "rank": 8,
-            "loss": 19.1
+            "loss": 9.85
           }
         ],
         "note": "Drop: Crimson Hammersmith, Stratholme"
@@ -2973,29 +2993,30 @@
       {
         "id": 12651,
         "name": "Blackcrow",
-        "dps": 1010.17,
+        "dps": 978.2,
         "loss": -0.29,
-        "note": "Shadow Hunter Vosh'gajin · Blackrock Spire"
+        "note": "Shadow Hunter Vosh'gajin · Blackrock Spire · 394g per DPS",
+        "avail": "infeasible"
       },
       {
         "id": 18323,
         "name": "Satyr's Bow",
-        "dps": 1009.88,
+        "dps": 977.91,
         "loss": 0,
         "bis": true,
-        "note": "Zevrim Thornhoof · Dire Maul"
+        "note": "Zevrim Thornhoof · Dire Maul · 16g per DPS"
       },
       {
         "id": 280020,
         "name": "Deep Jungle Rifle",
-        "dps": 1008.63,
+        "dps": 976.66,
         "loss": 1.25,
         "note": "Thunderhoof"
       },
       {
         "id": 19107,
         "name": "Bloodseeker",
-        "dps": 1004.69,
+        "dps": 972.72,
         "loss": 5.19,
         "avail": "doubtful",
         "note": "Alterac Valley quest · AV queue unconfirmed · unsure, used by standards 42"
@@ -3003,28 +3024,29 @@
       {
         "id": 280083,
         "name": "Truesight Rifle",
-        "dps": 1004.2,
+        "dps": 972.23,
         "loss": 5.68,
-        "note": "Sabella No-Eyes"
+        "note": "Sabella No-Eyes · 32g per DPS",
+        "avail": "infeasible"
       },
       {
         "id": 12653,
         "name": "Riphook",
-        "dps": 1003.15,
+        "dps": 971.18,
         "loss": 6.73,
         "note": "Shadow Hunter Vosh'gajin · Blackrock Spire"
       },
       {
         "id": 13139,
         "name": "Guttbuster",
-        "dps": 1002.62,
+        "dps": 970.65,
         "loss": 7.26,
-        "note": "Random world drop"
+        "note": "Random world drop · 27g per DPS"
       },
       {
         "id": 20722,
         "name": "Crystal Slugthrower",
-        "dps": 1002.49,
+        "dps": 970.52,
         "loss": 7.39,
         "avail": "doubtful",
         "note": "Random world drop · hidden stats, no Forever data"
@@ -3033,7 +3055,7 @@
         "id": 15289,
         "suffix": 684,
         "name": "Archstrike Bow of the Tiger",
-        "dps": 1002.25,
+        "dps": 970.28,
         "loss": 7.63,
         "note": "Random world drop"
       },
@@ -3041,7 +3063,7 @@
         "id": 15289,
         "suffix": 1555,
         "name": "Archstrike Bow of Power",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05,
         "note": "Random world drop"
       },
@@ -3049,21 +3071,21 @@
         "id": 15289,
         "suffix": 190,
         "name": "Archstrike Bow of Strength",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05,
         "note": "Random world drop"
       },
       {
         "id": 13173,
         "name": "Flightblade Throwing Axe",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05
       },
       {
         "id": 15296,
         "suffix": 1555,
         "name": "Hawkeye Bow of Power",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05,
         "note": "Random world drop"
       },
@@ -3071,26 +3093,26 @@
         "id": 15296,
         "suffix": 190,
         "name": "Hawkeye Bow of Strength",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05,
         "note": "Random world drop"
       },
       {
         "id": 11628,
         "name": "Houndmaster's Bow",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05
       },
       {
         "id": 22318,
         "name": "Malgen's Long Bow",
-        "dps": 1001.83,
+        "dps": 969.86,
         "loss": 8.05
       },
       {
         "id": 13023,
         "name": "Eaglehorn Long Bow",
-        "dps": 1001.67,
+        "dps": 969.7,
         "loss": 8.21,
         "note": "Random world drop"
       },
@@ -3098,21 +3120,21 @@
         "id": 15296,
         "suffix": 682,
         "name": "Hawkeye Bow of the Tiger",
-        "dps": 1001.58,
+        "dps": 969.61,
         "loss": 8.3,
         "note": "Random world drop"
       },
       {
         "id": 18680,
         "name": "Ancient Bone Bow",
-        "dps": 1001.53,
+        "dps": 969.56,
         "loss": 8.35,
         "note": "Scholomance bosses"
       },
       {
         "id": 21135,
         "name": "Assassin's Throwing Axe",
-        "dps": 1001.53,
+        "dps": 969.56,
         "loss": 8.35,
         "unsourced": true,
         "note": "Random world drop"
@@ -3120,7 +3142,7 @@
       {
         "id": 287026,
         "name": "Escape Plan",
-        "dps": 1001.53,
+        "dps": 969.56,
         "loss": 8.35,
         "note": "Zone drop"
       },
@@ -3128,7 +3150,7 @@
         "id": 15289,
         "suffix": 168,
         "name": "Archstrike Bow of Agility",
-        "dps": 1001.41,
+        "dps": 969.44,
         "loss": 8.47,
         "note": "Random world drop"
       },
@@ -3136,21 +3158,21 @@
         "id": 15296,
         "suffix": 168,
         "name": "Hawkeye Bow of Agility",
-        "dps": 1001.41,
+        "dps": 969.44,
         "loss": 8.47,
         "note": "Random world drop"
       },
       {
         "id": 13040,
         "name": "Heartseeking Crossbow",
-        "dps": 1001.41,
+        "dps": 969.44,
         "loss": 8.47
       },
       {
         "id": 15288,
         "suffix": 1554,
         "name": "Blasthorn Bow of Power",
-        "dps": 1001.17,
+        "dps": 969.2,
         "loss": 8.71
       }
     ]
@@ -3163,7 +3185,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": 1011.17,
+        "dps": 980.12,
         "loss": -1.29,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
       },
@@ -3173,7 +3195,7 @@
         "item": 11645,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Strength",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true
       },
@@ -3183,7 +3205,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": 1008.7,
+        "dps": 977.65,
         "loss": 1.18
       },
       {
@@ -3192,7 +3214,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 1004.31,
+        "dps": 973.26,
         "loss": 5.57,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
       }
@@ -3204,7 +3226,7 @@
         "spell": 1249019,
         "name": "Enchant Necklace - Strength",
         "effect": "+5 Strength",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "120 Merchant's Favor"
@@ -3215,7 +3237,7 @@
         "spell": 1249059,
         "name": "Enchant Necklace - Agility",
         "effect": "+5 Agility",
-        "dps": 1008.32,
+        "dps": 977.27,
         "loss": 1.56,
         "note": "120 Merchant's Favor"
       },
@@ -3225,7 +3247,7 @@
         "spell": 1249057,
         "name": "Enchant Necklace - Spell Power",
         "effect": "+6 spell power",
-        "dps": 1006.2,
+        "dps": 975.15,
         "loss": 3.68,
         "note": "120 Merchant's Favor"
       },
@@ -3235,7 +3257,7 @@
         "spell": 1249058,
         "name": "Enchant Necklace - Healing Power",
         "effect": "+11 healing, +4 spell damage",
-        "dps": 1006.09,
+        "dps": 975.04,
         "loss": 3.79,
         "note": "120 Merchant's Favor"
       }
@@ -3247,7 +3269,7 @@
         "spell": 1219587,
         "name": "Enchant Cloak - Agility",
         "effect": "+5 Agility",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3257,7 +3279,7 @@
         "spell": 13882,
         "name": "Enchant Cloak - Lesser Agility",
         "effect": "+3 Agility",
-        "dps": 1009.34,
+        "dps": 978.29,
         "loss": 0.54,
         "note": "Formula on AH ~0.4g"
       },
@@ -3267,7 +3289,7 @@
         "spell": 13419,
         "name": "Enchant Cloak - Minor Agility",
         "effect": "+3 Agility",
-        "dps": 1009.34,
+        "dps": 978.29,
         "loss": 0.54
       }
     ],
@@ -3277,7 +3299,7 @@
         "spell": 20025,
         "name": "Enchant Chest - Greater Stats",
         "effect": "+4 all stats",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~351g"
@@ -3287,7 +3309,7 @@
         "spell": 13941,
         "name": "Enchant Chest - Stats",
         "effect": "+3 all stats",
-        "dps": 1008.37,
+        "dps": 977.32,
         "loss": 1.51
       },
       {
@@ -3296,7 +3318,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 1007.63,
+        "dps": 976.58,
         "loss": 2.25
       },
       {
@@ -3304,7 +3326,7 @@
         "spell": 13700,
         "name": "Enchant Chest - Lesser Stats",
         "effect": "+2 all stats",
-        "dps": 1007.34,
+        "dps": 976.29,
         "loss": 2.54
       },
       {
@@ -3313,7 +3335,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 1006.96,
+        "dps": 975.91,
         "loss": 2.92,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3323,7 +3345,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 1006.29,
+        "dps": 975.24,
         "loss": 3.59
       },
       {
@@ -3332,7 +3354,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 1005.62,
+        "dps": 974.57,
         "loss": 4.26
       },
       {
@@ -3340,7 +3362,7 @@
         "spell": 13626,
         "name": "Enchant Chest - Minor Stats",
         "effect": "+1 all stats",
-        "dps": 1005.45,
+        "dps": 974.4,
         "loss": 4.43
       },
       {
@@ -3349,7 +3371,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 1004.63,
+        "dps": 973.58,
         "loss": 5.25,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3359,7 +3381,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 1004.57,
+        "dps": 973.52,
         "loss": 5.31
       }
     ],
@@ -3369,7 +3391,7 @@
         "spell": 20010,
         "name": "Enchant Bracer - Superior Strength",
         "effect": "+9 Strength",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~145g"
@@ -3380,7 +3402,7 @@
         "spell": 1248599,
         "name": "Enchant Bracer - Superior Agility",
         "effect": "+9 Agility",
-        "dps": 1008.59,
+        "dps": 977.54,
         "loss": 1.29,
         "avail": "doubtful",
         "note": "No known source"
@@ -3390,7 +3412,7 @@
         "spell": 13939,
         "name": "Enchant Bracer - Greater Strength",
         "effect": "+7 Strength",
-        "dps": 1007.87,
+        "dps": 976.82,
         "loss": 2.01
       },
       {
@@ -3399,7 +3421,7 @@
         "spell": 13661,
         "name": "Enchant Bracer - Strength",
         "effect": "+5 Strength",
-        "dps": 1006.54,
+        "dps": 975.49,
         "loss": 3.34
       },
       {
@@ -3408,7 +3430,7 @@
         "spell": 13536,
         "name": "Enchant Bracer - Lesser Strength",
         "effect": "+4 Strength",
-        "dps": 1005.87,
+        "dps": 974.82,
         "loss": 4.01
       },
       {
@@ -3417,7 +3439,7 @@
         "spell": 1248497,
         "name": "Enchant Bracer - Agility",
         "effect": "+5 Agility",
-        "dps": 1005.64,
+        "dps": 974.59,
         "loss": 4.24,
         "avail": "doubtful",
         "note": "No known source"
@@ -3428,7 +3450,7 @@
         "spell": 1248460,
         "name": "Enchant Bracer - Lesser Agility",
         "effect": "+4 Agility",
-        "dps": 1005.24,
+        "dps": 974.19,
         "loss": 4.64,
         "avail": "doubtful",
         "note": "Forever formula, source unchecked"
@@ -3439,7 +3461,7 @@
         "spell": 7782,
         "name": "Enchant Bracer - Minor Strength",
         "effect": "+3 Strength",
-        "dps": 1005.2,
+        "dps": 974.15,
         "loss": 4.68
       },
       {
@@ -3448,7 +3470,7 @@
         "spell": 7779,
         "name": "Enchant Bracer - Minor Agility",
         "effect": "+3 Agility",
-        "dps": 1004.57,
+        "dps": 973.52,
         "loss": 5.31
       },
       {
@@ -3457,7 +3479,7 @@
         "spell": 1220624,
         "name": "Enchant Bracer - Greater Spellpower",
         "effect": "+16 spell power",
-        "dps": 1004.08,
+        "dps": 973.03,
         "loss": 5.8,
         "note": "Merchant's Favor Honored"
       }
@@ -3469,7 +3491,7 @@
         "spell": 1248640,
         "name": "Enchant Gloves - Superior Strength",
         "effect": "+15 Strength",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored"
@@ -3479,7 +3501,7 @@
         "spell": 13948,
         "name": "Enchant Gloves - Minor Haste",
         "effect": "+1% attack speed",
-        "dps": 1005.96,
+        "dps": 974.91,
         "loss": 3.92
       },
       {
@@ -3488,7 +3510,7 @@
         "spell": 20013,
         "name": "Enchant Gloves - Greater Strength",
         "effect": "+7 Strength",
-        "dps": 1003.87,
+        "dps": 972.82,
         "loss": 6.01,
         "note": "7% formula drop"
       },
@@ -3498,7 +3520,7 @@
         "spell": 13887,
         "name": "Enchant Gloves - Strength",
         "effect": "+7 Strength",
-        "dps": 1003.87,
+        "dps": 972.82,
         "loss": 6.01
       },
       {
@@ -3507,7 +3529,7 @@
         "spell": 20012,
         "name": "Enchant Gloves - Greater Agility",
         "effect": "+7 Agility",
-        "dps": 1003,
+        "dps": 971.95,
         "loss": 6.88,
         "note": "Formula on AH ~6g"
       },
@@ -3517,7 +3539,7 @@
         "spell": 13815,
         "name": "Enchant Gloves - Agility",
         "effect": "+7 Agility",
-        "dps": 1003,
+        "dps": 971.95,
         "loss": 6.88
       },
       {
@@ -3526,7 +3548,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 1002.54,
+        "dps": 971.49,
         "loss": 7.34
       },
       {
@@ -3535,7 +3557,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 1001.87,
+        "dps": 970.82,
         "loss": 8.01,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3545,7 +3567,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 1001.2,
+        "dps": 970.15,
         "loss": 8.68
       },
       {
@@ -3554,7 +3576,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 1000.54,
+        "dps": 969.49,
         "loss": 9.34
       }
     ],
@@ -3565,7 +3587,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
@@ -3576,7 +3598,7 @@
         "item": 11645,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Strength",
-        "dps": 1009.37,
+        "dps": 978.32,
         "loss": 0.51
       },
       {
@@ -3585,7 +3607,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": 1008.15,
+        "dps": 977.1,
         "loss": 1.73
       },
       {
@@ -3594,7 +3616,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 1007.37,
+        "dps": 976.32,
         "loss": 2.51
       },
       {
@@ -3603,7 +3625,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 1006.71,
+        "dps": 975.66,
         "loss": 3.17,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3613,7 +3635,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 1006.04,
+        "dps": 974.99,
         "loss": 3.84
       },
       {
@@ -3622,7 +3644,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 1005.38,
+        "dps": 974.33,
         "loss": 4.5
       },
       {
@@ -3631,7 +3653,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": 1004.49,
+        "dps": 973.44,
         "loss": 5.39,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
       },
@@ -3641,7 +3663,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 1004.38,
+        "dps": 973.33,
         "loss": 5.5,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3651,7 +3673,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 1004.32,
+        "dps": 973.27,
         "loss": 5.56
       }
     ],
@@ -3661,7 +3683,7 @@
         "spell": 20023,
         "name": "Enchant Boots - Greater Agility",
         "effect": "+7 Agility",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~8g"
@@ -3671,7 +3693,7 @@
         "spell": 13935,
         "name": "Enchant Boots - Agility",
         "effect": "+5 Agility",
-        "dps": 1009.34,
+        "dps": 978.29,
         "loss": 0.54
       },
       {
@@ -3680,7 +3702,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": 1009.1,
+        "dps": 978.05,
         "loss": 0.78
       },
       {
@@ -3689,7 +3711,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": 1008.43,
+        "dps": 977.38,
         "loss": 1.45,
         "note": "60 Merchant's Favor, Friendly"
       },
@@ -3699,7 +3721,7 @@
         "spell": 13637,
         "name": "Enchant Boots - Lesser Agility",
         "effect": "+4 Agility",
-        "dps": 1008.12,
+        "dps": 977.07,
         "loss": 1.76
       },
       {
@@ -3708,7 +3730,7 @@
         "spell": 1255095,
         "name": "Forceful Heavy Armor Kit",
         "effect": "+6 AP, +24 armor",
-        "dps": 1007.77,
+        "dps": 976.72,
         "loss": 2.11
       },
       {
@@ -3717,7 +3739,7 @@
         "spell": 7867,
         "name": "Enchant Boots - Minor Agility",
         "effect": "+3 Agility",
-        "dps": 1007.63,
+        "dps": 976.58,
         "loss": 2.25
       },
       {
@@ -3726,7 +3748,7 @@
         "spell": 1255123,
         "name": "Forceful Medium Armor Kit",
         "effect": "+4 AP, +16 armor",
-        "dps": 1007.1,
+        "dps": 976.05,
         "loss": 2.78
       },
       {
@@ -3735,7 +3757,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": 1006.1,
+        "dps": 975.05,
         "loss": 3.78,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3745,7 +3767,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 1006.05,
+        "dps": 975,
         "loss": 3.83
       }
     ],
@@ -3754,34 +3776,34 @@
         "id": 1900,
         "spell": 20034,
         "name": "Enchant Weapon - Crusader",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~400g"
       },
       {
-        "id": 803,
-        "spell": 13898,
-        "name": "Enchant Weapon - Fiery Weapon",
-        "dps": 989.5,
-        "loss": 20.38,
-        "note": "41% formula drop"
-      },
-      {
         "id": 1898,
         "spell": 20032,
         "name": "Enchant Weapon - Lifestealing",
-        "dps": 987.01,
-        "loss": 22.87,
+        "dps": 958.04,
+        "loss": 20.79,
         "note": "Formula on AH ~149g"
+      },
+      {
+        "id": 803,
+        "spell": 13898,
+        "name": "Enchant Weapon - Fiery Weapon",
+        "dps": 958.03,
+        "loss": 20.8,
+        "note": "41% formula drop"
       },
       {
         "id": 2563,
         "spell": 23799,
         "name": "Enchant Weapon - Strength",
         "effect": "+15 Strength",
-        "dps": 986.78,
-        "loss": 23.1,
+        "dps": 955.24,
+        "loss": 23.59,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
       },
@@ -3790,45 +3812,45 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": 984.82,
-        "loss": 25.06,
+        "dps": 953.97,
+        "loss": 24.86,
         "note": "Timbermaw rep, tier unknown"
       },
       {
         "id": 1897,
         "spell": 20031,
         "name": "Enchant Weapon - Superior Striking",
-        "dps": 982.77,
-        "loss": 27.11,
+        "dps": 951.01,
+        "loss": 27.82,
         "note": "Formula on AH ~50g"
       },
       {
         "id": 805,
         "spell": 13943,
         "name": "Enchant Weapon - Greater Striking",
-        "dps": 981.51,
-        "loss": 28.37
+        "dps": 949.98,
+        "loss": 28.85
       },
       {
         "id": 943,
         "spell": 13693,
         "name": "Enchant Weapon - Striking",
-        "dps": 980.24,
-        "loss": 29.64
+        "dps": 948.95,
+        "loss": 29.88
       },
       {
         "id": 241,
         "spell": 13503,
         "name": "Enchant Weapon - Lesser Striking",
-        "dps": 978.98,
-        "loss": 30.9
+        "dps": 947.91,
+        "loss": 30.92
       },
       {
         "id": 250,
         "spell": 7788,
         "name": "Enchant Weapon - Minor Striking",
-        "dps": 977.71,
-        "loss": 32.17
+        "dps": 946.88,
+        "loss": 31.95
       }
     ],
     "offhand": [
@@ -3836,7 +3858,7 @@
         "id": 1900,
         "spell": 20034,
         "name": "Enchant Weapon - Crusader",
-        "dps": 1009.88,
+        "dps": 978.83,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~400g"
@@ -3846,8 +3868,8 @@
         "spell": 23799,
         "name": "Enchant Weapon - Strength",
         "effect": "+15 Strength",
-        "dps": 1002.93,
-        "loss": 6.95,
+        "dps": 969.85,
+        "loss": 8.98,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
       },
@@ -3856,61 +3878,61 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": 1001.08,
-        "loss": 8.8,
+        "dps": 969.22,
+        "loss": 9.61,
         "note": "Timbermaw rep, tier unknown"
       },
       {
         "id": 803,
         "spell": 13898,
         "name": "Enchant Weapon - Fiery Weapon",
-        "dps": 997.76,
-        "loss": 12.12,
+        "dps": 966.05,
+        "loss": 12.78,
         "note": "41% formula drop"
       },
       {
         "id": 1898,
         "spell": 20032,
         "name": "Enchant Weapon - Lifestealing",
-        "dps": 997.43,
-        "loss": 12.45,
+        "dps": 965.65,
+        "loss": 13.18,
         "note": "Formula on AH ~149g"
       },
       {
         "id": 1897,
         "spell": 20031,
         "name": "Enchant Weapon - Superior Striking",
-        "dps": 996.26,
-        "loss": 13.62,
+        "dps": 963.18,
+        "loss": 15.65,
         "note": "Formula on AH ~50g"
       },
       {
         "id": 805,
         "spell": 13943,
         "name": "Enchant Weapon - Greater Striking",
-        "dps": 995.52,
-        "loss": 14.36
+        "dps": 962.64,
+        "loss": 16.19
       },
       {
         "id": 943,
         "spell": 13693,
         "name": "Enchant Weapon - Striking",
-        "dps": 994.79,
-        "loss": 15.09
+        "dps": 962.09,
+        "loss": 16.74
       },
       {
         "id": 241,
         "spell": 13503,
         "name": "Enchant Weapon - Lesser Striking",
-        "dps": 994.06,
-        "loss": 15.82
+        "dps": 961.55,
+        "loss": 17.28
       },
       {
         "id": 250,
         "spell": 7788,
         "name": "Enchant Weapon - Minor Striking",
-        "dps": 993.32,
-        "loss": 16.56
+        "dps": 961,
+        "loss": 17.83
       }
     ]
   }
