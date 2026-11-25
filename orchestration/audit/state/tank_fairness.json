@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
+  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 31,
+ "last_pass_at": "2026-11-25T13:00:00Z",
+ "pass": 32,
  "result": "quiet",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-25T06:50:52Z",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics."
+ "note": "Re-simmed all 12 presets: stance Rage rule moves the bear (+108 Max survival) and warrior (-1 to -11); Warden -28 to -54 from Arcane Brilliance overwriting its intellect elixir; ranking unchanged; baseline refreshed.",
+ "checked_at": "2026-11-25T13:10:47Z"
 }

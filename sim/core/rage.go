@@ -139,38 +139,73 @@ func (unit *Unit) foreverWhiteHitRage(spell *Spell, result *SpellResult) float64
 // "increased damage taken from combat multipliers, in particular from taking critical strikes or
 // crushing blows" and ignore absorbs "as if the Warrior/Druid had no absorb active". The Warrior
 // deep dive (news.blizzard.com/en-us/article/24301514) says "wearing Armor will no longer reduce
-// the Rage you gain". Neither names stances, Shield Wall, talents or blocks; by the user's reading
-// (2026-10-16: being more defensive doesn't penalize Rage) those don't count either (report
-// assumption warr_dt_rage_mods).
-func ForeverDamageTakenRage(spell *Spell, result *SpellResult) float64 {
+// the Rage you gain". Neither names stances, Shield Wall, talents or blocks. Our own Forever logs
+// (orchestration/rage_taken_by_stance.md: 2,306 melee hits from 157 warriors in 38 logs) give
+// 0.878, 1.109 and 1.017 of this formula in Defensive, Berserker and Battle Stance, about 1 once
+// the stance's 0.9, 1.1 and 1.0 of the damage is taken out, with blocks and armor cutting none.
+// So D is also times the stance's damage taken modifier, and no other of ours (report assumption
+// warr_dt_rage_mods, ForeverDamageTakenRageModsStance).
+//
+// That is a melee auto attack's Rage. Every other hit gives twice as much (wowsims/forever, logs of
+// warriors taking hits from Rage-using mobs, Defensive Stance divided out; their
+// SpellDamageTakenRageMultiplier):
+//   - a hit of a school other than Physical, and every periodic tick of any school, on the same D
+//     (EV-0052, 1eb92e03e9: Arcane swings 3.85 and Fire swings 3.83, Poison ticks 3.75, Rend ticks
+//     3.76, where Physical swings read 1.96 against the rule's 1.955; builds 70862 to 70938);
+//   - any other Physical direct hit (a mob's special, Shoot, Throw, the raid damage model's melee
+//     abilities), on the damage that landed, after armor, our damage taken modifiers, the block and
+//     flat reductions, before absorbs (EV-0118, 77c8d275e7: 3.83 on 166 such hits from 34
+//     attackers at every armor level, 3.66 partly blocked, against twice the rule's 3.91, where the
+//     damage before armor read 2.30 and fell as armor rose). Our modifiers other than the stance's
+//     are divided out of that damage, as D leaves them out.
+//
+// Only the stance is measured on these too: the logs of both were all in Defensive Stance, and
+// the stance's share is in the reading (To Verify, notes.md). Attackers that use mana or energy
+// gave about half of each in their logs (EV-0048, EV-0052); a target has no power type, so the sim
+// gives every attacker the full amount, as theirs does.
+func ForeverDamageTakenRage(spell *Spell, result *SpellResult, periodic bool) float64 {
 	if !result.Landed() {
 		return 0
 	}
-	damage := foreverRageDamage(spell, result)
+	damage := foreverRageDamage(spell, result, periodic)
 	if damage <= 0 {
 		return 0
+	}
+	if periodic || !spell.SpellSchool.Matches(SpellSchoolPhysical) || !spell.ProcMask.Matches(ProcMaskMeleeWhiteHit) {
+		damage *= ForeverSpellDamageTakenRageMultiplier
 	}
 	attackerLevel := spell.Unit.Level
 	// reportSwitches.damageTakenRageFactor is ForeverDamageTakenRageFactor unless DASH_ASSUME warr_dt_rage_k sets it
 	return reportSwitches.damageTakenRageFactor * (1 - foreverDamageTakenRageArmor(attackerLevel)) * damage / foreverRageConversion(attackerLevel)
 }
 
+// ForeverSpellDamageTakenRageMultiplier is what a hit taken that isn't a Physical melee auto attack
+// gives over one that is (wowsims/forever EV-0052 and EV-0118, ForeverDamageTakenRage).
+const ForeverSpellDamageTakenRageMultiplier = 2.0
+
 // ForeverDamageTakenRageFactor is the 2.5 of ForeverDamageTakenRage (report assumption
 // warr_dt_rage_k).
 const ForeverDamageTakenRageFactor = 2.5
 
-// The armor ForeverDamageTakenRage assumes, by the attacker's level: 20% up to 42, 30% at 44, 36%
-// at 46 and 38% at 50 from the logs (wowsims/forever 73b317c7cf: k 1.993 on 187 melee hits from
-// attackers 16 to 42, 1.752 at 44, 1.611 at 46, 1.552 from 50 to 60), and 40% at 63, the top of
-// the notes' "20% to 40% range, varying by level" (de550b7df9). Levels in between interpolate.
+// The armor ForeverDamageTakenRage assumes, by the attacker's level, as wowsims/forever measured it
+// on warriors' and bears' logs of melee hits from Rage-using mobs: 21.8% up to 38 and 23.9% at 42
+// (EV-0048: k 1.956 on the pooled hits up to 38, 1.903 at 42), 31% at 44 and 36% at 46 (EV-0048),
+// .377 at 47 (EV-0034: .377, .381 and .379 at 47 to 49 on about 300 pairs each), 38% at 50 and .381
+// at 55 (EV-0035: .369 to .382 at 50 to 55), 38% at 59 (EV-0050: k 1.544 to 1.559 at 55 to 59) and
+// 40% at 63, the top of the notes' "20% to 40% range, varying by level" (de550b7df9; no log covers
+// 60 to 63). Levels in between interpolate.
 var foreverDamageTakenRageArmorRows = []struct {
 	level     int32
 	reduction float64
 }{
-	{42, 0.20},
-	{44, 0.30},
+	{38, 0.218},
+	{42, 0.239},
+	{44, 0.31},
 	{46, 0.36},
+	{47, 0.377},
 	{50, 0.38},
+	{55, 0.381},
+	{59, 0.38},
 	{63, 0.40},
 }
 
@@ -196,7 +231,7 @@ func foreverRageConversion(level int32) float64 {
 }
 
 // foreverRageDamage is the damage ForeverDamageTakenRage counts for a hit.
-func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
+func foreverRageDamage(spell *Spell, result *SpellResult, periodic bool) float64 {
 	if result.AttackerDamage <= 0 {
 		// A result built by hand rather than by CalcDamage has no attacker damage: count what
 		// landed before our armor and resists, which already carries its crit.
@@ -205,34 +240,60 @@ func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
 		}
 		return result.Damage / result.ResistanceMultiplier
 	}
-	damage := result.AttackerDamage
 	attackTable := spell.Unit.AttackTables[result.Target.UnitIndex][spell.CastType]
+	if !periodic && spell.SpellSchool.Matches(SpellSchoolPhysical) && !spell.ProcMask.Matches(ProcMaskMeleeWhiteHit) {
+		// A Physical special: the damage that landed, before absorbs, with our modifiers that
+		// don't count taken out again.
+		targetMultiplier := spell.TargetDamageMultiplier(attackTable, false)
+		if targetMultiplier <= 0 {
+			return 0
+		}
+		return result.PreAbsorbDamage / targetMultiplier * foreverRageModifier(spell, result, attackTable, false)
+	}
+	damage := result.AttackerDamage
 	if result.DidCrit() && spell.DefenseType != DefenseTypeNone {
 		damage *= spell.CritMultiplier(attackTable)
 	} else if result.DidCrush() {
 		damage *= 1.5
 	}
+	return damage * foreverRageModifier(spell, result, attackTable, periodic)
+}
+
+// foreverRageModifier is the part of our damage taken modifiers that counts toward the Rage from
+// a hit taken, by ForeverDamageTakenRageMods.
+func foreverRageModifier(spell *Spell, result *SpellResult, attackTable *AttackTable, periodic bool) float64 {
 	switch ForeverDamageTakenRageMods {
+	case ForeverDamageTakenRageModsStance:
+		if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+			return 1
+		}
+		return result.Target.PseudoStats.StanceDamageTakenMultiplier
 	case ForeverDamageTakenRageModsAll:
-		damage *= spell.TargetDamageMultiplier(attackTable, false)
+		return spell.TargetDamageMultiplier(attackTable, periodic)
 	case ForeverDamageTakenRageModsIncreases:
-		damage *= max(1, spell.TargetDamageMultiplier(attackTable, false))
+		return max(1, spell.TargetDamageMultiplier(attackTable, periodic))
 	}
-	return damage
+	return 1
 }
 
 // Which of our damage taken modifiers (stances, Shield Wall, Recklessness, talents) change the
 // Rage a hit gives (report assumption warr_dt_rage_mods).
 const (
-	// None: a defensive choice costs no Rage, and Recklessness or Berserker Stance add none.
+	// None: a defensive choice costs no Rage, and Recklessness or Berserker Stance add none (the
+	// rule from 2026-10-23 to 2026-11-25).
 	ForeverDamageTakenRageModsNone = 0
 	// All: the damage after our modifiers, before armor, as master had before 2026-10-16.
 	ForeverDamageTakenRageModsAll = 1
 	// Increases only: Recklessness and the like add Rage, reductions take none away.
 	ForeverDamageTakenRageModsIncreases = 2
+	// Stance only: Defensive Stance's 0.9 and Berserker Stance's 1.1, measured in our Forever logs
+	// (orchestration/rage_taken_by_stance.md). Shield Wall, Death Wish, Recklessness, talents and
+	// debuffs on us aren't measured and don't count; neither do blocks and armor, which the logs
+	// show cut none of it. Melee hits only were measured; spell hits follow the same rule here.
+	ForeverDamageTakenRageModsStance = 3
 )
 
-var ForeverDamageTakenRageMods = ForeverDamageTakenRageModsNone
+var ForeverDamageTakenRageMods = ForeverDamageTakenRageModsStance
 
 func GetRageConversion(attacker_level int32) float64 {
 	if attacker_level == 25 {
@@ -325,7 +386,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			}
 			var generatedRage float64
 			if sim.IsForever() {
-				generatedRage = ForeverDamageTakenRage(spell, result)
+				generatedRage = ForeverDamageTakenRage(spell, result, false)
 			} else {
 				generatedRage = result.Damage * 2.5 / GetRageConversion(spell.Unit.Level)
 			}
@@ -339,7 +400,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			if unit.GetCurrentPowerBar() != RageBar || !sim.IsForever() {
 				return
 			}
-			generatedRage := ForeverDamageTakenRage(spell, result) * unit.rageBar.damageTakenMultiplier
+			generatedRage := ForeverDamageTakenRage(spell, result, true) * unit.rageBar.damageTakenMultiplier
 			if generatedRage > 0 {
 				unit.rageBar.addRage(sim, generatedRage, rageFromDamageTakenMetrics, false)
 			}
@@ -429,7 +490,7 @@ func (rb *rageBar) addRage(sim *Simulation, amount float64, metrics *ResourceMet
 	metrics.AddEvent(amount, newRage-rb.currentRage)
 
 	if gain := newRage - rb.currentRage; gain > 0 && threat && sim.IsForever() {
-		rb.foreverRageGainThreat(sim, gain)
+		rb.foreverRageGainThreat(sim, gain, metrics)
 	}
 
 	if sim.Log != nil {
@@ -479,12 +540,23 @@ func (rb *rageBar) reset(_ *Simulation) {
 // combat at the time. wowsims/forever 913a5bcf69 and c48ea6cea3 have it from the owner's in-game
 // threat measurements; Classic gives 5 a Rage to every target, with no multiplier, at the end of the
 // iteration (doneIteration).
-func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64) {
+//
+// EV-0044: Rage gained before the pull makes no threat. EV-0043, EV-0044, EV-0045, EV-0174 and
+// EV-0035: a source marked UnscaledThreat (Bloodrage's instant Rage, Shield Specialization, Master
+// of Defense, Unbridled Wrath, Blood Frenzy) makes 5 a Rage without the multiplier; Bloodrage's
+// ticks read 5 x stance x Defiance (10.8 a Rage in Defensive Stance with Defiance 3).
+func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64, metrics *ResourceMetrics) {
+	if sim.CurrentTime < 0 {
+		return
+	}
 	targets := sim.Encounter.ActiveTargetUnits
 	if len(targets) == 0 {
 		return
 	}
-	threat := gain * ThreatPerRageGained * rb.unit.PseudoStats.ThreatMultiplier / float64(len(targets))
+	threat := gain * ThreatPerRageGained / float64(len(targets))
+	if !metrics.UnscaledThreat {
+		threat *= rb.unit.PseudoStats.ThreatMultiplier
+	}
 	for _, target := range targets {
 		rb.rageGainSpell.SpellMetrics()[target.UnitIndex].TotalThreat += threat
 		rb.unit.watchThreat(sim, target, threat)

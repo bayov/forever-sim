@@ -142,10 +142,14 @@ func (druid *Druid) registerForeverFaerieFireSpell() {
 		},
 
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  2. * 54,
 		DamageMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// EV-0034, EV-0037: a landed cast in Bear or Dire Bear Form threatens for twice the
+			// caster's level, raised by the form's multiplier (round(2 x level x 2.15) at levels 56
+			// to 59, 258 at 60); in Cat Form none (0 on 43 of 45 windows), and caster form takes the
+			// same none as wowsims/forever's.
+			spell.FlatThreatBonus = core.TernaryFloat64(druid.InForm(Bear), 2*float64(druid.Level), 0)
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				druid.FaerieFireAuras.Get(target).Activate(sim)

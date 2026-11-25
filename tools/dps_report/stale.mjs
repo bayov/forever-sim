@@ -34,7 +34,9 @@
 // sim/*.go, its bench's sources (tools/tankbench or tools/healbench, its req/ folder left out), tools/tankscore, the
 // seven boss files in tools/encounters, tankheal.py and the race sims' scripts (bench_races.py, adaptive.py,
 // dashpaths.py, run_build.py's CLASS_RACES), its own request, the class packages
-// of every class in its raid, and the database entries those requests wear. A tank preset's raid is the tank alone. A
+// of every class in its raid, its spec's other-faction Phase 0 sets (the `<gearOut>_<horde|alliance>.gear.json` beside
+// the spec's gearOut in tools/rotopt/phase0_specs.json, which bench_races.py puts on a race of the other faction), and
+// the database entries those requests and sets wear. A tank preset's raid is the tank alone. A
 // healing preset's raid is the healer and healbench's frost mage fillers (-filler), plus its warrior tank (-tank) for a
 // tank healer: a raid healer's raid has no tank (healbench -role raid). They are listed apart (`benches` in --json, a
 // second block in the text), so probe.py, which reads `stale`, sees DPS builds only.
@@ -209,6 +211,14 @@ export const benchPresets = memo((r, mode) =>
 		.filter(s => !NOT_PRESETS.includes(s))
 		.sort(),
 );
+// a bench request's other-faction Phase 0 sets at a revision (bench_races.py faction_set): the files beside the gearOut
+// of the phase0_specs.json spec whose reqFile or raidReqFile it is, the ones that exist
+export const benchFactionSets = (r, reqFile) => {
+	const specs = Object.values(showJson(r, 'tools/rotopt/phase0_specs.json')?.specs || {});
+	const out = specs.find(s => s?.bench && (s.reqFile === reqFile || s.raidReqFile === reqFile))?.gearOut;
+	if (!out?.endsWith('.gear.json')) return [];
+	return ['horde', 'alliance'].map(f => `${out.slice(0, -'.gear.json'.length)}_${f}.gear.json`).filter(p => lsTree(r, p).length);
+};
 export const benchFingerprint = memo((r, mode, stem) => {
 	const b = BENCH[mode];
 	const raid = b.raid(stem);
@@ -219,7 +229,9 @@ export const benchFingerprint = memo((r, mode, stem) => {
 	const src = lsTree(r, b.dir).filter(f => !f.path.startsWith(`${b.dir}/req/`) && !IGNORED.test(f.path));
 	fp[`${b.dir} (the bench, its requests left out)`] = src.length ? sha(src.map(f => `${f.blob} ${f.path}`).join('\n')) : null;
 	fp['sim/*.go'] = topSim(r);
-	fp['assets/database (the entries it wears)'] = dbSlice(r, reqs.flatMap(p => equipmentOf(showJson(r, p))));
+	const sets = benchFactionSets(r, `${b.dir}/req/${stem}.json`);
+	for (const p of sets) fp[p] = inputHash(r, p);
+	fp['assets/database (the entries it wears)'] = dbSlice(r, [...reqs.flatMap(p => equipmentOf(showJson(r, p))), ...sets.map(p => showJson(r, p))]);
 	return fp;
 });
 const benchModes = Object.keys(BENCH).filter(m => fs.existsSync(path.join(dataDir, `${m}_builds.json`)));

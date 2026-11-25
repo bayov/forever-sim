@@ -334,12 +334,11 @@
       <div class="content-block-header"><h6 class="content-block-title">Consumes and buffs</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-setup">How were these chosen?</button></div>
       <div class="fv-about-body" id="about-setup" data-title="Choosing consumes and buffs" hidden>
         <p><b>How.</b> Every preset gets the best of everything for it: a flask, an elixir in each slot, food, a weapon oil, stone or imbue, potions, a rune, and explosives when they help. Only what you can get at Forever's launch counts. Only one elixir's 2% crit counts. The fight is taken to be in Hyjal or the Barrow Deeps, the only places where some of Forever's flasks give their full bonus.</p>
-        <p>Buffs and debuffs are a full raid's, with each spec in the party it would really be in. Each one was also simmed off. "Hide inactive" hides the ones that change nothing.</p>
+        <p>Buffs and debuffs are a full raid's, with each spec in the party it would really be in, and no world buffs, which have no effect in a raid instance in Forever. Each one was also simmed off. "Hide inactive" hides the ones that change nothing.</p>
         <p><b>Why trust it.</b> Every preset gets the same treatment, so the ranking compares specs, not spending. Every consume, buff, debuff and enchant was checked against Forever's client and what's out at launch.</p>
         <p><b>Limits.</b></p>
         <ul>
           <li>A full raid with every class and consume is a best case. A smaller or less prepared raid does less.</li>
-          <li>No world buffs.</li>
           <li>In Forever, pets get no player buffs or consumes, so pet specs gain less from the raid than in Classic.</li>
         </ul>
       </div>
@@ -520,19 +519,42 @@
 
     <div class="content-block fv-card" id="rs-gear-card">
       <div class="content-block-header"><h6 class="content-block-title">Gear</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-rs-gear">How was gear made?</button></div>
-      <p class="fv-note">Made-up gear at Phase 1 item levels. Only DPS presets have Phase 0 gear so far.</p>
+      <p class="fv-note" data-gear="phase0">Phase 0 gear: the best the preset can get before the first raids open.</p>
+      <p class="fv-note" data-gear="synth" hidden>Made-up gear at Phase 1 item levels, until this preset's Phase 0 list lands.</p>
       <div class="fv-about-body" id="about-rs-gear" data-title="How gear was made" hidden>
-        <p><b>How.</b> Tanks and healers don't have Phase 0 gear lists yet, so every piece here is made up. Each piece's stats fit Forever's stat budget for its slot and item level. The item levels match Era's Phase 1 best in slot: 66 for head, shoulders, chest, hands, legs and feet, 71 for neck, back, wrists, waist, rings, one-handers and ranged, and 76 for two-handers.</p>
-        <p>The stat mix follows real level 60 best in slot lists, Season of Discovery's for tanks and Wowhead's for healers. Mana users get about 10% Spirit. Tanks get hit up to the cap where it helps them, healers none. Weapons keep the DPS of the Era Phase 1 weapon they replace, at the type and speed the spec does best with. Two pieces are from the class's Forever tier set, for its 2-piece bonus. Both trinkets are made up too.</p>
-        <p><b>Why trust it.</b> The budget is fitted to Era's level 60 epics. Forever's beta gear matches Era's budget within about 3%. Over 300 level 60 epics Forever has shown (crafted, reputation and PvP, item level 60 and 65) match these pieces within about 2%. Caster weapons get the double budget Forever's real caster weapons have. Every piece was checked against the budget, and the sets against each other.</p>
-        <p><b>Limits.</b></p>
-        <ul>
-          <li>The best real Forever gear with known stats is item level 65, plus one ring at 70. If Phase 1 tops out at 65, these sets have about 5% to 6% more stats than real gear.</li>
-          <li>Forever's real epics put about 28% of their budget into Stamina, against 18% here. Only 1 piece in 20 has hit, against 4 in 10 here. So these numbers are likely a bit high, most of all for specs that reach the hit cap from gear.</li>
-          <li>Some real Forever pieces have expertise. These sets have none.</li>
-          <li>Raid drops, the tier sets' real stats, procs, on-use effects and Forever's launch trinkets are unknown. The made-up trinkets stand in for them. A tank's stat trinket has tank stats.</li>
-          <li>Only the 2-piece set bonus counts.</li>
-        </ul>
+        <div data-gear="phase0">
+          <p><b>How.</b> Forever's first raids open on 2026-12-09. Until then players gear from dungeons, quests, crafting, reputation, PvP reputation, world drops and the auction house. We call that Phase 0. A gear search tries every item the spec can wear in each slot, keeps whatever raises the report's own score most and goes round again until no item beats the one it has. Then it tries every enchant the same way.</p>
+          <ul>
+            <li>Tanks: the score is the tank score, the mean over the six scored bosses. Each preset (Max threat, Balanced, Max survival) has its own list, since each weighs survival differently.</li>
+            <li>Healers: the score is the damage carried, the mean over the seven bosses as tank healer and as raid healer, the two weighed alike. Each spec has one list.</li>
+          </ul>
+          <p><b>What counts.</b></p>
+          <ul>
+            <li>In: dungeon drops and quest rewards, crafted gear, world drops, the auction house, and reputation rewards up to Revered, PvP reputations included.</li>
+            <li>Ranked but never picked: Exalted rewards, a very long grind, and items over 3000g for each 1% of score they add. For tanks 1% is of the class's Balanced score, for all three presets.</li>
+            <li>Out: raid and world boss loot, gear made from raid materials, and what only the other faction can get. The faction comes from the preset's race. A race of the other faction wears that faction's copy of the list.</li>
+          </ul>
+          <p>Set bonuses count at however many pieces the list wears. Trinkets are real, their on-use effects included where the sim models them.</p>
+          <p><b>Limits.</b></p>
+          <ul>
+            <li>Some items have a use or proc the sim doesn't model. They count for their stats alone, so they rank lower than they should.</li>
+            <li>Forever still hides some items' stats. Those use their Classic stats, or the part Forever shows.</li>
+            <li>Some picks may turn out not to be open before the raids.</li>
+          </ul>
+        </div>
+        <div data-gear="synth" hidden>
+          <p><b>How.</b> This preset's Phase 0 list isn't in yet, so every piece here is made up. Each piece's stats fit Forever's stat budget for its slot and item level. The item levels match Era's Phase 1 best in slot: 66 for head, shoulders, chest, hands, legs and feet, 71 for neck, back, wrists, waist, rings, one-handers and ranged, and 76 for two-handers.</p>
+          <p>The stat mix follows real level 60 best in slot lists, Season of Discovery's for tanks and Wowhead's for healers. Mana users get about 10% Spirit. Tanks get hit up to the cap where it helps them, healers none. Weapons keep the DPS of the Era Phase 1 weapon they replace, at the type and speed the spec does best with. Two pieces are from the class's Forever tier set, for its 2-piece bonus. Both trinkets are made up too.</p>
+          <p><b>Why trust it.</b> The budget is fitted to Era's level 60 epics. Forever's beta gear matches Era's budget within about 3%. Over 300 level 60 epics Forever has shown (crafted, reputation and PvP, item level 60 and 65) match these pieces within about 2%. Caster weapons get the double budget Forever's real caster weapons have. Every piece was checked against the budget, and the sets against each other.</p>
+          <p><b>Limits.</b></p>
+          <ul>
+            <li>The best real Forever gear with known stats is item level 65, plus one ring at 70. If Phase 1 tops out at 65, these sets have about 5% to 6% more stats than real gear.</li>
+            <li>Forever's real epics put about 28% of their budget into Stamina, against 18% here. Only 1 piece in 20 has hit, against 4 in 10 here. So these numbers are likely a bit high, most of all for specs that reach the hit cap from gear.</li>
+            <li>Some real Forever pieces have expertise. These sets have none.</li>
+            <li>Raid drops, the tier sets' real stats, procs, on-use effects and Forever's launch trinkets are unknown. The made-up trinkets stand in for them. A tank's stat trinket has tank stats.</li>
+            <li>Only the 2-piece set bonus counts.</li>
+          </ul>
+        </div>
       </div>
       <div class="fv-gearwrap"><div id="rs-gear-tab"><div class="gear-picker-root" id="rs-gear"></div></div></div>
     </div>

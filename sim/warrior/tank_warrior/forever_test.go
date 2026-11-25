@@ -89,6 +89,33 @@ func TestForeverShieldWallAndBlock(t *testing.T) {
 	}
 }
 
+// TestForeverShieldWallKeepsRage checks that Shield Wall takes no Rage from the boss's white hit,
+// while Defensive Stance takes 10% (report assumption warr_dt_rage_mods, the stance rule:
+// orchestration/rage_taken_by_stance.md measured the stances only).
+func TestForeverShieldWallKeepsRage(t *testing.T) {
+	sim, war := newForeverTankOf(t, P1Talents, true)
+	war.DefensiveStanceAura.Activate(sim)
+	hitRage := func() float64 {
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		attack := war.CurrentTarget.AutoAttacks.MHAuto()
+		result := attack.NewResult(&war.Unit)
+		result.Outcome = core.OutcomeHit
+		result.AttackerDamage = 1000
+		result.Damage = 600 * war.PseudoStats.DamageTakenMultiplier
+		result.PreAbsorbDamage = result.Damage
+		attack.DealDamage(sim, result)
+		return war.CurrentRage()
+	}
+	formula := 1000 * 2.5 * (1 - 0.40) / core.GetRageConversion(63)
+	if got, want := hitRage(), 0.9*formula; math.Abs(got-want) > 1e-6 {
+		t.Errorf("a 1000 hit in Defensive Stance gave %.3f Rage, want %.3f", got, want)
+	}
+	war.GetAura("Shield Wall").Activate(sim)
+	if got, want := hitRage(), 0.9*formula; math.Abs(got-want) > 1e-6 {
+		t.Errorf("a 1000 hit under Shield Wall gave %.3f Rage, want %.3f", got, want)
+	}
+}
+
 // TestForeverShieldBlockRecastRefills checks that casting Shield Block while its buff is still up
 // (7 sec on a 5 sec cooldown) refreshes it with both charges, as wowsims/forever's shield_block.go
 // does.

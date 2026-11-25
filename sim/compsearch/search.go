@@ -472,7 +472,22 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			fixed[i] = b.ForBoss(mob)
 		}
 	}
-	survivors, dominatedBy := model.Survivors(cands, 1.5)
+	// A duty variant fills too when the model puts it at or above its base under the full set (docs/raid_sim.md,
+	// The search, step 1). With its effect already up, a duty build's own rotation can be the better one, as
+	// Fury on Battle Shout is next to plain Fury, and it fills only a set where its effect is up.
+	fillCands := append([]*Build{}, cands...)
+	for _, b := range sc.Pool.Bases {
+		baseFull := model.builds[b].full
+		if v := b.ForBoss(mob); v != b {
+			baseFull = math.Max(baseFull, model.builds[v].full)
+		}
+		for _, d := range sortedDuties(b.Duties) {
+			if v := b.Duties[d]; model.builds[v].full >= baseFull {
+				fillCands = append(fillCands, v)
+			}
+		}
+	}
+	survivors, dominatedBy := model.Survivors(fillCands, 1.5)
 	f := &Fillers{Fill: append([]*Build{}, survivors...)}
 	// The best shaman of each package kind fills too, for its party's mana.
 	bestSham := map[proto.RaidPackage]*Build{}
@@ -497,7 +512,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	f.Providers = pickProviders(model, modelBuilds)
 
 	out := &proto.CompScenarioResult{Faction: sc.Faction, CampBuffs: sc.Camps, FightSeconds: sc.Fight.Duration}
-	out.Notes = append(out.Notes, fmt.Sprintf("%d of %d builds survive pruning: %s", len(survivors), len(cands), buildList(survivors)))
+	out.Notes = append(out.Notes, fmt.Sprintf("%d of %d builds survive pruning: %s", len(survivors), len(fillCands), buildList(survivors)))
 
 	// Signatures: one search each, then every combo re-fills its signature's best sets.
 	combos := Combos(req)
