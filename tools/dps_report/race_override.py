@@ -79,6 +79,18 @@ def has_gear(ov):
     return bool(ov and (ov.get('bonusStats') or ov.get('gearSet') or ov.get('equipment')))
 
 
+def faction_set(ov):
+    """Whether the override's gear set is the preset's set for the other faction (race_gear.py's `<gearSet>_horde` or
+    `_alliance`): gear the race wears because of its faction, not tuned around any racial."""
+    return bool(ov and (ov.get('gearSet') or '').endswith(('_horde', '_alliance')))
+
+
+def racial_gear(ov):
+    """Whether the override has gear tuned around a racial: bonus stats (the Dwarf's hit trade), or equipment that
+    isn't a faction set."""
+    return bool(ov and (ov.get('bonusStats') or (ov.get('equipment') and not faction_set(ov))))
+
+
 # The report's words for each race's own setup: a `note` for the Races tab and, for a rotation, a `why` per line it
 # changes ("<section>:<spell key, or the action's name>"). They live apart from the override files, which the sims read
 # and the staleness checks hash, so rewording them doesn't make a build stale.
@@ -145,8 +157,8 @@ def load(bid, race, meta=None):
 
 def apply(req, bid, race, meta=None, gear=True):
     """(the request at this race with its override applied, the override or None). Sets the race either way. gear=False
-    leaves the race's gear out, bonus stats and equipment (run_races.py's sims without the racial the gear is tuned
-    around)."""
+    leaves out the race's gear tuned around a racial (run_races.py's sims without that racial): its bonus stats, and its
+    equipment unless that is a faction set, which the race wears whatever its racials."""
     req = copy.deepcopy(req)
     pl = req['raid']['parties'][0]['players'][0]
     pl['race'] = 'Race' + race
@@ -155,7 +167,7 @@ def apply(req, bid, race, meta=None, gear=True):
         return req, None
     if 'rotation' in ov:
         pl['rotation'] = copy.deepcopy(ov['rotation'])
-    if gear and ov.get('equipment'):
+    if ov.get('equipment') and (gear or faction_set(ov)):
         pl['equipment'] = copy.deepcopy(ov['equipment'])
     if gear and ov.get('bonusStats'):
         bs = pl.setdefault('bonusStats', {})

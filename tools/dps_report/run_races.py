@@ -14,7 +14,9 @@ and Orc Savage with Command (command, 5% pet damage, Hunters and Warlocks only).
 Every scenario of a race other than the preset's sims that race's own rotation and gear where req/races/<id>.<Race>.json
 gives them (race_override.py, standards 29), the "off" rows included. A race's own gear is tuned around one of its racials
 (GEAR_PART: the Dwarf's trades the hit Artisan's Precision makes spare), so a sim with that racial off wears the
-preset's gear: the trade counts in the racial, and "base stats" are the race's stats on the preset's gear.
+preset's gear: the trade counts in the racial, and "base stats" are the race's stats on the preset's gear. A faction
+set (race_gear.py's `<gearSet>_horde` / `_alliance`, the race can't wear the other faction's rewards) is worn in every
+scenario: it isn't tuned around a racial, so only the Dwarf's hit trade on top of it comes off.
 Results append to rv/results.jsonl, one line per sim, so a rerun only does what is missing.
 Needs $DASH_BIN/wowsimcli, which build_bins.py builds. It reads DASH_RACIALS_OFF (report switches, sim/core/report_switches.go).
 """
@@ -71,7 +73,7 @@ def gear_on(race, off):
 def scenario_req(req, race, off=None, mob=None, bid=None, meta=None):
     if bid:
         ov = race_override.load(bid, race, meta)
-        if race_override.has_gear(ov) and race not in GEAR_PART:
+        if race_override.racial_gear(ov) and race not in GEAR_PART:
             raise RuntimeError(f'{bid} {race}: a gear override, and no GEAR_PART says which racial it is tuned around')
     req, _ = race_override.apply(req, bid, race, meta, gear=gear_on(race, off)) if bid else (copy.deepcopy(req), None)
     player(req)['race'] = 'Race' + race
