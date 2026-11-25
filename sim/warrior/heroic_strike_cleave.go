@@ -34,6 +34,8 @@ func (warrior *Warrior) registerHeroicStrikeSpell(realismICD *core.Cooldown) {
 		ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskMeleeMHAuto,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | SpellFlagOffensive,
 
+		ExtraCastCondition: warrior.castBySwing(&warrior.HeroicStrike),
+
 		RageCost: core.RageCostOptions{
 			Cost:   15 - float64(warrior.Talents.ImprovedHeroicStrike),
 			Refund: 0.8,
@@ -93,6 +95,8 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskMeleeMHAuto,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagOffensive,
+
+		ExtraCastCondition: warrior.castBySwing(&warrior.Cleave),
 
 		RageCost: core.RageCostOptions{
 			Cost: rageCost,
@@ -201,6 +205,17 @@ func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *WarriorSpell, realismIC
 	})
 
 	return queueSpell
+}
+
+// castBySwing keeps a leveling rotation from casting Heroic Strike or Cleave outright, on top of its
+// swings. It can only queue one (tag 1 of the spell ID), and the swing casts it.
+func (warrior *Warrior) castBySwing(strike **WarriorSpell) core.CanCastCondition {
+	if !warrior.Env.Encounter.IsLeveling() {
+		return nil
+	}
+	return func(_ *core.Simulation, _ *core.Unit) bool {
+		return warrior.curQueueAura.IsActive() && warrior.curQueuedAutoSpell == *strike
+	}
 }
 
 func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {

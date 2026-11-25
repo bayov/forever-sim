@@ -300,11 +300,12 @@ func (character *Character) EnableLevelingRageDecay(opts RageDecayOptions) {
 					leftCombatAt = max(sim.CurrentTime-period, s.stateSince)
 				}
 				rage := character.CurrentRage()
-				if inCombat || rage <= 0 || sim.CurrentTime < leftCombatAt+opts.Delay {
+				decayed := sim.CurrentTime - max(sim.CurrentTime-period, leftCombatAt+opts.Delay)
+				if inCombat || rage <= 0 || decayed <= 0 {
 					sim.NothingHappened()
 					return
 				}
-				decay := rageDecayPerSecond * opts.Multiplier * period.Seconds()
+				decay := rageDecayPerSecond * opts.Multiplier * decayed.Seconds()
 				character.SpendRage(sim, min(decay, rage), opts.Metrics)
 			},
 		})

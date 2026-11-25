@@ -718,6 +718,9 @@ func (result *SpellResult) applyAttackTableMissNoDWPenalty(spell *Spell, attackT
 }
 
 func (result *SpellResult) applyAttackTableBlock(spell *Spell, attackTable *AttackTable, roll float64, chance *float64, countHits bool) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
 	*chance += attackTable.BaseBlockChance
 	if roll < *chance {
 		isCrit := result.DidCrit()
@@ -746,6 +749,9 @@ func (result *SpellResult) applyAttackTableBlock(spell *Spell, attackTable *Atta
 }
 
 func (result *SpellResult) applyAttackTableDodge(spell *Spell, attackTable *AttackTable, roll float64, chance *float64, countHits bool) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
 	// In SoD this works like crit or hit chance.
 	expertiseDodgeReduction := attackTable.Attacker.stats[stats.Expertise] / 100
 
@@ -763,6 +769,9 @@ func (result *SpellResult) applyAttackTableDodge(spell *Spell, attackTable *Atta
 }
 
 func (result *SpellResult) applyAttackTableParry(spell *Spell, attackTable *AttackTable, roll float64, chance *float64, countHits bool) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
 	// In SoD this works like crit or hit chance.
 	expertiseParryReduction := attackTable.Attacker.stats[stats.Expertise] / 100
 

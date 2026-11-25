@@ -11,6 +11,8 @@ const (
 	whirlwindRadius        = 8.0
 	thunderClapRadius      = 8.0
 	demoralizingShoutReach = 10.0
+	chargeMinRange         = 8.0
+	chargeMaxRange         = 25.0
 )
 
 // knownRank is the highest rank of an ability the warrior knows, 0 when it knows none. The tables

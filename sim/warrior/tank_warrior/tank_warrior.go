@@ -66,7 +66,9 @@ func (war *TankWarrior) Initialize() {
 
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
-	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
+	if war.KnowsStance(warrior.DefensiveStance) {
+		war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
+	}
 }
 
 func (war *TankWarrior) Reset(sim *core.Simulation) {

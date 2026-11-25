@@ -61,6 +61,7 @@ type Warrior struct {
 	twoHandSpecPhysical float64
 	OverpowerAura       *core.Aura
 	BloodthrillAura     *core.Aura
+	GoreDrinkerAura     *core.Aura
 
 	// Enrage Auras
 	BerserkerRageAura  *core.Aura
@@ -106,6 +107,9 @@ type Warrior struct {
 	ConcussionBlow    *WarriorSpell
 	Hamstring         *WarriorSpell
 	SpearingStrike    *WarriorSpell
+	Intercept         *WarriorSpell
+	VictoryRush       *WarriorSpell
+	Retaliation       *WarriorSpell
 
 	HeroicStrike       *WarriorSpell
 	HeroicStrikeQueue  *WarriorSpell
@@ -226,7 +230,12 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerBloodrageCD()
 	warrior.registerRecklessSwingsCD()
 	warrior.registerChargeSpell()
+	warrior.registerInterceptSpell()
+	warrior.registerConcussionBlowSpell()
+	warrior.registerVictoryRushSpell()
+	warrior.registerRetaliationSpell()
 	warrior.RegisterRecklessnessCD()
+	warrior.enableLeveling()
 }
 
 func (warrior *Warrior) Reset(sim *core.Simulation) {
@@ -236,24 +245,18 @@ func (warrior *Warrior) Reset(sim *core.Simulation) {
 	// Reset Stance
 	switch warrior.WarriorInputs.Stance {
 	case proto.WarriorStance_WarriorStanceBattle:
-		warrior.Stance = BattleStance
-		warrior.BattleStanceAura.Activate(sim)
+		warrior.enterStance(sim, BattleStance)
 	case proto.WarriorStance_WarriorStanceDefensive:
-		warrior.Stance = DefensiveStance
-		warrior.DefensiveStanceAura.Activate(sim)
+		warrior.enterStance(sim, DefensiveStance)
 	case proto.WarriorStance_WarriorStanceBerserker:
-		warrior.Stance = BerserkerStance
-		warrior.BerserkerStanceAura.Activate(sim)
+		warrior.enterStance(sim, BerserkerStance)
 	default:
 		if warrior.PrimaryTalentTree == ArmsTree {
-			warrior.Stance = BattleStance
-			warrior.BattleStanceAura.Activate(sim)
+			warrior.enterStance(sim, BattleStance)
 		} else if warrior.PrimaryTalentTree == FuryTree {
-			warrior.Stance = BerserkerStance
-			warrior.BerserkerStanceAura.Activate(sim)
+			warrior.enterStance(sim, BerserkerStance)
 		} else {
-			warrior.Stance = DefensiveStance
-			warrior.DefensiveStanceAura.Activate(sim)
+			warrior.enterStance(sim, DefensiveStance)
 		}
 	}
 }
