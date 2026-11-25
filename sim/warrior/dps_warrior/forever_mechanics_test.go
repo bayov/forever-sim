@@ -621,7 +621,7 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 		}
 	}
 	check("Revenge", war.Revenge.Spell, 97, 145, 0.25)
-	check("Shield Slam", war.ShieldSlam.Spell, 625+war.BlockValue(), 685+war.BlockValue(), 0)
+	check("Shield Slam", war.ShieldSlam.Spell, 625+2*war.BlockValue(), 685+2*war.BlockValue(), 0) // EV-0004
 	check("Thunder Clap", war.ThunderClap.Spell, 103, 103, 0.07)
 
 	if got := war.Revenge.FlatThreatBonus; got != 0 {

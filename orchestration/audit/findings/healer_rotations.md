@@ -2,6 +2,14 @@
 
 ## Open
 
+### healer_rotations-20261125-1: Holy priest tank healer now runs out of mana on Chromaggus at the fight's own length (113 of 115 s), since f1942793d made Arcane Intellect and Divine Spirit overwrite the healers' Greater Intellect and Sages elixirs (-455 mana left on every bench row)
+- severity: medium (a mana failure at a judged length; carry 0.970 -> 0.911, other deaths 4.6% -> 11.4%, over the 5% floor)
+- affects: priest_holy tank healer (`ui/healing_priest/apls/*tank*`, `tools/healbench/req/priest_holy.json`) on Chromaggus; the whole bench's mana scale (60 of 63 rows moved, mean carry -0.006, mean mana left -455)
+- found: 2026-11-25, master 0404484fb (last audited 5536db4bc)
+- evidence: cause confirmed by healbench built at f1942793d^ (= 5536db4bc) and at f1942793d, 1,000 it, default seed: priest_holy tank chromaggus 0.970 / 782 mana / no OOM -> 0.912 / 486 / 10.4% other deaths; golemagg 2.000 / 6,501 -> 1.990 / 6,019. The rule change itself is right (wowsims/forever EV-0185, in-game character sheet) and needs no ruling; the healer requests' `intellectElixir: ElixirOfGreaterIntellect` and `spiritElixir: ElixirOfSages` are now (nearly) dead slots under AI and Divine Spirit (dropping both: 0.904 / 463, within noise). Rows over 0.02 on master 0404484fb vs the ref: priest_holy chromaggus -0.059 (OOM 113 s), priest_discipline chromaggus -0.043 (OOM 101 -> 95 s, other deaths 23.6% -> 44.0%), druid_restoration golemagg -0.050, chromaggus -0.026 (mana 2,711 -> 1,874), druid_restoration_raid magmadar -0.038, onyxia -0.027, priest_holy_raid golemagg -0.028, paladin_holy golemagg -0.028, shaman_restoration magmadar -0.026, priest_discipline broodlord -0.023, paladin_holy_raid broodlord -0.022, shaman_restoration_raid chromaggus +0.045, onyxia +0.032, broodlord -0.032 (the raid shaman moves are mixed-sign, likely a reshuffled stream). Other watched changes (spell_result.go PreAbsorbDamage for warrior Rage, totem comments) don't reach healers; world buffs (3275a60b1, 9701cff08) aren't in the healer requests.
+- proposed fix: a worker re-tunes the Holy tank healer's mana use for long heavy tank fights (as -20261104-2 asks for Disc), e.g. a lower bound Greater Heal rank under a mana-percent line; not measured this pass. Separately the healer requests (and presets) could drop the now-dead intellect and spirit elixirs, or the gear pass could check what fills those slots best under AI and Divine Spirit (healer_gear).
+- needs: worker fix
+
 ### healer_rotations-20261124-1: Raid-role healer bench moved with the DPS report's Frost mage preset (28 raid rows, 16 by more than 0.02 carry, Holy paladin raid Golemagg +0.096), because healbench's filler is `tools/dps_report/req/mage__frost.json`
 - severity: medium (carry only; signs mixed, mean about +0.02; no healer rotation changed)
 - affects: all four raid-healer requests (druid_restoration_raid, paladin_holy_raid, priest_holy_raid, shaman_restoration_raid) on every boss file; tank-role rows byte-identical (the tank role's fillers take no damage)
@@ -60,6 +68,7 @@
   Paired 1,000 it: shield gate 0.9 (line 3, was 0.7) Chromaggus 0.889 / 428 mana / OOM 107 s, Golemagg 1.984
   (-0.007); Renew only at 40% mana or more: Chromaggus 0.865, OOM 103 s, Golemagg unchanged. Neither stops the OOM.
 - update 2026-11-08, master 9ba00c2dc: unchanged (Chromaggus 0.866, 364 mana, OOM 101 s, 1,000 it).
+- update 2026-11-25, master 0404484fb: worse after f1942793d (elixir overwrite, see -20261125-1): Chromaggus 0.871 -> 0.828, 327 mana left, OOM at 95 s (was 101 s), other deaths 23.6% -> 44.0% (1,000 it).
 - update 2026-11-10, master ca5e35c3f: unchanged (same row, byte-identical).
 - update 2026-11-11, master 707ae92cc: unchanged (same row, byte-identical).
 - update 2026-11-12, master cb0d928fd: unchanged (same row, byte-identical).
