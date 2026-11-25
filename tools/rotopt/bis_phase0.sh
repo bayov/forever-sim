@@ -453,7 +453,8 @@ if [ -n "$RANK_ONLY" ]; then
 	# on the same fight lengths. A 45s list with 180s ranks in a few slots reads as one list but
 	# isn't. MIX_DURS=1 goes on anyway.
 	from_durs="$(jq -r '"\(.durations[0] // "none")/\(.use_dur // "none")"' "$from")"
-	if [ "$from_durs" != "$dur/$use_dur" ] && [ -z "$MIX_DURS" ]; then
+	# Tank and healer lists rank on encounters, not fight lengths, so the check skips them.
+	if [ "$from_durs" != "$dur/$use_dur" ] && [ -z "$MIX_DURS" ] && [ -z "$bench" ]; then
 		echo "$from was ranked at durations[0]/use_dur $from_durs, not DUR/USE_DUR $dur/$use_dur." >&2
 		echo "Rebuild it in full, or set MIX_DURS=1 to rerun on it anyway." >&2
 		exit 1

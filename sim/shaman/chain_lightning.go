@@ -92,6 +92,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	results := make([]*core.SpellResult, min(targetCount, shaman.Env.GetNumTargets()))
 
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		shaman.noteClearcastingKept(spell)
 		primaryTarget := target
 		origMult := spell.DamageMultiplier
 		// It jumps only to living mobs, never back to one it already hit.
@@ -106,13 +107,31 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 			spell.DamageMultiplier *= shaman.ChainLightningBounceCoefficient
 		}
 
+		// EV-0137: under Forever each target the cast lands on rolls its own overload at a third of
+		// Lightning Bolt's chance (10% at 3/3; two combat logs of 2026-11-13 and 15 fit 9.3% [7.6,
+		// 11.2] on 918 landed hits, 43 of 68 overloads starting on a jump target), and the overload
+		// chains on from that target. Landed is read before DealDamage, and the overloads go out
+		// once every hit has landed.
+		forever := shaman.Env.IsForever()
+		overload := shaman.ChainLightningOverload[rank]
+		var overloadTargets []*core.Unit
 		for _, result := range hits {
+			if forever && overload != nil && spell != overload && result.Landed() &&
+				sim.Proc(shaman.lightningOverloadChance()/3, "Lightning Overload") {
+				overloadTargets = append(overloadTargets, result.Target)
+			}
 			spell.DealDamage(sim, result)
 		}
 
 		spell.DamageMultiplier = origMult
 
-		shaman.tryLightningOverload(sim, primaryTarget, spell, shaman.ChainLightningOverload[rank])
+		if !forever {
+			shaman.tryLightningOverload(sim, primaryTarget, spell, overload)
+			return
+		}
+		for _, overloadTarget := range overloadTargets {
+			shaman.castOverload(sim, overloadTarget, overload)
+		}
 	}
 
 	return spell

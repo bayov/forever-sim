@@ -38,12 +38,13 @@ func (mage *Mage) newFrostfireBoltSpellConfig(rank int) core.SpellConfig {
 	dotTick := FrostfireBoltDotTick[rank]
 
 	return core.SpellConfig{
-		ActionID:     actionID,
-		SpellCode:    SpellCode_MageFrostfireBolt,
-		SpellSchool:  core.SpellSchoolFire | core.SpellSchoolFrost,
-		DefenseType:  core.DefenseTypeMagic,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | SpellFlagChillSpell | core.SpellFlagAPL,
+		ActionID:    actionID,
+		SpellCode:   SpellCode_MageFrostfireBolt,
+		SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
+		DefenseType: core.DefenseTypeMagic,
+		ProcMask:    core.ProcMaskSpellDamage,
+		// EV-0142: binary on the live realms, as Frostbolt is, and its DoT ticks take no partial.
+		Flags:        SpellFlagMage | SpellFlagChillSpell | core.SpellFlagAPL | core.BinaryUnderForever(mage.Env),
 		MissileSpeed: 24,
 
 		RequiredLevel: FrostfireBoltLevel[rank],

@@ -879,7 +879,8 @@ message IndividualBuffs {
 	int32 innervates = 5;
 	int32 power_infusions = 6;
 
-	// World Buffs
+	// World Buffs. Under Forever all but Spirit of Zandalar do nothing in a raid instance
+	// (Environment.ForeverRaidInstance): their auras read "No effect while in a raid instance".
 	bool rallying_cry_of_the_dragonslayer = 7;
 
 	SaygesFortune sayges_fortune = 8;
@@ -1160,6 +1161,11 @@ message Encounter {
 	// The kind of outdoor area the fight is in (OutdoorTerrain). None, the default, is a dungeon,
 	// a raid or any other place no item effect cares about.
 	OutdoorTerrain outdoor_terrain = 16;
+
+	// The fight isn't in a raid instance: a 5-man dungeon, a battleground or the open world.
+	// Under Forever the world buffs work only outside a raid instance (Environment.ForeverRaidInstance),
+	// and a fight is in one unless this, leveling, pvp or outdoor_terrain says otherwise.
+	bool outside_raid = 17;
 }
 
 // How a tank is scored (Player.tank_scoring, docs/tank_sim.md). SafeDPS is the steady DPS a

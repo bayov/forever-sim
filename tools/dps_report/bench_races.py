@@ -30,8 +30,14 @@ The scores and their paired errors:
          carry is read between the two lattice scales that bracket the line (healbench's interpolation). Its paired
          error is the same bootstrap. HPS and useful HPS are at the encounter's own damage (scale 1).
 
+A race of the other faction from the request's own race wears the spec's other-faction Phase 0 set when it exists
+(faction_set: `<gearOut>_<horde|alliance>.gear.json` beside the spec's gearOut in tools/rotopt/phase0_specs.json), as
+race_gear.py's faction_set does for the DPS builds: the preset's list holds its faction's rewards, which that race can't
+wear. Without the file the race wears the request's own gear, as before. The race's rows name the set (factionSet).
+
 Results append to $DASH_DIR/<mode>/races.jsonl, one line a (preset, race, variant), so a rerun only does what is missing;
-the vectors stay in $DASH_DIR/vec/bench_<mode>/ (keyed by the request, the switches and the bench binary's hash).
+the vectors stay in $DASH_DIR/vec/bench_<mode>/ (keyed by the request as simmed, its equipment included, the switches
+and the bench binary's hash).
 """
 import functools, hashlib, json, math, os, subprocess, sys, tempfile, threading
 
@@ -42,6 +48,9 @@ sys.path.insert(0, HERE)
 import adaptive  # noqa: E402
 import build_bins  # noqa: E402
 from dashpaths import D, RNG  # noqa: E402
+from race_gear import FACTION  # noqa: E402
+
+SPECS = 'tools/rotopt/phase0_specs.json'  # the Phase 0 specs: a bench spec's requests (reqFile, raidReqFile) and gearOut
 
 # Racial parts a tank or healer can feel, by race: run_races.py's PARTS (the DPS ones) plus Night Elf dodge. The boss
 # type parts (beast, insight) are left out: no tank or healing boss has a creature type.
@@ -80,6 +89,36 @@ def real_exe(exe):
     return build_bins.real_bin(exe)
 
 
+# ---------------------------------------------------------------- the other faction's gear
+
+def gear_out(tree, req_file):
+    """The Phase 0 gear set a bench request wears (phase0_specs.json gearOut of the spec whose reqFile or raidReqFile
+    it is, relative to the tree), or None."""
+    try:
+        specs = json.load(open(os.path.join(tree, SPECS)))['specs']
+    except (OSError, ValueError, KeyError):
+        return None
+    rel = os.path.relpath(os.path.abspath(req_file), os.path.abspath(tree))
+    for sp in specs.values():
+        if isinstance(sp, dict) and sp.get('bench') and rel in (sp.get('reqFile'), sp.get('raidReqFile')):
+            return sp.get('gearOut')
+    return None
+
+
+def faction_set(tree, req_file, req, race):
+    """{'name', 'faction', 'equipment'} of the other faction's copy of the request's Phase 0 set, for a race of the other
+    faction from the request's own race; None when the race is the request's faction or the file doesn't exist."""
+    mine = FACTION.get(req['raid']['parties'][0]['players'][0]['race'][4:])
+    theirs = FACTION.get(race)
+    out = gear_out(tree, req_file)
+    if not mine or not theirs or mine == theirs or not out or not out.endswith('.gear.json'):
+        return None
+    f = os.path.join(tree, out[:-len('.gear.json')] + f'_{theirs.lower()}.gear.json')
+    if not os.path.exists(f):
+        return None
+    return {'name': os.path.basename(f)[:-len('.gear.json')], 'faction': theirs, 'equipment': json.load(open(f))}
+
+
 # ---------------------------------------------------------------- the benches
 
 def fight_values(v, keys, count, what):
@@ -104,9 +143,23 @@ class Bench:
         self.binsha = sha(real_exe(exe))
         self.lock = threading.Lock()
 
-    def _run(self, stem, race, off, args, seed, count):
+    def request(self, stem, race):
+        """The request at this race: the race swapped in, and the other faction's set worn when there is one."""
         req = json.load(open(self.req_path(stem)))
-        req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
+        fs = faction_set(self.tree, self.req_path(stem), req, race)
+        pl = req['raid']['parties'][0]['players'][0]
+        if fs:
+            pl['equipment'] = fs['equipment']
+        pl['race'] = 'Race' + race
+        return req, fs
+
+    def gear_set(self, stem, race):
+        """The name of the other faction's set this race wears on the preset, or None."""
+        fs = self.request(stem, race)[1]
+        return fs and fs['name']
+
+    def _run(self, stem, race, off, args, seed, count):
+        req = self.request(stem, race)[0]
         cls = req['raid']['parties'][0]['players'][0]['class'][5:]
         env = dict(os.environ, TIMING_STEP=os.environ.get('TANKHEAL_STEP') or self.mode + '_races')  # timing_cli.py's step (a probe's: <mode>_probe)
         for k in ('DASH_RACIALS_OFF', 'DASH_RACIALS_OFF_CLASS', 'DASH_NAMES'):
@@ -123,8 +176,7 @@ class Bench:
             return [json.loads(l) for l in open(out)]
 
     def key(self, stem, race, off, boss, extra=None):
-        req = json.load(open(self.req_path(stem)))
-        req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
+        req = self.request(stem, race)[0]  # with the equipment as worn: a race in the other faction's set keys apart
         return {'req': req, 'boss': boss, 'encounter': json.load(open(self.enc(boss))), 'extra': extra}, {'off': off or '', 'bin': self.binsha}
 
     def tank(self, stem, race, off, boss, n):
@@ -424,4 +476,10 @@ def preset(mode, bench, stem, cls, own, races, bosses, w=None, each=None, role=N
             rows.append(row)
             if sv:
                 pilots.append((sides[rc], pilot, row))
+    gear = getattr(bench, 'gear_set', None)
+    sets = {rc: gear(stem, rc) for rc in races} if gear else {}
+    for row in rows:
+        row.pop('factionSet', None)  # a row taken from a twin keeps its own race's set
+        if sets.get(row['race']):
+            row['factionSet'] = sets[row['race']]
     return rows

@@ -1,12 +1,13 @@
 {
  "last": {
-  "master": "5536db4bcbbbddbc2278535a335ae1ba86088b01"
+  "master": "95962a7d3",
+  "branch": "phase0-tankheal"
  },
- "last_pass_at": "2026-11-25T03:50:00Z",
- "pass": 32,
- "result": "quiet",
+ "last_pass_at": "2026-11-25T17:38:34Z",
+ "pass": 34,
+ "result": "findings",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T06:50:52Z",
+ "checked_at": "2026-11-25T13:10:47Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -23,5 +24,5 @@
    "date": "2026-11-24T02:06:52Z"
   }
  },
- "note": "Racial lines pinned by racials_apl_test.go; Eureka! scope item stays open."
+ "note": "Pass on phase0-tankheal: bear threat batch matches wowsims/forever; Lacerate hit fixed (95962a7d3); Phase 0 survival gap is gear."
 }

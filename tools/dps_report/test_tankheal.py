@@ -400,5 +400,47 @@ class ShortVectors(unittest.TestCase):
             adaptive.D = old
 
 
+class FactionSet(unittest.TestCase):
+    """bench_races: a race of the other faction wears the spec's other-faction Phase 0 set when it exists."""
+
+    def setUp(self):
+        self.tree = tempfile.mkdtemp()
+        os.makedirs(os.path.join(self.tree, 'tools/rotopt'))
+        os.makedirs(os.path.join(self.tree, 'tools/healbench/req'))
+        os.makedirs(os.path.join(self.tree, 'ui/healing_priest/gear_sets'))
+        json.dump({'specs': {'priest_holy': {'bench': 'heal', 'reqFile': 'tools/healbench/req/priest_holy.json',
+                                             'raidReqFile': 'tools/healbench/req/priest_holy_raid.json',
+                                             'gearOut': 'ui/healing_priest/gear_sets/level60_phase0_priest_holy.gear.json'}}},
+                  open(os.path.join(self.tree, 'tools/rotopt/phase0_specs.json'), 'w'))
+        for s in ('priest_holy', 'priest_holy_raid'):
+            req = {'raid': {'parties': [{'players': [{'race': 'RaceHuman', 'class': 'ClassPriest', 'equipment': {'items': [{'id': 1}]}}]}]}}
+            json.dump(req, open(os.path.join(self.tree, f'tools/healbench/req/{s}.json'), 'w'))
+        br = tankheal.bench_races
+        self.bench = br.Bench.__new__(br.Bench)
+        self.bench.tree, self.bench.binsha = self.tree, 'x'
+        self.bench.req_path = lambda s: os.path.join(self.tree, 'tools/healbench/req', s + '.json')
+        self.bench.enc = lambda b: os.path.join(self.tree, 'enc.json')
+        json.dump({}, open(self.bench.enc('x'), 'w'))
+
+    def equipment(self, stem, race):
+        return self.bench.request(stem, race)[0]['raid']['parties'][0]['players'][0]['equipment']
+
+    def test_no_file_keeps_gear(self):
+        self.assertEqual(self.equipment('priest_holy', 'Undead'), {'items': [{'id': 1}]})
+        self.assertIsNone(self.bench.gear_set('priest_holy', 'Undead'))
+
+    def test_other_faction_wears_its_set(self):
+        json.dump({'items': [{'id': 2}]}, open(os.path.join(self.tree, 'ui/healing_priest/gear_sets/level60_phase0_priest_holy_horde.gear.json'), 'w'))
+        for stem in ('priest_holy', 'priest_holy_raid'):
+            self.assertEqual(self.equipment(stem, 'Undead'), {'items': [{'id': 2}]})
+            self.assertEqual(self.equipment(stem, 'Dwarf'), {'items': [{'id': 1}]})
+            self.assertEqual(self.bench.gear_set(stem, 'Troll'), 'level60_phase0_priest_holy_horde')
+        req = self.bench.request('priest_holy', 'Undead')[0]
+        self.assertEqual(req['raid']['parties'][0]['players'][0]['race'], 'RaceUndead')
+        # the result cache's key follows the equipment worn
+        k1 = self.bench.key('priest_holy', 'Undead', None, 'x')[0]['req']['raid']['parties'][0]['players'][0]['equipment']
+        self.assertEqual(k1, {'items': [{'id': 2}]})
+
+
 if __name__ == '__main__':
     unittest.main()

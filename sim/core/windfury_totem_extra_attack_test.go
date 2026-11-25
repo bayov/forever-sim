@@ -169,24 +169,46 @@ func TestWindfuryTotemAttackRecognized(t *testing.T) {
 	}
 }
 
-// No extra attack rolls Windfury Totem under Forever, whatever proc gave it (the log audit of
-// standards 17): Windfury's own swing, Hand of Justice, Sword Specialization, Thrash and a stored
-// attack. A normal swing still does.
-func TestWindfuryTotemExtraAttacksDontRoll(t *testing.T) {
+// EV-0008: under Forever an extra attack rolls Windfury Totem like any main hand swing, whatever
+// proc gave it (34 of 216 extra attack swings in wowsims/forever's logs after the 2026-11-13
+// hotfix): Hand of Justice, Sword Specialization, Thrash and a stored attack. A normal swing too.
+func TestWindfuryTotemExtraAttacksRoll(t *testing.T) {
 	sim, fw := setupWindfurySim(t)
 	mh := fw.AutoAttacks.MHAuto()
 	for _, source := range []ActionID{
-		{SpellID: WindfuryBuffSpellId[3]},
 		{SpellID: 15601}, // Hand of Justice
 		{SpellID: 13964}, // Sword Specialization
 		{SpellID: 12815}, // Sword Specialization (warrior)
 		{SpellID: 21919}, // Thrash, and the stored attacks' aura
+		{},               // a normal swing
 	} {
-		if rollWindfury(t, sim, fw, mh, source) {
-			t.Errorf("an extra attack from %v rolled Windfury Totem", source)
+		if !rollWindfury(t, sim, fw, mh, source) {
+			t.Errorf("a swing from %v never rolled Windfury Totem in 200 hits", source)
 		}
 	}
-	if !rollWindfury(t, sim, fw, mh, ActionID{}) {
-		t.Errorf("a normal swing never rolled Windfury Totem in 200 hits")
+}
+
+// The totem's own extra swing lands in the instant of its proc, inside the 100 ms cooldown that
+// proc just started, so it never chains into another (wowsims/forever's drivers.go, EV-0008).
+func TestWindfuryTotemSwingDoesNotChain(t *testing.T) {
+	sim, fw := setupWindfurySim(t)
+	fw.Windfury.Activate(sim)
+	fw.hits = nil
+	for at := 10 * time.Second; at <= 590*time.Second; at += 10 * time.Second {
+		stepSwingSim(t, sim, at)
+	}
+	last, swings := -time.Hour, 0
+	for _, h := range fw.hits {
+		if !h.totem {
+			continue
+		}
+		swings++
+		if h.at-last < 100*time.Millisecond {
+			t.Errorf("Windfury Totem swings at %v and %v: one chained into the other", last, h.at)
+		}
+		last = h.at
+	}
+	if swings < 20 {
+		t.Fatalf("only %d Windfury Totem swings in 590 sec", swings)
 	}
 }

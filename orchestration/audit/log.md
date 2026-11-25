@@ -602,3 +602,19 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 06:50 | consumables | pass 108 | master 5536db4bc | 1 new findings | natural_flask_zone description in assumptions_def.py still says 60 Stamina and 4-5% (sim uses 30 and 2%).
 2026-11-25 06:50 | mechanics | pass 104 | master 5536db4bc | quiet | Only drops.json changed; hunter pet buff drops fit the settled rule; no new client build or Blizzard notes.
 2026-11-25 06:50 | fairness | pass 58 | master 5536db4bc | quiet | drops.json isn't read by any report request; baseline unchanged.
+2026-11-25 13:10 | results | pass 105 | master 0404484fb | quiet | 60 of 68 builds moved (elixir overwrite, warrior Rage); metas lag the sim, noted on results-20261104-2.
+2026-11-25 13:10 | rotations | pass 79 | master 0404484fb | quiet | No APL changes; Heroic Strike threshold 60 holds; new regression baseline.
+2026-11-25 13:10 | gear | pass 78 | master 0404484fb | quiet | Only standards.md changed; no Phase 0 gear rule touched.
+2026-11-25 13:10 | consumables | pass 109 | master 0404484fb | 1 new findings | Arcane Brilliance and Divine Spirit now overwrite the Intellect and Spirit elixirs, which then add 0 in every DPS preset.
+2026-11-25 13:10 | mechanics | pass 105 | master 0404484fb | quiet | 7 commits checked against client 71091 and logs; all match.
+2026-11-25 13:10 | fairness | pass 59 | master 0404484fb | quiet | New race-sweep baseline; moves explained by elixir overwrite and Rage rule; report stale.
+2026-11-25 13:10 | healer_mechanics | pass 30 | master 0404484fb | quiet | spell_result and totem changes don't reach healers.
+2026-11-25 13:10 | healer_rotations | pass 27 | master 0404484fb | 1 new findings | Holy priest runs out of mana on Chromaggus after the elixir overwrite (other deaths 11.4%).
+2026-11-25 13:10 | healer_gear | pass 15 | master 0404484fb | quiet | Only standards.md changed; healer gear untouched.
+2026-11-25 13:10 | healer_fairness | pass 30 | master 0404484fb | quiet | Carry order unchanged; elixirs now do nothing for every healer alike.
+2026-11-25 13:10 | tank_mechanics | pass 33 | master 0404484fb | quiet | Stance-based Rage from hits taken matches standards 21.
+2026-11-25 13:10 | tank_rotations | pass 30 | master 0404484fb | quiet | Rage thresholds re-tested, all hold; Warden down from the elixir overwrite.
+2026-11-25 13:10 | tank_gear | pass 17 | master 0404484fb | quiet | Only standards.md changed; tank gear untouched.
+2026-11-25 13:10 | tank_fairness | pass 32 | master 0404484fb | quiet | Ranking unchanged at every weight; bear Max survival 347 to 455.
+2026-11-25 17:38 | tank_mechanics | pass 34 | phase0-tankheal 1624c3d56 | 1 new finding (fixed) | Bear threat batch matches wowsims/forever; Lacerate hit fixed 95962a7d3; Phase 0 survival gap is gear.
+2026-11-25 17:38 | tank_rotations | pass 31 | phase0-tankheal 1624c3d56 | 1 new finding | Baseline on Phase 0 requests; report Tanking mode stale; FF and Shield Slam-first both lose.

@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_rotations-20261125-1: The report's Tanking mode predates the Phase 0 requests, the tank threat batch and the Lacerate fix
+- severity: high (every tank row moves: bear Balanced 2153 to 3646, paladin Max survival 1787 to 800, warrior Max survival 1820 to 1096 on the bench's scoring mean)
+- affects: all tank presets in the DPS Report's Tanking mode
+- found: 2026-11-25, phase0-tankheal 95962a7d3
+- evidence: tools/dps_report/raw/bench/tank.tgz was last packed in 01cc70b80 ("Tanking and Healing re-simmed as is"), before the requests moved to Phase 0 gear (c916a72cf, 4c122eae9, 7753b07c6, 970d4bd3b and others), before 2f42f4a44 (threat batch) and 95962a7d3 (Lacerate). ref/tank_bench/summary.tsv has the new bench numbers; the round notes' bear scores (847.5 / 3467.2 / 5202.3) also predate 95962a7d3 (now 1015.3 / 3645.8 / 5386.8).
+- proposed fix: tools/dps_report/pipeline.sh hydrate, then pipeline.sh tankheal tank, then publish and deploy, after the branch merges; update the bear round notes' score table.
+- needs: orchestrator fix
+
 ### tank_rotations-20261122-1: Paladin Balanced's Consecration mana floor (60%) now costs about 4; any mana wins since Judgement of Wisdom pays only on landed swings
 - severity: low
 - affects: Protection paladin Balanced
@@ -9,6 +17,7 @@
 - evidence: tools/tankbench/req/paladin_protection_balanced.json priority line 7 (Consecration, `currentManaPercent >= 0.6`). Paired abtest at w = 1, Balanced minus the line without its condition, 10,000 iterations: +4.9 ± 1.0 (seed 1), +3.9 ± 0.9 (seed 2) on the scoring mean, nearly all Chromaggus (+18.4 ± 4.5, +18.8 ± 3.9, SafeDPS +8), the rest within noise; Ragnaros -10 / -7 ± 32. Floors 0.2, 0.3 and 0.4 give the same +3.5 to +4.6 ± 1.7 at 3,000 iterations, 0.7 -8.7 and 0.8 -15.0. docs/tank_paladin.md (Holy Strike rolls Windfury Totem, 2026-11-15) measured the same change at +0.9 / +0.7, noise, so the gain is new: bd7029410 (sim/core/debuffs.go, Judgement of Wisdom no longer pays on missed, dodged or parried white swings under Forever) cuts the paladin's mana. Max threat already casts it at any mana; Max survival's floor (also 0.6) is noise at w = 3 (any: -3.2 ± 5.4 / +10.5 ± 4.8; 0.4 alike; 0.8 -21.5 / -18.8). About 0.15% of the score. Sure: high that it's real, it's small. Repro: `abtest -preset balanced -iters 10000 -seed 1 tools/tankbench/req/paladin_protection_balanced.json B.json` with B made by `tools/audit/tank_rotations/mk_warrior.py A B nocond 7`.
 - proposed fix: drop the mana condition on Balanced's Consecration line (as Max threat), in the request, the UI apl `ui/protection_paladin/apls/level60_balanced.apl.json` and the rotopt template knob; update the note ("Consecration on cooldown").
 - needs: worker fix
+- pass 30: still open; 0404484fb leaves the paladin baseline bit-identical; not re-tested.
 
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
@@ -35,6 +44,7 @@
 - pass 23: still open (user call); 8b5137c6d's Flurry change (Heroic Strike no longer spends a charge under Forever) leaves the warrior baseline bit-identical; not re-tested.
 - pass 26: still open (user call); cd71e78c2 (Unbridled Wrath off Shield Slam/Revenge/Bash, HS spends Flurry and Reckless Swings) moves Max survival's scoring mean 1847.5 -> 1832.8, trinket lines untouched; not re-tested.
 - pass 27: still open (user call); c7e3b3e adds only racial lines (Undead no-ops), warrior baseline bit-identical; Max survival's racials synced with Shield Wall (13 s) lose -49 to -118 at seed 2; trinket lines not re-tested.
+- pass 30: still open (user call); b4cab8498's Rage-by-stance rule moves Max survival 1832.8 -> 1820.0 (Broodlord -95 ± 70); Heroic Strike 40 still best; trinket lines not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -61,6 +71,7 @@
 - pass 22: still open (user ruling); e07e8fdb8 adds only an Undead item condition to Tenets of the Silver Hand (no effect change), paladin baseline bit-identical; not re-tested.
 - pass 27: still open (user ruling); c7e3b3e touches no paladin file; not re-tested.
 - pass 23: still open (user ruling); 8b5137c6d's Two-Handed Weapon Specialization Holy damage fix applies only with a two-hander, paladin baseline bit-identical; not re-tested.
+- pass 30: still open (user ruling); 0404484fb leaves the paladin baseline bit-identical; not re-tested.
 
 ## Resolved
 

@@ -44,6 +44,17 @@ func (shaman *Shaman) tryLightningOverload(sim *core.Simulation, target *core.Un
 	}
 
 	if sim.Proc(shaman.lightningOverloadChance(), "Lightning Overload") {
-		overload.Cast(sim, target)
+		shaman.castOverload(sim, target, overload)
+	}
+}
+
+// castOverload launches an overload. EV-0137: under Forever the launch rolls Elemental Focus once,
+// as a cast does (two combat logs of 2026-11-13 and 15: 31 of 248 overloaded bolts gained
+// Clearcasting at the impact, 1 of 565 bolts without an overload). An overload spends no charge,
+// since it never completes a cast, so one that is up is kept.
+func (shaman *Shaman) castOverload(sim *core.Simulation, target *core.Unit, overload *core.Spell) {
+	overload.Cast(sim, target)
+	if shaman.Env.IsForever() {
+		shaman.rollElementalFocus(sim)
 	}
 }

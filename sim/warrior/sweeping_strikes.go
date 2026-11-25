@@ -13,16 +13,22 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 
 	// Procs from auto attacks and most abilities https://www.wowhead.com/classic/spell=12723/sweeping-strikes
 	//
-	// Under Forever the copy is the first hit's final damage with the first target's armor taken
-	// out: the attacker and target damage multipliers already went into it, so it skips them and
-	// takes only the second target's armor (wowsims/forever talents_arms.go copies Damage /
-	// ArmorAndResistanceMultiplier with SpellFlagIgnoreModifiers). Classic runs the copy through
-	// the damage multipliers a second time.
+	// Under Forever the copy is the first hit's damage, its crit included, with the first target's
+	// armor taken out and the second target's put in, and the attacker's damage bonuses apply to it
+	// a second time, except one that needs a weapon: Two-Handed Weapon Specialization counts once
+	// (wowsims/forever EV-0182, 20,650 copies from 148 warriors: Enrage's +10% moves the copy's
+	// ratio to its hit by +9.85%, and a two-hander's copy equals its hit on equal armor). The
+	// target's damage taken modifiers went into the hit and are not taken again. From 2026-10-23 to
+	// 2026-11-25 the copy skipped the attacker's bonuses too, on their earlier reading of the row
+	// (replaced by the user's ruling of 2026-11-25). Classic runs the copy through every damage
+	// multiplier a second time.
 	var curDmg float64
 	copyFlags := core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete
 	if warrior.Env.IsForever() {
-		copyFlags |= core.SpellFlagIgnoreModifiers
+		copyFlags |= core.SpellFlagIgnoreTargetModifiers
 	}
+	// 12723 states no DefenseType, so no chance-on-hit weapon or combat enchant hears it
+	// (EV-0007: 0 procs on 567 copies), and it keeps no proc mask.
 	hitSchoolDamagWithValue := warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 12723},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -34,16 +40,24 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamage(sim, target, curDmg, spell.OutcomeAlwaysHit)
+			damage := curDmg
+			if sim.IsForever() && warrior.twoHandSpecPhysical > 0 {
+				damage /= warrior.twoHandSpecPhysical
+			}
+			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeAlwaysHit)
 		},
 	})
 
 	// Procs from WW, also Execute? https://www.wowhead.com/classic/spell=26654/sweeping-strikes
+	//
+	// Under Forever the normalized hit has the melee DefenseType and is a main-hand special, so the
+	// main hand's chance-on-hit weapons roll on it (R-0042, EV-0007: 0.83 of the white hit rate).
+	// Classic gives it no proc mask.
 	hitSpecialNormalized := warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 26654},
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
-		ProcMask:    core.ProcMaskEmpty, // No proc mask, so it won't proc itself.
+		ProcMask:    core.Ternary(warrior.Env.IsForever(), core.ProcMaskMeleeMHSpecial, core.ProcMaskEmpty),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
@@ -68,7 +82,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			aura.SetStacks(sim, 5)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if aura.GetStacks() == 0 || result.Damage <= 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if aura.GetStacks() == 0 || result.Damage <= 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) || spell == hitSpecialNormalized.Spell {
 				return
 			}
 

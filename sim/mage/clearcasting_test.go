@@ -83,3 +83,36 @@ func TestMageFlamestrikeTicksKeepClearcasting(t *testing.T) {
 		t.Errorf("Flamestrike's burn used up Clearcasting")
 	}
 }
+
+// A Blizzard cast rolls Arcane Concentration once, and its ticks never do (EV-0116).
+func TestMageBlizzardRollsArcaneConcentrationOnce(t *testing.T) {
+	// Arcane Concentration 5.
+	sim, mage := newLongMageSim(t, "000005")
+	target := mage.CurrentTarget
+	blizzard := topRank(t, "Blizzard", mage.Blizzard)
+	blizzard.Cost.Multiplier = 0
+
+	const casts = 2000
+	atCast, afterCast := 0, 0
+	for i := 0; i < casts; i++ {
+		mage.ClearcastingAura.Deactivate(sim)
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		if !blizzard.Cast(sim, target) {
+			t.Fatalf("Blizzard didn't cast (cast %d at %v)", i, sim.CurrentTime)
+		}
+		if mage.ClearcastingAura.IsActive() {
+			atCast++
+			mage.ClearcastingAura.Deactivate(sim)
+		}
+		advanceMageSim(sim, 9*time.Second)
+		if mage.ClearcastingAura.IsActive() {
+			afterCast++
+		}
+	}
+	if rate := float64(atCast) / casts; rate < 0.08 || rate > 0.12 {
+		t.Errorf("Clearcasting at %.1f%% of Blizzard casts, want about 10%%", 100*rate)
+	}
+	if afterCast != 0 {
+		t.Errorf("Blizzard's ticks gave Clearcasting %d times, want never", afterCast)
+	}
+}
