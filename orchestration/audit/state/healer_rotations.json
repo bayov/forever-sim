@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
+  "master": "63129ce35290604315618746edd5a35123520089"
  },
  "last_pass_at": "2026-11-24T19:15:04Z",
  "pass": 25,
@@ -8,5 +8,5 @@
  "note": "Pass 25 on eceb09019. Watched: mana.go (Innervate/Energized scale MP5, ed1df1d51). Tank rows: druid/shaman moved under 0.02 (Innervate, Windshaper offsets, shaman class row); others byte-identical. All 28 raid rows moved with the Frost filler rewrite 058a07457 (update on -20261124-1, confirmed with the old filler). Innervate threshold 0.2/0.5 tried: no win. Ref refreshed. Open: -20261124-1, -20261118-1, -20261115-1, -20261104-2.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-24T19:15:51Z"
+ "checked_at": "2026-11-25T00:59:33Z"
 }

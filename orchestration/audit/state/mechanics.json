@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "9470bae6a38d9679d1f0091699fd64634079ae12"
+  "master": "63129ce35290604315618746edd5a35123520089"
  },
  "last_pass_at": "2026-11-24T18:52:27Z",
  "pass": 102,
  "result": "findings",
  "note": "Pass 102: e29cfe00f..eceb09019. Troll Regeneration, Forever Stoneform, Blood Fury SpellDamage verified on 71091; Innervate MP5 scaling from wowsims/forever EV-0114 logs accepted. Client 71091 class deltas left to TASKS' build-71091 item. Hotfix post 15 (Nov 23): Darkmoon Faire halved -> mechanics-20261124-1 (low). Forum JSON rate limited; blue tracker not re-read.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-24T19:15:51Z",
+ "checked_at": "2026-11-25T00:59:33Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
