@@ -78,6 +78,25 @@ type levelingSession struct {
 	stateSince time.Duration
 	seconds    [levelingStateCount]time.Duration
 
+	// How fast the run we're on goes (speedChanged), whether we look ahead on it, and whether
+	// the mob's swing being dealt came from behind, which may daze us (leveling_facing.go).
+	runSpeed   float64
+	runForward bool
+	hitBehind  bool
+	dazed      *Aura
+
+	// The mob our last spell at a mob went at, for the mobs an area ability reaches around it
+	// (inArea).
+	areaTarget *Unit
+
+	// The mobs around us when each has its own place (leveling_camp.go), nil otherwise, the
+	// next time one of them notices us, whether the mobs next to a pulled one are coming along,
+	// and how many dead ones we haven't looted.
+	camp    []campMob
+	notice  *PendingAction
+	linking bool
+	toLoot  int
+
 	// How many mobs the current pull has taken, and the session's pulls and mobs pulled.
 	pullMobs   int
 	pulls      int
@@ -149,9 +168,15 @@ type levelingOptions struct {
 	standingFoundMin, standingFoundMax   float64
 	deathPenalty                         time.Duration
 	reviveFraction                       float64
+
+	ignoreFacing          bool
+	surround, runForward  float64
+	campMobs              int
+	campOutside           float64
+	respawnTime, lootTime time.Duration
 }
 
-func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
+func resolveLevelingOptions(o *proto.LevelingOptions, level int32) levelingOptions {
 	or := func(v, def float64) float64 {
 		if v > 0 {
 			return v
@@ -178,6 +203,36 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		standingFoundMax:  math.Round(or(o.FoundStandingMax, 60)),
 		deathPenalty:      seconds(o.DeathPenalty, 180),
 		reviveFraction:    or(o.ReviveFraction, 0.5),
+		ignoreFacing:      o.IgnoreFacing,
+		surround:          1,
+		runForward:        0.5,
+		campMobs:          int(max(o.CampMobs, 0)),
+		campOutside:       7,
+		respawnTime:       seconds(o.Respawn, 300),
+		lootTime:          time.Second,
+	}
+	if o.CampMobs < 0 {
+		camp := usualCampAt(level)
+		opts.campMobs, opts.campOutside, opts.respawnTime = camp.mobs, camp.outside, camp.respawn
+		opts.respawnTime = seconds(o.Respawn, camp.respawn.Seconds())
+	}
+	if o.Surround != nil {
+		opts.surround = max(*o.Surround, 0)
+	}
+	if o.RunForward != nil {
+		opts.runForward = max(*o.RunForward, 0)
+	}
+	if o.CampOutsideMobs != nil {
+		opts.campOutside = max(*o.CampOutsideMobs, 0)
+	}
+	if o.LootTime != nil {
+		opts.lootTime = DurationFromSeconds(max(*o.LootTime, 0))
+	}
+	if opts.campMobs > 0 {
+		// Looking around is quick, and the walk to the mob is where the time goes.
+		opts.searchMax = seconds(o.SearchMax, 1)
+		opts.chainSearchMax = seconds(o.ChainSearchMax, 1)
+		opts.standingSearchMax = seconds(o.ChainSearchStandingMax, 1)
 	}
 	if o.MobLevelSpread != nil {
 		opts.mobSpread = max(*o.MobLevelSpread, 0)
@@ -221,8 +276,8 @@ func prepareLevelingEncounter(raidProto *proto.Raid, encounterProto *proto.Encou
 	if encounterProto == nil || encounterProto.Leveling == nil {
 		return encounterProto
 	}
-	opts := resolveLevelingOptions(encounterProto.Leveling)
 	level := levelingPlayerLevel(raidProto)
+	opts := resolveLevelingOptions(encounterProto.Leveling, level)
 
 	prepared := googleProto.Clone(encounterProto).(*proto.Encounter)
 	prepared.Duration = opts.sessionLength.Seconds()
@@ -268,7 +323,6 @@ func levelingMobLevels(level int32, opts levelingOptions) []int32 {
 func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *levelingSession {
 	session := &levelingSession{
 		env:  env,
-		opts: resolveLevelingOptions(encounterProto.Leveling),
 		pool: map[int32][]*Unit{},
 	}
 	for _, unit := range env.Raid.AllPlayerUnits {
@@ -278,17 +332,18 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 			break
 		}
 	}
-	// Every mob is in front of us, and we're in front of every mob, whatever the 2D positions
-	// in leveling_world.go say. A player turns and steps a little so all the mobs on them are in
+	// Every mob we attack is in front of us, and we're in front of it, whatever the 2D positions
+	// in leveling_world.go say. A player turns and steps a little so the mobs they fight are in
 	// front, and we don't sim those small moves. So our attacks can be parried and blocked, and
 	// Backstab can't go, even when the In Front of Target setting is off.
 	//
-	// The mobs' attacks on us don't look at facing (outcomeEnemyMeleeWhite), so we can always
-	// dodge, parry and block them. Our pets stay behind, see NewPet.
+	// Some of the mobs' swings at us do come from behind, see leveling_facing.go. Our pets stay
+	// behind, see NewPet.
 	for _, unit := range env.Raid.AllPlayerUnits {
 		unit.PseudoStats.InFrontOfTarget = true
 	}
 	session.level = session.player.Level
+	session.opts = resolveLevelingOptions(encounterProto.Leveling, session.level)
 	session.levels = levelingMobLevels(session.level, session.opts)
 	session.mobs = make([]levelingMob, len(env.Encounter.Targets))
 	for _, target := range env.Encounter.TargetUnits {
@@ -308,6 +363,7 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 		session.reviveManaMetrics = c.NewManaMetrics(ActionID{SpellID: 8326})
 	}
 	session.registerRestSpells()
+	session.registerDaze()
 	return session
 }
 
@@ -336,6 +392,8 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.rest = levelingRest{}
 	s.foods, s.drinks, s.bandages = 0, 0, 0
 	s.next, s.chainNext = nil, nil
+	s.areaTarget, s.hitBehind, s.runSpeed, s.runForward = nil, false, 0, false
+	s.resetCamp(sim)
 
 	sim.AddPendingAction(&PendingAction{
 		NextActionAt: 0,
@@ -421,7 +479,7 @@ func (s *levelingSession) retarget(sim *Simulation, mob *Unit) {
 	for _, pet := range s.character.Pets {
 		pet.CurrentTarget = mob
 	}
-	s.setPlayerDistance(sim, s.distance(sim, mob))
+	s.setPlayerDistance(sim, s.targetDistance(sim, mob))
 }
 
 func (s *levelingSession) setPlayerDistance(sim *Simulation, distance float64) {
@@ -441,6 +499,7 @@ func (s *levelingSession) setPlayerDistance(sim *Simulation, distance float64) {
 func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	s.kills++
 	s.xp += mobKillXP(s.level, mob.Level)
+	s.campKilled(sim, mob)
 	s.toPool(sim, mob)
 	active := s.env.Encounter.ActiveTargetUnits
 	if len(active) == 0 {
@@ -459,13 +518,21 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 		s.after(sim, &s.next, delay, s.leaveCombat)
 		return
 	}
-	// killTarget moved our target to the next living mob, which may be one we haven't
-	// pulled: we stay on the ones we have.
-	if target := s.player.CurrentTarget; target == nil || !s.pulled(target) {
-		s.retarget(sim, active[0])
-	} else {
-		s.retarget(sim, target)
+	// killTarget moved our target to the next living mob, which may be one that's still on its
+	// way while another stands next to us.
+	target := s.player.CurrentTarget
+	if target == nil || s.mobs[target.Index].state != mobArrived {
+		for _, other := range active {
+			if s.mobs[other.Index].state == mobArrived {
+				target = other
+				break
+			}
+		}
 	}
+	if target == nil || !s.pulled(target) {
+		target = active[0]
+	}
+	s.retarget(sim, target)
 }
 
 // pulled is whether the mob is one we pulled, on its way or on us.
@@ -483,6 +550,7 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 	if s.goal == goalMob && s.goalMob == mob {
 		s.move(sim, goalNone, Vec2{}, 0, nil)
 	}
+	s.campReturned(mob)
 	*m = levelingMob{}
 	mob.enabled = false
 	if s.found == mob {
@@ -638,6 +706,7 @@ func (s *levelingSession) revive(sim *Simulation) {
 		p.AddMana(sim, s.opts.reviveFraction*p.MaxMana()-p.CurrentMana(), s.reviveManaMetrics)
 	}
 	p.Metrics.Died = true
+	s.campRevive(sim)
 	s.ready(sim)
 }
 

@@ -28,7 +28,9 @@ part has the session's options). The mode comes from the encounter like the othe
   stat weights of that level, and the item we pick becomes one of ours from that level on.
 - **Talents.** A build is the order we put its points in, and at each level we have as many of
   them as the level gives (one a level from 10, plus any extra points from 25, none by
-  default).
+  default). "First talent point at" moves the first point earlier for the Legacy perk Talented
+  (`LevelingPlanSettings.first_talent_level`, 5 with all its 5 ranks). The cap stays 51 points,
+  so a plan with a first point at 5 has them all at 55.
   The talent trees edit the order: a click puts the next point in a talent, and a right click
   takes its last point out. Each talent in the trees shows the level of its first point. The
   Order list has a row for each talent we put points in one after the other, with a pip for
@@ -161,8 +163,10 @@ With Rotations too (`rotation_search`), the search also tunes a rotation for eac
 in turns with the route: the rotations with the plan's talents, then the route with them, then
 the rotations of the ranges whose talents the route changed, until neither changes (at most 3
 times). It's `tools/levelingplan/rotation.go`, on the leveling rotation template that the
-leveling optimizer uses too (`tools/rotopt/aplkit/shaman_enh_leveling.go`, only the
-enhancement shaman's for now).
+leveling optimizer uses too. The templates are in `tools/rotopt/aplkit`, registered by name:
+`shaman_enh_leveling` and `warrior_leveling`, which is only a start (rest, Charge, Battle Shout
+and Heroic Strike). A request picks one with `rotation_template`, and without it gets the first
+one that plays its spec. Only the shaman's has weapon imbues to tune (`ImbueTemplate`).
 
 - **Ranges.** A range starts at each level that brings an ability the template can use (a
   spell like Chain Lightning at 32, a talent like Stormstrike, an imbue like Windfury Weapon)
@@ -422,6 +426,59 @@ still (2 to 6 min a level more).
 Still open: the search doesn't tune the rotation again for a rank we train later, so a missing
 rank can look a bit worse than it is.
 
+## A plan without the browser
+
+The search, the training schedule and the two commands below take a request the UI sent, or a
+short config file that stands for one. `tools/levelingplan/configs` has three undead warriors
+(arms with a two-hander, fury with dual wield from 20, protection with a shield). Their talents
+and rotations are only a place to start from.
+
+    go run --tags=with_db ./tools/levelingplan -make tools/levelingplan/configs/undead_warrior_prot_shield.json -out request.json
+
+A config has (`tools/levelingplan/config.go`, and a field it doesn't know is an error):
+
+- `player`: the race, class and spec with its options, as a player's JSON. All warriors play
+  `tankWarrior`. It's the same warrior as the DPS spec's, with Shield Block and Shield Wall on
+  top, so one spec has every ability with a shield and with a two-hander.
+- `leveling`: the session's options (mobs, searches, the death penalty), as `LevelingOptions`.
+- `fromLevel`, `toLevel`, `firstTalentLevel` (5 with Talented) and `bonusTalentPoints`.
+- `styles`: the weapon styles by level, `twoHand`, `dualWield`, `shield` or `free`
+  (docs/leveling_gear.md).
+- `talents`: builds with their points in order, like `"Cruelty:5"`. A later build is a respec at
+  its level. `requiredTalents` are the ones the search must keep.
+- `rotations`: from each level a template with the knobs that aren't at their default, or an APL
+  `file`, with an `imbue` for a shaman. A template gets a new range at each level its rotation
+  changes, like where we learn Charge.
+- `planFile`: a saved plan, or a search's result, to start from. The fields above replace its own.
+- `trainingFile`, `routeFile`, and `weights` by style (`free` is every style without its own).
+  Paths go from the config's folder.
+- `gearSeed`, `pins`, `seed`, and the search's `sessions`, `confirmSessions`, `respecLevels`,
+  `rotationSearch` and `rotationTemplate`.
+
+### Comparing plans
+
+    go run --tags=with_db ./tools/levelingplan -hours -in arms.json,fury.json,prot.json -out hours.json
+
+This plays each plan with 8 gear seeds (`-gear-seeds`) and 500 sessions a level and gear seed
+(`-sessions`). One gear history isn't enough, because a lucky weapon moves a plan by more than
+the sessions' noise. Every plan plays the same gear seeds and session seeds, so `againstFirst`
+(the hours against the first plan) is paired by gear seed. The JSON has the hours with their
+standard error, deaths, mobs a pull, XP an hour and the shares of the time, for the plan, for each
+10 levels and for each level. `-levels 20-29` plays only those.
+
+### Measuring stat weights
+
+    go run --tags=with_db ./tools/levelingplan -weights -in prot.json -style shield -out weights_shield.json
+
+This plays the plan at every 5th level (and the last) with a little more of each stat on the same
+rolls, and writes what each is worth next to attack power. It's how we measured the shaman's
+weights (docs/leveling_gear.md). `-style` levels with that one style from level 1. It takes 3
+rounds (`-rounds`): the gear of the first by the config's weights, and of each later one by the
+mean of the rounds before it. The result is the mean of them all. Strength is measured, and so are
+Defense, Dodge and Parry, Block and Block Value with a shield, and off-hand DPS with two weapons.
+Each weight comes with its standard error, the larger of the sessions' noise and how far the
+rounds are apart. 8 gear seeds at 2000 sessions a probe are about 3 million sessions a round.
+
 ## The run
 
 Simulate runs one grinding session request per level, each with the main iterations, then the
@@ -550,7 +607,7 @@ only the regular plan and its weights.
 ## Open
 
 - A sim history for the Leveling mode.
-- Rotation templates for the other specs.
+- Rotation templates for the other specs, and a real one for the warrior.
 - Fleeing mobs in the leveling sim, which Frost Shock would be for.
 - A rotation condition on an aura we don't have is dropped, so the line runs as if it had no
   condition. The Maelstrom line used to hard cast Lightning Bolt all fight without the talent

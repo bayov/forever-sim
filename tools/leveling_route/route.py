@@ -12,6 +12,11 @@
 # keeps).
 #
 #   uv run tools/leveling_route/route.py [guides dir] > ui/enhancement_shaman/leveling_route.json
+#   uv run tools/leveling_route/route.py --race undead --class warrior > ui/warrior/leveling_route.json
+#
+# Our forks only start in Durotar, so another race starts in RestedXP's own guides for it (read
+# through bayovui/build/rxpdeps.py, which finds them in the game client) and joins our route
+# where the Barrens begin, see STARTS.
 #
 # The output holds only ids and levels, not the guide's text, because levels 22 to 60 come
 # from RestedXP's paid guides and this repo is public.
@@ -20,16 +25,23 @@
 # and the guide's "grind to" steps, where we're at least at their level. Each section's name
 # says the level the guide expects at its start, and we're at least there too. We don't count
 # the XP of the mobs we kill on the way, so the level runs up to a level behind the guide's.
-import json, os, re, sys
+import argparse, json, os, re, sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../database/forever_wowhead'))
-from scrape import scrape_quests
+# scrape.py reads its own level argument from sys.argv when it loads.
+argv, sys.argv = sys.argv, sys.argv[:1]
+from scrape import scrape_quests, last_ranges
+sys.argv = argv
 from wowhead import Wowhead
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..')
 GUIDES = '/mnt/d/Gaming/World of Warcraft/bayovui/addons/BayovCore/RXPGuides'
-# Who walks the route, as the RestedXP step filters name it.
+# Who walks the route, as the RestedXP step filters name it. --race and --class change it.
 ME = {'orc', 'shaman', 'horde'}
+# A race's own start: RestedXP's guides (speedrun group) walked first, then our route from the
+# section named last. Our sections before that one (Durotar for an orc) are left out.
+STARTS = {'undead': (['1-6 Tirisfal Glades', '6-12 Tirisfal Glades', '12-14 Silverpine Forest'], '13-14 The Barrens')}
+WOW = '/mnt/d/Gaming/World of Warcraft'
 # The dungeons BayovCore's Modules/RXPGuides.lua turns on and off for our route.
 DUNGEON_TAGS = {'RFC': True, 'ROL': True, 'WC': False, 'DM': False, 'SM': True, 'RFD': True, 'ULDA': True,
                 'ZF': True, 'MARA': True, 'ST': True, 'BRD': True}
@@ -67,12 +79,31 @@ def split_filter(line):
     return line, None
 
 
-def sections(guides):
-    """The route's sections in order, by their level in the file name."""
+def upstream_sections(race, cls, names):
+    """RestedXP's own sections of that name for the race and class, as (name, text)."""
+    sys.path.insert(0, WOW)
+    from bayovui.build import rxpdeps
+    rxpdeps.set_player(race, cls)
+    found, first = rxpdeps.upstream_guides(rxpdeps.forever_client(), rxpdeps.UPSTREAM_GROUPS['speedrun'])
+    for n in names:
+        yield n, found[n].text
+
+
+def sections(guides, start=None):
+    """The route's sections in order, by their level in the file name. A race's own start comes
+    first (see STARTS) and our sections from its join on."""
+    join = None
+    if start:
+        yield from upstream_sections(*start[:3])
+        join = start[3]
     for f in sorted(os.listdir(guides)):
         if f.endswith('.lua'):
             body = open(os.path.join(guides, f)).read().split('[==[', 1)[1].split(']==]', 1)[0]
-            yield re.search(r'^#name (.+)$', body, re.M).group(1).strip(), body
+            name = re.search(r'^#name (.+)$', body, re.M).group(1).strip()
+            if join and name == join:
+                join = None
+            if not join:
+                yield name, body
 
 
 def steps(body):
@@ -118,8 +149,16 @@ def skipped(flags, lines, reached):
 
 
 def main():
-    guides = sys.argv[1] if len(sys.argv) > 1 else GUIDES
-    quests = scrape_quests(Wowhead())
+    ap = argparse.ArgumentParser()
+    ap.add_argument('guides', nargs='?', default=GUIDES)
+    ap.add_argument('--race', default='orc')
+    ap.add_argument('--class', dest='cls', default='shaman')
+    a = ap.parse_args()
+    guides, race, cls = a.guides, a.race.lower(), a.cls.lower()
+    ME.clear()
+    ME.update({race, cls, 'horde'} | ({'scourge'} if race == 'undead' else set()))
+    start = (race, cls.upper(), *STARTS[race]) if race in STARTS else None
+    quests = scrape_quests(Wowhead(), last_ranges(), {})
     items = {i['id']: i for i in json.load(open(os.path.join(ROOT, 'assets/database/db.json')))['items']}
     level, xp = 1, 0
     turnins, runs = [], {}
@@ -129,7 +168,7 @@ def main():
         if (level, xp) < (lv, plus):
             level, xp = lv, plus
 
-    for name, body in sections(guides):
+    for name, body in sections(guides, start):
         m = re.match(r'(\d+)-', name)
         if m:
             reach(int(m.group(1)))
@@ -173,7 +212,7 @@ def main():
                                     'rewardIds': [r[0] for r in q['itemrewards'] if r[0] in items]})
 
     out = {
-        'name': 'Bayov On-Release Guide (Orc Shaman)',
+        'name': 'Bayov On-Release Guide (%s %s)' % (race.capitalize(), cls.capitalize()),
         'quests': [t for t in turnins if t['choiceIds'] or t['rewardIds']],
         'dungeons': [{'zoneId': zone, 'name': DUNGEON_NAMES[zone], 'level': lv} for zone, lv in sorted(runs.items(), key=lambda r: r[1])],
     }

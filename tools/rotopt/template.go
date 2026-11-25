@@ -20,13 +20,30 @@ type Template interface {
 }
 
 var templates = map[string]Template{
-	"rogue_ss":   rogueSS{},
-	"rogue_bs":   rogueBS{},
-	"shaman_enh": shamanEnh{},
-	// Leveling sessions (settings with leveling options).
-	"shaman_enh_leveling": shamanEnhLeveling{},
-	"paladin_ret":         paladinRet{},
-	"paladin_tank":        paladinTank{},
+	"rogue_ss":     rogueSS{},
+	"rogue_bs":     rogueBS{},
+	"shaman_enh":   shamanEnh{},
+	"paladin_ret":  paladinRet{},
+	"paladin_tank": paladinTank{},
+}
+
+// The leveling templates, for leveling sessions (settings with leveling options). They're in
+// aplkit because the leveling plan's rotation search (tools/levelingplan) uses them too.
+func init() {
+	for _, name := range aplkit.LevelingTemplateNames() {
+		templates[name] = levelingTemplate{aplkit.LevelingTemplateNamed(name)}
+	}
+}
+
+// A leveling template, built for the -level we sim.
+type levelingTemplate struct {
+	template aplkit.LevelingTemplate
+}
+
+func (t levelingTemplate) Knobs() []Knob { return t.template.Knobs() }
+
+func (t levelingTemplate) Build(k Knobs) *proto.APLRotation {
+	return t.template.Build(playerLevel, k)
 }
 
 func defaultKnobs(t Template) Knobs {
