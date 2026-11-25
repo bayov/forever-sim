@@ -1,9 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_eceb090_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  eceb09019 (pass 75), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/eceb090196be/wowsimcli`). Moves since
-  566067a39 come mostly from the Phase 0 regear (step 4) of the req files: warlock -11 to -20%, mage, balance, elemental,
-  Fury 2H -12 to -16%, feral, Fury, paladin, shadow, smite -8 to -11%, enhancement, arms -6 to -8%; rogue and hunter unmoved.
+- `baseline_0404484_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  0404484fb (pass 79), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/0404484fb68f/wowsimcli`). Moves since
+  eceb09019 come mostly from world buffs doing nothing in raids (rogue Combat Swords -11%, hunters -10%); warriors +0.4 to
+  +0.8% from the stance-modified Rage from hits taken.
 
 ## Not committed (kept locally, re-create as needed)
 

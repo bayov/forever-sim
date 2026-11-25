@@ -15,11 +15,22 @@ func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPer
 	//
 	// A hit it cuts still deals at least 1 damage after armor. On the beta our rank 1 totem's 4
 	// left 1 damage from raw 3 and 4 swings, and no hit in any log dealt 0.
+	//
+	// EV-0154: the flat reductions in this field together take at most half of the hit (Gold-plated,
+	// Stoneform Shoulders and Force of Will: a swing under twice the amount keeps about half of
+	// itself; a second reduction adds nothing past the cap), and the crit doubles what is left, as
+	// the outcome comes after this. Force of Will's 51 and Gift of Arthas's 8 land here too, so the
+	// share armor lets through scales them. A flat bonus (Gift of Arthas) follows the spell's bonus
+	// coefficient (EV-0045: Thunder Clap, Victory Rush and Rend ticks take none).
 	flatReduced := false
 	if bonus := attackTable.Defender.PseudoStats.BonusPhysicalDamageTakenBeforeArmor; bonus != 0 && !isPeriodic &&
 		spell.SpellSchool.Matches(SpellSchoolPhysical) && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
-		flatReduced = result.Damage > 0
-		result.Damage = max(0, result.Damage+bonus)
+		if bonus > 0 {
+			result.Damage += bonus * spell.BonusCoefficient
+		} else {
+			flatReduced = result.Damage > 0
+			result.Damage += max(bonus, -result.Damage/2)
+		}
 	}
 
 	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
