@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
-    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, potions and the EZ-Thro Dark Bomb on cooldown",
+    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, potions and the Dense Dynamite on cooldown",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
     "Arcane Shot on cooldown, before Aimed Shot, at any mana",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
@@ -58,7 +58,7 @@
     "Flank au Poivre",
     "Major Mana Potion",
     "Demonic Rune",
-    "EZ-Thro Dark Bomb"
+    "Dense Dynamite"
   ],
   "caveats": [
     "Trueshot Aura's top rank gives 100 ranged attack power, from the launch realms' hotfix of 2026-11-03 (ranks 20, 35, 50, 75 and 100). Hunter's Mark gives 143 after a server hotfix (older clients said 71).",
@@ -70,10 +70,10 @@
     "Intimidation is talented but not cast.",
     "Major Frenzy Potion is 17.0 DPS behind Major Mana Potion at 180s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
-    "Ranged slot is the Phase 0 list's pick, Ankle Slicers (a 1.8s thrown weapon). The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
+    "Ranged slot is the Phase 0 list's pick, Hyper Deluxe Sniper Rifle Mk XVII (a 2.5s gun). Forever's Auto Shot and hunter shots need a bow, gun or crossbow, so the list has no thrown weapons. The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2.5 DPS (Savage Rend), but none that fast is known.",
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (0.0 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
-  "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays."
+  "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the Dense Dynamite stays."
 }

@@ -23,7 +23,7 @@ ref/tank_bench/summary.tsv rewritten (bear rows on 95962a7d3, the Lacerate fix).
 Every row moved for a known cause: the Phase 0 gear in the requests (the round notes' Phase 0 against synthetic
 tables), 2f42f4a44 (threat batch: bear TPS +46% from Lacerate and Primal Bite, warrior Shield Slam), the procs and
 items batches, and 95962a7d3 (bear +170 to +185). No unexplained move. The report's Tanking mode has none of this
-yet: tank_rotations-20261125-1.
+yet: tank_rotations-20261125-3.
 
 ## Lines tried (paired, 1000 iterations, six scoring bosses)
 

@@ -53,14 +53,19 @@ def main():
         bad += 1
         print('! ' + msg)
 
-    def item_ok(where, iid, faction):
+    def gpd(c, spec):
+        # goldPerDps is one number per spec's list (phase0_prices.py)
+        g = c.get('goldPerDps')
+        return (g.get(spec) if isinstance(g, dict) else None) or 0
+
+    def item_ok(where, iid, faction, spec):
         c = content.get(str(iid))
         if c is None:
             return flag(f'{where}: item {iid} is not in phase0_content.json')
         if c.get('avail') in ('out', 'infeasible'):
             flag(f"{where}: {c.get('name')} ({iid}) is {c['avail']}: {c.get('note', '')}")
-        if (c.get('goldPerDps') or 0) > a.max_gpd:
-            flag(f"{where}: {c.get('name')} ({iid}) costs {c['goldPerDps']}g per DPS, over the {a.max_gpd:g}g line")
+        if gpd(c, spec) > a.max_gpd:
+            flag(f"{where}: {c.get('name')} ({iid}) costs {gpd(c, spec)}g per DPS, over the {a.max_gpd:g}g line")
         if faction and c.get('faction') and c['faction'] != faction:
             flag(f"{where}: {c.get('name')} ({iid}) is {c['faction']} only, the build is {faction}")
 
@@ -76,6 +81,10 @@ def main():
     sets = {}  # gear set name -> its items
     for p in glob.glob('ui/*/gear_sets/level60_phase0*.gear.json'):
         sets[os.path.basename(p)[:-len('.gear.json')]] = load(p)['items']
+    set_spec = {}  # gear set name -> the spec whose list it wears, for the spec's goldPerDps
+    for spec, row in specs.items():
+        gp = row.get('gearOut') or f"ui/{row['dir']}/gear_sets/level60_phase0_{spec}.gear.json"
+        set_spec[os.path.basename(gp)[:-len('.gear.json')]] = spec
     for spec, row in sorted(specs.items()):
         lp = row.get('out') or f"ui/{row['dir']}/bis/level60_phase0_{spec}.bis.json"
         gp = row.get('gearOut') or f"ui/{row['dir']}/gear_sets/level60_phase0_{spec}.gear.json"
@@ -89,14 +98,14 @@ def main():
             pk = [r for r in rows if r.get('bis')]
             picks[slot] = sorted(r['id'] for r in pk)
             for r in pk:
-                item_ok(f'{spec} {slot}', r['id'], fac)
+                item_ok(f'{spec} {slot}', r['id'], fac, spec)
             best = min((r['loss'] for r in pk), default=0)
             for r in rows:
                 c = content.get(str(r['id'])) or {}  # today's tag, and the one the list copied when it ran
                 # an item tagged infeasible (Exalted reputation, or over the gold line when the list ran) ranks but is
                 # never a pick, by design (bis_phase0.sh -gear-no-pick): sitting above the pick is not a finding
                 if (r.get('bis') or c.get('avail') in ('infeasible', 'out') or r.get('avail') in ('infeasible', 'out')
-                        or (c.get('goldPerDps') or 0) > a.max_gpd):
+                        or gpd(c, spec) > a.max_gpd):
                     continue
                 if r['loss'] < best - a.noise:
                     flag(f"{spec} {slot}: open {r['name']} ({r['id']}) sits {best - r['loss']:.2f} above the pick")
@@ -136,9 +145,11 @@ def main():
             continue
         bid, race = os.path.basename(op)[:-len('.json')].rsplit('.', 1)
         fac = faction_of(race)
+        mp = f'tools/dps_report/req/{bid}.meta.json'
+        spec = set_spec.get(load(mp).get('gearSet')) if os.path.exists(mp) else None
         for it in ov['equipment'].get('items') or []:
             if it and it.get('id'):
-                item_ok(f'{bid} as {race}', it['id'], fac)
+                item_ok(f'{bid} as {race}', it['id'], fac, spec)
     print(f'{bad} finding(s)')
 
 

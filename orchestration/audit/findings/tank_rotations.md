@@ -2,7 +2,23 @@
 
 ## Open
 
-### tank_rotations-20261125-1: The report's Tanking mode predates the Phase 0 requests, the tank threat batch and the Lacerate fix
+### tank_rotations-20261125-1: Bear Max threat and Balanced now lose 1-2% to their Demoralizing Roar line; Lacerate's 10/3 threat makes that GCD worth more
+- severity: high (Max threat +2.3%, Balanced +1.2 to 1.8%)
+- affects: Feral tank druid Max threat and Balanced (Max survival keeps Roar)
+- found: 2026-11-25, master 85691655ab
+- evidence: 2f42f4a44 (Lacerate threatens for 10/3 of its damage, Primal Bite 3x; EV-0034/0037) lifts bear SafeDPS by about 600 to 700, so a GCD spent on Roar now costs more threat than the boss's lower attack power gives back. Roar line deleted (tools/tankbench/req/druid_bear_max_threat.json priority 4, druid_bear_balanced.json priority 5), paired abtest, 3,000 iterations, B minus preset, at the preset's weight, scoring mean: Max threat +102.2 ± 3.7 (seed 1), +103.3 ± 3.8 (seed 2), every boss +79 to +132, Ragnaros +111 / +104. Balanced +59.6 ± 8.6, +39.6 ± 8.9: every boss gains or stays level (Chromaggus 0 / -14), Ragnaros -14 / -84 (noise there is about ±60). Max survival (priority 6) loses: -44.2 ± 22.7, -88.3 ± 25.7 (Chromaggus -205 / -184, Golemagg -163 / -164), so keep it there. Before the batch, finding 20261104-1 found Roar worth keeping once moved off the pull's first GCD. Sure: high. Repro: `tools/audit/tank_rotations/mk_warrior.py tools/tankbench/req/druid_bear_max_threat.json B.json del 4; abtest -iters 3000 -seed 1 tools/tankbench/req/druid_bear_max_threat.json B.json`.
+- proposed fix: re-run rotopt for bear Max threat and Balanced on master (`roarRefresh` 0 already means "never", tools/rotopt/druid_tank.go:38), or drop the Roar line from the Max threat and Balanced requests and the UI apls `ui/feral_tank_druid/apls/max_threat.apl.json` and `balanced.apl.json`. Re-check the Maul and Enrage thresholds in the same search. Maul 10/30 against 20 was noise this pass at all three presets.
+- needs: worker fix
+
+### tank_rotations-20261125-2: Warrior Balanced's Thunder Clap now gains less than its GCD after Thunder Clap's threat dropped to 1x; without it +16, but Chromaggus loses
+- severity: low (+0.5%)
+- affects: Protection warrior Balanced
+- found: 2026-11-25, master 85691655ab
+- evidence: 2f42f4a44 sets Thunder Clap's threat multiplier to 1 under Forever (sim/warrior/thunder_clap.go, EV-0050; it was 2.5). Thunder Clap line deleted (tools/tankbench/req/warrior_protection_balanced.json priority 14), paired, B minus preset, w = 1: +11.4 ± 10.6 (3k, seed 1), +24.4 ± 9.9 (3k, seed 2), +16.1 ± 5.6 (10k, seed 3). Bosses differ: Chromaggus -185 / -220 / -176, Broodlord -50 / +89 / -34, Vaelastrasz +162 / +127 / +138, Onyxia +50 / +108 / +99, Magmadar +78 / +46 / +65; Ragnaros +169 / -64 / -2. At Max survival the slow is still worth it: -289.7 ± 16.7, -294.7 ± 16.2 (Chromaggus -717). Sure: medium that the mean gain is real. It rests on the encounter mix (Chromaggus's heavy melee against the rest).
+- proposed fix: let rotopt search Balanced's Thunder Clap refresh with "never" as an option (or a remaining-time floor), and keep it only if the gain holds there. Otherwise keep it for Chromaggus and note that it's even.
+- needs: worker fix
+
+### tank_rotations-20261125-3: The report's Tanking mode predates the Phase 0 requests, the tank threat batch and the Lacerate fix
 - severity: high (every tank row moves: bear Balanced 2153 to 3646, paladin Max survival 1787 to 800, warrior Max survival 1820 to 1096 on the bench's scoring mean)
 - affects: all tank presets in the DPS Report's Tanking mode
 - found: 2026-11-25, phase0-tankheal 95962a7d3
@@ -18,6 +34,7 @@
 - proposed fix: drop the mana condition on Balanced's Consecration line (as Max threat), in the request, the UI apl `ui/protection_paladin/apls/level60_balanced.apl.json` and the rotopt template knob; update the note ("Consecration on cooldown").
 - needs: worker fix
 - pass 30: still open; 0404484fb leaves the paladin baseline bit-identical; not re-tested.
+- pass 31: still open; the evidence batches (85691655a) move paladin Balanced +48.7 (DTPS -3, healing needed -6.5), but the Consecration line is untouched. Not re-tested.
 
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
@@ -45,6 +62,7 @@
 - pass 26: still open (user call); cd71e78c2 (Unbridled Wrath off Shield Slam/Revenge/Bash, HS spends Flurry and Reckless Swings) moves Max survival's scoring mean 1847.5 -> 1832.8, trinket lines untouched; not re-tested.
 - pass 27: still open (user call); c7e3b3e adds only racial lines (Undead no-ops), warrior baseline bit-identical; Max survival's racials synced with Shield Wall (13 s) lose -49 to -118 at seed 2; trinket lines not re-tested.
 - pass 30: still open (user call); b4cab8498's Rage-by-stance rule moves Max survival 1832.8 -> 1820.0 (Broodlord -95 ± 70); Heroic Strike 40 still best; trinket lines not re-tested.
+- pass 31: still open (user call); 2f42f4a44's threat rules move Max survival 1820.0 -> 1617.0 (all bosses about -200, SafeDPS -107); trinket lines not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -72,6 +90,7 @@
 - pass 27: still open (user ruling); c7e3b3e touches no paladin file; not re-tested.
 - pass 23: still open (user ruling); 8b5137c6d's Two-Handed Weapon Specialization Holy damage fix applies only with a two-hander, paladin baseline bit-identical; not re-tested.
 - pass 30: still open (user ruling); 0404484fb leaves the paladin baseline bit-identical; not re-tested.
+- pass 31: still open (user ruling); the paladin rows moved +37 to +71 (damage taken), but the Bulwark line is untouched. Not re-tested.
 
 ## Resolved
 

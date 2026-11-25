@@ -59,7 +59,8 @@
     "Dragonbreath Chili",
     "Major Frenzy Potion",
     "Dense Sharpening Stone (main hand and off hand)",
-    "Goblin Sapper"
+    "Goblin Sapper",
+    "Goblin Land Mine"
   ],
   "caveats": [
     "The wolf costs 33.2 DPS at 180s against the same build without it (995.7 against 1028.9, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",

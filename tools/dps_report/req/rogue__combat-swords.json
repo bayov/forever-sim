@@ -63,11 +63,11 @@
                   "enchant": 1900
                 },
                 {
-                  "id": 12590,
+                  "id": 279261,
                   "enchant": 1900
                 },
                 {
-                  "id": 280020
+                  "id": 19107
                 }
               ]
             },
@@ -78,7 +78,7 @@
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
               "mainHandImbue": "DenseSharpeningStone",
-              "offHandImbue": "DenseSharpeningStone",
+              "offHandImbue": "DenseWeightstone",
               "defaultPotion": "MajorFrenzyPotion",
               "defaultConjured": "ConjuredRogueThistleTea",
               "dragonBreathChili": true,

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T08:30:00Z",
- "pass": 105,
- "result": "quiet",
- "note": "pass 105: elixir overwrite (f1942793d) and rage-taken (b4cab8498) moved 60 of 68 vs metas, all explained by paired runs; no new finding.",
+ "last_pass_at": "2026-11-25T15:00:00Z",
+ "pass": 106,
+ "result": "findings",
+ "note": "pass 106: evidence batches (hunter, items, procs, tank, casters) and 22d2cf952 moved 64 of 68 vs 0404484fb; bisected; new drift finding results-20261125-1.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T13:10:47Z",
+ "checked_at": "2026-11-25T19:23:36Z",
  "baseline": "0facd9428"
 }

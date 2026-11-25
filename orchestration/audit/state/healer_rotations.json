@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T13:04:31Z",
- "pass": 27,
+ "last_pass_at": "2026-11-25T19:13:37Z",
+ "pass": 28,
  "result": "findings",
- "note": "Bench re-based after f1942793d (AI/Divine Spirit overwrite the int/spirit elixirs): -455 mana a row; Holy priest tank OOM on Chromaggus (-20261125-1).",
+ "note": "Bench re-based after efeb06b95 (Forever resist constant 8L+19, 75% partial cap): 56 of 63 rows moved, mean carry +0.007, raid rows only past 0.02 (-20261125-2). No healer APL change; Holy tank mana gates tried, none wins.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-25T13:10:47Z"
+ "checked_at": "2026-11-25T19:23:36Z"
 }

@@ -1,0 +1,99 @@
+ele finger,mainhand,offhand
+    finger pick Rune Band of Wizardry 78.6g/DPS (+166.7g)
+    mainhand pick Hand of Edward the Odd 75.3g/DPS (+899.6g)
+    offhand pick Obsidian Bauble 297.1g/DPS (+101.0g)
+ret waist,legs,mainhand
+    waist pick Belt of the Archmage 214.2g/DPS (+533.2g)
+    legs pick Pristine Scorpid Leggings 32.0g/DPS (+173.4g)
+    mainhand pick Destiny 39.5g/DPS (+195.2g)
+balance waist,mainhand
+    waist pick Belt of the Archmage 91.3g/DPS (+533.2g)
+    mainhand pick Hand of Edward the Odd 66.5g/DPS (+899.6g)
+feral back
+    back pick Cape of the Black Baron 80.7g/DPS (+223.6g)
+hunter_bm neck,back
+    neck pick Pendant of Celerity 122.5g/DPS (+173.9g)
+    back pick Cape of the Black Baron 62.8g/DPS (+223.6g)
+hunter_mm neck,back,wrist
+    neck pick Pendant of Celerity 123.3g/DPS (+173.9g)
+    back pick Cape of the Black Baron 54.7g/DPS (+223.6g)
+    wrist pick Bracers of the Eclipse 509.8g/DPS (+147.8g)
+hunter_lw neck,back,wrist
+    neck pick Pendant of Celerity 123.3g/DPS (+173.9g)
+    back pick Cape of the Black Baron 54.7g/DPS (+223.6g)
+    wrist pick Bracers of the Eclipse 509.8g/DPS (+147.8g)
+hunter_sv back,wrist,mainhand,offhand,ranged
+    back pick Cape of the Black Baron 319.4g/DPS (+223.6g)
+    wrist pick Bracers of the Eclipse 176.0g/DPS (+147.8g)
+    mainhand pick Iceblade Hacker 48.4g/DPS (+298.7g)
+    offhand pick Felstriker 236.9g/DPS (+2352.9g)
+    ranged pick Satyr's Bow 91.7g/DPS (+126.6g)
+mage_arcane neck,mainhand,ranged
+    neck pick Star of Mystaria 104.4g/DPS (+180.6g)
+    mainhand pick Headmaster's Charge 636.6g/DPS (+1826.9g)
+    ranged pick Bonecreeper Stylus 464.1g/DPS (+374.0g)
+mage_fire neck,finger,ranged
+    neck pick Star of Mystaria 361.1g/DPS (+180.6g)
+    finger pick Rune Band of Wizardry 54.3g/DPS (+166.7g)
+    ranged pick Ritssyn's Wand of Bad Mojo 262.0g/DPS (+165.7g)
+mage_frost finger,ranged
+    finger pick Rune Band of Wizardry 877.2g/DPS (+166.7g)
+    ranged pick Ritssyn's Wand of Bad Mojo 115.2g/DPS (+165.7g)
+mage_frostfire neck,finger
+    neck freed Nacreous Shell Necklace loss -2.82 (was 217.4, now 23.9)
+    finger pick Rune Band of Wizardry 47.9g/DPS (+166.7g)
+shadow head,chest,hands,finger,mainhand,offhand
+    head pick Spellweaver's Turban 136.8g/DPS (+177.8g)
+    chest pick Robe of Winter Night 31.4g/DPS (+29.5g)
+    hands pick Felcloth Gloves 39.0g/DPS (+70.0g)
+    finger pick Rune Band of Wizardry 340.1g/DPS (+166.7g)
+    mainhand pick Hand of Edward the Odd 358.2g/DPS (+899.6g)
+    offhand pick Obsidian Bauble 132.9g/DPS (+101.0g)
+smite finger,mainhand,ranged
+    finger pick Maiden's Circle 34.2g/DPS (+82.0g)
+    mainhand pick Hand of Edward the Odd 87.6g/DPS (+899.6g)
+    ranged pick Ritssyn's Wand of Bad Mojo 86.9g/DPS (+165.7g)
+rogue_combat_swords offhand,ranged
+    offhand pick Felstriker 215.1g/DPS (+2352.9g)
+    ranged pick Deep Jungle Rifle 218.6g/DPS (+126.8g)
+rogue_assassination mainhand,offhand,ranged
+    mainhand pick Felstriker 320.9g/DPS (+2352.9g)
+    offhand pick Felstriker 320.9g/DPS (+2352.9g)
+    ranged pick Blackcrow 106.5g/DPS (+240.7g)
+rogue_subtlety back,mainhand,offhand,ranged
+    back pick Cape of the Black Baron 203.3g/DPS (+223.6g)
+    mainhand pick Felstriker 550.2g/DPS (+2352.9g)
+    offhand pick Felstriker 550.2g/DPS (+2352.9g)
+    ranged pick Deep Jungle Rifle 69.6g/DPS (+126.8g)
+rogue_combat_daggers ranged
+    ranged pick Deep Jungle Rifle 169.0g/DPS (+126.8g)
+rogue_seal_fate_swords back,offhand
+    back pick Cape of the Black Baron 508.1g/DPS (+223.6g)
+    offhand pick Felstriker 183.9g/DPS (+2352.9g)
+rogue_seal_fate_daggers back,ranged
+    back pick Cape of the Black Baron 573.3g/DPS (+223.6g)
+    ranged pick Blackcrow 143.3g/DPS (+240.7g)
+affliction ranged
+    ranged pick Skul's Ghastly Touch 135.1g/DPS (+120.4g)
+demonology head,neck,hands,offhand,ranged
+    head pick Spellweaver's Turban 37.5g/DPS (+177.8g)
+    neck pick Dark Advisor's Pendant 2465.0g/DPS (+1010.6g)
+    hands pick Felcloth Gloves 63.6g/DPS (+70.0g)
+    offhand pick Obsidian Bauble 69.2g/DPS (+101.0g)
+    ranged pick Skul's Ghastly Touch 150.5g/DPS (+120.4g)
+destruction legs,finger,mainhand,offhand,ranged
+    legs pick Skyshroud Leggings 109.6g/DPS (+200.6g)
+    finger pick Rune Band of Wizardry 106.8g/DPS (+166.7g)
+    mainhand pick Witchblade 58.0g/DPS (+362.6g)
+    offhand pick Obsidian Bauble 43.7g/DPS (+101.0g)
+    ranged pick Bonecreeper Stylus 207.5g/DPS (+374.0g)
+arms wrist
+    wrist pick Battleborn Armbraces 34.1g/DPS (+209.4g)
+fury shoulder,trinket
+    shoulder pick Truestrike Shoulders 57.4g/DPS (+208.3g)
+    trinket pick Hand of Justice 124.8g/DPS (+293.2g)
+fury_dw waist,mainhand,offhand
+    waist pick Might of the Timbermaw 106.2g/DPS (+79.6g)
+    mainhand pick Ironfoe 155.5g/DPS (+3958.3g)
+    offhand pick Felstriker 127.9g/DPS (+2352.9g)
+slots 72

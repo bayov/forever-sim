@@ -100,20 +100,24 @@ list uses it for the items that need Exalted reputation (`avail` `infeasible` in
 is very long, so the set doesn't count on it, and each slot's pick is the best item we can get.
 
 It also leaves out items that cost too much gold for what they add: more than 30g for each DPS
-(`MAX_GOLD_PER_DPS`, user 2026-11-22). `tools/rotopt/phase0_prices.py --write` prices each item
-and divides by the DPS it adds over the best cheaper item of its slot (the second best for rings
-and trinkets). It writes `gold` and `goldPerDps` into `phase0_content.json`, and the script makes
-every item over the line infeasible, with "133g per DPS" in its note.
+(`MAX_GOLD_PER_DPS`, user 2026-11-22). `tools/rotopt/phase0_prices.py --write` prices the items
+of every spec's list in `phase0_specs.json` in one run (since 2026-11-25, Enhancement's alone
+before) and divides by the DPS each adds over the best cheaper item of its slot on that list (the
+second best for rings and trinkets). It writes `gold` and `goldPerDps` into `phase0_content.json`,
+`goldPerDps` as one number per spec (`{"mage_fire": 160.0, "mage_frost": 12.4}`), since an item
+adds different DPS on each list. The script makes every item over the line on the spec's list
+infeasible there, with "133g per DPS" in its note.
 
 An item's gold is the cheapest of its auction house price, its recipe's materials and the effort
 of farming it. The first two come from our auction house scans (BayovCore's BayovAuctionData).
 The effort is the hours it takes at 30g an hour (user, 2026-11-22). Without it a rare drop cost
 nothing, so the list picked Treant's Bane, a 0.38% drop from the Dire Maul tribute, over Brain
 Hacker at 255g. The hours are the runs we expect times the time of a run. The runs are 1 / (drop
-chance x 0.5), because we assume one other player in the group needs the item too. A run takes the
-dungeon's typical clear time plus 20 minutes, for getting there and finding a group. So a bind on pickup drop costs only its effort, and a bind on equip drop costs the
-cheaper of its effort and the auction house. Treant's Bane comes to 526 runs, 439 hours and
-about 13200g, so Brain Hacker (12g per DPS over Brutehammer of Magic) is the better buy. Quest,
+chance x roll share), and the share is 1: we assume only we roll on a dungeon drop (user,
+2026-11-25; it was 0.5, one other player, until then). A run takes the dungeon's typical clear
+time plus 20 minutes, for getting there and finding a group. So a bind on pickup drop costs only
+its effort, and a bind on equip drop costs the cheaper of its effort and the auction house.
+Treant's Bane comes to 263 runs, 219 hours and about 6600g, so Brain Hacker is still the better buy. Quest,
 vendor and reputation items get no effort price yet, and neither do world drops outside
 dungeons, since their chance is too small to farm.
 

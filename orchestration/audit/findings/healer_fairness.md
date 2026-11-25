@@ -19,6 +19,10 @@
   gear, and keep this row.
 - ruling (user, 2026-11-25): the raid filler wears Phase 0 gear like the reports, so it tracks the DPS report's
   set. Keep the filler on the report request. The raid row is re-benched when the healer report moves to Phase 0.
+- evidence (pass 31, 2026-11-25, master 85691655a, `ref/healer_fairness/bench_8569165.tsv`): with the filler request
+  unchanged, the evidence batches (resists, procs, Frost mage rules) lift the raid row unevenly: Holy +0.023, shaman +0.018,
+  druid +0.008, paladin +0.004 (tank row +0.001..+0.005). Raid shaman 1.372 now ties the druid 1.370 for third, so "the
+  shaman last" no longer holds; the raid row's bottom two stay within noise of each other. Not attributed.
 
 ### healer_fairness-20261115-1: Wild Growth's doubled tick (0.033 -> 0.066) lowers the raid druid's carry, 1.414 -> 1.392, from third to last; the preset isn't re-tuned for it
 - severity: high (the raid druid drops from third to last in the raid role, 0.020 behind the shaman's 1.412)

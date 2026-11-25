@@ -69,6 +69,7 @@
   "20036": {"name": "Enchant 2H Weapon - Major Intellect", "note": "Formula on AH ~69g", "source": "1.83% Crimson Sorcerer (Stratholme)"},
   "22725": {"name": "Core Armor Kit", "avail": "out", "note": "Core Leather is a Molten Core material", "source": "Leatherworking recipe needing Core Leather (Molten Core)"},
   "22749": {"name": "Enchant Weapon - Spell Power", "avail": "out", "note": "Molten Core drop only", "source": "Molten Core bosses only (1%)"},
+  "22779": {"name": "Biznicks 247x128 Accurascope", "avail": "out", "note": "Schematic 18290 has no Forever source", "source": "Schematic: Biznicks 247x128 Accurascope (18290), a Molten Core drop in Classic, none in Forever data"},
   "22750": {"name": "Enchant Weapon - Healing Power", "avail": "out", "note": "Molten Core drop only", "source": "Formula: Enchant Weapon - Healing Power (18260), Molten Core bosses only (about 1%)"},
   "22840": {"name": "Arcanum of Rapidity", "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
   "22844": {"name": "Arcanum of Focus", "note": "Libram ~18g · Pristine Black Diamond ~75g on AH", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
