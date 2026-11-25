@@ -10,8 +10,11 @@ import (
 	dpswarrior "github.com/wowsims/classic/sim/warrior/dps_warrior"
 )
 
-func TestAbort(t *testing.T) {
+func init() {
 	dpswarrior.RegisterDpsWarrior()
+}
+
+func TestAbort(t *testing.T) {
 
 	player := &proto.Player{
 		Name:      "John",

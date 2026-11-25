@@ -274,11 +274,16 @@ func (b *bulkSimRunner) getRankedResults(signals simsignals.Signals, validCombos
 	var totalCompletedIterations int32
 	var totalCompletedSims int32
 
-	reporterSignal := simsignals.CreateSignals()
-
-	// reporter for all sims combined.
+	// reporter for all sims combined. It stops before getRankedResults returns, since the caller
+	// closes progress after the final result: a report sent after that panicked (send on closed
+	// channel), now and then when a bulk sim was aborted.
+	stopReporter := make(chan struct{})
+	reporterDone := make(chan struct{})
 	go func() {
-		for !signals.Abort.IsTriggered() && !reporterSignal.Abort.IsTriggered() {
+		defer close(reporterDone)
+		ticker := time.NewTicker(time.Second)
+		defer ticker.Stop()
+		for !signals.Abort.IsTriggered() {
 			complIters := atomic.LoadInt32(&totalCompletedIterations)
 			complSims := atomic.LoadInt32(&totalCompletedSims)
 
@@ -287,15 +292,27 @@ func (b *bulkSimRunner) getRankedResults(signals simsignals.Signals, validCombos
 				return
 			}
 
-			progress <- &proto.ProgressMetrics{
+			select {
+			case progress <- &proto.ProgressMetrics{
 				TotalSims:           numCombinations,
 				CompletedSims:       complSims,
 				CompletedIterations: complIters,
 				TotalIterations:     int32(totalIterationsUpperBound),
+			}:
+			case <-stopReporter:
+				return
 			}
-			time.Sleep(time.Second)
+			select {
+			case <-ticker.C:
+			case <-stopReporter:
+				return
+			}
 		}
 	}()
+	cancelReporter := func() {
+		close(stopReporter)
+		<-reporterDone
+	}
 
 	// launcher for all combos (limited by concurrency max)
 	go func() {
@@ -336,7 +353,7 @@ func (b *bulkSimRunner) getRankedResults(signals simsignals.Signals, validCombos
 	for i := range rankedResults {
 		result := <-results
 		if result.Result == nil || result.Result.Error != nil {
-			reporterSignal.Abort.Trigger() // cancel reporter
+			cancelReporter()
 			return nil, nil, result.Result.Error
 		}
 		if !result.Substitution.HasItemReplacements() {
@@ -344,7 +361,7 @@ func (b *bulkSimRunner) getRankedResults(signals simsignals.Signals, validCombos
 		}
 		rankedResults[i] = result
 	}
-	reporterSignal.Abort.Trigger() // cancel reporter
+	cancelReporter()
 
 	sort.Slice(rankedResults, func(i, j int) bool {
 		return rankedResults[i].Score() > rankedResults[j].Score()
