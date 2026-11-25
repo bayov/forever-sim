@@ -163,26 +163,59 @@ func (hp *HunterPet) addForeverAction(spell *core.Spell, wanted func(sim *core.S
 	}
 }
 
-// Under Forever the pet runs in first, casting its Charge or Dash (or Dive) on the way, and in melee
-// range casts the first ability it can, longest cooldown first. Autocast never waits: an ability
-// short of focus passes to the next one on the bar, as autocast does in game (wowsims/forever
-// 8223020463, from combat logs; user ruling 2026-11-12).
+// Under Forever the pet runs in first, casting its Charge or Dash (or Dive) on the way. In melee range
+// autocast decides in 0.8 sec steps, its next cast two steps after the last at the earliest, and picks
+// evenly among the abilities it can cast, not by their order on the bar; it casts Savage Rend only
+// about one time in nine that it could (EV-0187, wowsims/forever: 546 level 60 pets in 468 reports,
+// casts spaced 1.6 sec 86.6 to 88.2% of the time, then 2.4 and 3.2; Bite 48.6% of 75,136 Bite or Claw
+// picks; Savage Rend 179 of 1,589 chances). Autocast never waits: an ability short of focus isn't
+// among the ones it can cast (user ruling 2026-11-12). Before, the sim cast the first ability it
+// could, longest cooldown first, whenever the 1.5 sec global cooldown was up.
+const (
+	foreverPetAutocastStep    = 800 * time.Millisecond
+	foreverPetSavageRendShare = 0.113
+)
+
 func (hp *HunterPet) foreverRotation(sim *core.Simulation) {
 	if hp.DistanceFromTarget > core.MaxMeleeAttackDistance {
 		hp.foreverCloseIn(sim)
 		return
 	}
 
-	target := hp.CurrentTarget
+	if sim.CurrentTime >= hp.nextAutocast {
+		hp.nextAutocast = sim.CurrentTime + foreverPetAutocastStep
+		if hp.foreverCastRandomReady(sim, hp.CurrentTarget) {
+			hp.nextAutocast += foreverPetAutocastStep
+		}
+	}
+	hp.WaitUntil(sim, hp.nextAutocast)
+}
+
+// One autocast step: an even pick among the abilities the pet can cast now, Savage Rend aside.
+func (hp *HunterPet) foreverCastRandomReady(sim *core.Simulation, target *core.Unit) bool {
+	ready := hp.autocastReady[:0]
 	for _, action := range hp.foreverActions {
 		if action.wanted != nil && !action.wanted(sim, target) {
 			continue
 		}
-		if action.spell.CanCast(sim, target) {
-			action.spell.Cast(sim, target)
-			return
+		if !action.spell.CanCast(sim, target) {
+			continue
 		}
+		if action.spell.SpellCode == SpellCode_HunterPetSavageRend {
+			if sim.RandomFloat("Pet Savage Rend") < foreverPetSavageRendShare {
+				action.spell.Cast(sim, target)
+				return true
+			}
+			continue
+		}
+		ready = append(ready, action.spell)
 	}
+	hp.autocastReady = ready
+	if len(ready) == 0 {
+		return false
+	}
+	ready[int(sim.RandomFloat("Pet Autocast")*float64(len(ready)))].Cast(sim, target)
+	return true
 }
 
 // Charge reaches 8 to 25 yd (27685: MinRange 8, MaxRange 25).
