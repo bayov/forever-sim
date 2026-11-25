@@ -236,24 +236,29 @@ func TestNightfallSpellVulnerability(t *testing.T) {
 	}
 }
 
-// Forever's Annihilator takes 165 armor a stack and stacks with Faerie Fire; Classic's takes 200
-// a stack.
+// Forever's Annihilator takes 165 armor a stack and shares the minor armor slot with Faerie Fire
+// (EV-0147), so it does not land under it; Classic's takes 200 a stack.
 func TestForeverAnnihilatorArmorShatter(t *testing.T) {
 	for _, c := range []struct {
 		ruleset proto.Ruleset
 		debuffs *proto.Debuffs
 		want    float64
+		lands   bool
 	}{
-		{proto.Ruleset_RulesetForever, &proto.Debuffs{FaerieFire: true}, 3 * 165},
-		{proto.Ruleset_RulesetClassic, &proto.Debuffs{}, 3 * 200},
+		{proto.Ruleset_RulesetForever, &proto.Debuffs{}, 3 * 165, true},
+		{proto.Ruleset_RulesetForever, &proto.Debuffs{FaerieFire: true}, 0, false},
+		{proto.Ruleset_RulesetClassic, &proto.Debuffs{}, 3 * 200, true},
 	} {
 		sim, war := newWarriorWithGear(t, c.ruleset, 12798, 0, &proto.Consumes{}, c.debuffs)
 		target := war.CurrentTarget
 		before := target.GetStat(stats.Armor)
 		shatter := target.GetAura("Armor Shatter")
 		shatter.Activate(sim)
-		if !shatter.IsActive() {
-			t.Fatalf("%s: Armor Shatter did not land", c.ruleset)
+		if shatter.IsActive() != c.lands {
+			t.Fatalf("%s, Faerie Fire %v: Armor Shatter landed %v, want %v", c.ruleset, c.debuffs.FaerieFire, shatter.IsActive(), c.lands)
+		}
+		if !c.lands {
+			continue
 		}
 		shatter.SetStacks(sim, 3)
 		if got := before - target.GetStat(stats.Armor); !nearly(got, c.want) {
