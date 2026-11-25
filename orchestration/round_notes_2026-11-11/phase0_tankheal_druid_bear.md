@@ -15,6 +15,9 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
   Max threat Enrage under 80 Rage (+3), Max survival Lacerate refresh at 6s (+19). Talents kept.
 - Rotation and talents re-checked on the Phase 0 gear (knob and talent search, paired checks): nothing
   beats noise (best: Balanced Frenzied Regeneration at any Rage +7 ± 11, Max survival Roar at 2s +8 ± 9). No change.
+- Lacerate first-hit fix (95962a7d3): Max survival now refreshes Lacerate under 10s, not 6 (+69 ± 11, +88 ± 12
+  on seeds 1 and 2; 10 is past rotopt's knob range of 1 to 9). Balanced and Max threat keep 4. RANK_ONLY over all
+  slots on the fix: no pick changed.
 
 ## Tags added
 
@@ -51,7 +54,7 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
 ## Faction row
 
 - Balanced wears Theramore Pauldrons (Alliance only). Horde row (Tauren, RANK_ONLY SLOTS=shoulder):
-  Truestrike Shoulders, 3262.4 against 3458.7. `level60_phase0_druid_bear_balanced_horde.bis.json` and
+  Truestrike Shoulders, 3443.4 against 3637.4 (on the Lacerate fix). `level60_phase0_druid_bear_balanced_horde.bis.json` and
   `gear_sets/level60_phase0_druid_bear_balanced_horde.gear.json`.
 - Max threat and Max survival: no faction pick, skipped. (Max survival's top mainhand is The Unstoppable
   Force, infeasible, so not picked.)
@@ -63,12 +66,12 @@ with origin/master's gear.
 
 | Preset | Phase 0 | Synthetic | Gap | TPS Phase 0 / synthetic |
 |---|---|---|---|---|
-| Balanced | 3467.2 | 3338.3 | +128.9 | 2393 / 2424 |
-| Max threat | 5202.3 | 4544.3 | +658.0 | 2574 / 2550 |
-| Max survival | 847.5 | 1357.3 | -509.8 | 1797 / 1856 |
+| Balanced | 3645.8 | 3620.3 | +25.5 | 2410 / 2447 |
+| Max threat | 5386.8 | 4849.0 | +537.8 | 2591 / 2574 |
+| Max survival | 1048.0 | 1618.3 | -570.3 | 1905 / 1972 |
 
-Max survival loses 510 because the synthetic set has 10159 armor and 437 defense against 9473 and 370.
-Chromaggus drives it: -2286 against -1770.
+Max survival loses 570 because the synthetic set has 10159 armor and 437 defense against 9473 and 370.
+Chromaggus drives most of it: -2127 against -1470.
 
 ## Picks
 
