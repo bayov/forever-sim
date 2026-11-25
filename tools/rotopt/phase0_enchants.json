@@ -111,5 +111,13 @@
   "20015": {"name": "Enchant Cloak - Superior Defense", "note": "Formula 16224 vendor 2g", "source": "Vendor: Lorelae Wintersong (Moonglade), Formula 16224 for 2g, skill 285; 0.54% Gordok Mage-Lord (Dire Maul)"},
   "22846": {"name": "Arcanum of Protection", "source": "Dire Maul libram quest + Pristine Black Diamond (no source in data)"},
   "1248665": {"name": "Enchant Bracer - Superior Deflection", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored), Formula 249539, skill 300"},
-  "13746": {"name": "Enchant Cloak - Greater Defense", "source": "Trainer: enchanting trainers, 42s, skill 205"}
+  "13746": {"name": "Enchant Cloak - Greater Defense", "source": "Trainer: enchanting trainers, 42s, skill 205"},
+  "10344": {"name": "Thick Armor Kit", "source": "Leatherworking trainer (Una, Thunder Bluff; Telonis, Darnassus; Drakk Stonehand, Hinterlands; Hahrana Ironhide, Feralas), skill 175, 20s · 5 Thick Leather + Silken Thread"},
+  "13836": {"name": "Enchant Boots - Stamina", "source": "Trainer: Hgarth (Stonetalon) and others, skill 215, 46s"},
+  "13858": {"name": "Enchant Chest - Superior Stamina", "source": "Trainer: Hgarth (Stonetalon) and others, skill 220, 48s"},
+  "13945": {"name": "Enchant Bracer - Greater Stamina", "note": "Formula drop, rare", "source": "Formula 11225, skill 245: 5.3% Lord Captain Wyrmak (Swamp of Sorrows), under 0.6% from many other mobs and lockboxes"},
+  "20011": {"name": "Enchant Bracer - Superior Stamina", "note": "Formula drop, rare", "source": "Formula 16251, skill 300: 8.3% Blackhand Thug (Blackrock Spire), 2.7% Flesh Golem, 1.8% Wildspawn Rogue (Dire Maul), lockboxes"},
+  "20014": {"name": "Enchant Cloak - Greater Resistance", "note": "Needs Heart of Fire, Core of Earth, Globe of Water, Breath of Wind, Ichor of Undeath and 2 Lesser Eternal Essence", "source": "Formula 16216, skill 265: 2.8% Atal'ai Witch Doctor (Sunken Temple)"},
+  "20026": {"name": "Enchant Chest - Major Health", "note": "Forever +10 Stamina", "source": "Vendor: Qia (Winterspring), Formula 16221 for 1g60s, skill 275; 0.7% Blackrock Sorcerer"},
+  "7861": {"name": "Enchant Cloak - Lesser Fire Resistance", "source": "Trainer: Lucan Cordell (Stormwind) and others, skill 125, 12s50c"}
 }
