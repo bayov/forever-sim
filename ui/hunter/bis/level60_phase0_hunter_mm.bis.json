@@ -95,8 +95,8 @@
     ],
     "back": [
       {"id":13340,"name":"Cape of the Black Baron","dps":1105.28,"loss":-3.27,"avail":"infeasible","note":"Drop: Baron Rivendare, Stratholme · 55g per DPS"},
-      {"id":18496,"name":"Heliotrope Cloak","dps":1102.01,"loss":0,"bis":true,"enchant":1219587},
-      {"id":18511,"name":"Shifting Cloak","dps":1101.29,"loss":0.73,"note":"Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul"},
+      {"id":18496,"name":"Heliotrope Cloak","dps":1102.01,"loss":0,"note":"over the gold line (380g per DPS, phase0_prices.py 2026-11-25), not a pick"},
+      {"id":18511,"name":"Shifting Cloak","dps":1101.29,"loss":0.73,"note":"Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul","bis":true,"enchant":1219587},
       {"id":20068,"name":"Deathguard's Cloak","dps":1101.04,"loss":0.97,"avail":"infeasible","note":"Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"},
       {"id":22269,"name":"Shadow Prowler's Cloak","dps":1100.53,"loss":1.48,"note":"Drop: General Drakkisath, Upper Blackrock Spire"},
       {"id":13122,"name":"Dark Phantom Cape","dps":1099.82,"loss":2.19,"note":"Random world drop (BoE)"},

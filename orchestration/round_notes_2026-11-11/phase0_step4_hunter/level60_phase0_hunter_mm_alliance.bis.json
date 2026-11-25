@@ -601,15 +601,16 @@
         "name": "Heliotrope Cloak",
         "dps": 1102.01,
         "loss": 0,
-        "bis": true,
-        "enchant": 1219587
+        "note": "over the gold line (380g per DPS, phase0_prices.py 2026-11-25), not a pick"
       },
       {
         "id": 18511,
         "name": "Shifting Cloak",
         "dps": 1101.29,
         "loss": 0.73,
-        "note": "Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul"
+        "note": "Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul",
+        "bis": true,
+        "enchant": 1219587
       },
       {
         "id": 20068,

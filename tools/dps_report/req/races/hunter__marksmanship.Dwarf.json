@@ -7,7 +7,7 @@
     "enchant": 2543
    },
    {
-    "id": 22150,
+    "id": 15411,
     "enchant": 1249059
    },
    {
@@ -63,21 +63,6 @@
    }
   ]
  },
- "bonusStats": {
-  "MeleeHit": -0.6,
-  "Agility": 3.456,
-  "Intellect": 0.778,
-  "AttackPower": 1.526,
-  "RangedAttackPower": 1.853,
-  "MeleeCrit": 0.062
- },
- "note": "Alliance: wears level60_phase0_hunter_mm_alliance, the set without the Horde rewards; 0.6% hit over the cap re-spent as 3.5 Agility, 1.9 ranged attack power, 1.5 attack power and 0.06% crit",
- "gain": {
-  "dps": 4.26,
-  "se": 0.04,
-  "iterations": 20000,
-  "seed": 1,
-  "duration": 180
- },
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_hunter_mm. It wears level60_phase0_hunter_mm_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 8.6% against the 8% yellow cap, the set's own hit 5.6%: 0.6% (6 budget points) re-spent over the set's shares at the 1b prices (Agility 57.6%, CritRating 14.5%, Intellect 13.0%, AttackPowerBoth 12.7%, RangedAttackPower 2.2%). Hit and crit are one pool for the gear, so each is written once. Dwarf 1047.7 with the set, 1051.9 with the swap; gain.se is the paired error (the same seeded fights), 0.34 unpaired."
+ "note": "Alliance: wears level60_phase0_hunter_mm_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_hunter_mm. It wears level60_phase0_hunter_mm_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
 }
