@@ -1,17 +1,22 @@
-# Rotations pass 77 (2026-11-25, phase0-step4-publish 226ada86b)
+# Rotations pass 78 (2026-11-25, master 5536db4bc)
 
-Findings: 1 found and fixed in the pass (rotations-20261125-1). Range 63129ce35..226ada86b: 78802e6e put real
-on-use trinket lines in the APLs and requests; 1fed43cbf (Auto Time To Next); rotation_text.json wording (ff502e808).
+Result: quiet. Range 226ada86b..5536db4bc (6 commits).
 
 ## Checked
 
 | Check | Result |
 |---|---|
-| Each new trinket line against the same request without it (autocast on cooldown), 20k, seed 1 | Two lines lose DPS: warlock Talisman of Ascendance pre-pull at -0.1s (-1.9 to -4.9 on 5 builds) and Fury DW Blackhand's Breadth held for the last 30 s (-2.0 to -3.4 on 3 builds). Arms and Enhancement lines gain or tie. |
-| Fix 67fe28cf0 | Talisman line removed from ui/warlock APLs, warlock requests and race requests; Blackhand's line on cooldown in the 3 Fury DW requests and APLs. Measured: Affliction 960.87 -> 965.79, Destruction 877.59 -> 881.25, Demonology 892.02 -> 894.19, Fire 833.57 -> 835.28, Shadow Bolt 808.17 -> 810.11, Fury DW 1005.64 -> 1008.99, Sunder 971.23 -> 974.55, Battle Shout 1000.87 -> 1002.87. |
-| Rotation card text | 4 Warrior and 1 Feral code-like conditions worded; build_data.log has no "read like code" warning. |
-| Tank racial lines | Pinned by sim/warrior/tank_warrior/racials_apl_test.go (4c26b4b66). |
+| `apl_logic_diff.py 226ada86b 5536db4bc` | 0 APL files touched |
+| Non-test sim `.go` changed | none |
+| `tools/dps_report/req/*.json` changed | none |
+| Watched-file trigger `sim/compsearch/drops.json` | compsearch drop table regenerated after the trinket-line fix (86fbcf456); not read by the raid presets' rotations |
+| Other changes | DPS Report assumption settings (assumptions_def.py, asm_data.py, ui data), Phase 0 prices brief, audit state/reports |
 
 ## Open findings
 
-None new.
+Unchanged: rotations-20261122-1 (Shock Ret ordering) and rotations-20261112-1 (rogue poison hands) have not landed
+on master (no APL or request change in range).
+
+## Open items
+
+Carried over from passes/rotations.md "Open items and pending rulings"; none advanced this pass.
