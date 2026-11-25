@@ -306,11 +306,11 @@ export const DefaultTalents = TalentsLevel60Fury2H;
 ///////////////////////////////////////////////////////////////////////////
 
 // The raid damage in the Level 60 encounters (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
-// spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 3.4
-// Rage in any stance (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 5356 health, as if
-// 40% armor took its share, before any of our own damage taken modifiers), and has Enrage's 30%
-// chance, because Forever's Enrage fires on any damage taken. Since our stance and Recklessness no
-// longer change it (2026-10-16), Fury moved by -0.2 to -0.6.
+// spec): 2 direct Fire hits a minute at random times, 1500 damage each. Under Forever each gives
+// 18.5 Rage in Battle Stance and 20.3 in Berserker Stance since 2026-11-25 (core.ForeverDamageTakenRage:
+// twice a melee hit's, times the stance's damage taken modifier; orchestration/rage_taken_by_stance.md),
+// and has Enrage's 30% chance, because Forever's Enrage fires on any damage taken. The numbers
+// below are from 2026-10-16, under that day's rule (3.4 Rage a hit, the same in every stance).
 // At 180 sec (10,000 iterations, the report requests) that is +3.4 on Fury (1040.4 to 1043.8),
 // +11.0 on Fury two-hand (921.0 to 932.0), -1.1 on Arms (945.6 to 944.5: Slam's cast is pushed
 // back) and -0.1 on Arms vs Dragonkin; at 10 hits a minute +16.0, +47.5, -4.1 and -3.3. With

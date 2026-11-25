@@ -57,8 +57,15 @@ func (druid *Druid) registerShiftingPowerSpell() {
 			return druid.CurrentEnergy() < druid.MaxEnergy()
 		},
 
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			before := druid.CurrentEnergy()
 			druid.AddEnergy(sim, energy, energyMetrics)
+			// EV-0035: each Energy it gives threatens for 0.5, split between the enemies in combat,
+			// without the form's multiplier (40 Energy read 20 threat on one target, 10 windows; Cat
+			// Form's x0.71 rejected). Forever only; other Energy gains make none.
+			if druid.Env.IsForever() {
+				spell.BookSplitThreat(sim, (druid.CurrentEnergy()-before)*0.5)
+			}
 		},
 	})
 }

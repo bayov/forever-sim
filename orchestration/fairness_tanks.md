@@ -1,7 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-24, pass 29, master 566067a39 (warrior Unbridled Wrath off Shield Slam, Revenge and Shield Bash, and Heroic Strike / Cleave spending a Flurry charge, both from wowsims/forever's logs; druid Rip / Rake shares reach no bear preset: warrior -3.5 / -5.7 / -22.0 at Max threat / Balanced / Max survival, TPS -2 to -6, every other preset identical; ranking unchanged). Pass 27: 2026-11-23, master 5518f4873 (a guard in `sim/core/attack.go` so an empty weapon slot never swings; every tank wields a weapon, all 84 preset rows identical to pass 26). Pass 26: 2026-11-22, master 7a6d1beb9 (Judgement of Wisdom pays no mana off an avoided white swing under Forever: paladin TPS about -0.3%, Warden -0.2%, warrior identical; warrior Deep Wounds, Execute and Windfury talent rules reach no tank preset). Pass 25: master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
+preset weight, its reasons, and the open questions. Last pass: 2026-11-25, pass 32, master 0404484fb (Rage from hits taken now carries the warrior stance's 0.9 / 1.1 and twice the Rage from spells, ticks and Physical specials, b4cab8498: warrior -2.5 / -10.5 / -1.2, bear +1 / +21 / +108 at Max threat / Balanced / Max survival, the bear's gain on Onyxia, Broodlord, Magmadar and Vaelastrasz; Arcane Brilliance now overwrites the Warden's Elixir of Greater Intellect, f1942793d: Warden -28 / -38 / -54, TPS -1%; Windfury / Flametongue Totem raid scope and world-buff rules reach no tank score; paladin identical; ranking unchanged). Pass 29: 2026-11-24, master 566067a39 (warrior Unbridled Wrath off Shield Slam, Revenge and Shield Bash, and Heroic Strike / Cleave spending a Flurry charge, both from wowsims/forever's logs; druid Rip / Rake shares reach no bear preset: warrior -3.5 / -5.7 / -22.0 at Max threat / Balanced / Max survival, TPS -2 to -6, every other preset identical; ranking unchanged). Pass 27: 2026-11-23, master 5518f4873 (a guard in `sim/core/attack.go` so an empty weapon slot never swings; every tank wields a weapon, all 84 preset rows identical to pass 26). Pass 26: 2026-11-22, master 7a6d1beb9 (Judgement of Wisdom pays no mana off an avoided white swing under Forever: paladin TPS about -0.3%, Warden -0.2%, warrior identical; warrior Deep Wounds, Execute and Windfury talent rules reach no tank preset). Pass 25: master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
 Undead condition, Totem of Rage's Forever 2%, a crit-against-target mark; no tank preset wears an affected item; all 12
 presets identical to pass 23). Pass 23: 2026-11-19, master e671e881e (the least-HPS
 search in `sim/core/tank_score.go` restarts replays from the last capped point; all 12 presets identical to pass 22).
@@ -17,9 +17,9 @@ Judgement of Command melee again) and the warrior's Balanced and Max survival re
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4232 / 3240 / 3128 / 2628 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3469 / 2797 / 2130 / 1272 |
-| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1815 / 1778 / 347 / -2252 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4229 / 3240 / 3129 / 2600 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3459 / 2797 / 2151 / 1234 |
+| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1814 / 1778 / 455 / -2306 |
 
 The Nov 13 Windfury rule (every landed main hand hit rolls the totem) gave the bear +328 / +260 / +129 (12% at Max
 threat, TPS +163) and the Warden +88 / +61 at Max threat / Balanced; the paladin +38 at Balanced; the warrior nothing
@@ -28,10 +28,10 @@ d4325b775 (PR #130's merge), same requests. The bear is now 5% behind the paladi
 was a tie within the error until the Nov 16 hotfix took Windfury Totem off the Shieldsworn Holy Strike (the game's fix,
 so fair): two-seed means now warrior 1830 (1836.7 / 1822.3), paladin 1781 (1775.8 ± 14.0 / 1785.7 ± 14.0), the warrior
 ahead by 49 (2.7%), outside the error. The paladin's open potion action (finding -20261105-1, +374 at Max survival in
-pass 13) would still put the paladin first. Pass 29 (master 566067a39): warrior 1814.7 ± 12.2 against paladin 1778.0 ± 15.9 (seed 1), the lead down to 37 (2%) after Unbridled Wrath left Shield Slam and Revenge.
+pass 13) would still put the paladin first. Pass 29 (master 566067a39): warrior 1814.7 ± 12.2 against paladin 1778.0 ± 15.9 (seed 1), the lead down to 37 (2%) after Unbridled Wrath left Shield Slam and Revenge. Pass 32 (master 0404484fb): 1813.5 against 1778.0, unchanged by the stance Rage rule.
 
-TPS (Balanced): warrior 2069, bear 1628, paladin 1515, Warden 1382. Healing needed (Balanced): paladin 243, warrior 342,
-bear 474, Warden 666.
+TPS (Balanced): warrior 2064, bear 1626, paladin 1515, Warden 1365. Healing needed (Balanced): paladin 243, warrior 343,
+bear 467, Warden 667.
 
 Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins
 at its preset (pass 11).
@@ -76,6 +76,10 @@ at its three weights (most of it the Titans at Max survival).
 - Checked and equal: the paladin has no Blessing of Wisdom (every other mana spec does), but Wisdom gains it nothing
   (-1 to -8, noise). Everything else matches: all four tanks have searched every slot of the full raid set
   (standards 40); the Warden's other mana consumables (Demonic Rune, Greater Intellect) are noise for the paladin.
+  Since f1942793d the Warden's Elixir of Greater Intellect adds nothing under Arcane Brilliance (removing it: Balanced
+  1234.2 both ways, seed 1); a dead slot, not an unequal term (consumables-20261125-2 owns the elixir picks).
+- Rage from hits taken (b4cab8498): only the warrior's stance enters it (Defensive 0.9, measured in our logs); Bear
+  Form has no such modifier in the sim. Spells, ticks and Physical specials give both rage tanks twice the Rage.
 
 ## Open questions
 

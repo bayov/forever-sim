@@ -196,6 +196,7 @@ const (
 	SmokeysLighter            = 13171
 	TreantsBane               = 18538
 	RuneOfTheGuardCaptain     = 19120
+	CouriersClasp             = 279833
 	DraconianAegisOfTheLegion = 22336
 	FrozenHeartOfTheMountain  = 249469
 	MoltenHeartOfTheMountain  = 249470
@@ -286,7 +287,8 @@ func init() {
 	// Undead (client 1.60.1.71037 ItemSparse: stat 128 at share 8000, beside its 14 Attack Power
 	// at share 9333).
 	core.RegisterItemConditions(ArgentAvenger, core.MobTypeCondition(proto.MobType_MobTypeUndead))
-	itemhelpers.CreateWeaponProcAura(ArgentAvenger, "Argent Avenger", 1.0, func(character *core.Character) *core.Aura {
+	// EV-0126: under Forever it procs 1.05 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcAuraByRuleset(ArgentAvenger, "Argent Avenger", 1.0, 1.05, func(character *core.Character) *core.Aura {
 		matchingTargets := core.FilterSlice(
 			character.Env.Encounter.TargetUnits,
 			func(unit *core.Unit) bool { return unit.MobType == proto.MobType_MobTypeUndead },
@@ -333,15 +335,17 @@ func init() {
 	// Forever: Chance on hit: Blasts a target for 105 to 147 Nature damage. 18104 deals 126 with
 	// variance 0.333 (client 1.60.1.71037), at the 1.7 PPM the item's entry carries (wowsims/forever's
 	// client store). Not simulated under Classic.
+	// EV-0146: under Forever it procs 1.9 times a minute (wowsims/forever, Warcraft Logs).
 	itemhelpers.CreateWeaponCoHProcByRuleset(AxeOfTheDeepWoods, "Axe of the Deep Woods", core.SpellSchoolNature,
 		itemhelpers.WeaponProc{},
-		itemhelpers.WeaponProc{PPM: 1.7, SpellID: 18104, DmgMin: 105, DmgRange: 42},
+		itemhelpers.WeaponProc{PPM: 1.9, SpellID: 18104, DmgMin: 105, DmgRange: 42},
 		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=12791/barman-shanker
 	// Chance on hit: Wounds the target causing them to bleed for 100 damage over 30 sec.
 	// Assumed 1 PPM
-	itemhelpers.CreateWeaponProcSpell(BarmanShanker, "Barman Shanker", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0146: under Forever it procs 1.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(BarmanShanker, "Barman Shanker", 1.0, 1.95, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 13318},
 			SpellSchool:      core.SpellSchoolPhysical,
@@ -379,7 +383,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=14541/barovian-family-sword
 	// Chance on hit: Deals 30 Shadow damage every 3 sec for 15 sec. All damage done is then transferred to the caster.
 	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcSpell(BarovianFamilySword, "Barovian Family Sword", 0.5, func(character *core.Character) *core.Spell {
+	// EV-0179: under Forever it procs 1.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(BarovianFamilySword, "Barovian Family Sword", 0.5, 1.9, func(character *core.Character) *core.Spell {
 		actionID := core.ActionID{SpellID: 18652}
 
 		// Keep track of damage taken by each enemy
@@ -389,6 +394,26 @@ func init() {
 		}
 
 		healthMetrics := character.NewHealthMetrics(actionID)
+
+		// EV-0179: under Forever each tick heals the wearer through Siphon Health (18653) for the
+		// 49 the drain's row states, whatever the tick dealt, and the heal crits on its own roll
+		// (wowsims/forever, Warcraft Logs). Classic heals what the drain dealt when it ends.
+		forever := character.Env.IsForever()
+		var tickHeal *core.Spell
+		if forever {
+			tickHeal = character.RegisterSpell(core.SpellConfig{
+				ActionID:         core.ActionID{SpellID: 18653},
+				SpellSchool:      core.SpellSchoolShadow,
+				DefenseType:      core.DefenseTypeMagic,
+				ProcMask:         core.ProcMaskSpellHealing,
+				Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagHelpful,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealHealing(sim, target, BarovianFamilySwordForeverTickHeal, spell.OutcomeHealingCrit)
+				},
+			})
+		}
 
 		spell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
@@ -410,6 +435,9 @@ func init() {
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 					result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 					enemyDamageTaken[target.UnitIndex] += result.Damage
+					if forever {
+						tickHeal.Cast(sim, &character.Unit)
+					}
 				},
 			},
 
@@ -424,7 +452,7 @@ func init() {
 
 		// The healing is applied at the end of the DoT and can crit according to old comments
 		for _, dot := range spell.Dots() {
-			if dot != nil {
+			if dot != nil && !forever {
 				unit := dot.Unit
 				dot.ApplyOnExpire(func(aura *core.Aura, sim *core.Simulation) {
 					// TODO: This may not be quite correct but it's close enough
@@ -440,7 +468,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=13204/bashguuder
 	// Chance on hit: Punctures target's armor lowering it by 200. Can be applied up to 3 times.
 	// 2 PPM from Armaments Discord - same proc as Rivenspike
-	itemhelpers.CreateWeaponProcSpell(Bashguuder, "Bashguuder", 2.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 3 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(Bashguuder, "Bashguuder", 2.0, 3, func(character *core.Character) *core.Spell {
 		punctureArmorAuras := character.NewEnemyAuraArray(PunctureArmorAura)
 
 		return character.GetOrRegisterSpell(core.SpellConfig{
@@ -451,6 +480,11 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				// EV-0152: under Forever Puncture Armor rolls the melee hit table and fails on a
+				// miss, a dodge or a parry (wowsims/forever, Warcraft Logs).
+				if character.Env.IsForever() && !spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit).Landed() {
+					return
+				}
 				activateAura := punctureArmorAuras.Get(target)
 				activateAura.Activate(sim)
 
@@ -650,6 +684,7 @@ func init() {
 		})
 
 		castableSpells := []*core.Spell{curseOfShahram, mightOfShahram, fistOfShahram, blessingOfShahram, willOfShahram, flamesOfShahram}
+		forever := character.Env.IsForever()
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:              "Summon Shahram",
 			Callback:          core.CallbackOnSpellHitDealt,
@@ -658,6 +693,10 @@ func init() {
 			SpellFlagsExclude: core.SpellFlagSuppressWeaponProcs,
 			PPM:               1,
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if forever {
+					castableSpells[ShahramForeverSpell(sim.RandomFloat("Damage Roll"))].Cast(sim, result.Target)
+					return
+				}
 				spellIdx := int32(sim.RandomFloat("Damage Roll") * 6)
 				castableSpells[spellIdx].Cast(sim, result.Target)
 			},
@@ -667,7 +706,11 @@ func init() {
 	// https://www.wowhead.com/classic/item=12583/blackhand-doomsaw
 	// Chance on hit: Wounds the target for 324 to 540 damage.
 	// TODO: Proc rate based on the original item
-	itemhelpers.CreateWeaponCoHProcDamage(BlackhandDoomsaw, "Blackhand Doomsaw", 0.4, 16549, core.SpellSchoolPhysical, 324, 216, 0, core.DefenseTypeMelee)
+	// EV-0178: under Forever it procs once a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(BlackhandDoomsaw, "Blackhand Doomsaw", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{PPM: 0.4, SpellID: 16549, DmgMin: 324, DmgRange: 216},
+		itemhelpers.WeaponProc{PPM: 1, SpellID: 16549, DmgMin: 324, DmgRange: 216},
+		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=17780/blade-of-eternal-darkness
 	// Equip: Chance on landing a damaging spell to deal 100 Shadow damage and restore 100 mana to you. (Proc chance: 10%)
@@ -676,6 +719,41 @@ func init() {
 
 		actionID := core.ActionID{SpellID: 27860}
 		manaMetrics := character.NewManaMetrics(actionID)
+
+		if character.Env.IsForever() {
+			// EV-0025: under Forever every harmful spell that lands rolls it, damage or not, at 1.8
+			// procs a minute on the cast time of the cast that launched it, at least 1.5 s. Ticks,
+			// Ignite, wand shots and spells fired as a proc never roll (wowsims/forever, Warcraft
+			// Logs). Engulfing Shadows (27860) deals the row's 112 Shadow on the spell table, and
+			// EV-0108: its 104 mana comes with every proc, whether the damage lands or is resisted.
+			procSpell := character.RegisterSpell(core.SpellConfig{
+				ActionID:         actionID,
+				SpellSchool:      core.SpellSchoolShadow,
+				DefenseType:      core.DefenseTypeMagic,
+				ProcMask:         core.ProcMaskSpellDamageProc,
+				Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamage(sim, target, 112, spell.OutcomeMagicHitAndCrit)
+					character.AddMana(sim, 104, manaMetrics)
+				},
+			})
+			core.MakePermanent(character.RegisterAura(core.Aura{
+				Label: "Engulfing Shadows",
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) ||
+						spell.ProcMask.Matches(core.ProcMaskProc|core.ProcMaskSpellDamageProc) ||
+						spell.Flags.Matches(core.SpellFlagPassiveSpell) || spell == procSpell {
+						return
+					}
+					if sim.Proc(BladeOfEternalDarknessChance(spell.CurCast.CastTime), "Engulfing Shadows") {
+						procSpell.Cast(sim, result.Target)
+					}
+				},
+			}))
+			return
+		}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
@@ -804,7 +882,11 @@ func init() {
 	// https://www.wowhead.com/classic/item=11744/bloodfist
 	// Chance on hit: Wounds the target for 20 damage.
 	// 4 PPM from Armaments Discord
-	itemhelpers.CreateWeaponCoHProcDamage(Bloodfist, "Bloodfist", 4, 16433, core.SpellSchoolPhysical, 20, 0, 0, core.DefenseTypeMelee)
+	// EV-0003: under Forever it procs 3.2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(Bloodfist, "Bloodfist", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{PPM: 4, SpellID: 16433, DmgMin: 20, DmgRange: 0},
+		itemhelpers.WeaponProc{PPM: 3.2, SpellID: 16433, DmgMin: 20, DmgRange: 0},
+		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=9511/bloodletter-scalpel
 	itemhelpers.CreateWeaponCoHProcDamage(BloodletterScalpel, "Bloodletter Scalpel", 1.0, 18081, core.SpellSchoolPhysical, 60, 10, 0, core.DefenseTypeMelee)
@@ -872,8 +954,11 @@ func init() {
 	// https://www.wowhead.com/classic/item=14487/bonechill-hammer
 	// Chance on hit: Blasts a target for 90 Frost damage.
 	// 1 PPM from Armaments Discord. Forever's Frost Blast (18276) deals 105 (client 1.60.1.71037).
-	itemhelpers.CreateWeaponCoHProcDamageByRuleset(BonechillHammer, "Bonechill Hammer", 1.0, 18276, core.SpellSchoolFrost,
-		[2]float64{90, 0}, [2]float64{105, 0}, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 1.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(BonechillHammer, "Bonechill Hammer", core.SpellSchoolFrost,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18276, DmgMin: 90, DmgRange: 0},
+		itemhelpers.WeaponProc{PPM: 1.95, SpellID: 18276, DmgMin: 105, DmgRange: 0},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=17076/bonereavers-edge
 	// Chance on hit: Your attacks ignore 700 of your enemies' armor for 10 sec. This effect stacks up to 3 times.
@@ -905,7 +990,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=2825/bow-of-searing-arrows
 	// Equip: Chance to strike your ranged target with a Searing Arrow for 18 to 26 Fire damage.
 	// Forever: Searing Arrow (29638) is 28 with variance 0.364, 23 to 33 (wowsims/forever's client store).
-	itemhelpers.CreateWeaponProcSpell(BowOfSearingArrows, "Bow of Searing Arrows", 3.35, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 4.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(BowOfSearingArrows, "Bow of Searing Arrows", 3.35, 4.9, func(character *core.Character) *core.Spell {
 		minDamage, maxDamage := 18.0, 26.0
 		if character.Env.IsForever() {
 			minDamage, maxDamage = 23, 33
@@ -930,15 +1016,15 @@ func init() {
 	// Forever: Chance on hit: Brain Hacker (17148) deals 250 Physical with variance 0.4 and makes
 	// the target's spells take 30% longer to cast for 30 sec (client 1.60.1.70959 SpellEffect: a
 	// school damage effect and aura 65). It is on the melee table (DefenseType 2). We roll it by
-	// the whole variance either side, 150 to 350, as we do for Gut Ripper's Wound. The rate is 1
-	// PPM, the one wowsims/forever fitted from one wearer's log (their EV-0132), since the
-	// client's proc chance reads the 101 placeholder.
+	// the whole variance either side, 150 to 350, as we do for Gut Ripper's Wound. The client's
+	// proc chance reads the 101 placeholder.
 	//
 	// The slower casting is on the target, so it does nothing for our damage. Classic's
 	// Brain Hacker (200 damage and -25 Intellect) has no proc here.
+	// EV-0132: under Forever it procs 0.95 times a minute (wowsims/forever, Warcraft Logs).
 	itemhelpers.CreateWeaponCoHProcByRuleset(BrainHacker, "Brain Hacker", core.SpellSchoolPhysical,
 		itemhelpers.WeaponProc{},
-		itemhelpers.WeaponProc{PPM: 1, SpellID: 17148, DmgMin: 150, DmgRange: 200},
+		itemhelpers.WeaponProc{PPM: 0.95, SpellID: 17148, DmgMin: 150, DmgRange: 200},
 		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=13148/chillpike
@@ -949,19 +1035,28 @@ func init() {
 	// https://www.wowhead.com/classic/item=10761/coldrage-dagger
 	// Chance on hit: Launches a bolt of frost at the enemy causing 20 to 30 Frost damage and slowing movement speed by 50% for 5 sec.
 	// 2.2 PPM from Armaments Discord
-	itemhelpers.CreateWeaponCoHProcDamage(ColdrageDagger, "Coldrage Dagger", 2.2, 13439, core.SpellSchoolFrost, 20, 10, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 2.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(ColdrageDagger, "Coldrage Dagger", core.SpellSchoolFrost,
+		itemhelpers.WeaponProc{PPM: 2.2, SpellID: 13439, DmgMin: 20, DmgRange: 10},
+		itemhelpers.WeaponProc{PPM: 2.95, SpellID: 13439, DmgMin: 20, DmgRange: 10},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=13984/darrowspike
 	// Chance on hit: Blasts a target for 90 Frost damage.
 	// 1 PPM from Armaments Discord
-	itemhelpers.CreateWeaponCoHProcDamage(Darrowspike, "Darrowspike", 1.0, 18276, core.SpellSchoolFrost, 90, 0, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(Darrowspike, "Darrowspike", core.SpellSchoolFrost,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18276, DmgMin: 90, DmgRange: 0},
+		itemhelpers.WeaponProc{PPM: 2, SpellID: 18276, DmgMin: 90, DmgRange: 0},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=17068/deathbringer
 	// Chance on hit: Sends a shadowy bolt at the enemy causing 110 to 140 Shadow damage.
 	itemhelpers.CreateWeaponCoHProcDamage(Deathbringer, "Deathbringer", 1.0, 18138, core.SpellSchoolShadow, 110, 30, 0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=647/destiny
-	itemhelpers.CreateWeaponProcAura(Destiny, "Destiny", 1.0, func(character *core.Character) *core.Aura {
+	// EV-0132: under Forever it procs 1.05 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcAuraByRuleset(Destiny, "Destiny", 1.0, 1.05, func(character *core.Character) *core.Aura {
 		return character.RegisterAura(core.Aura{
 			ActionID: core.ActionID{SpellID: 17152},
 			Label:    "Destiny",
@@ -991,14 +1086,20 @@ func init() {
 
 		procMask := character.GetProcMaskForItem(DragonsCall)
 
+		// EV-0021: under Forever it procs 4.5 times a minute behind a 45 s cooldown (wowsims/forever,
+		// a level 57 combat log). Classic keeps 1 PPM with no cooldown.
+		ppm, icd := 1.0, time.Duration(0) // Reported by armaments discord
+		if character.Env.IsForever() {
+			ppm, icd = DragonsCallForeverPPM, DragonsCallForeverICD
+		}
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:              "Emerald Dragon Whelp Proc",
 			Callback:          core.CallbackOnSpellHitDealt,
 			Outcome:           core.OutcomeLanded,
 			ProcMask:          procMask,
 			SpellFlagsExclude: core.SpellFlagSuppressEquipProcs,
-			PPM:               1.0, // Reported by armaments discord
-			//ICD:               time.Minute * 1,  Removed ICD due to comments on multiple from Classic but am not implementing multiple pets
+			PPM:               ppm,
+			ICD:               icd,
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				for _, petAgent := range character.PetAgents {
 					if whelp, ok := petAgent.(*guardians.EmeraldDragonWhelp); ok {
@@ -1068,6 +1169,13 @@ func init() {
 	// such effect, and its +18 Spell Power is on the item (assets/db_inputs/forever_seen_in_game.json).
 	core.NewMobTypeSpellPowerEffectForever(DraconianAegisOfTheLegion, []proto.MobType{proto.MobType_MobTypeDragonkin}, 0, 9)
 
+	// https://www.wowhead.com/forever/item=279833/couriers-clasp
+	// EV-0141: a Forever necklace whose +10 spell damage against Humanoids reaches every damage
+	// spell and tick (wowsims/forever, combat logs of a Balance druid, an Elemental shaman and a
+	// Protection paladin: +10.8 spell power read on Humanoids). Its +8 Spell Power is on the item.
+	// Thorns, Retribution Aura and Seal of Fury, which take none of it in game, still do here.
+	core.NewMobTypeSpellPowerEffectForever(CouriersClasp, []proto.MobType{proto.MobType_MobTypeHumanoid}, 0, 10)
+
 	// https://www.wowhead.com/classic/item=19353/drake-talon-cleaver
 	// Chance on hit: Delivers a fatal wound for 240 damage.
 	// Original proc rate 1.0 increased to approximately 1.60 in SoD phase 5
@@ -1128,7 +1236,11 @@ func init() {
 	// https://www.wowhead.com/classicaitem=19100/electrified-dagger
 	// Chance on hit: Blasts a target for 45 Nature damage.
 	// 1.4 PPM from Armaments Discord - assumed same as horde Glacial Dagger
-	itemhelpers.CreateWeaponCoHProcDamage(ElectrifiedDagger, "Electrified Dagger", 1.4, 23592, core.SpellSchoolNature, 45, 0, 0, core.DefenseTypeMagic)
+	// EV-0183: under Forever it procs 1.25 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(ElectrifiedDagger, "Electrified Dagger", core.SpellSchoolNature,
+		itemhelpers.WeaponProc{PPM: 1.4, SpellID: 23592, DmgMin: 45, DmgRange: 0},
+		itemhelpers.WeaponProc{PPM: 1.25, SpellID: 23592, DmgMin: 45, DmgRange: 0},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=20578/emerald-dragonfang
 	// Chance on hit: Blasts the enemy with acid for 87 to 105 Nature damage.
@@ -1239,7 +1351,8 @@ func init() {
 			Outcome:           core.OutcomeLanded,
 			ProcMask:          procMask,
 			SpellFlagsExclude: core.SpellFlagSuppressWeaponProcs,
-			PPM:               1,
+			// EV-0136: 0.55 procs a minute under Forever, measured on 57,996 hits of 21 wearers.
+			PPM: core.TernaryFloat64(character.Env.IsForever(), 0.55, 1),
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				effectAura.Activate(sim)
 			},
@@ -1254,7 +1367,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=870/fiery-war-axe
 	// Forever: Fireball (18796) is 262 with variance 0.239, 231 to 293, and 20 every 2 sec for 6 sec
 	// (wowsims/forever's client store).
-	itemhelpers.CreateWeaponProcSpell(FieryWarAxe, "Fiery War Axe", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 0.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(FieryWarAxe, "Fiery War Axe", 1.0, 0.9, func(character *core.Character) *core.Spell {
 		minDamage, maxDamage, tickDamage := 155.0, 197.0, 8.0
 		if character.Env.IsForever() {
 			minDamage, maxDamage, tickDamage = 231, 293, 20
@@ -1294,7 +1408,8 @@ func init() {
 		})
 	})
 
-	itemhelpers.CreateWeaponProcSpell(Firebreather, "Firebreather", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 2.05 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(Firebreather, "Firebreather", 1.0, 2.05, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 16413},
 			SpellSchool:      core.SpellSchoolFire,
@@ -1324,7 +1439,9 @@ func init() {
 	// https://www.wowhead.com/classic/item=11809/flame-wrath
 	// Chance on hit: Envelops the caster with a Fire shield for 15 sec and shoots a ring of fire dealing 130 to 170 damage to all nearby enemies.
 	// Estimated based on data from WoW Armaments Discord
-	itemhelpers.CreateWeaponProcSpell(FlameWrath, "Flame Wrath", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 1.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(FlameWrath, "Flame Wrath", 1.0, 1.9, func(character *core.Character) *core.Spell {
+		forever := character.Env.IsForever()
 		shieldActionID := core.ActionID{SpellID: 461152}
 		shieldSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:         shieldActionID,
@@ -1367,6 +1484,15 @@ func init() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				shieldAura.Activate(sim)
 
+				// EV-0151: under Forever the ring (16559) deals the row's 154 with variance 0.267,
+				// 133.5 to 174.5, with no spell power, and crits at the wearer's spell crit
+				// (wowsims/forever, Warcraft Logs).
+				if forever {
+					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+						spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(FlameWrathForeverMin, FlameWrathForeverMax), spell.OutcomeMagicHitAndCrit)
+					}
+					return
+				}
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(130, 170), spell.OutcomeMagicHit)
 				}
@@ -1375,7 +1501,8 @@ func init() {
 	})
 
 	// PPM from Armaments discord
-	itemhelpers.CreateWeaponProcSpell(FlurryAxe, "Flurry Axe", 1.9, func(character *core.Character) *core.Spell {
+	// EV-0120: under Forever it procs 1.75 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(FlurryAxe, "Flurry Axe", 1.9, 1.75, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 18797},
 			SpellSchool:      core.SpellSchoolPhysical,
@@ -1526,7 +1653,11 @@ func init() {
 	// https://www.wowhead.com/classic/item=19099/glacial-blade
 	// Chance on hit: Blasts a target for 45 Frost damage.
 	// 1.4 PPM from Armaments Discord
-	itemhelpers.CreateWeaponCoHProcDamage(GlacialBlade, "Glacial Blade", 1.4, 18398, core.SpellSchoolFrost, 45, 0, 0, core.DefenseTypeMagic)
+	// EV-0183: under Forever it procs 1.3 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(GlacialBlade, "Glacial Blade", core.SpellSchoolFrost,
+		itemhelpers.WeaponProc{PPM: 1.4, SpellID: 18398, DmgMin: 45, DmgRange: 0},
+		itemhelpers.WeaponProc{PPM: 1.3, SpellID: 18398, DmgMin: 45, DmgRange: 0},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/forever/item=273817/graverobbers-shovel
 	// Forever: Equip 1319047 gives 12 attack power and 12 ranged attack power, which the item's
@@ -1588,19 +1719,22 @@ func init() {
 	core.NewMobTypeAttackPowerEffect(GrileksGrinder, []proto.MobType{proto.MobType_MobTypeDragonkin}, 48)
 
 	// https://www.wowhead.com/forever/item=13054/grim-reaper
-	// Forever: Chance on hit: Wound (14126), 130 Physical on the melee table, at the 0.87 PPM the
-	// item's chance-on-hit entry carries (wowsims/forever's client store and db.json). Not simulated
-	// under Classic.
+	// Forever: Chance on hit: Wound (14126), 130 Physical on the melee table (wowsims/forever's
+	// client store). Not simulated under Classic.
+	// EV-0136: under Forever it procs 0.9 times a minute (wowsims/forever, Warcraft Logs).
 	itemhelpers.CreateWeaponCoHProcByRuleset(GrimReaper, "Grim Reaper", core.SpellSchoolPhysical,
 		itemhelpers.WeaponProc{},
-		itemhelpers.WeaponProc{PPM: 0.87, SpellID: 14126, DmgMin: 130},
+		itemhelpers.WeaponProc{PPM: 0.9, SpellID: 14126, DmgMin: 130},
 		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=9651/gryphon-riders-stormhammer
 	// Forever: Lightning Bolt (18081) is 91 with variance 0.315, 77 to 105, in place of Classic's 91
 	// to 125 (wowsims/forever's client store and db.json, 1 PPM).
-	itemhelpers.CreateWeaponCoHProcDamageByRuleset(GryphonRidersStormhammer, "Gryphon Rider's Stormhammer", 1.0, 18081, core.SpellSchoolNature,
-		[2]float64{91, 34}, [2]float64{77, 28}, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 1.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(GryphonRidersStormhammer, "Gryphon Rider's Stormhammer", core.SpellSchoolNature,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18081, DmgMin: 91, DmgRange: 34},
+		itemhelpers.WeaponProc{PPM: 1.9, SpellID: 18081, DmgMin: 77, DmgRange: 28},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=17071/gutgore-ripper
 	// Chance on hit: Sends a shadowy bolt at the enemy causing 75 Shadow damage and lowering all stats by 25 for 30 sec.
@@ -1683,9 +1817,10 @@ func init() {
 	// Forever: Wound (18107) is 105, rolled by its variance 0.241 either side as a physical hit,
 	// 80 to 130, and its other two effects double it on a target below 25% health (wowsims/forever's
 	// client store: "Deals 100% increased damage to targets below 25% health").
+	// EV-0136: under Forever it procs 1.5 times a minute (wowsims/forever, Warcraft Logs).
 	itemhelpers.CreateWeaponCoHProcByRuleset(GutRipper, "Gut Ripper", core.SpellSchoolPhysical,
 		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18107, DmgMin: 95, DmgRange: 26},
-		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18107, DmgMin: 80, DmgRange: 50, ExecuteMultiplier: 2},
+		itemhelpers.WeaponProc{PPM: 1.5, SpellID: 18107, DmgMin: 80, DmgRange: 50, ExecuteMultiplier: 2},
 		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=19874/halberd-of-smiting
@@ -1695,7 +1830,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=15814/hameyas-slayer
 	// Chance on hit: Wounds the target causing them to bleed for 80 damage over 30 sec.
 	// Assumed 1 PPM
-	itemhelpers.CreateWeaponProcSpell(HameyasSlayer, "Hameya's Slayer", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 1.05 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(HameyasSlayer, "Hameya's Slayer", 1.0, 1.05, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 16406},
 			SpellSchool:      core.SpellSchoolPhysical,
@@ -1725,8 +1861,11 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=810/hammer-of-the-northern-wind
 	// Forever: Frostbolt (13439) is 50 with variance 0.4, 40 to 60 (wowsims/forever's client store).
-	itemhelpers.CreateWeaponCoHProcDamageByRuleset(HammerOfTheNorthernWind, "Hammer of the Northern Wind", 3.5, 13439, core.SpellSchoolFrost,
-		[2]float64{20, 10}, [2]float64{40, 20}, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 4.6 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(HammerOfTheNorthernWind, "Hammer of the Northern Wind", core.SpellSchoolFrost,
+		itemhelpers.WeaponProc{PPM: 3.5, SpellID: 13439, DmgMin: 20, DmgRange: 10},
+		itemhelpers.WeaponProc{PPM: 4.6, SpellID: 13439, DmgMin: 40, DmgRange: 20},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=2243/hand-of-edward-the-odd
 	// Chance on hit: Next spell cast within 4 sec will cast instantly.
@@ -1760,13 +1899,15 @@ func init() {
 	// Forever: Equip: Chance to strike your ranged target with a Shadowbolt for 13 to 19 Shadow
 	// damage. 29626 procs 29640, 16 with variance 0.375 on the ranged table, at the 3 PPM the item's
 	// entry carries (wowsims/forever's client store and db.json). Not simulated under Classic.
+	// EV-0119: under Forever it procs 2.7 times a minute (wowsims/forever, Warcraft Logs).
 	itemhelpers.CreateWeaponCoHProcByRuleset(HeartseekingCrossbow, "Heartseeking Crossbow", core.SpellSchoolShadow,
 		itemhelpers.WeaponProc{},
-		itemhelpers.WeaponProc{PPM: 3, SpellID: 29640, DmgMin: 13, DmgRange: 6},
+		itemhelpers.WeaponProc{PPM: 2.7, SpellID: 29640, DmgMin: 13, DmgRange: 6},
 		0, core.DefenseTypeRanged)
 
 	// https://www.wowhead.com/classic/item=11635/hookfang-shanker
-	itemhelpers.CreateWeaponProcSpell(HookfangShanker, "Hookfang Shanker", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0177: under Forever it procs 1.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(HookfangShanker, "Hookfang Shanker", 1.0, 1.95, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 13526},
 			SpellSchool:      core.SpellSchoolNature,
@@ -1802,18 +1943,53 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=11684/ironfoe
 	// Chance on hit: Grants 2 extra attacks on your next swing.
-	itemhelpers.CreateWeaponProcSpell(Ironfoe, "Ironfoe", 0.8, func(character *core.Character) *core.Spell {
+	// EV-0119: under Forever it is a flat chance per landed hit, not a rate: 3%, and 6% against an
+	// Orc (wowsims/forever, Warcraft Logs). Classic keeps 0.8 PPM.
+	ironfoeSpell := func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 15494},
 			SpellSchool:      core.SpellSchoolPhysical,
 			DefenseType:      core.DefenseTypeMelee,
 			ProcMask:         core.ProcMaskEmpty,
+			Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				character.AutoAttacks.ExtraMHAttackProc(sim, 2, core.ActionID{SpellID: 15494}, spell)
 			},
 		})
+	}
+	core.NewItemEffect(Ironfoe, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			procSpell := ironfoeSpell(character)
+			ppmm := character.AutoAttacks.NewPPMManager(0.8, character.GetProcMaskForItem(Ironfoe))
+			core.MakePermanent(character.GetOrRegisterAura(core.Aura{
+				Label: "Ironfoe Proc Aura",
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
+						return
+					}
+					if result.Landed() && ppmm.Proc(sim, spell.ProcMask, "Ironfoe Proc") {
+						procSpell.Cast(sim, result.Target)
+					}
+				},
+			}))
+			return
+		}
+		procSpell := ironfoeSpell(character)
+		procMask := character.GetProcMaskForItem(Ironfoe)
+		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
+			Label: "Ironfoe Proc Aura",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) || !spell.ProcMask.Matches(procMask) || !result.Landed() {
+					return
+				}
+				if sim.Proc(IronfoeForeverChance(result.Target), "Ironfoe Proc") {
+					procSpell.Cast(sim, result.Target)
+				}
+			},
+		}))
 	})
 
 	// https://www.wowhead.com/classic/item=19918/jekliks-crusher
@@ -1832,7 +2008,8 @@ func init() {
 	// 1 PPM assumed: neither client has an ItemEffect row with a rate.
 	// Forever: Rend (17153) bleeds for 100 every 3 sec for 15 sec, 500 in all (client 70658 SpellEffect
 	// 694561, DurationIndex 8; foreverchanges.pro item 2291). Classic: 56 every 3 sec for 30 sec.
-	itemhelpers.CreateWeaponProcSpell(KangTheDecapitator, "Kang the Decapitator", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 0.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(KangTheDecapitator, "Kang the Decapitator", 1.0, 0.95, func(character *core.Character) *core.Spell {
 		forever := character.Env.IsForever()
 		tickDamage := core.TernaryFloat64(forever, 100, 56)
 		numTicks := core.TernaryInt32(forever, 5, 10)
@@ -1866,7 +2043,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=12582/keris-of-zulserak
 	// Chance on hit: Inflicts numbing pain that deals 10 Nature damage every 2 sec and increases time between target's attacks by 10% for 10 sec.
 	// 1 PPM assumed and needs testing
-	itemhelpers.CreateWeaponProcSpell(KerisOfZulSerak, "Keris of Zul'Serak", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0003: under Forever it procs 1.7 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(KerisOfZulSerak, "Keris of Zul'Serak", 1.0, 1.7, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 16528},
 			SpellSchool:      core.SpellSchoolNature,
@@ -1902,8 +2080,11 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=11902/linkens-sword-of-mastery
 	// Forever: Lightning Bolt (18089) is 98 with variance 0.5, 74 to 122 (wowsims/forever's client store).
-	itemhelpers.CreateWeaponCoHProcDamageByRuleset(LinkensSwordOfMastery, "Linken's Sword of Mastery", 1.0, 18089, core.SpellSchoolNature,
-		[2]float64{45, 30}, [2]float64{74, 48}, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(LinkensSwordOfMastery, "Linken's Sword of Mastery", core.SpellSchoolNature,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18089, DmgMin: 45, DmgRange: 30},
+		itemhelpers.WeaponProc{PPM: 2, SpellID: 18089, DmgMin: 74, DmgRange: 48},
+		0, core.DefenseTypeMagic)
 
 	//https://www.wowhead.com/classic/item=19324/the-lobotomizer
 	// Chance on hit: Wounds the target for 200 to 300 damage and lowers Intellect of target by 25 for 30 sec.
@@ -1911,7 +2092,8 @@ func init() {
 	// Forever: Brain Damage is a new row, 1290950: 250 Shadow damage with variance 0.4, 200 to 300,
 	// and 25% slower casting on the target for 30 sec in place of the Intellect, at 0.4 PPM
 	// (wowsims/forever's client store and db.json). The target's casting is not simulated.
-	itemhelpers.CreateWeaponProcSpell(TheLobotomizer, "The Lobotomizer", .4, func(character *core.Character) *core.Spell {
+	// EV-0177: under Forever it procs 0.55 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(TheLobotomizer, "The Lobotomizer", .4, 0.55, func(character *core.Character) *core.Spell {
 		isForever := character.Env.IsForever()
 		actionID := core.ActionID{SpellID: core.TernaryInt32(isForever, 1290950, 24388)}
 		procAuras := character.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
@@ -1959,7 +2141,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=11817/lord-generals-sword
 	// Chance on hit: Increases attack power by 50 for 30 sec.
 	// // TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcAura(LordGeneralsSword, "Lord General's Sword", 1.0, func(character *core.Character) *core.Aura {
+	// EV-0136: under Forever it procs 2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcAuraByRuleset(LordGeneralsSword, "Lord General's Sword", 1.0, 2, func(character *core.Character) *core.Aura {
 		return character.RegisterAura(core.Aura{
 			ActionID: core.ActionID{SpellID: 15602},
 			Label:    "Lord General's Sword",
@@ -2060,7 +2243,9 @@ func init() {
 	// https://www.wowhead.com/classic/item=12794/masterwork-stormhammer
 	// Chance on hit: Blasts up to 3 targets for 105 to 145 Nature damage.
 	// Estimated based on data from WoW Armaments Discord
-	itemhelpers.CreateWeaponProcSpell(MasterworkStormhammer, "Masterwork Stormhammer", 0.5, func(character *core.Character) *core.Spell {
+	// EV-0184: under Forever it procs 0.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(MasterworkStormhammer, "Masterwork Stormhammer", 0.5, 0.9, func(character *core.Character) *core.Spell {
+		forever := character.Env.IsForever()
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 463946},
 			SpellSchool:      core.SpellSchoolNature,
@@ -2069,9 +2254,15 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				// EV-0184: under Forever each jump deals 70% of the one before, rolled on its own
+				// (wowsims/forever, Warcraft Logs).
+				jumpMultiplier := 1.0
 				for numHits := int32(0); numHits < sim.Encounter.AoETargetCount(3); numHits++ {
-					spell.CalcAndDealDamage(sim, target, sim.Roll(105, 145), spell.OutcomeMagicHitAndCrit)
+					spell.CalcAndDealDamage(sim, target, sim.Roll(105, 145)*jumpMultiplier, spell.OutcomeMagicHitAndCrit)
 					target = character.Env.NextTargetUnit(target)
+					if forever {
+						jumpMultiplier *= MasterworkStormhammerForeverJump
+					}
 				}
 			},
 		})
@@ -2125,8 +2316,11 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=1982/nightblade
 	// Forever: Shadow Bolt (18211) is 231 with variance 0.609, 161 to 301 (wowsims/forever's client store).
-	itemhelpers.CreateWeaponCoHProcDamageByRuleset(Nightblade, "Nightblade", 1.0, 18211, core.SpellSchoolShadow,
-		[2]float64{125, 150}, [2]float64{161, 140}, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 1.8 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(Nightblade, "Nightblade", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18211, DmgMin: 125, DmgRange: 150},
+		itemhelpers.WeaponProc{PPM: 1.8, SpellID: 18211, DmgMin: 161, DmgRange: 140},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=19169/nightfall
 	// Chance on hit: Spell damage taken by target increased by 15% for 5 sec.
@@ -2170,11 +2364,12 @@ func init() {
 	// https://www.wowhead.com/classic/item=9425/pendulum-of-doom
 	// Forever: Fatal Wound (10373) is 311, rolled by its variance 0.333 either side as a physical
 	// hit, 207 to 415, and 50% more on a target below 25% health (wowsims/forever's client store).
-	// The item's entry states no rate, so 0.5 PPM stays. Its new equip effect (1293881, each swing
+	// Its new equip effect (1293881, each swing
 	// alternates the attack speed between 100% faster and 50% slower) is not simulated.
+	// EV-0136: under Forever it procs once a minute (wowsims/forever, Warcraft Logs).
 	itemhelpers.CreateWeaponCoHProcByRuleset(PendulumOfDoom, "Pendulum of Doom", core.SpellSchoolPhysical,
 		itemhelpers.WeaponProc{PPM: 0.5, SpellID: 10373, DmgMin: 250, DmgRange: 100},
-		itemhelpers.WeaponProc{PPM: 0.5, SpellID: 10373, DmgMin: 207, DmgRange: 208, ExecuteMultiplier: 1.5},
+		itemhelpers.WeaponProc{PPM: 1, SpellID: 10373, DmgMin: 207, DmgRange: 208, ExecuteMultiplier: 1.5},
 		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=12709/pips-skinner
@@ -2191,7 +2386,8 @@ func init() {
 	// the 1 PPM the item's chance-on-hit entry carries (wowsims/forever's client store and db.json).
 	// The debuff is its own row, so it stacks with Sunder Armor and Faerie Fire. Not simulated under
 	// Classic.
-	itemhelpers.CreateWeaponProcSpellByRuleset(PhantomBlade, "Phantom Blade", 0, 1.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(PhantomBlade, "Phantom Blade", 0, 2, func(character *core.Character) *core.Spell {
 		phantomStrikeAuras := character.NewEnemyAuraArray(PhantomStrikeAura)
 
 		return character.GetOrRegisterSpell(core.SpellConfig{
@@ -2236,7 +2432,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=10626/ragehammer
 	// Chance on hit: Increases damage done by 20 and attack speed by 5% for 15 sec.
 	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcAura(Ragehammer, "Ragehammer", 1.0, func(character *core.Character) *core.Aura {
+	// EV-0186: under Forever it procs 2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcAuraByRuleset(Ragehammer, "Ragehammer", 1.0, 2, func(character *core.Character) *core.Aura {
 		return character.GetOrRegisterAura(core.Aura{
 			ActionID: core.ActionID{SpellID: 12686},
 			Label:    "Enrage (12686)",
@@ -2314,7 +2511,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=13286/rivenspike
 	// Chance on hit: Punctures target's armor lowering it by 200. Can be applied up to 3 times.
 	// 2 PPM - Armaments Discord has 1 PPM recorded before it could record refreshes.  Bashguuder with same effect is recorded at 2PPM so setting to match
-	itemhelpers.CreateWeaponProcSpell(Rivenspike, "Rivenspike", 2.0, func(character *core.Character) *core.Spell {
+	// EV-0136: under Forever it procs 1.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(Rivenspike, "Rivenspike", 2.0, 1.95, func(character *core.Character) *core.Spell {
 		punctureArmorAuras := character.NewEnemyAuraArray(PunctureArmorAura)
 
 		return character.GetOrRegisterSpell(core.SpellConfig{
@@ -2325,6 +2523,11 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				// EV-0152: under Forever Puncture Armor rolls the melee hit table and fails on a
+				// miss, a dodge or a parry (wowsims/forever, Warcraft Logs).
+				if character.Env.IsForever() && !spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit).Landed() {
+					return
+				}
 				activateAura := punctureArmorAuras.Get(target)
 				activateAura.Activate(sim)
 
@@ -2358,10 +2561,18 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=17752/satyrs-lash
-	itemhelpers.CreateWeaponCoHProcDamage(SatyrsLash, "Satyr's Lash", 1.0, 18205, core.SpellSchoolShadow, 55, 30, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 1.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(SatyrsLash, "Satyr's Lash", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18205, DmgMin: 55, DmgRange: 30},
+		itemhelpers.WeaponProc{PPM: 1.95, SpellID: 18205, DmgMin: 55, DmgRange: 30},
+		0, core.DefenseTypeMagic)
 
 	// TODO Searing Needle adds an "Apply Aura: Mod Damage Done (Fire): 10" aura to the /target/, buffing it; not currently modelled
-	itemhelpers.CreateWeaponCoHProcDamage(SearingNeedle, "Searing Needle", 1.0, 16454, core.SpellSchoolFire, 60, 0, 0, core.DefenseTypeMagic)
+	// EV-0183: under Forever it procs 2.8 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(SearingNeedle, "Searing Needle", core.SpellSchoolFire,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 16454, DmgMin: 60, DmgRange: 0},
+		itemhelpers.WeaponProc{PPM: 2.8, SpellID: 16454, DmgMin: 60, DmgRange: 0},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=12969/seeping-willow
 	// Chance on hit: Lowers all stats by 20 and deals 20 Nature damage every 3 sec to all enemies within an 8 yard radius of the caster for 30 sec.
@@ -2404,7 +2615,9 @@ func init() {
 			SpellSchool: core.SpellSchoolNature,
 			DefenseType: core.DefenseTypeMagic,
 			ProcMask:    core.ProcMaskEmpty,
-			Flags:       core.SpellFlagPoison | core.SpellFlagPureDot,
+			// Its ticks meet the target's full resistance (EV-0142: 156 of 156 partly resisted, 0.99 of
+			// the share).
+			Flags: core.SpellFlagPoison | core.SpellFlagPureDot | core.SpellFlagFullResistanceTicks,
 			Dot: core.DotConfig{
 				Aura: core.Aura{
 					Label: "Seeping Willow Poison",
@@ -2468,7 +2681,11 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=2163/shadowblade
-	itemhelpers.CreateWeaponCoHProcDamage(Shadowblade, "Shadowblade", 1.0, 18138, core.SpellSchoolShadow, 110, 30, 0, core.DefenseTypeMagic)
+	// EV-0136: under Forever it procs 1.05 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponCoHProcByRuleset(Shadowblade, "Shadowblade", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18138, DmgMin: 110, DmgRange: 30},
+		itemhelpers.WeaponProc{PPM: 1.05, SpellID: 18138, DmgMin: 110, DmgRange: 30},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=17074/shadowstrike
 	// Chance on hit: Steals 100 to 180 life from target enemy.
@@ -2499,7 +2716,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=13361/skullforge-reaver
 	// Equip: Drains target for 2 Shadow damage every 1 sec and transfers it to the caster. Lasts for 30 sec.
 	// Estimated based on data from WoW Armaments Discord
-	itemhelpers.CreateWeaponProcSpell(SkullforgeReaver, "Skullforge Reaver", 1.7, func(character *core.Character) *core.Spell {
+	// EV-0121: under Forever it procs 1.9 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(SkullforgeReaver, "Skullforge Reaver", 1.7, 1.9, func(character *core.Character) *core.Spell {
 		procMask := character.GetProcMaskForItem(SkullforgeReaver)
 		actionID := core.ActionID{SpellID: 17484}
 		healthMetrics := character.NewHealthMetrics(actionID)
@@ -2668,7 +2886,8 @@ func init() {
 	// Chance on hit: A burst of energy fills the caster, increasing his damage by 10 and armor by 150 for 15 sec.
 	// 1.8 PPM from Armaments discord
 	// Forever: the item's chance-on-hit entry carries 1.8 PPM (wowsims/forever's db.json).
-	itemhelpers.CreateWeaponProcAuraByRuleset(SwordOfZeal, "Sword of Zeal", 1.0, 1.8, func(character *core.Character) *core.Aura {
+	// EV-0175: under Forever it procs 1.95 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcAuraByRuleset(SwordOfZeal, "Sword of Zeal", 1.0, 1.95, func(character *core.Character) *core.Aura {
 		return character.GetOrRegisterAura(core.Aura{
 			ActionID: core.ActionID{SpellID: 8191},
 			Label:    "Zeal",
@@ -2756,7 +2975,8 @@ func init() {
 			Outcome:           core.OutcomeLanded,
 			ProcMask:          procMask,
 			SpellFlagsExclude: core.SpellFlagSuppressWeaponProcs,
-			PPM:               0.65,
+			// EV-0136: 2.15 procs a minute under Forever (wowsims/forever, Warcraft Logs).
+			PPM: core.TernaryFloat64(character.Env.IsForever(), 2.15, 0.65),
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				debuffAuraArray.Get(result.Target).Activate(sim)
 			},
@@ -2764,7 +2984,8 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=9639/the-hand-of-antusul
-	itemhelpers.CreateWeaponProcSpell(TheHandOfAntusul, "The Hand of Antu'sul", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0022: under Forever it procs 2 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(TheHandOfAntusul, "The Hand of Antu'sul", 1.0, 2, func(character *core.Character) *core.Spell {
 		debuffAuras := character.NewEnemyAuraArray(func(unit *core.Unit) *core.Aura {
 			aura := unit.GetOrRegisterAura(core.Aura{
 				Label:    "ThunderClap-Antu'sul",
@@ -3004,7 +3225,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=13183/venomspitter
 	// Chance on hit: Poisons target for 7 Nature damage every 2 sec for 30 sec.
 	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcSpell(Venomspitter, "Venomspitter", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0003: under Forever it procs 1.7 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(Venomspitter, "Venomspitter", 1.0, 1.7, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18203},
 			SpellSchool: core.SpellSchoolNature,
@@ -3103,7 +3325,8 @@ func init() {
 	// Forever's Drain Life (16414) steals 49 with no spell power coefficient, and twice as much
 	// from Undead (effect 2, client 1.60.1.71037).
 	core.RegisterItemConditions(WraithScythe, core.MobTypeCondition(proto.MobType_MobTypeUndead))
-	itemhelpers.CreateWeaponProcSpell(WraithScythe, "Wraith Scythe", 1.0, func(character *core.Character) *core.Spell {
+	// EV-0153: under Forever it procs 3.65 times a minute (wowsims/forever, Warcraft Logs).
+	itemhelpers.CreateWeaponProcSpellByRuleset(WraithScythe, "Wraith Scythe", 1.0, 3.65, func(character *core.Character) *core.Spell {
 		actionID := core.ActionID{SpellID: 16414}
 		healthMetrics := character.NewHealthMetrics(actionID)
 		forever := character.Env.IsForever()
@@ -4147,7 +4370,8 @@ func init() {
 			Outcome:           core.OutcomeLanded,
 			ProcMask:          core.Ternary(forever, core.ProcMaskMeleeOrRanged, core.ProcMaskMelee),
 			SpellFlagsExclude: core.SpellFlagSuppressEquipProcs,
-			PPM:               0.4,
+			// EV-0133: 1.95 procs a minute under Forever, measured on 256 Warcraft Logs reports.
+			PPM: core.TernaryFloat64(forever, 1.95, 0.4),
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 				spell.Cast(sim, result.Target)
 			},
@@ -5275,4 +5499,53 @@ func takesHits(character *core.Character) bool {
 		}
 	}
 	return false
+}
+
+// EV-0119: Ironfoe's chance per landed hit under Forever, twice as likely against an Orc.
+func IronfoeForeverChance(target *core.Unit) float64 {
+	if target.MobFamily == proto.MobFamily_MobFamilyOrc {
+		return 0.06
+	}
+	return 0.03
+}
+
+// EV-0021: Dragon's Call's rate and cooldown under Forever.
+const (
+	DragonsCallForeverPPM = 4.5
+	DragonsCallForeverICD = 45 * time.Second
+)
+
+// EV-0025: Blade of Eternal Darkness's chance under Forever, 1.8 procs a minute on a cast of
+// castTime, at least 1.5 s.
+func BladeOfEternalDarknessChance(castTime time.Duration) float64 {
+	return 1.8 * max(castTime, core.GCDDefault).Seconds() / 60
+}
+
+// EV-0151: Flame Wrath's ring of fire under Forever, 154 with the row's 0.267 variance.
+const (
+	FlameWrathForeverMin = 154 * (1 - 0.2666666805744171/2)
+	FlameWrathForeverMax = 154 * (1 + 0.2666666805744171/2)
+)
+
+// EV-0184: the share of the previous jump's damage each Chain Lightning jump of Masterwork
+// Stormhammer deals under Forever.
+const MasterworkStormhammerForeverJump = 0.7
+
+// EV-0179: the heal each tick of Barovian Family Sword's drain gives under Forever.
+const BarovianFamilySwordForeverTickHeal = 49
+
+
+// EV-0125: under Forever Shahram picks Flames, Will, Might, Blessing, Fist and Curse about 7:5:2:2:2:2
+// (wowsims/forever, Warcraft Logs). ShahramForeverSpell turns a roll in [0, 1) into the index in
+// Blackblade of Shahram's castableSpells (Curse, Might, Fist, Blessing, Will, Flames).
+func ShahramForeverSpell(roll float64) int {
+	weights := [6]float64{2, 2, 2, 2, 5, 7}
+	pick := roll * 20
+	for i, w := range weights {
+		if pick < w {
+			return i
+		}
+		pick -= w
+	}
+	return 5
 }

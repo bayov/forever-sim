@@ -35,7 +35,9 @@ func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, 
 			IgnoreHaste: true,
 		},
 
-		FlatThreatBonus: float64(core.BattleShoutLevel[rank]),
+		// EV-0043: under Forever Battle Shout makes no threat (Ranks 1, 2, 4 and 5 read 0; no rank
+		// carries a threat effect). Classic keeps its spell level's.
+		FlatThreatBonus: core.TernaryFloat64(warrior.Env.IsForever(), 0, float64(core.BattleShoutLevel[rank])),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			for _, aura := range receivers {

@@ -188,7 +188,7 @@ const (
 	SpellFlagIgnoreResists           SpellFlag = 1 << iota // skip spell resist/armor
 	SpellFlagIgnoreTargetModifiers                         // skip target damage modifiers
 	SpellFlagIgnoreAttackerModifiers                       // skip attacker damage modifiers
-	SpellFlagBinary                                        // Resisted in full on its hit roll instead of in part, and fully blocked. Under Forever a binary spell that lands still rolls a partial resist.
+	SpellFlagBinary                                        // Resisted in full on its hit roll instead of in part, and fully blocked. Under Forever one that lands takes no partial resist, though Spell Piercing beyond the resistance still rolls its bonus (EV-0142).
 	SpellFlagChanneled                                     // Spell is channeled
 	SpellFlagDisease                                       // Spell is categorized as disease
 	SpellFlagPoison                                        // Spell is categorized as poison
@@ -216,11 +216,14 @@ const (
 	SpellFlagNoPeriodicCrit                                // Indicates this spell's periodic damage can never crit, even under rulesets where dots normally can
 	SpellFlagCastFromTotem                                 // Indicates this spell goes off from a totem, not the caster (Forever's Fire Nova), so effects on the caster's next spell cast skip it
 	SpellFlagCastWhileCasting                              // Indicates this spell can go off while the caster is casting another (Forever's Auto Shot)
-	SpellFlagFullResistanceTicks                           // Under Forever its ticks meet the target's full resistance, as channel ticks do, where other ticks meet a tenth (Insect Swarm)
+	SpellFlagFullResistanceTicks                           // Under Forever its ticks meet the target's full resistance and take the Spell Piercing bonus, where other ticks, a channel's included, meet a tenth and take none (Insect Swarm, Mind Flay, Starshards, Devouring Plague, Pyroblast's DoT; EV-0142)
 	SpellFlagNoPartialResist                               // Under Forever its hits never lose damage to a partial resist or gain the Spell Penetration bonus (damage shields)
 	SpellFlagKeepsSwingTimer                               // Under Forever completing its cast leaves the melee swing timer running: the client's Do Not Reset Combat Timers (Attributes[2] 0x20000)
 	SpellFlagNoProcs                                       // Activates no ProcTrigger, on its casts or its hits (Forever's Volley, Blizzard hotfix 2026-11-11)
 	SpellFlagNoWindfuryTotem                               // Under Forever its main hand melee hits don't roll Windfury Totem: an on-hit proc, not a melee ability (the paladin seals' procs), or a shield strike (a Shieldsworn Holy Strike)
+	SpellFlagNoSpellPiercing                               // Under Forever the caster's Spell Piercing does not reach its hits (Searing and Magma Totem's attacks, EV-0142)
+	SpellFlagBinaryPartialResist                           // Under Forever a binary spell with this flag still rolls a partial resist when it lands (Earth Shock, on the user's beta log; EV-0142 has none).
+	SpellFlagRollsWeaponProcsTwice                         // Its landed hit rolls each weapon proc and combat enchant twice (Forever's Judgement of Command, EV-0156); see WeaponProcRolls
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1
@@ -269,3 +272,16 @@ rupture -
 wotlk
 shadowflame - requires each 'effect' to have its own school.
 */
+
+// WeaponProcRolls is how many times a weapon's chance-on-hit proc or a combat enchant rolls on a
+// landed hit of spell: twice for a spell flagged SpellFlagRollsWeaponProcsTwice, once otherwise.
+// Forever's Judgement of Command lands a dummy on the melee table before its damage, and each
+// landing rolls the weapon procs: units with a Judgement of Command hold 1.85 times the procs one
+// roll gives (17,148 units, 274 paladins), still 1.75 after hotfix push 114313, while Windfury
+// Totem and Vindication, which hear only the damage, roll once (wowsims/forever EV-0155, EV-0156).
+func WeaponProcRolls(spell *Spell) int {
+	if spell.Flags.Matches(SpellFlagRollsWeaponProcsTwice) {
+		return 2
+	}
+	return 1
+}

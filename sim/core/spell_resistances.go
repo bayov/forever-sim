@@ -15,11 +15,22 @@ func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPer
 	//
 	// A hit it cuts still deals at least 1 damage after armor. On the beta our rank 1 totem's 4
 	// left 1 damage from raw 3 and 4 swings, and no hit in any log dealt 0.
+	//
+	// EV-0154: the flat reductions in this field together take at most half of the hit (Gold-plated,
+	// Stoneform Shoulders and Force of Will: a swing under twice the amount keeps about half of
+	// itself; a second reduction adds nothing past the cap), and the crit doubles what is left, as
+	// the outcome comes after this. Force of Will's 51 and Gift of Arthas's 8 land here too, so the
+	// share armor lets through scales them. A flat bonus (Gift of Arthas) follows the spell's bonus
+	// coefficient (EV-0045: Thunder Clap, Victory Rush and Rend ticks take none).
 	flatReduced := false
 	if bonus := attackTable.Defender.PseudoStats.BonusPhysicalDamageTakenBeforeArmor; bonus != 0 && !isPeriodic &&
 		spell.SpellSchool.Matches(SpellSchoolPhysical) && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
-		flatReduced = result.Damage > 0
-		result.Damage = max(0, result.Damage+bonus)
+		if bonus > 0 {
+			result.Damage += bonus * spell.BonusCoefficient
+		} else {
+			flatReduced = result.Damage > 0
+			result.Damage += max(bonus, -result.Damage/2)
+		}
 	}
 
 	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
@@ -180,94 +191,119 @@ func (unit *Unit) schoolResistance(spell *Spell) float64 {
 
 // foreverResistanceMultiplier is a magic hit's resist under Forever: a roll in 10% steps around the
 // target's average resist (wowsims/forever 679ca6f875, chi-squared fits of their combat logs; our
-// Elder Cloud Serpents took 20% or 30%, never 25 or 50%). A binary spell that lands rolls it too
-// (78adad9607: Frostbolt 120 partials and 57 bonus hits in 1,166). Spell Penetration beyond the
-// resistance makes the average negative, and the same roll adds 10% or 20% damage (679ca6f875: a mage
-// with 15 Spell Penetration gained 10 or 20% on 1,671 of 2,960 hits on mobs with no resistance).
+// Elder Cloud Serpents took 20% or 30%, never 25 or 50%). Spell Penetration beyond the resistance
+// makes the average negative, and the same roll adds 10% or 20% damage (679ca6f875: a mage with 15
+// Spell Penetration gained 10 or 20% on 1,671 of 2,960 hits on mobs with no resistance).
+//
+// EV-0142 (wowsims/forever, 992 Warcraft Logs reports and 213 combat logs of the live realms,
+// 2026-09-27 to 2026-11-24): a binary spell's hit roll takes its whole resist, so one that lands
+// takes no partial resist (0 of 43,465 binary direct hits, 0 of 12,082 binary DoT ticks), while
+// Spell Piercing still rolls its bonus on it (Frostbolt 1,863 of 6,276 against 1,802 expected). No
+// partial resist takes more than 75% of a hit: every partial on a landed hit lands on a 10% step up
+// to 70% or on exactly 75% (69 direct hits and 2 ticks at 75%, none above), so the roll's 80, 90 and
+// 100% steps take 75%, and a spell that is not binary never resists whole (Arcane Explosion RESIST 0
+// of 16,264).
 func (spell *Spell) foreverResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable) (float64, HitOutcome) {
 	if spell.Flags.Matches(SpellFlagNoPartialResist) {
 		return 1, OutcomeEmpty
 	}
 
 	averageResist := attackTable.Defender.foreverAverageResist(spell, attackTable.Attacker, isPeriodic)
-	if averageResist == 0 {
+	if averageResist == 0 || averageResist > 0 && spell.Flags.Matches(SpellFlagBinary) && !spell.Flags.Matches(SpellFlagBinaryPartialResist) {
 		return 1, OutcomeEmpty
 	}
-	// Expected damage takes the average, which is the roll's mean.
+	chances := resistTenthsChances(math.Abs(averageResist))
+
+	// Expected damage takes the roll's mean, with the 75% step.
 	if spell.expecting {
-		return 1 - averageResist, OutcomeEmpty
+		share := 0.0
+		for tenths, chance := range chances {
+			share += chance * resistedShare(tenths)
+		}
+		return 1 - math.Copysign(share, averageResist), OutcomeEmpty
 	}
 
-	tenths := rollResistTenths(sim, math.Abs(averageResist))
+	tenths := rollResistTenths(sim, chances)
 	if tenths == 0 {
 		return 1, OutcomeEmpty
 	}
+	share := resistedShare(tenths)
 	if averageResist < 0 {
-		return 1 + 0.1*float64(tenths), OutcomeEmpty
+		return 1 + share, OutcomeEmpty
 	}
-	return 1 - 0.1*float64(tenths), partialResistOutcome(tenths)
+	if share < 0.1*float64(tenths) {
+		return 1 - share, OutcomePartial3_4
+	}
+	return 1 - share, partialResistOutcome(tenths)
+}
+
+// resistedShare is the share of the hit a roll of the given tenths takes: at most 75% (EV-0142).
+func resistedShare(tenths int) float64 {
+	return min(0.1*float64(tenths), 0.75)
 }
 
 // foreverAverageResist is the average share of a spell's damage the target resists under Forever,
-// R / (|R| + 9L) for the caster's level L, with the caster's Spell Penetration taken off R. The
-// target's own resistance stops at 0, so a debuff that takes it below 0 adds nothing, and Holy has
-// none. A target above the caster's level resists no more for its level.
+// R / (|R| + 8L + 19) for the caster's level L, with the caster's Spell Penetration taken off R
+// unless the spell is flagged SpellFlagNoSpellPiercing. The target's own resistance stops at 0, so a
+// debuff that takes it below 0 adds nothing, and Holy has none. A target above the caster's level
+// resists no more for its level.
 //
-// 9L fits wowsims/forever's Spell Penetration logs at levels 20 to 30 (8249a6d0e3: K = 179 at level
-// 20 up to 270 at 30, chi-squared 3.0 over the four levels, where 5L + 80 gives 19.5). A log at 40 to
-// 60 would tell it from creature curves that part from it above 30. The client's character sheet
-// shows 0.75 R / 5L (Camelot/PaperDollFrameStats.lua since build 69876), which the logs would fit only
-// with the caster near level 30 (679ca6f875).
+// EV-0091 (wowsims/forever, Spell Piercing logs at levels 20 to 50 and mobs near 38 casting at
+// players of known resistance): K = 8L + 19 fits every level (chi-squared 1.1), where the 9L we took
+// from their earlier fit of levels 20 to 30 (8249a6d0e3) gives 18.9 and sits 3.7 sigma off at level
+// 50 (a mage with 15 piercing: a bonus on 1,500 of 5,756 hits, K = 417, 9L 450). 499 at level 60.
 //
-// A DoT's tick, a hybrid's included, meets a tenth of the resistance. Channel ticks and spells
-// flagged SpellFlagFullResistanceTicks meet the full amount (a59a3e4931: Serpent Sting 7 of 36 ticks
-// resisted, 7.5 expected at a tenth and 35.6 at the full amount; Mind Flay 9 of 22; Insect Swarm 21
-// of 22).
+// EV-0142: Spell Piercing beyond the resistance gives no bonus while the share it makes is under 1%
+// (5 piercing at level 60, s 0.99%: a bonus on 0.64% of hits, the floor without piercing; 6 and up
+// follow 7.5s). A DoT's or channel's tick meets a tenth of a positive share and takes no piercing
+// bonus (Corruption, Siphon Life, Wrack 0.06 to 0.08 of the expected bonuses; Drain Life ticks a
+// tenth, 0.087; Hurricane 19 of 7,577). Spells flagged SpellFlagFullResistanceTicks meet the full
+// share and take the bonus in full (Devouring Plague 0.95, Pyroblast's DoT 0.98, Starshards 1.19;
+// EV-0092: Pyroblast's DoT 175 of 632 binned against the casters' 27.3% direct rate).
 func (unit *Unit) foreverAverageResist(spell *Spell, attacker *Unit, isPeriodic bool) float64 {
 	if spell.SchoolIndex <= stats.SchoolIndexPhysical || spell.SpellSchool.Matches(SpellSchoolHoly) {
 		return 0
 	}
 
-	resistance := max(0, unit.schoolResistance(spell)) - attacker.stats[stats.SpellPenetration]
-	averageResist := resistance / (math.Abs(resistance) + 9*float64(attacker.Level))
+	resistance := max(0, unit.schoolResistance(spell))
+	if !spell.Flags.Matches(SpellFlagNoSpellPiercing) {
+		resistance -= attacker.stats[stats.SpellPenetration]
+	}
+	averageResist := resistance / (math.Abs(resistance) + 8*float64(attacker.Level) + 19)
+	if averageResist < 0 && averageResist > -0.01 {
+		averageResist = 0
+	}
 
-	if isPeriodic && !spell.Flags.Matches(SpellFlagChanneled|SpellFlagFullResistanceTicks) {
-		averageResist /= 10
+	if isPeriodic && !spell.Flags.Matches(SpellFlagFullResistanceTicks) {
+		averageResist = max(0, averageResist) / 10
 	}
 	return averageResist
 }
 
-// rollResistTenths is Forever's partial resist roll, in tenths of the damage, around the average
-// share a (wowsims/forever 679ca6f875; their Thunderhawks fit it at chi-squared 4.5 and 4.9 on 2
-// degrees of freedom). Up to a = 10% it gives 0, 1 or 2 tenths at 1 - 7.5a, 5a and 2.5a, from 90% the
-// same mirrored from 10 tenths, and in between each 10% step x within 20% of a at 0.5 - 2.5|x - a|.
-// Its mean is a.
-func rollResistTenths(sim *Simulation, a float64) int {
-	roll := sim.RandomFloat("Partial Resist")
-	if a <= 0.1 {
-		switch {
-		case roll < 1-7.5*a:
-			return 0
-		case roll < 1-2.5*a:
-			return 1
-		default:
-			return 2
+// resistTenthsChances is the chance of each step of Forever's partial resist roll, in tenths of the
+// damage, around the average share a (wowsims/forever 679ca6f875; their Thunderhawks fit it at
+// chi-squared 4.5 and 4.9 on 2 degrees of freedom). Up to a = 10% it gives 0, 1 or 2 tenths at
+// 1 - 7.5a, 5a and 2.5a, from 90% the same mirrored from 10 tenths, and in between each 10% step x
+// within 20% of a at 0.5 - 2.5|x - a|. Its mean is a, before the 75% step.
+func resistTenthsChances(a float64) (chances [11]float64) {
+	switch {
+	case a <= 0.1:
+		chances[0], chances[1], chances[2] = 1-7.5*a, 5*a, 2.5*a
+	case a >= 0.9:
+		chances[10], chances[9], chances[8] = 1-7.5*(1-a), 5*(1-a), 2.5*(1-a)
+	default:
+		for tenths := range chances {
+			chances[tenths] = max(0, 0.5-2.5*math.Abs(float64(tenths)/10-a))
 		}
 	}
-	if a >= 0.9 {
-		switch {
-		case roll < 1-7.5*(1-a):
-			return 10
-		case roll < 1-2.5*(1-a):
-			return 9
-		default:
-			return 8
-		}
-	}
+	return chances
+}
 
+// rollResistTenths draws one step of the roll, taking the steps from 0 up.
+func rollResistTenths(sim *Simulation, chances [11]float64) int {
+	roll := sim.RandomFloat("Partial Resist")
 	cumulative, last := 0.0, 0
-	for tenths := 0; tenths <= 10; tenths++ {
-		chance := 0.5 - 2.5*math.Abs(float64(tenths)/10-a)
+	for tenths, chance := range chances {
 		if chance <= 0 {
 			continue
 		}
@@ -330,4 +366,15 @@ func (unit *Unit) partialResistRollThresholds(spell *Spell, attacker *Unit, pure
 		val -= 2
 		return 1, 0.78 + 0.18*val, 0.22 + 0.58*val
 	}
+}
+
+// BinaryUnderForever is SpellFlagBinary under Forever and nothing outside it, for a spell whose
+// row makes it binary on the live realms (EV-0142: a non-damage aura on the target, an interrupt,
+// E_DUMMY, E_SCRIPT_EFFECT, E_ENERGIZE or E_CREATE_AREATRIGGER beside the damage) where Classic
+// keeps it partial.
+func BinaryUnderForever(env *Environment) SpellFlag {
+	if env != nil && env.IsForever() {
+		return SpellFlagBinary
+	}
+	return SpellFlagNone
 }

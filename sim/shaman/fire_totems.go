@@ -55,6 +55,9 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskEmpty,
+		// EV-0142: the totem's attacks take none of the shaman's Spell Piercing (3 bonuses in 3,160
+		// hits of 58 shamans with piercing against 334 expected; 6 of 4,088 without it).
+		Flags: core.SpellFlagNoSpellPiercing,
 
 		DamageMultiplier: shaman.callOfFlameMultiplier(),
 		BonusCoefficient: spellCoeff,
@@ -168,6 +171,9 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskEmpty,
+		// EV-0142: the totem's pulses take none of the shaman's Spell Piercing (186 bonuses in 26,257
+		// hits of 76 shamans with piercing against 3,042 expected, the floor without it).
+		Flags: core.SpellFlagNoSpellPiercing,
 
 		DamageMultiplier: shaman.callOfFlameMultiplier(),
 		BonusCoefficient: spellCoeff,
@@ -336,10 +342,10 @@ func (shaman *Shaman) newFireNovaHitSpellConfig(rank int) core.SpellConfig {
 	}
 }
 
-// Flametongue Totem gives every main hand hit of the party extra Fire damage, by weapon
-// speed like Flametongue Weapon: the value below per 4 sec of swing time (548 / 25 on
-// wowhead's Forever tooltip for rank 1, which does not grow with level). Forever made it
-// last 5 min.
+// Flametongue Totem gives every main hand hit of the raid extra Fire damage (a raid area aura
+// since client 70425, effect 65 on 15036), by weapon speed like Flametongue Weapon: the value
+// below per 4 sec of swing time (548 / 25 on wowhead's Forever tooltip for rank 1, which does
+// not grow with level). Forever made it last 5 min.
 //
 // Its buff takes the totem slot of the weapon, so it works next to Windfury, Rockbiter or
 // Frostbrand Weapon and an oil or stone, and since Blizzard's 2026-11-10 hotfixes next to

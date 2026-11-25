@@ -326,6 +326,9 @@ type ResourceMetrics struct {
 	ActionID ActionID
 	Type     proto.ResourceType
 	NoThreat bool // Under Forever, Rage gained from this source generates no threat.
+	// Under Forever, Rage gained from this source makes its 5 threat a Rage without the unit's threat
+	// multiplier (stance, Defiance, form): EV-0043, EV-0044, EV-0045, EV-0174, EV-0035.
+	UnscaledThreat bool
 
 	Events     int32
 	Gain       float64

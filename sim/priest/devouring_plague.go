@@ -49,7 +49,10 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 		SpellSchool: core.SpellSchoolShadow,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagPriest | core.SpellFlagAPL | core.SpellFlagDisease | core.SpellFlagPureDot,
+		// Its ticks meet the target's full resistance and take the Spell Piercing bonus, where other
+		// DoTs meet a tenth (EV-0092: 23 of 216 ticks binned, the caster's direct rate; EV-0142: 256
+		// of 256 partly resisted, 0.95 of the share).
+		Flags:       SpellFlagPriest | core.SpellFlagAPL | core.SpellFlagDisease | core.SpellFlagPureDot | core.SpellFlagFullResistanceTicks,
 
 		Rank:          rank,
 		RequiredLevel: level,
