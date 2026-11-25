@@ -255,6 +255,11 @@ func (shaman *Shaman) applyElementalFocus() {
 				return
 			}
 
+			if shaman.clearcastingKeptBy == spell {
+				shaman.clearcastingKeptBy = nil
+				return
+			}
+
 			if aura.GetStacks() > 0 && shaman.isShamanDamagingSpell(spell) {
 				aura.RemoveStack(sim)
 			}
@@ -264,12 +269,47 @@ func (shaman *Shaman) applyElementalFocus() {
 	core.MakePermanent(shaman.RegisterAura(core.Aura{
 		Label: "Elemental Focus Trigger",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if shaman.isShamanDamagingSpell(spell) && sim.Proc(0.10, "Elemental Focus") {
-				shaman.ClearcastingAura.Activate(sim)
-				shaman.ClearcastingAura.SetStacks(sim, shaman.ClearcastingAura.MaxStacks)
+			if shaman.isShamanDamagingSpell(spell) {
+				shaman.rollElementalFocus(sim)
 			}
 		},
 	}))
+}
+
+// rollElementalFocus rolls Elemental Focus's 10% for one cast or overload launch.
+func (shaman *Shaman) rollElementalFocus(sim *core.Simulation) {
+	if shaman.ClearcastingAura == nil || !sim.Proc(0.10, "Elemental Focus") {
+		return
+	}
+	shaman.ClearcastingAura.Activate(sim)
+	shaman.ClearcastingAura.SetStacks(sim, shaman.ClearcastingAura.MaxStacks)
+}
+
+// noteClearcastingKept runs as a Lightning Bolt or Chain Lightning applies its effects, before the
+// cast completes and takes off Maelstrom Weapon and Maelstrom Ready!. EV-0180: under Forever a
+// Lightning Bolt that consumes five Maelstrom Weapon stacks keeps Clearcasting, and so does a Chain
+// Lightning cast while Maelstrom Ready! is up, which still costs nothing under it (a level 60
+// Enhancement shaman's combat log of 2026-11-19: 7 of 7 five-stack bolts and 5 of 5 such Chain
+// Lightnings kept the charge, against 35 of 37 Chain Lightnings below five stacks spending it).
+func (shaman *Shaman) noteClearcastingKept(spell *core.Spell) {
+	if spell.ActionID.Tag == CastTagLightningOverload {
+		return
+	}
+	shaman.clearcastingKeptBy = nil
+	if !shaman.Env.IsForever() {
+		return
+	}
+	maelstrom := shaman.MaelstromWeaponAura
+	switch spell.SpellCode {
+	case SpellCode_ShamanLightningBolt:
+		if maelstrom != nil && maelstrom.IsActive() && maelstrom.GetStacks() == maelstrom.MaxStacks {
+			shaman.clearcastingKeptBy = spell
+		}
+	case SpellCode_ShamanChainLightning:
+		if shaman.MaelstromReadyAura != nil && shaman.MaelstromReadyAura.IsActive() {
+			shaman.clearcastingKeptBy = spell
+		}
+	}
 }
 
 func (shaman *Shaman) isShamanDamagingSpell(spell *core.Spell) bool {
@@ -409,7 +449,7 @@ func (shaman *Shaman) applyFlurry() {
 
 	talentAura := shaman.makeFlurryAura(shaman.Talents.Flurry)
 
-	// This must be registered before the below trigger because in-game a crit weapon swing consumes a stack before the refresh, so you end up with:
+	// Outside Forever this must be registered before the below trigger because in-game a crit weapon swing consumes a stack before the refresh, so you end up with:
 	// 3 => 2
 	// refresh
 	// 2 => 3
@@ -427,6 +467,7 @@ func (shaman *Shaman) applyFlurry() {
 				if talentAura.IsActive() {
 					talentAura.SetStacks(sim, 3)
 				}
+				shaman.flurryGainedByImbue = shaman.isWindfuryWeaponHit(spell)
 				return
 			}
 		},
@@ -484,9 +525,40 @@ func (shaman *Shaman) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *core.
 		Timer:    shaman.NewTimer(),
 		Duration: time.Millisecond * 500,
 	}
+	forever := shaman.Env.IsForever()
 	return core.MakePermanent(shaman.GetOrRegisterAura(core.Aura{
 		Label: fmt.Sprintf("Flurry Consume Trigger - %d", flurryAura.ActionID.SpellID),
 		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			// Under Forever (EV-0010, wowsims/forever's combat logs of a level 60 Enhancement shaman
+			// on 2026-11-19 and 21, after push 114115): a white swing spends a charge whatever its
+			// outcome, and so does a Windfury Weapon hit (one charge spent in 18 of 18 bundles of a
+			// non-critting Stormstrike and Windfury Weapon hits), one per 0.5 sec. A Windfury Totem
+			// hit spends none (0 of 23 after a Stormstrike, 0 of 58 after a crit; Blizzard's
+			// November 17 hotfix, finding mechanics-20261118-1), nor do Stormstrike and spells. A
+			// melee crit spends none and sets three (a crit with no hit after it ends at three 378 of
+			// 385 times); a Windfury Weapon hit in its instant spends one (white crit then Windfury
+			// Weapon hits: one spent 17 of 17), but none in the instant another Windfury Weapon hit's
+			// crit gained them (47 of 47 at three), and a white swing in the instant of a gain spends
+			// none.
+			if forever {
+				if !flurryAura.IsActive() || shaman.AutoAttacks.IsWindfuryTotemAttack() || !spell.ProcMask.Matches(core.ProcMaskMelee) ||
+					result.Outcome.Matches(core.OutcomeCrit) {
+					return
+				}
+				imbueHit := shaman.isWindfuryWeaponHit(spell)
+				if !imbueHit && !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+					return
+				}
+				gainedNow := flurryAura.RemainingDuration(sim) == flurryAura.Duration
+				if gainedNow && (!imbueHit || shaman.flurryGainedByImbue) {
+					return
+				}
+				if icd.IsReady(sim) {
+					icd.Use(sim)
+					flurryAura.RemoveStack(sim)
+				}
+				return
+			}
 			// Remove a stack.
 			if flurryAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && icd.IsReady(sim) {
 				icd.Use(sim)
@@ -494,6 +566,11 @@ func (shaman *Shaman) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *core.
 			}
 		},
 	}))
+}
+
+// isWindfuryWeaponHit is whether spell is one of Windfury Weapon's extra hits.
+func (shaman *Shaman) isWindfuryWeaponHit(spell *core.Spell) bool {
+	return spell != nil && (spell == shaman.WindfuryWeaponMH || spell == shaman.WindfuryWeaponOH)
 }
 
 func (shaman *Shaman) applyImprovedStormstrike() {
@@ -585,6 +662,26 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return ppmm.Chance(core.ProcMaskMeleeMHAuto)
 	}
 
+	// EV-0180: under Forever Maelstrom Ready! (408501) goes up as the stacks reach five and comes off
+	// with them, or at the next Lightning Bolt, Chain Lightning, Healing Wave or Lesser Healing Wave,
+	// the heals and Chain Lightning leaving the stacks in place (combat logs of 2026-11-13 to 19:
+	// up at five stacks 179 of 179, 168 of 169 and 122 of 123 times). While it is up a Chain
+	// Lightning keeps Clearcasting (noteClearcastingKept).
+	if shaman.Env.IsForever() {
+		shaman.MaelstromReadyAura = shaman.RegisterAura(core.Aura{
+			Label:    "Maelstrom Ready!",
+			ActionID: core.ActionID{SpellID: 408501},
+			Duration: core.NeverExpires,
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				switch spell.SpellCode {
+				case SpellCode_ShamanLightningBolt, SpellCode_ShamanChainLightning,
+					SpellCode_ShamanHealingWave, SpellCode_ShamanLesserHealingWave:
+					aura.Deactivate(sim)
+				}
+			},
+		})
+	}
+
 	shaman.MaelstromWeaponAura = shaman.RegisterAura(core.Aura{
 		Label:     "Maelstrom Weapon",
 		ActionID:  core.ActionID{SpellID: 408505},
@@ -599,6 +696,14 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 
 				spell.CastTimeMultiplier -= castTimeReductionPerStack * float64(stacks)
 				spell.Cost.Multiplier -= costReductionPerStack * stacks
+			}
+			if shaman.MaelstromReadyAura != nil && newStacks == aura.MaxStacks && oldStacks < newStacks {
+				shaman.MaelstromReadyAura.Activate(sim)
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if shaman.MaelstromReadyAura != nil {
+				shaman.MaelstromReadyAura.Deactivate(sim)
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {

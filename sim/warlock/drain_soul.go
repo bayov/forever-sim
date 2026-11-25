@@ -26,7 +26,9 @@ func (warlock *Warlock) getDrainSoulBaseConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolShadow,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagAPL | core.SpellFlagChanneled | core.SpellFlagResetAttackSwing | WarlockFlagAffliction,
+		// EV-0142: binary on the live realms, 0 partials in 2,144 landed ticks and full resists at the
+		// share (46 of 106 against 46.9).
+		Flags:       core.SpellFlagAPL | core.SpellFlagChanneled | core.SpellFlagResetAttackSwing | WarlockFlagAffliction | core.BinaryUnderForever(warlock.Env),
 
 		RequiredLevel: level,
 		Rank:          rank,

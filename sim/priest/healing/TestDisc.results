@@ -50,216 +50,216 @@ character_stats_results: {
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Champion'sInvestiture"
  value: {
-  tps: 53.97023
-  dtps: 114.41917
-  hps: 112.9217
+  tps: 53.38259
+  dtps: 113.332
+  hps: 111.6062
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Champion'sInvestiture-2072"
  value: {
-  tps: 53.81431
-  dtps: 114.596
-  hps: 112.43283
+  tps: 53.09337
+  dtps: 113.466
+  hps: 110.89389
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Champion'sRaiment"
  value: {
-  tps: 54.1872
-  dtps: 114.40067
-  hps: 113.37292
+  tps: 53.52856
+  dtps: 113.27183
+  hps: 111.95768
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Champion'sRaiment-549"
  value: {
-  tps: 53.72659
-  dtps: 114.40683
-  hps: 112.44572
+  tps: 53.09871
+  dtps: 113.26083
+  hps: 111.1099
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Confessor'sRaiment"
  value: {
-  tps: 54.39531
-  dtps: 113.988
-  hps: 114.20319
+  tps: 53.48034
+  dtps: 112.8175
+  hps: 112.31811
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-FieldMarshal'sInvestiture"
  value: {
-  tps: 53.46545
-  dtps: 114.531
-  hps: 111.79999
+  tps: 52.87271
+  dtps: 113.3525
+  hps: 110.56694
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-FieldMarshal'sRaiment"
  value: {
-  tps: 53.16592
-  dtps: 114.04083
-  hps: 111.69094
+  tps: 52.59191
+  dtps: 112.86983
+  hps: 110.48744
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-GarmentsoftheOracle"
  value: {
-  tps: 54.03322
-  dtps: 113.91683
-  hps: 113.55055
+  tps: 53.38291
+  dtps: 112.79683
+  hps: 112.14239
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  tps: 53.87316
-  dtps: 114.52667
-  hps: 112.61999
+  tps: 52.9995
+  dtps: 113.29383
+  hps: 110.87816
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-LieutenantCommander'sInvestiture"
  value: {
-  tps: 53.81431
-  dtps: 114.596
-  hps: 112.43283
+  tps: 53.09337
+  dtps: 113.466
+  hps: 110.89389
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-LieutenantCommander'sRaiment"
  value: {
-  tps: 53.72659
-  dtps: 114.40683
-  hps: 112.44572
+  tps: 53.09871
+  dtps: 113.26083
+  hps: 111.1099
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-ShadowSynthetic(Phase1)"
  value: {
-  tps: 54.68959
-  dtps: 114.2555
-  hps: 114.52285
+  tps: 54.0396
+  dtps: 113.07967
+  hps: 113.19369
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-SmiteSynthetic(Phase1)"
  value: {
-  tps: 54.60873
-  dtps: 114.10017
-  hps: 114.52258
+  tps: 54.19457
+  dtps: 112.865
+  hps: 113.7165
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-VestmentsofFaith"
  value: {
-  tps: 54.23321
-  dtps: 114.00267
-  hps: 113.86471
+  tps: 53.49457
+  dtps: 112.91333
+  hps: 112.24912
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-VestmentsofProphecy"
  value: {
-  tps: 50.55517
-  dtps: 107.817
-  hps: 106.51383
+  tps: 50.22038
+  dtps: 106.51367
+  hps: 105.7473
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-VestmentsofTranscendence"
  value: {
-  tps: 50.61351
-  dtps: 107.1935
-  hps: 106.22618
+  tps: 49.85851
+  dtps: 105.762
+  hps: 104.66801
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-VestmentsoftheVirtuous"
  value: {
-  tps: 52.87502
-  dtps: 112.41533
-  hps: 111.0286
+  tps: 52.47974
+  dtps: 111.40467
+  hps: 110.19573
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-VestmentsoftheVirtuous-1675"
  value: {
-  tps: 53.29169
-  dtps: 112.41533
-  hps: 111.0286
+  tps: 52.89641
+  dtps: 111.40467
+  hps: 110.19573
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Warlord'sInvestiture"
  value: {
-  tps: 53.46545
-  dtps: 114.531
-  hps: 111.79999
+  tps: 52.87271
+  dtps: 113.3525
+  hps: 110.56694
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-AllItems-Warlord'sRaiment"
  value: {
-  tps: 53.16592
-  dtps: 114.04083
-  hps: 111.69094
+  tps: 52.59191
+  dtps: 112.86983
+  hps: 110.48744
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-Settings-Human-level60_phase1_synthetic-Disc-discipline_tank_healer-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  tps: 54.92214
-  dtps: 113.99133
-  hps: 115.31426
+  tps: 54.17
+  dtps: 112.85683
+  hps: 113.65909
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-Settings-Human-level60_phase1_synthetic-Disc-discipline_tank_healer-FullBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  tps: 54.92214
-  dtps: 113.99133
-  hps: 115.31426
+  tps: 54.17
+  dtps: 112.85683
+  hps: 113.65909
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-Settings-Human-level60_phase1_synthetic-Disc-discipline_tank_healer-FullBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
-  tps: 43.12608
-  dtps: 112.4675
-  hps: 92.65318
+  tps: 42.59517
+  dtps: 111.30083
+  hps: 91.59136
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-Settings-Human-level60_phase1_synthetic-Disc-discipline_tank_healer-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  tps: 61.89571
-  dtps: 126.66833
-  hps: 131.12947
+  tps: 61.86249
+  dtps: 126.575
+  hps: 131.11946
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-Settings-Human-level60_phase1_synthetic-Disc-discipline_tank_healer-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  tps: 61.89571
-  dtps: 126.66833
-  hps: 131.12947
+  tps: 61.86249
+  dtps: 126.575
+  hps: 131.11946
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-Settings-Human-level60_phase1_synthetic-Disc-discipline_tank_healer-NoBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
   tps: 53.60834
-  dtps: 125.33417
+  dtps: 125.2675
   hps: 118.83502
  }
 }
 dps_results: {
  key: "TestDisc-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  tps: 54.92214
-  dtps: 113.99133
-  hps: 115.31426
+  tps: 54.17
+  dtps: 112.85683
+  hps: 113.65909
  }
 }
