@@ -55,11 +55,27 @@ func (paladin *Paladin) registerUnsealedWrath() {
 	paladin.echoApply = map[*core.Aura]func(sim *core.Simulation, target *core.Unit){}
 
 	echoes := []*core.Aura{paladin.echoOfCommand, paladin.echoOfRighteousness}
+
+	// EV-0065: the talent needs a weapon (1310735's SpellEquippedItems, any weapon), and a main
+	// hand swap takes it off for a moment, which removes every Echo.
+	mainHand := paladin.MainHand().ID
+	if paladin.Env.IsForever() {
+		paladin.RegisterOnItemSwap(func(sim *core.Simulation) {
+			if paladin.MainHand().ID == mainHand {
+				return
+			}
+			mainHand = paladin.MainHand().ID
+			for _, echo := range echoes {
+				echo.Deactivate(sim)
+			}
+		})
+	}
 	paladin.RegisterAura(core.Aura{
 		Label:    "Unsealed Wrath",
 		ActionID: core.ActionID{SpellID: 1310735},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			mainHand = paladin.MainHand().ID
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
