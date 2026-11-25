@@ -549,9 +549,13 @@ features give no stat buff. No camp buff gives hit, haste, spell power or a dama
   Basic campfires give all 9.
 - **No camp inside a raid.** Campfires are outdoors only, and their spells carry the "not in raid
   instances" flag. The raid sim assumes the buffs taken outside carry in. The client doesn't settle it: the
-  world buffs have no zone flag either, yet their tooltips say "No effect while in a raid instance" (22888,
-  16609, 15366). They last 1 hour (1.5 with the Legacy perk Permanence), can't be refreshed inside, and are
-  probably lost on death.
+  world buffs have no zone flag either, yet their tooltips say "No effect while in a raid instance", and
+  Blizzard confirmed that for them (the user, 2026-11-25). The camp buffs' tooltips have no such line. They
+  last 1 hour (1.5 with the Legacy perk Permanence), can't be refreshed inside, and are probably lost on
+  death.
+- **No world buffs in a raid.** Under Forever the world buffs marked "No effect while in a raid instance"
+  (every one the sim models but Spirit of Zandalar) do nothing in a raid fight, and every raid sim fight is
+  one (`sim/core/buffs.go` ForeverRaidInstance, notes.md, Settled 2026-11-25). No search or preset gives any.
 - **"Mutually exclusive" is the server's.** No client table links a camp buff to its class buff. At 60
   every class buff is the stronger one, so "the stronger wins" and "the class buff wins" give the same
   result. The exception is the Camp Chair against Moonkin Aura.
