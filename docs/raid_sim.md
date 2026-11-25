@@ -553,8 +553,8 @@ features give no stat buff. No camp buff gives hit, haste, spell power or a dama
   Blizzard confirmed that for them (the user, 2026-11-25). The camp buffs' tooltips have no such line. They
   last 1 hour (1.5 with the Legacy perk Permanence), can't be refreshed inside, and are probably lost on
   death.
-- **No world buffs in a raid.** Under Forever the world buffs marked "No effect while in a raid instance"
-  (every one the sim models but Spirit of Zandalar) do nothing in a raid fight, and every raid sim fight is
+- **No world buffs in a raid.** Under Forever the world buffs (the ones marked "No effect while in a raid
+  instance", and Spirit of Zandalar on the user's ruling, not the client text) do nothing in a raid fight, and every raid sim fight is
   one (`sim/core/buffs.go` ForeverRaidInstance, notes.md, Settled 2026-11-25). No search or preset gives any.
 - **"Mutually exclusive" is the server's.** No client table links a camp buff to its class buff. At 60
   every class buff is the stronger one, so "the stronger wins" and "the class buff wins" give the same
