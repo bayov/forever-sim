@@ -1,11 +1,11 @@
 character_stats_results: {
  key: "TestHoly-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 136
-  final_stats: 187
-  final_stats: 461
-  final_stats: 507
-  final_stats: 402
+  final_stats: 102
+  final_stats: 146
+  final_stats: 332
+  final_stats: 423
+  final_stats: 331
   final_stats: 574
   final_stats: 0
   final_stats: 0
@@ -13,78 +13,78 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 133.25
+  final_stats: 123.25
   final_stats: 0
-  final_stats: 38.24617
-  final_stats: 0
-  final_stats: 0
-  final_stats: 714
-  final_stats: 0
-  final_stats: 23.92857
+  final_stats: 18.83497
   final_stats: 0
   final_stats: 0
+  final_stats: 340
   final_stats: 0
-  final_stats: 8701
+  final_stats: 13.92857
   final_stats: 0
   final_stats: 0
-  final_stats: 1522
-  final_stats: 440
+  final_stats: 0
+  final_stats: 7441
+  final_stats: 0
+  final_stats: 0
+  final_stats: 1440
+  final_stats: 100
   final_stats: 0
   final_stats: 5
   final_stats: 0
   final_stats: 3
   final_stats: 5
   final_stats: 0
-  final_stats: 6127
+  final_stats: 4537
   final_stats: 32
   final_stats: 65
   final_stats: 65
   final_stats: 65
   final_stats: 65
   final_stats: 505
-  final_stats: 622.5
-  final_stats: 36.16
+  final_stats: 604.75
+  final_stats: 30.48
   final_stats: 0
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sInvestiture"
  value: {
-  tps: 62.4375
+  tps: 62.32842
   dtps: 119.4
-  hps: 231.24706
+  hps: 208.54375
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sInvestiture-2072"
  value: {
-  tps: 62.4375
+  tps: 62.27617
   dtps: 119.4
-  hps: 234.66378
+  hps: 206.97212
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sRaiment"
  value: {
-  tps: 62.48838
+  tps: 62.32842
   dtps: 119.4
-  hps: 234.99781
+  hps: 207.32384
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Champion'sRaiment-549"
  value: {
-  tps: 62.60938
+  tps: 62.45492
   dtps: 119.4
-  hps: 244.53644
+  hps: 216.02406
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Confessor'sRaiment"
  value: {
-  tps: 62.41471
+  tps: 62.64846
   dtps: 119.4
-  hps: 204.92694
+  hps: 206.37967
  }
 }
 dps_results: {
@@ -92,15 +92,15 @@ dps_results: {
  value: {
   tps: 62.61821
   dtps: 119.4
-  hps: 219.58811
+  hps: 200.40372
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-FieldMarshal'sRaiment"
  value: {
-  tps: 62.4375
+  tps: 62.32842
   dtps: 119.4
-  hps: 232.08245
+  hps: 209.57204
  }
 }
 dps_results: {
@@ -108,31 +108,31 @@ dps_results: {
  value: {
   tps: 62.61821
   dtps: 119.4
-  hps: 220.92042
+  hps: 201.2454
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  tps: 70.55978
+  tps: 68.8455
   dtps: 119.4
-  hps: 285.07394
+  hps: 230.36605
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-LieutenantCommander'sInvestiture"
  value: {
-  tps: 62.4375
+  tps: 62.27617
   dtps: 119.4
-  hps: 234.66378
+  hps: 206.97212
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-LieutenantCommander'sRaiment"
  value: {
-  tps: 62.60938
+  tps: 62.45492
   dtps: 119.4
-  hps: 244.53644
+  hps: 216.02406
  }
 }
 dps_results: {
@@ -140,7 +140,7 @@ dps_results: {
  value: {
   tps: 62.40233
   dtps: 119.4
-  hps: 209.21351
+  hps: 191.0273
  }
 }
 dps_results: {
@@ -148,7 +148,7 @@ dps_results: {
  value: {
   tps: 62.40233
   dtps: 119.4
-  hps: 211.10457
+  hps: 192.84733
  }
 }
 dps_results: {
@@ -156,39 +156,39 @@ dps_results: {
  value: {
   tps: 62.40233
   dtps: 119.4
-  hps: 212.9482
+  hps: 193.59196
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-VestmentsofProphecy"
  value: {
-  tps: 59.3625
+  tps: 59.35317
   dtps: 113.22
-  hps: 219.40332
+  hps: 194.38617
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-VestmentsofTranscendence"
  value: {
-  tps: 58.79763
+  tps: 58.65025
   dtps: 112.19333
-  hps: 199.77833
+  hps: 187.08034
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-VestmentsoftheVirtuous"
  value: {
-  tps: 61.66583
+  tps: 61.56542
   dtps: 117.69333
-  hps: 232.38206
+  hps: 205.66914
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-VestmentsoftheVirtuous-1675"
  value: {
-  tps: 62.76042
+  tps: 62.60946
   dtps: 117.69333
-  hps: 232.38206
+  hps: 205.66914
  }
 }
 dps_results: {
@@ -196,15 +196,15 @@ dps_results: {
  value: {
   tps: 62.61821
   dtps: 119.4
-  hps: 219.58811
+  hps: 200.40372
  }
 }
 dps_results: {
  key: "TestHoly-Phase1-AllItems-Warlord'sRaiment"
  value: {
-  tps: 62.4375
+  tps: 62.32842
   dtps: 119.4
-  hps: 232.08245
+  hps: 209.57204
  }
 }
 dps_results: {
@@ -212,7 +212,7 @@ dps_results: {
  value: {
   tps: 62.40233
   dtps: 119.4
-  hps: 213.385
+  hps: 195.01459
  }
 }
 dps_results: {
@@ -220,7 +220,7 @@ dps_results: {
  value: {
   tps: 62.40233
   dtps: 119.4
-  hps: 213.385
+  hps: 195.01459
  }
 }
 dps_results: {
@@ -228,7 +228,7 @@ dps_results: {
  value: {
   tps: 62.13292
   dtps: 118.86667
-  hps: 214.62973
+  hps: 194.10804
  }
 }
 dps_results: {
@@ -260,6 +260,6 @@ dps_results: {
  value: {
   tps: 62.40233
   dtps: 119.4
-  hps: 213.385
+  hps: 195.01459
  }
 }

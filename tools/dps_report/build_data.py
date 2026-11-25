@@ -336,18 +336,43 @@ for _o in outs:  # the request's meta file is the source of truth for text (it c
 outs.sort(key=lambda o: (CLASS_ORDER.index(o['meta']['class']), -o['main']['dps']))
 
 builds, races, lengths, abilities, auras, hist, stats, gear, setup, notes = [], [], [], [], [], [], [], [], [], []
-# The gear rules of the Phase 0 lists (orchestration/standards.md 1b, 8a and 42, tools/rotopt/bis_phase0.sh), shown
-# on the Method tab. Tanks and healers keep the synthetic sets (standards 35, 36).
+# The gear rules of the Phase 0 lists (orchestration/standards.md 1b, 8a, 35, 36, 42 and 43, tools/rotopt/bis_phase0.sh),
+# shown on the Method tab. Tanks and healers wear Phase 0 lists too, searched by their report's score (standards 35, 36,
+# since 2026-11-25). A tank or healer request still wearing the synthetic set (an item named "... Synthetic ...") is named
+# in the last rule, so the rules read right before every list lands.
+
+
+def synthetic_benches():
+    """The Tanking and Healing presets whose request still wears the synthetic set (a healer by its spec), and how many
+    presets there are."""
+    out, n = [], 0
+    for d in ('tools/tankbench/req', 'tools/healbench/req'):
+        for f in sorted(glob.glob(os.path.join(TREE, d, '*.json'))):
+            stem = os.path.basename(f)[:-5]
+            if stem == 'warrior_protection' or stem.endswith('_raid'):  # the healing bench's tank; a raid preset wears its spec's list
+                continue
+            n += 1
+            items = json.load(open(f))['raid']['parties'][0]['players'][0].get('equipment', {}).get('items', [])
+            if any('Synthetic' in ((item_names.get(it.get('id')) or {}).get('name') or '') for it in items):
+                out.append(' '.join(stem.split('_')).capitalize())
+    return out, n
+
+
 GEAR_RULES = [
-    "Each DPS spec wears its Phase 0 list: the best gear it can get before the first raids open on 2026-12-09, found by a gear search on the spec's preset.",
+    "Each spec wears its Phase 0 list: the best gear it can get before the first raids open on 2026-12-09, found by a gear search on the spec's preset.",
     "In: dungeon drops, quest rewards, crafted gear, world drops, the auction house and reputation rewards up to Revered, PvP reputations included.",
     "Ranked but never picked: Exalted rewards and items that cost a lot of gold for the DPS they add.",
     "Out: raid and world boss loot, gear made from raid materials, and what only the other faction can get, by the preset's race.",
     "An item we aren't sure is open yet is used, with a note saying what is unsure.",
     "Every slot gets the best enchant that is open before the raids. Set bonuses count at however many pieces the list wears. Hit is whatever sims best, not forced to the cap.",
     "Trinkets are real. A use or proc counts where the sim models it. An item whose effect isn't modelled counts for its stats alone.",
-    "Tanks and healers still wear made-up gear at Phase 1 item levels.",
+    "Tanks and healers are searched by their report's own score, not DPS. A tank's is its tank score, the mean over the six scored bosses, with one list per preset. A healer's is the damage it carries, with one list per spec. An item over 3000g for each 1% of score it adds is never picked.",
 ]
+_synth, _benches = synthetic_benches()
+if _synth and len(_synth) == _benches:
+    GEAR_RULES.append("Until their lists land, tanks and healers wear made-up gear at Phase 1 item levels.")
+elif _synth:
+    GEAR_RULES.append(f"Until their lists land, these wear made-up gear at Phase 1 item levels: {', '.join(_synth)}.")
 for _i, _t in enumerate(GEAR_RULES):
     notes.append({'build': '_round', 'kind': 'gear', 'order': _i, 'text': _t})
 names = {}

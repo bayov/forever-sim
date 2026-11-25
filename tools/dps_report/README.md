@@ -319,7 +319,7 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | weights | build_data.py | `weights/*.json` (40k per stat) | weights.py |
 | mana | build_data.py (`mana_curves.datasets()`) | `mana/*.json`: per build and 5 s step, the average mana % of max over 100 fights at 480 s, with the 25th and 75th percentile fight | mana_curves.py |
 | mana_summary | build_data.py (`mana_curves.datasets()`) | `mana/*.json`: when mana first drops below 15% (`lowPct`) (median, p25, p75, null when that fight quantile never does), share of fights that do, mana % at 60/180/300/480 s, spend and regen per second, and the 5k run's `secondsOomAvg`, Tto and mana at the end | mana_curves.py |
-| tooltips | build_data.py + tooltips.py | `forever_tt_cache` (Forever wowhead, Classic fallback), the tree's wowhead csvs, `db.json` (items, the tanks' and healers' synthetic items, enchants), `sim/*/item*sets_pve.go`, `sim/*/forever_synthetic_trinkets.go`, Forever wiki, `racials.json`, talent trees | whcache.py |
+| tooltips | build_data.py + tooltips.py | `forever_tt_cache` (Forever wowhead, Classic fallback), the tree's wowhead csvs, `db.json` (items, the tanks' and healers' synthetic items while a request still wears them, enchants), `sim/*/item*sets_pve.go`, `sim/*/forever_synthetic_trinkets.go`, Forever wiki, `racials.json`, talent trees | whcache.py |
 | talenttrees | build_data.py | `ui/core/talents/trees/<class>.json`, plus wowhead links from the tooltip cache | none |
 | treeart | build_data.py | the tree icons from `tools/forever_talents/client/<class>.json`, and backgrounds fetched from each tree's `backgroundUrl` | icon fetch |
 | icons | build_data.py | every icon used, from wow.zamimg.com (36 px medium, 56 px large for headers), plus `assets/item_slots/*.jpg` | icon fetch |
@@ -343,6 +343,13 @@ What is simmed (the docs say how, `tankheal.py` does not choose):
 - Healing: the presets in `tools/healbench/req/`, `-carry`, `-role tank` for the tank healer files and `-role raid` for
   `_raid`, 1,000 iterations, each file at its own length, healbench's fixed seed 101, and the mean over the 7 boss files
   (docs/healing_sim.md, the "Carry, 1,000 iterations" table and the shaman's "raid mean over these 7 files").
+- Gear: each request wears its Phase 0 list in `.raid.parties[0].players[0].equipment` (standards 35, 36 and 43, since
+  2026-11-25; the synthetic sets before that). `bis_phase0.sh` searches it by the report's own score: a tank preset's
+  tank score, the mean over the six scored bosses, one list per preset; a healer's damage carried, one list per spec
+  (its `_raid` request wears the same). An item over `MAX_GOLD_PER_PCT` (3000g) for each 1% of the spec's score is never
+  picked, 1% of a tank class's Balanced score for all three presets. The lists' gearOut is in
+  `tools/rotopt/phase0_specs.json` (the rows with a `bench` field). A request not searched yet still wears the
+  synthetic set, and the page says so for it.
 - Races (`bench_races.py`, into `<mode>/races.jsonl`; `--no-races` skips them): every race the class can be
   (`CLASS_RACES` in run_build.py), and each race with every racial left out (`off`) and, for a race with more than one
   part that can count, each part left out (`off:<part>`: the DPS parts plus Night Elf `dodge`; the beast and elemental
@@ -359,7 +366,10 @@ What is simmed (the docs say how, `tankheal.py` does not choose):
   the line (tank healer: tank deaths 2%; raid healer: any death 5%). The errors are a paired bootstrap (400 resamples
   of the fights, shared by every side). The build puts the races on the main run's numbers (each race moved by the
   preset race's gap) and splits a race's gap over its base stats into its parts (`_race_breakdown`: Shapley for two,
-  scaled leave-one-out for three or more, like build_races.py).
+  scaled leave-one-out for three or more, like build_races.py). A race of the other faction from the request's race
+  wears the spec's `<gearOut>_<horde|alliance>.gear.json` when it exists (race_gear.py's `faction_set`, for the DPS
+  builds), and its rows name it (`factionSet`); without it the race wears the request's gear. stale.mjs hashes those
+  files into the presets' fingerprints.
 
 Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read the repository itself):
 

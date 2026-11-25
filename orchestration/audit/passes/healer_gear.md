@@ -1,23 +1,43 @@
-# Pass: healer synthetic gear
+# Pass: healer Phase 0 gear
 
-Follow `orchestration/audit/PASS.md` around this doc. Written 2026-11-03, as `gear.md` is for the DPS specs.
+Follow `orchestration/audit/PASS.md` around this doc. Written 2026-11-03 for the synthetic sets, rewritten 2026-11-25
+when healers moved to Phase 0 lists (`orchestration/standards.md` 35 and 43). `gear.md` is the same pass for the DPS
+specs: its rules, gotchas and settled points hold here unless this doc says otherwise.
 
-You check the healers' synthetic Phase 1 sets (`tools/database/forever_synthetic_items_shaman_restoration.go` and
-the other healers' `forever_synthetic_items_<class>_<spec>.go`, `ui/<spec>/gear_sets/level60*`) against the
-standards: 1b (the pure caster budget, the shape check, the weapon rate, trinkets), 5 (Spirit), 5a (the stat mix)
-and 35 (healers' sets, the healer rows of `orchestration/gear_targets.md`, Healers).
+You check the healers' Phase 0 lists: the rows of `tools/rotopt/phase0_specs.json` with `"bench": "heal"`, one list
+per spec, their gear sets (`gearOut`), the requests that wear them (`tools/healbench/req/<spec>.json` and
+`<spec>_raid.json`, `.raid.parties[0].players[0].equipment`), and the other-faction sets
+(`<gearOut>_<horde|alliance>.gear.json`) the race sims put on a race of the other faction
+(`tools/dps_report/bench_races.py`).
+
+## What differs from the DPS lists
+
+- **Score:** the healer report's damage carried (healbench carry), the mean over the seven bosses in each of the
+  spec's roles (`healRoles`), the roles weighed alike. The raid role sims the raid request (`raidReqFile`) under the
+  list. Not DPS.
+- **Gold line:** `MAX_GOLD_PER_PCT`, 3000g for each 1% of the spec's damage carried (the row's `scoreRef`) an item
+  adds. Only a price made for the spec's own list counts (`goldPerDps` by spec, `phase0_prices.py`).
+  `phase0_check.py`'s `goldPerDps` line is the DPS one: read its gold flags on a healer row against this line instead.
+- **Uses:** they count inside the boss fights (no 90s use fight).
 
 ## The pass
 
 1. **What changed** since `last.master` on the watched paths.
-2. **Each piece**: weighted linear total within 1% of slot mod x L(ilvl) x f (pure caster f), the 1.7-norm within
-   6% of its shape target, the armor type the class wears, item level and slot as the set's comment says. Weights:
-   Sta / Int / Spi / crit rating 1, spell power 0.86, healing on top of spell power 0.45, MP5 2.4, hit 1.
-   `orchestration/tools/healers/` has the scripts the sets were made with; recompute, don't trust the comments.
-3. **Each set**: every stat's share within its tolerance of the spec's healer row (Stamina +-1.5, the rest
-   +-3), Spirit about 10%, no hit, guardrail (no stat over 55% of the non-Stamina share), the trinkets on 1b's
-   trinket rules, the relic's effect modelled (`sim/<class>/items.go`), the enchants the best a Phase 1 character
-   gets outside the raids (`assets/db_inputs/forever_wowhead_recipes.json` for where a recipe comes from).
-4. **Each healer row**: does it follow from its sources as `gear_targets.md`, Healers, says (recompute from the
-   cached Wowhead pages with `orchestration/tools/healers/`; never fetch Wowhead in a pass)?
-5. Report: a table per set (piece, linear, norm, verdict) and per row; new findings.
+2. **Mechanical checks:** `python3 tools/audit/gear/phase0_check.py`, its lines for the healer rows. A row with no
+   list yet is expected until its worker lands it: note it, don't flag it.
+3. **Each changed list, by hand:** source, faction, effects and stats, weapons, as `gear.md` step 4. The relic's
+   effect is modelled (`sim/<class>/items.go`) or flagged. Spirit, MP5 and hit are what the search picked, so there's
+   no stat share to check.
+4. **The requests wear the list:** both of a spec's requests (tank healer and raid healer) wear its gear set. A
+   request still on synthetic items (ids 99xxxx, names with "Synthetic") has no list yet.
+5. **The other faction:** each `_horde` or `_alliance` set differs from the list only in slots the spec's faction
+   rewards fill, and holds no pick of the spec's faction only.
+6. Report: per spec the list's carry, faction, picks that changed, doubtful picks and unmodelled effects; new
+   findings.
+
+## Synthetic sets (history)
+
+Until 2026-11-25 healers wore synthetic Phase 1 sets (`tools/database/forever_synthetic_items_<class>_<spec>.go`,
+standards 1b, 5, 5a and 35, the healer rows of `orchestration/gear_targets.md`). A spec whose list hasn't landed still
+wears one. This pass's synthetic checks (budget, shape and stat share per piece and set, `orchestration/tools/healers/`)
+are in this file's git history.

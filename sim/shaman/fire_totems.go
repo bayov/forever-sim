@@ -336,10 +336,10 @@ func (shaman *Shaman) newFireNovaHitSpellConfig(rank int) core.SpellConfig {
 	}
 }
 
-// Flametongue Totem gives every main hand hit of the party extra Fire damage, by weapon
-// speed like Flametongue Weapon: the value below per 4 sec of swing time (548 / 25 on
-// wowhead's Forever tooltip for rank 1, which does not grow with level). Forever made it
-// last 5 min.
+// Flametongue Totem gives every main hand hit of the raid extra Fire damage (a raid area aura
+// since client 70425, effect 65 on 15036), by weapon speed like Flametongue Weapon: the value
+// below per 4 sec of swing time (548 / 25 on wowhead's Forever tooltip for rank 1, which does
+// not grow with level). Forever made it last 5 min.
 //
 // Its buff takes the totem slot of the weapon, so it works next to Windfury, Rockbiter or
 // Frostbrand Weapon and an oil or stone, and since Blizzard's 2026-11-10 hotfixes next to

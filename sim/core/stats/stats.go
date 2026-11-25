@@ -504,6 +504,7 @@ type PseudoStats struct {
 	BonusPhysicalDamageTakenBeforeArmor float64                 // Flat physical damage reduction BEFORE armor, like Forever's Stoneskin Totem
 
 	DamageTakenMultiplier       float64                   // All damage
+	StanceDamageTakenMultiplier float64                   // The warrior stance's share of DamageTakenMultiplier, for Forever's Rage from hits taken
 	SchoolDamageTakenMultiplier SchoolValueArray[float64] // For specific spell schools. DO NOT use with multi school index! See helper functions on Unit!
 	SchoolCritTakenChance       SchoolValueArray[float64] // For spell school crit. DO NOT use with multi school index! See helper functions on Unit!
 	SchoolBonusDamageTaken      SchoolValueArray[float64] // For spell school bonus damage taken. DO NOT use with multi school index! See helper functions on Unit!
@@ -546,6 +547,7 @@ func NewPseudoStats() PseudoStats {
 
 		// Target effects.
 		DamageTakenMultiplier:       1,
+		StanceDamageTakenMultiplier: 1,
 		SchoolDamageTakenMultiplier: NewSchoolValueArray(1.0),
 		SchoolCritTakenChance:       NewSchoolValueArray(0.0),
 		SchoolBonusDamageTaken:      NewSchoolValueArray(0.0),
