@@ -16,7 +16,7 @@
   ],
   "dps": 847.43,
   "made": "2026-11-25",
-  "sim": "8b63fffc0afc+",
+  "sim": "f709e28aabce+",
   "slots": {
     "head": [
       {
@@ -54,7 +54,8 @@
         "id": 14539,
         "name": "Bone Ring Helm",
         "dps": 713.89,
-        "loss": 133.54
+        "loss": 133.54,
+        "note": "Drop: Rattlegore, Scholomance"
       },
       {
         "id": 16707,
@@ -68,18 +69,6 @@
         "name": "Ghostshroud",
         "dps": 680.79,
         "loss": 166.63
-      },
-      {
-        "id": 272733,
-        "name": "Premier Beasthide Shroud",
-        "dps": 676.69,
-        "loss": 170.74
-      },
-      {
-        "id": 272471,
-        "name": "Premier Dragonhide Helm",
-        "dps": 676.69,
-        "loss": 170.74
       },
       {
         "id": 13404,
@@ -134,6 +123,14 @@
         "name": "Mighty Helmet of the Beast",
         "dps": 649.75,
         "loss": 197.68,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10226,
+        "suffix": 990574,
+        "name": "Nightshade Helmet of the Beast",
+        "dps": 647.08,
+        "loss": 200.35,
         "note": "Random world drop · BoE"
       },
       {
@@ -194,6 +191,13 @@
         "loss": 230.28,
         "avail": "doubtful",
         "note": "Varrox Bleakhoof · Blackmaw Hold · not in guides yet"
+      },
+      {
+        "id": 15439,
+        "suffix": 346,
+        "name": "Supreme Crown of Stamina",
+        "dps": 616.37,
+        "loss": 231.06
       }
     ],
     "neck": [
@@ -233,13 +237,14 @@
         "id": 287024,
         "name": "Mark of Captivity",
         "dps": 782.51,
-        "loss": 64.92
+        "loss": 64.92,
+        "note": "Trash, likely Alcaz Prison (zone 16620, no NPC known)"
       },
       {
         "id": 12048,
         "suffix": 990309,
         "name": "Prismatic Pendant of the Beast",
-        "dps": 780.53,
+        "dps": 780.54,
         "loss": 66.89,
         "note": "Random world drop"
       },
@@ -332,7 +337,7 @@
       {
         "id": 22150,
         "name": "Beads of Ogre Might",
-        "dps": 752.26,
+        "dps": 752.27,
         "loss": 95.16,
         "note": "Quest: Falrin's Vendetta (Dire Maul) · 25 Ogre Warbeads from Dire Maul or Blackrock Spire ogres · step of Mokvar's Five Thunders chain"
       },
@@ -433,18 +438,6 @@
         "loss": 96.79
       },
       {
-        "id": 272732,
-        "name": "Premier Beasthide Epaulets",
-        "dps": 718.78,
-        "loss": 128.65
-      },
-      {
-        "id": 272469,
-        "name": "Premier Dragonhide Spaulders",
-        "dps": 718.78,
-        "loss": 128.65
-      },
-      {
         "id": 13358,
         "name": "Wyrmtongue Shoulders",
         "dps": 717.88,
@@ -520,16 +513,12 @@
         "note": "Random world drop · BoE"
       },
       {
-        "id": 272670,
-        "name": "Premier Lunarhide Shoulders",
-        "dps": 684.52,
-        "loss": 162.91
-      },
-      {
-        "id": 273387,
-        "name": "Premier Wyrmhide Shoulders",
-        "dps": 684.52,
-        "loss": 162.91
+        "id": 10153,
+        "suffix": 990373,
+        "name": "Mighty Spaulders of the Beast",
+        "dps": 689.97,
+        "loss": 157.46,
+        "note": "Random world drop · BoE"
       },
       {
         "id": 226785,
@@ -539,11 +528,36 @@
         "note": "Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · Anthion chain (Strat, Dire Maul), step gold unknown · or the vendor after"
       },
       {
+        "id": 10783,
+        "suffix": 337,
+        "name": "Atal'ai Spaulders of Stamina",
+        "dps": 678.04,
+        "loss": 169.38,
+        "note": "Balcony Minibosses (Sunken Temple)"
+      },
+      {
         "id": 12927,
         "name": "Truestrike Shoulders",
         "dps": 677.88,
         "loss": 169.55,
         "note": "Pyroguard Emberseer · Blackrock Spire"
+      },
+      {
+        "id": 10263,
+        "suffix": 990458,
+        "name": "Adventurer's Shoulders of the Champion",
+        "dps": 675.91,
+        "loss": 171.52,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 15441,
+        "suffix": 990458,
+        "name": "Supreme Shoulders of the Champion",
+        "dps": 675.91,
+        "loss": 171.52,
+        "unsourced": true,
+        "note": "Random world drop · BoE"
       },
       {
         "id": 10263,
@@ -599,7 +613,8 @@
         "id": 11930,
         "name": "The Emperor's New Cape",
         "dps": 773.05,
-        "loss": 74.38
+        "loss": 74.38,
+        "note": "Drop: Emperor Dagran Thaurissan, Blackrock Depths"
       },
       {
         "id": 18495,
@@ -785,6 +800,22 @@
         "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 16g per DPS"
       },
       {
+        "id": 10264,
+        "suffix": 638,
+        "name": "Adventurer's Tunic of the Monkey",
+        "dps": 736.7,
+        "loss": 110.73,
+        "note": "Random world drop · other suffixes on AH ~10g"
+      },
+      {
+        "id": 15442,
+        "suffix": 638,
+        "name": "Supreme Breastplate of the Monkey",
+        "dps": 736.7,
+        "loss": 110.73,
+        "unsourced": true
+      },
+      {
         "id": 280016,
         "name": "Spiderchitin Wrap",
         "dps": 720.41,
@@ -836,6 +867,13 @@
         "loss": 134.89
       },
       {
+        "id": 10151,
+        "suffix": 990574,
+        "name": "Mighty Tunic of the Beast",
+        "dps": 712.48,
+        "loss": 134.95
+      },
+      {
         "id": 10264,
         "suffix": 990594,
         "name": "Adventurer's Tunic of the Beast",
@@ -859,16 +897,11 @@
         "note": "Solakar Flamewreath (Blackrock Spire)"
       },
       {
-        "id": 272730,
-        "name": "Premier Beasthide Tunic",
-        "dps": 691.9,
-        "loss": 155.52
-      },
-      {
-        "id": 272472,
-        "name": "Premier Dragonhide Breastplate",
-        "dps": 691.9,
-        "loss": 155.52
+        "id": 10151,
+        "suffix": 990576,
+        "name": "Mighty Tunic of the Bandit",
+        "dps": 704.14,
+        "loss": 143.28
       },
       {
         "id": 14637,
@@ -906,18 +939,6 @@
         "loss": 174.76,
         "avail": "doubtful",
         "note": "Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · end of the Valthalak chain, step gold unknown · or the vendor after"
-      },
-      {
-        "id": 273371,
-        "name": "Premier Lunarhide Tunic",
-        "dps": 671.01,
-        "loss": 176.42
-      },
-      {
-        "id": 273384,
-        "name": "Premier Wyrmhide Chestpiece",
-        "dps": 671.01,
-        "loss": 176.42
       }
     ],
     "wrist": [
@@ -957,7 +978,9 @@
         "id": 19113,
         "name": "Yeti Hide Bracers",
         "dps": 786.51,
-        "loss": 60.92
+        "loss": 60.92,
+        "avail": "doubtful",
+        "note": "No known source · hidden stats, Classic stats only"
       },
       {
         "id": 18700,
@@ -1007,18 +1030,6 @@
         "dps": 764.81,
         "loss": 82.62,
         "note": "Drop: Magistrate Barthilas, Stratholme"
-      },
-      {
-        "id": 272707,
-        "name": "Premier Beasthide Armsplints",
-        "dps": 764.25,
-        "loss": 83.18
-      },
-      {
-        "id": 272582,
-        "name": "Premier Dragonhide Armguards",
-        "dps": 764.25,
-        "loss": 83.18
       },
       {
         "id": 12966,
@@ -1091,11 +1102,26 @@
         "unsourced": true
       },
       {
+        "id": 11764,
+        "suffix": 866,
+        "name": "Cinderhide Armsplints of the Eagle",
+        "dps": 710.35,
+        "loss": 137.08
+      },
+      {
         "id": 14629,
         "name": "Necropile Cuffs",
         "dps": 646.54,
         "loss": 200.89,
         "note": "Scholomance bosses (Necropile set)"
+      },
+      {
+        "id": 22667,
+        "name": "Bracers of Hope",
+        "dps": 638.61,
+        "loss": 208.82,
+        "avail": "doubtful",
+        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       }
     ],
     "hands": [
@@ -1145,18 +1171,6 @@
         "note": "Urok Doomhowl (Blackrock Spire) · random suffix"
       },
       {
-        "id": 272709,
-        "name": "Premier Beasthide Gloves",
-        "dps": 710.3,
-        "loss": 137.13
-      },
-      {
-        "id": 272614,
-        "name": "Premier Dragonhide Grips",
-        "dps": 710.3,
-        "loss": 137.13
-      },
-      {
         "id": 18744,
         "name": "Plaguebat Fur Gloves",
         "dps": 700.4,
@@ -1197,22 +1211,18 @@
         "loss": 180.92
       },
       {
+        "id": 10260,
+        "suffix": 990353,
+        "name": "Adventurer's Gloves of the Beast",
+        "dps": 663.99,
+        "loss": 183.44,
+        "note": "Random world drop · BoE"
+      },
+      {
         "id": 273893,
         "name": "Grovekeeper Handguards",
         "dps": 660.38,
         "loss": 187.05
-      },
-      {
-        "id": 273368,
-        "name": "Premier Lunarhide Gloves",
-        "dps": 660.34,
-        "loss": 187.09
-      },
-      {
-        "id": 273382,
-        "name": "Premier Wyrmhide Gauntlets",
-        "dps": 660.34,
-        "loss": 187.09
       },
       {
         "id": 226777,
@@ -1241,18 +1251,6 @@
         "note": "Scholomance bosses (Malicia, Theolen, Polkelt, Ravenian, Alexei Barov) · Cadaverous set"
       },
       {
-        "id": 273377,
-        "name": "Premier Dreamhide Gloves",
-        "dps": 649.63,
-        "loss": 197.8
-      },
-      {
-        "id": 272464,
-        "name": "Premier Kodohide Gauntlets",
-        "dps": 649.63,
-        "loss": 197.8
-      },
-      {
         "id": 226784,
         "name": "Feralheart Gauntlets",
         "dps": 648.46,
@@ -1266,6 +1264,41 @@
         "dps": 648.39,
         "loss": 199.04,
         "note": "Random world drop · BoE"
+      },
+      {
+        "id": 15438,
+        "suffix": 990356,
+        "name": "Supreme Gloves of Fire Protection",
+        "dps": 648.39,
+        "loss": 199.04,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 15063,
+        "name": "Devilsaur Gauntlets",
+        "dps": 639.84,
+        "loss": 207.59
+      },
+      {
+        "id": 276395,
+        "name": "Grimm's Packing Gloves",
+        "dps": 609.66,
+        "loss": 237.77,
+        "note": "Looted Nov 15 · source unknown"
+      },
+      {
+        "id": 21278,
+        "name": "Stormshroud Gloves",
+        "dps": 606.53,
+        "loss": 240.9,
+        "note": "Leatherworking 290 · pattern on AH ~250g · Sewing Machine on AH ~14g"
+      },
+      {
+        "id": 287018,
+        "name": "Compound Gloves",
+        "dps": 574.3,
+        "loss": 273.13,
+        "note": "On AH ~26g"
       }
     ],
     "waist": [
@@ -1303,7 +1336,8 @@
         "id": 13526,
         "name": "Flamescarred Girdle",
         "dps": 746.06,
-        "loss": 101.37
+        "loss": 101.37,
+        "note": "Drop: Maleki the Pallid, Stratholme"
       },
       {
         "id": 14502,
@@ -1373,18 +1407,6 @@
         "loss": 136.53
       },
       {
-        "id": 272711,
-        "name": "Premier Beasthide Girdle",
-        "dps": 708.81,
-        "loss": 138.62
-      },
-      {
-        "id": 272463,
-        "name": "Premier Dragonhide Waistband",
-        "dps": 708.81,
-        "loss": 138.62
-      },
-      {
         "id": 11686,
         "name": "Girdle of Beastial Fury",
         "dps": 697.63,
@@ -1407,6 +1429,14 @@
         "note": "Scholomance bosses (Malicia, Theolen, Polkelt, Ravenian, Alexei Barov) · Cadaverous set"
       },
       {
+        "id": 15434,
+        "suffix": 990373,
+        "name": "Supreme Sash of the Beast",
+        "dps": 693.05,
+        "loss": 154.38,
+        "note": "Random world drop · BoE"
+      },
+      {
         "id": 279252,
         "name": "Elderwild Waistcord",
         "dps": 690.73,
@@ -1418,6 +1448,14 @@
         "dps": 678.55,
         "loss": 168.88,
         "note": "Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · gloves and belt quest, after the bracer quest · or the vendor after"
+      },
+      {
+        "id": 10259,
+        "suffix": 990459,
+        "name": "Adventurer's Belt of the Bandit",
+        "dps": 675.45,
+        "loss": 171.98,
+        "note": "Random world drop · BoE"
       },
       {
         "id": 226780,
@@ -1503,22 +1541,17 @@
         "loss": 154.13
       },
       {
-        "id": 272731,
-        "name": "Premier Beasthide Leggings",
-        "dps": 687.42,
-        "loss": 160.01
-      },
-      {
-        "id": 272470,
-        "name": "Premier Dragonhide Trousers",
-        "dps": 687.42,
-        "loss": 160.01
-      },
-      {
         "id": 16709,
         "name": "Shadowcraft Pants",
         "dps": 673.28,
         "loss": 174.14
+      },
+      {
+        "id": 10262,
+        "suffix": 638,
+        "name": "Adventurer's Legguards of the Monkey",
+        "dps": 666.53,
+        "loss": 180.9
       },
       {
         "id": 12963,
@@ -1565,6 +1598,14 @@
         "note": "Random world drop · BoE · also Dire Maul"
       },
       {
+        "id": 10227,
+        "suffix": 990574,
+        "name": "Nightshade Leggings of the Beast",
+        "dps": 637.54,
+        "loss": 209.89,
+        "note": "Random world drop · BoE · or Eternium Lockbox"
+      },
+      {
         "id": 279254,
         "name": "Elderwild Pants",
         "dps": 632.57,
@@ -1576,6 +1617,22 @@
         "name": "Adventurer's Legguards of the Bandit",
         "dps": 626.95,
         "loss": 220.48
+      },
+      {
+        "id": 10152,
+        "suffix": 990576,
+        "name": "Mighty Leggings of the Bandit",
+        "dps": 623.82,
+        "loss": 223.61,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 15440,
+        "suffix": 990576,
+        "name": "Supreme Leggings of the Bandit",
+        "dps": 623.82,
+        "loss": 223.61,
+        "note": "Random world drop · BoE · also Dire Maul"
       },
       {
         "id": 10262,
@@ -1599,18 +1656,6 @@
         "dps": 611.51,
         "loss": 235.92,
         "note": "Random world drop · BoE · also Dire Maul"
-      },
-      {
-        "id": 272656,
-        "name": "Premier Lunarhide Leggings",
-        "dps": 595.55,
-        "loss": 251.88
-      },
-      {
-        "id": 273385,
-        "name": "Premier Wyrmhide Leggings",
-        "dps": 595.55,
-        "loss": 251.88
       },
       {
         "id": 226787,
@@ -1704,18 +1749,6 @@
         "note": "Rattlegore (Scholomance) · Shadowcraft set"
       },
       {
-        "id": 272705,
-        "name": "Premier Beasthide Footwraps",
-        "dps": 720.99,
-        "loss": 126.44
-      },
-      {
-        "id": 272462,
-        "name": "Premier Dragonhide Boots",
-        "dps": 720.99,
-        "loss": 126.44
-      },
-      {
         "id": 20167,
         "name": "Defiler's Lizardhide Boots",
         "dps": 718.57,
@@ -1770,10 +1803,25 @@
       },
       {
         "id": 15435,
+        "suffix": 990458,
+        "name": "Supreme Shoes of the Champion",
+        "dps": 683.21,
+        "loss": 164.21
+      },
+      {
+        "id": 15435,
         "suffix": 990352,
         "name": "Supreme Shoes of the Bandit",
         "dps": 671.8,
         "loss": 175.63
+      },
+      {
+        "id": 10257,
+        "suffix": 990373,
+        "name": "Adventurer's Boots of the Beast",
+        "dps": 670.92,
+        "loss": 176.51,
+        "note": "Random world drop · other suffixes on AH ~5.5g"
       },
       {
         "id": 20170,
@@ -1873,7 +1921,7 @@
       {
         "id": 275972,
         "name": "Tracker's Signet of Ferocity",
-        "dps": 764.08,
+        "dps": 764.09,
         "loss": 83.34,
         "unsourced": true,
         "avail": "doubtful",
@@ -1891,7 +1939,7 @@
       {
         "id": 2246,
         "name": "Myrmidon's Signet",
-        "dps": 755.34,
+        "dps": 755.35,
         "loss": 92.08,
         "note": "Random world drop"
       },
@@ -1948,7 +1996,7 @@
       {
         "id": 260216,
         "name": "Ouroboros Ring",
-        "dps": 722.58,
+        "dps": 722.59,
         "loss": 124.84
       },
       {
@@ -2022,7 +2070,7 @@
       {
         "id": 272437,
         "name": "Adaptive Combat Assistant",
-        "dps": 808.17,
+        "dps": 808.18,
         "loss": 39.25,
         "note": "Pix Xizzix · 125 Reals"
       },
@@ -2158,7 +2206,7 @@
       {
         "id": 272061,
         "name": "Darkspear Voodoo Seal",
-        "dps": 739.89,
+        "dps": 739.9,
         "loss": 107.53,
         "note": "Creeg Bothunk, Barrens · Darkspear Raiders rep"
       },
@@ -2172,7 +2220,7 @@
       {
         "id": 1490,
         "name": "Guardian Talisman",
-        "dps": 735.44,
+        "dps": 735.45,
         "loss": 111.98,
         "avail": "doubtful",
         "note": "Quest reward, Sunken Temple · quest not identified"
@@ -2218,7 +2266,7 @@
       {
         "id": 276403,
         "name": "Scarlet Bonebreaker",
-        "dps": 768.66,
+        "dps": 768.67,
         "loss": 78.76,
         "note": "Drop: Crimson Hammersmith, Stratholme"
       },
@@ -2342,7 +2390,7 @@
       {
         "id": 18420,
         "name": "Bonecrusher",
-        "dps": 694.96,
+        "dps": 694.97,
         "loss": 152.46
       },
       {
@@ -2723,7 +2771,7 @@
         "spell": 1249058,
         "name": "Enchant Necklace - Healing Power",
         "effect": "+11 healing, +4 spell damage",
-        "dps": 808.42,
+        "dps": 808.43,
         "loss": 21.87,
         "note": "120 Merchant's Favor"
       }
@@ -3317,7 +3365,7 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": 771.89,
+        "dps": 771.9,
         "loss": 58.4,
         "note": "Timbermaw rep, tier unknown"
       },
@@ -3326,7 +3374,7 @@
         "spell": 7218,
         "name": "Iron Counterweight",
         "effect": "+3% attack speed",
-        "dps": 760.62,
+        "dps": 760.63,
         "loss": 69.67,
         "note": "Iron Counterweight on AH ~0.2g"
       },
@@ -3336,7 +3384,7 @@
         "spell": 1248668,
         "name": "Enchant 2H Weapon - Strength",
         "effect": "+25 Strength",
-        "dps": 732.92,
+        "dps": 732.93,
         "loss": 97.37,
         "avail": "doubtful",
         "note": "No known source"
@@ -3345,7 +3393,7 @@
         "id": 1896,
         "spell": 20030,
         "name": "Enchant 2H Weapon - Superior Impact",
-        "dps": 729,
+        "dps": 729.01,
         "loss": 101.29,
         "note": "Formula on AH ~25g"
       },
@@ -3355,7 +3403,7 @@
         "spell": 1248510,
         "name": "Enchant 2H Weapon - Lesser Agility",
         "effect": "+9 Agility",
-        "dps": 721.54,
+        "dps": 721.55,
         "loss": 108.75,
         "avail": "doubtful",
         "note": "No known source"
@@ -3372,7 +3420,7 @@
         "game": 8205,
         "spell": 13695,
         "name": "Enchant 2H Weapon - Impact",
-        "dps": 712.69,
+        "dps": 712.7,
         "loss": 117.6
       },
       {
@@ -3380,7 +3428,7 @@
         "spell": 23799,
         "name": "Enchant Weapon - Strength",
         "effect": "+15 Strength",
-        "dps": 711.39,
+        "dps": 711.4,
         "loss": 118.9,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3391,7 +3439,7 @@
         "spell": 1248511,
         "name": "Enchant 2H Weapon - Lesser Strength",
         "effect": "+15 Strength",
-        "dps": 711.39,
+        "dps": 711.4,
         "loss": 118.9,
         "avail": "doubtful",
         "note": "No known source"
