@@ -55,7 +55,10 @@ def asm_rows(As, names=None, sens=None):
 
 def build(dump, builds=None):
     from assumptions_def import A
-    res = load()
+    # only the settings assumptions_def.py still varies: a collapsed assumption's old results stay out
+    live = {(a['key'], s['id']) for a in A if a.get('status', 'live') == 'live' for s in a['settings'] if s['id'] != a['default']}
+    varied = {b for a in A if a.get('status', 'live') == 'live' and len(a['settings']) > 1 for b in a['builds']}
+    res = {k: v for k, v in load().items() if k[0] in varied and (not k[1] or all(tuple(p.split('=', 1)) in live for p in k[1].split('|')))}
     names = {b['id']: b['build'] for b in (builds or [])}
     rows = []
     for (bid, combo), (by_secs, rot) in sorted(res.items()):
