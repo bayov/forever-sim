@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The gear pass's mechanical checks on the Phase 0 lists (orchestration/standards.md 43, passes/gear.md).
 
-Run from the repo root: python3 tools/audit/gear/phase0_check.py [--noise 1.0] [--max-gpd 30]
+Run from the repo root: python3 tools/audit/gear/phase0_check.py [--noise 1.0] [--max-gpd 30] [--max-gold-per-pct 3000]
 
 For every spec in tools/rotopt/phase0_specs.json it reads the list (ui/<dir>/bis/...), its gear set and the content
 checks (tools/rotopt/phase0_content.json, phase0_enchants.json), and for every DPS request in tools/dps_report/req
@@ -15,6 +15,10 @@ and every race override in req/races the gear the report sims. Each line startin
     "infeasible" or "out" (by the content check today or on the list's own row) or over the gold line ranks but is
     never a pick, so it may sit above the pick (Nacreous Shell Necklace above the casters' neck picks);
   - a request whose gearSet isn't a Phase 0 set, has a hit-trade step (_hit), or whose equipment isn't that set's.
+
+A tank or healer row (bench in phase0_specs.json, 2026-11-25) is scored in its report's score, not DPS, so its line
+is bis_phase0.sh's: --max-gold-per-pct (3000g) per 1% of the row's scoreRef, 3000 * 100 / scoreRef gold per point of
+score, against its own goldPerDps. Its request (the row's reqFile) must wear its gear set, like a DPS request.
 
 It doesn't check sources against the game, set bonuses, hit or the list's dps: the pass does those by hand.
 """
@@ -33,6 +37,18 @@ def faction_of(race):
     return 'Alliance' if race in ALLIANCE else 'Horde' if race in HORDE else None
 
 
+def gold_line(row, max_gpd, max_gold_per_pct):
+    """The most gold a spec's list may pay per unit it adds: max_gpd per DPS, or for a tank or healer row (bench)
+    max_gold_per_pct per 1% of its scoreRef, as bis_phase0.sh's nopick_of has it."""
+    if row.get('bench'):
+        return max_gold_per_pct * 100 / row['scoreRef']
+    return max_gpd
+
+
+def unit_of(row):
+    return 'point of score' if row.get('bench') else 'DPS'
+
+
 def load(p):
     with open(p) as f:
         return json.load(f)
@@ -42,6 +58,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--noise', type=float, default=1.0, help='DPS an open item may sit above the pick (default 1.0)')
     ap.add_argument('--max-gpd', type=float, default=float(os.environ.get('MAX_GOLD_PER_DPS', 30)))
+    ap.add_argument('--max-gold-per-pct', type=float, default=float(os.environ.get('MAX_GOLD_PER_PCT', 3000)),
+                    help="a tank or healer list's line: gold per 1%% of its scoreRef (default 3000)")
     a = ap.parse_args()
     specs = load('tools/rotopt/phase0_specs.json')['specs']
     content = load('tools/rotopt/phase0_content.json')
@@ -58,14 +76,18 @@ def main():
         g = c.get('goldPerDps')
         return (g.get(spec) if isinstance(g, dict) else None) or 0
 
+    def line(spec):
+        return gold_line(specs.get(spec) or {}, a.max_gpd, a.max_gold_per_pct)
+
     def item_ok(where, iid, faction, spec):
         c = content.get(str(iid))
         if c is None:
             return flag(f'{where}: item {iid} is not in phase0_content.json')
         if c.get('avail') in ('out', 'infeasible'):
             flag(f"{where}: {c.get('name')} ({iid}) is {c['avail']}: {c.get('note', '')}")
-        if gpd(c, spec) > a.max_gpd:
-            flag(f"{where}: {c.get('name')} ({iid}) costs {gpd(c, spec)}g per DPS, over the {a.max_gpd:g}g line")
+        if gpd(c, spec) > line(spec):
+            flag(f"{where}: {c.get('name')} ({iid}) costs {gpd(c, spec)}g per {unit_of(specs.get(spec) or {})}, "
+                 f"over the {line(spec):g}g line")
         if faction and c.get('faction') and c['faction'] != faction:
             flag(f"{where}: {c.get('name')} ({iid}) is {c['faction']} only, the build is {faction}")
 
@@ -105,7 +127,7 @@ def main():
                 # an item tagged infeasible (Exalted reputation, or over the gold line when the list ran) ranks but is
                 # never a pick, by design (bis_phase0.sh -gear-no-pick): sitting above the pick is not a finding
                 if (r.get('bis') or c.get('avail') in ('infeasible', 'out') or r.get('avail') in ('infeasible', 'out')
-                        or gpd(c, spec) > a.max_gpd):
+                        or gpd(c, spec) > line(spec)):
                     continue
                 if r['loss'] < best - a.noise:
                     flag(f"{spec} {slot}: open {r['name']} ({r['id']}) sits {best - r['loss']:.2f} above the pick")
@@ -126,7 +148,17 @@ def main():
         missing = sorted(set(ench.values()) - set_ench)
         if missing:
             flag(f'{spec}: gear set {gp} lacks the list enchants {missing}')
-        print(f"{spec}: {lst.get('race')} {fac}, list dps {lst.get('dps')}, made {lst.get('made')} on sim {lst.get('sim')}")
+        # a tank or healer request (the row's reqFile) wears its gear set, as the DPS requests below do
+        rq = row.get('reqFile') if row.get('bench') else None
+        if rq and os.path.exists(rq):
+            eq = load(rq)['raid']['parties'][0]['players'][0].get('equipment', {}).get('items') or []
+            if [(i or {}).get('id') for i in eq] != [(i or {}).get('id') for i in items]:
+                flag(f'{spec}: its request {rq} does not wear {gp}')
+        if row.get('bench'):
+            print(f"{spec}: {lst.get('race')} {fac}, list score {lst.get('dps')}, line {line(spec):.1f}g per point of score, "
+                  f"made {lst.get('made')} on sim {lst.get('sim')}")
+        else:
+            print(f"{spec}: {lst.get('race')} {fac}, list dps {lst.get('dps')}, made {lst.get('made')} on sim {lst.get('sim')}")
 
     for mp in sorted(glob.glob('tools/dps_report/req/*.meta.json')):
         bid = os.path.basename(mp)[:-len('.meta.json')]
