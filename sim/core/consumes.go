@@ -829,10 +829,8 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 		case proto.AgilityElixir_ScrollOfAgility:
 			character.AddStat(stats.Agility, scrollValue(character.Level))
 		case proto.AgilityElixir_ElixirOfCunning:
-			character.AddStats(stats.Stats{
-				stats.Agility:   25,
-				stats.Intellect: 25,
-			})
+			// Its 25 Intellect is added with the Intellect elixirs (applySpellBuffConsumes).
+			character.AddStat(stats.Agility, 25)
 		}
 	}
 
@@ -997,26 +995,53 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 		}
 	}
 
-	// A stat elixir does not stack with the Scroll of the same stat. Only the higher one
-	// counts, so with a Scroll of Intellect II (8) already on, the elixir's 6 adds nothing.
-	// The buffs went on before the consumes, so we add only what the elixir gives above
-	// the scroll.
-	if elixir, ok := intellectElixirs[consumes.IntellectElixir]; ok {
-		if raidBuffs.GetScrollOfIntellect() && !raidBuffs.GetArcaneBrilliance() {
-			elixir -= scrollOfIntellect[HighestRankAt(character.Level, scrollOfIntellectLevel[:])]
-		}
-		if elixir > 0 {
-			character.AddStat(stats.Intellect, elixir)
+	// A stat elixir does not stack with the Scroll of the same stat, nor under Forever with
+	// Arcane Intellect or Divine Spirit. Only the higher one counts, so with a Scroll of
+	// Intellect II (8) already on, the elixir's 6 adds nothing, and under Arcane Brilliance's
+	// 31 neither does Elixir of Greater Intellect's 25. The buffs went on before the consumes,
+	// so each elixir adds only what it gives above the buff.
+	intellectOver, spiritOver := elixirStatsOverwritten(character, raidBuffs)
+	elixirIntellect := []float64{intellectElixirs[consumes.IntellectElixir]}
+	if consumes.AgilityElixir == proto.AgilityElixir_ElixirOfCunning {
+		elixirIntellect = append(elixirIntellect, 25)
+	}
+	for _, elixir := range elixirIntellect {
+		if elixir > intellectOver {
+			character.AddStat(stats.Intellect, elixir-intellectOver)
 		}
 	}
-	if elixir, ok := spiritElixirs[consumes.SpiritElixir]; ok {
-		if raidBuffs.GetScrollOfSpirit() && !raidBuffs.GetDivineSpirit() {
-			elixir -= scrollOfSpirit[HighestRankAt(character.Level, scrollOfSpiritLevel[:])]
-		}
-		if elixir > 0 {
-			character.AddStat(stats.Spirit, elixir)
-		}
+	if elixir := spiritElixirs[consumes.SpiritElixir]; elixir > spiritOver {
+		character.AddStat(stats.Spirit, elixir-spiritOver)
 	}
+}
+
+// The Intellect and Spirit the raid buffs (applyBuffEffects) already gave that an elixir of the
+// stat doesn't stack with.
+//
+// Under Forever, Arcane Intellect overwrites the elixirs' Intellect and Divine Spirit their Spirit:
+// wowsims/forever's EV-0185 (an in-game check relayed on 2026-11-23, build 1.60.1.71037, their
+// PR #1185) read the character sheet with one buff added at a time. Under Arcane Intellect and
+// Divine Spirit, Elixir of Sages left the sheet at 245 Spirit, its tooltip reading "Your spirit is
+// increased by 0", and Elixir of Cunning left it at 262 Intellect though its tooltip still read 25.
+// Mark of the Wild stacks with the elixirs. Before 2026-11-25 ours stacked them, worth about 17 DPS
+// to Marksmanship through mana.
+func elixirStatsOverwritten(character *Character, raidBuffs *proto.RaidBuffs) (intellect, spirit float64) {
+	forever := character.Env != nil && character.Env.IsForever()
+	if raidBuffs.GetArcaneBrilliance() {
+		if forever {
+			intellect = foreverArcaneIntellect[HighestRankAt(character.Level, foreverArcaneIntellectLevel[:])]
+		}
+	} else if raidBuffs.GetScrollOfIntellect() {
+		intellect = scrollOfIntellect[HighestRankAt(character.Level, scrollOfIntellectLevel[:])]
+	}
+	if raidBuffs.GetDivineSpirit() {
+		if forever {
+			spirit = foreverDivineSpirit[HighestRankAt(character.Level, foreverDivineSpiritLevel[:])]
+		}
+	} else if raidBuffs.GetScrollOfSpirit() {
+		spirit = scrollOfSpirit[HighestRankAt(character.Level, scrollOfSpiritLevel[:])]
+	}
+	return intellect, spirit
 }
 
 // The Intellect and Spirit each elixir gives, from client 1.60.1.70338 (Elixir of Wisdom's spell 3166
