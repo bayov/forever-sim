@@ -32,6 +32,7 @@ const (
 	SpellCode_MagePyroblast
 	SpellCode_MageArcaneWrath
 	SpellCode_MageConeOfCold
+	SpellCode_MageBlizzard
 )
 
 var TalentTreeSizes = [3]int{18, 17, 18}

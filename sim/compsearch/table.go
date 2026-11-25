@@ -14,8 +14,8 @@ import (
 //
 // When Forever changes a class, we edit these rows. A row can move an effect to another class, add a
 // blessing, or take a totem away without touching the search. What stays in code is the three ways a
-// raid shares its effects: a paladin's blessings go to each class, a shaman's totems go to its party, and
-// warriors Sunder the boss at the pull. A new kind of sharing needs code.
+// raid shares its effects: a paladin's blessings go to each class, a shaman's water totems go to its party
+// (Packages; its other totems reach the raid), and warriors Sunder the boss at the pull. A new kind of sharing needs code.
 
 // Effect is one raid-wide effect a member can give, in the order the page's strip shows them.
 type Effect struct {

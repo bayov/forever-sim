@@ -46,7 +46,10 @@ func (priest *Priest) newStarshardsSpellConfig(rank int, cdTimer *core.Timer) co
 		SpellSchool: core.SpellSchoolArcane,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagAPL,
+		// Its ticks meet the target's full resistance and take the Spell Piercing bonus, where other
+		// channels' ticks meet a tenth (EV-0142: 232 of 237 partly resisted, 1.19 of the share;
+		// EV-0092: 16 of 218 binned at the caster's direct rate).
+		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagAPL | core.SpellFlagFullResistanceTicks,
 
 		RequiredLevel: StarshardsLevel[rank],
 		Rank:          rank,

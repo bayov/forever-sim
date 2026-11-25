@@ -694,8 +694,8 @@ export class Player<SpecType extends Spec> {
 	}
 
 	setBuffs(eventID: EventID, newBuffs: IndividualBuffs) {
-		// The world buffs are off for now, see the Settings tab. Saved settings and imports from
-		// before still have them, so we turn them off here.
+		// The world buffs are off: in Forever they have no effect in a raid instance, see the Settings
+		// tab. Saved settings and imports from before still have them, so we turn them off here.
 		newBuffs = {
 			...newBuffs,
 			rallyingCryOfTheDragonslayer: false,

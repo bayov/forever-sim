@@ -60,6 +60,11 @@ func emeraldWhelpingStatInheritance() core.PetStatInheritance {
 }
 
 func (whelp *EmeraldDragonWhelp) Initialize() {
+	if whelp.Env.IsForever() {
+		// EV-0021: under Forever the whelp is its owner's level (wowsims/forever, a level 57 log
+		// whose whelp's health, armor and Acid Spit fit level 57). The ruleset is known from here on.
+		whelp.Level = whelp.Owner.Level
+	}
 	whelp.registerAcidSpitSpell()
 }
 

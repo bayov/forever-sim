@@ -7,12 +7,15 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// sealOfWisdomProcChance is the chance a melee hit under Seal of Wisdom gives the paladin mana. The
-// client's aura rows say 100 (20166, 20356, 20357: ProcChance 100, proc types 4 and 16, the
-// paladin's melee swings and melee abilities) and its tooltip only "a chance", so the server decides,
-// as it does Judgement of Wisdom's 50% (core.judgementOfWisdomAura). We assume the same 50%.
-// Unverified; it matters little, since a rotation judges the seal and replaces it at once.
+// sealOfWisdomProcChance is the chance a melee hit under Seal of Wisdom gives the paladin mana in
+// Classic. The client's aura rows say 100 (20166, 20356, 20357: ProcChance 100, proc types 4 and
+// 16, the paladin's melee swings and melee abilities) and its tooltip only "a chance".
 const sealOfWisdomProcChance = 0.5
+
+// sealOfWisdomPPM is Seal of Wisdom's rate under Forever, on the main hand's speed: 187 of 269
+// landed melee hits at 2.6 sec for rank 1 at level 41, where 15 a minute gives 0.65, as Seal of
+// Light's 15 a minute (wowsims/forever EV-0018, EV-0017). Until 2026-11-25 the sim assumed 50%.
+const sealOfWisdomPPM = 15.0
 
 // Seal of Wisdom (client 1.60.1.70685): 30 sec, each melee attack has a chance to give the
 // paladin 50 / 71 / 90 mana (20168, 20350, 20351). Its judgement puts Judgement of Wisdom on the
@@ -80,6 +83,11 @@ func (paladin *Paladin) registerSealOfWisdom() {
 		})
 
 		manaMetrics := paladin.NewManaMetrics(core.ActionID{SpellID: rank.procID})
+		var ppmm *core.PPMManager
+		if paladin.Env.IsForever() {
+			m := paladin.AutoAttacks.NewPPMManager(sealOfWisdomPPM, core.ProcMaskMelee)
+			ppmm = &m
+		}
 		aura := paladin.RegisterAura(core.Aura{
 			Label:    "Seal of Wisdom" + paladin.Label + strconv.Itoa(i+1),
 			ActionID: core.ActionID{SpellID: rank.spellID},
@@ -88,7 +96,7 @@ func (paladin *Paladin) registerSealOfWisdom() {
 				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
-				if sim.Proc(sealOfWisdomProcChance, "Seal of Wisdom") {
+				if ppmm != nil && ppmm.Proc(sim, spell.ProcMask, "Seal of Wisdom") || ppmm == nil && sim.Proc(sealOfWisdomProcChance, "Seal of Wisdom") {
 					paladin.AddMana(sim, rank.procMana, manaMetrics)
 				}
 			},

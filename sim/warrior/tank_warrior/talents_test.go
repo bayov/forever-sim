@@ -209,7 +209,8 @@ func TestForeverTankHeroicStrikeDamage(t *testing.T) {
 }
 
 // TestForeverTankShieldBlockCharges checks that Shield Block's 2 charges (client 70425, 2565) go
-// one a block the boss's swings actually make, and that the 75% block goes with the last one.
+// one a block the boss's swings actually make, and that the 75% block goes with the last one's
+// spell batch.
 func TestForeverTankShieldBlockCharges(t *testing.T) {
 	sim, war := newForeverTankOf(t, P1Talents, true)
 	boss := war.CurrentTarget
@@ -233,7 +234,10 @@ func TestForeverTankShieldBlockCharges(t *testing.T) {
 		switch {
 		case result.DidBlock():
 			blocks++
-			if aura.IsActive() && aura.GetStacks() != stacks-1 {
+			if stacks == 1 {
+				// The last charge's block leaves the aura up to the end of its batch (EV-0004, EV-0047).
+				advance(sim, core.SpellBatchWindow+time.Millisecond)
+			} else if aura.IsActive() && aura.GetStacks() != stacks-1 {
 				t.Errorf("a block left %d charges of %d", aura.GetStacks(), stacks)
 			}
 		case aura.GetStacks() != stacks:

@@ -123,6 +123,13 @@ func (paladin *Paladin) registerSealOfCommand() {
 				spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 			},
 		}
+		if paladin.Env.IsForever() {
+			// EV-0155, EV-0156: the judgement's dummy lands on the melee table before the damage,
+			// and both roll the weapon procs and combat enchants, so a landed Judgement of Command
+			// rolls them twice (1.85 times one roll's procs over 17,148 judgements, 1.75 after hotfix
+			// push 114313). Windfury Totem and Vindication hear only the damage and roll once.
+			judgeConfig.Flags |= core.SpellFlagRollsWeaponProcsTwice
+		}
 		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{

@@ -470,34 +470,40 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		BattleSquawkAura(&character.Unit, numBattleSquawks)
 	}
 
-	// World Buffs
-	ApplyDragonslayerBuffs(&character.Unit, individualBuffs)
+	// World Buffs. Under Forever they all do nothing in a raid instance.
+	worldBuffsWork := !character.Env.ForeverRaidInstance()
 
-	if individualBuffs.SpiritOfZandalar {
+	if worldBuffsWork {
+		ApplyDragonslayerBuffs(&character.Unit, individualBuffs)
+	}
+
+	if individualBuffs.SpiritOfZandalar && worldBuffsWork {
 		ApplySpiritOfZandalar(&character.Unit)
 	}
 
-	if individualBuffs.SongflowerSerenade {
+	if individualBuffs.SongflowerSerenade && worldBuffsWork {
 		ApplySongflowerSerenade(&character.Unit)
 	}
 
-	ApplyWarchiefsBuffs(&character.Unit, individualBuffs, isAlliance, isHorde)
+	if worldBuffsWork {
+		ApplyWarchiefsBuffs(&character.Unit, individualBuffs, isAlliance, isHorde)
+	}
 
 	// Dire Maul Buffs
-	if individualBuffs.FengusFerocity {
+	if individualBuffs.FengusFerocity && worldBuffsWork {
 		ApplyFengusFerocity(&character.Unit)
 	}
 
-	if individualBuffs.MoldarsMoxie {
+	if individualBuffs.MoldarsMoxie && worldBuffsWork {
 		ApplyMoldarsMoxie(&character.Unit)
 	}
 
-	if individualBuffs.SlipkiksSavvy {
+	if individualBuffs.SlipkiksSavvy && worldBuffsWork {
 		ApplySlipkiksSavvy(&character.Unit)
 	}
 
 	// Darkmoon Faire Buffs
-	if individualBuffs.SaygesFortune != proto.SaygesFortune_SaygesUnknown {
+	if individualBuffs.SaygesFortune != proto.SaygesFortune_SaygesUnknown && worldBuffsWork {
 		ApplySaygesFortunes(character, individualBuffs.SaygesFortune)
 	}
 
@@ -2215,17 +2221,21 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // melee special (Judgement of Command, melee again since the same hotfixes) roll it, where the
 // client flag list of the November 12 rule (Attributes_3 0x400 / Attributes_0 0x4) left them out.
 // Off-hand swings and strikes don't. Nor do the paladin seals' on-hit procs, which are no melee
-// ability (SpellFlagNoWindfuryTotem). Nor does any extra attack (its own, Hand of Justice, Sword
-// Specialization, Thrash, Reckoning, or an ability that one of them swings): the user's log audit
-// (orchestration/standards.md item 17) found none roll it.
+// ability (SpellFlagNoWindfuryTotem).
+//
+// Extra attack swings roll it like any main hand swing (Hand of Justice, Sword Specialization,
+// Thrash, Reckoning, and an ability one of them swings): wowsims/forever EV-0008, logs after the
+// 2026-11-13 hotfix, 34 of 216 extra attack swings rolled it. The totem's own extra swing can roll
+// it too, but it lands in the same instant, inside the 100 ms cooldown its proc has just started,
+// so it never chains into another (as wowsims/forever's drivers.go). From 2026-11-12 to 2026-11-25
+// no extra attack rolled it, on the user's log audit of Nov 6-11 (before the hotfix; standards
+// item 17); the user's ruling of 2026-11-25 replaced that with EV-0008's log.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
 	rollsOn := func(spell *Spell) bool { return spell.ProcMask.Matches(ProcMaskMeleeMH) }
 	if character.Env.IsForever() {
-		rollsOn = func(spell *Spell) bool {
-			return !character.AutoAttacks.IsExtraAttack() && windfuryTotemRollsOnForever(spell)
-		}
+		rollsOn = windfuryTotemRollsOnForever
 	}
 	aura, roll := createExtraAttackAura(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rollsOn)
 	if character.Env.IsForever() {
@@ -2294,6 +2304,24 @@ func windfuryTotemRollsOnForever(spell *Spell) bool {
 ///////////////////////////////////////////////////////////////////////////
 //                            World Buffs
 ///////////////////////////////////////////////////////////////////////////
+
+// ForeverRaidInstance says whether a Forever fight is in a raid instance, where the world buffs do
+// nothing. Blizzard confirmed it (the user, 2026-11-25), and in the Forever client (1.60.1.70959)
+// the auras of Rallying Cry of the Dragonslayer (22888, Onyxia's and Nefarian's heads), Warchief's
+// Blessing (16609), Songflower Serenade (15366), Fengus' Ferocity (22817), Mol'dar's Moxie (22818),
+// Slip'kik's Savvy (22820) and every Sayge's Dark Fortune (23735 to 23738, 23766 to 23769) read
+// "No effect while in a raid instance". Spirit of Zandalar (24425) has no such text, but it is cut on
+// the user's ruling that no world buff works in a raid (2026-11-25).
+// No spell attribute or zone flag marks them, so the encounter says where the fight is: a leveling
+// session, an outdoor fight (outdoor_terrain), a PvP fight or one marked outside_raid is outside a
+// raid instance, and every other fight is a raid boss. Other rulesets have no such rule.
+func (env *Environment) ForeverRaidInstance() bool {
+	if !env.IsForever() {
+		return false
+	}
+	enc := &env.Encounter
+	return enc.leveling == nil && !enc.PvP && !enc.OutsideRaid && enc.OutdoorTerrain == proto.OutdoorTerrain_OutdoorTerrainNone
+}
 
 func ApplyDragonslayerBuffs(unit *Unit, buffs *proto.IndividualBuffs) {
 	eeCategory := "DragonslayerBuff"

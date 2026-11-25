@@ -65,6 +65,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	if warrior.Env.IsForever() {
 		multiplier = 1 + 0.02*float64(min(warrior.Talents.TwoHandedWeaponSpecialization, 3))
 		warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
+		warrior.twoHandSpecPhysical = multiplier
 		return
 	}
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
@@ -122,9 +123,9 @@ func isShieldBash(spellID int32) bool {
 	return false
 }
 
-// isShieldStrike is Shield Slam or Shield Bash. Under Forever they are off-hand specials struck with
-// the shield, so the off-hand weapon modifiers (Dual Wield Specialization, Furious Precision,
-// Weaponmaster's off-hand crit) pass them by (wowsims/forever b6ce30c972).
+// isShieldStrike is Shield Slam or Shield Bash. They strike with the shield, so the off-hand weapon
+// modifiers (Dual Wield Specialization, Furious Precision, Weaponmaster's off-hand crit) pass them
+// by; under Forever Shield Slam is a main-hand special no weapon proc hears (R-0010, R-0041).
 func isShieldStrike(spell *core.Spell) bool {
 	return spell.SpellCode == SpellCode_WarriorShieldSlam || isShieldBash(spell.SpellID)
 }
@@ -241,6 +242,8 @@ func (warrior *Warrior) applyUnbridledWrath() {
 	rageGain := 1.0
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
+	// EV-0174 (the user's own log, levels 42 to 47, Defiance 3): 5 threat a Rage, no stance or Defiance.
+	rageMetrics.UnscaledThreat = true
 	forever := warrior.Env.IsForever()
 
 	// Push 114097's melee abilities: the ones that deal damage (Heroic Strike and Cleave, whose
@@ -561,6 +564,8 @@ func (warrior *Warrior) applyShieldSpecialization() {
 
 	procChance := 0.2 * float64(warrior.Talents.ShieldSpecialization)
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12727})
+	// EV-0043: 25 threat a 5 Rage proc in Defensive Stance, never 45 (5 x 1.8).
+	rageMetrics.UnscaledThreat = true
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Shield Specialization",
@@ -587,6 +592,8 @@ func (warrior *Warrior) applyMasterOfDefense() {
 	procChance := 0.5 * float64(warrior.Talents.MasterOfDefense)
 	rageGain := 5.0
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12727, Tag: 1})
+	// EV-0045: 5 threat a Rage in either stance, never 45 a proc.
+	rageMetrics.UnscaledThreat = true
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Master of Defense",
