@@ -98,67 +98,147 @@
 		"trueshot_aura"
 	],
 	"hunter__beast-mastery": [
-		"judgement_of_the_crusader",
-		"power_word_fortitude"
-	],
-	"hunter__beast-mastery+camps": [
-		"camp.first_aid_kit",
-		"judgement_of_the_crusader",
-		"power_word_fortitude"
-	],
-	"hunter__beast-mastery-tallstrider": [
-		"judgement_of_the_crusader",
-		"power_word_fortitude"
-	],
-	"hunter__beast-mastery-tallstrider+camps": [
-		"camp.first_aid_kit",
-		"judgement_of_the_crusader",
-		"power_word_fortitude"
-	],
-	"hunter__beast-mastery-wolf": [
+		"battle_shout",
+		"blessing_of_might",
 		"furious_howl",
-		"judgement_of_the_crusader",
-		"power_word_fortitude"
-	],
-	"hunter__beast-mastery-wolf+camps": [
-		"camp.first_aid_kit",
-		"furious_howl",
-		"judgement_of_the_crusader",
-		"power_word_fortitude"
-	],
-	"hunter__marksmanship": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury"
+	],
+	"hunter__beast-mastery+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury"
+	],
+	"hunter__beast-mastery-tallstrider": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury"
+	],
+	"hunter__beast-mastery-tallstrider+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury"
+	],
+	"hunter__beast-mastery-wolf": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury"
+	],
+	"hunter__beast-mastery-wolf+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury"
+	],
+	"hunter__marksmanship": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"hunter__marksmanship+camps": [
+		"battle_shout",
+		"blessing_of_might",
 		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"hunter__marksmanship-tallstrider": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"hunter__marksmanship-tallstrider+camps": [
+		"battle_shout",
+		"blessing_of_might",
 		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"hunter__marksmanship-wolf": [
+		"battle_shout",
+		"blessing_of_might",
 		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"hunter__marksmanship-wolf+camps": [
+		"battle_shout",
+		"blessing_of_might",
 		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
 		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"hunter__survival": [
@@ -180,11 +260,13 @@
 		"power_word_fortitude"
 	],
 	"hunter__survival-wolf": [
+		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude"
 	],
 	"hunter__survival-wolf+camps": [
 		"camp.first_aid_kit",
+		"furious_howl",
 		"judgement_of_the_crusader",
 		"power_word_fortitude"
 	],
@@ -319,9 +401,11 @@
 		"trueshot_aura"
 	],
 	"paladin__level_60_sub_holy-duty-crusader": [
+		"judgement_of_the_crusader",
 		"trueshot_aura"
 	],
 	"paladin__level_60_sub_holy-duty-crusader+camps": [
+		"judgement_of_the_crusader",
 		"trueshot_aura"
 	],
 	"paladin__level_60_sub_holy-duty-wisdom": [
@@ -950,14 +1034,12 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-battle-shout+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
-		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -967,7 +1049,6 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-sunder": [
@@ -979,14 +1060,12 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
-		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -995,7 +1074,6 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	]
 }
