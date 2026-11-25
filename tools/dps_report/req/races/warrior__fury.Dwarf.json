@@ -41,7 +41,7 @@
     "enchant": 1887
    },
    {
-    "id": 260219
+    "id": 275972
    },
    {
     "id": 275976
@@ -66,5 +66,5 @@
   ]
  },
  "note": "Alliance: wears level60_phase0_fury_dw_alliance, the set without the Horde rewards",
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_fury_dw. It wears level60_phase0_fury_dw_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 9% against the 8% yellow cap: trading the 1% excess for bonus stats lost or tied at 2 SE (-1.52 \u00b1 0.25), so the set is worn as it is."
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_fury_dw. It wears level60_phase0_fury_dw_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 10% against the 8% yellow cap: trading the 1% excess for bonus stats lost or tied at 2 SE (-1.20 \u00b1 0.25), so the set is worn as it is."
 }
