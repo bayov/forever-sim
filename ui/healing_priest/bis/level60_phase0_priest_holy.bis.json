@@ -1,0 +1,167 @@
+{
+ "name": "Phase 0",
+ "spec": "priest_holy",
+ "class": "PRIEST",
+ "race": "Human",
+ "faction": "Alliance",
+ "level": 60,
+ "talents": "00500503113-03505103030121531",
+ "durations": [
+  0
+ ],
+ "use_dur": 0,
+ "dps": 132.7,
+ "made": "2026-11-25",
+ "sim": "seed from the full search's gear (container restart)",
+ "slots": {
+  "head": [
+   {
+    "id": 226957,
+    "name": "Virtuous Cowl",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 1509
+   }
+  ],
+  "neck": [
+   {
+    "id": 19426,
+    "name": "Orb of the Darkmoon",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 1249058
+   }
+  ],
+  "shoulder": [
+   {
+    "id": 226955,
+    "name": "Virtuous Epaulets",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ],
+  "back": [
+   {
+    "id": 18510,
+    "name": "Hide of the Wild",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 1888
+   }
+  ],
+  "chest": [
+   {
+    "id": 14626,
+    "name": "Necropile Robe",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ],
+  "wrist": [
+   {
+    "id": 226953,
+    "name": "Virtuous Wraps",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 2566
+   }
+  ],
+  "hands": [
+   {
+    "id": 226958,
+    "name": "Virtuous Hands",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ],
+  "waist": [
+   {
+    "id": 228190,
+    "name": "Knowledge of the Timbermaw",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ],
+  "legs": [
+   {
+    "id": 226956,
+    "name": "Virtuous Leggings",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 1254966
+   }
+  ],
+  "feet": [
+   {
+    "id": 226959,
+    "name": "Virtuous Slippers",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 1254966
+   }
+  ],
+  "finger": [
+   {
+    "id": 22334,
+    "name": "Band of Mending",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   },
+   {
+    "id": 275977,
+    "name": "Watcher's Signet of Brilliance",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ],
+  "trinket": [
+   {
+    "id": 10455,
+    "name": "Chained Essence of Eranikus",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   },
+   {
+    "id": 272438,
+    "name": "Weakness Analyzer",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ],
+  "mainhand": [
+   {
+    "id": 812,
+    "name": "Glowing Brightwood Staff",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true,
+    "enchant": 1219580
+   }
+  ],
+  "offhand": [],
+  "ranged": [
+   {
+    "id": 22408,
+    "name": "Ritssyn's Wand of Bad Mojo",
+    "dps": 132.7,
+    "loss": 0,
+    "bis": true
+   }
+  ]
+ },
+ "enchants": {}
+}
