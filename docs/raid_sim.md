@@ -973,7 +973,13 @@ For each signature:
      Mastery, Lone Wolf, Marksmanship, fire, frostfire, sub Holy Ret, Shadow, Demonology, fire
      Destruction).
    - The best shaman of each package kind fills too, for its party's mana.
-   - A provider's duty variants are providers only, never fillers.
+   - A provider's duty variants are providers, and fillers only when the model puts one at or above its
+     base under the full set (2026-11-25). With its effect already up, a duty build's own rotation can be
+     the better one: Fury on Battle Shout does about 922 to plain Fury's 917 with a shout up, so the best
+     5-player comp of the brute-force check has two shouting warriors, which the search couldn't make when
+     a duty variant entered only to cover a role nobody had. A duty filler, like any giver, fills only a
+     set where its effect is already up. Checking against the base keeps the rest out, so it costs a
+     filler or two, not one per duty.
 2. **Rank every buff set with a model.** The model is each build's DPS under the full set, less what each
    missing role costs it. Those costs come from the search's own single-player sims: one per build with
    each role removed from the full set, at the run's length, race and camp setting (29 sims for each of
@@ -1009,7 +1015,7 @@ For each signature:
 4. **Fill a buff set exactly:**
    - The provider members are in. Each one runs its duty variant for what it holds, simmed with that effect
      off in its own settings, so it pays the assignment's cost. In the search, only provider members the
-     search chose hold duties. Fillers hold none.
+     search chose hold duties, and a duty variant that fills (step 1) holds its own.
    - Per-member choices are separable, so they're solved exactly inside the fill:
      - each class's blessings, picked by what they add summed over that class's members, providers
        included
