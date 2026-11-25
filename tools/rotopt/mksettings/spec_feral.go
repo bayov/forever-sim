@@ -27,7 +27,7 @@ func init() {
 				DefaultConjured:   proto.Conjured_ConjuredRogueThistleTea,
 				DefaultPotion:     proto.Potions_MightyRagePotion,
 				DragonBreathChili: true,
-				FillerExplosive:   proto.Explosive_ExplosiveEZThroDarkBomb,
+				FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine, // EV-0088 (ui/feral_druid/presets.ts)
 				Flask:             proto.Flask_FlaskOfNaturalAggression,
 				Food:              proto.Food_FoodFlankAuPoivre,
 				MainHandImbue:     proto.WeaponImbue_DenseWeightstone,

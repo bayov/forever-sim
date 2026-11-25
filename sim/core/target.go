@@ -186,6 +186,10 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	if target.Level == 0 {
 		target.Level = defaultRaidBossLevel
 	}
+	// A raid boss can't be stunned: a stun explosive comes back immune under Forever, its damage
+	// included (wowsims/forever EV-0088: Thorium Grenade 7 of 7 immune with no damage on bosses).
+	// Like theirs, a target at the raid boss level or above counts as one.
+	target.StunImmune = target.Level >= defaultRaidBossLevel
 
 	target.AddStatDependency(stats.Defense, stats.Dodge, MissDodgeParryBlockCritChancePerDefense)
 	target.AddStatDependency(stats.Defense, stats.Parry, MissDodgeParryBlockCritChancePerDefense)

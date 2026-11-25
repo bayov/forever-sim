@@ -150,17 +150,20 @@ func TestForeverShieldBlockRecastRefills(t *testing.T) {
 	}
 }
 
-// TestForeverShieldSlamIsOffHand checks that under Forever Shield Slam is an off-hand special,
-// struck with the shield (wowsims/forever b6ce30c972): main hand procs such as Windfury Totem and
-// weapon enchants never see it, Dual Wield Specialization and Furious Precision leave it alone,
-// and a procs-per-minute rate on it goes by the main hand's speed.
-func TestForeverShieldSlamIsOffHand(t *testing.T) {
+// TestForeverShieldSlamIsMainHandSpecial checks that under Forever Shield Slam is a main-hand
+// special (R-0010, EV-0012: the main hand's equip procs hear it) that no weapon proc, combat enchant
+// or Windfury Totem hears (R-0041, EV-0155), with the main hand's attack table, and that Dual Wield
+// Specialization and Furious Precision leave it alone.
+func TestForeverShieldSlamIsMainHandSpecial(t *testing.T) {
 	_, bare := newForeverTank(t, "--251533120331221351")
 	_, specced := newForeverTank(t, "-000030005-251533120331221351") // Furious Precision 3/3, Dual Wield Specialization 5/5
 	slam := specced.ShieldSlam.Spell
 
-	if slam.ProcMask != core.ProcMaskMeleeOHSpecial {
-		t.Errorf("Shield Slam's proc mask is %v, want the off-hand special mask", slam.ProcMask)
+	if slam.ProcMask != core.ProcMaskMeleeMHSpecial {
+		t.Errorf("Shield Slam's proc mask is %v, want the main-hand special mask", slam.ProcMask)
+	}
+	if !slam.Flags.Matches(core.SpellFlagSuppressWeaponProcs) || !slam.Flags.Matches(core.SpellFlagNoWindfuryTotem) {
+		t.Errorf("Shield Slam's flags %v should suppress weapon procs and Windfury Totem", slam.Flags)
 	}
 	if slam.CastType != proto.CastType_CastTypeMainHand {
 		t.Errorf("Shield Slam uses the %v attack table, want the main hand's", slam.CastType)
@@ -170,13 +173,10 @@ func TestForeverShieldSlamIsOffHand(t *testing.T) {
 			slam.DamageMultiplier, slam.BonusHitRating, bareSlam.DamageMultiplier, bareSlam.BonusHitRating)
 	}
 
+	// An equip proc on the main hand's hits rolls on it at the main hand's speed.
 	mainHandOnly := specced.AutoAttacks.NewPPMManager(6, core.ProcMaskMeleeMH)
-	if got := mainHandOnly.Chance(slam.ProcMask); got != 0 {
-		t.Errorf("a main hand weapon proc rolls on Shield Slam at %v, want never", got)
-	}
-	anyMelee := specced.AutoAttacks.NewPPMManager(6, core.ProcMaskMelee)
-	if got, want := anyMelee.Chance(slam.ProcMask), specced.AutoAttacks.MH().SwingSpeed*6/60; math.Abs(got-want) > 1e-9 {
-		t.Errorf("a 6 PPM melee proc rolls on Shield Slam at %v, want the main hand's %v", got, want)
+	if got, want := mainHandOnly.Chance(slam.ProcMask), specced.AutoAttacks.MH().SwingSpeed*6/60; math.Abs(got-want) > 1e-9 {
+		t.Errorf("a 6 PPM main hand proc rolls on Shield Slam at %v, want the main hand's %v", got, want)
 	}
 }
 
