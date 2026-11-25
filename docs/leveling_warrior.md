@@ -52,8 +52,38 @@ Talents that only matter alone: Gore Drinker heals 0.5 or 1% of max health for e
 hits after a trigger. Lingering Rage delays the rage decay by 2 sec a point, and Anger Management
 slows it by 30% and gives its rage only in combat. Vanguard lets Charge work in Defensive Stance.
 
+Gore Drinker, Victory Rush, Shield Specialization and Master of Defense match our logs (checked on
+2026-11-25). Each target a Whirlwind or Cleave lands on uses one of Gore Drinker's 3 hits, and Thunder
+Clap uses none. Victory Rush heals on a miss too. Shield Specialization 5/5 gives 5 Rage on every block
+and Master of Defense 2/2 on every dodge and parry, with no cooldown. One small gap is left: Victory
+Rush's heal crits about 5% of the time for half more, and the sim's doesn't.
+
 A stunned mob can't dodge, parry or block, and doesn't swing. Its swing timer goes on, so a swing
 that came due lands when the stun ends.
+
+### Surviving a big pull
+
+The Recovery enchant, Thrill of Adventure, the Krol'dok set, shield spikes and health per 5 sec gear
+are in `docs/leveling_sim.md`, "Healing while we fight". All of them are off by default.
+
+We measured them on the Undead protection warrior with 600 sessions each, a pack of up to 12 and a
+camp (2026-11-25). The base rotation is the one tuned without them, so these are low estimates. The
+numbers are XP an hour.
+
+| | Level 40 | Level 58 |
+|---|---|---|
+| None | 43,950 ± 90 | 50,650 ± 90 |
+| Recovery | +840 | +1,900 |
+| Mithril Spike at 40, Thorium Spike at 58 | +1,640 | +1,850 |
+| Thrill of Adventure 5/5 | +950 | +1,830 |
+| Krol'dok set | +880 (a test, since it needs 41) | +1,140 |
+| 10 health per 5 sec | +550 | +500 |
+| All five | +2,570 | +5,410 |
+| All five, gathering 6 mobs | 48,560 against 38,160 without | 56,050 (the tuned rotation gathers 6) |
+| Thorns | +1,810 | +2,120 |
+
+With all five the best of 4, 6, 8, 10 and 12 mobs to gather is 6 at level 40, where it's 4 without
+them. Gathering 10 or 12 still dies too often.
 
 ### Left out
 

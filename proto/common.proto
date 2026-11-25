@@ -1317,6 +1317,16 @@ message LevelingOptions {
 	// looting each one takes after the fight (default 1). Both only with camp_mobs.
 	double respawn = 29;
 	optional double loot_time = 30;
+
+	// Points in the Legacy perk Thrill of Adventure, 0 to 5 (default 0). Each mob we kill that
+	// gives experience heals 1% of our max health a point over 10 sec, and as much mana.
+	int32 thrill_of_adventure = 32;
+	// Gives us the 4 piece bonus of Krol'dok Battlegear (each block heals about 18, at most once
+	// a second) without wearing it, from this level on. Default 0: only when we wear the pieces.
+	int32 krol_dok_set_from_level = 33;
+	// Health that "Restores X health per 5 sec" gear gives every 5 sec, in combat and out of it, on
+	// top of Spirit's regen (default 0). The sim has no such item stat.
+	double health_regen_per5 = 34;
 }
 
 message PresetTarget {

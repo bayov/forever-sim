@@ -123,6 +123,7 @@ type levelingSession struct {
 
 	healthMetrics, reviveHealthMetrics *ResourceMetrics
 	drinkMetrics, reviveManaMetrics    *ResourceMetrics
+	gearRegenMetrics                   *ResourceMetrics
 	// The food, water and bandage as spells of ours, with their auras (registerRestSpells).
 	foodSpell, drinkSpell, bandageSpell                    *Spell
 	foodAura, drinkAura, bandageAura, recentlyBandagedAura *Aura
@@ -174,6 +175,10 @@ type levelingOptions struct {
 	campMobs              int
 	campOutside           float64
 	respawnTime, lootTime time.Duration
+
+	// Heals (leveling_heals.go).
+	thrillOfAdventure, krolDokFromLevel int32
+	healthRegenPer5                     float64
 }
 
 func resolveLevelingOptions(o *proto.LevelingOptions, level int32) levelingOptions {
@@ -210,6 +215,10 @@ func resolveLevelingOptions(o *proto.LevelingOptions, level int32) levelingOptio
 		campOutside:       7,
 		respawnTime:       seconds(o.Respawn, 300),
 		lootTime:          time.Second,
+
+		thrillOfAdventure: o.ThrillOfAdventure,
+		krolDokFromLevel:  o.KrolDokSetFromLevel,
+		healthRegenPer5:   o.HealthRegenPer5,
 	}
 	if o.CampMobs < 0 {
 		camp := usualCampAt(level)
@@ -626,6 +635,7 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 			healed = s.heal(sim, regen*trollCombatHealthRegen, s.healthMetrics)
 		}
 	}
+	healed = s.gearRegen(sim, seconds) || healed
 
 	switch s.state {
 	case levelingBandaging, levelingResting:
