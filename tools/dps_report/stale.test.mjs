@@ -100,6 +100,35 @@ test('tools/dashstats and the report switches stale the DPS builds, a patch file
 	assert.deepEqual(staleOf(r.json(), 'heal'), HEAL.slice().sort());
 });
 
+test("a spec's other-faction Phase 0 set stales its presets", () => {
+	const r = repo();
+	const out = 'ui/healing_priest/gear_sets/level60_phase0_priest_holy';
+	r.put('tools/rotopt/phase0_specs.json', {
+		specs: {
+			priest_holy: { bench: 'heal', reqFile: 'tools/healbench/req/priest_holy.json', raidReqFile: 'tools/healbench/req/priest_holy_raid.json', gearOut: `${out}.gear.json` },
+			hunter_bm: { gearOut: 'ui/hunter/gear_sets/level60_phase0_hunter_bm.gear.json' },
+		},
+	});
+	r.commit('specs, no faction set yet');
+	assert.deepEqual(r.json().benches, []);
+	r.put(`${out}.gear.json`, { items: [{ id: 3 }] });
+	r.put('ui/hunter/gear_sets/level60_phase0_hunter_bm_horde.gear.json', { items: [{ id: 3 }] });
+	r.commit('the preset faction set and a DPS faction set');
+	assert.deepEqual(r.json().benches, []);
+	r.put(`${out}_horde.gear.json`, { items: [{ id: 3 }] });
+	r.commit('the horde set');
+	assert.deepEqual(staleOf(r.json(), 'heal'), ['priest_holy', 'priest_holy_raid']);
+	assert.deepEqual(staleOf(r.json(), 'tank'), []);
+	r.stale('--record-bench', 'heal');
+	r.commit('record');
+	assert.deepEqual(r.json().benches, []);
+	const db = JSON.parse(fs.readFileSync(path.join(r.dir, 'assets/database/db.json'), 'utf8'));
+	db.items.find(x => x.id === 3).name = 'horde set item, changed';
+	r.put('assets/database/db.json', db);
+	r.commit('an item the horde set wears');
+	assert.deepEqual(staleOf(r.json(), 'heal'), ['priest_holy', 'priest_holy_raid']);
+});
+
 test('a class package stales only the presets whose raid has the class', () => {
 	const r = repo();
 	edit(r, 'sim/shaman/shaman.go');
