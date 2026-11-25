@@ -13,6 +13,8 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
 - All three: RANK_ONLY over the armor slots after the Premier PvP drop (no Premier item was a pick or in a top 5).
 - Rotation: re-searched on the threat fixes (docs/tank_druid.md, "Re-searched on the tank threat fixes").
   Max threat Enrage under 80 Rage (+3), Max survival Lacerate refresh at 6s (+19). Talents kept.
+- Rotation and talents re-checked on the Phase 0 gear (knob and talent search, paired checks): nothing
+  beats noise (best: Balanced Frenzied Regeneration at any Rage +7 ± 11, Max survival Roar at 2s +8 ± 9). No change.
 
 ## Tags added
 
