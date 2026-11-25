@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0",
   "apl": "optimized",
   "published": {
-    "dps": 981.58,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 960.23,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 982.4,
-    "stderr": 0.42,
+    "dps": 960.23,
+    "stderr": 0.41,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on the Phase 0 set level60_phase0 (step 4, 2026-11-24), wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "The default Enhancement build, with Improved Ghost Wolf for utility.",
   "keyTalents": [

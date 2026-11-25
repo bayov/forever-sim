@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_feral",
   "apl": "level60_ff",
   "published": {
-    "dps": 1052.38,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 1053.45,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 1049.76,
+    "dps": 1053.45,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "The cat build, keeping Faerie Fire on the boss for the raid. Forever has no Faerie Fire (Feral): the cat casts the caster Faerie Fire, free in Cat Form. Its own attacks gain from the armor cut, so it costs only a few GCDs.",
   "keyTalents": [
