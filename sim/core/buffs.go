@@ -2221,17 +2221,21 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // melee special (Judgement of Command, melee again since the same hotfixes) roll it, where the
 // client flag list of the November 12 rule (Attributes_3 0x400 / Attributes_0 0x4) left them out.
 // Off-hand swings and strikes don't. Nor do the paladin seals' on-hit procs, which are no melee
-// ability (SpellFlagNoWindfuryTotem). Nor does any extra attack (its own, Hand of Justice, Sword
-// Specialization, Thrash, Reckoning, or an ability that one of them swings): the user's log audit
-// (orchestration/standards.md item 17) found none roll it.
+// ability (SpellFlagNoWindfuryTotem).
+//
+// Extra attack swings roll it like any main hand swing (Hand of Justice, Sword Specialization,
+// Thrash, Reckoning, and an ability one of them swings): wowsims/forever EV-0008, logs after the
+// 2026-11-13 hotfix, 34 of 216 extra attack swings rolled it. The totem's own extra swing can roll
+// it too, but it lands in the same instant, inside the 100 ms cooldown its proc has just started,
+// so it never chains into another (as wowsims/forever's drivers.go). From 2026-11-12 to 2026-11-25
+// no extra attack rolled it, on the user's log audit of Nov 6-11 (before the hotfix; standards
+// item 17); the user's ruling of 2026-11-25 replaced that with EV-0008's log.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
 	rollsOn := func(spell *Spell) bool { return spell.ProcMask.Matches(ProcMaskMeleeMH) }
 	if character.Env.IsForever() {
-		rollsOn = func(spell *Spell) bool {
-			return !character.AutoAttacks.IsExtraAttack() && windfuryTotemRollsOnForever(spell)
-		}
+		rollsOn = windfuryTotemRollsOnForever
 	}
 	aura, roll := createExtraAttackAura(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rollsOn)
 	if character.Env.IsForever() {

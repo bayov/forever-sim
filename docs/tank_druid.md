@@ -336,7 +336,7 @@ rule (`sim/windfury_totem_rule_test.go`). Raw output: `orchestration/tank_handof
 
 Blizzard's hotfixes of November 13 make Windfury Totem roll on every landed main hand melee hit, white or special
 (standards 17; `windfuryTotemRollsOnForever` in `sim/core/buffs.go`: a `ProcMaskMeleeMH` spell without
-`SpellFlagNoWindfuryTotem`, and never during an extra attack). For the bear that adds Lacerate's hit, Primal Bite,
+`SpellFlagNoWindfuryTotem`; until 2026-11-25 never during an extra attack, since then extra attacks roll it too, EV-0008). For the bear that adds Lacerate's hit, Primal Bite,
 Swipe and Bash to Maul and the white swings; Lacerate's ticks and Demoralizing Roar don't roll. On the update-1115
 base the presets read (six-boss mean at their own weight, 10,000 iterations, seed 1, `rotopt -eval`): Max threat
 2,788.2 → **3,110.0**, Balanced 1,862.8 → **2,120.2**, Max survival 224 → **361.4**, all of it the rule.

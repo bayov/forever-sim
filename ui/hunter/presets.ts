@@ -311,11 +311,14 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.MajorManaPotion,
 	// The Goblin Land Mine and the Goblin Sapper Charge only reach 10 yd (2026-11-01), and the ranged
 	// specs stand at 12 yd (Beast Mastery) or 25 yd (Marksmanship, Lone Wolf). The Land Mine's 1 sec
-	// cast doesn't fit a melee weave (1.0 to 1.7 behind), so they throw the EZ-Thro Dark Bomb: +2.8 to
-	// +3.9 at 180 sec over none, 1.0 to 1.4 ahead of Dense Dynamite and the Thorium Grenade. They take
-	// no Sapper (consumables-20261101-1): it goes off only when a melee weave has the hunter within its
-	// 10 yd at its cooldown, worth 0.4 Beast Mastery, 0.1 Marksmanship and 0.0 Lone Wolf at 180 sec.
-	fillerExplosive: Explosive.ExplosiveEZThroDarkBomb,
+	// cast doesn't fit a melee weave (1.0 to 1.7 behind). They threw the EZ-Thro Dark Bomb until
+	// 2026-11-25, when a stun explosive started doing nothing to a raid boss (EV-0088): on the report
+	// requests Dense Dynamite is +8.8 Beast Mastery, +7.9 Marksmanship and +11.9 Lone Wolf over the
+	// Dark Bomb and +2.6 to +8.4 over none at 180 sec, level with the Holy Hand Grenade (the same 400
+	// average) and 3.5 to 4.3 ahead of Solid Dynamite. They take no Sapper (consumables-20261101-1):
+	// it goes off only when a melee weave has the hunter within its 10 yd at its cooldown, worth 0.4
+	// Beast Mastery, 0.1 Marksmanship and 0.0 Lone Wolf at 180 sec.
+	fillerExplosive: Explosive.ExplosiveDenseDynamite,
 	// The natural flask (standards 11, 2026-10-23, rechecked on the gear for the 8% hit cap):
 	// Aggression, on Beast Mastery / Lone Wolf at 180 sec 14.4 / 6.6 ahead of Swiftness, 37.1 / 39.6 of
 	// Accuracy (the hit is capped) and 36.0 / 20.9 of the Flask of Distilled Wisdom. Major Mana Potion is
@@ -343,7 +346,8 @@ export const SurvivalConsumes = Consumes.create({
 	// 1000003 (+6.2 / +6.0 at 120, +7.8 / +7.7 at 300). The EZ-Thro Dark Bomb ties the Land Mine (the
 	// same 450 average and the same cast) and the EZ-Thro Thorium Grenade is 0.9 behind it. The Goblin
 	// Sapper Charge needs no cast and stays (+4.7 at 180 sec). The ranged specs throw the EZ-Thro Dark
-	// Bomb (see DefaultConsumes).
+	// Bomb (see DefaultConsumes). Since 2026-11-25 a throw keeps the swing timer (EV-0088, the user's
+	// ruling of that day), so this pick is due a re-check.
 	// The natural flask (standards 11, 2026-10-23): Precision, +50.7 over none at 180 sec; on the gear
 	// for the 8% hit cap +30.0 over Accuracy, +31.3 over Swiftness and +32.8 over Aggression. Major
 	// Frenzy Potion stays 1.0 ahead of the Dragonfire Potion and 1.4 of Caustic Smog.
