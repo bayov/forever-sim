@@ -21,7 +21,9 @@ const restoAncestralHealingTalents = "-035-5530503015513151"
 func TestHealingFightShamanAncestralFortitude(t *testing.T) {
 	rsr := healingRaid(t, 1, 1, 0)
 	rsr.Raid.Parties[0].Players[1].TalentsString = restoAncestralHealingTalents
-	rsr.Encounter.Duration = 120
+	// 180 sec: one fight's rolls follow the tank's Rage, and at 120 this seed's buff no longer came
+	// and went in time once Rage from hits taken followed the stance (2026-11-25).
+	rsr.Encounter.Duration = 180
 	sim := core.NewSim(rsr, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()
