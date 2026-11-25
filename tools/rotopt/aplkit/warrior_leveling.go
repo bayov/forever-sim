@@ -69,7 +69,7 @@ var warriorAbilities = []warriorAbility{
 
 // The abilities that are talents, by their field names in the talent tree.
 var warriorTalentAbilities = []string{"deathWish", "recklessSwings", "bloodthirst", "mortalStrike", "shieldSlam", "concussionBlow",
-	"lastStand", "sweepingStrikes", "spearingStrike", "vanguard", "improvedSlam"}
+	"lastStand", "sweepingStrikes", "spearingStrike", "vanguard", "improvedSlam", "goreDrinker"}
 
 type warriorLevelingTemplate struct{}
 
@@ -158,15 +158,22 @@ func (WarriorLeveling) Knobs() []Knob {
 		{Name: "berserkerRage", Default: 1, Min: 0, Max: 1, Step: 1, Needs: []string{"berserkerRage"}, Kind: KnobSteady},
 		{Name: "deathWish", Default: 1, Min: 0, Max: 3, Step: 1, Needs: []string{"deathWish"}},
 		{Name: "recklessSwingsAbove", Default: 0, Min: 0, Max: 90, Step: 30, Needs: []string{"recklessSwings"}, Kind: KnobThreshold},
+		// Gore Drinker heals with our next three hits after Bloodrage, Reckless Swings or Berserker Rage.
+		// Below this health we use them for that at any rage, when its heals have run out.
+		{Name: "goreFeedBelow", Default: 80, Min: 0, Max: 100, Step: 20, Needs: []string{"goreDrinker"}, Kind: KnobThreshold},
+		{Name: "goreDance", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"goreDrinker", "berserkerRage"}},
 		{Name: "recklessness", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"recklessness"}, Kind: KnobSteady},
 		{Name: "sweepingStrikes", Default: 1, Min: 0, Max: 1, Step: 1, Needs: []string{"sweepingStrikes"}},
 		{Name: "concussionBlowMobs", Default: 0, Min: 0, Max: 3, Step: 1, Needs: []string{"concussionBlow"}},
 		{Name: "shieldBlockMobs", Default: 2, Min: 0, Max: 4, Step: 1, Needs: []string{"shieldBlock"}},
 		{Name: "retaliationMobs", Default: 3, Min: 0, Max: 6, Step: 1, Needs: []string{"retaliation"}},
-		{Name: "lastStandBelow", Default: 30, Min: 0, Max: 50, Step: 10, Needs: []string{"lastStand"}, Kind: KnobThreshold},
+		{Name: "lastStandBelow", Default: 30, Min: 0, Max: 90, Step: 10, Needs: []string{"lastStand"}, Kind: KnobThreshold},
 		{Name: "shieldWallBelow", Default: 30, Min: 0, Max: 60, Step: 20, Needs: []string{"shieldWall"}, Kind: KnobThreshold},
 	}
 }
+
+// Gore Drinker's buff, the three hits that heal.
+const warriorGoreDrinkerAura = 1323969
 
 const (
 	warriorStanceBattle = iota
@@ -302,6 +309,20 @@ func (t WarriorLeveling) Build(k Knobs) *proto.APLRotation {
 			when = inCombat
 		}
 		add(Cast(top(warriorBloodrage), And(when, Ge(CurrentHealthPercent(), Pct(k["bloodrageAbove"])), Le(CurrentRage(), Num(40))), "Bloodrage for rage while healthy."))
+	}
+	if k["goreFeedBelow"] > 0 {
+		low := And(Ge(TalentPoints("goreDrinker"), Num(1)), fighting, Lt(CurrentHealthPercent(), Pct(k["goreFeedBelow"])), Not(AuraIsActive(SpellID(warriorGoreDrinkerAura))))
+		// Both cost health, so we stop short of dying to them.
+		safe := And(low, Gt(CurrentHealthPercent(), Pct(30)))
+		add(Cast(SpellID(1329555), safe, "Reckless Swings for Gore Drinker, without the talent ignore the warning on this line."))
+		if knows(warriorBloodrage) {
+			add(Cast(top(warriorBloodrage), safe, "Bloodrage for Gore Drinker."))
+		}
+		if k["goreDance"] == 1 && knows(warriorBerserkerRage) {
+			ready := SpellIsReady(top(warriorBerserkerRage))
+			add(Cast(SpellID(warriorStanceIDs[warriorStanceBerserker]), And(low, ready, swapRage, Not(inStance(warriorStanceBerserker))), "Berserker Stance for Berserker Rage."),
+				Cast(top(warriorBerserkerRage), low, "Berserker Rage for Gore Drinker."))
+		}
 	}
 	if k["retaliationMobs"] > 0 && knows(warriorRetaliation) {
 		n := onUs(k["retaliationMobs"])
