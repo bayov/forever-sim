@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-25T00:00:00Z",
- "pass": 102,
- "result": "quiet",
- "note": "Seeded from the long-running auditor session at the move to the audit loop.",
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 103,
+ "result": "findings",
+ "note": "results-20261125-1 found and resolved: 49 metas rewritten from 20k runs after the trinket fix; 16 builds re-simmed; stale 0 of 68.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T00:59:33Z",
+ "checked_at": "2026-11-25T03:50:00Z",
  "baseline": "0facd9428"
 }

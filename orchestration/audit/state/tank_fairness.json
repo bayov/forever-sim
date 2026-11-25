@@ -1,11 +1,12 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-24T18:50:10Z",
- "pass": 30,
- "result": "findings",
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 31,
+ "result": "quiet",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-25T00:59:33Z",
- "baseline": "ref/tank_fairness/summary.tsv"
+ "checked_at": "2026-11-25T03:50:00Z",
+ "baseline": "ref/tank_fairness/summary.tsv",
+ "note": "Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics."
 }

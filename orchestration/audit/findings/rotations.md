@@ -49,6 +49,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Resolved
 
+### rotations-20261125-1: Two of 78802e6e's live on-use trinket lines lose DPS: the warlock Talisman of Ascendance pre-pull and Fury DW's held Blackhand's Breadth
+- severity: medium (Affliction -0.5%, Fury DW -0.3%; no place in the ranking changes)
+- affects: all 16 warlock builds, warrior__fury and its two duty variants
+- found: 2026-11-25, phase0-step4-publish 01cc70b80
+- evidence: 20k iterations, seed 1, 180 s, CLI at 01cc70b80, one line changed per variant. Warlocks, Talisman pre-pull at -0.1s against none (autocast still casts it on cooldown, 3.33 a fight either way; the pre-pull holds the shared burst-trinket category so Weakness Analyzer goes later): Affliction 960.87 / 965.79, Destruction 877.59 / 881.25, Demonology 892.02 / 894.19, Fire 833.57 / 835.28, Shadow Bolt 808.17 / 810.11; the pre-pull at 0s is the same 960.87. Swapping the pre-pull to the other trinket: 964.92 (Affliction). Fury DW, Blackhand's Breadth (5 min) held for the last 30 s against on cooldown: 1005.64 / 1008.99, Sunder 971.23 / 974.55, Battle Shout 1000.87 / 1002.87. Other trinket lines checked made dead (pre-78802e6e behaviour): Arms, Enhancement imp-gw and water-shield unchanged to 0.01.
+- proposed fix: drop the warlocks' Talisman pre-pull line; cast Blackhand's Breadth on cooldown in the three Fury DW APLs.
+- needs: orchestrator fix
+- resolved: 2026-11-25, 67fe28cf0 (the fix above in requests, race rows and ui APLs; re-simmed and published)
+
 ### rotations-20261115-1: Arms: hold the main-hand abilities while Windfury Totem's 100 ms cooldown runs
 - severity: low (+2.5 DPS at 180 s, 0.24%; Dragonkin +1.6)
 - affects: warrior__arms, warrior__arms_dragonkin (+ the two Arms duty builds, same lines, not run). Not Fury DW (0.0) or Fury 2H (+0.4, under the bar).

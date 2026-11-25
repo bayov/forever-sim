@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-24T19:12:18Z",
- "pass": 28,
- "result": "findings",
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 29,
+ "result": "quiet",
  "baseline": "eceb09019",
- "note": "Pass 28 on eceb09019: ed1df1d51 (Innervate scales gear MP5) moves only the tank druid Chromaggus +0.010. Full 63-cell re-bench (ref/healer_fairness/bench_eceb090.tsv): raid row 1-3% lower from the Phase 0 filler mage (058a07457), shaman now last; new -20261124-1. Open: -20261124-1, -20261115-1, -20261104-4.",
+ "note": "Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-25T00:59:33Z"
+ "checked_at": "2026-11-25T03:50:00Z"
 }

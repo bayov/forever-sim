@@ -1,10 +1,11 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-23T12:50:56Z",
- "pass": 13,
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 14,
  "result": "quiet",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-25T00:59:33Z"
+ "checked_at": "2026-11-25T03:50:00Z",
+ "note": "Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics."
 }

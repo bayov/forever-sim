@@ -18,6 +18,7 @@
 - proposed fix: a tank_warrior test that sims level60_balanced as Gnome / Night Elf / Orc / Troll and checks each racial is cast (2 / 1.5 / 2 / 1.5 a 180 s fight), and that Eureka! multiplies Shield Slam 23925, Revenge 11601 and Heroic Strike 11567 damage by 1.1 and cost by 0.9, and leaves Sunder 11597 alone.
 - needs: worker fix
 - update 2026-11-24 (pass 31, master eceb090): the new Stoneform and the tank-side Troll Regeneration tick have no test either; the only one is the leveling sim's TestLevelingTrollRegen (sim/shaman/enhancement/leveling_rest_test.go, 20% in combat). A test should check Stoneform's x0.9 Physical taken for 8 s and that a Troll tank's healing needed drops with the regen on.
+- update 2026-11-25 (phase0-step4-publish, 4c26b4b66): the racial lines part is pinned: TestForeverTankRacialLines (sim/warrior/tank_warrior/racials_apl_test.go) sims the three level 60 Protection requests as Orc, Gnome, Troll, Night Elf, Dwarf and Human on a 170 s fight and checks Blood Fury 2, Eureka! 2, Berserking 1, Elune's Light 1, Stoneform 1 (0 in Max threat, which has no line), none for Human. Still open: Eureka!'s x1.1 damage / x0.9 cost scope, Stoneform's damage taken and the tank-side Troll Regeneration.
 
 ### tank_mechanics-20261117-1: Unbridled Wrath after push 114097 skips Sunder Armor (no damage), with no evidence for that limit
 - severity: low (+0.3 to +0.4% objective at stake, measured)

@@ -582,3 +582,18 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 00:59 | gear | pass 76 | master 63129ce | quiet | Phase 0 real-item sets only, no synthetic gear changed
 2026-11-25 00:59 | consumables | pass 106 | master 63129ce | quiet | no consumes/buffs change; enchants resolve
 2026-11-25 00:59 | fairness | pass 56 | master 63129ce | 1 new finding | MM report race Orc trails Skyborne High Order by 6.1 (medium)
+2026-11-25 03:50 | results | pass 103 | master 226ada86b | findings | results-20261125-1 found and resolved: 49 metas rewritten from 20k runs after the trinket fix; 16 builds re-simmed; stale 0 of 68.
+2026-11-25 03:50 | rotations | pass 77 | master 226ada86b | findings | rotations-20261125-1 found and fixed in 67fe28cf0 (warlock Talisman pre-pull, Fury DW Blackhand held); rotation card conditions worded.
+2026-11-25 03:50 | gear | pass 77 | master 226ada86b | quiet | Phase 0 sets on every DPS request and live trinket lines checked; no finding.
+2026-11-25 03:50 | consumables | pass 107 | master 226ada86b | quiet | Consumes and buffs unchanged in every request; Enhancement pairings recorded.
+2026-11-25 03:50 | fairness | pass 57 | master 226ada86b | quiet | Trinket-line fix applies alike to every race request; not re-swept. Open findings unchanged.
+2026-11-25 03:50 | mechanics | pass 103 | master 226ada86b | quiet | Only sim change 1fed43cbf (Auto Time To Next with a pending extra attack), pinned by a test.
+2026-11-25 03:50 | tank_mechanics | pass 32 | master 226ada86b | quiet | Racial lines pinned by racials_apl_test.go; Eureka! scope item stays open.
+2026-11-25 03:50 | client_update | pass 17 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | healer_fairness | pass 29 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | healer_gear | pass 14 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | healer_mechanics | pass 29 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | healer_rotations | pass 26 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | tank_gear | pass 16 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | tank_rotations | pass 29 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.
+2026-11-25 03:50 | tank_fairness | pass 31 | master 226ada86b | quiet | Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.

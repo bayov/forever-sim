@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-25T00:50:47Z",
- "pass": 76,
- "result": "quiet",
- "note": "Pass 76: quiet. 9470bae..63129ce changed no APL file, no sim .go; req rotations unchanged (key order only, checked with jq -S); new race rows for hunter and rogue are gear copies. Hunter (new talents) and rogue Phase 0 sets not re-searched (gear/talent change, not rotation).",
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 77,
+ "result": "findings",
+ "note": "rotations-20261125-1 found and fixed in 67fe28cf0 (warlock Talisman pre-pull, Fury DW Blackhand held); rotation card conditions worded.",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T00:59:33Z",
+ "checked_at": "2026-11-25T03:50:00Z",
  "baseline": "baseline_eceb090_3000it_seed424242.tsv"
 }

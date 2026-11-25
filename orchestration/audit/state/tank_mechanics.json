@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-24T18:54:33Z",
- "pass": 31,
- "result": "findings",
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 32,
+ "result": "quiet",
  "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T00:59:33Z",
+ "checked_at": "2026-11-25T03:50:00Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -23,5 +23,5 @@
    "date": "2026-11-24T02:06:52Z"
   }
  },
- "note": "Pass 31 (eceb090): client 71091 touches no tank row; Troll Regeneration and warrior Stoneform landed (-1, -2 resolved). Dwarf paladin/Warden never cast Stoneform (20261124-4, low); racial tests still missing (-3)."
+ "note": "Racial lines pinned by racials_apl_test.go; Eureka! scope item stays open."
 }

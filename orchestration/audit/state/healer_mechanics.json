@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "63129ce35290604315618746edd5a35123520089"
+  "master": "226ada86b09bc6bd5ec28f695c68bd550befbb34"
  },
- "last_pass_at": "2026-11-24T18:54:34Z",
- "pass": 28,
- "result": "findings",
- "note": "Pass 28: ed1df1d51 Innervate/Energized scale MP5 less EnergizeMP5; client auras checked for every MP5 source; camp Mana Well 1230587 is aura 24 but not in EnergizeMP5 (finding 17, low). 71091 touches no player heal. Forum rate-limited, t/2403040 not re-read. Findings 10, 11, 17 open.",
+ "last_pass_at": "2026-11-25T03:50:00Z",
+ "pass": 29,
+ "result": "quiet",
+ "note": "Nothing new in scope: the branch changed DPS requests, APLs and report data; its sim changes (1fed43cbf, bulksim.go) were read by mechanics and tank_mechanics.",
  "client_build": "1.60.1.71091",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-21T00:18:29Z"
  },
- "checked_at": "2026-11-25T00:59:33Z"
+ "checked_at": "2026-11-25T03:50:00Z"
 }

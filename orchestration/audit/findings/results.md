@@ -51,6 +51,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Resolved
 
+### results-20261125-1: 32 metas' published.dps lag 78802e6e and 1fed43cb (up to 4.8 DPS)
+- severity: low (the report's builds.json agrees with the shared run within its own method's noise; only the metas lag)
+- affects: 32 DPS metas (warlocks, Feral, Fury and Arms, Smite, Arcane, paladins, Enhancement and others)
+- found: 2026-11-25, phase0-step4-publish 01cc70b80
+- evidence: shared run (run_reqs.py, 20k, seed 1, CLI 01cc70b80) against the metas: 15 exact (0.15 or less), 21 within 0.5, 32 over 0.5 (`compare_runs.py --published`, /tmp/audit-work/cmp_pub.txt): Affliction 965.7 -> 960.9, Feral 1054.8 -> 1057.2, Fury 1007.1 -> 1005.6, Arms 1014.8 -> 1016.0. The metas' source is the class workers' verify.py runs of 2026-11-24, before 78802e6e (live trinket lines) and 1fed43cb (Auto Time To Next). Against builds.json the shared run is within 1.3 for every build.
+- proposed fix: after the trinket-line fix (rotations-20261125-1) and its re-sim, write each meta's published.dps from a 20k seed-1 run of its request, source naming the run.
+- resolved: 2026-11-25, phase0-step4-publish 226ada86b: 49 metas written from 20k seed-1 runs of their requests after the trinket-line fix (67fe28cf0), source naming the run.
+
 ### results-20261112-1: 19 builds (warriors 10, rogues 6, Survival 3) in builds.json lag a0b4d3be9 (Windfury Totem on main hand abilities), +18.7 to +171.6
 - severity: high (Arms +171.6 = +19.7%, Fury 2H +106.7; moves the ranking)
 - affects: warrior arms/fury/fury_2h families, rogue (6), hunter survival (3); paladin, other hunters, casters, shaman unchanged
