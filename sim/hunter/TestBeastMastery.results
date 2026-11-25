@@ -4,7 +4,7 @@ character_stats_results: {
   final_stats: 204
   final_stats: 896
   final_stats: 567
-  final_stats: 228
+  final_stats: 197
   final_stats: 289
   final_stats: 0
   final_stats: 0
@@ -15,20 +15,20 @@ character_stats_results: {
   final_stats: 0
   final_stats: 101.25
   final_stats: 8
-  final_stats: 47.00486
+  final_stats: 46.49336
   final_stats: 0
   final_stats: 0
-  final_stats: 2056
+  final_stats: 2025
   final_stats: 8
   final_stats: 48.57726
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 6860
+  final_stats: 6395
   final_stats: 0
   final_stats: 0
   final_stats: 4671
-  final_stats: 2706
+  final_stats: 2675
   final_stats: 0
   final_stats: 5
   final_stats: 0
@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestBeastMastery-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 1.12316
+  weights: 1.12094
   weights: 0
   weights: 0
   weights: 0
@@ -69,7 +69,7 @@ stat_weights_results: {
   weights: 0
   weights: 0.02326
   weights: 0
-  weights: 12.78014
+  weights: 12.68565
   weights: 0
   weights: 0
   weights: 0
@@ -99,233 +99,233 @@ stat_weights_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BeastmasterArmor"
  value: {
-  dps: 1529.65867
-  tps: 1319.62127
+  dps: 1520.17817
+  tps: 1310.62916
   dtps: 1.83383
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BeastmasterArmor-1669"
  value: {
-  dps: 1529.65867
-  tps: 1319.87514
+  dps: 1520.17817
+  tps: 1310.88303
   dtps: 1.83383
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
-  dps: 1655.07667
-  tps: 1425.28174
+  dps: 1644.7875
+  tps: 1415.51734
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BloodGuard'sChainVices-22862"
  value: {
-  dps: 1663.63183
-  tps: 1434.25605
+  dps: 1653.32567
+  tps: 1424.47204
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Champion'sPursuance"
  value: {
-  dps: 1604.63483
-  tps: 1387.27905
+  dps: 1594.18517
+  tps: 1377.33474
   dtps: 1.91783
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1507.13483
-  tps: 1294.57328
+  dps: 1497.65417
+  tps: 1285.57267
   dtps: 1.8695
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-CryptstalkerArmor"
  value: {
-  dps: 1759.25267
-  tps: 1528.1393
+  dps: 1748.5885
+  tps: 1518.00319
   dtps: 1.91617
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-DevilsaurEye-19991"
  value: {
-  dps: 1688.80267
-  tps: 1454.77964
+  dps: 1678.3105
+  tps: 1444.81025
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-DevilsaurTooth-19992"
  value: {
-  dps: 1679.64983
-  tps: 1445.5706
+  dps: 1669.152
+  tps: 1435.59395
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-DragonstalkerArmor"
  value: {
-  dps: 1662.13333
-  tps: 1440.21434
+  dps: 1652.1745
+  tps: 1430.76082
   dtps: 1.75383
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1558.38867
-  tps: 1342.87418
+  dps: 1548.511
+  tps: 1333.49944
   dtps: 1.8695
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-General'sChainGloves-16571"
  value: {
-  dps: 1685.1865
-  tps: 1455.27463
+  dps: 1674.43367
+  tps: 1445.06258
   dtps: 1.94283
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-GiantstalkerArmor"
  value: {
-  dps: 1610.35783
-  tps: 1387.73355
+  dps: 1600.0705
+  tps: 1377.98043
   dtps: 1.773
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-HunterSyntheticRanged(Phase1)"
  value: {
-  dps: 1685.13983
-  tps: 1452.12058
+  dps: 1674.67067
+  tps: 1442.17648
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-HunterSyntheticSurvival(Phase1)"
  value: {
-  dps: 1657.83417
-  tps: 1427.577
+  dps: 1647.434
+  tps: 1417.71856
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Knight-Lieutenant'sChainGauntlets-16403"
  value: {
-  dps: 1655.07667
-  tps: 1425.28174
+  dps: 1644.7875
+  tps: 1415.51734
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Knight-Lieutenant'sChainVices-23279"
  value: {
-  dps: 1663.63183
-  tps: 1434.25605
+  dps: 1653.32567
+  tps: 1424.47204
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-LieutenantCommander'sPursuance"
  value: {
-  dps: 1604.63483
-  tps: 1387.27905
+  dps: 1594.18517
+  tps: 1377.33474
   dtps: 1.91783
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1507.13483
-  tps: 1294.57328
+  dps: 1497.65417
+  tps: 1285.57267
   dtps: 1.8695
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Marshal'sChainGrips-16463"
  value: {
-  dps: 1685.1865
-  tps: 1455.27463
+  dps: 1674.43367
+  tps: 1445.06258
   dtps: 1.94283
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Predator'sArmor"
  value: {
-  dps: 1583.25783
-  tps: 1359.90094
+  dps: 1573.03
+  tps: 1350.21258
   dtps: 1.94833
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Renataki'sCharmofBeasts-19953"
  value: {
-  dps: 1675.478
-  tps: 1442.28892
+  dps: 1664.9865
+  tps: 1432.3081
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Striker'sGarb"
  value: {
-  dps: 1685.49383
-  tps: 1458.06258
-  dtps: 1.91267
+  dps: 1675.29067
+  tps: 1448.36783
+  dtps: 1.8695
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-SurvivalSyntheticOn-UseTrinket(Phase1)-993117"
  value: {
-  dps: 1696.44367
-  tps: 1462.68824
+  dps: 1685.951
+  tps: 1452.71885
   dtps: 1.94267
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1558.38867
-  tps: 1342.87418
+  dps: 1548.511
+  tps: 1333.49944
   dtps: 1.8695
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Average-Default"
  value: {
-  dps: 1701.08593
-  tps: 1467.91115
-  dtps: 2.07484
+  dps: 1690.56525
+  tps: 1457.91761
+  dtps: 2.07004
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1729.82183
-  tps: 1510.20847
+  dps: 1719.25683
+  tps: 1500.1499
   dtps: 1.73233
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1702.79617
-  tps: 1483.1239
-  dtps: 1.9975
+  dps: 1692.30133
+  tps: 1473.12761
+  dtps: 1.955
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1830.00417
-  tps: 1578.33501
-  dtps: 9.58333
+  dps: 1819.03
+  tps: 1567.90349
+  dtps: 9.37083
  }
 }
 dps_results: {
@@ -355,24 +355,24 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1732.55983
-  tps: 1503.02192
+  dps: 1721.9895
+  tps: 1492.95995
   dtps: 1.73233
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1705.53017
-  tps: 1475.96846
+  dps: 1694.98467
+  tps: 1465.93765
   dtps: 1.95517
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1831.03
-  tps: 1569.8139
+  dps: 1819.97
+  tps: 1559.33414
   dtps: 9.37167
  }
 }
@@ -403,8 +403,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1690.6235
-  tps: 1457.32907
+  dps: 1680.23183
+  tps: 1447.4689
   dtps: 1.94267
  }
 }
