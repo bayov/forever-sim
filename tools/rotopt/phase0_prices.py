@@ -517,7 +517,11 @@ def main():
             for r in price_slot(slot, entries, content, prices, recipes, args.max, effort):
                 if not r['gold']:
                     continue
-                priced[spec][str(r['id'])] = r
+                # an item on two slots (Felstriker mainhand and offhand) keeps its dearest slot's number: the offhand
+                # row, often unpriced, used to overwrite the mainhand's, so the mainhand pick was never marked out
+                prev = priced[spec].get(str(r['id']))
+                if prev is None or (r['gpd'] or 0) > (prev['gpd'] or 0):
+                    priced[spec][str(r['id'])] = r
                 over = r['gpd'] is not None and r['gpd'] > args.max
                 if r['gpd'] is not None:
                     print(f"{slot:9s} {r['name'][:30]:30s} {r['gold']:8.1f}g {r['gpd']:8.1f}g/DPS over "
