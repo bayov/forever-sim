@@ -65,6 +65,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	if warrior.Env.IsForever() {
 		multiplier = 1 + 0.02*float64(min(warrior.Talents.TwoHandedWeaponSpecialization, 3))
 		warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
+		warrior.twoHandSpecPhysical = multiplier
 		return
 	}
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
@@ -122,9 +123,9 @@ func isShieldBash(spellID int32) bool {
 	return false
 }
 
-// isShieldStrike is Shield Slam or Shield Bash. Under Forever they are off-hand specials struck with
-// the shield, so the off-hand weapon modifiers (Dual Wield Specialization, Furious Precision,
-// Weaponmaster's off-hand crit) pass them by (wowsims/forever b6ce30c972).
+// isShieldStrike is Shield Slam or Shield Bash. They strike with the shield, so the off-hand weapon
+// modifiers (Dual Wield Specialization, Furious Precision, Weaponmaster's off-hand crit) pass them
+// by; under Forever Shield Slam is a main-hand special no weapon proc hears (R-0010, R-0041).
 func isShieldStrike(spell *core.Spell) bool {
 	return spell.SpellCode == SpellCode_WarriorShieldSlam || isShieldBash(spell.SpellID)
 }

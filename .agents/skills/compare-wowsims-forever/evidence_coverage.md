@@ -284,10 +284,11 @@ The gaps above were fixed in five batches; the rows above are the verdicts from 
   0119 (Judgement of Command), 0145, R-0040, 0149, 0155, 0156, 0161, 0165, R-0048, R-0051.
 - Casters (becbcd30d): EV-0010, 0029, 0091, 0092, 0137, 0138 (shaman), 0142, 0180.
 
-Their log against the user's ruling, waiting on the user: EV-0088 (throws keep the swing timer),
-EV-0081 (demon crit), EV-0008 (Windfury Totem on extra attacks), EV-0004 (Shield Slam block value
-2x, adopted, against the 10-23 approval), R-0010/R-0041 (Shield Slam main-hand mask) and EV-0182
-(Sweeping Strikes copy damage bonuses), both 10-23 user-approved, fixes saved unapplied. Ours kept on
+Their log against the user's ruling, fixed in 22d2cf952 after the user ruled on 2026-11-25 to adopt
+their log over the earlier rulings: EV-0088 (throws keep the swing timer, stun explosives miss
+stun-immune bosses), EV-0081 (demon crit), EV-0008 (Windfury Totem on extra attacks), EV-0004
+(Shield Slam block value 2x, ruling text), R-0010/R-0041 (Shield Slam main-hand mask) and EV-0182
+(Sweeping Strikes copy damage bonuses). Ours kept on
 the user's log: EV-0011 (Searing Totem 2.5 s), Earth Shock partials (EV-0142), Frightskull Shaft
 (EV-0183), Fire Nova Revelation (EV-0149), 2H Weapon Spec Holy (EV-0022, EV-0064).
 

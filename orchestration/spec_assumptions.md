@@ -63,7 +63,7 @@ Close behind, until round 70753: `sham_lb_31plus` (−1.9% / +4.1% Elemental aro
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | no, main hand only (one value, user ruling 2026-10-16) | = Expected | main hand only | = Expected | none left (one value) |
-| `land_mine_swing` | The Goblin Land Mine's cast resets the swing | every warrior, rogue, paladin and ranged hunter build (Enhancement and Survival dropped the Land Mine on 2026-10-23, standards 11: its reset cost them 7 to 9 DPS at 180 sec) | yes (one value, user ruling 2026-10-23) | = Expected | yes | = Expected | none left (one value) |
+| `land_mine_swing` | The Goblin Land Mine's cast resets the swing | every warrior, rogue, paladin and ranged hunter build (Enhancement and Survival dropped the Land Mine on 2026-10-23, standards 11: its reset cost them 7 to 9 DPS at 180 sec) | no since 2026-11-25: a throw keeps the swing (EV-0088, the user's ruling of 2026-11-25, replacing the ruling of 2026-10-23) | = Expected | yes | = Expected | none left (one value) |
 | `wf_totem_nodamage` | A landed hit that deals no damage procs Windfury Totem | every warrior and rogue build | yes (one value, user ruling 2026-11-02) | = Expected | procs | = Expected | none left (one value; damage needed, wowsims/forever's rule: Arms −11.9, Subtlety −2.5 at 180 sec) |
 | `flurry_batch` | Two white swings within 0.5 sec spend one Flurry charge | Fury, Fury two-hand, the four Enhancement builds | yes (one value, user ruling 2026-11-02) | = Expected | one charge in 0.5 sec | = Expected | none left (one value; one charge a swing, wowsims/forever's rule: Fury −11.4, Fury two-hand −3.4 at 180 sec) |
 | `natural_flask_zone` | The fight is in a natural flask zone | every warrior, rogue and hunter build, Feral | yes (user decision 2026-10-23) | outside the zone | in the zone | = Expected | Low −3 to −6% (5k iterations, 180 s, old requests with the flask swapped in) |
@@ -71,7 +71,8 @@ Close behind, until round 70753: `sham_lb_31plus` (−1.9% / +4.1% Elemental aro
 ### `land_mine_swing`: the Goblin Land Mine resets the swing (one value, added 2026-10-23)
 
 - **Ruling (2026-10-23):** a single-value assumption. The user: "Goblin Land Mine resets swing: single-value assumption."
-- **Sim now:** every explosive with a cast time resets the melee swing under Forever, like any cast with a cast time (wowsims/forever 4fb2849945, our 216d430cbf and c4ee6d3e9d). The sim gives the Land Mine a 1 sec cast, so the swing waits and restarts when it lands; the warrior, rogue and paladin rotations throw it just after a main hand swing.
+- **Replaced 2026-11-25** by the user's ruling of that day, adopting wowsims/forever's EV-0088: in 21 throws across five Forever logs (copper bombs, Iron Grenade, dynamite) the next swing kept its old schedule and swings landed inside the cast, never reset. Every explosive now keeps the swing timer under Forever (`SpellFlagKeepsSwingTimer` in `newBasicExplosiveSpellConfig`), and the Enhancement and Survival picks are due a re-check. The rest of this section is the history.
+- **Sim from 2026-10-23 to 2026-11-25:** every explosive with a cast time reset the melee swing under Forever, like any cast with a cast time (wowsims/forever 4fb2849945, our 216d430cbf and c4ee6d3e9d). The sim gives the Land Mine a 1 sec cast, so the swing waits and restarts when it lands; the warrior, rogue and paladin rotations throw it just after a main hand swing.
 - **Why uncertain:** client 70338's Land Mine (4100) is instant (cast time index 1), while Solid Dynamite (12419) takes 1000 ms. An instant mine would leave the swing alone (notes.md, explosives and the swing timer): the Survival golden lost 1.1 to 1.4% to the Land Mine's reset.
 - **Settings:** Expected only, "resets the swing". **Knob:** none (one value).
 
@@ -743,7 +744,7 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 
 ### Rows added 2026-10-16 (assumptions audit, orchestrator's request)
 
-These were pending when added; c3c8167f20 (2026-10-16) gave them their knobs. `lock_pet_crit` is one value (the user's ruling on forever-bugs #331; wowsims/forever does the same, pets.go, with a TODO that it is not live yet).
+These were pending when added; c3c8167f20 (2026-10-16) gave them their knobs. `lock_pet_crit` is one value (the user's ruling on forever-bugs #331; wowsims/forever does the same, pets.go, with a TODO that it is not live yet). REPLACED 2026-11-25 by the user's ruling of that day, adopting wowsims/forever's EV-0081: the demon's spell crit is the warlock's, its melee crit its own 0.7% plus the warlock's "+X% critical strike" gear (three level 30 Succubus logs, 12 crits in 1,718 swings).
 
 - **`lock_pet_crit`: do demons inherit the warlock's spell crit?** (all four warlocks)
   - Source: AidanZMoon on forever-bugs #331 (13 to 14 October). Demons "should be getting their master's spell crit as their own melee AND spell crit chance", and the scaling stays off until the demons' wrong base crit is removed.

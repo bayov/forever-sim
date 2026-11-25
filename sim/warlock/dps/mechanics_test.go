@@ -185,17 +185,18 @@ func TestWarlockPushbackProtection(t *testing.T) {
 	}
 }
 
-// TestWarlockDemonCrit checks that a demon's melee and spell crit are its master's spell crit and
-// nothing of its own (forever-bugs #331, Blizzard's intent), also after the warlock gains crit.
+// TestWarlockDemonCrit checks EV-0081: a demon's spell crit is its master's spell crit and nothing of
+// its own, also after the warlock gains crit, and its melee crit is its own 0.7%, none of the
+// warlock's.
 func TestWarlockDemonCrit(t *testing.T) {
 	for _, summon := range []proto.WarlockOptions_Summon{proto.WarlockOptions_Succubus, proto.WarlockOptions_Imp, proto.WarlockOptions_Felhunter} {
 		sim, lock := newWarlockSim(t, "", &proto.WarlockOptions{Summon: summon})
 		check := func(when string) {
-			want := lock.GetStat(stats.SpellCrit)
-			for _, stat := range []stats.Stat{stats.MeleeCrit, stats.SpellCrit} {
-				if got := lock.ActivePet.GetStat(stat); got != want {
-					t.Errorf("%s %s: stat %d is %.3f, want the warlock's spell crit %.3f", summon, when, stat, got, want)
-				}
+			if got, want := lock.ActivePet.GetStat(stats.SpellCrit), lock.GetStat(stats.SpellCrit); got != want {
+				t.Errorf("%s %s: spell crit %.3f, want the warlock's %.3f", summon, when, got, want)
+			}
+			if got, want := lock.ActivePet.GetStat(stats.MeleeCrit), 0.7*core.CritRatingPerCritChance; math.Abs(got-want) > 1e-9 {
+				t.Errorf("%s %s: melee crit %.3f, want its own 0.7%% (%.3f)", summon, when, got, want)
 			}
 		}
 		if lock.GetStat(stats.SpellCrit) <= 0 {
@@ -204,8 +205,9 @@ func TestWarlockDemonCrit(t *testing.T) {
 		check("at the pull")
 		at(sim, 1, func(sim *core.Simulation) {
 			lock.AddStatDynamic(sim, stats.SpellCrit, 5*core.SpellCritRatingPerCritChance)
+			lock.AddStatDynamic(sim, stats.MeleeCrit, 5*core.CritRatingPerCritChance)
 		})
-		at(sim, 2, func(sim *core.Simulation) { check("after +5% spell crit") })
+		at(sim, 2, func(sim *core.Simulation) { check("after +5% spell and melee crit") })
 		runSim(sim)
 	}
 }

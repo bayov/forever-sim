@@ -588,7 +588,7 @@ func landedRange(sim *core.Simulation, spell *core.Spell, target *core.Unit, n i
 // TestForeverWarriorProtectionValues checks the Protection rows under Forever (client 70425):
 // Revenge rank 5 rolls 97 to 145 plus 25% of attack power (11601; the 70707 tooltip as wowsims/forever
 // d7a38ae, to verify by a level 60 Revenge log after 70707: user ruling 2026-11-04, standards 40),
-// Shield Slam 625 to 685 plus the block value once and no attack power (23925), Thunder Clap 103
+// Shield Slam 625 to 685 plus twice the block value (EV-0004) and no attack power (23925), Thunder Clap 103
 // plus 7% of attack power (11581; 1172f1c745), Demoralizing Shout lasts 45 sec (11556), and
 // Bastion raises Physical damage only (16538).
 func TestForeverWarriorProtectionValues(t *testing.T) {
@@ -650,15 +650,16 @@ func TestForeverWarriorTwoHandedSpecialization(t *testing.T) {
 }
 
 // TestForeverWarriorSweepingStrikesCopiesFinalDamage checks that under Forever Sweeping Strikes
-// copies the first hit's final damage to the second target, so the damage multipliers that went
-// into it don't apply again (wowsims/forever talents_arms.go: Damage / ArmorAndResistanceMultiplier
-// with SpellFlagIgnoreModifiers). The two bosses have the same armor, so the copy is the hit.
+// copies the first hit's damage to the second target and the attacker's damage bonuses apply to the
+// copy a second time (wowsims/forever EV-0182: Enrage counts twice). The two bosses have the same
+// armor, so the copy is the hit times the attacker's Physical multiplier.
 func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
 	sim, war := newForeverWarriorTargets(t, "00000000000010000", 991016, 0, 2) // Sweeping Strikes, a two-hander
 	war.AutoAttacks.CancelAutoSwing(sim)
 	first, second := sim.Encounter.TargetUnits[0], sim.Encounter.TargetUnits[1]
 	ss := war.GetAura("Sweeping Strikes")
 	war.PseudoStats.DamageDealtMultiplier *= 1.5
+	attacker := war.PseudoStats.DamageDealtMultiplier * war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 
 	slam := war.Slam.Spell
 	copies := 0
@@ -674,9 +675,9 @@ func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
 
 	hit := slam.SpellMetrics()[first.UnitIndex].TotalDamage
 	copied := war.GetSpell(core.ActionID{SpellID: 12723}).SpellMetrics()[second.UnitIndex].TotalDamage
-	// Forever rounds damage to whole numbers, so each copy comes within 1 of its hit.
-	if copies == 0 || math.Abs(copied-hit) > float64(copies) {
-		t.Errorf("Sweeping Strikes copied %.1f damage of %.1f over %d hits", copied, hit, copies)
+	// Forever rounds damage to whole numbers, so each copy comes within 1 of its share.
+	if copies == 0 || math.Abs(copied-hit*attacker) > float64(copies) {
+		t.Errorf("Sweeping Strikes copied %.1f damage of %.1f over %d hits, want %.1f (x%.2f)", copied, hit, copies, hit*attacker, attacker)
 	}
 }
 

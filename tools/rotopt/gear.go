@@ -263,8 +263,10 @@ func loadUnsourcedItems(path string) (map[int32]bool, error) {
 }
 
 // The PvP rank titles that start the names of Forever's rank gear, with or without
-// "Premier" in front.
-var foreverPvpRankName = regexp.MustCompile(`^(Premier )?(Private|Scout|Corporal|Grunt|Sergeant|Senior Sergeant|Master Sergeant|First Sergeant|Sergeant Major|Stone Guard|Knight|Blood Guard|Knight-Lieutenant|Legionnaire|Knight-Captain|Centurion|Knight-Champion|Champion|Lieutenant Commander|Lieutenant General|Commander|General|Marshal|Warlord|Field Marshal|High Warlord|Grand Marshal)'s `)
+// "Premier" in front. Forever's low rank sets carry "Premier" and no rank title
+// ("Premier Linkmail Helm", set 2092 Lieutenant Commander's Wartide), so any Forever item
+// named "Premier ..." is rank gear too (240 armor pieces, no other item has the word).
+var foreverPvpRankName = regexp.MustCompile(`^(Premier |(Private|Scout|Corporal|Grunt|Sergeant|Senior Sergeant|Master Sergeant|First Sergeant|Sergeant Major|Stone Guard|Knight|Blood Guard|Knight-Lieutenant|Legionnaire|Knight-Captain|Centurion|Knight-Champion|Champion|Lieutenant Commander|Lieutenant General|Commander|General|Marshal|Warlord|Field Marshal|High Warlord|Grand Marshal)'s )`)
 
 // Every option for every slot the player can use at their level, leaving out what only the
 // other faction can get (faction.go).

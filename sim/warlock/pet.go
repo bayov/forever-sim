@@ -111,8 +111,10 @@ func (warlock *Warlock) registerPets() {
 }
 
 func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet {
-	// No crit of the demon's own: its crit is its master's spell crit (makeStatInheritance).
-	cfg.Stats[stats.MeleeCrit] = 0
+	// EV-0081: a demon's melee crit is its own, about 0.7%, plus the warlock's "+X% critical strike"
+	// gear and none of the warlock's other crit; its spell crit is the warlock's (makeStatInheritance),
+	// with none of its own.
+	cfg.Stats[stats.MeleeCrit] = demonMeleeCritPercent*core.CritRatingPerCritChance + warlock.Equipment.Stats()[stats.MeleeCrit]
 	cfg.Stats[stats.SpellCrit] = 0
 
 	wp := &WarlockPet{
@@ -253,6 +255,10 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 }
 
+// demonMeleeCritPercent is a demon's own melee crit (EV-0081: a level 30 Succubus's 0.70% on 1,718
+// swings at its level; the other demons and other levels are not measured and take the same).
+const demonMeleeCritPercent = 0.7
+
 // makeStatInheritance is the Warlock Pet Scaling aura (client 70338, spell 416189, which names health,
 // attack power, damage done, resistances, armor, hit, crit, haste and mana regen; Blizzard's warlock deep
 // dive of 2026-10-07: "pets now scale from their summoner's stats"). Every base point is 0 in the client,
@@ -268,11 +274,15 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 //     of the warlock's, Demon Armor included (7097a63bc9, a level 30 Imp's sheet).
 //   - MP5: a share of the warlock's Intellect, 0.30 for the Imp and 0.10 for the others (f5b2f7ef33, level
 //     30 pet panes; the Felhunter's not read).
-//   - Crit: the warlock's spell crit, as the demon's melee and its spell crit, and no crit of the demon's
-//     own (no base crit, none from its Agility or Intellect). Blizzard's intent: AidanZMoon on forever-bugs
-//     #331 (13 to 14 October), demons "should be getting their master's spell crit as their own melee AND
-//     spell crit chance", the scaling held back on the beta "until the baseline critical strike chance is
-//     removed" (user ruling 2026-10-16: model Blizzard's intent, one value).
+//   - Crit: the warlock's spell crit as the demon's spell crit, none of the demon's own; the melee crit
+//     is the demon's own 0.7% plus the warlock's "+X% critical strike" gear (makePet), none of the
+//     warlock's other crit. wowsims/forever EV-0081 (fc9e608630): in three level 30 Succubus logs its
+//     melee crit 12 of 1,718 swings (0.70%) whether the warlock's sheet melee crit read 0% or 4.58%, and
+//     Lash of Pain crit 13 of 205 (6.3%) beside the warlock's 4.58% spell crit. From 2026-10-16 to
+//     2026-11-25 the demon's melee crit was the warlock's spell crit too, on the user's ruling to model
+//     Blizzard's intent (AidanZMoon on forever-bugs #331: demons "should be getting their master's
+//     spell crit as their own melee AND spell crit chance"), which is not live; the user's ruling of
+//     2026-11-25 replaced it with EV-0081's log.
 //
 // notes.md lists what is still unmeasured.
 func (warlock *Warlock) makeStatInheritance(mp5PerOwnerIntellect float64) core.PetStatInheritance {
@@ -297,7 +307,6 @@ func (warlock *Warlock) makeStatInheritance(mp5PerOwnerIntellect float64) core.P
 			stats.SpellHit:    ownerHitChance * core.SpellHitRatingPerHitChance,
 			stats.MeleeHit:    ownerHitChance * 8 / 17 * core.MeleeHitRatingPerHitChance,
 			stats.SpellCrit:   ownerCritChance * core.SpellCritRatingPerCritChance,
-			stats.MeleeCrit:   ownerCritChance * core.CritRatingPerCritChance,
 		}
 	}
 }
