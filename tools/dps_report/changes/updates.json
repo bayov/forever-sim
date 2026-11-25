@@ -4118,7 +4118,7 @@
    "title": "November 10 hotfixes: class tuning",
    "date": "2026-11-10",
    "baselineData": "c61845d5ccb97b5829a43325d9d4bd1462bbadad",
-   "endData": null,
+   "endData": "4ccf4d90bc581be86633252b326614a3122efd3e",
    "lines": [
     {
      "title": "Stormstrike deals 100% weapon damage (was 150%) and has an 8 sec cooldown (was 6)",
@@ -6652,6 +6652,16 @@
     "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
     "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
    }
+  },
+  {
+   "id": "2026-11-25-phase0-gear",
+   "type": "sim",
+   "title": "Phase 0 gear: what you can get at level 60 today",
+   "date": "2026-11-25",
+   "baselineData": "4ccf4d90bc581be86633252b326614a3122efd3e",
+   "endData": null,
+   "lines": [],
+   "internal": []
   }
  ]
 }
