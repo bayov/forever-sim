@@ -127,8 +127,13 @@ func createWeaponProcDamage(itemId int32, itemName string, school core.SpellScho
 				if proc.NoSelfProc && spell == procSpell {
 					return
 				}
-				if result.Landed() && ppmm.Proc(sim, spell.ProcMask, aura.Label) {
-					procSpell.Cast(sim, result.Target)
+				if !result.Landed() {
+					return
+				}
+				for i := core.WeaponProcRolls(spell); i > 0; i-- {
+					if ppmm.Proc(sim, spell.ProcMask, aura.Label) {
+						CastWeaponProcSpell(sim, character, procSpell, spell, result.Target)
+					}
 				}
 			},
 		})
@@ -147,6 +152,31 @@ func CreateWeaponEquipProcDamage(itemId int32, itemName string, ppm float64, spe
 	dmgMin float64, dmgRange float64, bonusCoef float64, defType core.DefenseType) {
 
 	CreateWeaponProcDamage(itemId, itemName, ppm, spellId, school, dmgMin, dmgRange, bonusCoef, defType, core.SpellFlagSuppressEquipProcs)
+}
+
+// CastWeaponProcSpell casts a weapon proc's spell off the hit (trigger) that rolled it.
+//
+// Under Forever a weapon proc's melee strike is heard by weapon procs, combat enchants and oils,
+// its own weapon included, only when a main-hand white swing cast it. One cast by an ability, a
+// seal's strike, a Windfury Totem hit, an off-hand swing, a druid's paw in a form or another
+// strike rolls none of them, so a white swing's strike rolls its weapon once more and the strike
+// that roll casts rolls nothing (EV-0145, R-0040: Mutilator's Lacerations follows 52 of 259 first
+// strikes off white swings with a second and never a third, and none of 214 off Holy Strike,
+// Cleave, Overpower, seal strikes and Windfury Totem hits; 22 more weapons read the same).
+// Classic lets every strike roll them.
+func CastWeaponProcSpell(sim *core.Simulation, character *core.Character, procSpell *core.Spell, trigger *core.Spell, target *core.Unit) {
+	if !sim.IsForever() || !procSpell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || procSpell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
+		procSpell.Cast(sim, target)
+		return
+	}
+	// EV-0145: only a main-hand white swing's strike rolls weapon procs again.
+	if trigger.ProcMask.Matches(core.ProcMaskMeleeMHAuto) && !character.AutoAttacks.IsWindfuryTotemAttack() && !character.IsShapeshifted() {
+		procSpell.Cast(sim, target)
+		return
+	}
+	procSpell.Flags |= core.SpellFlagSuppressWeaponProcs
+	procSpell.Cast(sim, target)
+	procSpell.Flags &^= core.SpellFlagSuppressWeaponProcs
 }
 
 // Create a weapon proc using a custom spell.
@@ -177,8 +207,13 @@ func CreateWeaponProcSpellByRuleset(itemId int32, itemName string, classicPPM fl
 				if spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 					return
 				}
-				if result.Landed() && ppmm.Proc(sim, spell.ProcMask, procLabel) {
-					procSpell.Cast(sim, result.Target)
+				if !result.Landed() {
+					return
+				}
+				for i := core.WeaponProcRolls(spell); i > 0; i-- {
+					if ppmm.Proc(sim, spell.ProcMask, procLabel) {
+						CastWeaponProcSpell(sim, character, procSpell, spell, result.Target)
+					}
 				}
 			},
 		}))
@@ -213,8 +248,13 @@ func CreateWeaponProcAuraByRuleset(itemId int32, itemName string, classicPPM flo
 				if spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 					return
 				}
-				if result.Landed() && ppmm.Proc(sim, spell.ProcMask, procLabel) {
-					procAura.Activate(sim)
+				if !result.Landed() {
+					return
+				}
+				for i := core.WeaponProcRolls(spell); i > 0; i-- {
+					if ppmm.Proc(sim, spell.ProcMask, procLabel) {
+						procAura.Activate(sim)
+					}
 				}
 			},
 		}))

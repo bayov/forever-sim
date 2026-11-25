@@ -451,6 +451,19 @@ func TestProtectionStatTalents(t *testing.T) {
 		}
 	}
 	near(t, "Redoubt proc rate", float64(procs)/swings, 0.1, 0.01)
+	// And on 10% of the dodged ones (EV-0022).
+	procs = 0
+	swing := boss.AutoAttacks.MHAuto()
+	for range swings {
+		aura.Deactivate(sim)
+		swing.CalcAndDealOutcome(sim, &redoubt.Unit, func(_ *core.Simulation, result *core.SpellResult, _ *core.AttackTable) {
+			result.Outcome = core.OutcomeDodge
+		})
+		if aura.IsActive() {
+			procs++
+		}
+	}
+	near(t, "Redoubt proc rate on dodged swings", float64(procs)/swings, 0.1, 0.01)
 
 	_, shieldSpec := protSim(t, "-05000002", nil)
 	_, redoubtOnly := protSim(t, "-05", nil)

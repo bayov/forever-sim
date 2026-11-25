@@ -621,7 +621,7 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 		}
 	}
 	check("Revenge", war.Revenge.Spell, 97, 145, 0.25)
-	check("Shield Slam", war.ShieldSlam.Spell, 625+war.BlockValue(), 685+war.BlockValue(), 0)
+	check("Shield Slam", war.ShieldSlam.Spell, 625+2*war.BlockValue(), 685+2*war.BlockValue(), 0) // EV-0004
 	check("Thunder Clap", war.ThunderClap.Spell, 103, 103, 0.07)
 
 	if got := war.Revenge.FlatThreatBonus; got != 0 {
@@ -677,6 +677,19 @@ func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
 	// Forever rounds damage to whole numbers, so each copy comes within 1 of its hit.
 	if copies == 0 || math.Abs(copied-hit) > float64(copies) {
 		t.Errorf("Sweeping Strikes copied %.1f damage of %.1f over %d hits", copied, hit, copies)
+	}
+}
+
+// TestForeverWarriorSweepingStrikesNormalizedHitRollsWeaponProcs checks that Sweeping Strikes'
+// normalized hit 26654 is a main-hand special a chance-on-hit weapon rolls on, while the copied hit
+// 12723 rolls none (R-0042, EV-0007).
+func TestForeverWarriorSweepingStrikesNormalizedHitRollsWeaponProcs(t *testing.T) {
+	_, war := newForeverWarriorTargets(t, "00000000000010000", 991016, 0, 2)
+	if got := war.GetSpell(core.ActionID{SpellID: 26654}).ProcMask; got != core.ProcMaskMeleeMHSpecial {
+		t.Errorf("the normalized hit's proc mask is %v, want the main-hand special mask", got)
+	}
+	if got := war.GetSpell(core.ActionID{SpellID: 12723}).ProcMask; got != core.ProcMaskEmpty {
+		t.Errorf("the copied hit's proc mask is %v, want none", got)
 	}
 }
 

@@ -28,6 +28,10 @@ type SpellResult struct {
 	// special taken reads it (ForeverDamageTakenRage).
 	PreAbsorbDamage float64
 
+	// areaCastHit marks the damageless hit an area channel's cast lands on each enemy
+	// (AreaChannelCastHits).
+	areaCastHit bool
+
 	inUse bool
 }
 
@@ -817,7 +821,11 @@ func (result *SpellResult) applyTargetModifiers(spell *Spell, attackTable *Attac
 			result.Damage += attackTable.Defender.GetSchoolBonusDamageTaken(spell) * dot.BonusCoefficient
 		}
 	} else {
-		if spell.BonusCoefficient > 0 {
+		// EV-0066: under Forever a damage shield's hit takes no share of the target's flat school
+		// bonus (9 of 9 rank 1 Retribution Aura hits under the paladin's Judgement of the Crusader
+		// dealt the flat 5).
+		damageShield := spell.Flags.Matches(SpellFlagNoPartialResist) && spell.Flags.Matches(SpellFlagPassiveSpell) && spell.Unit.Env.IsForever()
+		if spell.BonusCoefficient > 0 && !damageShield {
 			result.Damage += attackTable.Defender.GetSchoolBonusDamageTaken(spell) * spell.BonusCoefficient
 		}
 	}

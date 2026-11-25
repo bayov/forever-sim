@@ -54,7 +54,9 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		CritDamageBonus: warrior.impale(),
 
 		DamageMultiplier: core.TernaryFloat64(has5pcConq, 1.5, 1),
-		ThreatMultiplier: 2.5,
+		// EV-0048: under Forever its threat is 1 x its damage with no flat bonus (0.9965 to 0.9994 at 1
+		// to 4 targets). Classic keeps 2.5.
+		ThreatMultiplier: core.TernaryFloat64(warrior.Env.IsForever(), 1, 2.5),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Only living targets, each one once.

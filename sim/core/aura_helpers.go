@@ -79,19 +79,27 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 		if config.Harmful && result.Damage == 0 {
 			return
 		}
-		if icd.Duration != 0 && !icd.IsReady(sim) {
-			return
+		// A weapon proc (one that skips SpellFlagSuppressWeaponProcs hits) rolls twice on a spell
+		// WeaponProcRolls names.
+		rolls := 1
+		if config.SpellFlagsExclude.Matches(SpellFlagSuppressWeaponProcs) {
+			rolls = WeaponProcRolls(spell)
 		}
-		if config.ProcChance != 1 && sim.RandomFloat(config.Name) > config.ProcChance {
-			return
-		} else if config.PPM != 0 && !ppmm.ProcWithWeaponSpecials(sim, spell.ProcMask, config.Name) {
-			return
-		}
+		for ; rolls > 0; rolls-- {
+			if icd.Duration != 0 && !icd.IsReady(sim) {
+				return
+			}
+			if config.ProcChance != 1 && sim.RandomFloat(config.Name) > config.ProcChance {
+				continue
+			} else if config.PPM != 0 && !ppmm.ProcWithWeaponSpecials(sim, spell.ProcMask, config.Name) {
+				continue
+			}
 
-		if icd.Duration != 0 {
-			icd.Use(sim)
+			if icd.Duration != 0 {
+				icd.Use(sim)
+			}
+			handler(sim, spell, result)
 		}
-		handler(sim, spell, result)
 	}
 
 	if config.ProcChance == 0 {
