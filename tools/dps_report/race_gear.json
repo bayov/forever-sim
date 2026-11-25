@@ -3461,22 +3461,22 @@
   "excess": 1.0,
   "bonusStats": {
    "SpellHit": -1.0,
-   "SpellCrit": 0.022,
-   "Intellect": 3.261,
-   "SpellPower": 7.475
+   "SpellCrit": 0.044,
+   "Intellect": 2.997,
+   "SpellPower": 7.426
   },
   "shares": {
-   "SpellPower": 64.3,
-   "Intellect": 32.6,
-   "CritRating": 3.1
+   "SpellPower": 63.9,
+   "Intellect": 30.0,
+   "CritRating": 6.2
   },
-  "dpsPreset": 677.44,
-  "dpsSwap": 680.64,
-  "gain": 3.2,
+  "dpsPreset": 678.21,
+  "dpsSwap": 681.46,
+  "gain": 3.25,
   "se": 0.05,
   "seUnpaired": 0.17,
   "keep": true,
-  "note": "1% hit over the cap re-spent as 7.5 spell power and 3.3 Intellect"
+  "note": "1% hit over the cap re-spent as 7.4 spell power and 3.0 Intellect"
  },
  "priest__smite.NightElf": {
   "build": "priest__smite",

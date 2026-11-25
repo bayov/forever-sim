@@ -318,14 +318,14 @@
  "how": "rotopt -template priest_smite -race Dwarf -durs 180 from the template defaults on the Phase 0 set (2026-11-24): smiteManaRate 20 -> 30. Same rotation at the preset race (Undead): +0.3. The old Holy Fire or no Devouring Plague override lost 11 to 17 to the new defaults.",
  "bonusStats": {
   "SpellHit": -1.0,
-  "SpellCrit": 0.022,
-  "Intellect": 3.261,
-  "SpellPower": 7.475
+  "SpellCrit": 0.044,
+  "Intellect": 2.997,
+  "SpellPower": 7.426
  },
- "gearNote": "1% hit over the cap re-spent as 7.5 spell power and 3.3 Intellect",
- "gearHow": "race_gear.py: Dwarf hit 22% (with Holy Precision 3/3) against the 16% spell cap, the set's own hit 3%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (SpellPower 64.3%, Intellect 32.6%, CritRating 3.1%). Hit and crit are one pool for the gear, so each is written once. Dwarf 677.4 with the preset's gear, 680.6 with the swap; gain.se is the paired error (the same seeded fights), 0.17 unpaired.",
+ "gearNote": "1% hit over the cap re-spent as 7.4 spell power and 3.0 Intellect",
+ "gearHow": "race_gear.py: Dwarf hit 22% (with Holy Precision 3/3) against the 16% spell cap, the set's own hit 3%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (SpellPower 63.9%, Intellect 30.0%, CritRating 6.2%). Hit and crit are one pool for the gear, so each is written once. Dwarf 678.2 with the preset's gear, 681.5 with the swap; gain.se is the paired error (the same seeded fights), 0.17 unpaired.",
  "gearGain": {
-  "dps": 3.2,
+  "dps": 3.25,
   "se": 0.05,
   "iterations": 20000,
   "seed": 1,
