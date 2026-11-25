@@ -83,6 +83,7 @@
               "dragonBreathChili": true,
               "zanzaBuff": "GroundScorpokAssay",
               "sapperExplosive": "SapperGoblinSapper",
+              "fillerExplosive":  "ExplosiveGoblinLandMine",
               "intellectElixir": "ElixirOfGreaterIntellect"
             },
             "buffs": {
