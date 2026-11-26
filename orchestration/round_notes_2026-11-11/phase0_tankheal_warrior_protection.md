@@ -9,8 +9,8 @@ The mean of the six scored bosses (magmadar, golemagg, onyxia, broodlord, vaelas
 
 | Preset | Phase 0 | Synthetic | Gap |
 |---|---|---|---|
-| Balanced | 3309.7 | 3262.8 | +46.9 |
-| Max threat | 4698.5 | 4110.0 | +588.5 |
+| Balanced | 3379.7 | 3262.8 | +116.9 |
+| Max threat | 4727.2 | 4110.0 | +617.2 |
 | Max survival | 1203.8 | 1617.8 | -414.0 |
 
 The Phase 0 set has more threat than the synthetic set but less mitigation and health. Survival loses most on onyxia, broodlord and chromaggus.
@@ -110,7 +110,11 @@ tank_gear-1 was that the bench scored the lists 5 to 11% under their list score.
 - The bench now matches the lists: Balanced 3309.7 against 3299.4, Max threat 4698.5 against 4692.0, Max survival 1203.8 against 1218.7.
 - No re-search was needed.
 
-Open for rotopt: both synthetic ids map to one real trinket. A set whose second trinket also has a use (Adaptive Combat Assistant beside Chained Essence on Balanced and Max threat) never casts the second one in either tool.
+Follow-up (ecf1cbb50): rotopt now maps each synthetic id to its own worn on-use trinket.
+- Re-ranking the trinket slots on all three presets and the Alliance row left the picks unchanged.
+- The list scores went up: Balanced 3360.5 (+61.2), Max threat 4725.7 (+33.7), Alliance 4584.3 (+19.0). Max survival is unchanged at 1218.7, because Royal Seal of Eldre'Thalas has no use.
+- The requests now cast both worn trinkets: 990617 is trinket 1's line and 991018 is trinket 2's.
+- One catch: rotopt maps only synthetic ids. A request that casts real ids keeps them whatever trinket the search tries. So a trinket re-rank needs the synthetic ids put back in the request first, which is how this one ran.
 
 Fixed (trinket mapping round): rotopt's withRealTrinket now gives each synthetic id its own worn on-use trinket (first synthetic id to the first trinket slot's, the second to the second's; TestRealTrinketPerSlot). The Balanced and Max threat requests' second trinket line casts Adaptive Combat Assistant. tankbench, 3000 iterations, first seed 1, labeled, six bosses: Balanced 3305.8 to 3380.0, Max threat 4700.3 to 4728.0. rotopt -eval on the same requests: 3364.0 and 4720.7. The list scores (3299.4, 4692.0) predate this and are 2.4% and 0.8% under; a re-rank would refresh them. Max survival is unchanged (Royal Seal of Eldre'Thalas has no modelled use).
 
@@ -190,8 +194,8 @@ All four races wear the preset's gear.
 | Synthetic, after (current code) | Balanced | 3199.0 | 3182.2 | 3127.7 | **3262.8** |
 | | Max threat | **4114.3** | 4066.7 | 4004.7 | 4110.0 |
 | | Max survival | 1349.8 | 1418.7 | 1360.7 | **1617.8** |
-| Phase 0 set, after (current code) | Balanced | 3198.7 | 3221.3 | 3175.3 | **3309.7** |
-| | Max threat | 4678.2 | 4672.5 | 4598.3 | **4698.5** |
+| Phase 0 set, after (current code) | Balanced | 3270.3 | 3292.8 | 3241.3 | **3379.7** |
+| | Max threat | 4706.0 | 4701.0 | 4627.7 | **4727.2** |
 | | Max survival | 854.0 | 974.8 | 903.3 | **1203.8** |
 | Synthetic, rage stance rule off (final go code) | Balanced | 3217.2 | 3199.0 | 3144.7 | 3279.7 |
 | | Max threat | 4124.0 | 4077.7 | 4013.5 | 4120.0 |
