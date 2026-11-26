@@ -6,22 +6,6 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
-### Stormstrike hits about 1.6x the sim from Nov 11 10:37 to Nov 13 04:59
-
-- **Flag**: `Stormstrike (17364): raw`, mob levels 46 to 59 (114 flags, 49 windows of `WoWCombatLog-111126_095013.txt`, Nov 11 10:37 to Nov 12 07:41). `Melee: raw` stays close on most of them.
-- **Windows**: `111126_095013 10:37-10:54` log 544 to 552 vs the sim's 330 to 332 (36 and 21 hits, 1.65x, Staves). `11:02-11:22` 523 vs 337 (33 hits). `13:56-13:58` with Rockbiter 786 vs 503 (7 hits). `23:15-23:19` 814 vs 333 (2.44x), `03:08-03:16` 827 vs 335 (2.47x), both with Shadow Oil and sheet AP about 790 over the sim's. `05:25-05:42` 625 to 639 vs 376 (38 hits). Almost every window sits at 1.55 to 1.70x (Alcaz Willcrusher and The Chief's Enforcer, both two-handers). Only `07:38-07:41` (Rockbiter, level 59 boss) fits: 557.6 vs 523.9 (1.06x, 9 hits). The last window before Nov 11 10:37 with Stormstrike (`075640 00:10:31`, Rockbiter, client tables 70862) fit: 731.8 vs 725.0.
-- **What we think**: the sim's Stormstrike takes the 2026-11-10 class tuning (100% weapon damage, 8 sec cooldown, `StormstrikeWeaponDamagePercent` in `sim/shaman/stormstrike.go`), but its own comment says no server row carries it (`SpellEffect 1368308` still 150). 1.5x fits the windows at 1.55 to 1.70x, and Rockbiter windows with a matching sheet AP (13:56, 14:32 to 20:56) are 1.55 to 1.6x too, so the AP gap below isn't the cause. The one fitting window (07:38) could be the tuning going live, or a one-off (the sim's Rockbiter AP was 610 over the sheet's there). Touches the Stormstrike notes in `notes.md`.
-- **Nov 13 update**: `111226_132121` Nov 12 13:52 to 18:10 (18 windows) and `111226_230324` Nov 13 04:36 to 04:59 (client tables 70888) are still 1.56 to 1.77x (log 523 to 639 vs the sim's 322 to 369, 5 to 143 hits a window). But every window of `111326_101810` (client tables 1.60.1.70938, Nov 13 10:53 to 12:48) fits: `11:29-11:43` 365 vs 364 (10 hits), `11:47-11:51` 372 vs 361, `12:09-12:19` 389 vs 379 (30), `12:03-12:05` 393 vs 360 and `12:24-12:31` 418 vs 387 (a few hits, Melee raw is +8% to +10% there too). The other windows of that log (`10:53`, `11:44`, `11:51`, `11:56`, `11:59`, `12:22`, `12:35`, `12:39`) had no Stormstrike raw flag.
-- **What we think now**: the 100% weapon damage in the sim is the live value, and it went live with the client tables bump 70888 to 70938 between Nov 13 04:59 and 10:53. The 1.5x of Nov 11 to 13 04:59 was the old row. So no sim change is needed.
-- **Next step**: nothing to change in the sim. Move it to Done at the next `/log-audit` if the user agrees, and recheck the cooldown (6 or 8 sec) from cast gaps in `111326_101810`.
-- **Nov 16 update**: the Nov 15 and 16 logs (`111526_162618`, `111626_123605`, client tables 70938) keep fitting: Stormstrike raw is 1.00x the sim in 15 windows (90 hits) and 1.03x in 4 (25 hits) at mob levels up to 60. The 100% weapon damage is the live value.
-- **Nov 17 update**: `111626_123605` Nov 16 evening (49 windows run, 18:32 to 23:04, levels 54 to 60): Stormstrike raw 383.0 vs the sim's 361.5 (4 hits, `22:44:55`) and 378.5 vs 362.1 (4 hits, `23:00:21`), +5%, the same size as `Melee: raw` there. Still no 1.5x.
-- **Nov 18 update**: `111726_171435` Nov 17 18:20 to 22:34 (61 windows run, 70 skipped under 50 attacks): Stormstrike raw is 0.95 to 0.99x the sim at levels 55 to 59 (16 hits), 1.07x at 60 (15 hits), 1.06x at 61 (10) and 1.11x at 62 (33 hits, 433.6 vs 391.5). Still no 1.5x. The rise with mob level matches `Melee: raw` and the level finding under "Collect more data".
-- **Nov 20 update**: `111926_175614` and `112026_111427` (Nov 19 22:13 to Nov 20 16:23): Stormstrike raw is 1.03x the sim at level 60 (15 hits, 376.6 vs 367.1) and 1.08x at 62 (28 hits, 447.8 vs 414.5), the same size as `Melee: raw` (1.07 to 1.09x at 60 to 62). Still no 1.5x.
-- **Nov 22 update**: `112126_201216` and `112226_113558` (45 windows run, Nov 21 20:14 to Nov 22 13:43): Stormstrike raw is 1.00x the sim at levels 58 to 60 in the Nov 21 and Nov 22 morning windows (48 hits, 419.1 vs 418.3 and 380.5 vs 383.2) and 1.05x in the afternoon at 58 to 60 (31 hits). At 62 it is 1.28x (6 hits, 507.0 vs 396.6 in `13:42:21`), the level shape of `Melee: raw` (1.24x there, 26 hits). Still no 1.5x.
-- **Nov 25 update**: `112326_183423`, `112426_110702` and `112426_172127` (Nov 23 18:56 to Nov 24 18:06, 34 windows run, 134 skipped under 50 attacks): Stormstrike raw is 1.04x the sim at 58 and 59 (33 hits, 363.3 vs 350.9, 404.9 vs 389.5), 1.06x at 61 (8 hits), 1.09x at 56 (11 hits). Still no 1.5x, the same size as `Melee: raw`.
-- **Status**: open, first seen 2026-11-12, updated 2026-11-25 (log fits, ready for Done).
-
 ## Collect more data
 
 ### Fixed-damage hits move with the mob's level around 60
@@ -171,6 +155,10 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Stormstrike hit about 1.6x the sim from Nov 11 10:37 to Nov 13 04:59
+
+The server still had Stormstrike at 150% weapon damage then, while the sim already used the announced 100% (`StormstrikeWeaponDamagePercent` in `sim/shaman/stormstrike.go`). Every log since Nov 13 (client tables 70938) fits the sim's 100%, up to the Nov 25 logs. Closed 2026-11-26.
 
 ### Mob Demoralizing Shout read as -40 attack power
 
