@@ -4,6 +4,22 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261126-3: Might of Shahram stuns the stun-immune raid boss, and since 8f5b59325 a stunned target can't dodge, parry or block
+- severity: low (+0.8 to +1.6 DPS, 0.1-0.2%, on the 7 paladin builds that wear Blackblade of Shahram; no rank change)
+- affects: paladin__level_60, -duty-crusader, -duty-wisdom, paladin__level_60_sub_holy, -duty-crusader, -duty-wisdom, paladin__level_60_sub_holy_undead (all wear 12592)
+- found: 2026-11-26, master ab3fff7007
+- evidence: `regress.py` old CLI bfbee78fcca3 vs new ab3fff700700, same new reqs, 3000 it, seed 424242: only these 7 presets moved more than 0.05 DPS (+1.2, +1.6, +1.6, +1.1, +0.8, +1.2, +1.4); every other preset, all warriors included, is unchanged. Cause: 8f5b59325 (warrior leveling) added `if result.Target.PseudoStats.Stunned { return false }` to the dodge, parry and block rolls (sim/core/spell_outcome.go:724, 755, 775). Might of Shahram (sim/common/item_effects.go:541-566) sets `Stunned = true` on every active target with no `StunImmune` check, while the raid boss is `StunImmune` (sim/core/target.go:192, EV-0088) and Forever explosives already skip it (sim/core/consumes.go:1438). So for 5 s per proc the boss stops dodging and parrying the paladin, which can't happen in game.
+- proposed fix: in Might of Shahram's ApplyEffects, skip `aoeTarget.StunImmune` targets under `sim.IsForever()` (as consumes.go:1438 does). Expected effect: the 7 builds go back by the amounts above.
+- needs: orchestrator fix
+
+### rotations-20261126-2: Fury DW APLs still use Blackhand's Breadth (13965) after the re-rank moved Fury DW to Heart of Wyrmthalak and Darkmoon Card: Maelstrom
+- severity: low (correctness: dead line, 0.0 DPS; the build now wears no on-use trinket)
+- affects: warrior__fury, warrior__fury-duty-battle-shout, warrior__fury-duty-sunder and their race rows (ui/warrior/apls/level60_fury.apl.json:15, level60_fury_battle_shout.apl.json:18, level60_fury_sunder.apl.json:16, and the three req rotations)
+- found: 2026-11-26, master ab3fff7007
+- evidence: f79e810e1 changed Fury DW trinkets 13965+19289 -> 22321+19289 (req equipment items[12..13]); the APL line `{"action":{"castSpell":{"spellId":{"itemId":13965}}},"notes":"Blackhand's Breadth on cooldown: its mark beats holding it for the last 30 s."}` now names an item not worn. Arms and Fury 2H still wear 13965 with no line (autocast), which is fine. Per the Phase 0 trinkets open item, a build with no on-use trinket shouldn't keep a trinket line.
+- proposed fix: delete that line from the three APLs and their req rotations.
+- needs: orchestrator fix
+
 ### rotations-20261126-1: Balance APLs still pre-pull and gate Elune's Light on Chained Essence of Eranikus (10455) after the re-rank moved Balance to Talisman of Ascendance
 - severity: low (correctness: dead lines naming a trinket the build no longer wears; 0.0 DPS to clean up)
 - affects: druid__balance, druid__balance-wrath and their -duty-ff builds (ui/balance_druid/apls/level60{,_ff,_wrath,_wrath_ff}.apl.json lines 5 and 11, and the four req rotations)

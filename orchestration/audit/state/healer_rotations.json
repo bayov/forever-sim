@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
- "last_pass_at": "2026-11-25T19:13:37Z",
- "pass": 28,
- "result": "findings",
- "note": "Bench re-based after efeb06b95 (Forever resist constant 8L+19, 75% partial cap): 56 of 63 rows moved, mean carry +0.007, raid rows only past 0.02 (-20261125-2). No healer APL change; Holy tank mana gates tried, none wins.",
+ "last_pass_at": "2026-11-26T07:06:17Z",
+ "pass": 29,
+ "result": "quiet",
+ "note": "Watched spell_result.go change is leveling-only (inert in healbench). Bench re-based: 28 raid rows moved by the filler mage__frost.json item swap (7829e00f1/14de5d62d), confirmed with the old filler; logged under -20261124-1. -20261125-2 closed.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-26T01:04:24Z"
+ "checked_at": "2026-11-26T07:11:41Z"
 }

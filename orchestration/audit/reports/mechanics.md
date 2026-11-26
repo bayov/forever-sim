@@ -1,31 +1,32 @@
-# Mechanics pass 107 (2026-11-26)
+# Mechanics pass 108 (2026-11-26)
 
-- Master: bfbee78fc (last audited 85691655a). Client 1.60.1.71091 -> 1.60.1.71139.
-- Result: findings (1 medium, 2 low).
+- Master: ab3fff700 (last audited bfbee78fc). Client 1.60.1.71139 (unchanged).
+- Result: findings (1 low).
 
-## Repo since 85691655a
+## Repo since bfbee78fc
 
-No commit touches `sim/**/*.go` or `tools/rotopt/mksettings/**`; no TASKS.md / ledger change, no forever-update merge. Only Phase 0 re-rank preset work.
+Four sim commits, all warrior leveling work: 143bf4f72 (ranks by learn level, leveling hooks), 8f5b59325 (Charge, Intercept, Victory Rush, Retaliation, Concussion Blow, Gore Drinker, Cannibalize, Rage decay, stances by level), 1223e764e (big pulls: facing, camps, area reach), 81a2e51fc (Recovery, shield spikes, leveling heals).
 
-## Client 71091 -> 71139 (81 spell rows, `wago.py diff --by-spell`)
-
-| Spells | Change | Sim |
+| Change | Level 60 effect | Verdict |
 |---|---|---|
-| World buffs 22888, 16609, 460939, 15366, 22817, 22818, 22820, 23735-38, 23766-69, 24425, 25101 | Attributes_6 0x800 (not in raid instances) | Matches ForeverRaidInstance; comment stale (mechanics-20261126-3) |
-| Fengus' Ferocity 22817 | e2/e3 bp 230 -> 115 (spell damage, Nov 23 hotfix baked) | No spell part at all (mechanics-20261126-2) |
-| Sayge's fortunes | effect 0 aura -> 4 (dummy), bp kept (23768: 10) | Server side; added to mechanics-20261124-1 |
-| Rogue poisons, Reagent Economy 1262636-47 | Attributes_5 0x2, Attributes_0 / duration | Reagents, no DPS |
-| Fist of Shahram 16601 | ImplicitTarget 1 -> 27 (wielder only) | Sim buffs wielder only |
-| Holy Fire ranks | default SpellAuraOptions rows removed | No effect |
-| Reinforce 1225497, Summon Charger / Dreadsteed, Enveloping Winds | legacy / mounts / NPC | n/a |
+| aoe.go AoETargetCount / TargetsNear, consumes.go explosives, Dragon Breath Chili, Dragonfire, Caustic Smog | Outside leveling returns ActiveTargetUnits as before | Gated, no change |
+| apl_values_encounter.go execute phase -> InExecuteRange | Outside leveling = sim.executePhase <= N, as before | No change |
+| environment.go NextTargetUnit, spell_result.go, outcomeEnemyMeleeWhite from behind | Gated on leveling | No change |
+| spell_outcome.go: stunned target can't block / dodge / parry | Ungated; Era rule (tier 3) | Right rule; Might of Shahram stuns StunImmune bosses: mechanics-20261126-4 |
+| debuffs.go SunderArmorAuraOfRank (90 x rank) | Rank 5 = 450, same as SunderArmorAura | No change |
+| Warrior ranks (knownRank) for BT, MS, Execute, HS, Cleave, Rend, Revenge, Shield Slam, Slam, Sunder, TC, Overpower, Pummel, Hamstring, Battle Shout, Demo Shout | Rank max at 60; values equal the old constants | No change |
+| Retaliation registered at 60 outside leveling; Victory Rush, Intercept, Concussion Blow, Gore Drinker, Cannibalize, Recovery heal | Leveling-gated or unused by presets | No change |
+| MaxRange on melee specials, Thunder Clap 8 yd | Only checked in a leveling session (spell.go:589) | No change |
 
-## Blizzard
+## Measured (paired seeds, 10k iterations, run_reqs.py, bfbee78fc vs ab3fff700)
 
-- Dev notes t/2360696: still 8 posts, newest post 10 (2026-11-04). Nothing new.
-- Hotfix post t/2403040/16 (2026-11-25 23:25Z), not yet in TASKS.md:
-  - "Fixed a bug causing Libram of Law to not affect Judgement of Command." Sim misses it: mechanics-20261126-1 (JoC is 13.4% of Shock Ret damage, 1000 iterations; about +0.5% DPS).
-  - "The Blackhand's Breadth's trinket can no longer be resisted." Evidence added to mechanics-20261125-2.
-  - "The Blackblade of Shahram will now correctly perform its haste buff, but only to the wielder." Sim already does.
-  - Balance druid items repeat the Nov 25 blue post (mechanics-20261125-1).
-  - Class items for the class auditors: pet melee crit 0% fixed (hunter, warlock), Succubus/Incubus -5% crit, hawks +5% crit, Exorcism can crit (sim already), Judgement refresh below 20 s, Hurricane final hit, Genesis on Hurricane, Chain Lightning Clearcasting with 5 Maelstrom stacks.
-- Blue tracker: newest 2026-11-25 23:25Z (the hotfix post above); AV adjustments (PvP, not simmed).
+| Preset | Old | New | Delta |
+|---|---|---|---|
+| paladin__level_60 | 930.27 | 931.52 | +1.25 |
+| paladin__level_60-duty-crusader | 920.27 | 921.22 | +0.95 |
+
+Only Blackblade of Shahram's stun reaches ret in this range.
+
+## Blizzard and daily update
+
+No forum post past 2026-11-25T23:25:08Z (Hotfixes Nov 25, 2403040/16); dev notes thread 2360696 unchanged (8 posts, last 2026-11-04). No TASKS.md or update_ledger change, no forever-update merge. Client build 71139 still newest per the gate.

@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261126-4: Might of Shahram stuns a raid boss the sim marks StunImmune; since 8f5b59325 a stunned target can't dodge, parry or block, so Blackblade of Shahram gains about +1 DPS
+- severity: low
+- affects: every build wielding Blackblade of Shahram (12592): Retribution paladin Level 60 presets (ret, ret_undead gear sets); shared item code
+- found: 2026-11-26, master ab3fff7007
+- evidence: 8f5b59325 added `if result.Target.PseudoStats.Stunned { return false }` to applyAttackTableBlock / Dodge / Parry (sim/core/spell_outcome.go ~721-778), ungated, for leveling mobs (Era rule, tier 3: a stunned unit can't dodge, parry or block; that part is right). But the only stun on a raid target outside leveling is Might of Shahram (16600, sim/common/item_effects.go:541-552), which sets `Stunned = true` on the boss for 5 s with no `StunImmune` check, although target.go:192 marks every level 63 target StunImmune and consumes.go:1438 already makes stun explosives miss it (EV-0088, settled). A boss is immune to the stun in game (tier 3, and the sim's own ruling). Measured, paired seeds, 10k iterations, presets via tools/audit/run_reqs.py at bfbee78fc vs ab3fff7007 (no other change reaches ret): paladin__level_60 930.27 -> 931.52 (+1.25), paladin__level_60-duty-crusader 920.27 -> 921.22 (+0.95), about +0.13%. Before 8f5b59325 the boss stun already slowed nothing that matters for DPS, so the bug only now shows.
+- proposed fix: in Might of Shahram's OnGain/OnExpire (or the spell's ApplyEffects), skip targets with `StunImmune` when `sim.IsForever()`, matching consumes.go:1438; keep Curse of Shahram (attack-speed slow, not a stun). Expected: ret back to 930.27 / 920.27.
+- needs: orchestrator fix
+
 ### mechanics-20261126-1: Libram of Law now raises Judgement of Command (November 25 hotfix); the sim applies it to Righteousness and Fury only
 - severity: medium (estimate from a measured share: Judgement of Command 20966 is 13.4% of Shock Ret's damage, `paladin__level_60_shock_ret.json`, 1000 iterations, master bfbee78fc; 4% of it is about +0.5% DPS, +4.8 DPS)
 - affects: paladin (Shock Ret and its duty variants: tools/dps_report/req/paladin__level_60_shock_ret*.json, the Seal of Command builds that wear Libram of Law 272435)
