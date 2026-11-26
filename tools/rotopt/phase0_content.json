@@ -993,6 +993,7 @@
   "22150": {"name": "Beads of Ogre Might", "note": "Quest: Falrin's Vendetta (Dire Maul) · 25 Ogre Warbeads from Dire Maul or Blackrock Spire ogres · step of Mokvar's Five Thunders chain"},
   "22204": {"name": "Wristguards of Renown", "note": "Emperor Dagran Thaurissan (Blackrock Depths)"},
   "22207": {"name": "Sash of the Grand Hunt", "note": "Emperor Dagran Thaurissan · Blackrock Depths"},
+  "22212": {"name": "Golem Fitted Pauldrons", "note": "Phalanx · Blackrock Depths · seen in game"},
   "22231": {"name": "Kayser's Boots of Precision", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "gold": 213.8, "goldPerDps": {"enh": 204.0}},
   "22232": {"name": "Marksman's Girdle", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "22240": {"name": "Greaves of Withering Despair", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "gold": 87.3, "goldPerDps": {"enh": 9.5, "shaman_warden_balanced": 2.8}},
