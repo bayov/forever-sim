@@ -2,6 +2,15 @@
 
 ## Open
 
+### healer_gear-20261126-1: The Holy priest and Holy paladin lists score about 1.4% above what their requests sim on the bench
+- severity: low (1.9 and 1.7 points of carry; picks may be ranked on a biased estimate)
+- affects: priest_holy (ui/healing_priest/bis/level60_phase0_priest_holy.bis.json), paladin_holy (ui/holy_paladin/bis/level60_phase0_paladin_holy.bis.json)
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: tools/audit/healer_rotations/baseline.sh, 1,000 iterations, healbench's seed, 7 bosses per role, score = 100 x mean carry with the roles weighed alike: priest_holy (1.194 + 1.440) / 2 = 131.7 against the list's 133.59 (the spec notes' own step 9 also has 131.7); paladin_holy (1.100 + 1.343) / 2 = 122.2 against 123.91 (notes 123.4). shaman_restoration 127.5 against 127.63 and priest_discipline 122.8 against 122.23 match. Standards 43: the request sims to its list's score within noise (about 0.3 points here).
+- proposed fix: score the final set with the full carry at -heal-seed 101 and at healbench's seed; if healscore's linear estimate (docs/healing_sim.md, The rotopt objective) is what's off, re-rank the picks that won by less than the gap with the full carry.
+- needs: worker fix
+
+
 ## Resolved
 
 ### healer_gear-20261112-1: all five healer presets waste the spell-damage elixir and food; Greater Cleric's Elixir and Sage's Tea heal

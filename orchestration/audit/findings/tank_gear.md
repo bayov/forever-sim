@@ -2,6 +2,39 @@
 
 ## Open
 
+### tank_gear-20261126-1: The warrior's Phase 0 lists don't sim to their list score on the bench (5 to 11% high), so the search ranked warrior gear on a different score than the one published
+- severity: medium (the warrior's three presets; the bench is 238 / 244 / 140 below the list, standards 43 asks for "within noise")
+- affects: Protection warrior, all three presets (ui/tank_warrior/bis/level60_phase0_warrior_protection_*.bis.json against tools/tankbench/req/warrior_protection_*.json); Warden Balanced to a lesser degree
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: tankbench, 3,000 iterations, six scored bosses, own column, seed 1 / 2 (`tools/audit/tank_fairness/bench.sh`): warrior Balanced 3061.5 / 3055.3 against the list's 3299.37; Max threat 4454.7 / 4455.8 against 4699.65; Max survival 1090.8 / 1067.2 against 1218.67 (errors about 5 to 15). The other tanks match: bear 3694.2 / 5607.3 / 1081.8 against 3686.0 / 5606.7 / 1047.9, paladin 2958.7 / 3917.0 / 793.2 against 2965.3 / 3912.6 / 800.2, Warden Max threat and Max survival within error. Warden Balanced is 2029.3 / 2019.7 against 1962.8 (+3%, the other way). The warrior notes (phase0_tankheal_warrior_protection.md, Scores) record the gap but not its cause.
+- proposed fix: find what rotopt -tank (bis_phase0.sh, tools/tankscore) does differently from tankbench on the warrior request (APL, Stoneform line on an Undead, rage options, consumes or race read from the list) and fix it, then re-run the three warrior searches. Until then the warrior picks are ranked on a score the report doesn't publish.
+- needs: worker fix
+
+### tank_gear-20261126-2: Warrior Max threat picks Frozen Steel Vambraces, which the content check says the server calls invalid
+- severity: low (the next pick, Bracers of Heroism, is 3.9 below on the list, within noise)
+- affects: Protection warrior Max threat and its Alliance row (ui/tank_warrior/gear_sets/level60_phase0_warrior_protection_max_threat{,_alliance}.gear.json, wrist 19112)
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: tools/rotopt/phase0_content.json "19112": avail doubtful, note "Not in Forever's client data (the server calls it invalid)". Standards 42 keeps "out" for what we know is not in the game; an item the server rejects is that, not an unsure source. The list's next feasible wrist is Bracers of Heroism 226863 (4695.79 against 4699.65).
+- proposed fix: mark 19112 "out" in phase0_content.json, re-rank the warrior Max threat wrist (RANK_ONLY) and rewrite its gear sets and request. No DPS gear set wears it.
+- needs: worker fix
+
+### tank_gear-20261126-3: Tank and healer lists carry stale price annotations: Warden picks tagged "infeasible", notes in "g per DPS"
+- severity: low (display only: the gear sets wear the items)
+- affects: Warden shaman lists: Totem of Rage (ranged, all three presets and the Max survival Alliance row), Windreaver Greaves (Balanced feet); "g per DPS" notes on 15 of 20 tank and healer lists (Warden Max threat 9, warrior Max threat 5, Warden Max survival Alliance 5, paladin_holy 2, priest_holy 2, ...)
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: ui/warden_shaman/bis/level60_phase0_shaman_warden_*.bis.json carry avail "infeasible" and notes "269g per DPS" on picks. The current content check gives Totem of Rage (22395) goldPerDps only for enh, and Windreaver Greaves (13967) shaman_warden_balanced 7.1 (line 237.2 a point), so bis_phase0.sh's annotation step would tag neither. The public list shows a worn pick as infeasible. The "per DPS" notes are older than the score-unit annotation and than the last price run: paladin_holy's Amalgam's Band says "929g per DPS" while the content check now has paladin_holy 126.3 a point.
+- proposed fix: after the final price run, re-run the annotation step of bis_phase0.sh on every tank and healer list (tank_fairness-20261126-2 asks for Totem of Rage's Warden price).
+- needs: worker fix
+
+### tank_gear-20261126-4: phase0_check.py flags tank rows on noise: its --noise is 1.0 in DPS, the tank score's bench error is 5 to 20
+- severity: low (audit tool; 21 of the 26 flags this pass are tank rows, every one re-tested as noise in the spec notes)
+- affects: tools/audit/gear/phase0_check.py on rows with a bench
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: flags such as paladin Max survival waist Brigam Girdle +48.4, bear Max survival trinket Adaptive Combat Assistant +51.1, Warden Max survival feet Flame Walkers +17.9 are all bench-tested in phase0_tankheal_*.md (within 2 stderr). The screen lists rank at 1,000 iterations.
+- proposed fix: for bench rows, default the noise to 1% of the row's scoreRef (tank) or 0.5 points (healer), or read a per-row noise from the list.
+- needs: orchestrator fix
+
+
 ## Resolved
 
 ### tank_gear-20261112-1: Warrior (all presets) and Warden (Max threat, Balanced) still wear Greater Stamina boots; Greater Agility (1887) scores higher

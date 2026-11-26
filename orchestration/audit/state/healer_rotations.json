@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
  },
- "last_pass_at": "2026-11-25T19:13:37Z",
- "pass": 28,
- "result": "findings",
- "note": "Bench re-based after efeb06b95 (Forever resist constant 8L+19, 75% partial cap): 56 of 63 rows moved, mean carry +0.007, raid rows only past 0.02 (-20261125-2). No healer APL change; Holy tank mana gates tried, none wins.",
+ "last_pass_at": "2026-11-26T13:30:00Z",
+ "pass": 29,
+ "result": "quiet",
+ "note": "Phase 0 gear (equipment only changed in the 7 finished requests): 41 of 63 rows moved >0.02, mean carry down 0.008 to 0.075 by spec; baseline re-based. Holy and Disc tank still OOM on Chromaggus (106 s, 102 s of 115; open -20261125-1, -20261104-2). No other OOM at 180/300 s.",
  "baseline": "ref/healer_bench/summary.tsv",
- "client_build": "1.60.1.71037",
- "checked_at": "2026-11-25T19:23:36Z"
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T13:30:00Z"
 }

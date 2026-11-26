@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
  },
- "last_pass_at": "2026-11-25T18:48:13Z",
- "pass": 18,
- "result": "quiet",
- "client_build": "1.60.1.70888",
- "checked_at": "2026-11-25T19:23:36Z",
- "note": "Only standards.md changed (item 11 explosives per EV-0088, item 17 Windfury extra attacks). No tank gear, set, enchant or Tanks row input changed."
+ "last_pass_at": "2026-11-26T13:00:00Z",
+ "pass": 19,
+ "result": "findings",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T13:00:00Z",
+ "note": "First Phase 0 pass (branch phase0-tankheal). 12 tank lists, requests wear them. Warrior lists sim 5-11% below list score (-1); Frozen Steel Vambraces pick (-2); stale Warden infeasible tags (-3); phase0_check noise (-4)."
 }

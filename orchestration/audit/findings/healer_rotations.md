@@ -18,6 +18,7 @@
 - proposed fix: a worker re-tunes the Holy tank healer's mana use for long heavy tank fights (as -20261104-2 asks for Disc), e.g. a lower bound Greater Heal rank under a mana-percent line; not measured this pass. Separately the healer requests (and presets) could drop the now-dead intellect and spirit elixirs, or the gear pass could check what fills those slots best under AI and Divine Spirit (healer_gear).
 - update 2026-11-25, master 85691655a: unchanged within noise (Chromaggus 0.914, 504 mana, OOM 114 s, other deaths 11.6%). Tried paired, 1,000 it, all 7 files plus Golemagg/Ragnaros at 300 s: Greater Heal 5 (line 7) only at 30% mana or more: Chromaggus 0.912, OOM 114 s, Golemagg 300 0.932 (same); at 50%: Chromaggus 0.920 (+0.006), OOM 114 s, others same; Renew (line 3) only at 30% mana: Chromaggus 0.905, no OOM (116 s), Golemagg 300 0.911 (-0.021); Renew at 50%: Chromaggus 0.902, Golemagg 300 0.895. None stops the OOM without losing carry; the cheaper pattern needs more than a one-line gate.
 - needs: worker fix
+- pass 29 (2026-11-26, phase0-tankheal 3e9748641): worse on the Phase 0 set: out of mana at 106 s of 115 (was 114), carry 0.878 (was 0.914), 412 mana left; same at -dur 180 and 300 (105 / 107 s). The Phase 0 set ends about 1500 mana lower on every boss (paladin_holy notes say the same of the paladin).
 
 ### healer_rotations-20261124-1: Raid-role healer bench moved with the DPS report's Frost mage preset (28 raid rows, 16 by more than 0.02 carry, Holy paladin raid Golemagg +0.096), because healbench's filler is `tools/dps_report/req/mage__frost.json`
 - severity: medium (carry only; signs mixed, mean about +0.02; no healer rotation changed)
@@ -111,6 +112,7 @@
 - needs: worker fix
 
 ## Resolved
+- pass 29 (2026-11-26, phase0-tankheal 3e9748641): still out of mana on Chromaggus at 102 s of 115 (was 95 s), carry 0.866; Golemagg at 300 s now 189 s, Magmadar at 300 s 245 s.
 
 ### healer_rotations-20261112-2: Restoration shaman raid healer spends Nature's Swiftness on cooldown; held for an emergency Healing Wave it carries +0.010 more
 - severity: medium (+0.7% mean carry on two seeds; under the 1% line)

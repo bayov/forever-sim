@@ -632,3 +632,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 19:23 | tank_rotations | pass 31 | master 85691655ab | 2 new findings | Bear should drop Demoralizing Roar at Max threat/Balanced; warrior Balanced Thunder Clap marginal.
 2026-11-25 19:23 | tank_gear | pass 18 | master 85691655ab | quiet | Tank gear untouched.
 2026-11-25 19:23 | tank_fairness | pass 33 | master 85691655ab | 1 new finding | Bear Balanced preset now ties its Max threat build.
+2026-11-26 13:30 | tank_gear | pass 19 | phase0-tankheal 3e9748641 | 4 new findings | Warrior lists sim 5-11% below their list score; Frozen Steel Vambraces (server-invalid) picked; stale infeasible / per-DPS annotations; phase0_check noise in DPS.
+2026-11-26 13:30 | tank_fairness | pass 34 | phase0-tankheal 3e9748641 | 2 new findings | Phase 0: bear leads MT/Bal, warrior leads MS, paladin third; Titans +120 for paladin MS; price coverage gaps (11 unpriced crafted picks, 5 items without the list's price).
+2026-11-26 13:30 | healer_mechanics | pass 32 | phase0-tankheal 3e9748641 | quiet | Client 71139 touches no heal; healscore refactor keeps bench results.
+2026-11-26 13:30 | healer_rotations | pass 29 | phase0-tankheal 3e9748641 | quiet | Baseline re-based on Phase 0 gear (41 of 63 rows); Holy and Disc tank OOM on Chromaggus earlier (106 s, 102 s).
+2026-11-26 13:30 | healer_gear | pass 17 | phase0-tankheal 3e9748641 | 1 new finding | Holy priest and Holy paladin lists 1.4% above the bench; druid_restoration pending.
