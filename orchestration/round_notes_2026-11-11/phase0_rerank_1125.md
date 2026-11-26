@@ -24,7 +24,7 @@ slots over the line re-ranked. Group notes: `phase0_rerank_<group>.md`.
 - Fury DW: main hand Ironwood Blade -> Thrash Blade, trinkets Maelstrom + Blackhand's Breadth, ranged Satyr's Bow
   (over the line) -> Bloodseeker. 983.62 -> 986.50
 - Combat Swords: 840.96 -> 840.39
-- Seal Fate Swords: ranged Deep Jungle Rifle (over the line) -> Ancient Bone Bow. 848.83 -> 839.50
+- Seal Fate Swords: ranged Deep Jungle Rifle (over the line) -> Ancient Bone Bow, trinket Eranikus -> Maelstrom after the audit (+8.9). 848.83 -> 848.3
 - Combat Daggers, Mutilate, Subtlety, Seal Fate Daggers: Devilsaur Gauntlets and Leggings for the Darkmantle pair
   (Devilsaur 2 beats Darkmantle 6). 828.81 -> 829.20, 785.09 -> 787.14, 786.46 -> 787.33, 818.47 -> 820.02
 
