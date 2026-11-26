@@ -217,17 +217,18 @@ class ApplyPrices(unittest.TestCase):
 class FactionSets(unittest.TestCase):
     def test_set_paths_and_gold(self):
         with tempfile.TemporaryDirectory() as root:
-            folder = os.path.join(root, 'ui', 'rogue', 'gear_sets')
+            folder = os.path.join(root, 'ui', 'warrior', 'gear_sets')
             os.makedirs(folder)
-            row = {'dir': 'rogue', 'gearOut': 'ui/rogue/gear_sets/level60_phase0_x.gear.json'}
-            for name in ('level60_phase0_x', 'level60_phase0_x_alliance'):
-                open(os.path.join(folder, name + '.gear.json'), 'w').close()
-            self.assertEqual(phase0_prices.set_paths(root, 'x', row), [
-                ('x', os.path.join(root, row['gearOut'])),
-                ('x_alliance', os.path.join(folder, 'level60_phase0_x_alliance.gear.json'))])
-            # no gearOut: the default path, and no copies when none are written
-            self.assertEqual(phase0_prices.set_paths(root, 'y', {'dir': 'rogue'}),
-                             [('y', os.path.join(folder, 'level60_phase0_y.gear.json'))])
+            table = {'x': {'dir': 'warrior', 'gearOut': 'ui/warrior/gear_sets/level60_phase0_x.gear.json'},
+                     'x_dw': {'dir': 'warrior'}}
+            for name in ('x', 'x_alliance', 'x_shock', 'x_dw', 'x_dw_alliance'):
+                open(os.path.join(folder, f'level60_phase0_{name}.gear.json'), 'w').close()
+            got = phase0_prices.set_paths(root, 'x', table['x'], table)
+            self.assertEqual([label for label, _ in got], ['x', 'x_alliance', 'x_shock'])
+            self.assertEqual(got[0][1], os.path.join(root, table['x']['gearOut']))
+            # x_dw's sets are its own, found from its default path
+            self.assertEqual([label for label, _ in phase0_prices.set_paths(root, 'x_dw', table['x_dw'], table)],
+                             ['x_dw', 'x_dw_alliance'])
         items = [{'id': 1}, {'id': 2}, {'id': 3}]
         total, parts = phase0_prices.set_gold(items, {1: 10.0}, {2: [(1, 2)]}, {3: (5.0, 'effort: run')},
                                               names={'1': 'A'})

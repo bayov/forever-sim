@@ -4,7 +4,7 @@
     python3 tools/rotopt/phase0_prices.py                     # print the tables of every spec
     python3 tools/rotopt/phase0_prices.py --write             # save gold and goldPerDps in phase0_content.json
     python3 tools/rotopt/phase0_prices.py --spec mage_fire    # one spec, or a comma list
-    python3 tools/rotopt/phase0_prices.py --sets              # each spec's gear set's total gold, faction copies too
+    python3 tools/rotopt/phase0_prices.py --sets              # each spec's gear set's total gold, faction and build copies too
 
 One run prices every spec's list in tools/rotopt/phase0_specs.json (the one
 bis_phase0.sh writes for it). An item's gold is the same on every list, but its
@@ -425,16 +425,21 @@ def content_text(content):
                             f'{"," if i < len(keys) - 1 else ""}\n' for i, k in enumerate(keys)) + '}\n'
 
 
-def set_paths(root, spec, row):
-    """The gear sets of a spec to price: its gearOut and the faction copies next to it
-    (<gearOut minus .gear.json>_horde and _alliance, bis_phase0.sh RACE), as [(label, path)]."""
-    path = os.path.join(root, row.get('gearOut') or f"ui/{row['dir']}/gear_sets/level60_phase0_{spec}.gear.json")
-    out = [(spec, path)]
-    base = path[:-len('.gear.json')] if path.endswith('.gear.json') else path
-    for faction in ('horde', 'alliance'):
-        copy = f'{base}_{faction}.gear.json'
-        if os.path.exists(copy):
-            out.append((f'{spec}_{faction}', copy))
+def set_paths(root, spec, row, table=None):
+    """The gear sets of a spec to price, as [(label, path)]: its gearOut and every set named
+    <gearOut minus .gear.json>_<variant>.gear.json next to it, the faction copies (_horde, _alliance,
+    bis_phase0.sh RACE) and build variants such as Retribution's _shock and _undead. A set that
+    belongs to another spec of the table (fury_dw next to fury) is left to that spec."""
+    def base(s, r):
+        p = os.path.join(root, r.get('gearOut') or f"ui/{r['dir']}/gear_sets/level60_phase0_{s}.gear.json")
+        return p[:-len('.gear.json')] if p.endswith('.gear.json') else p
+    mine = base(spec, row)
+    others = [base(s, r) for s, r in (table or {}).items() if s != spec]
+    out = [(spec, mine + '.gear.json')]
+    for path in sorted(glob.glob(glob.escape(mine) + '_*.gear.json')):
+        if any(o.startswith(mine + '_') and path.startswith(o) for o in others):
+            continue
+        out.append((spec + path[len(mine):-len('.gear.json')], path))
     return out
 
 
@@ -504,7 +509,7 @@ def main():
     sets = {}
     if args.sets:
         for spec in specs:
-            for label, path in set_paths(ROOT, spec, table[spec]):
+            for label, path in set_paths(ROOT, spec, table[spec], table):
                 with open(path) as f:
                     sets[label] = [i for i in json.load(f)['items'] if i and i.get('id')]
     effort, unknown = {}, set()
