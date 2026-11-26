@@ -158,7 +158,7 @@ Dropping Thunder Clap loses on both seeds, well beyond noise, so it stays. A lik
 Max threat's hands, Raider Gauntlets, need Darkspear Raiders Revered (Horde). The Alliance row is ranked at RaceHuman over the hands slot.
 - The best Alliance hands are Gauntlets of Heroism.
 - The Theramore Gauntlets would rank higher but are infeasible.
-- The Alliance list scores 4570.0 in the search, against Horde's 4699.7. That includes the race change.
+- The Alliance list scores 4565.3 in the search, against Horde's 4692.0. That includes the race change.
 
 It is written to ui/tank_warrior/gear_sets/level60_phase0_warrior_protection_max_threat_alliance.gear.json. Balanced and max survival have no faction reward. The Watchers rings are for both factions.
 
