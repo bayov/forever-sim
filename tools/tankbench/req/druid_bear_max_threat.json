@@ -13,7 +13,7 @@
               "items": [
                 {
                   "id": 287019,
-                  "enchant": 1506
+                  "enchant": 2543
                 },
                 {
                   "id": 22150,
@@ -27,7 +27,7 @@
                   "enchant": 1219587
                 },
                 {
-                  "id": 252484,
+                  "id": 252483,
                   "enchant": 1891
                 },
                 {
@@ -62,7 +62,7 @@
                   "id": 272437
                 },
                 {
-                  "id": 9449,
+                  "id": 280018,
                   "enchant": 1248668
                 },
                 {},
@@ -209,36 +209,6 @@
                     }
                   },
                   "notes": "Lacerate to 5 stacks, and again before they drop (under 4 sec left)."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 9898
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "auraRemainingTime": {
-                            "auraId": {
-                              "spellId": 9898
-                            },
-                            "sourceUnit": {
-                              "type": "CurrentTarget"
-                            }
-                          }
-                        },
-                        "op": "OpLt",
-                        "rhs": {
-                          "const": {
-                            "val": "3s"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout)."
                 },
                 {
                   "action": {

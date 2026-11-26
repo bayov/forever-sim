@@ -4,12 +4,29 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261125-2: The explosive re-pick after EV-0088 reached only the hunters and Feral; every other melee build still takes no filler explosive and loses 2.7 to 7.3 DPS to Goblin Land Mine
+- severity: high (0.3% to 0.9%; Mutilate with the mine (802.1) passes Subtlety (798.1), which already carries it)
+- affects: warrior__fury, warrior__fury_2h, rogue__mutilate, rogue__combat-swords, rogue__combat-daggers, rogue__seal-fate-swords, paladin__level_60 (and shock_ret, sub_holy), shaman__enhancement-level60 (and imp-gw), hunter__survival; their duty / race variants likely the same (not simmed)
+- found: 2026-11-25, master 85691655a
+- evidence: standards 11 (22d2cf952) says a thrown explosive now keeps the swing timer and "the picks are due a re-check"; 22d2cf952 re-picked only hunter (Dense Dynamite) and feral (Goblin Land Mine) in mksettings / presets (results-20261125-1 covers those requests' drift). Rogue Subtlety and Seal Fate Daggers already carry the Land Mine (-7.0 / -6.6 without it). Paired, report request with only fillerExplosive changed, 10k iterations, seeds 1 / 1000003, CLI 85691655a (tools/audit/fairness/explosives.py): Goblin Land Mine over none: Fury DW +3.3, Fury 2H +2.7, Mutilate +6.8, Combat Swords +6.5, Combat Daggers +6.2, Seal Fate Swords +6.9, Ret +7.3, Shock Ret +6.8, Sub Holy +7.1, Enhancement +6.3, Enh imp-gw +5.0, Survival +4.6, Survival wolf +5.2; Arms dragonkin +0.3 (noise); Dense Dynamite 0.6 to 1.2 below the mine on each; EZ-Thro Dark Bomb loses on all (stun-immune boss). Arms keeps none (mine -1.4, Dynamite -2.1). Casters gain nothing (Fire, Affliction, Elemental: mine +0.0, Dynamite -5 to -6). Sure of the numbers.
+- proposed fix: set fillerExplosive Goblin Land Mine in the listed requests, their presets.ts and mksettings (Fury, rogues, Ret, Enhancement, Survival), confirm the duty variants with explosives.py, and re-sim; Arms and the casters stay on none.
+- needs: orchestrator fix
+
+### fairness-20261125-3: Demonology's report race (Orc) is no longer its best; Undead sims 5.7 higher (Destruction +2.2)
+- severity: medium (0.6% on warlock__demonology; no place in the ranking changes)
+- affects: warlock__demonology (and its duty variants, not simmed), warlock__destruction (low)
+- found: 2026-11-25, master 85691655a
+- evidence: paired 20k, seeds 1 / 1000003, report request with only the race changed (no Undead race rotation exists): Demonology Orc 885.2 / 884.5, Undead 890.4 / 890.7 (+5.7); Destruction Orc 870.0 / 869.9, Undead 871.9 / 872.4 (+2.2). 5k sweep agrees (Demonology Undead 891.1, Orc 885.4; Destruction Undead 871.7, Orc 870.2). At 0404484fb Human / Orc / Undead were within 1.6 on Demonology. The likely cause is efeb06b95 (resist constant 8L+19 raises the boss's resist, which makes Undead's racial worth more; Shadow priest's Undead also overtook Troll), not checked further. Script: $AUDIT_WORK/fairness/paired/race.py (scratch).
+- proposed fix: move Demonology (and Destruction if the +2.2 holds with a race rotation check, standards 29) to Undead and re-sim; or record why Orc stays.
+- needs: orchestrator fix
+
 ### fairness-20261125-1: Marksmanship's report race (Orc) is no longer its best on the Phase 0 set; Skyborne High Order sims 6.1 higher
 - severity: medium (0.56% on hunter__marksmanship, 0.65% on the wolf variant; MM keeps 2nd place)
 - affects: hunter__marksmanship (report race Orc), hunter__marksmanship-wolf, hunter__marksmanship-tallstrider
 - found: 2026-11-25, master 63129ce35
 - evidence: paired 20k, seeds 1 / 1000003, CLI /tmp/audit-cache/cli/63129ce35290: hunter__marksmanship Orc 1090.4 / 1090.3, High Order on its committed race file req/races/hunter__marksmanship.SkyborneHighOrder.json (Alliance set) 1096.4 / 1096.5 (+6.1; the same on the Horde set); hunter__marksmanship-wolf Orc 1070.4, High Order 1077.4 (+7.0, seed 1). 5k sweep: MM High Order 1096.3 vs Orc 1090.0, tallstrider +6.8, wolf +7.5. Beast Mastery is a tie (Orc 1009.5 / 1009.4, High Order 1009.5 / 1009.1). Came with the hunter Phase 0 regear (8e04994c5, merged 3fdc2dca4); on the synthetic set Orc was within 1.0 of the best. Script: $AUDIT_WORK/fairness/paired/p.py (scratch). Standards 16 says presets use the best race.
 - 2026-11-25 (pass 59, 0404484fb): 5k sweep MM High Order 1088.8 vs Orc 1082.2 (+6.6) after the elixir overwrite; variants +7.1 / +7.7. Still open.
+- 2026-11-25 (pass 60, 85691655a): 5k sweep MM High Order 1100.9 vs Orc 1095.9 (+5.0); wolf +6.7, tallstrider +6.4. Still open.
 - proposed fix: move the three Marksmanship requests, metas and preset to Skyborne High Order on level60_phase0_hunter_mm_alliance (or check a High Order race rotation first, standards 29) and re-sim; or record why Orc stays.
 - needs: orchestrator fix
 
@@ -20,6 +37,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: paired 20k, seeds 1 / 1000003, report request with only the race changed (no race rotation exists for these races): Fire Human 920.8 / 920.2, Undead 922.8 / 922.5 (+2.2), High Order with req/races/mage__fire.SkyborneHighOrder 906.4 / 906.6; Shadow Undead 855.2 / 855.2, Troll 857.3 / 856.9 (+1.9). The 5k sweep agrees (Fire Undead 923.3 vs Human 920.4, Shadow Troll 857.3 vs Undead 855.5). Both came with the Phase 0 regear (8b5137c6d sweep: Fire Human best, Shadow Undead best). Scripts: $AUDIT_WORK/fairness/paired/run.py (scratch).
 - 2026-11-25 (pass 56, 63129ce35): Shadow on its new talents (a2d195d46): paired 20k Undead 857.6 / 857.7, Troll 859.5 / 859.4 (+1.8). Fire unchanged (5k sweep Undead 923.3, Human 920.4). Still open.
 - 2026-11-25 (pass 59, 0404484fb): 5k sweep after the elixir overwrite: Fire Undead 913.9 vs Human 913.1 (+0.8, now near noise; needs a paired check); Shadow Troll 856.0 vs Undead 854.3 (+1.7). Still open.
+- 2026-11-25 (pass 60, 85691655a): Shadow fixed by the rules, not the request: paired 20k Undead 869.2 / 869.2, Troll 865.5 / 865.5 (Undead, the report race, best by 3.7). Fire: paired 20k Human 918.5 / 917.8, Gnome 918.9 / 918.3 (+0.45), Undead 918.7 / 919.7 (+1.05), at the edge of noise. Open for Fire only (low).
 - proposed fix: re-pick the report race (standards 16 / 29), Fire to Undead and Shadow to Troll, with a race rotation check; or note in the metas why Human / Undead stay.
 - needs: orchestrator fix
 
@@ -35,6 +53,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-11-24 (pass 55, eceb09019): the four Balance requests moved to the Phase 0 set (still Night Elf). Paired 20k, seeds 1 / 1000003, report request with only the race changed, race rotation where req/races has one: Balance NE 822.3 / 822.1, High Order (race rotation) 826.5 / 826.1 (+4.1), Windshaper 825.7 / 825.4; Wrath NE 730.1 / 730.4, High Order 735.1 / 736.0 (+5.3); Balance FF duty NE 789.0 / 788.3, High Order (race rotation) 793.5 / 793.5 (+4.9); Wrath FF duty NE 702.8 / 702.7, High Order 708.5 / 708.5 (+5.8). The 5k sweep (base rotation only) shows Night Elf best for default Balance, but with the committed race rotation High Order still wins all four. Still open.
 - 2026-11-25 (pass 56, 63129ce35): no druid change in range; 5k sweep Balance unchanged (Night Elf 822.9, Wrath High Order 734.5 vs Night Elf 730.5). Still open.
 - 2026-11-25 (pass 59, 0404484fb): no druid Balance change; 5k sweep (base rotation) Balance Night Elf 818.8, Wrath High Order 732.4 vs Night Elf 727.7. Still open.
+- 2026-11-25 (pass 60, 85691655a): no Balance code change; 5k sweep (base rotation) Night Elf 816.1, Wrath High Order 735.3 vs Night Elf 731.5. Still open.
 - proposed fix: set the four Balance requests' and presets' race to Skyborne High Order (Balance and Balance FF duty with the race-tuned rotation the race table already uses) and re-sim them; or record in standards why Night Elf stays.
 - needs: orchestrator fix
 

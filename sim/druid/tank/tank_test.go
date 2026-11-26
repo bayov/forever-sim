@@ -73,7 +73,7 @@ func TestForeverBear(t *testing.T) {
 			casts[a.Id.GetSpellId()] += float64(tgt.Casts) / iterations
 		}
 	}
-	for id, name := range map[int32]string{9881: "Maul", 1235827: "Lacerate", 1238070: "Primal Bite", 9898: "Demoralizing Roar"} {
+	for id, name := range map[int32]string{9881: "Maul", 1235827: "Lacerate", 1238070: "Primal Bite"} {
 		if casts[id] < 1 {
 			t.Errorf("%s cast %.1f times a fight, want it in the rotation", name, casts[id])
 		}
@@ -84,17 +84,12 @@ func TestForeverBear(t *testing.T) {
 		t.Errorf("Primal Bite cast %.1f times in %d sec, over its cooldown", casts[1238070], seconds)
 	}
 
-	// The bear's own Demoralizing Roar is on the boss.
-	uptime := 0.0
+	// No Demoralizing Roar on the boss: the bench drops the raid's (tankscore.OwnDebuffs), and since
+	// Lacerate's 10/3 threat Balanced leaves its own off (rotopt roarRefresh=0, docs/tank_druid.md).
 	for _, a := range res.EncounterMetrics.Targets[0].Auras {
-		if a.Id.GetSpellId() == 9898 {
-			uptime = a.UptimeSecondsAvg / seconds
+		if a.Id.GetSpellId() == 9898 && a.UptimeSecondsAvg > 0 {
+			t.Errorf("Demoralizing Roar up %.0f sec, want none", a.UptimeSecondsAvg)
 		}
-	}
-	// Roar's line is below Lacerate's keep-up (rotopt's roarAfterLacerate), so the first Roar waits for
-	// Lacerate's 5 stacks and an early refresh can wait a GCD or two.
-	if uptime < 0.8 {
-		t.Errorf("Demoralizing Roar up %.0f%% of the fight, want it kept up", 100*uptime)
 	}
 
 	if m.Threat.Avg <= 0 || m.Dps.Avg <= 0 {

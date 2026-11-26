@@ -16,7 +16,7 @@
   ],
   "dps": -1336.94,
   "made": "2026-11-25",
-  "sim": "5d6beb1d3be2+",
+  "sim": "fc39e500063b+",
   "slots": {
     "head": [
       {
@@ -26,7 +26,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1505,
-        "note": "Random world drop"
+        "note": "Random world drop · 1g per point of score"
       },
       {
         "id": 279253,
@@ -82,7 +82,7 @@
         "name": "Black Dragonscale Helm",
         "dps": -1429.14,
         "loss": 92.2,
-        "note": "On AH ~296g · or Leatherworking 300 · pattern on AH ~91g · 47g per DPS"
+        "note": "On AH ~296g · or Leatherworking 300 · pattern on AH ~91g"
       },
       {
         "id": 10160,
@@ -181,7 +181,8 @@
         "id": 16707,
         "name": "Shadowcraft Cap",
         "dps": -1497.89,
-        "loss": 160.95
+        "loss": 160.95,
+        "note": "Drop: Darkmaster Gandling, Scholomance · Shadowcraft set"
       },
       {
         "id": 13404,
@@ -194,16 +195,16 @@
       {
         "id": 11755,
         "name": "Verek's Collar",
-        "dps": -1325.35,
+        "dps": -1325.34,
         "loss": -11.59,
-        "note": "Verek (Blackrock Depths)"
+        "note": "Drop: Verek, Blackrock Depths · 81g per point of score"
       },
       {
         "id": 18381,
         "name": "Evil Eye Pendant",
         "dps": -1328.01,
         "loss": -8.93,
-        "note": "Drop: Immol'thar, Dire Maul"
+        "note": "Drop: Immol'thar, Dire Maul · 14g per point of score"
       },
       {
         "id": 19491,
@@ -219,7 +220,7 @@
         "name": "Talisman of Evasion",
         "dps": -1346.86,
         "loss": 9.92,
-        "note": "War Master Voone · Blackrock Spire"
+        "note": "War Master Voone · Upper Blackrock Spire"
       },
       {
         "id": 12046,
@@ -230,49 +231,10 @@
         "note": "Random world drop"
       },
       {
-        "id": 12044,
-        "suffix": 1763,
-        "name": "Arctic Pendant of Eluding",
-        "dps": -1365.22,
-        "loss": 28.28
-      },
-      {
-        "id": 12036,
-        "suffix": 1760,
-        "name": "Granite Necklace of Eluding",
-        "dps": -1371.41,
-        "loss": 34.47,
-        "note": "Random world drop · other suffixes on AH ~5.8g"
-      },
-      {
-        "id": 12035,
-        "suffix": 1760,
-        "name": "Obsidian Pendant of Eluding",
-        "dps": -1371.41,
-        "loss": 34.47,
-        "note": "On AH ~3.5g"
-      },
-      {
-        "id": 12026,
-        "suffix": 1760,
-        "name": "Quicksilver Pendant of Eluding",
-        "dps": -1371.41,
-        "loss": 34.47,
-        "note": "Random world drop"
-      },
-      {
-        "id": 12027,
-        "suffix": 1760,
-        "name": "Vermilion Necklace of Eluding",
-        "dps": -1371.41,
-        "loss": 34.47,
-        "note": "Random world drop"
-      },
-      {
         "id": 12048,
         "suffix": 1772,
         "name": "Prismatic Pendant of Eluding",
-        "dps": -1371.99,
+        "dps": -1371.98,
         "loss": 35.05,
         "note": "Random world drop"
       },
@@ -295,7 +257,7 @@
       {
         "id": 275736,
         "name": "Horn of Ve'han",
-        "dps": -1384.16,
+        "dps": -1384.15,
         "loss": 47.22,
         "avail": "doubtful",
         "note": "Quest: Work Well Done"
@@ -307,6 +269,14 @@
         "loss": 52.27
       },
       {
+        "id": 277202,
+        "name": "Artifact Seeker's Pendant",
+        "dps": -1389.95,
+        "loss": 53.02,
+        "avail": "doubtful",
+        "note": "Quest: Greater Friend of the Library · giver and place unknown"
+      },
+      {
         "id": 19534,
         "name": "Scout's Medallion",
         "dps": -1390,
@@ -316,16 +286,25 @@
       {
         "id": 22659,
         "name": "Medallion of the Dawn",
-        "dps": -1394.42,
+        "dps": -1394.41,
         "loss": 57.48,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
-        "id": 12929,
-        "name": "Emberfury Talisman",
-        "dps": -1400.74,
-        "loss": 63.8
+        "id": 287024,
+        "name": "Mark of Captivity",
+        "dps": -1400.9,
+        "loss": 63.96,
+        "note": "Trash, likely Alcaz Prison (zone 16620, no NPC known)"
+      },
+      {
+        "id": 12048,
+        "suffix": 613,
+        "name": "Prismatic Pendant of the Monkey",
+        "dps": -1402.68,
+        "loss": 65.74,
+        "note": "Random world drop"
       },
       {
         "id": 22657,
@@ -336,9 +315,29 @@
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
+        "id": 19159,
+        "name": "Woven Ivy Necklace",
+        "dps": -1412.08,
+        "loss": 75.14
+      },
+      {
+        "id": 12048,
+        "suffix": 990309,
+        "name": "Prismatic Pendant of the Beast",
+        "dps": -1413.88,
+        "loss": 76.95,
+        "note": "Random world drop"
+      },
+      {
+        "id": 12103,
+        "name": "Star of Mystaria",
+        "dps": -1425.24,
+        "loss": 88.3
+      },
+      {
         "id": 19426,
         "name": "Orb of the Darkmoon",
-        "dps": -1432.71,
+        "dps": -1432.7,
         "loss": 95.77,
         "note": "Quest: 1200 Tickets - Orb of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
       },
@@ -352,7 +351,7 @@
       {
         "id": 22149,
         "name": "Beads of Ogre Mojo",
-        "dps": -1439.12,
+        "dps": -1439.11,
         "loss": 102.18,
         "note": "Quest: Falrin's Vendetta · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
@@ -364,19 +363,19 @@
         "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
+        "id": 22403,
+        "name": "Nacreous Shell Necklace",
+        "dps": -1447.84,
+        "loss": 110.91,
+        "note": "price restored 2026-11-24 (warlock step 4): the Enhancement price pass of 5e556ff1e dropped it, not being on that list"
+      },
+      {
         "id": 21531,
         "name": "Drake Tooth Necklace",
         "dps": -1448.35,
         "loss": 111.41,
         "avail": "doubtful",
         "note": "Quest: The Nightmare Manifests"
-      },
-      {
-        "id": 15411,
-        "name": "Mark of Fordring",
-        "dps": -1456.66,
-        "loss": 119.72,
-        "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       }
     ],
     "shoulder": [
@@ -445,7 +444,8 @@
         "id": 16679,
         "name": "Beaststalker's Mantle",
         "dps": -1435.41,
-        "loss": 98.47
+        "loss": 98.47,
+        "note": "Overlord Wyrmthalak · Lower Blackrock Spire · Beaststalker's set"
       },
       {
         "id": 22212,
@@ -569,7 +569,7 @@
         "name": "Stoneskin Gargoyle Cape",
         "dps": -1393.5,
         "loss": 56.56,
-        "note": "Stonespine · Stratholme"
+        "note": "Drop: Stonespine, Stratholme"
       },
       {
         "id": 22269,
@@ -583,7 +583,7 @@
         "name": "Redoubt Cloak",
         "dps": -1401.66,
         "loss": 64.72,
-        "note": "Cho'Rush the Observer · Gordok Tribute, Dire Maul · per AtlasLoot and our data, not seen in game"
+        "note": "Drop: Dire Maul (trash or NPC 14324)"
       },
       {
         "id": 18413,
@@ -596,14 +596,16 @@
         "id": 11930,
         "name": "The Emperor's New Cape",
         "dps": -1415.01,
-        "loss": 78.07
+        "loss": 78.07,
+        "note": "Drop: Emperor Dagran Thaurissan, Blackrock Depths"
       },
       {
         "id": 287044,
         "name": "Predator's Shroud",
         "dps": -1415.08,
         "loss": 78.14,
-        "note": "Forever world drop, no NPC in our data · revealed in game Nov 12"
+        "note": "No known source · revealed in game Nov 12",
+        "avail": "doubtful"
       },
       {
         "id": 272415,
@@ -622,7 +624,8 @@
         "id": 18509,
         "name": "Chromatic Cloak",
         "dps": -1435.22,
-        "loss": 98.28
+        "loss": 98.28,
+        "note": "Leatherworking 300 · pattern 5.3% from object 179501 (location not checked) · 12 Brilliant Chromatic Scale + 30 Black/30 Red Dragonscale · no raid material"
       },
       {
         "id": 10249,
@@ -720,7 +723,8 @@
         "id": 18689,
         "name": "Phantasmal Cloak",
         "dps": -1475.76,
-        "loss": 138.82
+        "loss": 138.82,
+        "note": "Jandice Barov · Scholomance"
       },
       {
         "id": 12551,
@@ -752,7 +756,7 @@
         "name": "Beaststalker's Tunic",
         "dps": -1427.7,
         "loss": 90.76,
-        "note": "General Drakkisath · Upper Blackrock Spire · Dungeon Set 1 (Beaststalker) chest"
+        "note": "General Drakkisath · Upper Blackrock Spire · Dungeon Set 1 (Beaststalker) chest · 7g per point of score"
       },
       {
         "id": 14611,
@@ -765,14 +769,16 @@
         "id": 18530,
         "name": "Ogre Forged Hauberk",
         "dps": -1468.39,
-        "loss": 131.45
+        "loss": 131.45,
+        "note": "211g per point of score"
       },
       {
         "id": 10266,
         "suffix": 638,
         "name": "Masterwork Breastplate of the Monkey",
         "dps": -1469.37,
-        "loss": 132.43
+        "loss": 132.43,
+        "note": "1g per point of score"
       },
       {
         "id": 15680,
@@ -920,7 +926,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1248665,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 11765,
@@ -928,14 +934,14 @@
         "name": "Pyremail Wristguards of Agility",
         "dps": -1339.85,
         "loss": 2.91,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 16681,
         "name": "Beaststalker's Bindings",
         "dps": -1345.82,
         "loss": 8.88,
-        "note": "Drop, boss not in our data · Beaststalker's set"
+        "note": "Drop, boss not in our data · Beaststalker's set · 0g per point of score"
       },
       {
         "id": 22668,
@@ -951,7 +957,7 @@
         "name": "Pyremail Wristguards of the Monkey",
         "dps": -1347.81,
         "loss": 10.87,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 11679,
@@ -981,7 +987,7 @@
         "name": "Pyremail Wristguards of Stamina",
         "dps": -1373.24,
         "loss": 36.3,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 18296,
@@ -996,14 +1002,15 @@
         "name": "Pyremail Wristguards of the Falcon",
         "dps": -1377.26,
         "loss": 40.32,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 10265,
         "suffix": 611,
         "name": "Masterwork Bracers of the Monkey",
         "dps": -1378.05,
-        "loss": 41.11
+        "loss": 41.11,
+        "note": "0g per point of score"
       },
       {
         "id": 15679,
@@ -1045,7 +1052,7 @@
         "name": "Pyremail Wristguards of the Bandit",
         "dps": -1389.86,
         "loss": 52.92,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 11765,
@@ -1053,7 +1060,7 @@
         "name": "Pyremail Wristguards of the Beast",
         "dps": -1390.33,
         "loss": 53.39,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 273353,
@@ -1073,7 +1080,7 @@
         "name": "Pyremail Wristguards of the Eagle",
         "dps": -1392.53,
         "loss": 55.59,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
       },
       {
         "id": 227017,
@@ -1086,7 +1093,8 @@
         "id": 18726,
         "name": "Magistrate's Cuffs",
         "dps": -1398.16,
-        "loss": 61.22
+        "loss": 61.22,
+        "note": "Drop: Magistrate Barthilas, Stratholme"
       },
       {
         "id": 227001,
@@ -1131,7 +1139,7 @@
         "name": "Quickdraw Gloves",
         "dps": -1407.92,
         "loss": 70.98,
-        "note": "Immol'thar · Dire Maul · seen in game Nov 24"
+        "note": "Drop: Immol'thar, Dire Maul"
       },
       {
         "id": 20133,
@@ -1273,14 +1281,14 @@
         "dps": -1336.94,
         "loss": 0,
         "bis": true,
-        "note": "Blackmaw Behemoth · Blackmaw Hold (Ashenvale) · seen in game Nov 24"
+        "note": "Blackmaw Behemoth · Blackmaw Hold (Ashenvale) · seen in game Nov 24 · 2g per point of score"
       },
       {
         "id": 275617,
         "name": "Scalegut Belt",
         "dps": -1388.68,
         "loss": 51.74,
-        "note": "Leatherworking 290 · pattern from Aendel Windspear (Silithus) ~7.9g · reagents unchecked"
+        "note": "Leatherworking 290 · pattern from Aendel Windspear (Silithus) ~7.9g · reagents unchecked · 1g per point of score"
       },
       {
         "id": 22207,
@@ -1307,7 +1315,9 @@
         "id": 287040,
         "name": "Dinosaur Hide Belt",
         "dps": -1403.12,
-        "loss": 66.18
+        "loss": 66.18,
+        "avail": "doubtful",
+        "note": "No known source · seen in game Nov 24"
       },
       {
         "id": 10269,
@@ -1315,7 +1325,7 @@
         "name": "Masterwork Girdle of the Monkey",
         "dps": -1409.43,
         "loss": 72.49,
-        "note": "Random world drop"
+        "note": "Random world drop · 0g per point of score"
       },
       {
         "id": 10154,
@@ -1323,7 +1333,7 @@
         "name": "Mercurial Girdle of the Monkey",
         "dps": -1410.6,
         "loss": 73.66,
-        "note": "Random world drop"
+        "note": "Random world drop · 0g per point of score"
       },
       {
         "id": 19088,
@@ -1341,13 +1351,15 @@
         "id": 13526,
         "name": "Flamescarred Girdle",
         "dps": -1426.4,
-        "loss": 89.46
+        "loss": 89.46,
+        "note": "Drop: Maleki the Pallid, Stratholme"
       },
       {
         "id": 280070,
         "name": "Veilpiercer Girdle",
         "dps": -1442.55,
-        "loss": 105.61
+        "loss": 105.61,
+        "note": "Drop: Elder Shaman Bloodmane, Blackmaw Hold · seen in game Nov 24"
       },
       {
         "id": 227018,
@@ -1381,7 +1393,9 @@
         "id": 13962,
         "name": "Vosh'gajin's Strand",
         "dps": -1479.62,
-        "loss": 142.68
+        "loss": 142.68,
+        "avail": "doubtful",
+        "note": "Quest reward, Blackrock Spire · quest not identified"
       },
       {
         "id": 227008,
@@ -1464,7 +1478,7 @@
         "name": "Warstrife Leggings",
         "dps": -1406.13,
         "loss": 69.19,
-        "note": "General Angerforge · Blackrock Depths"
+        "note": "Drop: General Angerforge, Blackrock Depths"
       },
       {
         "id": 22740,
@@ -1618,9 +1632,9 @@
       {
         "id": 18047,
         "name": "Flame Walkers",
-        "dps": -1319.05,
+        "dps": -1319.04,
         "loss": -17.89,
-        "note": "Goraluk Anvilcrack · Blackrock Spire · seen in game Nov 24"
+        "note": "Goraluk Anvilcrack · Blackrock Spire · seen in game Nov 24 · 2g per point of score"
       },
       {
         "id": 20154,
@@ -1645,7 +1659,7 @@
         "name": "Beaststalker's Boots",
         "dps": -1340.78,
         "loss": 3.84,
-        "note": "Nerub'enkan · Stratholme · Beaststalker's set"
+        "note": "Nerub'enkan · Stratholme · Beaststalker's set · 3g per point of score"
       },
       {
         "id": 21532,
@@ -1658,57 +1672,51 @@
       {
         "id": 13402,
         "name": "Timmy's Galoshes",
-        "dps": -1349.89,
+        "dps": -1349.88,
         "loss": 12.95,
         "note": "Timmy the Cruel · Stratholme · looted Nov 13"
       },
       {
         "id": 18716,
         "name": "Ash Covered Boots",
-        "dps": -1357.12,
+        "dps": -1357.11,
         "loss": 20.18,
-        "note": "Archivist Galford · Stratholme"
+        "note": "Drop: Archivist Galford, Stratholme"
       },
       {
         "id": 11731,
         "name": "Savage Gladiator Greaves",
-        "dps": -1359.91,
+        "dps": -1359.9,
         "loss": 22.97,
-        "note": "Anub'shiah · Blackrock Depths"
+        "note": "Anub'shiah · Blackrock Depths · 4g per point of score"
       },
       {
         "id": 13284,
         "name": "Swiftdart Battleboots",
         "dps": -1365.2,
         "loss": 28.26,
-        "note": "Spirestone Battle Lord · Lower Blackrock Spire · looted Nov 12"
+        "note": "Spirestone Battle Lord · Lower Blackrock Spire · looted Nov 12 · 11g per point of score"
       },
       {
         "id": 10270,
         "suffix": 621,
         "name": "Masterwork Boots of the Monkey",
-        "dps": -1371.15,
+        "dps": -1371.14,
         "loss": 34.21
       },
       {
         "id": 15678,
         "suffix": 621,
         "name": "Triumphant Sabatons of the Monkey",
-        "dps": -1371.15,
+        "dps": -1371.14,
         "loss": 34.21
       },
       {
         "id": 10155,
         "suffix": 621,
         "name": "Mercurial Greaves of the Monkey",
-        "dps": -1373.46,
+        "dps": -1373.45,
         "loss": 36.52
-      },
-      {
-        "id": 13260,
-        "name": "Wind Dancer Boots",
-        "dps": -1375.33,
-        "loss": 38.39
       },
       {
         "id": 280017,
@@ -1720,7 +1728,7 @@
       {
         "id": 20186,
         "name": "Defiler's Leather Boots",
-        "dps": -1387.15,
+        "dps": -1387.14,
         "loss": 50.21,
         "avail": "doubtful",
         "note": "Defilers Revered · Rutherford Twing · Arathi Basin in Forever unconfirmed"
@@ -1744,9 +1752,15 @@
       {
         "id": 22472,
         "name": "Boots of Ferocity",
-        "dps": -1395.98,
+        "dps": -1395.97,
         "loss": 59.04,
         "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 19048,
+        "name": "Heavy Timbermaw Boots",
+        "dps": -1400.63,
+        "loss": 63.69
       },
       {
         "id": 20715,
@@ -1760,40 +1774,41 @@
         "id": 13967,
         "name": "Windreaver Greaves",
         "dps": -1413.85,
-        "loss": 76.91,
-        "avail": "infeasible",
-        "note": "251g per DPS"
-      },
-      {
-        "id": 274192,
-        "name": "Premier Flatmail Greaves",
-        "dps": -1415.65,
-        "loss": 78.71
-      },
-      {
-        "id": 272609,
-        "name": "Premier Linked Greaves",
-        "dps": -1415.65,
-        "loss": 78.71
-      },
-      {
-        "id": 274217,
-        "name": "Premier Linkmail Walkers",
-        "dps": -1416.25,
-        "loss": 79.31
-      },
-      {
-        "id": 273355,
-        "name": "Premier Ringmail Walkers",
-        "dps": -1416.25,
-        "loss": 79.31
+        "loss": 76.91
       },
       {
         "id": 10270,
         "suffix": 990353,
         "name": "Masterwork Boots of the Beast",
-        "dps": -1416.78,
+        "dps": -1416.77,
         "loss": 79.84
+      },
+      {
+        "id": 15678,
+        "suffix": 990353,
+        "name": "Triumphant Sabatons of the Beast",
+        "dps": -1416.77,
+        "loss": 79.84
+      },
+      {
+        "id": 227007,
+        "name": "Slippers of The Five Thunders",
+        "dps": -1418.81,
+        "loss": 81.88,
+        "note": "Quest at Mokvar · Pauldrons (Gyth, UBRS), Kilt (Rivendare, Strat), Boots of Elements (Omokk, LBRS) · Anthion chain (Strat, Dire Maul), step gold unknown · Elemental pick · or 47g at Mokvar after"
+      },
+      {
+        "id": 16711,
+        "name": "Shadowcraft Boots",
+        "dps": -1419.68,
+        "loss": 82.74,
+        "note": "Rattlegore (Scholomance) · Shadowcraft set"
+      },
+      {
+        "id": 14616,
+        "name": "Bloodmail Boots",
+        "dps": -1421.84,
+        "loss": 84.91
       }
     ],
     "finger": [
@@ -1847,7 +1862,7 @@
         "name": "Myrmidon's Signet",
         "dps": -1392.54,
         "loss": 55.6,
-        "note": "Random world drop"
+        "note": "Random world drop · 6g per point of score"
       },
       {
         "id": 10795,
@@ -1998,7 +2013,7 @@
       {
         "id": 17909,
         "name": "Frostwolf Insignia Rank 6",
-        "dps": -1310.4,
+        "dps": -1310.41,
         "loss": -26.53,
         "avail": "infeasible",
         "note": "Quest: The Eye of Command (Horde) · Frostwolf Exalted · AV queue unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
@@ -2037,7 +2052,7 @@
       {
         "id": 22678,
         "name": "Talisman of Ascendance",
-        "dps": -1390.35,
+        "dps": -1390.36,
         "loss": 53.42,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -2045,7 +2060,7 @@
       {
         "id": 18638,
         "name": "Hyper-Radiant Flame Reflector",
-        "dps": -1393.71,
+        "dps": -1393.72,
         "loss": 56.78,
         "note": "Engineering 290, schematic from Solakar Flamewreath, Upper Blackrock Spire"
       },
@@ -2124,7 +2139,7 @@
       {
         "id": 21115,
         "name": "Defiler's Talisman",
-        "dps": -1401.36,
+        "dps": -1401.37,
         "loss": 64.43,
         "avail": "doubtful",
         "note": "Defilers Friendly · Rutherford Twing · Arathi Basin in Forever unconfirmed"
@@ -2132,7 +2147,7 @@
       {
         "id": 280071,
         "name": "Flamebreak Talisman",
-        "dps": -1404.57,
+        "dps": -1404.58,
         "loss": 67.64,
         "avail": "doubtful",
         "note": "Drop: Unbound Spirit, Blackmaw Hold · not in guides yet"
@@ -2148,7 +2163,7 @@
       {
         "id": 14557,
         "name": "The Lion Horn of Stormwind",
-        "dps": -1405.71,
+        "dps": -1405.72,
         "loss": 68.78,
         "unsourced": true,
         "avail": "doubtful",
@@ -2179,14 +2194,14 @@
       {
         "id": 10455,
         "name": "Chained Essence of Eranikus",
-        "dps": -1412.55,
+        "dps": -1412.56,
         "loss": 75.62,
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
       },
       {
         "id": 11810,
         "name": "Force of Will",
-        "dps": -1427.73,
+        "dps": -1427.74,
         "loss": 90.8,
         "note": "Drop: General Angerforge, Blackrock Depths"
       }
@@ -2200,7 +2215,7 @@
         "with": 279262,
         "bis": true,
         "enchant": 1248805,
-        "note": "Ras Frostwhisper (Scholo)"
+        "note": "Ras Frostwhisper (Scholo) · 1g per point of score"
       },
       {
         "id": 279261,
@@ -2218,7 +2233,7 @@
         "dps": -1807.22,
         "loss": 470.28,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
       },
       {
         "id": 11684,
@@ -2250,7 +2265,7 @@
         "dps": -1838.17,
         "loss": 501.23,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
       },
       {
         "id": 15240,
@@ -2259,7 +2274,7 @@
         "dps": -1839.43,
         "loss": 502.49,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
       },
       {
         "id": 15238,
@@ -2407,7 +2422,7 @@
         "bis": true,
         "enchant": 1886,
         "avail": "doubtful",
-        "note": "Blacksmithing 300 craft · Plans: Evergreen Shield (279311) have no source in our data · icon says Hyjal Summit, which opens Dec 9"
+        "note": "Blacksmithing 300 · plans (279311) have no source in Forever data · reagents not in data, may need raid essence like Forest Defender's Axe"
       },
       {
         "id": 19321,
@@ -2424,7 +2439,7 @@
         "dps": -1477.2,
         "loss": 140.26,
         "with": 13952,
-        "note": "General Drakkisath · Upper Blackrock Spire"
+        "note": "General Drakkisath · Upper Blackrock Spire · 7g per point of score"
       },
       {
         "id": 14002,
@@ -2463,14 +2478,17 @@
         "name": "Avalanchion's Stony Hide",
         "dps": -1545.01,
         "loss": 208.07,
-        "with": 13952
+        "with": 13952,
+        "note": "Avalanchion · Azshara world rare"
       },
       {
         "id": 23139,
         "name": "Lord Blackwood's Buckler",
         "dps": -1546.95,
         "loss": 210.01,
-        "with": 13952
+        "with": 13952,
+        "avail": "out",
+        "note": "Lord Blackwood · Scholomance, summoned boss"
       },
       {
         "id": 13243,
@@ -2492,21 +2510,23 @@
         "dps": -1549.42,
         "loss": 212.48,
         "with": 13952,
-        "note": "Random world drop"
+        "note": "Random world drop · epic BoE, AH price not checked"
       },
       {
         "id": 18696,
         "name": "Intricately Runed Shield",
         "dps": -1552.12,
         "loss": 215.18,
-        "with": 13952
+        "with": 13952,
+        "note": "Ras Frostwhisper · Scholomance"
       },
       {
         "id": 14528,
         "name": "Rattlecage Buckler",
         "dps": -1552.38,
         "loss": 215.44,
-        "with": 13952
+        "with": 13952,
+        "note": "Rattlegore · Scholomance (Warden max threat top 5, not a pick)"
       },
       {
         "id": 274418,
@@ -2553,7 +2573,9 @@
         "name": "Bloodfur Bulwark",
         "dps": -1575.18,
         "loss": 238.24,
-        "with": 13952
+        "with": 13952,
+        "avail": "doubtful",
+        "note": "Withermaw · Blackmaw Hold · not in guides yet"
       },
       {
         "id": 14982,
@@ -2612,7 +2634,7 @@
         "loss": 0,
         "bis": true,
         "avail": "infeasible",
-        "note": "Magmus · Blackrock Depths · 269g per DPS"
+        "note": "Magmus · Blackrock Depths"
       }
     ]
   },
@@ -2624,7 +2646,7 @@
         "item": 18331,
         "name": "Arcanum of Protection",
         "effect": "+1 Dodge",
-        "dps": -1318.65,
+        "dps": -1354.97,
         "loss": -18.29,
         "note": "Libram not priced · Pristine Black Diamond ~75g on AH (as Arcanum of Focus)"
       },
@@ -2634,7 +2656,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": -1335.12,
+        "dps": -1371.44,
         "loss": -1.82
       },
       {
@@ -2643,7 +2665,7 @@
         "item": 11644,
         "name": "Lesser Arcanum of Resilience",
         "effect": "+20 FireResistance",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Dire Maul libram quest + Black Diamond (sources not in data)"
@@ -2654,7 +2676,7 @@
         "item": 11643,
         "name": "Lesser Arcanum of Tenacity",
         "effect": "+125 armor",
-        "dps": -1348.35,
+        "dps": -1384.67,
         "loss": 11.41,
         "note": "Dire Maul libram quest + Black Diamond (sources not in data)"
       },
@@ -2664,7 +2686,7 @@
         "item": 11642,
         "name": "Lesser Arcanum of Constitution",
         "effect": "+100 health",
-        "dps": -1364.5,
+        "dps": -1400.82,
         "loss": 27.56
       },
       {
@@ -2673,7 +2695,7 @@
         "item": 11646,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Stamina",
-        "dps": -1367.42,
+        "dps": -1403.74,
         "loss": 30.48
       },
       {
@@ -2682,7 +2704,7 @@
         "item": 18329,
         "name": "Arcanum of Rapidity",
         "effect": "+1% attack speed",
-        "dps": -1390.71,
+        "dps": -1427.03,
         "loss": 53.77,
         "note": "Libram ~0.5g · Pristine Black Diamond ~75g on AH"
       },
@@ -2692,7 +2714,7 @@
         "item": 18330,
         "name": "Arcanum of Focus",
         "effect": "+8 spell power",
-        "dps": -1397.11,
+        "dps": -1433.43,
         "loss": 60.17,
         "note": "Libram ~18g · Pristine Black Diamond ~75g on AH"
       },
@@ -2702,7 +2724,7 @@
         "item": 11645,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Strength",
-        "dps": -1397.84,
+        "dps": -1434.16,
         "loss": 60.9
       },
       {
@@ -2711,7 +2733,7 @@
         "item": 11648,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Intellect",
-        "dps": -1401.04,
+        "dps": -1437.36,
         "loss": 64.1
       }
     ],
@@ -2722,7 +2744,7 @@
         "spell": 1249059,
         "name": "Enchant Necklace - Agility",
         "effect": "+5 Agility",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "120 Merchant's Favor"
@@ -2733,7 +2755,7 @@
         "spell": 1249057,
         "name": "Enchant Necklace - Spell Power",
         "effect": "+6 spell power",
-        "dps": -1370.29,
+        "dps": -1406.61,
         "loss": 33.35,
         "note": "120 Merchant's Favor"
       },
@@ -2743,7 +2765,7 @@
         "spell": 1249058,
         "name": "Enchant Necklace - Healing Power",
         "effect": "+11 healing, +4 spell damage",
-        "dps": -1371.57,
+        "dps": -1407.89,
         "loss": 34.63,
         "note": "120 Merchant's Favor"
       },
@@ -2753,7 +2775,7 @@
         "spell": 1249019,
         "name": "Enchant Necklace - Strength",
         "effect": "+5 Strength",
-        "dps": -1372.41,
+        "dps": -1408.74,
         "loss": 35.47,
         "note": "120 Merchant's Favor"
       }
@@ -2765,7 +2787,7 @@
         "spell": 1219587,
         "name": "Enchant Cloak - Agility",
         "effect": "+5 Agility",
-        "dps": -1325.92,
+        "dps": -1362.24,
         "loss": -11.02,
         "note": "Merchant's Favor Honored"
       },
@@ -2774,7 +2796,7 @@
         "spell": 20015,
         "name": "Enchant Cloak - Superior Defense",
         "effect": "+70 armor",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Formula 16224 vendor, 2g, skill 285"
@@ -2784,7 +2806,7 @@
         "spell": 13882,
         "name": "Enchant Cloak - Lesser Agility",
         "effect": "+3 Agility",
-        "dps": -1344.53,
+        "dps": -1380.85,
         "loss": 7.59,
         "note": "Formula on AH ~0.4g"
       },
@@ -2794,7 +2816,7 @@
         "spell": 13419,
         "name": "Enchant Cloak - Minor Agility",
         "effect": "+3 Agility",
-        "dps": -1344.53,
+        "dps": -1380.85,
         "loss": 7.59
       },
       {
@@ -2802,7 +2824,7 @@
         "spell": 13746,
         "name": "Enchant Cloak - Greater Defense",
         "effect": "+50 armor",
-        "dps": -1346.38,
+        "dps": -1382.7,
         "loss": 9.44,
         "note": "Trainer, skill 205"
       },
@@ -2811,7 +2833,7 @@
         "spell": 13657,
         "name": "Enchant Cloak - Fire Resistance",
         "effect": "+7 FireResistance",
-        "dps": -1352.9,
+        "dps": -1389.22,
         "loss": 15.96,
         "note": "Trainer, skill 175"
       },
@@ -2820,7 +2842,7 @@
         "spell": 13635,
         "name": "Enchant Cloak - Defense",
         "effect": "+30 armor",
-        "dps": -1356.38,
+        "dps": -1392.7,
         "loss": 19.44
       },
       {
@@ -2828,7 +2850,7 @@
         "spell": 7861,
         "name": "Enchant Cloak - Lesser Fire Resistance",
         "effect": "+5 FireResistance",
-        "dps": -1359.3,
+        "dps": -1395.62,
         "loss": 22.36
       },
       {
@@ -2836,7 +2858,7 @@
         "spell": 20014,
         "name": "Enchant Cloak - Greater Resistance",
         "effect": "+5 ArcaneResistance, +5 FireResistance, +5 FrostResistance, +5 NatureResistance, +5 ShadowResistance",
-        "dps": -1359.3,
+        "dps": -1395.62,
         "loss": 22.36,
         "note": "Formula 16216 (skill 265) is a rare drop · AH price not checked"
       },
@@ -2845,7 +2867,7 @@
         "spell": 13421,
         "name": "Enchant Cloak - Lesser Protection",
         "effect": "+20 armor",
-        "dps": -1360.36,
+        "dps": -1396.68,
         "loss": 23.42
       }
     ],
@@ -2855,7 +2877,7 @@
         "spell": 20025,
         "name": "Enchant Chest - Greater Stats",
         "effect": "+4 all stats",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~351g"
@@ -2865,7 +2887,7 @@
         "spell": 13941,
         "name": "Enchant Chest - Stats",
         "effect": "+3 all stats",
-        "dps": -1349.55,
+        "dps": -1385.87,
         "loss": 12.61
       },
       {
@@ -2873,7 +2895,7 @@
         "spell": 20026,
         "name": "Enchant Chest - Major Health",
         "effect": "+100 health",
-        "dps": -1359.65,
+        "dps": -1395.97,
         "loss": 22.71,
         "note": "Formula 16221 (skill 275) vendor, 16g · Forever renamed the formula Major Stamina (+10 Stamina), our sim still has +100 Health"
       },
@@ -2883,7 +2905,7 @@
         "spell": 13858,
         "name": "Enchant Chest - Superior Stamina",
         "effect": "+8 Stamina",
-        "dps": -1359.65,
+        "dps": -1395.97,
         "loss": 22.71
       },
       {
@@ -2891,7 +2913,7 @@
         "spell": 13700,
         "name": "Enchant Chest - Lesser Stats",
         "effect": "+2 all stats",
-        "dps": -1361.26,
+        "dps": -1397.58,
         "loss": 24.32
       },
       {
@@ -2901,7 +2923,7 @@
         "item": 15564,
         "name": "Rugged Armor Kit",
         "effect": "+5 Stamina, +40 armor",
-        "dps": -1361.4,
+        "dps": -1397.72,
         "loss": 24.46,
         "note": "Leatherworking craft"
       },
@@ -2912,7 +2934,7 @@
         "item": 8173,
         "name": "Thick Armor Kit",
         "effect": "+4 Stamina, +32 armor",
-        "dps": -1370.56,
+        "dps": -1406.88,
         "loss": 33.62,
         "note": "Leatherworking craft (skill 165) · kit also from the quest The Green Hills of Stranglethorn"
       },
@@ -2922,7 +2944,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": -1379.47,
+        "dps": -1415.79,
         "loss": 42.53,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -2933,7 +2955,7 @@
         "item": 4265,
         "name": "Heavy Armor Kit",
         "effect": "+3 Stamina, +24 armor",
-        "dps": -1380.85,
+        "dps": -1417.17,
         "loss": 43.91
       },
       {
@@ -2942,7 +2964,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": -1381.7,
+        "dps": -1418.02,
         "loss": 44.76
       }
     ],
@@ -2953,7 +2975,7 @@
         "spell": 1248665,
         "name": "Enchant Bracer - Superior Deflection",
         "effect": "+9 Defense",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Merchant's Favor Honored, 240 of currency 3402"
@@ -2963,7 +2985,7 @@
         "spell": 13931,
         "name": "Enchant Bracer - Deflection",
         "effect": "+7 Defense",
-        "dps": -1362.52,
+        "dps": -1398.84,
         "loss": 25.58,
         "note": "Formula 11223 vendor, 58s, skill 235"
       },
@@ -2972,7 +2994,7 @@
         "spell": 20011,
         "name": "Enchant Bracer - Superior Stamina",
         "effect": "+9 Stamina",
-        "dps": -1363.01,
+        "dps": -1399.33,
         "loss": 26.07,
         "note": "Formula 16251 (skill 300) is a drop · AH price not checked"
       },
@@ -2982,7 +3004,7 @@
         "spell": 1248599,
         "name": "Enchant Bracer - Superior Agility",
         "effect": "+9 Agility",
-        "dps": -1369.71,
+        "dps": -1406.03,
         "loss": 32.77,
         "note": "Formula 249524 drops from Thuzadin Acolyte (Stratholme), 8.41%"
       },
@@ -2991,7 +3013,7 @@
         "spell": 13945,
         "name": "Enchant Bracer - Greater Stamina",
         "effect": "+7 Stamina",
-        "dps": -1375.77,
+        "dps": -1412.09,
         "loss": 38.83,
         "note": "Formula 11225 (skill 245) is a rare drop · AH price not checked"
       },
@@ -3000,7 +3022,7 @@
         "spell": 13648,
         "name": "Enchant Bracer - Stamina",
         "effect": "+5 Stamina",
-        "dps": -1384.49,
+        "dps": -1420.81,
         "loss": 47.55
       },
       {
@@ -3009,7 +3031,7 @@
         "spell": 1220624,
         "name": "Enchant Bracer - Greater Spellpower",
         "effect": "+16 spell power",
-        "dps": -1392.77,
+        "dps": -1429.09,
         "loss": 55.83,
         "note": "Merchant's Favor Honored"
       },
@@ -3018,7 +3040,7 @@
         "spell": 13646,
         "name": "Enchant Bracer - Lesser Deflection",
         "effect": "+2 Defense",
-        "dps": -1394.98,
+        "dps": -1431.3,
         "loss": 58.04
       },
       {
@@ -3026,7 +3048,7 @@
         "spell": 7457,
         "name": "Enchant Bracer - Minor Stamina",
         "effect": "+3 Stamina",
-        "dps": -1397.44,
+        "dps": -1433.76,
         "loss": 60.5
       },
       {
@@ -3035,7 +3057,7 @@
         "spell": 13501,
         "name": "Enchant Bracer - Lesser Stamina",
         "effect": "+3 Stamina",
-        "dps": -1397.44,
+        "dps": -1433.76,
         "loss": 60.5
       }
     ],
@@ -3046,7 +3068,7 @@
         "spell": 20012,
         "name": "Enchant Gloves - Greater Agility",
         "effect": "+7 Agility",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Formula on AH ~6g"
@@ -3057,7 +3079,7 @@
         "spell": 13815,
         "name": "Enchant Gloves - Agility",
         "effect": "+7 Agility",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0
       },
       {
@@ -3067,7 +3089,7 @@
         "item": 15564,
         "name": "Rugged Armor Kit",
         "effect": "+5 Stamina, +40 armor",
-        "dps": -1341.11,
+        "dps": -1377.43,
         "loss": 4.17,
         "note": "Leatherworking craft"
       },
@@ -3078,7 +3100,7 @@
         "item": 8173,
         "name": "Thick Armor Kit",
         "effect": "+4 Stamina, +32 armor",
-        "dps": -1348.6,
+        "dps": -1384.92,
         "loss": 11.66,
         "note": "Leatherworking craft (skill 165) · kit also from the quest The Green Hills of Stranglethorn"
       },
@@ -3087,7 +3109,7 @@
         "spell": 13948,
         "name": "Enchant Gloves - Minor Haste",
         "effect": "+1% attack speed",
-        "dps": -1361.49,
+        "dps": -1397.81,
         "loss": 24.55
       },
       {
@@ -3097,7 +3119,7 @@
         "item": 4265,
         "name": "Heavy Armor Kit",
         "effect": "+3 Stamina, +24 armor",
-        "dps": -1361.75,
+        "dps": -1398.07,
         "loss": 24.81
       },
       {
@@ -3106,7 +3128,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": -1363.94,
+        "dps": -1400.26,
         "loss": 27,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3116,7 +3138,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": -1366.18,
+        "dps": -1402.5,
         "loss": 29.24
       },
       {
@@ -3125,7 +3147,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": -1368.87,
+        "dps": -1405.19,
         "loss": 31.93
       },
       {
@@ -3134,7 +3156,7 @@
         "spell": 1255073,
         "name": "Forceful Thick Armor Kit",
         "effect": "+8 AP, +32 armor",
-        "dps": -1370.88,
+        "dps": -1407.2,
         "loss": 33.94,
         "note": "60 Merchant's Favor, Friendly"
       }
@@ -3146,7 +3168,7 @@
         "item": 18331,
         "name": "Arcanum of Protection",
         "effect": "+1 Dodge",
-        "dps": -1304.22,
+        "dps": -1340.54,
         "loss": -32.72,
         "note": "Libram not priced · Pristine Black Diamond ~75g on AH (as Arcanum of Focus)"
       },
@@ -3156,7 +3178,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": -1321.57,
+        "dps": -1357.89,
         "loss": -15.37
       },
       {
@@ -3165,7 +3187,7 @@
         "item": 11643,
         "name": "Lesser Arcanum of Tenacity",
         "effect": "+125 armor",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Dire Maul libram quest + Black Diamond (sources not in data)"
@@ -3176,7 +3198,7 @@
         "item": 11644,
         "name": "Lesser Arcanum of Resilience",
         "effect": "+20 FireResistance",
-        "dps": -1346.68,
+        "dps": -1383,
         "loss": 9.74,
         "note": "Dire Maul libram quest + Black Diamond (sources not in data)"
       },
@@ -3187,7 +3209,7 @@
         "item": 15564,
         "name": "Rugged Armor Kit",
         "effect": "+5 Stamina, +40 armor",
-        "dps": -1351.38,
+        "dps": -1387.7,
         "loss": 14.44,
         "note": "Leatherworking craft"
       },
@@ -3197,7 +3219,7 @@
         "item": 11642,
         "name": "Lesser Arcanum of Constitution",
         "effect": "+100 health",
-        "dps": -1352.51,
+        "dps": -1388.83,
         "loss": 15.57
       },
       {
@@ -3206,7 +3228,7 @@
         "item": 11646,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Stamina",
-        "dps": -1356.97,
+        "dps": -1393.29,
         "loss": 20.03
       },
       {
@@ -3216,7 +3238,7 @@
         "item": 8173,
         "name": "Thick Armor Kit",
         "effect": "+4 Stamina, +32 armor",
-        "dps": -1358.57,
+        "dps": -1394.89,
         "loss": 21.63,
         "note": "Leatherworking craft (skill 165) · kit also from the quest The Green Hills of Stranglethorn"
       },
@@ -3226,7 +3248,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": -1368.75,
+        "dps": -1405.07,
         "loss": 31.81,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3236,7 +3258,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": -1370.95,
+        "dps": -1407.27,
         "loss": 34.01
       }
     ],
@@ -3246,7 +3268,7 @@
         "spell": 20023,
         "name": "Enchant Boots - Greater Agility",
         "effect": "+7 Agility",
-        "dps": -1308.12,
+        "dps": -1344.44,
         "loss": -28.82,
         "note": "Formula on AH ~8g"
       },
@@ -3257,7 +3279,7 @@
         "item": 15564,
         "name": "Rugged Armor Kit",
         "effect": "+5 Stamina, +40 armor",
-        "dps": -1333.94,
+        "dps": -1370.26,
         "loss": -3,
         "note": "Leatherworking craft"
       },
@@ -3266,7 +3288,7 @@
         "spell": 13935,
         "name": "Enchant Boots - Agility",
         "effect": "+5 Agility",
-        "dps": -1335.7,
+        "dps": -1372.02,
         "loss": -1.24
       },
       {
@@ -3274,7 +3296,7 @@
         "spell": 20020,
         "name": "Enchant Boots - Greater Stamina",
         "effect": "+7 Stamina",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true
       },
@@ -3285,9 +3307,9 @@
         "item": 8173,
         "name": "Thick Armor Kit",
         "effect": "+4 Stamina, +32 armor",
-        "dps": -1342.17,
+        "dps": -1378.49,
         "loss": 5.23,
-        "note": "Leatherworking craft (skill 165) · kit also from the quest The Green Hills of Stranglethorn"
+        "note": "Leatherworking craft"
       },
       {
         "id": 17,
@@ -3296,7 +3318,7 @@
         "item": 4265,
         "name": "Heavy Armor Kit",
         "effect": "+3 Stamina, +24 armor",
-        "dps": -1347.11,
+        "dps": -1383.43,
         "loss": 10.17
       },
       {
@@ -3304,7 +3326,7 @@
         "spell": 13836,
         "name": "Enchant Boots - Stamina",
         "effect": "+5 Stamina",
-        "dps": -1349.64,
+        "dps": -1385.96,
         "loss": 12.7
       },
       {
@@ -3313,7 +3335,7 @@
         "spell": 1254966,
         "name": "Mystic Rugged Armor Kit",
         "effect": "+6 spell power, +40 armor",
-        "dps": -1350.23,
+        "dps": -1386.55,
         "loss": 13.29,
         "note": "90 Merchant's Favor, Honored"
       },
@@ -3323,7 +3345,7 @@
         "spell": 1254965,
         "name": "Forceful Rugged Armor Kit",
         "effect": "+10 AP, +40 armor",
-        "dps": -1352.44,
+        "dps": -1388.76,
         "loss": 15.5
       },
       {
@@ -3332,7 +3354,7 @@
         "spell": 13637,
         "name": "Enchant Boots - Lesser Agility",
         "effect": "+4 Agility",
-        "dps": -1353.59,
+        "dps": -1389.91,
         "loss": 16.65
       }
     ],
@@ -3342,7 +3364,7 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": -1320.77,
+        "dps": -1357.09,
         "loss": -16.17,
         "note": "Timbermaw rep, tier unknown"
       },
@@ -3351,7 +3373,7 @@
         "game": 8217,
         "spell": 1248805,
         "name": "Enchant Weapon - Revelation",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "45 Merchant's Favor"
@@ -3360,7 +3382,7 @@
         "id": 803,
         "spell": 13898,
         "name": "Enchant Weapon - Fiery Weapon",
-        "dps": -1364.54,
+        "dps": -1400.86,
         "loss": 27.6,
         "note": "41% formula drop"
       },
@@ -3369,7 +3391,7 @@
         "spell": 23804,
         "name": "Enchant Weapon - Mighty Intellect",
         "effect": "+22 Intellect",
-        "dps": -1391.9,
+        "dps": -1428.22,
         "loss": 54.96,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3378,7 +3400,7 @@
         "id": 1900,
         "spell": 20034,
         "name": "Enchant Weapon - Crusader",
-        "dps": -1392.13,
+        "dps": -1428.45,
         "loss": 55.19,
         "note": "Formula on AH ~400g"
       },
@@ -3386,7 +3408,7 @@
         "id": 1898,
         "spell": 20032,
         "name": "Enchant Weapon - Lifestealing",
-        "dps": -1394.52,
+        "dps": -1430.84,
         "loss": 57.58,
         "note": "Formula on AH ~149g"
       },
@@ -3395,7 +3417,7 @@
         "spell": 23799,
         "name": "Enchant Weapon - Strength",
         "effect": "+15 Strength",
-        "dps": -1396.57,
+        "dps": -1432.89,
         "loss": 59.63,
         "avail": "doubtful",
         "note": "Thorium Brotherhood rep, tier unknown"
@@ -3404,7 +3426,7 @@
         "id": 1897,
         "spell": 20031,
         "name": "Enchant Weapon - Superior Striking",
-        "dps": -1396.95,
+        "dps": -1433.27,
         "loss": 60.01,
         "note": "Formula on AH ~50g"
       },
@@ -3412,14 +3434,14 @@
         "id": 805,
         "spell": 13943,
         "name": "Enchant Weapon - Greater Striking",
-        "dps": -1399.75,
+        "dps": -1436.07,
         "loss": 62.81
       },
       {
         "id": 943,
         "spell": 13693,
         "name": "Enchant Weapon - Striking",
-        "dps": -1402.55,
+        "dps": -1438.87,
         "loss": 65.61
       }
     ],
@@ -3430,7 +3452,7 @@
         "item": 16217,
         "name": "Enchant Shield - Greater Stamina",
         "effect": "+9 Stamina",
-        "dps": -1336.94,
+        "dps": -1373.26,
         "loss": 0,
         "bis": true,
         "note": "Formula 16217 vendor, about 12g, skill 265"
@@ -3441,7 +3463,7 @@
         "item": 228982,
         "name": "Enchant Shield - Law of Nature",
         "effect": "+55 healing, +30 spell damage",
-        "dps": -1343.16,
+        "dps": -1379.48,
         "loss": 6.22,
         "avail": "doubtful",
         "note": "Season of Discovery formula 228982 (Meilosh, Timbermaw Hold Revered) delisted from Wowhead Forever on 2026-11-04 · never seen in game"
@@ -3453,7 +3475,7 @@
         "item": 11202,
         "name": "Enchant Shield - Stamina",
         "effect": "+5 Stamina",
-        "dps": -1358.42,
+        "dps": -1394.74,
         "loss": 21.48,
         "note": "Formula 11202 (skill 210) is a rare drop · AH price not checked"
       },
@@ -3463,7 +3485,7 @@
         "item": 11081,
         "name": "Enchant Shield - Lesser Protection",
         "effect": "+30 Armor",
-        "dps": -1368.11,
+        "dps": -1404.43,
         "loss": 31.17,
         "note": "Formula 11081 (skill 115) is a rare drop · AH price not checked"
       },
@@ -3473,7 +3495,7 @@
         "item": 11168,
         "name": "Enchant Shield - Lesser Block",
         "effect": "+2 Block",
-        "dps": -1376.06,
+        "dps": -1412.38,
         "loss": 39.12,
         "note": "Formula 11168 (skill 195) is a very rare drop (under 0.1%) · AH price not checked"
       }

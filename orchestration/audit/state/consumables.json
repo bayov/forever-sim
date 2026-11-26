@@ -1,9 +1,9 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T08:00:00Z",
- "pass": 109,
+ "last_pass_at": "2026-11-25T18:50:00Z",
+ "pass": 110,
  "result": "findings",
  "note": "elixir overwrite by AB/DS; world buffs off in raids (no preset uses them).",
  "client_build": "1.60.1.71091",

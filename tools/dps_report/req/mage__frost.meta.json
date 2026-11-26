@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_mage_frost",
   "apl": "level60_frost",
   "published": {
-    "dps": 726.88,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 725.42,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 726.44,
+    "dps": 725.42,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Frostbolt build to Ice Barrier: Frigid Power's 15% Frost damage stays up all fight, with Fingers of Frost, Shatter and Ice Lance on Frozen. Its 15 Arcane points take Arcane Concentration and Missile Barrage, and Incineration 5 adds Ice Lance crit.",
   "keyTalents": [

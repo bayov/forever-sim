@@ -618,3 +618,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 13:10 | tank_fairness | pass 32 | master 0404484fb | quiet | Ranking unchanged at every weight; bear Max survival 347 to 455.
 2026-11-25 17:38 | tank_mechanics | pass 34 | phase0-tankheal 1624c3d56 | 1 new finding (fixed) | Bear threat batch matches wowsims/forever; Lacerate hit fixed 95962a7d3; Phase 0 survival gap is gear.
 2026-11-25 17:38 | tank_rotations | pass 31 | phase0-tankheal 1624c3d56 | 1 new finding | Baseline on Phase 0 requests; report Tanking mode stale; FF and Shield Slam-first both lose.
+2026-11-25 19:23 | results | pass 106 | master 85691655ab | 1 new finding | Hunter and feral requests still carry EZ-Thro Dark Bomb after EV-0088.
+2026-11-25 19:23 | rotations | pass 80 | master 85691655ab | 1 new finding | Feral cat APLs still cast the dead EZ-Thro Dark Bomb line.
+2026-11-25 19:23 | gear | pass 79 | master 85691655ab | quiet | No watched gear files changed.
+2026-11-25 19:23 | consumables | pass 110 | master 85691655ab | 1 new finding | Nine request files still carry EZ-Thro Dark Bomb.
+2026-11-25 19:23 | mechanics | pass 106 | master 85691655ab | 2 new findings | Balance Druid Nov 25 talent changes missing; Blackhand's Breadth mark still a missable Shadow spell.
+2026-11-25 19:23 | fairness | pass 60 | master 85691655ab | 2 new findings | Goblin Land Mine gains for many builds; Demonology Undead beats Orc.
+2026-11-25 19:23 | healer_mechanics | pass 31 | master 85691655ab | quiet | None of the changes touch healing.
+2026-11-25 19:23 | healer_rotations | pass 28 | master 85691655ab | 1 new finding | Resist change moved 56 of 63 healer bench rows; baseline re-based.
+2026-11-25 19:23 | healer_gear | pass 16 | master 85691655ab | quiet | Healer gear untouched.
+2026-11-25 19:23 | healer_fairness | pass 31 | master 85691655ab | quiet | Order unchanged; shaman now ties druid for third in raid.
+2026-11-25 19:23 | tank_mechanics | pass 34 | master 85691655ab | quiet | Tank batch matches logged evidence.
+2026-11-25 19:23 | tank_rotations | pass 31 | master 85691655ab | 2 new findings | Bear should drop Demoralizing Roar at Max threat/Balanced; warrior Balanced Thunder Clap marginal.
+2026-11-25 19:23 | tank_gear | pass 18 | master 85691655ab | quiet | Tank gear untouched.
+2026-11-25 19:23 | tank_fairness | pass 33 | master 85691655ab | 1 new finding | Bear Balanced preset now ties its Max threat build.

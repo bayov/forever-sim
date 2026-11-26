@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T13:00:00Z",
- "pass": 32,
- "result": "quiet",
+ "last_pass_at": "2026-11-25T19:05:00Z",
+ "pass": 33,
+ "result": "findings",
  "client_build": "1.60.1.70959",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Re-simmed all 12 presets: stance Rage rule moves the bear (+108 Max survival) and warrior (-1 to -11); Warden -28 to -54 from Arcane Brilliance overwriting its intellect elixir; ranking unchanged; baseline refreshed.",
- "checked_at": "2026-11-25T13:10:47Z"
+ "note": "Re-simmed all 12 presets after 2f42f4a44 (logged tank threat rules): bear +46% TPS from Lacerate 10/3 / Primal Bite 3x, now first at Max threat and Balanced; warrior -132/-208/-197; paladin leads Max survival. Bear Balanced ties its Max threat build at w 1 (new finding -20261125-1). Baseline refreshed.",
+ "checked_at": "2026-11-25T19:23:36Z"
 }

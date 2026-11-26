@@ -109,15 +109,22 @@ class Effort(unittest.TestCase):
     TRIBUTE = [('DireMaul', 'North', 0.38)]
 
     def test_hours_at_the_default_share_and_overhead(self):
-        # 1 / (0.38% x 0.5) = 526 runs of 30 + 20 min, 439h at 30g an hour.
-        gold, how = phase0_prices.drop_effort(self.TRIBUTE, 30, 0.5, 20)
-        self.assertAlmostEqual(gold, 100 / 0.19 * 50 / 60 * 30, places=3)
-        self.assertEqual(how, 'effort: DireMaul North 0.38%, 526 runs, 439h')
+        # Only we roll (share 1, user 2026-11-25): 1 / 0.38% = 263 runs of 30 + 20 min, 219h at 30g an hour.
+        gold, how = phase0_prices.drop_effort(self.TRIBUTE, 30, 1, 20)
+        self.assertAlmostEqual(gold, 100 / 0.38 * 50 / 60 * 30, places=3)
+        self.assertEqual(how, 'effort: DireMaul North 0.38%, 263 runs, 219h')
+
+    def test_default_roll_share_is_one(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
+            sys.argv = ['phase0_prices.py', '--help']
+            phase0_prices.main()
+        self.assertIn('1 when only we roll', out.getvalue())
 
     def test_share_and_overhead(self):
-        # Alone in the group (share 1) and straight in (no overhead) is half the runs of 30 min, not 50.
-        alone, _ = phase0_prices.drop_effort(self.TRIBUTE, 30, 1, 0)
-        self.assertAlmostEqual(alone, phase0_prices.drop_effort(self.TRIBUTE, 30, 0.5, 20)[0] / 2 * 30 / 50)
+        # One other player rolling (share 0.5) doubles the runs; no overhead makes them 30 min, not 50.
+        shared, _ = phase0_prices.drop_effort(self.TRIBUTE, 30, 0.5, 0)
+        self.assertAlmostEqual(shared, phase0_prices.drop_effort(self.TRIBUTE, 30, 1, 20)[0] * 2 * 30 / 50)
 
     def test_the_easiest_source(self):
         # A dungeon RUN_MINUTES doesn't know is a 60 min clear. 20% there is 10 runs of 80 min (13.3h),
@@ -163,20 +170,44 @@ class ApplyPrices(unittest.TestCase):
 
     def test_keeps_items_off_the_list(self):
         content = {
-            '1263': {'name': 'Brain Hacker', 'gold': 255.0, 'goldPerDps': 10.7},
-            '22403': {'name': 'Nacreous Shell Necklace', 'avail': 'infeasible', 'gold': 282.6, 'goldPerDps': 217.4},
-            '13098': {'name': 'Painweaver Band', 'gold': 347.8, 'goldPerDps': 483.1},
+            '1263': {'name': 'Brain Hacker', 'gold': 255.0, 'goldPerDps': {'enh': 10.7}},
+            '22403': {'name': 'Nacreous Shell Necklace', 'avail': 'infeasible', 'gold': 282.6, 'goldPerDps': {'enh': 217.4}},
+            '13098': {'name': 'Painweaver Band', 'gold': 347.8, 'goldPerDps': {'enh': 483.1}},
         }
-        priced = {'1263': self.row('Brain Hacker', 255.0, 7.4), '2915': self.row('Taran Icebreaker', 99.04, 21.9)}
-        changed = phase0_prices.apply_prices(content, priced, {'1263', '2915', '13098'})
+        priced = {'enh': {'1263': self.row('Brain Hacker', 255.0, 7.4), '2915': self.row('Taran Icebreaker', 99.04, 21.9)}}
+        changed = phase0_prices.apply_prices(content, priced, {'enh': {'1263', '2915', '13098'}})
         self.assertEqual(changed, 3)
-        self.assertEqual(content['1263'], {'name': 'Brain Hacker', 'gold': 255.0, 'goldPerDps': 7.4})
-        self.assertEqual(content['2915'], {'name': 'Taran Icebreaker', 'gold': 99.0, 'goldPerDps': 21.9})
+        self.assertEqual(content['1263'], {'name': 'Brain Hacker', 'gold': 255.0, 'goldPerDps': {'enh': 7.4}})
+        self.assertEqual(content['2915'], {'name': 'Taran Icebreaker', 'gold': 99.0, 'goldPerDps': {'enh': 21.9}})
         # On the list with no goldPerDps now: its old one goes.
         self.assertEqual(content['13098'], {'name': 'Painweaver Band'})
         # Not on the list: price and avail stay.
         self.assertEqual(content['22403'], {'name': 'Nacreous Shell Necklace', 'avail': 'infeasible',
-                                            'gold': 282.6, 'goldPerDps': 217.4})
+                                            'gold': 282.6, 'goldPerDps': {'enh': 217.4}})
+
+    def test_every_list_takes_its_own_number(self):
+        # Elemental Mage Staff: over the line for Fire, under it for Frost, not on the Arcane list's top, and
+        # the Enhancement number from before the lists were priced by spec stays when enh doesn't run.
+        content = {'944': {'name': 'Elemental Mage Staff', 'gold': 2000.0, 'goldPerDps': 7.0}}
+        priced = {'mage_fire': {'944': self.row('Elemental Mage Staff', 249.0, 19.9)},
+                  'mage_frost': {'944': self.row('Elemental Mage Staff', 249.0, 41.5)},
+                  'mage_arcane': {'944': self.row('Elemental Mage Staff', 249.0, None)}}
+        on_list = {'mage_fire': {'944'}, 'mage_frost': {'944'}, 'mage_arcane': {'944'}}
+        self.assertEqual(phase0_prices.apply_prices(content, priced, on_list), 1)
+        self.assertEqual(content['944'], {'name': 'Elemental Mage Staff', 'gold': 249.0,
+                                          'goldPerDps': {'enh': 7.0, 'mage_fire': 19.9, 'mage_frost': 41.5}})
+        self.assertEqual(phase0_prices.spec_gpd(content['944'], 'mage_frost'), 41.5)
+        self.assertIsNone(phase0_prices.spec_gpd(content['944'], 'mage_arcane'))
+        # Its last number gone, the gold goes too.
+        phase0_prices.apply_prices(content, {'enh': {}}, {'enh': {'944'}, 'mage_fire': {'944'}, 'mage_frost': {'944'}})
+        self.assertEqual(content['944'], {'name': 'Elemental Mage Staff'})
+
+    def test_every_spec_has_a_list(self):
+        import json
+        with open(phase0_prices.SPECS) as f:
+            specs = json.load(f)['specs']
+        for spec, row in specs.items():
+            self.assertTrue(os.path.exists(phase0_prices.list_path(spec, row)), spec)
 
     def test_content_text_one_entry_per_line(self):
         text = phase0_prices.content_text({'22403': {'name': 'Nacreous Shell Necklace'}, '1263': {'name': 'Brain Hacker'}})

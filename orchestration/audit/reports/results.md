@@ -1,26 +1,25 @@
-# Results pass 105 (master 0404484fb)
+# Results pass 106 (master 85691655a)
 
-Range 5536db4bc..0404484fb. Watched paths changed: sim/core (consumes, buffs, rage, target, stats), sim/common/item_effects.go,
-sim/compsearch, sim/shaman (comments only), sim/warrior/stances.go, class goldens. No request, mksettings, proto-request or database change.
+Range 0404484fb..85691655a. Watched paths changed: sim/core, sim/hunter, items, procs, warrior/tank, casters (efeb06b95, 60fde111f,
+295206ddf, b663145ad, 2f42f4a44 via merges, 22d2cf952), and tools/rotopt/mksettings (spec_hunter.go, spec_feral.go). No request change.
 
-Shared run (68 builds, 20k, seed 1) vs metas: 60 of 68 moved more than 0.5 (largest Enhancement -25.5, paladins -9.5 to -17.7,
-Arcane -14.6, Frostfire -13.5, warlocks -8 to -9.5, hunters -7 to -9, warriors +1.7 to +6.0).
+Shared run (68 builds, 20k, seed 1) vs the previous binary (0404484fb, same requests): 64 of 68 moved by more than 1 DPS.
 
-Paired runs (same request, binaries 5536db4bc / f1942793d / 3275a60b1 / 0404484fb):
+| Build | 0404484fb | efeb06b95 | merged batches | 85691655a |
+|---|---|---|---|---|
+| hunter beast-mastery | 1002.9 | 1002.9 | 1054.8 | 1044.1 |
+| hunter survival | 919.9 | 919.9 | 949.1 | 949.1 |
+| hunter lone-wolf | 1164.9 | 1164.9 | 1164.9 | 1152.0 |
+| priest shadow | 854.2 | 854.2 | 869.2 | 869.2 |
+| shaman elemental-level60 | 852.4 | 854.6 | 867.3 | 867.3 |
+| rogue mutilate | 821.1 | 821.1 | 795.3 | 795.3 |
+| warrior fury | 1014.9 | 1014.9 | 997.3 | 1001.8 |
+| warlock affliction_shadow_bolt | 800.0 | 800.0 | 800.0 | 794.2 |
 
-| Build | before | after f1942793d | after rage-taken |
-|---|---|---|---|
-| shaman enhancement-level60 | 990.6 | 965.2 | 965.2 |
-| paladin level_60 | 956.8 | 941.0 | 941.0 |
-| warlock demonology | 894.2 | 884.8 | 884.8 |
-| hunter marksmanship | 1090.4 | 1082.6 | 1082.6 |
-| mage arcane | 844.1 | 829.4 | 829.4 |
-| priest shadow | 857.5 | 854.2 | 854.2 |
-| warrior fury | 1009.0 | 1009.0 | 1014.9 |
+The casters batch moves none of these; the hunter, items, procs and tank batches (merge becbcd30d) move most; 22d2cf952 moves
+hunter Dark Bomb, demon crit, Windfury Totem and Shield Slam rules. Other rogue builds -11 to -17, Enhancement -22 to -28 vs metas.
+Moves under 1.5% were not individually bisected.
 
-Causes: f1942793d, Arcane Intellect and Divine Spirit overwrite the elixirs of their stat (EV-0185), so mana-limited builds lose 25
-Int / Spirit (Enhancement OOM 0.7 -> 2.5 s); b4cab8498, Rage from hits taken follows the stance (warriors up). World buffs
-(3275a60b1, 9701cff08), Armor Shatter slot (75dee7458), raid-scope check (5dbc01412) and compsearch changes move no request.
-Mage Frost and Ret and others fall in the same elixir family. Not run: drift (mksettings and requests unchanged; only known
-feral sapper line expected) and unread fields (no request change). The metas and builds.json need the full re-sim; see
-results-20261104-2. No new finding.
+Drift: new. Hunter and feral requests carry EZ-Thro Dark Bomb; mksettings writes Dense Dynamite (hunters) and Goblin Land Mine
+(feral). Regenerated: BM +9.6, MM +9.3, Lone Wolf +11.5, feral +3.8 (finding results-20261125-1). Feral sapper line unchanged.
+Unread fields not run (no request change). Metas and builds.json need the full re-sim (results-20261104-2).

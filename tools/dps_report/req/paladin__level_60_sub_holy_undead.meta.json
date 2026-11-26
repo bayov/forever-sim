@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_ret_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 1055.47,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 1025.15,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 1055.7,
-    "stderr": 0.36,
+    "dps": 1025.15,
+    "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, Phase 0 set level60_phase0_ret_undead, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-24)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Ret sub-Holy with Exorcism, for an Undead or Demon boss.",
   "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",

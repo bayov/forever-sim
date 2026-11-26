@@ -377,6 +377,10 @@ lost or tied. Knob strings: Max threat as 2026-11-12 with `enrageRage=80`; Max s
 `lacerateRefresh=6`. With Lacerate's threat now 10/3 its damage, keeping the stacks up longer is worth the earlier
 GCD at Max survival, where Swipe at 80 Rage takes the filler.
 
+After the Lacerate first-hit fix (EV-0040), paired `abtest` on the six bosses: Max survival `lacerateRefresh=10` (above rotopt's 1–9 range) beats 6 by **+68.7 ± 10.8** / **+87.9 ± 11.5** (10,000, seeds 1 / 2; 8 gave +27.6 / +25.0, 12 +64.9 ± 19.0 and 14 −276.4 at 3,000), so it is taken; Balanced and Max threat keep 4 (2 and 6 within ±0.5, Max threat 2 +0.0 ± 0.1 at 10,000).
+
+With Lacerate's 10/3 threat Demoralizing Roar costs more than it saves, so Balanced and Max threat drop its line (`roarRefresh=0`, which never casts it): paired `abtest`, 10,000, seeds 1 / 2, Balanced **+46.1 ± 6.0** / **+52.4 ± 5.5**, Max threat **+143.4 ± 2.6** / **+149.6 ± 2.8**; six-boss means (`rotopt -eval -apl`, 10,000, seed 1) Balanced 3,637.4 → 3,683.5, Max threat 5,391.2 → 5,534.7; tankbench TPS (3,000, seed 1) Balanced 2,544 → 2,613, Max threat 2,799 → 2,887. Max survival keeps it (−119.5 ± 22.4 at 3,000, seed 1).
+
 Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval -apl`): Max threat 4,530.5 → **4,533.4**, Balanced
 **3,344.8** (unchanged), Max survival 1,298.8 → **1,317.4**. Tankbench, 3,000, seed 1, six-boss mean (score / SafeDPS /
 TPS): Max threat 4,536 / 2,559 / 2,561 → 4,539 / 2,561 / 2,561; Balanced 3,334 / 2,309 / 2,371; Max survival 1,289 /

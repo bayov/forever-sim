@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
-"""Price the Phase 0 BiS list's items in gold per DPS, from our auction house scans.
+"""Price the Phase 0 BiS lists' items in gold per DPS, from our auction house scans.
 
-    python3 tools/rotopt/phase0_prices.py            # print the table
-    python3 tools/rotopt/phase0_prices.py --write    # save gold and goldPerDps in phase0_content.json
+    python3 tools/rotopt/phase0_prices.py                     # print the tables of every spec
+    python3 tools/rotopt/phase0_prices.py --write             # save gold and goldPerDps in phase0_content.json
+    python3 tools/rotopt/phase0_prices.py --spec mage_fire    # one spec, or a comma list
+    python3 tools/rotopt/phase0_prices.py --sets              # each spec's gear set's total gold
 
-Only an item that beats the cheaper items of its slot gets the two numbers,
-since the line only matters for those.
+One run prices every spec's list in tools/rotopt/phase0_specs.json (the one
+bis_phase0.sh writes for it). An item's gold is the same on every list, but its
+DPS isn't, so goldPerDps is a table by spec: {"mage_fire": 160.0, "mage_frost": 12.4}.
+bis_phase0.sh and the gear auditor read the spec's own number. Only an item
+that beats the cheaper items of its slot on a list gets a number for that spec,
+since the line only matters for those, and an item with no number on any list
+has no gold either.
 
 The Phase 0 list doesn't pick an item that costs too much gold for the DPS it
 adds (user, 2026-11-22). bis_phase0.sh makes every item whose goldPerDps is
@@ -24,8 +31,8 @@ count the hours it takes at 30g an hour (--gold-per-hour). Without it a rare
 drop cost nothing, so the list picked Treant's Bane (a 0.38% drop from the
 Dire Maul tribute) over Brain Hacker (255g on the auction house). The hours
 are the runs we expect times the time of a run. The runs are 1 / (drop chance
-x roll share), and the share is 0.5 (--roll-share) because we assume one other
-player in the group needs it too. A run takes the dungeon's typical clear
+x roll share), and the share is 1 (--roll-share): we assume only we roll on a
+dungeon drop (user, 2026-11-25; it was 0.5, one other player, until then). A run takes the dungeon's typical clear
 time plus 20 minutes (--run-overhead), for getting there and finding a group
 (user, 2026-11-22). When an item drops from several bosses, we take the one
 with the fewest hours.
@@ -47,9 +54,9 @@ out. goldPerDps is (gold - that item's gold) / (DPS gained). An item that
 doesn't beat the cheaper one gets no goldPerDps, because the list never picks
 it over that one anyway.
 
-The DPS comes from the list's own losses (ui/enhancement_shaman/bis/
-level60_phase0.bis.json), and infeasible items are ranked with their real
-loss, so their numbers are there too. The picks can move after a rerun, so
+The DPS comes from each list's own losses (ui/<dir>/bis/level60_phase0_<spec>
+.bis.json, or the spec's "out"), and infeasible items are ranked with their
+real loss, so their numbers are there too. The picks can move after a rerun, so
 run this again after one and see whether anything crosses the line.
 
 The scans are BayovCore's BayovAuctionData saved variables. We take the
@@ -80,7 +87,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 CONTENT = os.path.join(HERE, 'phase0_content.json')
-LIST = os.path.join(ROOT, 'ui', 'enhancement_shaman', 'bis', 'level60_phase0.bis.json')
+SPECS = os.path.join(HERE, 'phase0_specs.json')
 WAGO = os.path.expanduser('~/forever-logs/wago')
 
 # The two lists whose two picks share one list (docs/bis_lists.md).
@@ -359,34 +366,55 @@ def price_slot(slot, entries, content, prices, recipes, max_gpd, effort=None):
     return rows
 
 
+def list_path(spec, row):
+    """A spec's list, as bis_phase0.sh's list_path has it."""
+    return os.path.join(ROOT, row.get('out') or f"ui/{row['dir']}/bis/level60_phase0_{spec}.bis.json")
+
+
+def spec_gpd(c, spec):
+    """An item's goldPerDps on a spec's list, from its content entry, or None."""
+    g = c.get('goldPerDps')
+    return g.get(spec) if isinstance(g, dict) else None
+
+
 def apply_prices(content, priced, on_list):
     """Save a pass's prices in content, and return how many entries changed.
 
-    priced is {item ID: row} for what this pass priced, and on_list the item IDs
-    of the list it read. Only those items' gold and goldPerDps change: an item on
-    another spec's list keeps its numbers and its avail tag, since this pass
-    never saw it (the Enhancement pass of 5e556ff1e dropped Nacreous Shell
-    Necklace's price that way). An item on the list that gets no goldPerDps now
-    loses its old one.
+    priced is {spec: {item ID: row}} for what this pass priced, and on_list
+    {spec: item IDs} of the lists it read. Only those specs' goldPerDps change on
+    those items: a spec this pass didn't run keeps its numbers, and an item on no
+    list it read keeps its prices and its avail tag (the Enhancement pass of
+    5e556ff1e dropped Nacreous Shell Necklace's price that way). An item on a
+    list that gets no goldPerDps there now loses that spec's old one, and its
+    gold goes with its last number. A goldPerDps that is still one number is the
+    Enhancement list's, from before the lists were priced by spec.
     """
-    priced = {iid: r for iid, r in priced.items() if r['gpd'] is not None}
+    gold = {}
+    for rows in priced.values():
+        for iid, r in rows.items():
+            if r['gpd'] is not None:
+                gold[iid] = round(r['gold'], 1)
     changed = 0
-    for iid, c in content.items():
-        if iid not in on_list:
-            continue
-        r = priced.get(iid)
-        new = {'gold': round(r['gold'], 1), 'goldPerDps': r['gpd']} if r else {}
+    for iid in sorted(set(content) | set(gold), key=int):
+        c = content.get(iid)
+        if c is None:
+            c = {'name': next(rows[iid]['name'] for rows in priced.values() if iid in rows)}
         old = {k: c[k] for k in ('gold', 'goldPerDps') if k in c}
+        g = c.get('goldPerDps')
+        gpd = dict(g) if isinstance(g, dict) else ({'enh': g} if g is not None else {})
+        for spec, ids in on_list.items():
+            r = priced.get(spec, {}).get(iid)
+            if r is not None and r['gpd'] is not None:
+                gpd[spec] = r['gpd']
+            elif iid in ids:
+                gpd.pop(spec, None)
+        new = {'gold': gold.get(iid, c.get('gold')), 'goldPerDps': dict(sorted(gpd.items()))} if gpd else {}
         if old != new:
             changed += 1
             for k in ('gold', 'goldPerDps'):
                 c.pop(k, None)
             c.update(new)
-    # A priced list item the content check hasn't seen yet gets an entry of its own.
-    for iid, r in priced.items():
-        if iid not in content:
-            content[iid] = {'name': r['name'], 'gold': round(r['gold'], 1), 'goldPerDps': r['gpd']}
-            changed += 1
+            content[iid] = c
     return changed
 
 
@@ -400,25 +428,43 @@ def content_text(content):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--write', action='store_true', help='save gold and goldPerDps in phase0_content.json')
+    ap.add_argument('--spec', help='the specs of phase0_specs.json to price, comma separated (default: all)')
+    ap.add_argument('--sets', action='store_true',
+                    help="print each spec's gear set (gearOut) and its total gold, items only, and stop")
+    ap.add_argument('--list', help='a list to read in place of the spec\'s own, with one --spec')
     ap.add_argument('--ah', help="a BayovAuctionData.lua (default: the main account's newest under --wow)")
     ap.add_argument('--wow', default=os.environ.get('WOW_DIR', '/mnt/d/Gaming/World of Warcraft'))
     ap.add_argument('--wago', help='a wago table folder with SpellEffect.csv and SpellReagents.csv (default: the newest build)')
-    ap.add_argument('--list', default=LIST)
     ap.add_argument('--max', type=float, default=float(os.environ.get('MAX_GOLD_PER_DPS', 30)),
                     help='the line, for the table and the feasible chain (bis_phase0.sh has its own)')
     ap.add_argument('--gold-per-hour', type=float, default=30, help='what an hour of farming is worth')
-    ap.add_argument('--roll-share', type=float, default=0.5, help='our share of a drop, 0.5 when one other player needs it')
+    ap.add_argument('--roll-share', type=float, default=1.0,
+                    help='our share of a drop: 1 when only we roll on it (0.5 for one other player)')
     ap.add_argument('--run-overhead', type=float, default=20,
                     help="minutes a run takes on top of the clear, for getting there and finding a group")
     args = ap.parse_args()
+
+    with open(SPECS) as f:
+        table = json.load(f)['specs']
+    specs = args.spec.split(',') if args.spec else list(table)
+    for spec in specs:
+        if spec not in table:
+            sys.exit(f"no spec {spec} in {SPECS}: {', '.join(table)}")
+    if args.list and len(specs) != 1:
+        sys.exit('--list needs one --spec')
+    lists = {}
+    for spec in specs:
+        path = args.list or list_path(spec, table[spec])
+        if not os.path.exists(path):
+            sys.exit(f'{spec} has no list at {path}')
+        with open(path) as f:
+            lists[spec] = json.load(f)
 
     ah = args.ah or newest_ah_file(args.wow)
     wago = args.wago or latest_wago(WAGO)
     if not ah or not wago:
         sys.exit(f'no auction data ({ah}) or wago tables ({wago})')
     prices, recipes = load_prices(ah), load_recipes(wago)
-    with open(args.list) as f:
-        bis = json.load(f)
     with open(CONTENT) as f:
         content = json.load(f)
 
@@ -429,37 +475,73 @@ def main():
     drops = load_drops(gear) if gear else {}
     bosses = load_bosses(dungeons) if dungeons else {}
     rates = load_droprates(atlas) if atlas else {}
+    sets = {}
+    if args.sets:
+        for spec in specs:
+            row = table[spec]
+            path = os.path.join(ROOT, row.get('gearOut') or f"ui/{row['dir']}/gear_sets/level60_phase0_{spec}.gear.json")
+            with open(path) as f:
+                sets[spec] = [i for i in json.load(f)['items'] if i and i.get('id')]
     effort, unknown = {}, set()
-    for entries in bis['slots'].values():
-        for e in entries:
-            if e['id'] not in drops:
-                continue
-            r = drop_effort(drop_sources(e['id'], drops, bosses, rates),
-                            args.gold_per_hour, args.roll_share, args.run_overhead)
-            if r:
-                effort[e['id']] = r
-            elif content.get(str(e['id']), {}).get('avail') not in SKIP_AVAIL:
-                unknown.add(e['name'])
+    for e in ([e for bis in lists.values() for es in bis['slots'].values() for e in es]
+              + [{'id': i['id'], 'name': str(i['id'])} for items in sets.values() for i in items]):
+        if e['id'] not in drops or e['id'] in effort:
+            continue
+        r = drop_effort(drop_sources(e['id'], drops, bosses, rates),
+                        args.gold_per_hour, args.roll_share, args.run_overhead)
+        if r:
+            effort[e['id']] = r
+        elif content.get(str(e['id']), {}).get('avail') not in SKIP_AVAIL:
+            unknown.add(e['name'])
 
     print(f'prices from {ah}, recipes from {wago}, line {args.max:g}g per DPS')
     print(f'drops from {gear[0] if gear else None}, wings from {dungeons}, AtlasLoot rates from {atlas}')
     print(f'effort at {args.gold_per_hour:g}g per hour, roll share {args.roll_share:g}, run overhead {args.run_overhead:g} min')
+    if args.sets:
+        names = {str(e['id']): e['name'] for bis in lists.values() for es in bis['slots'].values() for e in es}
+        for spec, items in sets.items():
+            total, parts = 0, []
+            for i in items:
+                gold, how = item_gold(i['id'], prices, recipes, effort)
+                if gold:
+                    total += gold
+                    name = names.get(str(i['id'])) or content.get(str(i['id']), {}).get('name') or i['id']
+                    parts.append(f"{name} {gold:.0f}g ({how.split(':')[0]})")
+            print(f"{spec:24s} {total:8.0f}g  {', '.join(parts)}")
+        return
     priced = {}
-    for slot, entries in bis['slots'].items():
-        for r in price_slot(slot, entries, content, prices, recipes, args.max, effort):
-            if not r['gold']:
-                continue
-            priced[str(r['id'])] = r
-            over = r['gpd'] is not None and r['gpd'] > args.max
-            if r['gpd'] is not None:
-                print(f"{slot:9s} {r['name'][:30]:30s} {r['gold']:8.1f}g {r['gpd']:8.1f}g/DPS over "
-                      f"{r['over'][:28]:28s}{' PICK' if r['pick'] else '     '}{' OUT' if over else '    '}  {r['how']}")
+    for spec, bis in lists.items():
+        print(f'\n{spec}')
+        priced[spec] = {}
+        for slot, entries in bis['slots'].items():
+            in_slot = {}
+            for r in price_slot(slot, entries, content, prices, recipes, args.max, effort):
+                if not r['gold']:
+                    continue
+                # random suffixes of one item in one slot keep the cheapest number (a suffix with no number only when
+                # none has one): the line drops an item by its ID, so Lunar Wand of Magic's 107g per DPS used to drop
+                # Demonology's pick, Lunar Wand of Shadow Wrath
+                prev = in_slot.get(str(r['id']))
+                key = lambda x: (x['gpd'] is None, x['gpd'] or 0)
+                if prev is None or key(r) < key(prev):
+                    in_slot[str(r['id'])] = r
+                over = r['gpd'] is not None and r['gpd'] > args.max
+                if r['gpd'] is not None:
+                    print(f"{slot:9s} {r['name'][:30]:30s} {r['gold']:8.1f}g {r['gpd']:8.1f}g/DPS over "
+                          f"{r['over'][:28]:28s}{' PICK' if r['pick'] else '     '}{' OUT' if over else '    '}  {r['how']}")
+            for iid, r in in_slot.items():
+                # an item on two slots (Felstriker mainhand and offhand) keeps its dearest slot's number: the offhand
+                # row, often unpriced, used to overwrite the mainhand's, so the mainhand pick was never marked out
+                prev = priced[spec].get(iid)
+                if prev is None or (r['gpd'] or 0) > (prev['gpd'] or 0):
+                    priced[spec][iid] = r
     if unknown:
-        print(f"drops with no known chance, so no effort price: {', '.join(sorted(unknown))}")
+        print(f"\ndrops with no known chance, so no effort price: {', '.join(sorted(unknown))}")
 
     if not args.write:
         return
-    on_list = {str(e['id']) for entries in bis['slots'].values() for e in entries}
+    on_list = {spec: {str(e['id']) for entries in bis['slots'].values() for e in entries}
+               for spec, bis in lists.items()}
     changed = apply_prices(content, priced, on_list)
     with open(CONTENT, 'w') as f:
         f.write(content_text(content))

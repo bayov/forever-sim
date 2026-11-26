@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_balance",
   "apl": "level60",
   "published": {
-    "dps": 822.15,
-    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 796.72,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 822.15,
+    "dps": 796.72,
     "stderr": 0.29,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Moonkin that keeps Insect Swarm and Moonfire up. It weaves Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [

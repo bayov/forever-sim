@@ -14,8 +14,8 @@
   "gearSet": "level60_phase0_ret",
   "apl": "level60_shock_ret_crusader_duty",
   "published": {
-    "dps": 914.67,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 895.13,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -72,11 +72,11 @@
   ],
   "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfTheCrusader removed and the level60_shock_ret_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-24 (Phase 0 step 4, orchestration/round_notes_2026-11-11/phase0_step4_shaman_ret.md): gear moved from the synthetic set (level60_phase1_synthetic_crusader_duty, published 1008.8) to the Phase 0 set (level60_phase0_ret); request from mksettings -gear level60_phase0_ret with the same edits as above. Talents re-searched on the Phase 0 set (melee hit 5% from gear) and kept. The synthetic set wore Libram of Fervor; it has no known source in Forever (Wowhead's Forever data says drop with no NPC, our data has none), so the Phase 0 set keeps Libram of Law.",
   "verify": {
-    "dps": 914.5,
-    "stderr": 0.34,
+    "dps": 895.13,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, Phase 0 set level60_phase0_ret, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-24)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60_shock_ret"
