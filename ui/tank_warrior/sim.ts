@@ -103,7 +103,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarrior, {
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
 		encounter: Presets.EncounterLevel60Tank.encounter,
+		levelingPlan: Presets.DefaultLevelingPlan,
 	},
+	levelingRoute: Presets.LevelingRouteUndeadWarrior,
 
 	// IconInputs to include in the 'Player' section on the settings tab.
 	playerIconInputs: [WarriorInputs.ShoutPicker<Spec.SpecTankWarrior>(), WarriorInputs.StancePicker<Spec.SpecTankWarrior>()],
@@ -139,7 +141,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarrior, {
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase1]],
 		// Preset builds that the user can quickly select.
-		builds: [Presets.PresetBuildLevel60Balanced, Presets.PresetBuildLevel60MaxThreat, Presets.PresetBuildLevel60MaxSurvival, Presets.PresetBuildTanky],
+		builds: [
+			Presets.PresetBuildLevel60Balanced,
+			Presets.PresetBuildLevel60MaxThreat,
+			Presets.PresetBuildLevel60MaxSurvival,
+			Presets.PresetBuildTanky,
+			Presets.PresetBuildLeveling1to60,
+		],
+		epWeights: Presets.EPPresets,
 	},
 
 	autoRotation: player => {

@@ -13,9 +13,11 @@ import {
 	HealingModel,
 	HealthElixir,
 	IndividualBuffs,
+	LevelingOptions,
 	MobType,
 	Potions,
 	Profession,
+	PseudoStat,
 	Race,
 	RaidBuffs,
 	SapperExplosive,
@@ -28,11 +30,12 @@ import {
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { LevelingPlanSettings, LevelingRoute, SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { TankWarrior_Options as TankWarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
 import APLNoReckJSON from './apls/dps_no_reck.apl.json';
 import APLReckJSON from './apls/dps_reck.apl.json';
+import LevelingPlanJSON from './apls/leveling_plan.json';
 import Level60BalancedAPLJSON from './apls/level60_balanced.apl.json';
 import Level60MaxSurvivalAPLJSON from './apls/level60_max_survival.apl.json';
 import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
@@ -43,6 +46,10 @@ import Level60Phase1SyntheticBalancedGear from './gear_sets/level60_phase1_synth
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P0BISSwordBoardGear from './gear_sets/p0.bis_sword_board.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
+import LevelingWeightsDualWieldJSON from './leveling_weights_dual_wield.json';
+import LevelingWeightsShieldJSON from './leveling_weights_shield.json';
+import LevelingWeightsTwoHandJSON from './leveling_weights_two_hand.json';
+import LevelingRouteJSON from '../warrior/leveling_route.json';
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
@@ -319,4 +326,112 @@ export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 
 	rotation: APLLevel60MaxSurvival,
 	encounter: EncounterLevel60TankMaxSurvival,
 	race: Race.RaceUndead,
+});
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Leveling
+///////////////////////////////////////////////////////////////////////////
+
+// The leveling sessions play this spec for every warrior, two-hand and dual wield too: it's the
+// DPS spec's warrior with Shield Block and Shield Wall on top (docs/leveling_plan.md, A plan
+// without the browser). So the 1 to 60 plan lives here.
+
+// Stat weights for the leveling gear plan, by mobs killed in a session, in attack power, every 5
+// levels from 5 to 59 (tools/levelingplan -weights, 2026-11-26). One set a weapon style: two-hand
+// on the Arms plan, dual wield on the Gore Drinker build, and a shield on Protection. The Leveling
+// Gear tab judges items by the set of the plan's style at that level (docs/leveling_warrior.md,
+// Leveling 1-60).
+type LevelingWeightsFile = { levels: Array<{ level: number; weights: Record<string, number | undefined> }> };
+
+const levelingGearWeights = (file: LevelingWeightsFile, style: string, group: string, tooltip: string) =>
+	file.levels.map(({ level, weights }) => {
+		const w = (name: string) => weights[name] ?? 0;
+		return PresetUtils.makePresetEpWeights(
+			`Level ${level} Leveling Gear ${style}`,
+			Stats.fromMap(
+				{
+					[Stat.StatStrength]: w('Strength'),
+					[Stat.StatAgility]: w('Agility'),
+					[Stat.StatStamina]: w('Stamina'),
+					[Stat.StatSpirit]: w('Spirit'),
+					[Stat.StatAttackPower]: 1,
+					[Stat.StatMeleeHit]: w('MeleeHit'),
+					[Stat.StatMeleeCrit]: w('MeleeCrit'),
+					[Stat.StatArmor]: w('Armor'),
+					[Stat.StatBonusArmor]: w('Armor'),
+					[Stat.StatDefense]: w('Defense'),
+					[Stat.StatDodge]: w('Dodge'),
+					[Stat.StatParry]: w('Parry'),
+					[Stat.StatBlock]: w('Block'),
+					[Stat.StatBlockValue]: w('BlockValue'),
+				},
+				{
+					[PseudoStat.PseudoStatMainHandDps]: w('MainHandDps'),
+					[PseudoStat.PseudoStatOffHandDps]: w('OffHandDps'),
+				},
+			),
+			{ tooltip: `Stat weights for a solo level ${level} ${tooltip}. The Leveling Gear tab judges items by them.`, group },
+		);
+	});
+
+export const EPLevelingGearPlanTwoHand = levelingGearWeights(
+	LevelingWeightsTwoHandJSON,
+	'Two-Hand',
+	'Leveling Gear Plan Two-Hand',
+	'Arms warrior with a two-hander',
+);
+export const EPLevelingGearPlanDualWield = levelingGearWeights(
+	LevelingWeightsDualWieldJSON,
+	'Dual Wield',
+	'Leveling Gear Plan Dual Wield',
+	'Gore Drinker warrior with two weapons',
+);
+export const EPLevelingGearPlanShield = levelingGearWeights(
+	LevelingWeightsShieldJSON,
+	'Shield',
+	'Leveling Gear Plan Shield',
+	'Protection warrior with a one-hander and shield',
+);
+
+export const EPPresets = [...EPLevelingGearPlanTwoHand, ...EPLevelingGearPlanDualWield, ...EPLevelingGearPlanShield];
+
+// The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 1 to 60, with
+// Talented's first talent at 5 (docs/leveling_warrior.md, Leveling 1-60). Arms with a two-hander
+// to 43, then a respec at 44 into Gore Drinker Fury with two weapons. The rotations to 39 are the
+// talent and rotation search's ("Searched 1" and so on), and the hand-tuned ones from 40 ("From
+// 37" and so on). tools/levelingplan/configs/undead_warrior_leveling_1_60.json makes the same plan
+// for the command line.
+export const DefaultLevelingPlan = LevelingPlanSettings.fromJson(LevelingPlanJSON as any);
+
+// Our RestedXP route for an Undead Warrior (tools/leveling_route): the quest rewards we take on it
+// and the dungeons we run, at the levels we're at then. The leveling gear plan takes them in place
+// of the ones it makes up.
+export const LevelingRouteUndeadWarrior = LevelingRoute.fromJson(LevelingRouteJSON);
+
+// The Leveling mode with the options the plan was measured with: mobs a level below ours, packs of
+// up to 12, a camp of mobs with their own places, 1 point of Thrill of Adventure and Enchant Weapon
+// - Recovery from 20. No stand-in healer, which the tanking fight has. The fight's duration and
+// target only count when we go back to the DPS mode.
+export const EncounterLevelingPlan = PresetUtils.makePresetEncounter(
+	'Leveling',
+	Encounter.create({
+		...EncounterLevel60Tank.encounter,
+		leveling: LevelingOptions.create({
+			plan: true,
+			mobLevelOffset: -1,
+			maxPackSize: 12,
+			campMobs: -1,
+			thrillOfAdventure: 1,
+			recoveryFromLevel: 20,
+		}),
+	}),
+	{ group: 'Leveling', healingModel: HealingModel.create({}) },
+);
+export const PresetBuildLeveling1to60 = PresetUtils.makePresetBuild('Leveling 1-60', {
+	group: 'Leveling',
+	tooltip: 'The Leveling mode with our 1 to 60 plan: an Undead grinding alone, Arms with a two-hander, then Gore Drinker with two weapons from 44.',
+	encounter: EncounterLevelingPlan,
+	race: Race.RaceUndead,
+	options: TankWarriorOptions.create({ queueDelay: 250, startingRage: 0, shout: WarriorShout.WarriorShoutBattle, stance: WarriorStance.WarriorStanceBattle }),
+	levelingPlan: DefaultLevelingPlan,
 });
