@@ -235,6 +235,22 @@ class FactionSets(unittest.TestCase):
         self.assertEqual(total, 35.0)
         self.assertEqual(parts, ['A 10g (AH)', '2 20g (materials)', '3 5g (effort)'])
 
+    def test_variant_lists(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = os.path.join(root, 'ui', 'warrior', 'bis')
+            os.makedirs(folder)
+            table = {'x': {'dir': 'warrior'}, 'x_dw': {'dir': 'warrior'}}
+            for name in ('x', 'x_alliance', 'x_horde', 'x_dw', 'x_dw_alliance'):
+                open(os.path.join(folder, f'level60_phase0_{name}.bis.json'), 'w').close()
+            old, phase0_prices.ROOT = phase0_prices.ROOT, root
+            try:
+                got = phase0_prices.variant_lists(root, 'x', table['x'], table)
+                self.assertEqual([l for l, _ in got], ['x_alliance', 'x_horde'])
+                self.assertEqual([l for l, _ in phase0_prices.variant_lists(root, 'x_dw', table['x_dw'], table)],
+                                 ['x_dw_alliance'])
+            finally:
+                phase0_prices.ROOT = old
+
 
 if __name__ == '__main__':
     unittest.main()

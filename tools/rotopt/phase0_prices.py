@@ -425,6 +425,22 @@ def content_text(content):
                             f'{"," if i < len(keys) - 1 else ""}\n' for i, k in enumerate(keys)) + '}\n'
 
 
+def variant_lists(root, spec, row, table=None):
+    """The faction and build copies of a spec's BiS list, as [(label, path)]: every
+    <list minus .bis.json>_<variant>.bis.json next to it (_horde, _alliance, ...), other specs' lists left out."""
+    def base(s, r):
+        p = list_path(s, r)
+        return p[:-len('.bis.json')] if p.endswith('.bis.json') else p
+    mine = base(spec, row)
+    others = [base(s, r) for s, r in (table or {}).items() if s != spec]
+    out = []
+    for path in sorted(glob.glob(glob.escape(mine) + '_*.bis.json')):
+        if any(o.startswith(mine + '_') and path.startswith(o) for o in others):
+            continue
+        out.append((spec + path[len(mine):-len('.bis.json')], path))
+    return out
+
+
 def set_paths(root, spec, row, table=None):
     """The gear sets of a spec to price, as [(label, path)]: its gearOut and every set named
     <gearOut minus .gear.json>_<variant>.gear.json next to it, the faction copies (_horde, _alliance,
@@ -490,6 +506,14 @@ def main():
             sys.exit(f'{spec} has no list at {path}')
         with open(path) as f:
             lists[spec] = json.load(f)
+    # The faction and build copies of each list are priced as the spec's own: their picks need a number too.
+    owner = {spec: spec for spec in lists}
+    if not args.list:
+        for spec in specs:
+            for label, path in variant_lists(ROOT, spec, table[spec], table):
+                with open(path) as f:
+                    lists[label] = json.load(f)
+                owner[label] = spec
 
     ah = args.ah or newest_ah_file(args.wow)
     wago = args.wago or latest_wago(WAGO)
@@ -559,13 +583,21 @@ def main():
                 prev = priced[spec].get(iid)
                 if prev is None or (r['gpd'] or 0) > (prev['gpd'] or 0):
                     priced[spec][iid] = r
+    # a copy's rows join its spec's, keeping the dearer number of an item both price
+    for label in [l for l in priced if owner[l] != l]:
+        for iid, r in priced.pop(label).items():
+            prev = priced[owner[label]].get(iid)
+            if prev is None or (r['gpd'] or 0) > (prev['gpd'] or 0):
+                priced[owner[label]][iid] = r
     if unknown:
         print(f"\ndrops with no known chance, so no effort price: {', '.join(sorted(unknown))}")
 
     if not args.write:
         return
-    on_list = {spec: {str(e['id']) for entries in bis['slots'].values() for e in entries}
-               for spec, bis in lists.items()}
+    on_list = {}
+    for label, bis in lists.items():
+        on_list.setdefault(owner[label], set()).update(
+            str(e['id']) for entries in bis['slots'].values() for e in entries)
     changed = apply_prices(content, priced, on_list)
     with open(CONTENT, 'w') as f:
         f.write(content_text(content))
