@@ -7,7 +7,10 @@ import (
 )
 
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
-	rank := int32(5)
+	rank := int32(warrior.knownRank([]int32{0, 14, 24, 34, 44, 54}, core.DemoralizingShoutSpellId[:]))
+	if rank == 0 {
+		return
+	}
 	actionId := core.DemoralizingShoutSpellId[rank]
 
 	warrior.DemoralizingShoutAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
@@ -26,7 +29,8 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	// 2026-11-03.
 	flatThreat := 0.4 * 2 * float64(core.DemoralizingShoutLevel[rank])
 	if warrior.Env.IsForever() {
-		flatThreat = math.Floor(43 + 0.8*float64(min(warrior.Level, 64)-54))
+		learned := int32(core.DemoralizingShoutLevel[rank])
+		flatThreat = math.Floor([]float64{0, 11, 19, 27, 35, 43}[rank] + 0.8*float64(min(warrior.Level, learned+10)-learned))
 	}
 
 	warrior.DemoralizingShout = warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -49,7 +53,7 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 		FlatThreatBonus:  flatThreat,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+			for _, aoeTarget := range warrior.shoutTargets(sim) {
 				result := spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
 				if result.Landed() {
 					warrior.DemoralizingShoutAuras.Get(aoeTarget).Activate(sim)
@@ -59,4 +63,13 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 
 		RelatedAuras: []core.AuraArray{warrior.DemoralizingShoutAuras},
 	})
+}
+
+// shoutTargets are the enemies a Demoralizing Shout reaches. It has no target limit.
+func (warrior *Warrior) shoutTargets(sim *core.Simulation) []*core.Unit {
+	active := sim.Encounter.ActiveTargetUnits
+	if !sim.Encounter.IsLeveling() {
+		return active
+	}
+	return warrior.areaTargets(sim, warrior.CurrentTarget, demoralizingShoutReach, len(active))
 }

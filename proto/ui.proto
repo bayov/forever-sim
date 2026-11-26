@@ -399,6 +399,33 @@ message LevelingPlanSettings {
 	// We level in a one-hander and a shield from level 1. The gear plan takes no two-handers and
 	// no items held in the off hand, and it judges items by the spec's shield stat weights.
 	bool one_hand_and_shield = 11;
+	// The level we get our first talent point at, with one more each level after. 0 is 10, the
+	// game's. The Legacy perk Talented gives it at 5 with all 5 ranks. The cap stays 51 points.
+	int32 first_talent_level = 12;
+	// The weapons we level with, each from its level until the next one's. With none, the gear
+	// plan wears whatever the stat weights like (or what one_hand_and_shield says). With any, it
+	// keeps every weapon and shield it finds and wears the best set of the level's style, so a
+	// switch finds the weapons we came across before it.
+	repeated LevelingWeaponStyleRange weapon_styles = 13;
+	// A build with stat weights of its own, like "Fury Prot". Each style then judges items by the
+	// spec's "<style's weights group> (<name>)" presets when there are any, and by the style's own
+	// group otherwise. Empty takes the style's group.
+	string weights_build = 14;
+}
+
+// What we hold in our hands at a level.
+enum LevelingWeaponStyle {
+	// Whatever the stat weights like best.
+	LevelingWeaponStyleFree = 0;
+	LevelingWeaponStyleTwoHand = 1;
+	// Below LevelingGearClassRules.dual_wield_level this is the same as free.
+	LevelingWeaponStyleDualWield = 2;
+	LevelingWeaponStyleOneHandShield = 3;
+}
+
+message LevelingWeaponStyleRange {
+	int32 level = 1;
+	LevelingWeaponStyle style = 2;
 }
 
 // Training: the gold we have by level, riding, and when we buy each rank.
@@ -559,11 +586,17 @@ message LevelingPlanSearchRequest {
 	bool rotation_search = 13;
 	// The spec's leveling route, when the gear plan takes it (LevelingGearPlanSettings.ignore_route).
 	LevelingRoute route = 14;
+	// The rotation template the search tunes (tools/rotopt/aplkit, like "warrior_leveling"). Empty
+	// for the first one that plays the player's spec.
+	string rotation_template = 15;
 }
 
 message LevelingGearWeights {
 	int32 level = 1;
 	UnitStats weights = 2;
+	// The weapon style these weights are for. A plan with weapon_styles takes its style's weights
+	// when there are any, and the ones of no style (free) when there are none.
+	LevelingWeaponStyle style = 3;
 }
 
 // What the class can wear and wield (proto_utils/utils.ts).
@@ -575,6 +608,8 @@ message LevelingGearClassRules {
 	repeated WeaponType two_hand_weapon_types = 3;
 	repeated RangedWeaponType ranged_weapon_types = 4;
 	bool can_dual_wield = 5;
+	// The level we learn Dual Wield at. Only a plan with weapon_styles reads it.
+	int32 dual_wield_level = 6;
 }
 
 // The class's talent trees as the leveling plan needs them (leveling_plan.ts, TalentShape).

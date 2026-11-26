@@ -27,6 +27,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyEnrage()
 	warrior.applyFlurry()
 	warrior.applyBloodCraze()
+	warrior.applyGoreDrinker()
 	warrior.applyShieldSpecialization()
 	warrior.applyMasterOfDefense()
 	warrior.registerDeathWishCD()
@@ -34,17 +35,24 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.registerLastStandCD()
 }
 
+// 1 Rage every 3 sec in combat, and Rage decays 30% slower out of it (client 71091, spell 12296; the
+// decay is in enableLeveling).
 func (warrior *Warrior) applyAngerManagement() {
 	if !warrior.Talents.AngerManagement {
 		return
 	}
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12296})
+	leveling := warrior.Env.Encounter.IsLeveling()
 
 	warrior.RegisterResetEffect(func(sim *core.Simulation) {
 		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 			Period: time.Second * 3,
 			OnAction: func(sim *core.Simulation) {
+				if leveling && !sim.Encounter.LevelingInCombat(sim) {
+					sim.NothingHappened()
+					return
+				}
 				warrior.AddRage(sim, 1, rageMetrics)
 				warrior.LastAMTick = sim.CurrentTime
 			},
@@ -217,7 +225,7 @@ func (warrior *Warrior) applyBloodthrill() {
 				return
 			}
 
-			if !warrior.Rend.Dot(result.Target).IsActive() {
+			if warrior.Rend == nil || !warrior.Rend.Dot(result.Target).IsActive() {
 				return
 			}
 
@@ -256,8 +264,7 @@ func (warrior *Warrior) applyUnbridledWrath() {
 	//     Thunder Clap 0 of 2,238, Retaliation 0 of 49, Victory Rush 0 of 24, Shield Bash 0 of 44.
 	//   - EV-0138 (2026-11-16, build 70938, push 114115; a level 60 Fury warrior): Heroic Strike 70%,
 	//     Cleave 67%, Windfury Totem hits 59%, Whirlwind 2 of 425 (0.5%).
-	// Thunder Clap is a spell in the sim and procs nothing; Retaliation and Victory Rush aren't in
-	// it. Bloodthirst, Mortal Strike, Execute, Slam, Overpower and Hamstring have no count in
+	// Thunder Clap is a spell in the sim and procs nothing. Bloodthirst, Mortal Strike, Execute, Slam, Overpower and Hamstring have no count in
 	// either log, so they keep the row's reading and proc it as a white hit does (To Verify, notes.md).
 	procsOnAbility := func(spell *core.Spell, result *core.SpellResult) bool {
 		if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || result.Damage <= 0 {
@@ -267,6 +274,8 @@ func (warrior *Warrior) applyUnbridledWrath() {
 		case spell.ActionID.SpellID == 1680, // Whirlwind, both strikes
 			spell.SpellCode == SpellCode_WarriorShieldSlam,
 			spell.SpellCode == SpellCode_WarriorRevenge,
+			spell.ActionID.SpellID == victoryRushID,
+			spell.ActionID.SpellID == retaliationStrikeID,
 			isShieldBash(spell.ActionID.SpellID):
 			return false
 		}
@@ -362,6 +371,7 @@ func (warrior *Warrior) applyEnrage() {
 
 			if sim.Proc(procChance, "Enrage") {
 				warrior.EnrageAura.Activate(sim)
+				warrior.goreDrinker(sim)
 			}
 		},
 	}))

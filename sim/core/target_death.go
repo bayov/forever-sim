@@ -41,6 +41,7 @@ func (encounter *Encounter) killTarget(sim *Simulation, target *Unit) {
 	}
 
 	if encounter.leveling != nil {
+		encounter.leveling.onKill(sim, target)
 		encounter.leveling.onMobDeath(sim, target)
 	} else if len(encounter.ActiveTargetUnits) == 0 && encounter.EndFightAtHealth > 0 {
 		// Step ends the fight once the damage taken passes this.

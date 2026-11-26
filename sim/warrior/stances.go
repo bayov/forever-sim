@@ -29,6 +29,34 @@ func (warrior *Warrior) StanceMatches(other Stance) bool {
 	return warrior.Stance.Matches(other)
 }
 
+// KnowsStance is whether the warrior has the stance yet: Battle Stance from the start, Defensive
+// Stance at 10 and Berserker Stance at 30 (client 71091, SpellLevels of 2457, 71 and 2458).
+func (warrior *Warrior) KnowsStance(stance Stance) bool {
+	switch stance {
+	case DefensiveStance:
+		return warrior.Level >= 10
+	case BerserkerStance:
+		return warrior.Level >= 30
+	}
+	return true
+}
+
+// enterStance starts the fight in this stance, or in Battle Stance when we don't have it yet.
+func (warrior *Warrior) enterStance(sim *core.Simulation, stance Stance) {
+	if !warrior.KnowsStance(stance) {
+		stance = BattleStance
+	}
+	warrior.Stance = stance
+	switch stance {
+	case BattleStance:
+		warrior.BattleStanceAura.Activate(sim)
+	case DefensiveStance:
+		warrior.DefensiveStanceAura.Activate(sim)
+	case BerserkerStance:
+		warrior.BerserkerStanceAura.Activate(sim)
+	}
+}
+
 func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD *core.Timer) *WarriorSpell {
 	spellCode := map[Stance]int32{
 		BattleStance:    SpellCode_WarriorStanceBattle,
@@ -172,6 +200,10 @@ func (warrior *Warrior) registerStances() {
 	warrior.registerDefensiveStanceAura()
 	warrior.registerBerserkerStanceAura()
 	warrior.BattleStance = warrior.makeStanceSpell(BattleStance, warrior.BattleStanceAura, stanceCD)
-	warrior.DefensiveStance = warrior.makeStanceSpell(DefensiveStance, warrior.DefensiveStanceAura, stanceCD)
-	warrior.BerserkerStance = warrior.makeStanceSpell(BerserkerStance, warrior.BerserkerStanceAura, stanceCD)
+	if warrior.KnowsStance(DefensiveStance) {
+		warrior.DefensiveStance = warrior.makeStanceSpell(DefensiveStance, warrior.DefensiveStanceAura, stanceCD)
+	}
+	if warrior.KnowsStance(BerserkerStance) {
+		warrior.BerserkerStance = warrior.makeStanceSpell(BerserkerStance, warrior.BerserkerStanceAura, stanceCD)
+	}
 }

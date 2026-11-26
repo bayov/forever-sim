@@ -38,6 +38,11 @@ func MobsPulled() Value {
 	return Add(MobsOnUs(), MobsRunningIn())
 }
 
+// LevelingMobsThisPull are the mobs this pull has taken, the dead ones too. 0 out of combat.
+func LevelingMobsThisPull() Value {
+	return &proto.APLValue{Value: &proto.APLValue_LevelingMobsThisPull{LevelingMobsThisPull: &proto.APLValueLevelingMobsThisPull{}}}
+}
+
 func IsMoving() Value {
 	return &proto.APLValue{Value: &proto.APLValue_IsMoving{IsMoving: &proto.APLValueIsMoving{}}}
 }

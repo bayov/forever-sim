@@ -174,8 +174,13 @@ type gearPlanInputs struct {
 	route *proto.LevelingRoute
 	// We wear a one-hander and a shield all the way: no two-handers, nothing held in the off hand.
 	oneHandAndShield bool
-	weightsAt        func(level int32) weights
+	// The weapon style of each level range, lowest first, or none (weapon_styles.go).
+	weaponStyles []*proto.LevelingWeaponStyleRange
+	// The stat weights at a level, for a weapon style.
+	weightsAt func(level int32, style proto.LevelingWeaponStyle) weights
 }
+
+func (in *gearPlanInputs) styled() bool { return len(in.weaponStyles) > 0 }
 
 type gearPlan struct {
 	levels []gearLevel
@@ -191,21 +196,43 @@ func planLevelingGear(in *gearPlanInputs) *gearPlan {
 	runs := planDungeonRuns(in, pool)
 
 	// We start in white chest, legs and boots, with a white weapon, and a white shield if we level
-	// with one.
+	// with one. With weapon styles these go in the bag.
+	var bag *weaponBag
+	if in.styled() {
+		bag = &weaponBag{in: in}
+	}
 	for _, slot := range []proto.ItemSlot{proto.ItemSlot_ItemSlotChest, proto.ItemSlot_ItemSlotLegs, proto.ItemSlot_ItemSlotFeet, proto.ItemSlot_ItemSlotMainHand} {
 		if item := pool.plainItem(slotType[slot], 1, 1, func() float64 { return 0 }); item != nil {
-			gear[slot] = gearPiece{item: item, source: "start", since: 1}
+			p := gearPiece{item: item, source: "start", since: 1}
+			if bag != nil && slot == proto.ItemSlot_ItemSlotMainHand {
+				bag.add(p)
+			} else {
+				gear[slot] = p
+			}
 		}
 	}
-	if in.oneHandAndShield {
+	if bag != nil && pool.canWield(proto.WeaponType_WeaponTypeShield, false) {
+		bag.add(gearPiece{item: pool.plainShield(1), source: "start", since: 1})
+	} else if in.oneHandAndShield {
 		gear[proto.ItemSlot_ItemSlotOffHand] = gearPiece{item: pool.plainShield(1), source: "start", since: 1}
 	}
 
 	for level := int32(1); level <= gearMaxLevel; level++ {
-		weights := in.weightsAt(level)
+		weights := in.weightsAt(level, weaponStyleAt(in.weaponStyles, level))
 		var changed []proto.ItemSlot
-		gainOf := func(p gearPiece) (proto.ItemSlot, bool, float64) { return bestSlotFor(p, gear, &weights, in.rules) }
+		// With weapon styles a weapon has no slot of its own, because the bag has the set we wear.
+		gainOf := func(p gearPiece) (proto.ItemSlot, bool, float64) {
+			if bag != nil && p.item.Type == proto.ItemType_ItemTypeWeapon {
+				gain := bag.gain(p, level)
+				return 0, gain > 0, gain
+			}
+			return bestSlotFor(p, gear, &weights, in.rules)
+		}
 		offer := func(p gearPiece) {
+			if bag != nil && p.item.Type == proto.ItemType_ItemTypeWeapon {
+				bag.add(p)
+				return
+			}
 			slot, ok, _ := gainOf(p)
 			if !ok {
 				return
@@ -307,7 +334,14 @@ func planLevelingGear(in *gearPlanInputs) *gearPlan {
 						continue
 					}
 					p := pool.withSuffix(usable[int(math.Floor(rand()*float64(len(usable))))], rand, "dungeon", level)
-					if _, ok, _ := gainOf(p); !ok || rand() >= dungeonWinChance {
+					_, ok, _ := gainOf(p)
+					// With weapon styles we roll for every drop, so a plan with other styles gets
+					// the same drops.
+					if bag != nil {
+						if won := rand() < dungeonWinChance; !ok || !won {
+							continue
+						}
+					} else if !ok || rand() >= dungeonWinChance {
 						continue
 					}
 					offer(p)
@@ -325,6 +359,10 @@ func planLevelingGear(in *gearPlanInputs) *gearPlan {
 			offer(gearPiece{item: item, suffix: in.suffixes[pin.Item.RandomSuffix], source: "pinned", since: level})
 		}
 
+		if bag != nil {
+			bag.buy(pool, level)
+			changed = append(changed, bag.wear(gear, level)...)
+		}
 		snapshot := make(map[proto.ItemSlot]gearPiece, len(gear))
 		for slot, p := range gear {
 			snapshot[slot] = p
@@ -463,7 +501,8 @@ func stat(values []float64, s proto.Stat) float64 { return at(values, int(s)) }
 
 // scorePiece is a piece's worth by the stat weights, like the gear picker's EP. Under Forever
 // an item's hit and crit count for melee and spells both, so we price them once, at the
-// larger weight. Bonus armor takes the armor price when it has none of its own.
+// larger weight, except the crit of an item with kindLimitedCrit, which each kind's weight
+// prices on its own. Bonus armor takes the armor price when it has none of its own.
 func scorePiece(p gearPiece, slot proto.ItemSlot, weights *weights) float64 {
 	item := p.item
 	values := make([]float64, max(len(item.Stats), len(p.suffix.GetStats())))
@@ -480,9 +519,14 @@ func scorePiece(p gearPiece, slot proto.ItemSlot, weights *weights) float64 {
 		score += values[s] * weights.stat(proto.Stat(s))
 	}
 	hit := stat(values, proto.Stat_StatMeleeHit) + stat(values, proto.Stat_StatSpellHit) + item.HitRating/10
-	crit := stat(values, proto.Stat_StatMeleeCrit) + stat(values, proto.Stat_StatSpellCrit) + item.CritRating/14
+	var meleeOnlyCrit, spellOnlyCrit float64
+	if item.KindLimitedCrit {
+		meleeOnlyCrit, spellOnlyCrit = stat(values, proto.Stat_StatMeleeCrit), stat(values, proto.Stat_StatSpellCrit)
+	}
+	crit := stat(values, proto.Stat_StatMeleeCrit) + stat(values, proto.Stat_StatSpellCrit) - meleeOnlyCrit - spellOnlyCrit + item.CritRating/14
 	score += hit * max(weights.stat(proto.Stat_StatMeleeHit), weights.stat(proto.Stat_StatSpellHit))
 	score += crit * max(weights.stat(proto.Stat_StatMeleeCrit), weights.stat(proto.Stat_StatSpellCrit))
+	score += meleeOnlyCrit*weights.stat(proto.Stat_StatMeleeCrit) + spellOnlyCrit*weights.stat(proto.Stat_StatSpellCrit)
 	armorWeight := weights.stat(proto.Stat_StatArmor)
 	bonusArmorWeight := weights.stat(proto.Stat_StatBonusArmor)
 	if bonusArmorWeight == 0 {
@@ -720,9 +764,10 @@ func (pool *itemPool) plainItem(itemType proto.ItemType, ilvl, level int32, rand
 		if len(kinds) == 0 {
 			return nil
 		}
-		// A shield is one more kind of white item we can come across, if we level with one.
+		// A shield is one more kind of white item we can come across, if we level with one or have
+		// weapon styles.
 		count := len(kinds)
-		if pool.in.oneHandAndShield {
+		if pool.in.oneHandAndShield || pool.in.styled() && pool.canWield(proto.WeaponType_WeaponTypeShield, false) {
 			count++
 		}
 		kind := int(math.Floor(rand() * float64(count)))
@@ -730,7 +775,7 @@ func (pool *itemPool) plainItem(itemType proto.ItemType, ilvl, level int32, rand
 			return pool.plainShield(ilvl)
 		}
 		w := plainWeapons[kinds[kind]]
-		item = pool.plain.weapon(w.weaponType, w.twoHand, ilvl)
+		item = pool.plain.weapon(w.weaponType, w.twoHand, ilvl, pool.in.styled())
 	} else {
 		armorType := pool.maxArmorAt(level)
 		if itemType == proto.ItemType_ItemTypeBack {
@@ -742,6 +787,18 @@ func (pool *itemPool) plainItem(itemType proto.ItemType, ilvl, level int32, rand
 		pool.usedPlain[item.Id] = item
 	}
 	return item
+}
+
+// The first kind of plain one-hander or two-hander we can use.
+func (pool *itemPool) plainWeapon(twoHand bool, ilvl int32) *proto.UIItem {
+	for _, w := range plainWeapons {
+		if w.twoHand == twoHand && pool.canWield(w.weaponType, twoHand) {
+			item := pool.plain.weapon(w.weaponType, twoHand, ilvl, pool.in.styled())
+			pool.usedPlain[item.Id] = item
+			return item
+		}
+	}
+	return nil
 }
 
 func (pool *itemPool) plainShield(ilvl int32) *proto.UIItem {
@@ -810,7 +867,9 @@ func (p *plainItems) armor(itemType proto.ItemType, armorType proto.ArmorType, i
 	return item
 }
 
-func (p *plainItems) weapon(weaponType proto.WeaponType, twoHand bool, ilvl int32) *proto.UIItem {
+// A plain weapon. A one-hander goes in the main hand only, as it always has, unless it's for a
+// plan with weapon styles (eitherHand).
+func (p *plainItems) weapon(weaponType proto.WeaponType, twoHand bool, ilvl int32, eitherHand bool) *proto.UIItem {
 	speed := 2.4
 	if twoHand {
 		speed = 3.3
@@ -820,12 +879,16 @@ func (p *plainItems) weapon(weaponType proto.WeaponType, twoHand bool, ilvl int3
 	kind := int32(weaponType) * 10
 	if twoHand {
 		kind++
+	} else if eitherHand {
+		kind += 2
 	}
 	item := madeUpItem(plainID(proto.ItemType_ItemTypeWeapon, kind, ilvl), proto.ItemType_ItemTypeWeapon, ilvl)
 	item.WeaponType = weaponType
 	item.HandType = proto.HandType_HandTypeMainHand
 	if twoHand {
 		item.HandType = proto.HandType_HandTypeTwoHand
+	} else if eitherHand {
+		item.HandType = proto.HandType_HandTypeOneHand
 	}
 	item.WeaponSpeed = speed
 	item.WeaponDamageMin = jsRound(dps * speed * 0.8)

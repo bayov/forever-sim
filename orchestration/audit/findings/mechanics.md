@@ -4,6 +4,30 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261126-1: Libram of Law now raises Judgement of Command (November 25 hotfix); the sim applies it to Righteousness and Fury only
+- severity: medium (estimate from a measured share: Judgement of Command 20966 is 13.4% of Shock Ret's damage, `paladin__level_60_shock_ret.json`, 1000 iterations, master bfbee78fc; 4% of it is about +0.5% DPS, +4.8 DPS)
+- affects: paladin (Shock Ret and its duty variants: tools/dps_report/req/paladin__level_60_shock_ret*.json, the Seal of Command builds that wear Libram of Law 272435)
+- found: 2026-11-26, master bfbee78fc
+- evidence: tier 1, hotfix post us.forums.blizzard.com/en/wow/t/2403040/16 (2026-11-25 23:25Z): "Fixed a bug causing Libram of Law to not affect Judgement of Command." Sim: sim/paladin/sor.go:93 and seal_of_fury.go:109 take the 1.04 for LibramOfLaw; soc.go's Judgement of Command does not; items.go:17-20 says the client mask leaves Command out. Client 71139 doesn't change spell 1291086, so the fix is server side.
+- proposed fix: in soc.go, multiply the judge spell's DamageMultiplier by `core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1)` under Forever (as sor.go:93), update the items.go comment, re-sim the three Shock Ret requests.
+- needs: worker fix
+
+### mechanics-20261126-2: Fengus' Ferocity gives no spell damage in the sim; client 1.60.1.71139 bakes it at 115 (halved from 230 by the November 23 hotfix)
+- severity: low (no preset takes it, and it is off in every raid fight; only outside_raid / outdoor / leveling fights with the buff set would move)
+- affects: shared raid buffs (sim/core/buffs.go ApplyFengusFerocity); casters and healers with the buff
+- found: 2026-11-26, master bfbee78fc
+- evidence: tier 1, 71139 Spell 22817: Description "Attack power increased by $s1 and spell damage and healing increased by up to $s3"; SpellEffect #0/#1 bp 200, #2/#3 bp 230 -> 115 (71091 -> 71139); hotfix post t/2403040/15 (Nov 23) halved its spell power. Sim buffs.go:2440-2445 gives 200 AP and 200 RAP only.
+- proposed fix: add `{stats.SpellPower, 115, false}` (or SpellDamage plus HealingPower, per the sim's stat for "spell damage and healing") to ApplyFengusFerocity under Forever.
+- needs: orchestrator fix
+
+### mechanics-20261126-3: The world-buff comment says no spell attribute marks the raid rule; client 71139 marks every world buff with Attributes_6 0x800 (not in raid instances)
+- severity: low (comment only; the rule the sim applies is unchanged and now has tier 1 backing, Spirit of Zandalar included)
+- affects: shared raid buffs (sim/core/buffs.go ForeverRaidInstance comment, 2309-2317)
+- found: 2026-11-26, master bfbee78fc
+- evidence: tier 1, 71139 SpellMisc Attributes_6 0 -> 2048 (bit 11, SPELL_ATTR6_NOT_IN_RAID_INSTANCES) on 22888, 16609, 460939, 15366, 22817, 22818, 22820, 23735-23738, 23766-23769, 24425 and 25101 (Battle Shout, an NPC world-buff variant). Spirit of Zandalar 24425 has the bit though its tooltip lacks the text, so the user's 2026-11-25 ruling now matches the client. Confidence high: the bit landed on exactly the world-buff set.
+- proposed fix: replace "No spell attribute or zone flag marks them" with the 71139 attribute and drop "on the user's ruling" for Spirit of Zandalar.
+- needs: orchestrator fix
+
 ### mechanics-20261125-1: Blizzard's November 25 Balance druid changes are live; the sim has none of them
 - severity: high (estimate, not measured: Moonfury's 10% at 5/5 is replaced by Moonkin Form's 10% and Wrath gains 7/13/20% crit under Eclipse's talent, Starfire loses up to 0.5 s cast time; the Balance talent strings in the presets change shape (Improved Starfire 5 -> 2 points with a reset), so every Balance build's DPS and place in the ranking can move)
 - affects: druid (Balance, Balance Wrath and their duty variants: tools/dps_report/req/druid__balance*.json; any build with Moonfury, Improved Starfire, Improved Wrath, Improved Moonfire, Eclipse or Moonkin Form)
@@ -19,6 +43,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: foreverchanges.pro "Hotfix 2026-11-24" (server hotfix data, first seen 20:30 UTC Nov 24): mark 1318944 now physical instead of Shadow and "can no longer be resisted"; recorded by the daily update in TASKS.md (85691655a). Sim item_effects.go:3503-3520: `SpellSchoolShadow`, `DefenseTypeMagic`, `OutcomeMagicHit`, and a missed mark still spends the 5 min cooldown. The hotfix rows (SpellMisc SchoolMask, SpellCategories DefenseType) aren't cached here (`tools/sources/hotfixes.py rows 1.60.1.71091 SpellMisc SpellCategories` returned nothing), so whether it now rolls melee hit or always lands is unknown.
 - proposed fix: under Forever make the use spell `SpellSchoolPhysical` and, reading "can no longer be resisted" as always landing, `spell.OutcomeAlwaysHit` (or `OutcomeMeleeSpecialHit` with DefenseTypeMelee if the hotfix rows show a melee defense type); fix the comment at 3470-3473.
 - needs: orchestrator fix
+- 2026-11-26 (pass 107): tier 1, hotfix post t/2403040/16 (Nov 25): "The Blackhand's Breadth's trinket can no longer be resisted." 71139 leaves the mark's client rows unchanged, so school and defense type are still server side.
 
 ### mechanics-20261124-1: Blizzard's November 23 hotfix halves the Darkmoon Faire buffs; the sim still gives Sayge's fortunes 10%
 - severity: low (no Level 60 preset or report request sets `saygesFortune`, checked over tools/dps_report/req/*.json; a user who ticks Sayge's Dark Fortune of Damage gets about 5% more DPS than the game, if the halving reaches it)
@@ -28,6 +53,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: once wago.tools hotfixes (spells 23735-23738, 23766-23769) or a log give the value, set every fortune to it (5% if "twice as much" means exactly halved) and cite the hotfix in the comment. Until then, a comment saying the value is pre-hotfix.
 - update 2026-11-25 (pass 105, master 0404484fb): since 3275a60b1 every Forever fight that isn't leveling, outdoor, PvP or `outside_raid` drops Sayge's fortunes entirely (client aura text "No effect while in a raid instance"), so the 10% now reaches only those fights. Still open for them.
 - needs: orchestrator fix
+- 2026-11-26 (pass 107): client 71139 turns every Sayge fortune (23735-23738, 23766-23769) into a dummy aura (EffectAura 4, misc 0); 23768 keeps bp 10. The client no longer carries the effect, so the halving can only be checked in game or in hotfix rows.
 
 ### mechanics-20261123-1: Robe of the Archmage's Replenish Mana shares the 60 s spell category cooldown with mana gems, healthstones and Demonic Rune; the sim gives it none
 - severity: low (estimate, not measured: no preset or gear set wears item 14152; it only touches mage builds the Phase 0 gear search tries, where pressing the robe can delay a mana gem or rune by up to 60 s)

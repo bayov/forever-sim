@@ -48,7 +48,29 @@ We don't take the best item for each level. While leveling we gear up as we go:
   enhancement shaman's are its regular weights plus those two (docs/leveling_plan.md, One-hand +
   shield).
 
-The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
+- **Weapon styles.** A plan can have a list of weapon styles by level instead
+  (`LevelingPlanSettings.weapon_styles`): two-hander, dual wield, or one-hander and shield. The
+  lowest range counts below its level too. Without the list the plan is as it always was.
+  - A plan with styles keeps every weapon, shield and held off-hand in a bag, and wears the best
+    set of its level's style from it. So a warrior who switches to a shield at 25 wears the best
+    shield it came across before.
+  - The finds and the dungeon rolls don't depend on the styles, so two plans with the same seed
+    find the same items. A quest reward for a later style wins only when no reward helps now.
+  - When a style's set isn't full, we buy the white pieces it misses from level 5, so a two-hand
+    plan never goes on with a one-hander because it found no two-hander. Below level 5 we wear
+    the weapon and the white shield we started with.
+  - A dual wield plan wears the best set of any style below the class's Dual Wield level (warrior
+    13, rogue 10, hunter 20). The warrior's 13 is a guess (notes.md, Need to Verify).
+  - Each style can have its own weights ("Leveling Gear Plan Two-Hand", "Dual Wield" and
+    "Shield" presets). A style without them takes the "Leveling Gear Plan" ones.
+- **Class rules.** What a class can wear and wield comes from the UI's class tables, and from
+  `classGears` in tools/levelingplan/class_rules.go for the requests we make without the browser.
+  A weapon kind from the weapon master counts as trained. `TestGearPlanMatchesTS` plays the same
+  plans with the Go and the TS code, for a shaman and a warrior in each style.
+
+The stat weights come from the leveling sim, by mobs killed in a session. `levelingplan -weights`
+measures them for a plan and a weapon style (docs/leveling_plan.md, Measuring stat weights). The
+enhancement shaman
 has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from
 ui/enhancement_shaman/leveling_weights.json), measured on the Leveling 1-60 plan at that level:
 its gear, talents, rotation and trained ranks. Between two of those levels we blend them by
@@ -111,6 +133,11 @@ the boss loot stay random:
 - **The level.** The tool counts each quest's XP (wowhead's quest rows) and the guide's "grind
   to" steps, and each section starts at least at the level its name says. It doesn't count
   the mobs we kill on the way, so it can be up to a level behind the guide.
+
+The warrior has its own route, walked as an Undead Warrior (`ui/warrior/leveling_route.json`,
+`route.py --race undead --class warrior`). It starts in RestedXP's own Tirisfal Glades and Silverpine
+Forest guides (1 to 14) and joins our route at 13-14 The Barrens, so it has our dungeons and the
+warrior class quests, like Whirlwind Weapon and Trial at the Field of Giants.
 
 The Gear part's Quest route switch makes the plan make them up again. On the 10 to 60 plan, four
 seeds took 97.1 to 98.6 hours with the route (98.0 on average) and 98.5 to 101.7 without it

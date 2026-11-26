@@ -50,7 +50,7 @@
     "id": 13965
    },
    {
-    "id": 19289
+    "id": 22321
    },
    {
     "id": 6622,
@@ -66,5 +66,5 @@
   ]
  },
  "note": "Alliance: wears level60_phase0_rogue_seal_fate_swords_alliance, the set without the Horde rewards",
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_seal_fate_swords. It wears level60_phase0_rogue_seal_fate_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 11.7% against the 8% yellow cap: trading the 1% excess for bonus stats lost or tied at 2 SE (+0.00 \u00b1 0.13), so the set is worn as it is."
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_seal_fate_swords. It wears level60_phase0_rogue_seal_fate_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 11.7% against the 8% yellow cap: trading the 1% excess for bonus stats lost or tied at 2 SE (-0.05 \u00b1 0.13), so the set is worn as it is."
 }

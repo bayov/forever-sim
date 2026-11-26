@@ -4,13 +4,21 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### client_update-20261124-1: Blizzard's Nov 23 hotfix halves the Darkmoon Faire buffs' power, but client 71091 still gives Sayge's fortunes 10%
-- severity: low (no report request or preset takes a Sayge's fortune; a build that does would lose up to 5% damage if the fortunes are now 5%)
-- affects: any build with Sayge's Dark Fortune (`IndividualBuffs.SaygesFortune`)
-- found: 2026-11-24, master eceb090196
-- evidence: Blizzard's November 23 hotfixes (read on foreverchanges.pro/patch-notes, November 23 "Spells"): "Fixed an issue where Darkmoon Faire buffs were granting twice as much power as intended", no numbers. Client 71091 (`spell.py 71091 23768` etc.): Sayge's Dark Fortune of Damage 23768 aura 79 still 10, Strength 23735 / Stamina 23737 / Armor 23767 still 10; no hotfix row for them in the client diff. Either the bug doubled a correct 10% on the server (the sim is right) or the intended value is 5% and is server side only. Sim: `sim/core/buffs.go:2451-2475`, 10%. Ledger SHR-HF-08. Confidence: low which reading is right.
-- proposed fix: none until a Sayge's tooltip, a character sheet or a wago.tools/hotfixes row after 2026-11-23 shows the value; if 5%, set the Forever fortunes to 1.05 / 5%.
-- needs: worker fix (verify first)
+### client_update-20261126-1: Summoned Hawks get about 5% more crit since Blizzard's November 25 hotfix; the sim keeps the pre-fix log value
+- severity: medium (estimate, not measured: a hawk crit chance 5 points higher is roughly +3-4% hawk damage; with hawks a sizable share of a hawk build's damage that is about +0.3-1% on those requests)
+- affects: hunter builds that summon hawks (`sim/hunter/summon_hawk.go`; the Beast Mastery requests in tools/dps_report/req/hunter__beast-mastery*.json if they take the hawk talent)
+- found: 2026-11-26, master bfbee78fcc
+- evidence: Blizzard hotfixes November 25 (t/2403040 post 16, Kaivax 2026-11-25 23:25 UTC, tier 1): "Fixed an issue where Summoned Hawks had ~5% less critical strike chance than intended." Server side (nothing in client 71139). `summon_hawk.go:56-71`: hawk MeleeCrit = 0.5 x the hunter's melee crit plus 2% a point of Ferocity, fitted to 4,340 pre-fix swings (b89878e6f9). Ledger HUN-HF-12.
+- proposed fix: under Forever add 5% crit to the hawk (`stats.MeleeCrit += 5 * core.CritRatingPerCritChance`), citing the hotfix and the standards-41 rule that Blizzard's note settles it over the earlier log fit; confirm with a post-11-25 log if one comes in, then size with `dps_beforeafter.sh` on the hawk requests.
+- needs: worker fix
+
+### client_update-20261126-2: Demons' melee crit was 0% until Blizzard's November 25 hotfix; the sim's 0.7% comes from those pre-fix logs, and the Succubus crit fix has no number
+- severity: medium (estimate, not measured: a Succubus melee crit moving from 0.7% to about 5% or to the warlock's crit is several percent more pet melee damage on 7 warlock requests that summon a Succubus; the "5% higher crit" fix pulls the other way on whichever crit it means; net under 1% of warlock DPS, sign unclear)
+- affects: warlock (the 7 tools/dps_report/req/warlock__*.json requests with `"summon": "Succubus"`; any demon build)
+- found: 2026-11-26, master bfbee78fcc
+- evidence: Blizzard hotfixes November 25 (t/2403040 post 16, tier 1), Warlock: "Fixed an issue where pets had 0% critical strike chance on melee basic attacks." and "Fixed an issue where Succubus and Incubus had 5% higher critical strike chance than intended." `sim/warlock/pet.go:258-283`: `demonMeleeCritPercent = 0.7` from wowsims/forever EV-0081 (three level 30 Succubus logs, 12 crits in 1,718 swings), adopted by the user's ruling of 2026-11-25; those logs predate the fix, so they measured the bug. Lash of Pain's 6.3% beside the warlock's 4.58% spell crit may be what the second line trims. Ledger WL-HF-07, WL-HF-08. Server side (nothing in client 71139).
+- proposed fix: the hotfix retires the 0.7% (standards 41: a Blizzard note settles it without a ruling) but gives no new value. Get a post-11-25 Succubus log (log-audit) for melee and Lash of Pain crit; until then, the closest reading is the demon's own base melee crit (about 5%) for melee and the warlock's spell crit with no extra for Lash of Pain. Size with `dps_beforeafter.sh` on the Succubus requests.
+- needs: worker fix (verify the number first)
 
 ### client_update-20261120-1: Execute's cast spell becomes Always Hit and suppresses procs in 71037; the sim's "avoided Execute keeps its extra rage" may no longer hold
 - severity: low until verified (an estimate: if the extra rage is now spent on every Execute, Fury and Arms in execute phase lose a little rage on the 5-8% of Executes that are dodged or missed; well under 0.5%)
@@ -81,9 +89,19 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: 22817 effects 0-3 (aura 99 +200 AP, 124 +200 RAP, 13 +230 spell damage, 135 healing) all become aura 4 in 70707. Either the buff is dead or a script applies it. Sim: `sim/core/buffs.go:2244` gives 200 AP and 200 RAP. Ledger SHR-U-16.
 - proposed fix: none until confirmed in game; if it is dead, drop it under Forever.
 - update 2026-11-24 (pass 16): Blizzard's November 23 hotfix fixes it "granting twice as much Spell Power as intended", and foreverchanges.pro (71091, "Found in the game") reads 115 spell damage and healing (was 230) with 200 AP unchanged, so the buff is live. In flight on `forever-update/2026-11-24-71091` (3f1c2708d: 115 spell damage and healing under Forever). Ledger SHR-HF-07.
+- update 2026-11-26 (pass 18, master bfbee78fcc): client 71139 now carries the halving (22817 and 1304759 effects 2-3 230 -> 115 spell power). Still not on master: the fix (3f1c2708d) sits on `forever-update/2026-11-24-71091`, unmerged; `sim/core/buffs.go` ApplyFengusFerocity gives 200 AP and no spell power.
 - needs: verify (in game)
 
 ## Resolved
+
+### client_update-20261124-1: Blizzard's Nov 23 hotfix halves the Darkmoon Faire buffs' power, but client 71091 still gives Sayge's fortunes 10%
+- severity: low (no report request or preset takes a Sayge's fortune; a build that does would lose up to 5% damage if the fortunes are now 5%)
+- affects: any build with Sayge's Dark Fortune (`IndividualBuffs.SaygesFortune`)
+- found: 2026-11-24, master eceb090196
+- evidence: Blizzard's November 23 hotfixes (read on foreverchanges.pro/patch-notes, November 23 "Spells"): "Fixed an issue where Darkmoon Faire buffs were granting twice as much power as intended", no numbers. Client 71091 (`spell.py 71091 23768` etc.): Sayge's Dark Fortune of Damage 23768 aura 79 still 10, Strength 23735 / Stamina 23737 / Armor 23767 still 10; no hotfix row for them in the client diff. Either the bug doubled a correct 10% on the server (the sim is right) or the intended value is 5% and is server side only. Sim: `sim/core/buffs.go:2451-2475`, 10%. Ledger SHR-HF-08. Confidence: low which reading is right.
+- proposed fix: none until a Sayge's tooltip, a character sheet or a wago.tools/hotfixes row after 2026-11-23 shows the value; if 5%, set the Forever fortunes to 1.05 / 5%.
+- needs: worker fix (verify first)
+- resolved: 2026-11-26, bfbee78fcc (no sim change needed). Client 71139 shows the doubling: each fortune applied two 10% auras, the cast spell on the target (23768 aura 79 bp 10) and the self copy (1304769 aura 79 bp 10); 71139 turns the cast spells 23735-23738/23766-23769 into dummies (SpellEffect 696766 aura 79 -> 4) and keeps the copies at 10% (stat copies aura 80 -> 137, bp 10). The sim applies 10% once, which is the fixed value. Ledger SHR-HF-11. (mechanics-20261124-1 asks the same question; this answers it.)
 
 ### client_update-20261117-3: Darkmoon Card: Blue Dragon procs on 3% of spellcasts since 11-16; the sim uses 2%
 - severity: low (no request or preset wears it)

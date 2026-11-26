@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
  },
- "last_pass_at": "2026-11-25T19:13:46Z",
- "pass": 80,
+ "last_pass_at": "2026-11-26T01:05:00Z",
+ "pass": 81,
  "result": "findings",
- "note": "c3bbe33ea..85691655a: no APL/req change; EV-* sim batches. Baseline refreshed; EV-0088 explosive swing gates measured (feral APL names dropped Dark Bomb: rotations-20261125-1). Caster-rule rechecks, Phase 0 trinkets, WF timing still open.",
+ "note": "85691655a..bfbee78fc: Phase 0 re-rank, feral Land Mine line (resolves rotations-20261125-1). No sim change, baseline kept. Balance APLs still name 10455 (rotations-20261126-1).",
  "client_build": "1.60.1.71091",
  "baseline": "baseline_8569165_3000it_seed424242.tsv",
- "checked_at": "2026-11-25T19:23:36Z"
+ "checked_at": "2026-11-26T01:04:24Z"
 }

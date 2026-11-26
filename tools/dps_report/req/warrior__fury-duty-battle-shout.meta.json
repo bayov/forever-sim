@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_fury_dw",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 979.67,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 988.19,
+    "source": "tools/dps_report/verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 re-rank of the trinkets and Fury DW main hand"
   },
   "verify": {
-    "dps": 979.67,
-    "stderr": 0.36,
+    "dps": 988.19,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-26; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -76,7 +76,7 @@
     "Saving the second Mighty Rage Potion for the last 20s adds 10.4 DPS at 180s and 0.0 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase0_fury_dw -apl level60_fury_battle_shout -talents 30313113002-050530055120100231 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.8 / +1.8 / +1.0 at 120 / 180 / 300 s. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_fury_dw, Phase 0 step 4), was the synthetic level60_phase1_synthetic_fury_hit+2 (1097.2 at 180s). Both Ironwood Blades take a Dense Sharpening Stone. Execute first in the execute phase since 2026-11-24 (tools/rotopt/warrior_presets.sh).",
+  "notes": "Request from mksettings -spec fury -gear level60_phase0_fury_dw -apl level60_fury_battle_shout -talents 30313113002-050530055120100231 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.8 / +1.8 / +1.0 at 120 / 180 / 300 s. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_fury_dw, Phase 0 step 4), was the synthetic level60_phase1_synthetic_fury_hit+2 (1097.2 at 180s). Main hand Thrash Blade (17705) and off hand Ironwood Blade, both swords, take a Dense Sharpening Stone; trinket Heart of Wyrmthalak (22321) in place of Blackhand's Breadth (re-rank 2026-11-26). Execute first in the execute phase since 2026-11-24 (tools/rotopt/warrior_presets.sh).",
   "duty": "Battle Shout",
   "baseBuild": "warrior__fury"
 }

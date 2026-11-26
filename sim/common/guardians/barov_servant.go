@@ -55,7 +55,11 @@ func (servant *BarovServant) Initialize() {
 }
 
 func (servant *BarovServant) ExecuteCustomRotation(sim *core.Simulation) {
-	servant.WaitUntil(sim, servant.AutoAttacks.NextAttackAt()-1)
+	// The guard the other guardians use (core_hound.go): a swing due now, or a wait into the past,
+	// panicked with "cannot wait negative time" (Subtlety's trinket use values, 2026-11-26).
+	if servant.AutoAttacks.NextAttackAt() != sim.CurrentTime+servant.AutoAttacks.MainhandSwingSpeed() && servant.AutoAttacks.NextAnyAttackAt()-1 > sim.CurrentTime {
+		servant.WaitUntil(sim, servant.AutoAttacks.NextAttackAt()-1)
+	}
 }
 
 func (servant *BarovServant) Reset(sim *core.Simulation) {

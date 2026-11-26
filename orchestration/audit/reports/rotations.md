@@ -1,53 +1,38 @@
-# Rotations pass 80 (2026-11-25, master 85691655a)
+# Rotations pass 81 (2026-11-26, master bfbee78fc)
 
-Result: findings (1 new, low). Range c3bbe33ea..85691655a (21 commits): the wowsims/forever evidence batches (tank
-threat, caster resists and overloads, hunter pet rules, item procs, proc rules) and the 2026-11-25 ruling batch
-(22d2cf952: EV-0088 explosive throws keep the swing timer and stun explosives miss level 63 bosses; EV-0008 extra
-attacks roll Windfury Totem; EV-0081 demon melee crit).
+Result: findings (1 new, low). Range 85691655a..bfbee78fc: the Phase 0 pricing and re-rank rounds (gear, weapons, trinkets,
+race rows, rotopt Phase 0 tools) and 35a2e9dca (Feral Land Mine line). No sim change.
 
 ## Checked
 
 | Check | Result |
 |---|---|
-| `apl_logic_diff.py c3bbe33ea origin/master` | 0 APL files touched |
-| `tools/dps_report/req/*.json` changed | none (the hunter/feral explosive move landed only in presets.ts and mksettings; filed by consumables-20261125-3 and results-20261125-1) |
-| Non-test sim `.go` changed | 68 files, all EV-* batches above; reached by every class |
-| Open findings landed? | no: rotations-20261122-1 and rotations-20261112-1 stay open |
-| Regression baseline (68 presets, 3000 it, seed 424242) | refreshed: `ref/rotations/baseline_8569165_3000it_seed424242.tsv` replaces the 0404484 one |
-| Resource check (shared 20k run, `secondsOomAvg`) | unchanged: worst warlock Affliction SB 4.5 s, other warlocks 3.1-3.4 s, Enhancement 2.5 s, all fine |
-| EV-0088 swing-timer gates on explosive lines (rogue, feral) | measured below; feral filed as rotations-20261125-1 |
+| `apl_logic_diff.py 85691655a bfbee78fc` | 2 files: feral `level60`, `level60_ff`, line 4 itemId 260817 -> 4395 |
+| Non-test sim `.go` changed | none; regression baseline kept (`baseline_8569165_3000it_seed424242.tsv`) |
+| Req rotations changed | feral-cat, feral-cat-duty-ff only (same Land Mine line) |
+| Open findings landed? | rotations-20261125-1 (Feral Dark Bomb) resolved as a variant (keeps the swing term, measured +0.52 vs +0.58); 20261122-1 and 20261112-1 stay open |
+| Phase 0 trinket lines, re-ranked builds | trinket changes in the reqs: Balance 10455 -> 22678 (on-use), Feral 19289 -> 22321 and Ret/Shock Ret/Sub Holy 13965 -> 22321 (both procs, no APL line). Feral and Ret still wear 10455, which their APLs name. Balance APLs still name 10455: rotations-20261126-1 |
 
-### Baseline moves vs 0404484 (3000 it, seed 424242)
+## Balance trinket lines (druid__balance, 20k it, 8 blocks, CLI bfbee78fcca3, A 802.6 at 180 s)
 
-Hunters +3.0 to +4.9% (pet white swing takes the hunter's crit, EV-0134); rogues -1.4 to -3.0% (Mutilate -3.0%; weapon
-PPMs and set procs, EV-0144); Fury duty Battle Shout -1.5%; other builds within about 1-2%. Sim mechanic changes, not
-rotation faults.
-
-### Explosive swing gates after EV-0088 (paired, 20k it, 8 blocks, B-A pooled over seed sets 1e6 and 2e8)
-
-| Build | Variant | 120 s | 180 s | 300 s |
+| variant | set | 120 | 180 | 300 |
 |---|---|---|---|---|
-| rogue__subtlety | Land Mine without the swing gate | +0.47 | +0.44 | +0.41 |
-| rogue__seal-fate-daggers | Land Mine without the swing gate | +0.14 | +0.10 | +0.50 |
-| druid__feral-cat (req with Land Mine) | 260817 -> 4395, energy gate only | +0.49 | +0.58 | -0.01 |
-| druid__feral-cat (req with Land Mine) | 260817 -> 4395, both gates | +0.41 | +0.52 | -0.02 |
-| druid__feral-cat-duty-ff (req with Land Mine) | 260817 -> 4395, energy gate only | +0.62 | +0.52 | -0.04 |
+| B3 drop 10455 pre-pull, Elune's Light on cooldown | 1e6 | +0.00 | +0.00 | +0.00 |
+| B3 on balance-wrath (A 714.3) | 1e6 | +0.00 | +0.00 | +0.00 |
+| B2 drop pre-pull, gate Elune's Light on 22678 | 1e6 | +0.00 | -0.03 | +0.07 |
+| B1 pre-pull 22678 and gate on it | 1e6 | -1.76 | -1.21 | -0.63 |
+| B1 | 2e8 | -1.73 | -1.17 | -0.73 |
 
-Per-set SEs 0.1-0.3. All under the 1 DPS bar; the feral line is filed for its wrong item id (correctness).
-
-## Open findings
-
-New: rotations-20261125-1 (feral APLs name the Dark Bomb the presets dropped). Unchanged: rotations-20261122-1,
-rotations-20261112-1.
+The dead lines cost nothing (B3 is bit-identical); pre-pulling the Talisman loses, as it did for warlocks.
 
 ## Optional
 
-- Rogue Land Mine lines (all six rogue APLs): drop the `autoTimeToNext >= autoSwingTime - 0.4s` term and the stale
-  "1 sec cast loses no swing time" note; +0.4 Subtlety, +0.1 Seal Fate Daggers at 180 s (above). Mostly a note fix.
+None new.
 
-## Open items
+## Still open (pass doc items)
 
-Not done this pass (bounded by time and a loaded machine): the Phase 0 trinket line check, the Windfury main-hand timing
-tests, and rotation re-checks for the new caster rules (Maelstrom Ready! keeping Clearcasting for Enhancement/Elemental
-Chain Lightning, EV-0180; judgements refreshing only on white swings and totem hits for paladins, EV-0117; Revelation
-spent on cast completion, EV-0028). The last three moved builds 1-2% and are worth a fan-out pass.
+Phase 0 trinkets: done for the builds re-ranked in this range (Balance, Feral, Ret family); other classes were checked by
+earlier passes only where their trinkets moved. Warrior HS/Cleave re-search, paladin hasted-GCD re-timing, Windfury
+main-hand timing, Night Elf vs Tauren Balance, Elemental Mastery hold, Enhancement imbue: unchanged, not run this pass.
+
+Note: a scratch slip left copies of the A and B1-B3 Balance APL JSONs in `/rotations` on the audit machine (outside the repo); safe to delete.
