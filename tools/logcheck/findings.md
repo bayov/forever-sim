@@ -6,15 +6,6 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
-### Cloud of Chained Essence ticks crit far less than the sim
-
-- **Found by**: search (trends across logs).
-- **Windows**: every log from Nov 12 to Nov 24 for `Player-6940-0038ED1A`: 57 crits in 2151 ticks (2.7%, 52 of them for 210). The reports' sim expects 16.6 to 17.7%, about 360 crits. Per report it never flags (5 to 16 ticks a window).
-- **What we think**: the sim rolls the ticks with our spell crit (`dot.OutcomeTick` in `sim/common/item_effects.go`, the Chained Essence of Eranikus use effect), but the game crits them at about 3%. The sim's comment there says 6 of about 300 ticks crit on Nov 12 and 13, which is the same low rate, and it read that as "crits like other Forever dots".
-- **Next step**: with the user's go, give the ticks a fixed crit chance of about 3% in place of our spell crit. It's worth about 100 damage per 10 min use, so small.
-- **Status**: open, first seen 2026-11-26.
-
-
 ## Collect more data
 
 ### Fixed-damage hits move with the mob's level around 60
@@ -201,6 +192,14 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Cloud of Chained Essence ticks crit far less than the sim
+
+- **Found by**: search (trends across logs).
+- **Windows**: every log from Nov 12 to Nov 24 for `Player-6940-0038ED1A`: 57 crits in 2151 ticks (2.7%, 52 of them for 210). The reports' sim expects 16.6 to 17.7%, about 360 crits. Per report it never flags (5 to 16 ticks a window).
+- **What we think**: the sim rolls the ticks with our spell crit (`dot.OutcomeTick` in `sim/common/item_effects.go`, the Chained Essence of Eranikus use effect), but the game crits them at about 3%. The sim's comment there says 6 of about 300 ticks crit on Nov 12 and 13, which is the same low rate, and it read that as "crits like other Forever dots".
+- **Done**: 2026-11-26. On the user's go, the ticks roll a fixed 2.7% crit for 1.5x in `sim/common/item_effects.go` in place of our spell crit.
+
 
 ### Water Shield gives 4 globes with Totem of Sustaining
 

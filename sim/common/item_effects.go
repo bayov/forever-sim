@@ -3663,8 +3663,11 @@ func init() {
 	//
 	// The cloud ends at 20 sec, just before a 10th tick would land. In our logs of Nov 12 and
 	// 13 the cloud put its debuff on each enemy about 0.1 sec after the use, and each enemy took 9
-	// ticks of 140 before the debuff went with the cloud. 6 of the about 300 ticks were crits for
-	// 210, so the ticks crit like other Forever dots. The ticks have no spell power coefficient.
+	// ticks of 140 before the debuff went with the cloud. The ticks have no spell power coefficient.
+	//
+	// The ticks crit for 1.5x (210), but far less often than our spells. Over our logs of Nov 12
+	// to 24, 57 of 2151 ticks crit (2.7%) while our spell crit was about 17%, so the chance doesn't
+	// come from our crit. We roll a fixed 2.7% (the 2026-11-26 log audit).
 	//
 	// The cloud's debuff never misses. Its spell has no defense type in the client (no
 	// SpellCategories row), and in the Nov 13 log it landed on all 85 enemies it was cast on.
@@ -3685,7 +3688,28 @@ func init() {
 			return
 		}
 
-		cloud := character.RegisterSpell(core.SpellConfig{
+		const tickCritChance = 57.0 / 2151
+		var cloud *core.Spell
+		tickOutcome := func(sim *core.Simulation, result *core.SpellResult, _ *core.AttackTable) {
+			metrics := &cloud.SpellMetrics()[result.Target.UnitIndex]
+			resisted := result.DidResist()
+			if sim.Proc(tickCritChance, "Cloud of Chained Essence Crit") {
+				result.Outcome = core.OutcomeCrit
+				result.Damage *= 1.5
+				metrics.CritTicks++
+				if resisted {
+					metrics.ResistedCritTicks++
+				}
+				return
+			}
+			result.Outcome = core.OutcomeHit
+			metrics.Ticks++
+			if resisted {
+				metrics.ResistedTicks++
+			}
+		}
+
+		cloud = character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 1300240},
 			SpellSchool: core.SpellSchoolNature,
 			DefenseType: core.DefenseTypeMagic,
@@ -3706,7 +3730,7 @@ func init() {
 					if target.MobFamily == proto.MobFamily_MobFamilyTroll {
 						damage *= 2
 					}
-					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, tickOutcome)
 				},
 			},
 
