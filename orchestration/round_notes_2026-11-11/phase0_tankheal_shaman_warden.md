@@ -108,3 +108,39 @@ bench (3000 iterations, seeds 1 and 2, preset column) clears no flag, so all fou
 
 The two seeds differ by about 55 on max survival, so these are within noise and the cheaper fallbacks are near
 equal. Scores vs synthetic are unchanged (list scores 1962.8, 3418.1, -1336.9).
+
+## Legal races (tank_fairness-20261105-2, 2026-11-26)
+
+Night Elf and Undead can't be shamans (run_build.py CLASS_RACES). Each preset was measured on its Phase 0 set at all
+five legal races, 3000 iterations, seeds 1 and 2, own column:
+
+| Preset | Troll | Tauren | Orc | Windshaper | Dwarf |
+|---|---|---|---|---|---|
+| balanced | **1996.2** | 1945.0 | 1940.5 | 1936.7 | 1904.8 |
+| max_threat | **3396.2** | 3316.9 | 3350.2 | 3322.7 | 3301.5 |
+| max_survival | -1589.4 | **-1535.8** | -1666.7 | -1692.0 | -1683.8 |
+
+Troll at balanced and max threat, Tauren at max survival, all Horde. Set in the requests, the lists, the UI presets and
+sim.ts (Alliance default Dwarf, Horde Troll), and docs/tank_shaman.md. An explicit Berserking cast changes nothing
+(identical to the decimal), so no APL change. Guard: tools/audit/gear/test_bench_races.py checks every tank and healer
+bench request's race against CLASS_RACES.
+
+Every list ranked again on the new race (FROM=current, all slots):
+
+- balanced 2022.6. No pick changed.
+- max_threat 3420.2. Legs Kilt of The Five Thunders for the Legplates (still 6 pieces), gloves enchant Natural Power.
+- max_survival -1213.1. Enchants Arcanum of Protection on legs, Rugged Armor Kit on feet, Enchant Weapon - Recovery
+  (45 Merchant's Favor, heals 5% of max health once per 10 sec, tagged this round).
+
+Tagged: Enchant Weapon - Recovery, Tristam Legguards (The Beast, UBRS), Raptorscale Bulwark (doubtful, reported
+only), Golem Fitted Pauldrons (Phalanx, BRD).
+
+Trinkets: balanced's request lost its dead 999216 line (the bench is identical without it, and rotopt no longer swaps
+it for Chained Essence, which loses 75). Bench and list now agree: 2022.7, 3420.2, -1212.8 against 2022.6, 3420.2,
+-1213.1. The UI APLs still name 999216, which is correct while the UI presets wear the synthetic gear.
+
+Scores, tankbench 1000 iterations, Phase 0 vs synthetic (master): balanced 2022.7 vs 1245.7 (+777.0), max_threat
+3420.2 vs 2608.2 (+812.0), max_survival -1212.8 vs -2234.0 (+1021.2).
+
+Faction rows: balanced and max threat have no faction picks. Max survival's Alliance row is Dwarf: Theramore Epaulets
+and Flame Walkers, -1446.8.
