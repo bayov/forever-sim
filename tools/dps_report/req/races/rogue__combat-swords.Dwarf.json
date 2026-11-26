@@ -47,7 +47,7 @@
     "id": 272408
    },
    {
-    "id": 10455
+    "id": 22321
    },
    {
     "id": 19289
@@ -61,10 +61,10 @@
     "enchant": 1900
    },
    {
-    "id": 19107
+    "id": 12651
    }
   ]
  },
  "note": "Alliance: wears level60_phase0_rogue_combat_swords_alliance, the set without the Horde rewards",
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_combat_swords. It wears level60_phase0_rogue_combat_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 11.2% against the 8% yellow cap: trading the 1% excess for bonus stats lost or tied at 2 SE (-0.73 \u00b1 0.10), so the set is worn as it is."
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_combat_swords. It wears level60_phase0_rogue_combat_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 12.1% against the 8% yellow cap: trading the 1% excess for bonus stats lost or tied at 2 SE (-0.56 \u00b1 0.10), so the set is worn as it is."
 }
