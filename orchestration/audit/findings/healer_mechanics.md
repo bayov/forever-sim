@@ -89,6 +89,10 @@
   damage share under one target (`TestHealingFightRaidDamageShare` has no share x N < 1 case), the health clamp when
   max health falls, and the school crit bonus on direct heals; nor for heal assignments, Lowest Health by percent,
   cancelled heals, or two absorbs on one unit.
+- update 2026-11-26 (master f9fa79917): 7de8438a6 gives Water Shield a 4th globe with Totem of Sustaining (23200,
+  spell 28856, client-correct, tier 1) but adds no test; `sim/shaman/enhancement/shields_test.go` and
+  `healing_untested_test.go` check 3 globes only. Wanted: with 23200 in the ranged slot, a fresh Water Shield has 4 stacks
+  and 4 globes are spent before it drops; with another totem, 3.
 
 ## Resolved
 

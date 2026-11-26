@@ -2,12 +2,12 @@
 
 ## Open
 
-### tank_fairness-20261126-1: On Phase 0 gear, Flask of the Titans beats the paladin Max survival preset's Flask of Supreme Power by about 120
-- severity: medium (+108.5 / +131.2 at w 3, 4% of the paladin's scoreRef; the paladin stays third at Max survival)
-- affects: Protection paladin Max survival (tools/tankbench/req/paladin_protection_max_survival.json consumes.flask, its UI preset and the Tanking data)
-- found: 2026-11-26, phase0-tankheal 3e9748641
-- evidence: tankbench, 3,000 iterations, six scored bosses, own column, the request against a copy with `"flask": "FlaskOfTheTitans"`, seed 1 / 2: 793.2 -> 901.7, 766.0 -> 897.2 (errors about 16). The flask was re-picked on the synthetic set (tank_fairness-20261111-1, Supreme Power +146 then); the Phase 0 set has 8271 health against the warrior's 10269, so the 1200 health counts for more now. Warden Balanced and Max survival already wear Titans.
-- proposed fix: Titans for paladin Max survival; and since every tank's consumables were tuned on the synthetic sets, re-screen flask, food, elixirs and potion per preset on the Phase 0 sets (paired, 3,000 on two seeds).
+### tank_fairness-20261126-3: The paladin's Max threat build now beats its Balanced build at the Balanced weight
+- severity: low (+31 at w 1, 1%; the paladin stays third at Balanced either way)
+- affects: Protection paladin Balanced preset (tools/tankbench/req/paladin_protection_balanced.json, its UI preset and the DPS Report Tanking row)
+- found: 2026-11-26, master f9fa79917
+- evidence: tankbench, six scoring bosses, 10,000 iterations, score at w 1: seed 1 Max threat build 2977.7 against Balanced 2948.0, seed 2 2971.7 against 2939.3 (3,000 iterations: 2981.8 / 2958.7 and 2960.0 / 2944.8). In pass 34 (phase0-tankheal 3e9748641) Balanced won its weight, 2952 against 2880. 3ae9da70a gave the Max threat preset Spirit of Zanza (was ROIDS): +12 at its own weight, about +90 at w 1. The builds differ in head, neck, shoulder, chest and wrist enchants, waist, hands, both rings' order and two talent points (05005-25300102413001531-5023 against 05005-25300100413201531-5023). Reproduce: `bash tools/audit/tank_fairness/bench.sh <dir> 10000 <seed> tools/tankbench/req/paladin_protection_{balanced,max_threat}.json`, read the Balanced column.
+- proposed fix: paladin worker: re-search the Balanced preset from the Max threat list and build (as b7b411a01 did for the bear), Spirit of Zanza kept, paired 10,000 on two seeds; take the Max threat build's slots where they win at w 1.
 - needs: worker fix
 
 ### tank_fairness-20261126-2: Price coverage: many tank and healer picks have no gold price, so the gold line never tests them
@@ -31,6 +31,7 @@
 - proposed fix: bear worker: re-search the Balanced (and Max threat, Max survival) enchants, Zanza buff and APL under the new threat rules, paired at 10,000 on two seeds. The warrior's presets were tuned before Shield Slam's 2 x block value / 255 threat and Thunder Clap 1x (its TPS fell 50 to 77); still ordered, but worth the same re-search.
 - needs: worker fix
 - pass 34 (2026-11-26, master ab3fff7007): not fixed; bear requests unchanged, all six-boss rows identical to pass 33.
+- pass 35 (2026-11-26, master f9fa79917): not fixed, narrower. b7b411a01 re-searched the Balanced set from the Max threat list (+89 at w 1), but the Max threat build still wins at w 1: 3889.4 against 3775.0 (two-seed mean, 3,000 iterations; seed 1 3898.8 / 3783.2, seed 2 3880.0 / 3766.8), 3% ahead, outside the error.
 - pass 34 (2026-11-26, phase0-tankheal 3e9748641): worse on the Phase 0 sets. At w 1 the Max threat build scores 3889.4 against the Balanced build 3696.0 (two-seed mean, 3,000 iterations; seed 1 / 2 about ±10), 5% ahead, outside the error. Raise to medium; the bear notes ran the Balanced search with the no-Roar APL (tank_rotations-20261125-1), so re-search Balanced after that APL settles.
 
 ### tank_fairness-20261124-1: Only the warrior APLs cast Stoneform; Dwarf paladin and Dwarf Warden race rows go without it
@@ -44,29 +45,6 @@
 - pass 33 (2026-11-25, master 85691655a): not fixed; no paladin or Warden request casts 20594.
 - pass 34 (2026-11-26, master ab3fff7007): not fixed; no paladin or Warden request casts 20594.
 - pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed; only warrior_protection_balanced and _max_survival cast 20594.
-
-### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
-- severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
-- affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
-- found: 2026-11-05, master bba052f
-- evidence: the client's CharBaseInfo (tier: client data, via tools/sources/racials.py into ui/core/forever/racials.json) gives no Night Elf or Undead shaman: Elune's Light 1259799 and Shadowmeld list Warrior, Hunter, Rogue, Priest, Druid; Will of the Forsaken lists Warrior, Mage, Rogue, Priest, Warlock, Paladin. tools/dps_report/run_build.py:31 has Shaman = Dwarf, Orc, Tauren, Troll, Skyborne Windshaper, so the DPS Report's race table (ui/dps_report/data/tank_races.json, re-simmed at c46062a with the new paired tankbench flags) has no preset row for any Warden build (isPreset false on all 15 rows), while the other three tanks' preset races top their tables. Size, from round 3's own race A/B (docs/tank_shaman.md:177-182, against Tauren, 3k): Night Elf +104.2 / +111.3, Orc +27.8 / -3.5, Troll +38.2 / +2.3 at Max threat / Balanced; Undead +43 ± 11 pooled at Max survival. The race table on master agrees on the legal order: Orc 3098 at Max threat, Orc 1698 / Troll 1692 at Balanced, Tauren -2132 at Max survival. Estimated from those, not re-measured paired against Night Elf; sure of the illegality, the sizes to about ±15.
-- proposed fix: re-pick each Warden preset's race among Dwarf, Orc, Tauren, Troll and Skyborne Windshaper by its own objective (on the race table: Orc at Max threat and Balanced, Tauren at Max survival; Troll is within error of Orc at Balanced), in the requests, ui/warden_shaman/sim.ts and docs/tank_shaman.md; re-tune talents only if the race's racial touches the rotation (standards 29). A guard would stop it recurring: tankbench or the request check failing on a race outside CharBaseInfo's list for the class.
-- needs: worker fix
-- pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
-- pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
-- pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
-- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
-- pass 10 (2026-11-12, master 67ad7c6a4): not fixed; requests still Night Elf / Night Elf / Undead. Re-measured after the Warden re-tune, paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -56.7 / -62.0, Orc -59.7 / -63.2; Balanced Troll -84.3 / -71.3, Orc -87.2 / -91.2; Max survival Tauren -153.2 / -163.8 (the Undead edge grew from about 43). Legal scores: 2,475 / 1,100 / -2,550; the Warden stays last at every weight.
-- pass 11 (2026-11-12, master 4fb90c298): not fixed; still Night Elf / Night Elf / Undead. Paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -58.8 / -67.3, Orc -59.3 / -69.2, Skyborne Windshaper -112.8 / -108.5; Balanced Troll -84.2 / -72.8, Orc -89.2 / -86.0, Tauren -90.8 / -92.5; Max survival Tauren -153.2 / -163.8, Troll -205 / -236. Best legal: Troll / Troll / Tauren. The Warden stays last at every weight.
-- pass 12 (2026-11-13, master 71562a8b0): not fixed; still Night Elf / Night Elf / Undead after the enchant re-pick (a6a8305da). Paired 3,000 iterations, seed 1, against the preset race: Max threat Orc -49.8, Troll -54.0; Balanced Troll -76.8, Orc -82.7; Max survival Tauren -123.5, Troll -189.3. Legal scores about 2,507 / 1,142 / -2,435; the Warden stays last at every weight.
-- pass 25 (2026-11-22, master 8b5137c6d): not fixed; requests still Night Elf / Night Elf / Undead; bench rows identical to pass 24.
-- pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2628 / 1272 / -2252, still last at every weight.
-- pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
-- pass 29 (2026-11-24, master 566067a39): not fixed; requests still Night Elf / Night Elf / Undead, Warden rows identical.
-- pass 32 (2026-11-25, master 0404484fb): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2600 / 1234 / -2306 (Greater Intellect now overwritten by Arcane Brilliance), still last at every weight.
-- pass 33 (2026-11-25, master 85691655a): not fixed; still Night Elf / Night Elf / Undead. Warden 2606 / 1244 / -2277, last at every weight.
-- pass 34 (2026-11-26, master ab3fff7007): not fixed; still Night Elf / Night Elf / Undead, Warden rows identical to pass 33.
-- pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed, and now baked into gear: the Phase 0 Warden lists were searched on Night Elf (Balanced, Max threat) and Undead (Max survival). Warden 2024.5 / 3399.5 / -1400.8 (two-seed means), last at every weight. A race change now needs the lists re-run for that race and faction.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -155,6 +133,39 @@
 - pass 33 (2026-11-25, master 85691655a): unchanged; the file is still present (-398 at Balanced on the bench).
 
 ## Resolved
+
+### tank_fairness-20261126-1: On Phase 0 gear, Flask of the Titans beats the paladin Max survival preset's Flask of Supreme Power by about 120
+- severity: medium (+108.5 / +131.2 at w 3, 4% of the paladin's scoreRef; the paladin stays third at Max survival)
+- affects: Protection paladin Max survival (tools/tankbench/req/paladin_protection_max_survival.json consumes.flask, its UI preset and the Tanking data)
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: tankbench, 3,000 iterations, six scored bosses, own column, the request against a copy with `"flask": "FlaskOfTheTitans"`, seed 1 / 2: 793.2 -> 901.7, 766.0 -> 897.2 (errors about 16). The flask was re-picked on the synthetic set (tank_fairness-20261111-1, Supreme Power +146 then); the Phase 0 set has 8271 health against the warrior's 10269, so the 1200 health counts for more now. Warden Balanced and Max survival already wear Titans.
+- proposed fix: Titans for paladin Max survival; and since every tank's consumables were tuned on the synthetic sets, re-screen flask, food, elixirs and potion per preset on the Phase 0 sets (paired, 3,000 on two seeds).
+- needs: worker fix
+- resolved: 2026-11-26, 52572a1d7 (paladin Max survival takes Flask of the Titans; pass 35 on master f9fa79917: 793.2 -> 901.7 seed 1, 897.2 seed 2, own column). The re-screen of the other consumables on the Phase 0 sets is the tank workers' (3ae9da70a did the paladin Max threat Zanza).
+
+### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
+- severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
+- affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
+- found: 2026-11-05, master bba052f
+- evidence: the client's CharBaseInfo (tier: client data, via tools/sources/racials.py into ui/core/forever/racials.json) gives no Night Elf or Undead shaman: Elune's Light 1259799 and Shadowmeld list Warrior, Hunter, Rogue, Priest, Druid; Will of the Forsaken lists Warrior, Mage, Rogue, Priest, Warlock, Paladin. tools/dps_report/run_build.py:31 has Shaman = Dwarf, Orc, Tauren, Troll, Skyborne Windshaper, so the DPS Report's race table (ui/dps_report/data/tank_races.json, re-simmed at c46062a with the new paired tankbench flags) has no preset row for any Warden build (isPreset false on all 15 rows), while the other three tanks' preset races top their tables. Size, from round 3's own race A/B (docs/tank_shaman.md:177-182, against Tauren, 3k): Night Elf +104.2 / +111.3, Orc +27.8 / -3.5, Troll +38.2 / +2.3 at Max threat / Balanced; Undead +43 ± 11 pooled at Max survival. The race table on master agrees on the legal order: Orc 3098 at Max threat, Orc 1698 / Troll 1692 at Balanced, Tauren -2132 at Max survival. Estimated from those, not re-measured paired against Night Elf; sure of the illegality, the sizes to about ±15.
+- proposed fix: re-pick each Warden preset's race among Dwarf, Orc, Tauren, Troll and Skyborne Windshaper by its own objective (on the race table: Orc at Max threat and Balanced, Tauren at Max survival; Troll is within error of Orc at Balanced), in the requests, ui/warden_shaman/sim.ts and docs/tank_shaman.md; re-tune talents only if the race's racial touches the rotation (standards 29). A guard would stop it recurring: tankbench or the request check failing on a race outside CharBaseInfo's list for the class.
+- needs: worker fix
+- pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
+- pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
+- pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
+- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
+- pass 10 (2026-11-12, master 67ad7c6a4): not fixed; requests still Night Elf / Night Elf / Undead. Re-measured after the Warden re-tune, paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -56.7 / -62.0, Orc -59.7 / -63.2; Balanced Troll -84.3 / -71.3, Orc -87.2 / -91.2; Max survival Tauren -153.2 / -163.8 (the Undead edge grew from about 43). Legal scores: 2,475 / 1,100 / -2,550; the Warden stays last at every weight.
+- pass 11 (2026-11-12, master 4fb90c298): not fixed; still Night Elf / Night Elf / Undead. Paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -58.8 / -67.3, Orc -59.3 / -69.2, Skyborne Windshaper -112.8 / -108.5; Balanced Troll -84.2 / -72.8, Orc -89.2 / -86.0, Tauren -90.8 / -92.5; Max survival Tauren -153.2 / -163.8, Troll -205 / -236. Best legal: Troll / Troll / Tauren. The Warden stays last at every weight.
+- pass 12 (2026-11-13, master 71562a8b0): not fixed; still Night Elf / Night Elf / Undead after the enchant re-pick (a6a8305da). Paired 3,000 iterations, seed 1, against the preset race: Max threat Orc -49.8, Troll -54.0; Balanced Troll -76.8, Orc -82.7; Max survival Tauren -123.5, Troll -189.3. Legal scores about 2,507 / 1,142 / -2,435; the Warden stays last at every weight.
+- pass 25 (2026-11-22, master 8b5137c6d): not fixed; requests still Night Elf / Night Elf / Undead; bench rows identical to pass 24.
+- pass 26 (2026-11-22, master 7a6d1beb9): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2628 / 1272 / -2252, still last at every weight.
+- pass 27 (2026-11-23, master 5518f4873): not fixed; requests unchanged, bench rows identical to pass 26.
+- pass 29 (2026-11-24, master 566067a39): not fixed; requests still Night Elf / Night Elf / Undead, Warden rows identical.
+- pass 32 (2026-11-25, master 0404484fb): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2600 / 1234 / -2306 (Greater Intellect now overwritten by Arcane Brilliance), still last at every weight.
+- pass 33 (2026-11-25, master 85691655a): not fixed; still Night Elf / Night Elf / Undead. Warden 2606 / 1244 / -2277, last at every weight.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; still Night Elf / Night Elf / Undead, Warden rows identical to pass 33.
+- pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed, and now baked into gear: the Phase 0 Warden lists were searched on Night Elf (Balanced, Max threat) and Undead (Max survival). Warden 2024.5 / 3399.5 / -1400.8 (two-seed means), last at every weight. A race change now needs the lists re-run for that race and faction.
+- resolved: 2026-11-26, 3ea8c0ecc (Troll at Max threat and Balanced, Tauren at Max survival; eae898b24 re-searched the Warden gear on those lists). Pass 35 on master f9fa79917: Warden 3413 / 1996 / -1214, last at every weight as before.
 
 ### tank_fairness-20261112-2: Agility enchants beat the head, legs, neck and glove picks on three tanks (paladin Max survival +78 / +62, which puts it back ahead of the warrior)
 - severity: high (moves the Max survival ranking: paladin 1,723 -> 1,801 against the warrior's 1,750 -> 1,764 with its own fix)

@@ -6,6 +6,8 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 
 ## 1. Cross-spec table (master 2af970d74: Phase 0 prices round 2, every class's over-the-gold-line picks out and trinkets, weapons and ranged re-ranked; rogue lists re-ranked on the current sim; report re-sim and published DPS refresh (aeaae077c, db7482a0f, 31d2f59e8); client 1.60.1.71139; pass 63, 2026-11-26)
 
+Re-checked at f9fa79917 (pass 64, quiet): the range is tank and healer Phase 0 work, the Bear Lacerate fix and Water Shield's Totem of Sustaining globe; no DPS build moves (the loop's 20k run is within 1.4 of published), so this table stands.
+
 Full pass: 5k race sweep (seed 1, every race, report requests with only the race changed) on the 2af970d74 CLI. "Report's published" is meta `published.dps`. "Before" is the ab3fff700 sweep at the best race. This sweep is the new baseline.
 
 | # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (ab3fff700) |

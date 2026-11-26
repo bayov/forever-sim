@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T06:52:54Z",
- "pass": 32,
+ "last_pass_at": "2026-11-26T18:53:32Z",
+ "pass": 34,
  "result": "quiet",
  "baseline": "ref/tank_bench/summary.tsv",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-26T01:04:24Z",
- "note": "ab3fff7007: warrior leveling only (ranks by level, leveling hooks, leveling plan); all 104 bench rows bit-identical to pass 31. Five open findings unchanged. Windfury timing item not done. Also 20261125-3 (phase0-tankheal pass 31b): report Tanking mode stale until publish (orchestrator). After the merge ref/tank_bench/summary.tsv is phase0-tankheal's Phase 0 baseline, not the synthetic-gear rows this pass compared. Master's pass 33 (2af970d748, 12:51Z, quiet): 104 synthetic-gear rows bit-identical to pass 32; superseded by this Phase 0 baseline."
+ "checked_at": "2026-11-26T19:06:21Z",
+ "note": "f9fa79917b: phase0-tankheal merge; all bench moves trace to request changes (old requests reproduce the old summary). Resolved 20261125-1/-2/-3 and 20261122-1; two user-call findings open. Windfury timing item not done. Pass 34 (master already had a pass 33)."
 }

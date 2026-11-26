@@ -4,6 +4,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261126-5: Revelation still rolls once per target of an area spell and lets a channel keep its charge to the end; Blizzard's November 25 hotfixes changed both
+- severity: medium (Arcane mage -5.5 DPS, -0.66%; single-target presets that don't channel don't move)
+- affects: shared enchant (Weapon - Revelation 1248805): Arcane mage (Arcane Missiles), any multi-target preset with an area spell; Shadow priest and Balance presets unchanged in the probe
+- found: 2026-11-26, master f9fa79917
+- evidence: tier 1, Blizzard "WoW: Forever Hotfixes - November 25, 2026" (us.forums.blizzard.com/en/wow/t/2403040/16, 2026-11-25 23:25 UTC): "The Revelation weapon enchant no longer rolls its proc chance for every target struck by an area of effect spell. It now rolls once per wave." and "The Revelation enchant no longer affects the entire duration of channeled spells." Server push 114415: SpellAuraOptions 248540 ProcTypeMask_0 81920 -> 344064 for 1323377 (TASKS.md 2026-11-26 item). The sim, sim/common/enchant_effects.go:296-313 and the "Revelation Weapon" aura (OnSpellHitDealt, OnPeriodicDamageDealt at :440-452): each target of an area spell rolls on its own, and "a channel keeps the charge to its end and every hit of it crits meanwhile" (heldBy). Measured with a probe that has the next hit of the holding channel spend the charge (patch $AUDIT_WORK/mechanics/revelation_channel.patch), tools/dps_report/req/<build>.json, 20,000 iterations, seed 1, paired: mage__arcane 833.89 -> 828.42 (stderr 0.29), priest__shadow 861.81 -> 861.81, druid__balance 801.90 -> 801.90. The per-wave half was not measured (no report preset is multi-target). Sure: high that the sim contradicts the hotfix; medium on the channel model, since "no longer affects the entire duration" doesn't say whether one missile or none keeps the crit.
+- proposed fix: (1) channels: drop the hold, so the first hit of the channel after the charge spends it. Key hunk, on the "Revelation" aura:
+  `OnSpellHitDealt: func(aura, sim, spell, result) { if heldBy != nil && aura.StartedAt() != sim.CurrentTime && buffed(spell) { heldBy = nil; aura.Deactivate(sim) } }` (or remove heldBy outright if a log shows no missile keeps it). (2) area spells: roll once per cast (one roll per wave for area channel ticks), e.g. keep the last (spell, sim.CurrentTime) rolled in the "Revelation Weapon" aura and skip further targets of the same wave. Update the comment block at :296-313. Confirm in a post-hotfix arcane log whether the first missile crits.
+- needs: orchestrator fix
+
 ### mechanics-20261126-4: Might of Shahram stuns a raid boss the sim marks StunImmune; since 8f5b59325 a stunned target can't dodge, parry or block, so Blackblade of Shahram gains about +1 DPS
 - severity: low
 - affects: every build wielding Blackblade of Shahram (12592): Retribution paladin Level 60 presets (ret, ret_undead gear sets); shared item code

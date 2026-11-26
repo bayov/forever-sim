@@ -2,6 +2,26 @@
 
 ## Open
 
+### healer_fairness-20261126-1: the Restoration druid alone still wears its synthetic set, ranks first tank healer on it, and the page's changes entry says it wears Phase 0 gear
+- severity: high (a spec's place in the ranking: tank druid first by 0.027, raid druid first of a three-way tie)
+- affects: Restoration druid, both presets (`tools/healbench/req/druid_restoration{,_raid}.json`), and the healer ranking the DPS Report shows
+- found: 2026-11-26, master f9fa79917
+- evidence: the other 7 requests moved to their Phase 0 lists (equipment only; consumables, buffs, race, professions
+  byte-identical to 2af970d74 once `.equipment` is dropped); both druid requests keep 15 synthetic ids (990401-...).
+  Bench (seed 101, 1,000 it, `screen.sh`, `ref/healer_fairness/bench_f9fa799.tsv`) against pass 31: tank shaman 1.276 ->
+  1.201, Holy 1.267 -> 1.194, Disc 1.266 -> 1.228, paladin 1.151 -> 1.100, druid 1.255 -> 1.255 (unchanged), so the druid
+  goes from fourth to first; raid druid 1.351, shaman 1.348, paladin 1.343 (Holy 1.440). Every Phase 0 list cost its spec
+  0.038-0.075 tank carry, so the druid's lead is very likely the gear, not the class (estimate: the druid's own list isn't
+  built, so not measured). Standards 43 lets a spec keep its synthetic set until its list lands "and the page says so".
+  The page doesn't: `ui/dps_report/data/heal_builds.json` gives druid__restoration `rank: 1` with no note, and
+  `ui/dps_report/data/changes.json`'s entry "Healing presets now wear real Phase 0 gear instead of synthetic gear" lists
+  Restoration Druid among the specs that "now wear gear you can get at level 60" (the gear table does show "Restoration
+  Druid Synthetic" item names).
+- proposed fix: land the druid's Phase 0 list (row `druid_restoration` in `tools/rotopt/phase0_specs.json`) and re-bench;
+  until then drop the druid from that changes entry and mark its two rows on the page as synthetic gear, not comparable
+  (or unranked).
+- needs: worker fix (the list), orchestrator fix (the page note)
+
 ### healer_fairness-20261124-1: the raid role's filler is the DPS report's Frost mage, so its move to Phase 0 gear cut every raid healer's carry 1-3%, unevenly, and put the shaman last
 - severity: high (raid shaman 1.390 -> 1.344, second-to-last to last; raid druid 1.385 -> 1.372, last to third)
 - affects: every raid healer preset in healbench's raid role (`tools/healbench/req/*_raid.json`); the tank role has no fillers
@@ -23,6 +43,10 @@
   unchanged, the evidence batches (resists, procs, Frost mage rules) lift the raid row unevenly: Holy +0.023, shaman +0.018,
   druid +0.008, paladin +0.004 (tank row +0.001..+0.005). Raid shaman 1.372 now ties the druid 1.370 for third, so "the
   shaman last" no longer holds; the raid row's bottom two stay within noise of each other. Not attributed.
+- evidence (pass 33, 2026-11-26, master f9fa79917): the raid druid, whose request didn't change, moved 1.370 -> 1.351
+  (golemagg -0.042), matching the third filler item swap healer_rotations logged at ab3fff700 (7829e00f1, two
+  items in `mage__frost.json`; its 2026-11-26 update in `findings/healer_rotations.md`). Raid row
+  now Holy 1.440, druid 1.351, shaman 1.348, paladin 1.343 (the last three on their Phase 0 lists except the druid).
 
 ### healer_fairness-20261115-1: Wild Growth's doubled tick (0.033 -> 0.066) lowers the raid druid's carry, 1.414 -> 1.392, from third to last; the preset isn't re-tuned for it
 - severity: high (the raid druid drops from third to last in the raid role, 0.020 behind the shaman's 1.412)

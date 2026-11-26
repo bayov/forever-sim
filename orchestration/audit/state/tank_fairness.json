@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T13:05:00Z",
- "pass": 34,
+ "last_pass_at": "2026-11-26T19:30:00Z",
+ "pass": 35,
  "result": "findings",
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Phase 0 gear (branch phase0-tankheal). Bear first at Max threat and Balanced (21% over warrior), warrior first at Max survival, paladin drops to third there; Titans +120 for paladin Max survival (-20261126-1); price coverage gaps (-20261126-2). Baseline refreshed. Master's pass 34 (ab3fff7007, 06:52Z, quiet): leveling-only batch left all 12 synthetic-gear presets identical to pass 33. Master's pass 35 (2af970d748, 12:51Z, quiet): leveling-only batch, all 12 synthetic-gear presets identical to pass 34; superseded by this Phase 0 baseline.",
- "checked_at": "2026-11-26T13:05:00Z"
+ "note": "Pass 35, master f9fa79917 (Phase 0 tank batch merged). Warrior casts its worn trinkets (+267/+297/+131); bear first at Max threat and Balanced (12% over warrior), warrior first at Max survival. Resolved -20261126-1 (paladin Titans) and -20261105-2 (Warden legal races). New -20261126-3: paladin Max threat build beats Balanced at w 1 (+31, 10k). Baseline refreshed (seed 1).",
+ "checked_at": "2026-11-26T19:06:21Z"
 }
