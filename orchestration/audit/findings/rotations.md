@@ -12,27 +12,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: in Might of Shahram's ApplyEffects, skip `aoeTarget.StunImmune` targets under `sim.IsForever()` (as consumes.go:1438 does). Expected effect: the 7 builds go back by the amounts above.
 - needs: orchestrator fix
 
-### rotations-20261126-2: Fury DW APLs still use Blackhand's Breadth (13965) after the re-rank moved Fury DW to Heart of Wyrmthalak and Darkmoon Card: Maelstrom
-- severity: low (correctness: dead line, 0.0 DPS; the build now wears no on-use trinket)
-- affects: warrior__fury, warrior__fury-duty-battle-shout, warrior__fury-duty-sunder and their race rows (ui/warrior/apls/level60_fury.apl.json:15, level60_fury_battle_shout.apl.json:18, level60_fury_sunder.apl.json:16, and the three req rotations)
-- found: 2026-11-26, master ab3fff7007
-- evidence: f79e810e1 changed Fury DW trinkets 13965+19289 -> 22321+19289 (req equipment items[12..13]); the APL line `{"action":{"castSpell":{"spellId":{"itemId":13965}}},"notes":"Blackhand's Breadth on cooldown: its mark beats holding it for the last 30 s."}` now names an item not worn. Arms and Fury 2H still wear 13965 with no line (autocast), which is fine. Per the Phase 0 trinkets open item, a build with no on-use trinket shouldn't keep a trinket line.
-- proposed fix: delete that line from the three APLs and their req rotations.
-- needs: orchestrator fix
-
-### rotations-20261126-1: Balance APLs still pre-pull and gate Elune's Light on Chained Essence of Eranikus (10455) after the re-rank moved Balance to Talisman of Ascendance
-- severity: low (correctness: dead lines naming a trinket the build no longer wears; 0.0 DPS to clean up)
-- affects: druid__balance, druid__balance-wrath and their -duty-ff builds (ui/balance_druid/apls/level60{,_ff,_wrath,_wrath_ff}.apl.json lines 5 and 11, and the four req rotations)
-- found: 2026-11-26, master bfbee78fc
-- evidence: a60eb2ca1 swaps trinket 10455 for 22678 (Talisman of Ascendance) in the four Balance reqs, but the APLs keep the pre-pull
-  `{"action":{"castSpell":{"spellId":{"itemId":10455}}},"doAtValue":{"const":{"val":"-0.1s"}}}` and Elune's Light's (1259799) condition on
-  `auraIsActive/spellTimeToReady/spellUsesLostByDelay` of itemId 10455. Paired ab.py, 20k it, 8 blocks, CLI bfbee78fcca3, A = the req as is (802.6 at 180 s), B-A at 120 / 180 / 300 s:
-  - B3, drop the 10455 pre-pull and the Elune's Light condition (cast on cooldown): +0.00 / +0.00 / +0.00 on balance and balance-wrath (set 1): identical to A, so the lines are dead.
-  - B2, drop the pre-pull, gate Elune's Light on 22678: +0.00 / -0.03 / +0.07 (set 1).
-  - B1, 10455 -> 22678 everywhere (pre-pull the Talisman): set 1 -1.76 / -1.21 / -0.63, set 2 -1.73 / -1.17 / -0.73, pooled -1.75 / -1.19 / -0.68. Don't pre-pull it; autocast already fires it on cooldown (as rotations-20261125-1 on the warlock Talisman found).
-- proposed fix: B3 in the four APLs and four req rotations: delete the 10455 pre-pull line and the Elune's Light line's condition (rewrite its note: on cooldown). No re-sim needed (bit-identical).
-- needs: orchestrator fix
-
 ### rotations-20261122-1: Shock Ret: Hammer of Wrath and Holy Strike ahead of Judgement and Seal of Command
 - severity: low (+2.2 at 180 s, 0.22%)
 - affects: paladin__level_60_shock_ret (its duty-crusader and duty-wisdom variants share the order; not measured)
@@ -77,6 +56,29 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 
 ## Resolved
+
+### rotations-20261126-1: Balance APLs still pre-pull and gate Elune's Light on Chained Essence of Eranikus (10455) after the re-rank moved Balance to Talisman of Ascendance
+- severity: low (correctness: dead lines naming a trinket the build no longer wears; 0.0 DPS to clean up)
+- affects: druid__balance, druid__balance-wrath and their -duty-ff builds (ui/balance_druid/apls/level60{,_ff,_wrath,_wrath_ff}.apl.json lines 5 and 11, and the four req rotations)
+- found: 2026-11-26, master bfbee78fc
+- evidence: a60eb2ca1 swaps trinket 10455 for 22678 (Talisman of Ascendance) in the four Balance reqs, but the APLs keep the pre-pull
+  `{"action":{"castSpell":{"spellId":{"itemId":10455}}},"doAtValue":{"const":{"val":"-0.1s"}}}` and Elune's Light's (1259799) condition on
+  `auraIsActive/spellTimeToReady/spellUsesLostByDelay` of itemId 10455. Paired ab.py, 20k it, 8 blocks, CLI bfbee78fcca3, A = the req as is (802.6 at 180 s), B-A at 120 / 180 / 300 s:
+  - B3, drop the 10455 pre-pull and the Elune's Light condition (cast on cooldown): +0.00 / +0.00 / +0.00 on balance and balance-wrath (set 1): identical to A, so the lines are dead.
+  - B2, drop the pre-pull, gate Elune's Light on 22678: +0.00 / -0.03 / +0.07 (set 1).
+  - B1, 10455 -> 22678 everywhere (pre-pull the Talisman): set 1 -1.76 / -1.21 / -0.63, set 2 -1.73 / -1.17 / -0.73, pooled -1.75 / -1.19 / -0.68. Don't pre-pull it; autocast already fires it on cooldown (as rotations-20261125-1 on the warlock Talisman found).
+- proposed fix: B3 in the four APLs and four req rotations: delete the 10455 pre-pull line and the Elune's Light line's condition (rewrite its note: on cooldown). No re-sim needed (bit-identical).
+- needs: orchestrator fix
+- resolved: 2026-11-26, c1ebe2d79 (pre-pull 10455 line dropped, Elune's Light ungated, in all four APLs and the four req rotations)
+
+### rotations-20261126-2: Fury DW APLs still use Blackhand's Breadth (13965) after the re-rank moved Fury DW to Heart of Wyrmthalak and Darkmoon Card: Maelstrom
+- severity: low (correctness: dead line, 0.0 DPS; the build now wears no on-use trinket)
+- affects: warrior__fury, warrior__fury-duty-battle-shout, warrior__fury-duty-sunder and their race rows (ui/warrior/apls/level60_fury.apl.json:15, level60_fury_battle_shout.apl.json:18, level60_fury_sunder.apl.json:16, and the three req rotations)
+- found: 2026-11-26, master ab3fff7007
+- evidence: f79e810e1 changed Fury DW trinkets 13965+19289 -> 22321+19289 (req equipment items[12..13]); the APL line `{"action":{"castSpell":{"spellId":{"itemId":13965}}},"notes":"Blackhand's Breadth on cooldown: its mark beats holding it for the last 30 s."}` now names an item not worn. Arms and Fury 2H still wear 13965 with no line (autocast), which is fine. Per the Phase 0 trinkets open item, a build with no on-use trinket shouldn't keep a trinket line.
+- proposed fix: delete that line from the three APLs and their req rotations.
+- needs: orchestrator fix
+- resolved: 2026-11-26, 832070749 (Phase 0 prices round 2 put Blackhand's Breadth 13965 back on Fury DW, req trinkets 19289+13965, so the line names a worn on-use trinket again)
 
 ### rotations-20261125-1: Feral cat APLs still cast the EZ-Thro Dark Bomb (260817) after the presets moved to the Goblin Land Mine
 - severity: low (correctness: a dead line naming an item the build no longer carries; +0.5 DPS at 180 s once fixed)

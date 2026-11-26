@@ -140,12 +140,14 @@ out.
 
 - Protection all the way. A two-hander until 15, and a one-hander and shield from Shield Block at
   16. With the shield from 1 it takes 0.5h longer, all of it before 20.
-- Talents, from the talent search: Shield Specialization 5, Anticipation 2, Improved Revenge 3, Last
-  Stand, Master of Defense 2, Improved Thunder Clap 1, Anticipation 4, Improved Thunder Clap 2,
-  Improved Bloodrage 2, Vanguard, Focused Rage 3, Improved Thunder Clap 3, Concussion Blow, Bastion
-  5, Shield Slam at 35. Then Cruelty 4, Improved Rend 1, Cruelty 5, Unbridled Wrath 5, Enrage 5,
-  Improved Rend 3, Improved Execute 2.
-- No Defiance. It only adds threat, which does nothing alone.
+- Talents, from the talent search with Defiance 3 required by 20: Shield Specialization 5,
+  Anticipation 2, Improved Revenge 3, Last Stand, Master of Defense 2, Defiance 3 (18 to 20),
+  Improved Thunder Clap 2, Anticipation 3, Improved Thunder Clap 3, Focused Rage 3, Improved
+  Bloodrage 1, Anticipation 4, Bastion 3, Improved Bloodrage 2, Concussion Blow, Shield Slam at 35,
+  Vanguard, Bastion 5. Then Cruelty 4, Improved Rend 1, Cruelty 5, Unbridled Wrath 5, Enrage 5,
+  Improved Rend 2.
+- Defiance only adds threat, which does nothing alone, but we tank dungeons while leveling. Solo it
+  costs 1h: without it the search's plan takes 96.6h on the seeds below.
 - Rotations from the `warrior_leveling` template, all the talent and rotation search's ("Searched
   1" and so on).
 - Enchant Weapon - Recovery on the main hand from 20 (`recoveryFromLevel`).
@@ -155,8 +157,8 @@ The weights are `ui/tank_warrior/leveling_weights_*.json` (two-hand, dual wield 
 
 ### Hours
 
-1 to 60 with Recovery from 20, 8 gear seeds and 400 sessions a level: 96.6h on seeds the search
-never saw (gear seeds 41 to 48), and 96.6h on the seeds of the table below (28 deaths).
+1 to 60 with Recovery from 20, 8 gear seeds and 400 sessions a level, on the seeds of the table
+below: 97.6h (27 deaths).
 
 | Levels | 1-9 | 10-19 | 20-29 | 30-39 | 40-49 | 50-59 |
 |---|---|---|---|---|---|---|
@@ -167,7 +169,7 @@ from 20.
 
 | Preset | Build | Hours | Deaths |
 |---|---|---|---|
-| Leveling: Prot | Protection, two-hander until 16, then a shield | 96.6 | 28 |
+| Leveling: Prot | Protection with Defiance, two-hander until 16, then a shield | 97.6 | 27 |
 | Leveling: Arms then DW | Arms with a two-hander, Gore Drinker dual wield from 44 | 99.5 | 21 |
 | Leveling: Arms, Prot, DW | Arms, Protection with a shield at 30, dual wield at 40 | 101.2 | 20 |
 | Leveling: Dual Wield | Gore Drinker dual wield all the way | 102.5 | 10 |
@@ -176,7 +178,18 @@ from 20.
 
 How Prot got there, on gear seeds 41 to 48: Prot with hand-tuned rotations 102.4h, with the
 search's rotations 99.5h, with its talents too 97.1h, and with the two-hander until 16 96.6h.
-Arms then DW took 99.2h on those seeds.
+Arms then DW took 99.2h on those seeds. Requiring Defiance 3 by 20 then cost 1h.
+
+### Tanking dungeons
+
+We tank 5-player dungeons while leveling, so the plan takes Defiance. A plain multi-target sim at
+20, 30, 40, 50 and 60 (4 mobs at one and two levels above us, 40 s, no deaths, leveling gear with a
+shield) compared builds. Defiance 3 gives 14 to 18% more threat for 1 to 5% less damage. The level
+60 tank builds (Balanced and Max threat), spent in leveling order, came within 2% of our build
+with Defiance. The most damage a shield build found with the talent search was Protection to Shield
+Slam and then Fury, only 0.4 to 8% more damage than ours and no more threat. Arms or Fury-heavy
+builds with a shield lost 11 to 21% damage and 22 to 55% threat from 30. Mobs never died in that
+sim, which flatters Rend, and the rotation didn't Sunder each mob in turn.
 
 Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer and
 more. Earlier runs without Recovery took 3 to 4h longer on every build.
@@ -188,8 +201,8 @@ Fury Protection is a known endgame build, not one people level with.
 The Forever guides we read (2026-11) all level deep Protection with Shield Slam at 40 (35 with
 Talented) and Fury after it: wowforeverinfo.com, kami-labs.fr, method.gg, warcrafttavern.com. Our
 talents share their core. Theirs differ in a few points each: Improved Thunder Clap 3 early,
-Defiance, Improved Sunder Armor, Lingering Rage, Deflection. Wowforeverinfo's two-hander until
-Revenge and Shield Block is what our plan does to 15.
+Improved Sunder Armor, Lingering Rage, Deflection. Kami-labs also takes Defiance at 20 to 29.
+Wowforeverinfo's two-hander until Revenge and Shield Block is what our plan does to 15.
 
 ### What we found
 

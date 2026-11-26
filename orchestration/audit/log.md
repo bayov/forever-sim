@@ -653,6 +653,14 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-26 07:11 | tank_mechanics | pass 36 | master ab3fff7007 | quiet | Warrior leveling batch, level 60 unchanged.
 2026-11-26 07:11 | tank_rotations | pass 32 | master ab3fff7007 | quiet | All 104 tank rows match pass 31.
 2026-11-26 07:11 | tank_fairness | pass 34 | master ab3fff7007 | quiet | All 84 tankbench rows match baseline.
+2026-11-26 13:01 | results | pass 109 | master 2af970d748 | quiet | 14 of 68 builds differ >0.5 DPS from metas (max +1.4); two findings resolved.
+2026-11-26 13:01 | rotations | pass 83 | master 2af970d748 | quiet | Balance APL fixes resolved two findings; no new.
+2026-11-26 13:01 | gear | pass 82 | master 2af970d748 | quiet | Three close calls under 20k confirm; nothing new.
+2026-11-26 13:01 | consumables | pass 113 | master 2af970d748 | quiet | Explosives now in mksettings; two findings resolved.
+2026-11-26 13:01 | mechanics | pass 109 | master 2af970d748 | quiet | Barov guard and mksettings explosives only.
+2026-11-26 13:01 | fairness | pass 63 | master 2af970d748 | 1 new finding | Ret omits Darkmoon Card: Maelstrom (+3.83 DPS paired 20k).
+2026-11-26 13:01 | tank_rotations | pass 33 | master 2af970d748 | quiet | 104 tank rows bit-identical to pass 32.
+2026-11-26 13:01 | tank_fairness | pass 35 | master 2af970d748 | quiet | All 84 tankbench rows match baseline.
 2026-11-26 13:30 | tank_gear | pass 19 | phase0-tankheal 3e9748641 | 4 new findings | Warrior lists sim 5-11% below their list score; Frozen Steel Vambraces (server-invalid) picked; stale infeasible / per-DPS annotations; phase0_check noise in DPS.
 2026-11-26 13:30 | tank_fairness | pass 34 | phase0-tankheal 3e9748641 | 2 new findings | Phase 0: bear leads MT/Bal, warrior leads MS, paladin third; Titans +120 for paladin MS; price coverage gaps (11 unpriced crafted picks, 5 items without the list's price).
 2026-11-26 13:30 | healer_mechanics | pass 32 | phase0-tankheal 3e9748641 | quiet | Client 71139 touches no heal; healscore refactor keeps bench results.

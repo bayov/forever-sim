@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
  "last_pass_at": "2026-11-26T06:51:11Z",
  "pass": 32,
@@ -8,5 +8,5 @@
  "baseline": "85691655a",
  "note": "Re-benched 63 cells (bench_8569165.tsv) after the wowsims/forever evidence batches: tank +0.001..+0.005, raid +0.004..+0.023; raid shaman 1.372 ties druid 1.370 for third (evidence under -20261124-1).",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-26T07:11:41Z"
+ "checked_at": "2026-11-26T13:01:11Z"
 }

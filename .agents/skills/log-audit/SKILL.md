@@ -1,6 +1,6 @@
 ---
 name: log-audit
-description: Audit the sim against the user's WoW Forever combat logs and BayovCore history, and hourly or daily only when asked. Use on /log-audit (or "/log-audit hourly", "/log-audit daily", "/log-audit stop"), "audit the logs", "check my new logs", after a play session, or when asked whether the sim still matches the game.
+description: Audit the sim against the user's WoW Forever combat logs and BayovCore history, with agents searching the logs for gaps logcheck misses (skip with "/log-audit quick"), and hourly or daily only when asked. Use on /log-audit (or "/log-audit hourly", "/log-audit daily", "/log-audit stop"), "audit the logs", "check my new logs", after a play session, or when asked whether the sim still matches the game.
 ---
 
 # Audit the sim against our combat logs
@@ -13,8 +13,9 @@ Run everything from `/home/bayov/projects/forever-sim`.
 
 ## Modes
 
-- **`/log-audit`**: run the audit and go through the findings with the user (sections 1 to 4).
-  Don't schedule anything.
+- **`/log-audit`**: run the audit, search the new logs with agents and go through the findings
+  with the user (sections 1 to 4). Don't schedule anything.
+- **`/log-audit quick`**: the same without the agent search (section 2b).
 - **`/log-audit hourly`**: like `/log-audit`, then schedule unattended runs every hour
   (section 5). Only when the user asks for hourly runs.
 - **`/log-audit daily`**: the same, but daily (cron like `13 9 * * *`), replacing any hourly job.
@@ -91,6 +92,42 @@ Never assume a character's name, realm or game folder. Read `reference.md` when 
 script can't find our character, a window is skipped or waits unexpectedly, or the audit finds
 no new windows though the user played.
 
+## 2b. Search the logs with agents
+
+logcheck only flags what it was built to compare: outcome rates, damage per hit and procs per
+swing, in windows of 50 attacks or more against mobs. Anything else the game does differently
+from the sim passes silently. So after the triage, send agents to read the new play sessions
+themselves and look for what logcheck can't see.
+
+Run it when the audit had new windows (run or skipped). Start one `sonnet` agent per lens below,
+all in one message, each on every log file with new windows. Each brief gives the log paths
+(`~/forever-logs/<flavor>/`, a `.txt.gz` needs `zcat` into a scratch file), the time ranges,
+our character's GUID from the digest, and the report paths. It points the agent at
+`tools/combat_log/` (`cl.py` parses lines) and tells it to grep and count with scripts, never
+to read a log whole. It tells the agent to read `tools/logcheck/findings.md`, `known.json` and
+`notes.md` "Need to Verify" first, so it reports only what's new.
+
+- **Spells and auras the sim doesn't have**: every spell ID in our events (casts, damage,
+  auras, energizes, procs from gear and enchants) and on our targets that the sim never
+  produces. Check with `rg` in `sim/` and the sim's spell IDs, and say what each does.
+- **Timing**: cooldowns from cast gaps, buff and debuff durations, totem lifetimes, cast times,
+  swing speed under haste, internal cooldowns of procs (the shortest gap between two procs),
+  and the GCD. Compare each with the sim's value in `sim/`.
+- **Resources and what logcheck skips**: mana costs and regen (energize events, the power
+  fields of advanced logging), damage taken by us, healing, threat, the skipped windows under
+  50 attacks, fights against players, and odd log events (reflects, absorbs, extra attacks,
+  evades) that logcheck drops.
+
+Each agent hands back at most ten candidates. Each one has the rule the sim gets wrong, the
+counts from the log and the sim's value with its file and line, and three example log lines.
+It leaves out anything it can't back with counts.
+
+Then verify each candidate yourself before it goes anywhere. Check one example line, and check
+that the sim really does it otherwise. A candidate that holds up goes into `findings.md` like a
+flag, in the section it fits, with **Found by**: search (lens) in place of **Flag**. Drop the
+rest and say in one line why. When a lens keeps finding the same kind of gap, propose a
+logcheck check for it, so the mechanical audit catches it next time.
+
 ## 3. Record what we found
 
 - **`tools/logcheck/known.json`**: one entry per explained ability and kind, optionally limited
@@ -146,7 +183,9 @@ The user may be away and other sessions share the working copy. So an unattended
   looks like a real sim error. A compressed log
   (`.txt.gz`) needs `zcat` into a scratch file before a Python script reads it.
 
-Run the audit (section 1). With no new windows, say so in one line and stop. Otherwise, for
+Run the audit (section 1). With no new windows, say so in one line and stop. Otherwise also run
+the agent search (section 2b), but with only one lens per run: the first, second or third by the
+hour of the day mod 3. Its verified candidates go into `findings.md` like flags. Otherwise, for
 each new window, read the report of each flag that isn't `known`, triage it as in section 2,
 and update `findings.md`:
 

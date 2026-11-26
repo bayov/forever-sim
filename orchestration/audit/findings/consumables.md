@@ -4,13 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### consumables-20261125-3: DPS Report requests still throw the EZ-Thro Dark Bomb that does nothing to a raid boss
-- severity: medium (the report's hunter and feral cat numbers; presets.ts say +7.9 to +11.9 hunter, +8.7 feral at 180 sec, taken from the preset comments, not re-measured here)
-- affects: tools/dps_report/req/hunter__{beast-mastery,beast-mastery-tallstrider,beast-mastery-wolf,marksmanship,marksmanship-tallstrider,marksmanship-wolf,lone-wolf}.json, druid__feral-cat.json, druid__feral-cat-duty-ff.json
-- found: 2026-11-25, master 85691655a
-- evidence: sim/core/consumes.go stunExplosives (new, EV-0088, user ruling 2026-11-25): Dark Bomb and Thorium Grenades are fully immune on a stun-immune boss. ui/hunter/presets.ts and spec_hunter.go moved to ExplosiveDenseDynamite and ui/feral_druid/presets.ts and spec_feral.go to ExplosiveGoblinLandMine, but `git grep fillerExplosive origin/master -- tools/dps_report/req` still shows ExplosiveEZThroDarkBomb in all nine files (line 77 or 79). Also spec_feral.go still lacks the Goblin Sapper Charge (see 20261105-1).
-- proposed fix: set the hunter requests to ExplosiveDenseDynamite and the feral ones to ExplosiveGoblinLandMine, then regenerate the report.
-- needs: orchestrator fix
 
 ### consumables-20261125-2: Intellect and Spirit elixirs in every preset now add nothing under the raid's Arcane Brilliance and Divine Spirit
 - severity: medium (estimate, not sim-measured; the elixir slot is wasted for mana users, up to about 17 DPS on Marksmanship per the sim comment)
@@ -36,6 +29,9 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: rename to "Inferior Stamina"; confirm the generated db shows +2 Stamina, not +5 Health.
 - needs: orchestrator fix
 
+
+## Resolved
+
 ### consumables-20261105-1: Feral mksettings consumes lack the Goblin Sapper Charge the preset and requests now carry
 - severity: low
 - affects: tools/rotopt/mksettings/spec_feral.go (consumes func, lines 20-33); ui/feral_druid/presets.ts (DefaultConsumes)
@@ -43,9 +39,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: a07941531 adds `sapperExplosive: SapperGoblinSapper` to the feral DefaultConsumes (works in form, sim/core/consumes.go explosivesUsableInForm; +3.1 at 180 sec per the preset comment, not re-measured here) and tools/dps_report/req/druid__feral-cat*.json carry it, but spec_feral.go has no SapperExplosive and its comment still says the cat "can use no explosives". A rotopt/mksettings regeneration would drop the Sapper.
 - proposed fix: add `SapperExplosive: proto.SapperExplosive_SapperGoblinSapper` and fix the comment.
 - needs: orchestrator fix
+- resolved: 2026-11-26, master 2af970d74 (spec_feral.go has SapperGoblinSapper and Land Mine)
 
-
-## Resolved
+### consumables-20261125-3: DPS Report requests still throw the EZ-Thro Dark Bomb that does nothing to a raid boss
+- severity: medium (the report's hunter and feral cat numbers; presets.ts say +7.9 to +11.9 hunter, +8.7 feral at 180 sec, taken from the preset comments, not re-measured here)
+- affects: tools/dps_report/req/hunter__{beast-mastery,beast-mastery-tallstrider,beast-mastery-wolf,marksmanship,marksmanship-tallstrider,marksmanship-wolf,lone-wolf}.json, druid__feral-cat.json, druid__feral-cat-duty-ff.json
+- found: 2026-11-25, master 85691655a
+- evidence: sim/core/consumes.go stunExplosives (new, EV-0088, user ruling 2026-11-25): Dark Bomb and Thorium Grenades are fully immune on a stun-immune boss. ui/hunter/presets.ts and spec_hunter.go moved to ExplosiveDenseDynamite and ui/feral_druid/presets.ts and spec_feral.go to ExplosiveGoblinLandMine, but `git grep fillerExplosive origin/master -- tools/dps_report/req` still shows ExplosiveEZThroDarkBomb in all nine files (line 77 or 79). Also spec_feral.go still lacks the Goblin Sapper Charge (see 20261105-1).
+- proposed fix: set the hunter requests to ExplosiveDenseDynamite and the feral ones to ExplosiveGoblinLandMine, then regenerate the report.
+- needs: orchestrator fix
+- resolved: 2026-11-26, master 2af970d74 (dps_report req files carry Dense Dynamite / Goblin Land Mine)
 
 ### consumables-20261107-1: Client 70862 halves the four Natural flasks (Stamina 60 to 30, zone bonus 4-5 to 2); sim still models 60 and 4-5
 - severity: high (estimate, not measured: every warrior, rogue, hunter and cat preset uses a Natural flask; the zone bonus is 5% hit/expertise/haste or 4% crit, now 2 in the client data)

@@ -10,6 +10,7 @@
 - proposed fix: re-run rotopt for bear Max threat and Balanced on master (`roarRefresh` 0 already means "never", tools/rotopt/druid_tank.go:38), or drop the Roar line from the Max threat and Balanced requests and the UI apls `ui/feral_tank_druid/apls/max_threat.apl.json` and `balanced.apl.json`. Re-check the Maul and Enrage thresholds in the same search. Maul 10/30 against 20 was noise this pass at all three presets.
 - needs: worker fix
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
+- pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 
 ### tank_rotations-20261125-2: Warrior Balanced's Thunder Clap now gains less than its GCD after Thunder Clap's threat dropped to 1x; without it +16, but Chromaggus loses
 - severity: low (+0.5%)
@@ -19,6 +20,7 @@
 - proposed fix: let rotopt search Balanced's Thunder Clap refresh with "never" as an option (or a remaining-time floor), and keep it only if the gain holds there. Otherwise keep it for Chromaggus and note that it's even.
 - needs: worker fix
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
+- pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 
 ### tank_rotations-20261125-3: The report's Tanking mode predates the Phase 0 requests, the tank threat batch and the Lacerate fix
 - severity: high (every tank row moves: bear Balanced 2153 to 3646, paladin Max survival 1787 to 800, warrior Max survival 1820 to 1096 on the bench's scoring mean)
@@ -38,6 +40,7 @@
 - pass 30: still open; 0404484fb leaves the paladin baseline bit-identical; not re-tested.
 - pass 31: still open; the evidence batches (85691655a) move paladin Balanced +48.7 (DTPS -3, healing needed -6.5), but the Consecration line is untouched. Not re-tested.
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
+- pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
@@ -67,6 +70,7 @@
 - pass 30: still open (user call); b4cab8498's Rage-by-stance rule moves Max survival 1832.8 -> 1820.0 (Broodlord -95 ± 70); Heroic Strike 40 still best; trinket lines not re-tested.
 - pass 31: still open (user call); 2f42f4a44's threat rules move Max survival 1820.0 -> 1617.0 (all bosses about -200, SafeDPS -107); trinket lines not re-tested.
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
+- pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -96,6 +100,7 @@
 - pass 30: still open (user ruling); 0404484fb leaves the paladin baseline bit-identical; not re-tested.
 - pass 31: still open (user ruling); the paladin rows moved +37 to +71 (damage taken), but the Bulwark line is untouched. Not re-tested.
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
+- pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 
 ## Resolved
 
