@@ -24,7 +24,7 @@
   ],
   "dps": 133.38,
   "made": "2026-11-26",
-  "sim": "701f08a0ea8a",
+  "sim": "7a7fd7538a1e",
   "slots": {
     "head": [
       {
@@ -236,7 +236,7 @@
       {
         "id": 21531,
         "name": "Drake Tooth Necklace",
-        "dps": 133.55,
+        "dps": 133.56,
         "loss": -0.18,
         "avail": "doubtful",
         "note": "Quest: The Nightmare Manifests"
@@ -253,7 +253,7 @@
       {
         "id": 17707,
         "name": "Gemshard Heart",
-        "dps": 133.52,
+        "dps": 133.53,
         "loss": -0.15,
         "note": "Princess Theradras · Maraudon"
       },
@@ -268,7 +268,7 @@
         "id": 12048,
         "suffix": 990401,
         "name": "Prismatic Pendant of the Physician",
-        "dps": 133.45,
+        "dps": 133.46,
         "loss": -0.08,
         "note": "Random world drop"
       },
@@ -289,7 +289,7 @@
       {
         "id": 19593,
         "name": "The Eye of Zuldazar",
-        "dps": 133.44,
+        "dps": 133.45,
         "loss": -0.07
       },
       {
@@ -319,7 +319,7 @@
       {
         "id": 271917,
         "name": "Seal of the Expedition",
-        "dps": 133.38,
+        "dps": 133.39,
         "loss": -0.01
       },
       {
@@ -339,7 +339,7 @@
       {
         "id": 16309,
         "name": "Drakefire Amulet",
-        "dps": 133.31,
+        "dps": 133.32,
         "loss": 0.06
       },
       {
@@ -377,7 +377,7 @@
       {
         "id": 22659,
         "name": "Medallion of the Dawn",
-        "dps": 133.26,
+        "dps": 133.27,
         "loss": 0.11,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -409,185 +409,179 @@
       {
         "id": 226951,
         "name": "Virtuous Mantle",
-        "dps": 133.62,
-        "loss": -0.24,
-        "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · Anthion chain (Strat, Dire Maul), step gold unknown · or the vendor after",
-        "bis": true
-      },
-      {
-        "id": 273926,
-        "name": "Pauldrons of Conviction",
-        "dps": 133.51,
-        "loss": -0.13,
-        "avail": "out",
-        "note": "Tailoring 300 · pattern from Aisarra Nightmeadow · needs Malleable Essence of Nature, disenchanted from Hyjal Summit and Barrow Deeps raid items, so the raids (Dec 9)"
-      },
-      {
-        "id": 22405,
-        "name": "Mantle of the Scarlet Crusade",
-        "dps": 133.46,
-        "loss": -0.08,
-        "note": "Cannon Master Willey · Stratholme"
-      },
-      {
-        "id": 14633,
-        "name": "Necropile Mantle",
-        "dps": 133.45,
-        "loss": -0.07,
-        "note": "Scholomance bosses (Necropile set)"
-      },
-      {
-        "id": 14139,
-        "name": "Mooncloth Shoulders",
-        "dps": 133.4,
-        "loss": -0.02,
-        "avail": "doubtful",
-        "note": "Tailoring 275 · pattern drops from raid and world bosses, lockboxes (0.1%) and Greater Darkmoon Prize (0.7%) only · Mooncloth"
-      },
-      {
-        "id": 226955,
-        "name": "Virtuous Epaulets",
         "dps": 133.38,
         "loss": 0,
+        "bis": true,
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · Anthion chain (Strat, Dire Maul), step gold unknown · or the vendor after"
-      },
-      {
-        "id": 16695,
-        "name": "Devout Mantle",
-        "dps": 133.37,
-        "loss": 0.01
-      },
-      {
-        "id": 13185,
-        "name": "Sunderseer Mantle",
-        "dps": 133.35,
-        "loss": 0.03,
-        "note": "Crystal Fang (Lower Blackrock Spire)"
-      },
-      {
-        "id": 22234,
-        "name": "Mantle of Lost Hope",
-        "dps": 133.34,
-        "loss": 0.04
-      },
-      {
-        "id": 18720,
-        "name": "Shroud of the Nathrezim",
-        "dps": 133.33,
-        "loss": 0.05,
-        "note": "Hel'nurath (Dire Maul East, summoned)"
       },
       {
         "id": 271953,
         "name": "Theramore Shoulderpads",
-        "dps": 133.3,
-        "loss": 0.08,
+        "dps": 133.33,
+        "loss": 0.04,
         "note": "Alliance only"
+      },
+      {
+        "id": 16695,
+        "name": "Devout Mantle",
+        "dps": 133.19,
+        "loss": 0.19
+      },
+      {
+        "id": 14633,
+        "name": "Necropile Mantle",
+        "dps": 133.04,
+        "loss": 0.34,
+        "note": "Scholomance bosses (Necropile set)"
+      },
+      {
+        "id": 226955,
+        "name": "Virtuous Epaulets",
+        "dps": 133.03,
+        "loss": 0.35,
+        "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · Anthion chain (Strat, Dire Maul), step gold unknown · or the vendor after"
       },
       {
         "id": 22412,
         "name": "Thuzadin Mantle",
-        "dps": 133.26,
-        "loss": 0.12
+        "dps": 132.96,
+        "loss": 0.42
+      },
+      {
+        "id": 18720,
+        "name": "Shroud of the Nathrezim",
+        "dps": 132.86,
+        "loss": 0.52,
+        "note": "Hel'nurath (Dire Maul East, summoned)"
       },
       {
         "id": 16701,
         "name": "Dreadmist Mantle",
-        "dps": 133.23,
-        "loss": 0.15
+        "dps": 132.82,
+        "loss": 0.56
       },
       {
-        "id": 14335,
-        "suffix": 990449,
-        "name": "Eternal Spaulders of the Prophet",
-        "dps": 133.21,
-        "loss": 0.17,
-        "note": "Random world drop · BoE"
-      },
-      {
-        "id": 10253,
-        "suffix": 990449,
-        "name": "Master's Mantle of the Prophet",
-        "dps": 133.21,
-        "loss": 0.17,
-        "note": "Random world drop · BoE"
-      },
-      {
-        "id": 10210,
-        "suffix": 990456,
-        "name": "Elegant Mantle of the Prophet",
-        "dps": 133.19,
-        "loss": 0.19,
-        "note": "Random world drop · BoE"
-      },
-      {
-        "id": 10142,
-        "suffix": 990456,
-        "name": "High Councillor's Mantle of the Prophet",
-        "dps": 133.19,
-        "loss": 0.19,
-        "note": "Random world drop · BoE"
-      },
-      {
-        "id": 14325,
-        "suffix": 990456,
-        "name": "Resplendent Epaulets of the Prophet",
-        "dps": 133.19,
-        "loss": 0.19,
-        "note": "Random world drop · BoE"
-      },
-      {
-        "id": 22305,
-        "name": "Ironweave Mantle",
-        "dps": 133.19,
-        "loss": 0.19,
-        "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "id": 16689,
+        "name": "Magister's Mantle",
+        "dps": 132.76,
+        "loss": 0.61
       },
       {
         "id": 10210,
         "suffix": 990455,
         "name": "Elegant Mantle of the Physician",
-        "dps": 133.18,
-        "loss": 0.2,
+        "dps": 132.75,
+        "loss": 0.63,
         "note": "Random world drop · BoE"
       },
       {
         "id": 10142,
         "suffix": 990455,
         "name": "High Councillor's Mantle of the Physician",
-        "dps": 133.18,
-        "loss": 0.2,
+        "dps": 132.75,
+        "loss": 0.63,
         "note": "Random world drop · BoE"
       },
       {
         "id": 14325,
         "suffix": 990455,
         "name": "Resplendent Epaulets of the Physician",
-        "dps": 133.18,
-        "loss": 0.2,
+        "dps": 132.75,
+        "loss": 0.63,
         "note": "Random world drop · BoE"
       },
       {
         "id": 14335,
         "suffix": 990448,
         "name": "Eternal Spaulders of the Physician",
-        "dps": 133.17,
-        "loss": 0.21,
+        "dps": 132.71,
+        "loss": 0.66,
         "note": "Random world drop · BoE"
       },
       {
         "id": 10253,
         "suffix": 990448,
         "name": "Master's Mantle of the Physician",
-        "dps": 133.17,
-        "loss": 0.21,
+        "dps": 132.71,
+        "loss": 0.66,
         "note": "Random world drop · BoE"
       },
       {
-        "id": 16689,
-        "name": "Magister's Mantle",
-        "dps": 133.16,
-        "loss": 0.22
+        "id": 22305,
+        "name": "Ironweave Mantle",
+        "dps": 132.68,
+        "loss": 0.69,
+        "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 14316,
+        "suffix": 990393,
+        "name": "Celestial Pauldrons of the Physician",
+        "dps": 132.66,
+        "loss": 0.72,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 14298,
+        "suffix": 990429,
+        "name": "Bonecaster's Spaulders of the Physician",
+        "dps": 132.62,
+        "loss": 0.76,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10100,
+        "suffix": 990429,
+        "name": "Councillor's Shoulders of the Physician",
+        "dps": 132.62,
+        "loss": 0.76,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10172,
+        "suffix": 990429,
+        "name": "Mystical Mantle of the Physician",
+        "dps": 132.62,
+        "loss": 0.76,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 14335,
+        "suffix": 877,
+        "name": "Eternal Spaulders of the Eagle",
+        "dps": 132.47,
+        "loss": 0.91,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10142,
+        "suffix": 877,
+        "name": "High Councillor's Mantle of the Eagle",
+        "dps": 132.47,
+        "loss": 0.91,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10253,
+        "suffix": 877,
+        "name": "Master's Mantle of the Eagle",
+        "dps": 132.47,
+        "loss": 0.91,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 14325,
+        "suffix": 877,
+        "name": "Resplendent Epaulets of the Eagle",
+        "dps": 132.47,
+        "loss": 0.91,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 14538,
+        "name": "Deadwalker Mantle",
+        "dps": 132.42,
+        "loss": 0.95
       }
     ],
     "back": [
