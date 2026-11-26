@@ -144,11 +144,11 @@
 			}
 		},
 		"rogue__seal-fate-swords": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:31.528Z",
+			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"recordedAt": "2026-11-26T10:25:43.571Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -172,14 +172,14 @@
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 				"sim/rogue": "2bc0e942e2fc4a6a023c3f44f0abffb7f8af4a1a5b38810528bd9af9849f50d5",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-				"tools/dps_report/req/rogue__seal-fate-swords.json": "5787128662bb3db51faa5da5a1c6bc0dbc4b0c3779a84749e57b4ea10207f5f0",
+				"tools/dps_report/req/rogue__seal-fate-swords.json": "aaadc8bf688ad5ca03ebfabfbd3b77e7f653f22d5ec5fdcf6e44d58fda145e81",
 				"tools/dps_report/req/rogue__seal-fate-swords.meta.json (sim fields)": "d14ec9549955595337d7cc5454f9858e20cd98b47f430387d641340ef431fc39",
-				"tools/dps_report/req/races/rogue__seal-fate-swords.Dwarf.json": "59fdbf97ab3b48897c99bd83081fa0cf79756628",
-				"tools/dps_report/req/races/rogue__seal-fate-swords.Gnome.json": "7152c33f45d7e52d5cddf975c8586660a5f27b31",
-				"tools/dps_report/req/races/rogue__seal-fate-swords.Human.json": "0e6efc4fd76cc226c9a64818fb3c16321bdc41fc",
-				"tools/dps_report/req/races/rogue__seal-fate-swords.NightElf.json": "4693e05edbc940d0626498323d5fed78276aae1a",
-				"tools/dps_report/req/races/rogue__seal-fate-swords.SkyborneHighOrder.json": "aed356b3cda635f3595dd81a267bd12259244c32",
-				"assets/database (the entries it wears)": "f680c314f8b584a772867915501413993a37ef04178cc50021762c03aaa06faf"
+				"tools/dps_report/req/races/rogue__seal-fate-swords.Dwarf.json": "c354f393d4da478b9d87edc19b154159a5fcc8be",
+				"tools/dps_report/req/races/rogue__seal-fate-swords.Gnome.json": "142aaf1ce12dff374bc5ed3199f119a3064f280b",
+				"tools/dps_report/req/races/rogue__seal-fate-swords.Human.json": "5e732790185749d867c614fec2ebb1db3734b4ed",
+				"tools/dps_report/req/races/rogue__seal-fate-swords.NightElf.json": "8707824843117aeba731733fcd2f2e4b1e281ca8",
+				"tools/dps_report/req/races/rogue__seal-fate-swords.SkyborneHighOrder.json": "9a1245c43dfbee3f91a12194f5c9884268d642f9",
+				"assets/database (the entries it wears)": "2159c6c7d9895973295a87b5c0247128d7797610daa5e2a6bdc6cbf365484f43"
 			}
 		},
 		"rogue__subtlety": {
@@ -679,11 +679,11 @@
 			}
 		},
 		"druid__balance": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:31.768Z",
+			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"recordedAt": "2026-11-26T10:25:43.773Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -707,20 +707,20 @@
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-				"tools/dps_report/req/druid__balance.json": "5250eb99d4afc18a495a2357a1d29570c4d91470b63af660b9e7db7663384715",
+				"tools/dps_report/req/druid__balance.json": "5e748ec066b96e0abb4d3683fd0b937b0b52339ca8bd5bd7f0841b1d5c256c6d",
 				"tools/dps_report/req/druid__balance.meta.json (sim fields)": "4b01dcfc8305d18b3bc2748e2d36b80b62fa6c51d16efd93d9131ef92ccf5d4d",
-				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "498324237d70d63dd1f5b47b0d6e5dae90fb82d1",
-				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "44a61d34f8197a41a39c9fa303ed9b18228f8d61",
+				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "4bea3b8524fe64db4344d9fb21e23b2339c0679b",
+				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "8c75ad03d4ea81c04ab3a6fd59669da33f5759ec",
 				"tools/dps_report/req/races/druid__balance.Tauren.json": "ec4ec30908a342bf977711bdc29fcc2eb64f57d0",
 				"assets/database (the entries it wears)": "d7db357b36d072dd940a8713ea8b0cc08248f8a64f535ab34be15fec4750f94a"
 			}
 		},
 		"druid__balance-wrath": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:31.794Z",
+			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"recordedAt": "2026-11-26T10:25:43.800Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -744,7 +744,7 @@
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-				"tools/dps_report/req/druid__balance-wrath.json": "470b063cb1a948e7c129dba1ea97d202d74f875aa7b19dc3c2dd23b013ec0a18",
+				"tools/dps_report/req/druid__balance-wrath.json": "fe264add3cf545d5163c51f559605bcc6d14829cfc6c6bef2caced11fdbb912c",
 				"tools/dps_report/req/druid__balance-wrath.meta.json (sim fields)": "4b01dcfc8305d18b3bc2748e2d36b80b62fa6c51d16efd93d9131ef92ccf5d4d",
 				"tools/dps_report/req/races/druid__balance-wrath.SkyborneWindshaper.json": "e8cb7f45cabaf1138e1dd8390b10f53c1dbbc7ff",
 				"tools/dps_report/req/races/druid__balance-wrath.Tauren.json": "ec4ec30908a342bf977711bdc29fcc2eb64f57d0",
@@ -1492,11 +1492,11 @@
 			}
 		},
 		"druid__balance-duty-ff": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:32.123Z",
+			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"recordedAt": "2026-11-26T10:25:43.821Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -1520,23 +1520,23 @@
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-				"tools/dps_report/req/druid__balance-duty-ff.json": "d22a8d3685c5e57b7b38b4abb023a627fb989217e553467a45344dc77b1fe9f1",
+				"tools/dps_report/req/druid__balance-duty-ff.json": "acfaac04c8aa6a90b0f4d8049c7b330cb5fbe1a263bcad5cc80cdeb44e2ba1ba",
 				"tools/dps_report/req/druid__balance-duty-ff.meta.json (sim fields)": "f3aeca68b483021e4c1dd6378ea6b056001b1f69e7edd251d61239f76d9f796b",
-				"tools/dps_report/req/druid__balance.json": "5250eb99d4afc18a495a2357a1d29570c4d91470b63af660b9e7db7663384715",
-				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneHighOrder.json": "c0531505197b9df96da108f3e1a60220b4a26a47",
-				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneWindshaper.json": "ac0d7325c99cca127001dc7a04de2b953224b22e",
-				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "498324237d70d63dd1f5b47b0d6e5dae90fb82d1",
-				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "44a61d34f8197a41a39c9fa303ed9b18228f8d61",
+				"tools/dps_report/req/druid__balance.json": "5e748ec066b96e0abb4d3683fd0b937b0b52339ca8bd5bd7f0841b1d5c256c6d",
+				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneHighOrder.json": "f3b7829d7d4942ba72fa69d95537fe84943acd0c",
+				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneWindshaper.json": "b60889350edbf549ca745457da8b98edee045a00",
+				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "4bea3b8524fe64db4344d9fb21e23b2339c0679b",
+				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "8c75ad03d4ea81c04ab3a6fd59669da33f5759ec",
 				"tools/dps_report/req/races/druid__balance.Tauren.json": "ec4ec30908a342bf977711bdc29fcc2eb64f57d0",
 				"assets/database (the entries it wears)": "d7db357b36d072dd940a8713ea8b0cc08248f8a64f535ab34be15fec4750f94a"
 			}
 		},
 		"druid__balance-wrath-duty-ff": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:32.145Z",
+			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"recordedAt": "2026-11-26T10:25:43.842Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -1560,9 +1560,9 @@
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-				"tools/dps_report/req/druid__balance-wrath-duty-ff.json": "8222e4920dfed5a56dd141178afd042f577885d5d6daff1843e7a97d0e231166",
+				"tools/dps_report/req/druid__balance-wrath-duty-ff.json": "6f31d4d71d13d2c41b402fd46a1e794dc71fe941c33aada6f28568251ceb09a3",
 				"tools/dps_report/req/druid__balance-wrath-duty-ff.meta.json (sim fields)": "ba50175380719e1c609f904c3af9e1b573118885467e2ad8243869354cb21035",
-				"tools/dps_report/req/druid__balance-wrath.json": "470b063cb1a948e7c129dba1ea97d202d74f875aa7b19dc3c2dd23b013ec0a18",
+				"tools/dps_report/req/druid__balance-wrath.json": "fe264add3cf545d5163c51f559605bcc6d14829cfc6c6bef2caced11fdbb912c",
 				"tools/dps_report/req/races/druid__balance-wrath.SkyborneWindshaper.json": "e8cb7f45cabaf1138e1dd8390b10f53c1dbbc7ff",
 				"tools/dps_report/req/races/druid__balance-wrath.Tauren.json": "ec4ec30908a342bf977711bdc29fcc2eb64f57d0",
 				"assets/database (the entries it wears)": "d7db357b36d072dd940a8713ea8b0cc08248f8a64f535ab34be15fec4750f94a"

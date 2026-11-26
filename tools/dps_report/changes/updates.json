@@ -8061,6 +8061,21 @@
       "832070749",
       "dac79e5f6"
      ]
+    },
+    {
+     "title": "Seal Fate Swords wears Darkmoon Card: Maelstrom",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__seal-fate-swords"
+     ],
+     "note": "Darkmoon Card: Maelstrom replaces Chained Essence of Eranikus beside Blackhand's Breadth, for about 9 more DPS.",
+     "commits": [
+      "8c5ebbb30",
+      "f4b9f6908"
+     ]
     }
    ],
    "internal": [
@@ -8123,6 +8138,14 @@
     {
      "commit": "51ba1c542",
      "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "eae05254e",
+     "why": "the request generator now writes the explosives the requests already carry; no request changed"
+    },
+    {
+     "commit": "c1ebe2d79",
+     "why": "removes Balance rotation lines for a trinket it no longer wears, which the sim already ignored; DPS unchanged"
     }
    ]
   }
