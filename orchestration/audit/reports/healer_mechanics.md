@@ -1,30 +1,42 @@
-# Healer mechanics: pass 31
+# Healer mechanics: pass 32
 
-2026-11-25, master 85691655ab (last c3bbe33eab), client 1.60.1.71091 (unchanged; external check done 2026-11-25T13:10Z, under the 72 h interval). Result: quiet.
+2026-11-26, master bfbee78fcc (last 85691655ab), client 1.60.1.71139 (was 71091). Result: findings (2 low).
 
 ## Why due
 
-master: 22 watched files changed (2f42f4a44 tank batch, efeb06b95 caster rules, 295206ddf item procs, b663145ad batch procs, merges).
+Client build 71091 -> 71139. No `sim/` file changed between 85691655ab and bfbee78fcc (gear sets, rotopt, report raws and
+audit files only); `orchestration/update_ledger.md` unchanged.
 
-## What changed, read for healer reach
+## Client 71091 -> 71139 (`python3 tools/sources/wago.py diff 1.60.1.71091 1.60.1.71139 --set mechanics`)
 
-| Commit | File | Change | Healer reach | Verdict |
-|---|---|---|---|---|
-| 2f42f4a44 | sim/core/spell_result.go | Damage shields (NoPartialResist + PassiveSpell, Forever) take no flat school bonus (EV-0066); new `areaCastHit` flag | damage path only (`applyTargetModifiers` else branch); heals, absorbs, health booking untouched | no healing effect |
-| 295206ddf / b663145ad | sim/shaman/item_sets_pve.go | Five Thunders 4pc now `item_sets.ForeverSpellPowerProc` at FuriousStormPPM: white swings PPM, casts (heals included, `foreverCastRolls`) at ppm x max(cast,1.5 s)/60 instead of flat 5% | no healer preset or healbench wears Five Thunders (as pass 17) | no preset effect |
-| efeb06b95 | sim/shaman/talents.go, shaman.go | Maelstrom Ready! (408501) aura, Healing Wave / LHW / LB / CL take it off; Elemental Focus keep rule; Forever Flurry consumption | Maelstrom Weapon not on any Restoration shaman preset; Elemental Focus reads damaging spells only | none |
-| efeb06b95 | sim/shaman/chain_lightning.go, lightning_overload.go, lightning_bolt.go, earth_shock.go, fire_totems.go, frostbrand_weapon.go | damage, overload, resist rules | none | none |
-| 295206ddf | sim/paladin/sow.go | Seal of Wisdom 15 PPM on main-hand speed under Forever (was 50%) | melee only; Holy paladin presets don't melee or use it | none |
-| 2f42f4a44 | sim/paladin/talents.go, soc.go, unsealed_wrath.go | Redoubt rolls on avoided swings; Vengeance skips NoProcs hits | tank / Ret only | none |
-| efeb06b95 | sim/priest/devouring_plague.go, mind_flay.go, starshards.go, shadow_word_death.go | FullResistanceTicks / binary flags | damage; shadow test hps (Vampiric Embrace) shifts follow damage | none |
-| 2f42f4a44 | sim/druid/bear.go, bear_attacks.go, faerie_fire.go, shifting_power.go | bear threat, Shifting Power energy threat | no Restoration druid heal path | none |
+| Change | Rows | Healer reach | Verdict |
+|---|---|---|---|
+| Sayge's Dark Fortunes: old 237xx effect 0 aura -> 4 (dummy); new 13047xx aura 80 -> 137 (total stat %), misc1 bitmask | 692746, 699970, 1331584-98 ... | world buff; off in raid instances; no healer preset sets SaygesFortune | none (DPS side: mechanics) |
+| Fengus' Ferocity 230 -> 115, Weight of Duty 7 -> 8 Str, Reinforce, Reagent Economy, Explosive Runeshard, Enveloping Winds | | not healing | none |
+| Rogue poisons / Vanish Attributes_5, world buffs Attributes_6 | SpellMisc | not healing | none |
+| Holy Fire 18167 DurationIndex 21 -> 0 | SpellMisc 329246 | not a player rank (player ranks 14914, 15261-15267) | none |
+| Clam foods, Nutritious Food ItemEffect, Hurricane / Prowl text, CurvePoint 295686-90 sign | | not healing | none |
+| SpellPower, SpellCastTimes, SpellCooldowns, SpellLevels, Trait tables | | no change | heal ranks unchanged |
 
-## Get current
+## Blizzard since 2026-11-21T00:18Z (tier 1)
 
-No new client build (71091) and no Blizzard post newer than 2026-11-21 recorded at today's 13:10Z check; nothing reopened.
+Read: Forever hotfixes t/2403040 posts 15 (Nov 23) and 16 (Nov 25); blue tracker (Balance druid t/2429007 is in
+mechanics-20261125-1; AV and store posts not mechanics).
 
-## Open findings (unchanged)
+| Note | Healer reach | Verdict |
+|---|---|---|
+| Holy: Oath of Light duration 60 min | sim 5 min (holy_talents.go:114); tank_healer APL recasts it | **finding -19** (low) |
+| Genesis now raises Hurricane damage and Tranquility healing | sim and docs say "not Tranquility"; no preset APL casts Tranquility | **finding -18** (low) |
+| Moonfury replaced by Dreamstate (Innervate on others) | Restoration preset has no Moonfury; self-Innervate unaffected | covered by mechanics-20261125-1 |
+| Darkmoon Faire / Fengus double power; world buffs persist across zones | world buffs, off in raids | DPS side |
+| Paladin Judgement refresh, Exorcism crit; Shaman Chain Lightning Clearcasting | damage | none |
+| Priest Mind Vision procs, Dark Inspiration (Shadow) | not healing | none |
 
-- healer_mechanics-20261124-17 (Mana Well MP5 under Innervate/Energized)
-- healer_mechanics-20261104-11 (Riptide mana)
-- healer_mechanics-20261104-10 (untested heal paths)
+## Open findings re-checked
+
+- -17 Mana Well energize: camp_buffs.go:58 unchanged, still open.
+- -11 Riptide cost: sim/shaman/healing.go unchanged, still open.
+
+## Engine and tests
+
+No engine or healer test file changed; pass 31's engine verdicts stand.

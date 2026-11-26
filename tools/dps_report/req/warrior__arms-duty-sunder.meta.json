@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_arms",
   "apl": "level60_arms_sunder",
   "published": {
-    "dps": 962.47,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 963.85,
+    "source": "tools/dps_report/verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 re-rank of the trinkets and Fury DW main hand"
   },
   "verify": {
-    "dps": 962.47,
+    "dps": 963.85,
     "stderr": 0.42,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-26; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [

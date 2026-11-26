@@ -1,6 +1,13 @@
-# Consumables pass 110, master 85691655a
+# Consumables pass 111 (master bfbee78fc, client 1.60.1.71139)
 
-Findings: consumables-20261125-3 (medium): report requests keep the Dark Bomb that EV-0088 makes useless on bosses.
+No new findings. Open items from pass 110 (20261125-1, -2, -3, 20261110-1, 20261105-1) stand unchanged.
 
-Verified: client 71091 unchanged (no newer build). scan.sh: banned list and NONSYN lines unchanged in kind (gear-set enchants 2544/Revelation are Phase 0 sets owned by the gear pass); minor-armor count 3 by design (see 20261125-2). consumes.go stunExplosives and swing-keep, buffs.go Windfury extra-attack rolls, debuffs.go JoW/Gift of Arthas, sim/common proc changes: no consumable or enchant value change. Hunter (Dense Dynamite) and feral (Land Mine) presets.ts match their mksettings; enhancement keeps Goblin Land Mine, marked due a re-check by its owner.
-Open: 20261125-3, -2, -1, 20261110-1, 20261105-1.
+## What moved
+- Master since 85691655a: only Phase 0 gear sets (44 files, the re-rank). No change to presets.ts, mksettings, sim/core, sim/common, forever_enchants.go, assumptions_def.py or the mage imbue.
+- Client 71091 -> 71139 (builddiff.py): 2 consumable spells changed, both world buffs no preset uses: Fengus' Ferocity (22817, effects 2/3 value 230 -> 115) and Sayge's Dark Fortune of Damage (23768, effect 0 now a flat aura 4 instead of 79). Forever enchants: 58 checked, 0 changed.
+
+## Verified
+- scan.sh: banned list only lists Phase 0 gear-set enchants 2544 and Revelation 1248805 (gear pass owns legality; 1248805 is in phase0_enchants.json). Revelation-outside-shamans, trinket, crit-elixir lists empty. Minor-armor count 3 by design (see 20261125-2). Air/weapon totems and Sunder/MobType lines unchanged.
+- New Phase 0 copies (Horde/Alliance sets, Ret Shock, SV hunter, rogue Seal Fate) use enchants all present in phase0_enchants.json, except 2544, 2543, 2564, 1891, 1887, which the gear pass already carried.
+
+No open items beyond the above.

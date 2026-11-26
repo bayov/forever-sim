@@ -33,8 +33,11 @@ var (
 	druidShiftingPower = spellID(1322605)
 	druidShadowmeld    = spellID(20580)
 	druidRavage        = spellID(9867)
-	// The filler explosive (the dps report's engineering bomb slot).
-	druidBomb = itemID(260817)
+	// The filler explosive (the dps report's engineering bomb slot): the Goblin Land Mine, the
+	// request's fillerExplosive. The EZ-Thro Dark Bomb (260817) is a stun explosive and does nothing
+	// to a level 63 boss, and the line casting it read the same as no explosive. The mine reads +0.5
+	// at 180s against none (2026-11-25, Phase 0 set, 20000 iterations).
+	druidBomb = itemID(4395)
 )
 
 func (druidFeral) Knobs() []Knob {

@@ -4,12 +4,12 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261125-1: hunter and feral requests still carry the EZ-Thro Dark Bomb; mksettings now writes Dense Dynamite / Goblin Land Mine (drift, +9 to +11 DPS on hunters)
-- severity: medium (about +1% on Beast Mastery, Marksmanship and Lone Wolf; no published number is wrong yet, the requests are just behind the preset)
-- affects: hunter beast-mastery (3), marksmanship (3), lone-wolf, druid feral-cat (2) (tools/dps_report/req/, tools/rotopt/mksettings/spec_hunter.go:133, spec_feral.go:30)
-- found: 2026-11-25, master 85691655a
-- evidence: 22d2cf952 (EV-0088: the Dark Bomb is a stun and does nothing to a stun-immune raid boss) changed mksettings and the UI presets, not the requests. regen.py: `fillerExplosive: committed=ExplosiveEZThroDarkBomb regen=ExplosiveDenseDynamite` on all 7 ranged hunter requests, `regen=ExplosiveGoblinLandMine` on both feral requests. Paired 20k seed 1 (regen JSON vs committed request, same binary): Beast Mastery 1044.1 -> 1053.7 (+9.6), Marksmanship 1095.8 -> 1105.1 (+9.3), Lone Wolf 1152.0 -> 1163.5 (+11.5); feral-cat 1053.6 -> 1057.4 (+3.8, net of the known sapper drift below, which costs 3.6). Sure of the numbers; Survival is unchanged (949.1).
-- proposed fix: regenerate the hunter and feral requests (or set fillerExplosive by hand) and re-sim the report; refresh ref/results/drift_report.txt after.
+### results-20261126-1: Survival and the four Enhancement requests carry Goblin Land Mine that mksettings does not write (drift, -5 DPS)
+- severity: low (no published number is wrong; regenerating by the README loses about 0.5%)
+- affects: hunter__survival (3), shaman__enhancement (4) (tools/dps_report/req/, mksettings spec_hunter_sv, spec_enh.go)
+- found: 2026-11-26, master bfbee78fc
+- evidence: regen.py: `consumes.fillerExplosive: committed=ExplosiveGoblinLandMine regen=<absent>` on 3 Survival and 4 Enhancement requests (new against the reference; 68380891b and c3884acc6 era edits, requests set by hand). Paired 20k seed 1 (regen JSON vs committed): Survival 945.5 vs 950.4 (-4.9), Enhancement level60 966.5 vs 971.7 (-5.2). Feral-cat regen 1059.3 vs 1060.0 (the sapper line alone now costs 0.7). Sure of the numbers.
+- proposed fix: set FillerExplosive: ExplosiveGoblinLandMine in the Survival and Enhancement mksettings specs (as 22d2cf952 did for BM/MM/LW/feral), then refresh ref/results/drift_report.txt.
 - needs: orchestrator fix
 
 ### results-20261105-1: mksettings -spec feral lacks the Goblin Sapper Charge the committed feral requests carry (drift, -3.6 DPS)
@@ -158,3 +158,11 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 - resolved: 2026-11-03, 5b766ca2b (meta race NightElf; regen.py now reports 0 diffs for rogue__subtlety)
 
+### results-20261125-1: hunter and feral requests still carry the EZ-Thro Dark Bomb; mksettings now writes Dense Dynamite / Goblin Land Mine (drift, +9 to +11 DPS on hunters)
+- severity: medium (about +1% on Beast Mastery, Marksmanship and Lone Wolf; no published number is wrong yet, the requests are just behind the preset)
+- affects: hunter beast-mastery (3), marksmanship (3), lone-wolf, druid feral-cat (2) (tools/dps_report/req/, tools/rotopt/mksettings/spec_hunter.go:133, spec_feral.go:30)
+- found: 2026-11-25, master 85691655a
+- evidence: 22d2cf952 (EV-0088: the Dark Bomb is a stun and does nothing to a stun-immune raid boss) changed mksettings and the UI presets, not the requests. regen.py: `fillerExplosive: committed=ExplosiveEZThroDarkBomb regen=ExplosiveDenseDynamite` on all 7 ranged hunter requests, `regen=ExplosiveGoblinLandMine` on both feral requests. Paired 20k seed 1 (regen JSON vs committed request, same binary): Beast Mastery 1044.1 -> 1053.7 (+9.6), Marksmanship 1095.8 -> 1105.1 (+9.3), Lone Wolf 1152.0 -> 1163.5 (+11.5); feral-cat 1053.6 -> 1057.4 (+3.8, net of the known sapper drift below, which costs 3.6). Sure of the numbers; Survival is unchanged (949.1).
+- proposed fix: regenerate the hunter and feral requests (or set fillerExplosive by hand) and re-sim the report; refresh ref/results/drift_report.txt after.
+- needs: orchestrator fix
+- resolved: 2026-11-26, bfbee78fc (hunter requests regenerated in 68380891b, feral in 35a2e9dca; the drift report no longer shows the Dark Bomb on either)
