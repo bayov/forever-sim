@@ -59,7 +59,7 @@ var errNoRoute = errors.New("No talent route has the required talents by their l
 type routeSearch struct {
 	shape    *proto.LevelingTalentShape
 	levels   []int32
-	bonus    int32
+	points   talentPoints
 	required []*proto.LevelingTalentRequirement
 	// Sims the jobs and gives back each one's hours, or false for one it didn't get to.
 	sim      func(jobs []levelJob) ([]levelHours, []bool)
@@ -72,7 +72,7 @@ type routeSearch struct {
 	bigChanges bool
 }
 
-func (s *routeSearch) pointsAt(level int32) int { return talentPointsAt(level, s.bonus) }
+func (s *routeSearch) pointsAt(level int32) int { return s.points.at(level) }
 
 func (s *routeSearch) allowed(tree, talent int) bool {
 	return !s.shape.Trees[tree].Talents[talent].NotSimulated

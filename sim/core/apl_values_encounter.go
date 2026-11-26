@@ -94,6 +94,7 @@ func (value *APLValueNumberTargets) String() string {
 
 type APLValueIsExecutePhase struct {
 	DefaultAPLValueImpl
+	unit      *Unit
 	threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold
 }
 
@@ -102,6 +103,7 @@ func (rot *APLRotation) newValueIsExecutePhase(config *proto.APLValueIsExecutePh
 		return nil
 	}
 	return &APLValueIsExecutePhase{
+		unit:      rot.unit,
 		threshold: config.Threshold,
 	}
 }
@@ -109,12 +111,13 @@ func (value *APLValueIsExecutePhase) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }
 func (value *APLValueIsExecutePhase) GetBool(sim *Simulation) bool {
+	// In a leveling session it's our target's health (InExecuteRange).
 	if value.threshold == proto.APLValueIsExecutePhase_E20 {
-		return sim.IsExecutePhase20()
+		return sim.InExecuteRange(value.unit.CurrentTarget, 20)
 	} else if value.threshold == proto.APLValueIsExecutePhase_E25 {
-		return sim.IsExecutePhase25()
+		return sim.InExecuteRange(value.unit.CurrentTarget, 25)
 	} else if value.threshold == proto.APLValueIsExecutePhase_E35 {
-		return sim.IsExecutePhase35()
+		return sim.InExecuteRange(value.unit.CurrentTarget, 35)
 	} else {
 		panic("Should never reach here")
 	}

@@ -5,10 +5,14 @@ import (
 )
 
 func (warrior *Warrior) registerExecuteSpell() {
-
-	flatDamage := 600.0
-	convertedRageDamage := 15.0
-	spellID := int32(20662)
+	spellIDs := []int32{0, 5308, 20658, 20660, 20661, 20662}
+	rank := warrior.knownRank([]int32{0, 24, 32, 40, 48, 56}, spellIDs)
+	if rank == 0 {
+		return
+	}
+	flatDamage := []float64{0, 125, 200, 325, 450, 600}[rank]
+	convertedRageDamage := []float64{0, 3, 6, 9, 12, 15}[rank]
+	spellID := spellIDs[rank]
 
 	forever := warrior.Env.IsForever()
 
@@ -46,7 +50,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return sim.IsExecutePhase20()
+			return sim.InExecuteRange(target, 20)
 		},
 
 		CritDamageBonus: warrior.impale(),

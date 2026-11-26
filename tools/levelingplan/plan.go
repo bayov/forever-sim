@@ -27,7 +27,10 @@ const (
 	maxPlanLevel = 60
 	// Forever gives its extra talent points from level 25 on.
 	bonusTalentPointsLevel = 25
-	maxTalentPoints        = 51
+	// The level the game gives the first talent point at. The Legacy perk Talented moves it as
+	// low as 5.
+	defaultFirstTalentLevel = 10
+	maxTalentPoints         = 51
 )
 
 // The hours a level takes us, when we get xpPerHour.
@@ -38,19 +41,47 @@ func hoursAtLevel(level int32, xpPerHour float64) float64 {
 	return xpToNextLevel[level] / xpPerHour
 }
 
-func talentPointsAt(level, bonusPoints int32) int {
+// How many talent points a plan has by level: the points Forever adds from level 25, and the
+// level of the first point (0 for the game's 10).
+type talentPoints struct{ bonus, first int32 }
+
+func talentPointsOf(plan *proto.LevelingPlanSettings) talentPoints {
+	return talentPoints{bonus: plan.GetBonusTalentPoints(), first: plan.GetFirstTalentLevel()}
+}
+
+func (p talentPoints) firstLevel() int32 {
+	if p.first <= 0 {
+		return defaultFirstTalentLevel
+	}
+	return p.first
+}
+
+func (p talentPoints) at(level int32) int {
 	bonus := int32(0)
 	if level >= bonusTalentPointsLevel {
-		bonus = bonusPoints
+		bonus = p.bonus
 	}
-	return int(min(maxTalentPoints, max(0, level-9)+bonus))
+	return int(min(maxTalentPoints, max(0, level-p.firstLevel()+1)+bonus))
+}
+
+// The points at a level on top of the level minus 9 that the player's settings count on their
+// own (Player.bonus_talent_points).
+func (p talentPoints) bonusAt(level int32) int32 {
+	bonus := int32(0)
+	if level >= bonusTalentPointsLevel {
+		bonus = p.bonus
+	}
+	if p.firstLevel() != defaultFirstTalentLevel {
+		bonus = int32(p.at(level)) - max(0, level-defaultFirstTalentLevel+1)
+	}
+	return bonus
 }
 
 // The level we put in a build's point number index (0 for the first point), when the build
 // starts at startLevel.
-func pickLevel(index int, startLevel, bonusPoints int32) int32 {
-	for level := max(startLevel, 10); level <= maxPlanLevel; level++ {
-		if talentPointsAt(level, bonusPoints) > index {
+func (p talentPoints) pickLevel(index int, startLevel int32) int32 {
+	for level := max(startLevel, p.firstLevel()); level <= maxPlanLevel; level++ {
+		if p.at(level) > index {
 			return level
 		}
 	}
@@ -91,7 +122,7 @@ func planTalentsAt(plan *proto.LevelingPlanSettings, level int32, shape *proto.L
 	if len(builds) > 0 {
 		picks = builds[buildIndexAt(plan, level)].Picks
 	}
-	n := min(talentPointsAt(level, plan.BonusTalentPoints), len(picks))
+	n := min(talentPointsOf(plan).at(level), len(picks))
 	return countsToTalentsString(countsOf(picks[:n], shape))
 }
 

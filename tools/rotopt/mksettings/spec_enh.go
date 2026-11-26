@@ -17,15 +17,16 @@ func init() {
 		},
 		consumes: func() *proto.Consumes {
 			// The Level 60 preset's consumes (ui/enhancement_shaman/presets.ts). Under Forever the
-			// shaman imbue is a class option, so the main hand holds Shadow Oil beside it. No filler
-			// explosive: the Goblin Land Mine's cast reset the swing and lost (standards 11,
-			// 2026-10-23); since 2026-11-25 a throw keeps the swing (EV-0088), due a re-check.
+			// shaman imbue is a class option, so the main hand holds Shadow Oil beside it. The Goblin
+			// Land Mine as the filler explosive since 2026-11-25: its cast reset the swing and lost
+			// before (standards 11, 2026-10-23), and a throw now keeps the swing (EV-0088).
 			return &proto.Consumes{
 				AgilityElixir:     proto.AgilityElixir_ElixirOfCunning,
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 				DefaultPotion:     proto.Potions_MajorManaPotion,
 				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
 				DragonBreathChili: true,
+				FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:     proto.FirePowerBuff_ElixirOfFirepower,
 				Flask:             proto.Flask_FlaskOfSupremePower,
 				Food:              proto.Food_FoodGrilledSquid,

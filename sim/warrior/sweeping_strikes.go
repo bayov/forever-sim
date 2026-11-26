@@ -95,8 +95,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 				spellToUse = hitSchoolDamagWithValue
 			}
 
-			if sim.Encounter.AoETargetCount(0) > 1 {
-				target := warrior.Env.NextTargetUnit(result.Target)
+			if target := warrior.sweepingStrikesTarget(sim, result.Target); target != nil {
 				spellToUse.Cast(sim, target)
 				spellToUse.SpellMetrics()[target.UnitIndex].Casts--
 			} else if warrior.Env.IsForever() {
@@ -133,7 +132,27 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		Spell: SweepingStrikes.Spell,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if _, onUs := sim.Encounter.LevelingMobCounts(); sim.Encounter.IsLeveling() && onUs < 2 {
+				return false
+			}
 			return sim.Encounter.AoETargetCount(0) >= 2
 		},
 	})
+}
+
+// sweepingStrikesTarget is the second target a hit on first strikes too, nil when there's none. In
+// a leveling session it's another mob that has reached us.
+func (warrior *Warrior) sweepingStrikesTarget(sim *core.Simulation, first *core.Unit) *core.Unit {
+	if !sim.Encounter.IsLeveling() {
+		if sim.Encounter.AoETargetCount(0) > 1 {
+			return warrior.Env.NextTargetUnit(first)
+		}
+		return nil
+	}
+	for _, mob := range sim.Encounter.ActiveTargetUnits {
+		if mob != first && sim.Encounter.LevelingDistance(sim, mob) <= meleeReach {
+			return mob
+		}
+	}
+	return nil
 }

@@ -28,6 +28,16 @@ class GoldLine(unittest.TestCase):
         self.assertEqual(phase0_check.gold_line({'bench': 'tank', 'scoreRef': 3000}, 30, 3000), 100)
 
 
+class Noise(unittest.TestCase):
+    def test_dps_row(self):
+        self.assertEqual(phase0_check.noise_of({'dir': 'x'}, 1.0), 1.0)
+
+    def test_bench_row(self):
+        # 0.1% of the scoreRef per 1.0 of noise
+        self.assertAlmostEqual(phase0_check.noise_of({'bench': 'tank', 'scoreRef': 3000}, 1.0), 15.0)
+        self.assertAlmostEqual(phase0_check.noise_of({'bench': 'heal', 'scoreRef': 130}, 2.0), 3.9)
+
+
 class Run(unittest.TestCase):
     """One DPS and one tank spec, each picking an item at 50g per unit of its list."""
 

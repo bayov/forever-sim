@@ -1,0 +1,70 @@
+{
+	"player": {
+		"race": "RaceUndead",
+		"class": "ClassWarrior",
+		"tankWarrior": {
+			"options": {
+				"stance": "WarriorStanceBattle",
+				"shout": "WarriorShoutBattle",
+				"queueDelay": 250
+			}
+		}
+	},
+	"leveling": {
+		"maxPackSize": 12,
+		"campMobs": -1
+	},
+	"fromLevel": 1,
+	"toLevel": 60,
+	"firstTalentLevel": 5,
+	"styles": [
+		{
+			"level": 1,
+			"style": "twoHand"
+		}
+	],
+	"talents": [
+		{
+			"level": 5,
+			"order": [
+				"Improved Rend:3",
+				"Deflection:2",
+				"Improved Tactical Mastery:3",
+				"Improved Charge:2",
+				"Deep Wounds:3",
+				"Anger Management",
+				"Improved Overpower",
+				"Two-Handed Weapon Specialization:3",
+				"Impale:2",
+				"Sweeping Strikes",
+				"Bloodthrill:2",
+				"Weaponmaster:5",
+				"Improved Slam:2",
+				"Mortal Strike",
+				"Cruelty:5",
+				"Unbridled Wrath:5",
+				"Blood Craze:3",
+				"Enrage:3",
+				"Improved Heroic Strike:3",
+				"Reckless Swings"
+			]
+		}
+	],
+	"rotations": [
+		{
+			"level": 1,
+			"template": "warrior_leveling",
+			"knobs": {
+				"restHealth": 60,
+				"chainMax": 0
+			}
+		}
+	],
+	"rotationTemplate": "warrior_leveling",
+	"routeFile": "../../../ui/warrior/leveling_route.json",
+	"weights": {
+		"free": "../testdata/warrior_weights.json"
+	},
+	"gearSeed": 1,
+	"seed": 1
+}

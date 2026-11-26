@@ -361,14 +361,14 @@
         "name": "Nacreous Shell Necklace",
         "dps": 954.17,
         "loss": 93.71,
-        "avail": "infeasible",
         "note": "price restored 2026-11-24 (warlock step 4): the Enhancement price pass of 5e556ff1e dropped it, not being on that list"
       },
       {
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 940.93,
-        "loss": 106.95
+        "loss": 106.95,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 22657,
@@ -659,7 +659,8 @@
         "id": 11812,
         "name": "Cape of the Fire Salamander",
         "dps": 950.91,
-        "loss": 96.97
+        "loss": 96.97,
+        "note": "Drop: Ambassador Flamelash, Blackrock Depths"
       },
       {
         "id": 18689,
@@ -1459,7 +1460,9 @@
         "id": 279252,
         "name": "Elderwild Waistcord",
         "dps": 882.8,
-        "loss": 165.08
+        "loss": 165.08,
+        "avail": "doubtful",
+        "note": "Leatherworking 300 · pattern (279301) has no known source · reagents not in data, may need raid essence like Tranquil Wristguards"
       },
       {
         "id": 226780,
@@ -1633,7 +1636,9 @@
         "id": 279254,
         "name": "Elderwild Pants",
         "dps": 823.16,
-        "loss": 224.72
+        "loss": 224.72,
+        "avail": "doubtful",
+        "note": "Leatherworking 300 · pattern (279303) has no known source · reagents not in data, may need raid essence like Tranquil Wristguards"
       },
       {
         "id": 226787,
@@ -1915,14 +1920,14 @@
         "dps": 975.03,
         "loss": 72.85,
         "avail": "infeasible",
-        "note": "579g per point of score"
+        "note": "578g per point of score"
       },
       {
         "id": 2246,
         "name": "Myrmidon's Signet",
         "dps": 974.76,
         "loss": 73.12,
-        "note": "Random world drop · 11g per point of score"
+        "note": "Random world drop · 10g per point of score"
       },
       {
         "id": 276396,
@@ -2021,9 +2026,7 @@
         "id": 13098,
         "name": "Painweaver Band",
         "dps": 928.19,
-        "loss": 119.69,
-        "avail": "infeasible",
-        "note": "2110g per DPS"
+        "loss": 119.69
       },
       {
         "id": 22339,
@@ -2382,8 +2385,7 @@
         "id": 2915,
         "name": "Taran Icebreaker",
         "dps": 903.21,
-        "loss": 144.67,
-        "note": "22g per DPS"
+        "loss": 144.67
       },
       {
         "id": 11921,
@@ -2585,7 +2587,8 @@
         "name": "Magmus Stone",
         "dps": 898.74,
         "loss": 149.14,
-        "with": 279261
+        "with": 279261,
+        "note": "Drop: Magmus, Blackrock Depths"
       },
       {
         "id": 15987,

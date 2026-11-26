@@ -26,7 +26,7 @@ func routeProblem(plan *proto.LevelingPlanSettings, shape *proto.LevelingTalentS
 			start = plan.FromLevel
 		}
 		for i, reason := range pickReasons(picksFromProto(build.Picks), shape) {
-			level := pickLevel(i, start, plan.BonusTalentPoints)
+			level := talentPointsOf(plan).pickLevel(i, start)
 			if level >= plan.ToLevel {
 				break
 			}
@@ -49,8 +49,7 @@ func routeProblem(plan *proto.LevelingPlanSettings, shape *proto.LevelingTalentS
 }
 
 // treeFileShape reads a class's talent trees from the UI's talent file
-// (ui/core/talents/trees/<class>.json) in the shape the requests carry, without the
-// NotSimulated marks, which the UI adds.
+// (ui/core/talents/trees/<class>.json) in the shape the requests carry.
 func treeFileShape(data []byte) (*proto.LevelingTalentShape, error) {
 	type location struct{ RowIdx, ColIdx int32 }
 	var trees []struct {
@@ -60,6 +59,7 @@ func treeFileShape(data []byte) (*proto.LevelingTalentShape, error) {
 			MaxPoints      int32
 			Location       location
 			PrereqLocation *location
+			NotSimulated   bool
 		}
 	}
 	if err := json.Unmarshal(data, &trees); err != nil {
@@ -79,6 +79,7 @@ func treeFileShape(data []byte) (*proto.LevelingTalentShape, error) {
 			}
 			out.Talents = append(out.Talents, &proto.LevelingTalentConfig{
 				Name: talent.Name, Row: talent.Location.RowIdx, Col: talent.Location.ColIdx, MaxPoints: talent.MaxPoints, Prereq: prereq,
+				NotSimulated: talent.NotSimulated,
 			})
 		}
 		shape.Trees = append(shape.Trees, out)

@@ -8,6 +8,10 @@ import (
 )
 
 func (warrior *Warrior) registerBloodrageCD() {
+	if !warrior.KnowsRank(2687, 10) {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 2687}
 	// EV-0044: the instant Rage makes 5 threat a Rage in every stance and Defiance doesn't scale it;
 	// the Rage over time (29131) takes the stance and Defiance.

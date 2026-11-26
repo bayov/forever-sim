@@ -102,6 +102,7 @@
   "1248665": {"name": "Enchant Bracer - Superior Deflection", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored), Formula 249539, skill 300"},
   "1248668": {"name": "Enchant 2H Weapon - Strength", "avail": "doubtful", "note": "No known source", "source": "Formula 249523 has no source in data"},
   "1248805": {"name": "Enchant Weapon - Revelation", "note": "45 Merchant's Favor", "source": "Vendor: Beneris, Barrens (45 Merchant's Favor)"},
+  "1248760": {"name": "Enchant Weapon - Recovery", "note": "45 Merchant's Favor", "source": "Vendor: Beneris, Barrens (45 Merchant's Favor, formula 249480 sold beside Revelation's)"},
   "1249019": {"name": "Enchant Necklace - Strength", "note": "120 Merchant's Favor", "source": "Vendor: Beneris, Barrens (120 Merchant's Favor, Friendly)"},
   "1249057": {"name": "Enchant Necklace - Spell Power", "note": "120 Merchant's Favor", "source": "Vendor: Beneris, Barrens (120 Merchant's Favor, Friendly)"},
   "1249058": {"name": "Enchant Necklace - Healing Power", "note": "120 Merchant's Favor", "source": "Vendor: Beneris, Barrens (120 Merchant's Favor, Friendly)"},
@@ -154,5 +155,7 @@
   "13817": {"name": "Enchant Shield - Stamina", "note": "Formula on AH, price not checked", "source": "Drop: Formula 11202, 10% Digmaster Shovelphlange (Uldaman), 0.9% Caretaker Weston and about 250 other mobs, skill 210"},
   "20017": {"name": "Enchant Shield - Greater Stamina", "source": "Vendor: Daniel Bartlett (Undercity), 1g 14s, skill 265"},
   "463871": {"name": "Enchant Shield - Law of Nature", "note": "Timbermaw Hold Honored · Wowhead delisted the formula on 2026-11-04, the game may still have it", "source": "Vendor: Meilosh (Felwood, Timbermaw Hold Honored), Formula 228982, skill 300"},
-  "22725": {"name": "Core Armor Kit", "avail": "out", "note": "Core Leather is a Molten Core material", "source": "Leatherworking recipe needing Core Leather (Molten Core)"}
+  "22725": {"name": "Core Armor Kit", "avail": "out", "note": "Core Leather is a Molten Core material", "source": "Leatherworking recipe needing Core Leather (Molten Core)"},
+  "2831": {"name": "Light Armor Kit", "source": "Leatherworking craft, 1 Light Leather · or 28% drop from Olaf (Uldaman)", "note": "Leatherworking craft"},
+  "20016": {"name": "Enchant Shield - Superior Spirit", "source": "Formula 16222: 1.5% from Scarlet Warder (Eastern Plaguelands), rare in lockboxes · 2 Greater Eternal Essence, 4 Illusion Dust", "note": "Formula on the AH, price not checked"}
 }

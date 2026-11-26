@@ -215,7 +215,7 @@
         "name": "Talisman of Evasion",
         "dps": 617.95,
         "loss": -26.47,
-        "note": "War Master Voone · Upper Blackrock Spire"
+        "note": "War Master Voone · Upper Blackrock Spire · 7g per point of score"
       },
       {
         "id": 19491,
@@ -356,7 +356,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 507.47,
-        "loss": 84.01
+        "loss": 84.01,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 276740,
@@ -599,7 +600,8 @@
         "id": 11812,
         "name": "Cape of the Fire Salamander",
         "dps": 555.66,
-        "loss": 35.82
+        "loss": 35.82,
+        "note": "Drop: Ambassador Flamelash, Blackrock Depths"
       },
       {
         "id": 272415,
@@ -991,7 +993,7 @@
         "name": "Frozen Steel Vambraces",
         "dps": 562.79,
         "loss": 28.69,
-        "avail": "doubtful",
+        "avail": "out",
         "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"
       },
       {
@@ -1115,7 +1117,7 @@
         "name": "Force Imbued Gauntlets",
         "dps": 595.55,
         "loss": -4.07,
-        "note": "Illyanna Ravenoak · Dire Maul · 72g per point of score"
+        "note": "Illyanna Ravenoak · Dire Maul · 5g per point of score"
       },
       {
         "id": 279264,
@@ -1168,7 +1170,8 @@
         "id": 279257,
         "name": "Mourning Handguards",
         "dps": 527,
-        "loss": 64.48
+        "loss": 64.48,
+        "note": "Leatherworking 300 · pattern (279306) has no known source · reagents not in data"
       },
       {
         "id": 250552,
@@ -1289,14 +1292,14 @@
         "name": "Brigam Girdle",
         "dps": 639.89,
         "loss": -48.41,
-        "note": "General Drakkisath · Upper Blackrock Spire"
+        "note": "General Drakkisath · Upper Blackrock Spire · 15g per point of score"
       },
       {
         "id": 250573,
         "name": "Warder's Waistguard",
         "dps": 628.06,
         "loss": -36.58,
-        "note": "Blacksmithing 250 · Forever craft · plans (251425) from Gor'mak (Barrens, 90 Merchant's Favor, Honored) · reagents not in data"
+        "note": "Blacksmithing 250 · Forever craft · plans (251425) from Gor'mak (Barrens, 90 Merchant's Favor, Honored) · reagents not in data · 7g per point of score"
       },
       {
         "id": 226971,
@@ -1316,7 +1319,8 @@
         "id": 250572,
         "name": "Sentinel's Waistguard",
         "dps": 607.11,
-        "loss": -15.63
+        "loss": -15.63,
+        "note": "Blacksmithing 250 · Forever craft · plans (251424) from a Merchant's Favor vendor (90, Honored), like Warder's Waistguard · reagents not in data"
       },
       {
         "id": 16736,
@@ -1573,7 +1577,8 @@
         "id": 12903,
         "name": "Legguards of the Chromatic Defier",
         "dps": 435.35,
-        "loss": 156.13
+        "loss": 156.13,
+        "note": "Quest: Legplates of the Chromatic Defier (5167, a choice with Legplates 12945; the reward is this item per forever_wowhead_items.json) · materials not in our data · Forever's quest not checked"
       },
       {
         "id": 22740,
@@ -1891,7 +1896,9 @@
         "id": 11669,
         "name": "Naglering",
         "dps": 535.69,
-        "loss": 55.79
+        "loss": 55.79,
+        "avail": "infeasible",
+        "note": "3231g per point of score"
       },
       {
         "id": 276333,
@@ -1951,7 +1958,7 @@
         "name": "Band of the Steadfast Hero",
         "dps": 523.02,
         "loss": 68.46,
-        "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 23g per point of score"
+        "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 22433,
@@ -2276,7 +2283,8 @@
         "dps": 420.74,
         "loss": 170.74,
         "unsourced": true,
-        "with": 18168
+        "with": 18168,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15240,
@@ -2325,7 +2333,8 @@
         "dps": 395.37,
         "loss": 196.11,
         "unsourced": true,
-        "with": 18168
+        "with": 18168,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 280012,
@@ -2532,7 +2541,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 355.22,
         "loss": 236.26,
-        "with": 2243
+        "with": 2243,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 13243,

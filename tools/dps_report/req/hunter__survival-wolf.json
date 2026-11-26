@@ -53,10 +53,10 @@
                   "id": 272408
                 },
                 {
-                  "id": 10455
+                  "id": 19289
                 },
                 {
-                  "id": 19289
+                  "id": 10455
                 },
                 {
                   "id": 6622,
@@ -83,7 +83,7 @@
               "dragonBreathChili": true,
               "zanzaBuff": "GroundScorpokAssay",
               "sapperExplosive": "SapperGoblinSapper",
-              "fillerExplosive":  "ExplosiveGoblinLandMine",
+              "fillerExplosive": "ExplosiveGoblinLandMine",
               "intellectElixir": "ElixirOfGreaterIntellect"
             },
             "buffs": {

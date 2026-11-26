@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
- "last_pass_at": "2026-11-25T19:14:07Z",
- "pass": 79,
+ "last_pass_at": "2026-11-26T06:54:24Z",
+ "pass": 81,
  "result": "quiet",
- "note": "No gear files changed. standards.md 22d2cf952 (explosives, demon crit, Windfury, Shield Slam rulings) adds no Phase 0 gear ruling.",
- "client_build": "1.60.1.71037",
- "checked_at": "2026-11-25T19:23:36Z"
+ "note": "Rerank 2026-11-26 (hunter, warrior) checked: phase0_check.py same 2 close calls (Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77). New picks Heart of Wyrmthalak (LBRS), Thrash Blade (Maraudon), Dragon's Call tagged open; no faction. Requests match published runs within 1.1 DPS.",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T07:11:41Z"
 }

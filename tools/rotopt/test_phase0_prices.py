@@ -214,5 +214,43 @@ class ApplyPrices(unittest.TestCase):
         self.assertEqual(text, '{\n  "1263": {"name": "Brain Hacker"},\n  "22403": {"name": "Nacreous Shell Necklace"}\n}\n')
 
 
+class FactionSets(unittest.TestCase):
+    def test_set_paths_and_gold(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = os.path.join(root, 'ui', 'warrior', 'gear_sets')
+            os.makedirs(folder)
+            table = {'x': {'dir': 'warrior', 'gearOut': 'ui/warrior/gear_sets/level60_phase0_x.gear.json'},
+                     'x_dw': {'dir': 'warrior'}}
+            for name in ('x', 'x_alliance', 'x_shock', 'x_dw', 'x_dw_alliance'):
+                open(os.path.join(folder, f'level60_phase0_{name}.gear.json'), 'w').close()
+            got = phase0_prices.set_paths(root, 'x', table['x'], table)
+            self.assertEqual([label for label, _ in got], ['x', 'x_alliance', 'x_shock'])
+            self.assertEqual(got[0][1], os.path.join(root, table['x']['gearOut']))
+            # x_dw's sets are its own, found from its default path
+            self.assertEqual([label for label, _ in phase0_prices.set_paths(root, 'x_dw', table['x_dw'], table)],
+                             ['x_dw', 'x_dw_alliance'])
+        items = [{'id': 1}, {'id': 2}, {'id': 3}]
+        total, parts = phase0_prices.set_gold(items, {1: 10.0}, {2: [(1, 2)]}, {3: (5.0, 'effort: run')},
+                                              names={'1': 'A'})
+        self.assertEqual(total, 35.0)
+        self.assertEqual(parts, ['A 10g (AH)', '2 20g (materials)', '3 5g (effort)'])
+
+    def test_variant_lists(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = os.path.join(root, 'ui', 'warrior', 'bis')
+            os.makedirs(folder)
+            table = {'x': {'dir': 'warrior'}, 'x_dw': {'dir': 'warrior'}}
+            for name in ('x', 'x_alliance', 'x_horde', 'x_dw', 'x_dw_alliance'):
+                open(os.path.join(folder, f'level60_phase0_{name}.bis.json'), 'w').close()
+            old, phase0_prices.ROOT = phase0_prices.ROOT, root
+            try:
+                got = phase0_prices.variant_lists(root, 'x', table['x'], table)
+                self.assertEqual([l for l, _ in got], ['x_alliance', 'x_horde'])
+                self.assertEqual([l for l, _ in phase0_prices.variant_lists(root, 'x_dw', table['x_dw'], table)],
+                                 ['x_dw_alliance'])
+            finally:
+                phase0_prices.ROOT = old
+
+
 if __name__ == '__main__':
     unittest.main()

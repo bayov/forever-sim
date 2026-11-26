@@ -79,7 +79,8 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // one at a time, on the Beast Mastery, Lone Wolf and Survival builds at 180 sec, and again with
 // Forever's consumables after the shared consumables merge. All keep Elixir of the Mongoose (their
 // one +2% crit elixir; +27 over none), Ground Scorpok Assay (+14), Juju Might (+8) and an
-// explosive (Survival the Goblin Sapper, +4.7; the ranged specs the EZ-Thro Dark Bomb, see below),
+// explosive (Survival the Goblin Sapper, +4.7, and since 2026-11-25 the Goblin Land Mine; the ranged
+// specs Dense Dynamite, see below),
 // and take Forever's Elixir of
 // Ferocity (18 Strength and Agility, no crit: +11 Beast Mastery, +13 Lone Wolf, +4.8 Survival over
 // Juju Power), Flank au Poivre (20 Agility: +4 to +6 over Grilled Squid; Mightfish Steak +0.2 to
@@ -111,6 +112,9 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		consumes.DefaultPotion = proto.Potions_MajorFrenzyPotion
 		consumes.DragonBreathChili = true
 		consumes.SapperExplosive = proto.SapperExplosive_SapperGoblinSapper
+		// The Goblin Land Mine since 2026-11-25: its cast reset the swing and lost before (standards
+		// 11, 2026-10-23), and a throw now keeps the swing (EV-0088).
+		consumes.FillerExplosive = proto.Explosive_ExplosiveGoblinLandMine
 		consumes.MainHandImbue = proto.WeaponImbue_DenseSharpeningStone
 		consumes.OffHandImbue = proto.WeaponImbue_DenseSharpeningStone
 	} else {
@@ -118,9 +122,7 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		consumes.DefaultConjured = proto.Conjured_ConjuredDemonicRune
 		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
 		consumes.Flask = proto.Flask_FlaskOfNaturalAggression
-		// Only the ranged specs take a filler explosive: on Survival its cast reset the swing and
-		// lost (standards 11, 2026-10-23, ui/hunter/presets.ts; since 2026-11-25 a throw keeps the
-		// swing, EV-0088, due a re-check). Since 2026-11-01 the Goblin Land
+		// The ranged specs' filler explosive (Survival's is the Land Mine, above). Since 2026-11-01 the Goblin Land
 		// Mine and the Goblin Sapper Charge only reach 10 yd, and the ranged specs stand at 12 yd
 		// (Beast Mastery) or 25 yd (Marksmanship, Lone Wolf), so they throw Dense Dynamite: since
 		// 2026-11-25 the EZ-Thro Dark Bomb, a stun, does nothing to a raid boss (EV-0088), and Dense

@@ -20,20 +20,6 @@
     "action": {
      "castSpell": {
       "spellId": {
-       "itemId": 10455
-      }
-     }
-    },
-    "doAtValue": {
-     "const": {
-      "val": "-0.1s"
-     }
-    }
-   },
-   {
-    "action": {
-     "castSpell": {
-      "spellId": {
        "itemId": 250937
       }
      }
@@ -280,7 +266,7 @@
     "id": 12545
    },
    {
-    "id": 10455
+    "id": 22678
    },
    {
     "id": 13968
@@ -290,7 +276,7 @@
     "enchant": 1248805
    },
    {
-    "id": 18316,
+    "id": 11904,
     "enchant": 1219579
    },
    {

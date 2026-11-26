@@ -569,8 +569,12 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		return
 	}
 	// A hit on a mob a leveling session found pulls it, before the damage can kill it.
-	if leveling := sim.Encounter.leveling; leveling != nil && result.Target.Type == EnemyUnit {
-		leveling.onHit(sim, result.Target, spell)
+	if leveling := sim.Encounter.leveling; leveling != nil {
+		if result.Target.Type == EnemyUnit {
+			leveling.onHit(sim, result.Target, spell)
+		} else if leveling.hitBehind && result.Target == leveling.player && spell.Unit.Type == EnemyUnit {
+			leveling.onHitFromBehind(sim, spell.Unit, result.Damage)
+		}
 	}
 
 	result.Damage = sim.roundDamage(result.Damage)

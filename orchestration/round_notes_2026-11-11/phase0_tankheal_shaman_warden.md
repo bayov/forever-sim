@@ -108,3 +108,77 @@ bench (3000 iterations, seeds 1 and 2, preset column) clears no flag, so all fou
 
 The two seeds differ by about 55 on max survival, so these are within noise and the cheaper fallbacks are near
 equal. Scores vs synthetic are unchanged (list scores 1962.8, 3418.1, -1336.9).
+
+## Legal races (tank_fairness-20261105-2, 2026-11-26)
+
+Night Elf and Undead can't be shamans (run_build.py CLASS_RACES). Each preset was measured on its Phase 0 set at all
+five legal races, 3000 iterations, seeds 1 and 2, own column:
+
+| Preset | Troll | Tauren | Orc | Windshaper | Dwarf |
+|---|---|---|---|---|---|
+| balanced | **1996.2** | 1945.0 | 1940.5 | 1936.7 | 1904.8 |
+| max_threat | **3396.2** | 3316.9 | 3350.2 | 3322.7 | 3301.5 |
+| max_survival | -1589.4 | **-1535.8** | -1666.7 | -1692.0 | -1683.8 |
+
+Troll at balanced and max threat, Tauren at max survival, all Horde. Set in the requests, the lists, the UI presets and
+sim.ts (Alliance default Dwarf, Horde Troll), and docs/tank_shaman.md. An explicit Berserking cast changes nothing
+(identical to the decimal), so no APL change. Guard: tools/audit/gear/test_bench_races.py checks every tank and healer
+bench request's race against CLASS_RACES.
+
+Every list ranked again on the new race (FROM=current, all slots):
+
+- balanced 2022.6. No pick changed.
+- max_threat 3420.2. Legs Kilt of The Five Thunders for the Legplates (still 6 pieces), gloves enchant Natural Power.
+- max_survival -1213.1. Enchants Arcanum of Protection on legs, Rugged Armor Kit on feet, Enchant Weapon - Recovery
+  (45 Merchant's Favor, heals 5% of max health once per 10 sec, tagged this round).
+
+Tagged: Enchant Weapon - Recovery, Tristam Legguards (The Beast, UBRS), Raptorscale Bulwark (doubtful, reported
+only), Golem Fitted Pauldrons (Phalanx, BRD).
+
+Trinkets: balanced's request lost its dead 999216 line (the bench is identical without it, and rotopt no longer swaps
+it for Chained Essence, which loses 75). Bench and list now agree: 2022.7, 3420.2, -1212.8 against 2022.6, 3420.2,
+-1213.1. The UI APLs still name 999216, which is correct while the UI presets wear the synthetic gear.
+
+Scores, tankbench 1000 iterations, Phase 0 vs synthetic (master): balanced 2022.7 vs 1245.7 (+777.0), max_threat
+3420.2 vs 2608.2 (+812.0), max_survival -1212.8 vs -2234.0 (+1021.2).
+
+Faction rows: balanced and max threat have no faction picks. Max survival's Alliance row is Dwarf: Theramore Epaulets
+and Flame Walkers, -1446.8.
+
+
+## Max survival vs synthetic
+
+`tankbench -iters 1000`, mean of the six scoring bosses. Synthetic is the origin/master request. Stats are tankbench's sheet against a level 63 boss. Block value is (sheet value + 0.05 Str) x the block value multiplier. Coverage is miss + dodge + parry + block (102.4% on the sheet is uncrushable). Both sets clear the 315 Defense that stops Forever's 0.6% boss crit, so crit plays no part. Max survival is 2 x SafeDPS less 3 x 900 / 300 x the healing that holds deaths to 5%, so healing needed is the survival side.
+
+| Stat | Phase 0 | Synthetic |
+|---|---|---|
+| Health | 10483 | 10119 |
+| Stamina | 650 | 663 |
+| Armor | 7423 | 7586 |
+| Defense | 337 | 355 |
+| Miss / dodge / parry / block | 7.9 / 31.7 / 5.9 / 5.9 | 8.6 / 19.6 / 6.6 / 6.6 |
+| Block value | 56 | 106 |
+| Coverage | 51.4% | 41.4% |
+| Crushing blows taken | 15.1% | 14.9% |
+| DTPS | 598 | 671 |
+| Healing needed | 549 | 630 |
+| Max survival | -1212.8 | -2234.0 |
+
+Non-gear differences are the race (Tauren on Phase 0, Undead on synthetic, the deliberate legal race change) and the APL's trinket item id, which follows the worn trinket. Synthetic on Tauren scores -2421.2, so the rise is the gear. Phase 0 dodge (+12.1, from 397 Agility against 202) outweighs the lost Defense, armor and block value.
+
+## Final price round flags (2026-11-26)
+
+Bench swaps at 5000 iterations, preset column, against the list's set. Seed 1 for all flagged items, seeds 2 and 3 for
+the four best. Per-run stderr about 3 to 4 (max threat), 6 (balanced), 14 (max survival).
+
+- max_threat back, Shifting Cloak for Stalwart Cloak: +5.9, +15.0, +11.8, about 3 stderr pooled. Swapped (list,
+  gear set, request). List score 3427.9.
+- balanced head, Helm of Narv: +8.2, +2.2, +0.4. Noise, the Face stays.
+- max_survival trinket 1, Chained Essence of Eranikus: +12.8, -32.0, +14.3. Wrist, Pyremail Wristguards of the Monkey:
+  +6.2, -14.2, +21.8. Noise.
+- max_survival seed 1 only, all at or below base: Rubicund Armguards -16.5, Cutthroat's Signet -18.3 or +3.7 (by ring
+  slot), Drakeclaw Band -36.7 or -55.8, Chained Essence in trinket 2 -26.3, Darkmoon Card: Heroism -4.3 or -62.5, Ash
+  Covered Boots -26.5, Talisman of Evasion -12.2.
+
+The max survival flags stand: its rank pass sits 10 to 48 above the picks, but no swap holds on the bench. Its
+picks and the Alliance row are unchanged.

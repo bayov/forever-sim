@@ -708,7 +708,7 @@ func DragonBreathChiliAura(character *Character) *Aura {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			for _, aoeTarget := range sim.Environment.Encounter.ActiveTargetUnits {
+			for _, aoeTarget := range sim.Encounter.TargetsNear(sim, nil, levelingAreaReach) {
 				spell.CalcAndDealDamage(sim, aoeTarget, dragonbreathChiliDamage(sim), spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -1430,7 +1430,11 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+			center := target
+			if isSapper {
+				center = nil
+			}
+			for _, aoeTarget := range sim.Encounter.TargetsNear(sim, center, explosiveBlastRadius) {
 				if isStun && aoeTarget.StunImmune && sim.IsForever() {
 					spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeAlwaysMiss)
 					continue
@@ -1831,7 +1835,7 @@ func makeDragonfirePotionMCD(character *Character, cdTimer *Timer) MajorCooldown
 			StartDelayedAction(sim, DelayedActionOptions{
 				DoAt: sim.CurrentTime + time.Second,
 				OnAction: func(sim *Simulation) {
-					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+					for _, aoeTarget := range sim.Encounter.TargetsNear(sim, nil, coneRadius) {
 						spell.CalcAndDealDamage(sim, aoeTarget, 280*sim.Encounter.AOECapMultiplier(), spell.OutcomeAlwaysHit)
 						spell.Dot(aoeTarget).Apply(sim)
 					}
@@ -1889,11 +1893,11 @@ func makeCausticSmogPotionMCD(character *Character, cdTimer *Timer) MajorCooldow
 			},
 		},
 
-		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+		ApplyEffects: func(sim *Simulation, target *Unit, _ *Spell) {
 			StartDelayedAction(sim, DelayedActionOptions{
 				DoAt: sim.CurrentTime + max(spell.TravelTime(), time.Millisecond*1500),
 				OnAction: func(sim *Simulation) {
-					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+					for _, aoeTarget := range sim.Encounter.TargetsNear(sim, target, explosiveBlastRadius) {
 						spell.Dot(aoeTarget).Apply(sim)
 					}
 				},

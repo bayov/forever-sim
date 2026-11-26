@@ -175,6 +175,15 @@ func TestLevelingPacks(t *testing.T) {
 	if three.MobsKilled >= one.MobsKilled {
 		t.Errorf("pulling three killed %.1f, single pulls %.1f: dying should cost more than it gains", three.MobsKilled, one.MobsKilled)
 	}
+	// Mobs on us at once: always one with single pulls. Pulling three, the first can die before the
+	// last arrives, so fewer than three swing at us at once, but more than one.
+	t.Logf("on us at once: single %.2f (peak %.2f), three %.2f (peak %.2f)", one.MobsOnUs, one.PeakMobs, three.MobsOnUs, three.PeakMobs)
+	if math.Abs(one.MobsOnUs-1) > 0.01 || math.Abs(one.PeakMobs-1) > 0.01 {
+		t.Errorf("single pulls had %.2f mobs on us at once, peak %.2f, want 1", one.MobsOnUs, one.PeakMobs)
+	}
+	if three.MobsOnUs <= 1 || three.MobsOnUs > three.PeakMobs || three.PeakMobs > 3 {
+		t.Errorf("pulling three had %.2f mobs on us at once, peak %.2f, want above 1, at most the peak, and the peak at most 3", three.MobsOnUs, three.PeakMobs)
+	}
 }
 
 // TestLevelingRests: a rotation that rests below 99% sits after every pull, and one with its

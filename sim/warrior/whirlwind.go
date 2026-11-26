@@ -7,6 +7,10 @@ import (
 )
 
 func (warrior *Warrior) registerWhirlwindSpell() {
+	if !warrior.KnowsRank(1680, 36) {
+		return
+	}
+
 	results := make([]*core.SpellResult, min(4, warrior.Env.GetNumTargets()))
 	ohResults := make([]*core.SpellResult, len(results))
 
@@ -52,26 +56,23 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			mhTarget := target
 			// Only living targets, each one once.
-			hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
-			ohHits := ohResults[:len(hits)]
-			for idx := range hits {
+			targets := warrior.areaTargets(sim, target, whirlwindRadius, len(results))
+			hits := results[:len(targets)]
+			ohHits := ohResults[:len(targets)]
+			for idx, target := range targets {
 				baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))
 				results[idx] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
-				target = sim.Environment.NextTargetUnit(target)
 			}
 
 			if whirlwindOh != nil {
-				target = mhTarget
-				for idx := range ohHits {
+				for idx, target := range targets {
 					baseDamage := whirlwindOh.Unit.OHNormalizedWeaponDamage(sim, whirlwindOh.MeleeAttackPower(target))
 					ohResults[idx] = whirlwindOh.CalcDamage(sim, target, baseDamage, whirlwindOh.OutcomeMeleeWeaponSpecialHitAndCrit)
-					target = sim.Environment.NextTargetUnit(target)
 				}
 			}
 
-			if improvedPoints > 0 {
+			if improvedPoints > 0 && len(hits) > 0 {
 				hits[0].Damage *= closestMultiplier
 				if whirlwindOh != nil {
 					ohHits[0].Damage *= closestMultiplier

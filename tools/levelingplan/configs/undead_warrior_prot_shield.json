@@ -1,0 +1,68 @@
+{
+	"player": {
+		"race": "RaceUndead",
+		"class": "ClassWarrior",
+		"tankWarrior": {
+			"options": {
+				"stance": "WarriorStanceBattle",
+				"shout": "WarriorShoutBattle",
+				"queueDelay": 250
+			}
+		}
+	},
+	"leveling": {
+		"maxPackSize": 12,
+		"campMobs": -1
+	},
+	"fromLevel": 1,
+	"toLevel": 60,
+	"firstTalentLevel": 5,
+	"styles": [
+		{
+			"level": 1,
+			"style": "shield"
+		}
+	],
+	"talents": [
+		{
+			"level": 5,
+			"order": [
+				"Shield Specialization:5",
+				"Anticipation:2",
+				"Improved Revenge:3",
+				"Last Stand",
+				"Defiance:3",
+				"Master of Defense:2",
+				"Vanguard",
+				"Improved Bloodrage:2",
+				"Improved Thunder Clap:2",
+				"Concussion Blow",
+				"Focused Rage:3",
+				"Bastion:5",
+				"Shield Slam",
+				"Cruelty:5",
+				"Unbridled Wrath:5",
+				"Blood Craze:3",
+				"Enrage:5",
+				"Improved Execute:2"
+			]
+		}
+	],
+	"rotations": [
+		{
+			"level": 1,
+			"template": "warrior_leveling",
+			"knobs": {
+				"restHealth": 60,
+				"chainMax": 0
+			}
+		}
+	],
+	"rotationTemplate": "warrior_leveling",
+	"routeFile": "../../../ui/warrior/leveling_route.json",
+	"weights": {
+		"free": "../testdata/warrior_weights.json"
+	},
+	"gearSeed": 1,
+	"seed": 1
+}

@@ -1,7 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-25, pass 33, master 85691655a (wowsims/forever's logged tank threat batch, 2f42f4a44: bear Lacerate 10/3 and Primal Bite 3x threat lift bear TPS 46% and its scores +1408 / +1191 / +846, now first at Max threat and Balanced; warrior Shield Slam 2 x block value / 255 threat, Thunder Clap 1x and rage-gain threat cost it TPS 50 to 77 and -132 / -208 / -197; flat physical reduction capped at half the hit gives the paladin +43 / +65 / +97; Warden noise). Pass 32: 2026-11-25, master 0404484fb (Rage from hits taken now carries the warrior stance's 0.9 / 1.1 and twice the Rage from spells, ticks and Physical specials, b4cab8498: warrior -2.5 / -10.5 / -1.2, bear +1 / +21 / +108 at Max threat / Balanced / Max survival, the bear's gain on Onyxia, Broodlord, Magmadar and Vaelastrasz; Arcane Brilliance now overwrites the Warden's Elixir of Greater Intellect, f1942793d: Warden -28 / -38 / -54, TPS -1%; Windfury / Flametongue Totem raid scope and world-buff rules reach no tank score; paladin identical; ranking unchanged). Pass 29: 2026-11-24, master 566067a39 (warrior Unbridled Wrath off Shield Slam, Revenge and Shield Bash, and Heroic Strike / Cleave spending a Flurry charge, both from wowsims/forever's logs; druid Rip / Rake shares reach no bear preset: warrior -3.5 / -5.7 / -22.0 at Max threat / Balanced / Max survival, TPS -2 to -6, every other preset identical; ranking unchanged). Pass 27: 2026-11-23, master 5518f4873 (a guard in `sim/core/attack.go` so an empty weapon slot never swings; every tank wields a weapon, all 84 preset rows identical to pass 26). Pass 26: 2026-11-22, master 7a6d1beb9 (Judgement of Wisdom pays no mana off an avoided white swing under Forever: paladin TPS about -0.3%, Warden -0.2%, warrior identical; warrior Deep Wounds, Execute and Windfury talent rules reach no tank preset). Pass 25: master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
+preset weight, its reasons, and the open questions. Last pass: 2026-11-26, pass 34, branch phase0-tankheal 3e9748641 (the tanks wear their Phase 0 lists, standards 43: bear first at Max threat and Balanced, 21% over the warrior at Balanced; warrior first at Max survival; the paladin falls to third there, 8271 health, and Titans would give it +120, finding -20261126-1). Master's own pass 34 (same day, before the merge): master ab3fff7007 (warrior leveling batch: spell ranks by level, leveling-only stuns, swings from behind and Cannibalize; all 12 presets identical to pass 33, ranking unchanged). Pass 33: 2026-11-25, master 85691655a (wowsims/forever's logged tank threat batch, 2f42f4a44: bear Lacerate 10/3 and Primal Bite 3x threat lift bear TPS 46% and its scores +1408 / +1191 / +846, now first at Max threat and Balanced; warrior Shield Slam 2 x block value / 255 threat, Thunder Clap 1x and rage-gain threat cost it TPS 50 to 77 and -132 / -208 / -197; flat physical reduction capped at half the hit gives the paladin +43 / +65 / +97; Warden noise). Pass 32: 2026-11-25, master 0404484fb (Rage from hits taken now carries the warrior stance's 0.9 / 1.1 and twice the Rage from spells, ticks and Physical specials, b4cab8498: warrior -2.5 / -10.5 / -1.2, bear +1 / +21 / +108 at Max threat / Balanced / Max survival, the bear's gain on Onyxia, Broodlord, Magmadar and Vaelastrasz; Arcane Brilliance now overwrites the Warden's Elixir of Greater Intellect, f1942793d: Warden -28 / -38 / -54, TPS -1%; Windfury / Flametongue Totem raid scope and world-buff rules reach no tank score; paladin identical; ranking unchanged). Pass 29: 2026-11-24, master 566067a39 (warrior Unbridled Wrath off Shield Slam, Revenge and Shield Bash, and Heroic Strike / Cleave spending a Flurry charge, both from wowsims/forever's logs; druid Rip / Rake shares reach no bear preset: warrior -3.5 / -5.7 / -22.0 at Max threat / Balanced / Max survival, TPS -2 to -6, every other preset identical; ranking unchanged). Pass 27: 2026-11-23, master 5518f4873 (a guard in `sim/core/attack.go` so an empty weapon slot never swings; every tank wields a weapon, all 84 preset rows identical to pass 26). Pass 26: 2026-11-22, master 7a6d1beb9 (Judgement of Wisdom pays no mana off an avoided white swing under Forever: paladin TPS about -0.3%, Warden -0.2%, warrior identical; warrior Deep Wounds, Execute and Windfury talent rules reach no tank preset). Pass 25: master 8b5137c6d (paladin Two-Handed Weapon Specialization on all Holy damage, Nov 19 hotfix; standards 41; warrior push 114097 talents; no tank preset moves: all 12 presets identical to pass 24). Pass 24: 2026-11-20, master e07e8fdb8 (item conditions and target mob family, Tenets of the Silver Hand's
 Undead condition, Totem of Rage's Forever 2%, a crit-against-target mark; no tank preset wears an affected item; all 12
 presets identical to pass 23). Pass 23: 2026-11-19, master e671e881e (the least-HPS
 search in `sim/core/tank_score.go` restarts replays from the last capped point; all 12 presets identical to pass 22).
@@ -13,13 +13,16 @@ full change: pass 16, master 25ce81de7, after the Nov 13 hotfixes (PR #130: Wind
 Judgement of Command melee again) and the warrior's Balanced and Max survival re-tune (f2a5dfe25). The report has the details
 (orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
 
-## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
+## Ranking (tankbench 3000 iterations, seeds 1 and 2 mean, six-boss mean, each spec's matching preset, Phase 0 gear)
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Bear, Warrior, Paladin, Warden | 4537 / 4097 / 3282 / 2606 |
-| Balanced (w 1) | Bear, Warrior, Paladin, Warden | 3342 / 3251 / 2863 / 1244 |
-| Max survival (w 3) | Paladin, Warrior, Bear, Warden | 1875 / 1617 / 1301 / -2277 |
+| Max threat (w 1/3) | Bear, Warrior, Paladin, Warden | 5603 / 4455 / 3913 / 3400 |
+| Balanced (w 1) | Bear, Warrior, Paladin, Warden | 3696 / 3058 / 2952 / 2024 |
+| Max survival (w 3) | Warrior, Bear, Paladin, Warden | 1079 / 1047 / 780 / -1401 |
+
+On the synthetic sets (pass 33) it was 4537 / 4097 / 3282 / 2606, 3342 / 3251 / 2863 / 1244 and paladin 1875, warrior
+1617, bear 1301, Warden -2277. The history below is from the synthetic sets.
 
 The Nov 13 Windfury rule (every landed main hand hit rolls the totem) gave the bear +328 / +260 / +129 (12% at Max
 threat, TPS +163) and the Warden +88 / +61 at Max threat / Balanced; the paladin +38 at Balanced; the warrior nothing
@@ -30,10 +33,10 @@ so fair): two-seed means now warrior 1830 (1836.7 / 1822.3), paladin 1781 (1775.
 ahead by 49 (2.7%), outside the error. The paladin's open potion action (finding -20261105-1, +374 at Max survival in
 pass 13) would still put the paladin first. Pass 29 (master 566067a39): warrior 1814.7 ± 12.2 against paladin 1778.0 ± 15.9 (seed 1), the lead down to 37 (2%) after Unbridled Wrath left Shield Slam and Revenge. Pass 32 (master 0404484fb): 1813.5 against 1778.0, unchanged by the stance Rage rule. Pass 33 (master 85691655a): the warrior threat batch cost the warrior 197 there, so the paladin leads, 1874.5 against 1617.0 (16%), with or without its open potion.
 
-TPS (Balanced): bear 2371, warrior 1987, paladin 1531, Warden 1367. Healing needed (Balanced): paladin 233, warrior 341,
-bear 468, Warden 664.
+TPS (Balanced, Phase 0): bear 2612, warrior 2137, paladin 1858, Warden 1738. Healing needed (Balanced): paladin 449, warrior 524,
+Warden 700, bear 711.
 
-Each preset wins its own weight except the bear's Balanced, which ties its Max threat build at w 1 since 2f42f4a44 (3341.8 against 3377.7 seed 1, 3321.0 against 3327.7 seed 2; finding -20261125-1). The three builds are distinct for every spec. Every flask still wins
+Each preset wins its own weight except the bear's Balanced: its Max threat build beats it at w 1, 3889 against 3696 on Phase 0 gear (a tie on the synthetic sets since 2f42f4a44; finding -20261125-1). The three builds are distinct for every spec. Every flask still wins
 at its preset (pass 11).
 
 ## Why

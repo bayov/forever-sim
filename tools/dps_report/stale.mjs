@@ -31,7 +31,7 @@
 // The Tanking and Healing modes (tankheal.py) are recorded per preset under provenance.json's `benches` (tank, heal:
 // {presets: {<stem>: record}}), the same way as the DPS builds. A preset (a request in tools/tankbench/req or
 // tools/healbench/req) depends on the sim's packages (not the DPS-only CLI, dashstats and step scripts), the top-level
-// sim/*.go, its bench's sources (tools/tankbench or tools/healbench, its req/ folder left out), tools/tankscore, the
+// sim/*.go, its bench's sources (tools/tankbench or tools/healbench, its req/ folder left out), tools/tankscore and tools/healscore, the
 // seven boss files in tools/encounters, tankheal.py and the race sims' scripts (bench_races.py, adaptive.py,
 // dashpaths.py, run_build.py's CLASS_RACES), its own request, the class packages
 // of every class in its raid, its spec's other-faction Phase 0 sets (the `<gearOut>_<horde|alliance>.gear.json` beside
@@ -189,7 +189,7 @@ export const fingerprint = memo((r, id) => {
 
 // the Tanking and Healing modes' inputs (tankheal.py), per preset
 export const BENCH_FORMAT = 3;
-const BENCH_SHARED = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'go.mod', 'go.sum', 'tools/tankscore', 'tools/dps_report/tankheal.py',
+const BENCH_SHARED = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'go.mod', 'go.sum', 'tools/tankscore', 'tools/healscore', 'tools/dps_report/tankheal.py',
 	'tools/dps_report/bench_races.py', 'tools/dps_report/adaptive.py', 'tools/dps_report/dashpaths.py', 'tools/dps_report/run_build.py'];
 const BOSSES = ['magmadar', 'golemagg', 'onyxia', 'broodlord', 'vaelastrasz', 'chromaggus', 'ragnaros'];
 const NOT_PRESETS = ['warrior_protection']; // the healing bench's tank (tankheal.py NOT_PRESETS)

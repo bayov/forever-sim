@@ -5,7 +5,7 @@
     "players": [
      {
       "inFrontOfTarget": true,
-      "race": "RaceUndead",
+      "race": "RaceTauren",
       "class": "ClassShaman",
       "level": 60,
       "talentsString": "05050003-050230113541012201-050002",
@@ -44,11 +44,11 @@
         },
         {
          "id": 12903,
-         "enchant": 1504
+         "enchant": 2545
         },
         {
          "id": 20154,
-         "enchant": 929
+         "enchant": 1843
         },
         {
          "id": 275980
@@ -64,7 +64,7 @@
         },
         {
          "id": 13952,
-         "enchant": 1248805
+         "enchant": 8721
         },
         {
          "id": 279262,

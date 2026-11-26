@@ -1,33 +1,32 @@
-# Mechanics pass 106 (2026-11-25, master 85691655a)
+# Mechanics pass 108 (2026-11-26)
 
-Range: c3bbe33ea..85691655a. Client 1.60.1.71091 still newest (gate). Blizzard: dev notes
-t/2360696 unchanged (8 posts, newest 2026-11-04); hotfix thread t/2403040 unchanged (#15,
-2026-11-24); blue tracker has a new Forever post, "Balance Druid Adjustments - November 25"
-(t/2429007, Kaivax, 2026-11-25 18:32Z, "now live"). Daily update: one TASKS.md item
-(85691655a, Blackhand's Breadth hotfix from foreverchanges, Nov 24 push).
+- Master: ab3fff700 (last audited bfbee78fc). Client 1.60.1.71139 (unchanged).
+- Result: findings (1 low).
 
-## Commits checked
+## Repo since bfbee78fc
 
-| Commit | Change | Check | Verdict |
-|---|---|---|---|
-| 2f42f4a44 | Tank batch: rage-gain threat, damage-taken Rage armor rows, flat reduction cap, bear threat | log-sourced (EV-0032..0050, 0154); level 63 row unchanged | settled (ruling) |
-| efeb06b95 | Resist constant 8L+19, 75% partial cap, binary spells, Flurry vs Windfury Totem (shaman) | log-sourced (EV-0091, 0092, 0142, 0010); shaman totem swings no longer spend Flurry | settled; resolves mechanics-20261118-1 |
-| 60fde111f | Hunter hawk, pet white crit, Explosive Trap, pet autocast | log-sourced (EV-0073, 0127, 0134, 0068, 0187); class rules | settled (ruling) |
-| 295206ddf | Item PPMs, set procs, 49 on-hit weapons | Flame Wrath 16559 bp 154 matches; Ironfoe client 10% / 5 s vs sim 3% from logs (server side) | settled (logs) |
-| b663145ad | Weapon-proc chains, JoC double roll, Revelation, judgements refresh, damage shields | log-sourced (EV-0145, 0155, 0028, 0117, 0066 ...) | settled (ruling) |
-| 22d2cf952 | Explosives keep swing timer, stun explosives miss level 63, demon crit, extra attacks roll Windfury Totem, Shield Slam MH special | log-sourced, user ruling 2026-11-25 | settled (ruling) |
+Four sim commits, all warrior leveling work: 143bf4f72 (ranks by learn level, leveling hooks), 8f5b59325 (Charge, Intercept, Victory Rush, Retaliation, Concussion Blow, Gore Drinker, Cannibalize, Rage decay, stances by level), 1223e764e (big pulls: facing, camps, area reach), 81a2e51fc (Recovery, shield spikes, leveling heals).
 
-## Findings
-
-| Id | Severity | Title |
+| Change | Level 60 effect | Verdict |
 |---|---|---|
-| mechanics-20261125-1 | high (estimate) | Nov 25 Balance druid changes live; sim has none (Moonkin +10%, Eclipse Wrath crit, Moonfury removed, Improved Starfire 2 points, Starfire cast time) |
-| mechanics-20261125-2 | low (estimate) | Blackhand's Breadth mark still Shadow / can miss; Nov 24 hotfix made it physical, unresistable |
+| aoe.go AoETargetCount / TargetsNear, consumes.go explosives, Dragon Breath Chili, Dragonfire, Caustic Smog | Outside leveling returns ActiveTargetUnits as before | Gated, no change |
+| apl_values_encounter.go execute phase -> InExecuteRange | Outside leveling = sim.executePhase <= N, as before | No change |
+| environment.go NextTargetUnit, spell_result.go, outcomeEnemyMeleeWhite from behind | Gated on leveling | No change |
+| spell_outcome.go: stunned target can't block / dodge / parry | Ungated; Era rule (tier 3) | Right rule; Might of Shahram stuns StunImmune bosses: mechanics-20261126-4 |
+| debuffs.go SunderArmorAuraOfRank (90 x rank) | Rank 5 = 450, same as SunderArmorAura | No change |
+| Warrior ranks (knownRank) for BT, MS, Execute, HS, Cleave, Rend, Revenge, Shield Slam, Slam, Sunder, TC, Overpower, Pummel, Hamstring, Battle Shout, Demo Shout | Rank max at 60; values equal the old constants | No change |
+| Retaliation registered at 60 outside leveling; Victory Rush, Intercept, Concussion Blow, Gore Drinker, Cannibalize, Recovery heal | Leveling-gated or unused by presets | No change |
+| MaxRange on melee specials, Thunder Clap 8 yd | Only checked in a leveling session (spell.go:589) | No change |
 
-Resolved: mechanics-20261118-1 (efeb06b95, shaman half).
+## Measured (paired seeds, 10k iterations, run_reqs.py, bfbee78fc vs ab3fff700)
 
-## Open items
+| Preset | Old | New | Delta |
+|---|---|---|---|
+| paladin__level_60 | 930.27 | 931.52 | +1.25 |
+| paladin__level_60-duty-crusader | 920.27 | 921.22 | +0.95 |
 
-- Hotfix rows for Blackhand's Breadth and the Balance changes aren't cached (`hotfixes.py rows`
-  returned nothing); a fetch from wago.tools/hotfixes would give exact values.
-- No sims run: all commits are log-sourced rulings; DPS sizes above are estimates.
+Only Blackblade of Shahram's stun reaches ret in this range.
+
+## Blizzard and daily update
+
+No forum post past 2026-11-25T23:25:08Z (Hotfixes Nov 25, 2403040/16); dev notes thread 2360696 unchanged (8 posts, last 2026-11-04). No TASKS.md or update_ledger change, no forever-update merge. Client build 71139 still newest per the gate.

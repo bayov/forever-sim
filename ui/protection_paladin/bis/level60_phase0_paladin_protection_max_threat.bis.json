@@ -259,7 +259,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 3895.25,
-        "loss": 17.38
+        "loss": 17.38,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 277202,
@@ -895,7 +896,8 @@
         "id": 280027,
         "name": "Crownroar Chestplate",
         "dps": 3852.41,
-        "loss": 60.22
+        "loss": 60.22,
+        "note": "Drop: Vitrix (AtlasLoot) · Forever rare, zone not in our data · seen in game Nov 8"
       },
       {
         "id": 12757,
@@ -1089,7 +1091,7 @@
         "name": "Frozen Steel Vambraces",
         "dps": 3855.08,
         "loss": 57.55,
-        "avail": "doubtful",
+        "avail": "out",
         "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"
       },
       {
@@ -1206,7 +1208,8 @@
         "id": 279257,
         "name": "Mourning Handguards",
         "dps": 3776.35,
-        "loss": 136.28
+        "loss": 136.28,
+        "note": "Leatherworking 300 · pattern (279306) has no known source · reagents not in data"
       },
       {
         "id": 272096,
@@ -1903,7 +1906,6 @@
         "name": "Don Mauricio's Band of Domination",
         "dps": 3895.66,
         "loss": 16.97,
-        "avail": "infeasible",
         "note": "10g per point of score"
       },
       {
@@ -1937,7 +1939,6 @@
         "name": "Painweaver Band",
         "dps": 3872.09,
         "loss": 40.54,
-        "avail": "infeasible",
         "note": "69g per point of score"
       },
       {
@@ -2344,7 +2345,8 @@
         "dps": 3708.98,
         "loss": 203.65,
         "unsourced": true,
-        "with": 279262
+        "with": 279262,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 11684,
@@ -2361,7 +2363,8 @@
         "dps": 3699.92,
         "loss": 212.71,
         "unsourced": true,
-        "with": 279262
+        "with": 279262,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 280012,
@@ -2396,7 +2399,8 @@
         "dps": 3694.44,
         "loss": 218.19,
         "unsourced": true,
-        "with": 279262
+        "with": 279262,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15221,
@@ -2405,7 +2409,8 @@
         "dps": 3692.18,
         "loss": 220.45,
         "unsourced": true,
-        "with": 279262
+        "with": 279262,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 18498,
@@ -2626,7 +2631,9 @@
         "name": "Faintly Glowing Orb",
         "dps": -188232.66,
         "loss": 192145.29,
-        "with": 2243
+        "with": 2243,
+        "avail": "doubtful",
+        "note": "Quest reward (Forever item) · quest not in our data"
       },
       {
         "id": 19312,

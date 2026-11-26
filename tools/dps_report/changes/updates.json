@@ -6675,7 +6675,7 @@
       "Warlock",
       "Warrior"
      ],
-     "note": "Every DPS preset now wears gear you can get at level 60 in the first phase of the game, with each faction's own rewards for its races. Before, they wore synthetic items made for the report. Every DPS preset drops, from 5.6% (Mutilate) to 20.8% (Affliction Shadow Bolt); most lose 7 to 13%. The ranking moves with the gear each spec can get now. Tanking and Healing presets keep their synthetic gear and are unchanged.",
+     "note": "Every DPS preset now wears gear you can get at level 60 in the first phase of the game, with each faction's own rewards for its races. Before, they wore synthetic items made for the report. Every DPS preset drops, from 5.6% (Mutilate) to 20.8% (Affliction Shadow Bolt); most lose 7 to 13%. The ranking moves with the gear each spec can get now.",
      "commits": [
       "b5277c3f1",
       "1fed43cbf",
@@ -6808,7 +6808,7 @@
    "title": "Phase 0 gear priced for every spec",
    "date": "2026-11-25",
    "baselineData": "226ada86b09bc6bd5ec28f695c68bd550befbb34",
-   "endData": null,
+   "endData": "94d6cd2e4ab463f77cf64ab1779c6020ba9d636f",
    "lines": [
     {
      "title": "The 30 gold per DPS line now prices every spec's own gear list",
@@ -7846,6 +7846,515 @@
     {
      "commit": "86fbcf456",
      "why": "comp search and raid sim data only"
+    }
+   ]
+  },
+  {
+   "id": "2026-11-26-phase0-rerank",
+   "type": "sim",
+   "title": "Phase 0 gear lists ranked again",
+   "date": "2026-11-26",
+   "baselineData": "94d6cd2e4ab463f77cf64ab1779c6020ba9d636f",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Phase 0 gear lists ranked again, with newer gold prices",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Hunter",
+      "Mage",
+      "Paladin",
+      "Priest",
+      "Rogue",
+      "Shaman",
+      "Warlock",
+      "Warrior"
+     ],
+     "builds": [],
+     "note": "Every DPS spec's Phase 0 list was ranked again on the current sim, with prices from a newer auction house scan, and each preset wears its list's picks. Heart of Wyrmthalak tops the trinket list of 12 specs but costs too much gold per DPS on all of them, so no preset wears it. Fire, Frost, Frostfire, Demonology, Shadow, Smite, Beast Mastery, Marksmanship, Survival, Arms and Fury 2H keep their gear.",
+     "commits": [
+      "41615e521",
+      "1de0c1df2",
+      "821892e20",
+      "bec27efed",
+      "629c7b306",
+      "518f23165",
+      "3594f31f2"
+     ]
+    },
+    {
+     "title": "Balance wears Talisman of Ascendance and Spirit of Aquementas",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff"
+     ],
+     "note": "Talisman of Ascendance replaces Chained Essence, and Spirit of Aquementas replaces Obsidian Bauble, which costs too much gold per DPS. Balance gains 5.6 DPS at 180s.",
+     "commits": [
+      "a60eb2ca1",
+      "f4e2b6e46",
+      "d2570c616",
+      "9751f992a"
+     ]
+    },
+    {
+     "title": "Feral throws Goblin Land Mine instead of Dark Bomb",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Dark Bomb does nothing to level 63 bosses, so the rotation uses Goblin Land Mine in its place. Feral gains 0.5 DPS.",
+     "commits": [
+      "35a2e9dca"
+     ]
+    },
+    {
+     "title": "Lone Wolf takes Hawkeye Bow of Agility",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__lone-wolf"
+     ],
+     "note": "Eaglehorn Long Bow costs too much gold per DPS, so Lone Wolf wears Hawkeye Bow of Agility and loses 4.6 DPS at 180s.",
+     "commits": [
+      "02c06a709",
+      "13592ab69",
+      "c1bf6ca50",
+      "205b45318",
+      "5f50e8841",
+      "9c1cf0b4d",
+      "7fb108796"
+     ]
+    },
+    {
+     "title": "Arcane enchants its staff with Revelation",
+     "kind": "sim",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__arcane"
+     ],
+     "note": "Revelation replaces Spellblasting on Arcane's staff, for 3.9 more DPS.",
+     "commits": [
+      "841d6747d",
+      "a7eef5188"
+     ]
+    },
+    {
+     "title": "Retribution wields Destiny",
+     "kind": "sim",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy-duty-crusader"
+     ],
+     "note": "Destiny replaces Warblade of Caer Darrow for Twist and Sub Holy Retribution, about 9.5 more DPS at 180s. Shock Retribution keeps Warblade, which still suits it best.",
+     "commits": [
+      "4a39a50be",
+      "8e536aa0d",
+      "1a6600121"
+     ]
+    },
+    {
+     "title": "Dagger rogues wear the Devilsaur pair, Seal Fate Swords takes Ancient Bone Bow",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__seal-fate-swords",
+      "rogue__combat-daggers",
+      "rogue__seal-fate-daggers",
+      "rogue__subtlety",
+      "rogue__mutilate"
+     ],
+     "note": "Combat Daggers, Mutilate, Subtlety and Seal Fate Daggers wear Devilsaur Gauntlets and Leggings in place of the Darkmantle pieces, since the two piece Devilsaur bonus beats the six piece Darkmantle one. Each gains 0.7 to 1.7 DPS. Deep Jungle Rifle costs too much gold per DPS, so Seal Fate Swords wears Ancient Bone Bow and loses 9.2 DPS.",
+     "commits": [
+      "b4eecbf1a",
+      "4be74dfaa",
+      "a8dea3f5d",
+      "e9da0ddcd",
+      "f3bf14c7c",
+      "26e4300f1",
+      "57fbb3401"
+     ]
+    },
+    {
+     "title": "Shamans change trinkets, Improved Ghost Wolf talents fixed",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide"
+     ],
+     "note": "Elemental wears Talisman of Ascendance in place of Eye of the Beast, for 3.5 more DPS. Enhancement wears Blackhand's Breadth in place of Adaptive Combat Assistant and loses about 1.3 DPS. The Improved Ghost Wolf preset now has talents the game allows, with the same DPS.",
+     "commits": [
+      "c3884acc6"
+     ]
+    },
+    {
+     "title": "Warlocks change their enchant and trinket",
+     "kind": "sim",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__affliction_shadow_bolt",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "note": "Affliction enchants its main hand with Revelation in place of Mighty Intellect, for 2.9 more DPS, and Shadow Bolt Affliction gains 27.1. Destruction wears Eye of the Beast in place of Weakness Analyzer at the same DPS. Fire Destruction shares that gear and loses 3.4 DPS.",
+     "commits": [
+      "140f0f767",
+      "c15219593"
+     ]
+    },
+    {
+     "title": "Dual-wield Fury takes Thrash Blade and Bloodseeker",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder"
+     ],
+     "note": "Thrash Blade replaces Ironwood Blade in the main hand, the trinkets are Darkmoon Card: Maelstrom and Blackhand's Breadth, and Bloodseeker replaces Satyr's Bow, which costs too much gold per DPS. Dual-wield Fury gains 2.1 DPS at 180s.",
+     "commits": [
+      "f79e810e1",
+      "7a3b753cb",
+      "bb218ef46",
+      "ef9dbff7a",
+      "832070749",
+      "dac79e5f6"
+     ]
+    },
+    {
+     "title": "Seal Fate Swords wears Darkmoon Card: Maelstrom",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__seal-fate-swords"
+     ],
+     "note": "Darkmoon Card: Maelstrom replaces Chained Essence of Eranikus beside Blackhand's Breadth, for about 9 more DPS.",
+     "commits": [
+      "8c5ebbb30",
+      "f4b9f6908"
+     ]
+    },
+    {
+     "title": "Tanking presets now wear real Phase 0 gear instead of synthetic gear",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Paladin",
+      "Shaman",
+      "Warrior"
+     ],
+     "moves": false,
+     "note": "Protection Warrior, Protection Paladin, Bear and Warden presets now wear gear you can get at level 60 in the first phase of the game, with one list for each of Balanced, Max threat and Max survival. Each faction's races wear their own faction's rewards. Before, they wore synthetic items made for the report.",
+     "commits": [
+      "12e6132b2",
+      "b7b411a01",
+      "2f20719e4",
+      "ecf1cbb50",
+      "06a460b5a",
+      "0741191ab",
+      "3ae9da70a",
+      "9f5bd2d71",
+      "1fe75412e",
+      "a7682e0ec",
+      "06cee142c",
+      "6741a469a",
+      "8629f5da5",
+      "182f314d2",
+      "196415355",
+      "01ae5640f",
+      "a2f62f579",
+      "091d7a4b8",
+      "161799e11",
+      "4a5da9220",
+      "b2324b08e",
+      "7753b07c6",
+      "6f2b57e9b",
+      "5c0036bf1",
+      "983a6d20c",
+      "a2297a301",
+      "a6ed07464",
+      "d91a2c7df",
+      "ba4e57a84",
+      "b1f2ba9ae",
+      "970d4bd3b",
+      "722d6a680",
+      "c916a72cf",
+      "c738cf3a4",
+      "4c122eae9",
+      "7bcdbe3a4",
+      "bb0221701",
+      "faf426f27",
+      "bc07fc31d",
+      "f709e28aa",
+      "250b364d9",
+      "a1904ac61",
+      "500d6f9f9",
+      "1c3c603b5",
+      "ec915c712",
+      "7115cb483",
+      "9f0ffa31e",
+      "cccca7055",
+      "98dbc95da",
+      "00a450b42",
+      "8b63fffc0",
+      "e00594e66",
+      "360cffe06",
+      "a9b350045",
+      "934230088",
+      "ec9e945ab",
+      "b78b70a60",
+      "56cddda04",
+      "8a3638855",
+      "73101aa5c",
+      "d0729fcc7",
+      "4515b6728",
+      "ecba46ae2",
+      "25b14b680",
+      "8dd4b0d53",
+      "999a0aa85",
+      "57009ffc1",
+      "601239d5b",
+      "73bb540f2",
+      "1b6290270",
+      "7738b164d",
+      "730bfe121",
+      "65c8afda2",
+      "21186875b",
+      "288c5b429",
+      "5be266e3c",
+      "a76dfa430",
+      "02d575f64",
+      "c970da448"
+     ]
+    },
+    {
+     "title": "Bear: Lacerate's first hit deals damage, Balanced and Max threat skip Demoralizing Roar",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "moves": false,
+     "note": "Lacerate's hit grows with the stacks the cast leaves, as tested in game, so the first cast hits for 10% of weapon damage. Before, it hit for nothing. Balanced and Max threat no longer use Demoralizing Roar, since its global cooldown and Rage do more on attacks.",
+     "commits": [
+      "09709d889",
+      "60b66c9d1",
+      "95962a7d3",
+      "5c33b79e3"
+     ]
+    },
+    {
+     "title": "Warden presets play races a shaman can be",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Balanced and Max threat are now Troll (was Night Elf), and Max survival is Tauren (was Undead).",
+     "commits": [
+      "eae898b24",
+      "6c94809c3",
+      "23723f005"
+     ]
+    },
+    {
+     "title": "Healing presets now wear real Phase 0 gear instead of synthetic gear",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Paladin",
+      "Priest",
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Discipline Priest, Holy Priest, Holy Paladin, Restoration Shaman and Restoration Druid now wear gear you can get at level 60 in the first phase of the game, one list per spec for both tank and raid healing. Each faction's races wear their own faction's rewards. Before, they wore synthetic items made for the report.",
+     "commits": [
+      "29f49c34c",
+      "7371cc06e",
+      "9ff2895da",
+      "e9922d058",
+      "74ee06c94",
+      "ab2d73909",
+      "aa1d56ed0",
+      "652488b50",
+      "7a7fd7538",
+      "701f08a0e",
+      "01a54a988",
+      "9b2e64287",
+      "ecb44df1a",
+      "07a6a7b06",
+      "9b4a7d64c",
+      "74aa9e630",
+      "ae0541d53",
+      "f9808629a",
+      "19a0aa0fc",
+      "7db408967",
+      "2e31951aa",
+      "6680d3482",
+      "065361621",
+      "d21a05e97",
+      "296b0b0f4",
+      "8aa00e2f3",
+      "3cca88170",
+      "470d1c8ac",
+      "11f332468",
+      "f313b97a8",
+      "084322bf9",
+      "0a4d36103",
+      "687346663",
+      "4a73d7298",
+      "b327157be",
+      "374e9e603",
+      "7143a86ed",
+      "8cec2feea",
+      "1352e5a34",
+      "0afa82611",
+      "eac7ba8b5"
+     ]
+    },
+    {
+     "title": "Tank and healer gear skips items over 3000g for each 1% of score",
+     "kind": "method",
+     "classes": [
+      "Druid",
+      "Paladin",
+      "Priest",
+      "Shaman",
+      "Warrior"
+     ],
+     "moves": false,
+     "note": "The same gold line as the DPS gear's 30g per DPS, scaled to each preset's own score.",
+     "commits": [
+      "266e5357f",
+      "e26d2c0fb",
+      "3e9748641",
+      "23469c224",
+      "b79f9be20"
+     ]
+    }
+   ],
+   "internal": [
+    {
+     "commit": "c377aaf95",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "6a447e231",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "565f32155",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "adb69fdc7",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "1d20f40d4",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "81a2e51fc",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "c747e7ccd",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "1223e764e",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "30bb3a590",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "ddd9dab00",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "a5fc8ae2a",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "8f5b59325",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "a7e0abce1",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "143bf4f72",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "51ba1c542",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "eae05254e",
+     "why": "the request generator now writes the explosives the requests already carry; no request changed"
+    },
+    {
+     "commit": "c1ebe2d79",
+     "why": "removes Balance rotation lines for a trinket it no longer wears, which the sim already ignored; DPS unchanged"
+    },
+    {
+     "commit": "31d2f59e8",
+     "why": "refreshes the requests' recorded reference numbers only; no sim input changed"
+    },
+    {
+     "commit": "48902239f",
+     "why": "leveling plan only, no report preset reads it"
+    },
+    {
+     "commit": "a5b8f9d4b",
+     "why": "test only"
     }
    ]
   }

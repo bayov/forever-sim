@@ -40,8 +40,8 @@ func levelingString(r result) string {
 	if levelingObjective == "xp" {
 		out = fmt.Sprintf("%.0f(%.0f) XP/h mobs %.1f", r.dps, r.stderr, m.MobsKilled)
 	}
-	return out + fmt.Sprintf(" deaths %.2f mobs/pull %.2f combat %.0fs rest %.0fs search %.0fs dead %.0fs food %.1f drinks %.1f bandages %.1f",
-		m.Deaths, m.MobsPerPull, m.SecondsInCombat, m.SecondsResting, m.SecondsSearching, m.SecondsDead, m.Food, m.Drinks, m.Bandages)
+	return out + fmt.Sprintf(" deaths %.2f mobs/pull %.2f on us %.2f peak %.2f combat %.0fs rest %.0fs search %.0fs dead %.0fs food %.1f drinks %.1f bandages %.1f",
+		m.Deaths, m.MobsPerPull, m.MobsOnUs, m.PeakMobs, m.SecondsInCombat, m.SecondsResting, m.SecondsSearching, m.SecondsDead, m.Food, m.Drinks, m.Bandages)
 }
 
 // session runs one session with the combat log and boils it down to what an auditor needs

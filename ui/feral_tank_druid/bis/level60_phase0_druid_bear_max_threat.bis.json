@@ -26,7 +26,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 2543,
-        "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known)"
+        "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known) · 0g per point of score"
       },
       {
         "id": 12587,
@@ -195,7 +195,8 @@
         "id": 16693,
         "name": "Devout Crown",
         "dps": 5348.8,
-        "loss": 257.87
+        "loss": 257.87,
+        "note": "Drop: Darkmaster Gandling, Scholomance · Vestments of the Devout"
       }
     ],
     "neck": [
@@ -353,7 +354,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 5527.55,
-        "loss": 79.12
+        "loss": 79.12,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 18317,
@@ -391,7 +393,7 @@
         "dps": 5606.67,
         "loss": 0,
         "bis": true,
-        "note": "Pyroguard Emberseer · Blackrock Spire · 7g per point of score"
+        "note": "Pyroguard Emberseer · Blackrock Spire · 6g per point of score"
       },
       {
         "id": 12082,
@@ -770,7 +772,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1891,
-        "note": "On AH ~350g · or Leatherworking craft"
+        "note": "On AH ~350g · or Leatherworking craft · 3g per point of score"
       },
       {
         "id": 252484,
@@ -813,7 +815,7 @@
         "name": "Defias Enforcer's Chest",
         "dps": 5480.18,
         "loss": 126.49,
-        "note": "On AH ~43g"
+        "note": "On AH ~43g · 56g per point of score"
       },
       {
         "id": 10264,
@@ -957,7 +959,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1885,
-        "note": "The Beast · Blackrock Spire · 2g per point of score"
+        "note": "The Beast · Blackrock Spire · 1g per point of score"
       },
       {
         "id": 19587,
@@ -1282,7 +1284,8 @@
         "id": 18369,
         "name": "Gordok's Handwraps",
         "dps": 5358.17,
-        "loss": 248.5
+        "loss": 248.5,
+        "note": "Quest reward, Dire Maul · quest not identified in our data, like Gordok's Gauntlets · seen in game Nov 24"
       },
       {
         "id": 226777,
@@ -1708,7 +1711,8 @@
         "name": "Shadowcraft Boots",
         "dps": 5573.1,
         "loss": 33.57,
-        "note": "Rattlegore (Scholomance) · Shadowcraft set"
+        "note": "Rattlegore (Scholomance) · Shadowcraft set · 302g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 226794,
@@ -1963,7 +1967,7 @@
         "name": "Blackstone Ring",
         "dps": 5483.31,
         "loss": 123.36,
-        "note": "2g per point of score"
+        "note": "114g per point of score"
       },
       {
         "id": 19514,
@@ -2271,7 +2275,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1248668,
-        "note": "30g per point of score"
+        "note": "23g per point of score"
       },
       {
         "id": 18420,

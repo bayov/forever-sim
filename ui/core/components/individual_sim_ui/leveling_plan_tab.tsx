@@ -6,8 +6,11 @@ import { IndividualSimUI } from '../../individual_sim_ui';
 import { LEVELING_GEAR_SLOTS } from '../../leveling_gear';
 import {
 	BONUS_TALENT_POINTS_LEVEL,
+	bonusTalentPointsAt,
 	buildIndexAt,
 	buildLevels,
+	DEFAULT_FIRST_TALENT_LEVEL,
+	firstTalentLevel,
 	hoursAtLevel,
 	LEVELING_PLAN_MAX_LEVEL,
 	planLevels,
@@ -28,7 +31,14 @@ import { Consumes, Debuffs, EquipmentSpec, IndividualBuffs, PartyBuffs, RaidBuff
 import { LevelingGearClassRules, LevelingGearWeights, LevelingPlanSearchRequest, LevelingPlanSettings, LevelingTalentShape } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
 import { Database } from '../../proto_utils/database';
-import { classToEligibleRangedWeaponTypes, classToEligibleWeaponTypes, dualWieldClasses, maxArmorTypeAt, raceToFaction } from '../../proto_utils/utils';
+import {
+	classToEligibleRangedWeaponTypes,
+	classToEligibleWeaponTypes,
+	dualWieldClasses,
+	dualWieldLevels,
+	maxArmorTypeAt,
+	raceToFaction,
+} from '../../proto_utils/utils';
 import { encounterMode } from '../../sim_mode';
 import { TypedEvent } from '../../typed_event';
 import { BooleanPicker } from '../boolean_picker';
@@ -193,6 +203,13 @@ export class LevelingPlanTab extends SimTab {
 			plan => plan.bonusTalentPoints,
 			(plan, value) => (plan.bonusTalentPoints = Math.max(Math.round(value), 0)),
 		);
+		levelInput(
+			'leveling-plan-first-talent',
+			'First talent point at',
+			'The level of the first talent point. The Legacy perk Talented 5/5 makes it 5.',
+			plan => firstTalentLevel(plan),
+			(plan, value) => (plan.firstTalentLevel = Math.min(Math.max(Math.round(value), 1), DEFAULT_FIRST_TALENT_LEVEL)),
+		);
 		new BooleanPicker<Player<Spec>>(levelsBlock.bodyElement, this.player, {
 			id: 'leveling-plan-settings-buffs',
 			label: "Settings tab's buffs",
@@ -348,7 +365,7 @@ export class LevelingPlanTab extends SimTab {
 		if (options.seed !== undefined) request.simOptions!.randomSeed = options.seed;
 		const player = request.raid!.parties[0].players[0];
 		player.level = level;
-		player.bonusTalentPoints = level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0;
+		player.bonusTalentPoints = bonusTalentPointsAt(level, plan);
 		player.talentsString = talentsAt(plan, level, this.talents.shape, options.buildIndex);
 		player.untrainedSpells = untrainedAt(plan, level);
 		player.equipment = gear.asSpec();
@@ -387,7 +404,9 @@ export class LevelingPlanTab extends SimTab {
 			plan,
 			gearPlan: this.player.getLevelingGearPlan(),
 			route: this.gear.route(),
-			gearWeights: this.gear.weightPresets().map(preset => LevelingGearWeights.create({ level: preset.level, weights: preset.weights.toProto() })),
+			gearWeights: this.gear
+				.allWeightPresets()
+				.map(preset => LevelingGearWeights.create({ level: preset.level, weights: preset.weights.toProto(), style: preset.style })),
 			gearDefaultWeights: this.player.getEpWeights().toProto(),
 			classRules: LevelingGearClassRules.create({
 				maxArmorType: Array.from({ length: LEVELING_PLAN_MAX_LEVEL }, (_, i) => maxArmorTypeAt(playerClass, i + 1)),
@@ -395,6 +414,7 @@ export class LevelingPlanTab extends SimTab {
 				twoHandWeaponTypes: classToEligibleWeaponTypes[playerClass].filter(wt => wt.canUseTwoHand).map(wt => wt.weaponType),
 				rangedWeaponTypes: classToEligibleRangedWeaponTypes[playerClass],
 				canDualWield: dualWieldClasses.includes(playerClass),
+				dualWieldLevel: dualWieldLevels[playerClass] ?? 0,
 			}),
 			faction: raceToFaction[this.player.getRace()],
 			talentShape: LevelingTalentShape.create({
@@ -505,7 +525,7 @@ export class LevelingPlanTab extends SimTab {
 		return JSON.stringify([
 			level,
 			talentsAt(plan, level, this.talents.shape),
-			plan.bonusTalentPoints,
+			bonusTalentPointsAt(level, plan),
 			plan.useSettingsBuffs,
 			rangeAt(plan, level)?.imbue ?? 0,
 			untrainedAt(plan, level),
@@ -529,7 +549,7 @@ export class LevelingPlanTab extends SimTab {
 		const eventID = TypedEvent.nextEventID();
 		TypedEvent.freezeAllAndDo(() => {
 			this.player.setLevel(eventID, level);
-			this.player.setBonusTalentPoints(eventID, level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0);
+			this.player.setBonusTalentPoints(eventID, bonusTalentPointsAt(level, plan));
 			this.player.setTalentsString(eventID, talentsAt(plan, level, this.talents.shape));
 			if (gear) this.player.setGear(eventID, gear);
 			if (rotation) this.player.setAplRotation(eventID, rotation);

@@ -42,6 +42,38 @@ type ShamanEnhLeveling struct {
 	Level int32
 }
 
+// The template as the registry has it, for the level it's asked for.
+type shamanEnhLevelingTemplate struct{}
+
+func init() {
+	RegisterLevelingTemplate("shaman_enh_leveling", shamanEnhLevelingTemplate{}, func(player *proto.Player) bool {
+		return player.GetEnhancementShaman() != nil
+	})
+}
+
+func (shamanEnhLevelingTemplate) Knobs() []Knob { return ShamanEnhLeveling{}.Knobs() }
+
+func (shamanEnhLevelingTemplate) Build(level int32, k Knobs) *proto.APLRotation {
+	return ShamanEnhLeveling{Level: level}.Build(k)
+}
+
+func (shamanEnhLevelingTemplate) Abilities(level int32, hasTalent func(string) bool) []string {
+	return ShamanEnhLeveling{Level: level}.Abilities(hasTalent)
+}
+
+func (shamanEnhLevelingTemplate) NewRank(level int32) bool {
+	return ShamanEnhLeveling{Level: level}.NewRank()
+}
+
+// The imbues in the order we list them.
+func (shamanEnhLevelingTemplate) Imbues() []Imbue {
+	return []Imbue{
+		{"rockbiterWeapon", proto.WeaponImbue_RockbiterWeapon},
+		{"flametongueWeapon", proto.WeaponImbue_FlametongueWeapon},
+		{"windfuryWeapon", proto.WeaponImbue_WindfuryWeapon},
+	}
+}
+
 func (ShamanEnhLeveling) Knobs() []Knob {
 	return []Knob{
 		// Out of combat.

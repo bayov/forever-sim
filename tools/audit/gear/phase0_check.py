@@ -37,6 +37,19 @@ def faction_of(race):
     return 'Alliance' if race in ALLIANCE else 'Horde' if race in HORDE else None
 
 
+# The bench ranks run at 1000 iterations, and their noise is far above 0.1% of scoreRef: about 2 standard errors is
+# 0.5% of scoreRef on tankbench (warrior 17, paladin 14 points) and 1.5% on healbench (about 2 points at 130),
+# as measured in the 2026-11-25 Phase 0 tank and healer round.
+BENCH_NOISE_PCT = {'tank': 0.5, 'heal': 1.5}
+
+
+def noise_of(row, noise):
+    """The noise an open item may sit above the pick: noise DPS, or for a bench row noise * BENCH_NOISE_PCT% of scoreRef."""
+    if row.get('bench'):
+        return noise * row['scoreRef'] * BENCH_NOISE_PCT[row['bench']] / 100
+    return noise
+
+
 def gold_line(row, max_gpd, max_gold_per_pct):
     """The most gold a spec's list may pay per unit it adds: max_gpd per DPS, or for a tank or healer row (bench)
     max_gold_per_pct per 1% of its scoreRef, as bis_phase0.sh's nopick_of has it."""
@@ -56,7 +69,9 @@ def load(p):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--noise', type=float, default=1.0, help='DPS an open item may sit above the pick (default 1.0)')
+    ap.add_argument('--noise', type=float, default=1.0, help='DPS an open item may sit above the pick (default 1.0). A tank or healer row (bench) is scored in '
+                    'points of score, and its 1000-iteration rank is noisier: --noise * 0.5%% of scoreRef on a tank '
+                    '(17 points on the 3454 warrior), --noise * 1.5%% on a healer (about 2 points at 130)')
     ap.add_argument('--max-gpd', type=float, default=float(os.environ.get('MAX_GOLD_PER_DPS', 30)))
     ap.add_argument('--max-gold-per-pct', type=float, default=float(os.environ.get('MAX_GOLD_PER_PCT', 3000)),
                     help="a tank or healer list's line: gold per 1%% of its scoreRef (default 3000)")
@@ -129,7 +144,7 @@ def main():
                 if (r.get('bis') or c.get('avail') in ('infeasible', 'out') or r.get('avail') in ('infeasible', 'out')
                         or gpd(c, spec) > line(spec)):
                     continue
-                if r['loss'] < best - a.noise:
+                if r['loss'] < best - noise_of(row, a.noise):
                     flag(f"{spec} {slot}: open {r['name']} ({r['id']}) sits {best - r['loss']:.2f} above the pick")
         for slot, rows in (lst.get('enchants') or {}).items():
             for r in rows:

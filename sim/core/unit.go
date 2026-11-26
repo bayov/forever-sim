@@ -45,6 +45,9 @@ type Unit struct {
 	// Reset every iteration.
 	dead bool
 
+	// The stun a leveling session's mobs take (Stun), nil when nothing stuns them.
+	stunAura *Aura
+
 	// The players this one heals (Player.heal_assignment), which its rotation's Most Hurt and
 	// Lowest Health pick from (heal_targets.go). Empty is the whole raid.
 	healAssignment []*Unit

@@ -2,6 +2,27 @@
 
 ## Open
 
+### tank_fairness-20261126-1: On Phase 0 gear, Flask of the Titans beats the paladin Max survival preset's Flask of Supreme Power by about 120
+- severity: medium (+108.5 / +131.2 at w 3, 4% of the paladin's scoreRef; the paladin stays third at Max survival)
+- affects: Protection paladin Max survival (tools/tankbench/req/paladin_protection_max_survival.json consumes.flask, its UI preset and the Tanking data)
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: tankbench, 3,000 iterations, six scored bosses, own column, the request against a copy with `"flask": "FlaskOfTheTitans"`, seed 1 / 2: 793.2 -> 901.7, 766.0 -> 897.2 (errors about 16). The flask was re-picked on the synthetic set (tank_fairness-20261111-1, Supreme Power +146 then); the Phase 0 set has 8271 health against the warrior's 10269, so the 1200 health counts for more now. Warden Balanced and Max survival already wear Titans.
+- proposed fix: Titans for paladin Max survival; and since every tank's consumables were tuned on the synthetic sets, re-screen flask, food, elixirs and potion per preset on the Phase 0 sets (paired, 3,000 on two seeds).
+- needs: worker fix
+
+### tank_fairness-20261126-2: Price coverage: many tank and healer picks have no gold price, so the gold line never tests them
+- severity: medium (the gold line, standards 43, is blind on 11 crafted picks (every shield tank list, the bear, resto shaman and holy paladin) and on 5 priced items the lists rank at or above their pick)
+- affects: tank lists (warrior, paladin, bear, Warden, all presets) and the finished healer lists (priest_holy, priest_discipline, paladin_holy, shaman_restoration); druid_restoration pending
+- found: 2026-11-26, phase0-tankheal 3e9748641
+- evidence: every feasible entry of each list's slots checked against tools/rotopt/phase0_content.json (gold, goldPerDps[row key]) and its source note.
+  (a) Crafted picks with no gold at all (no materials or plans price): Evergreen Shield 279262 (all 12 shield-tank lists and both resto shaman rows; plans 279311 have no source), Shifting Cloak 18511 (warrior, paladin, bear and Warden Max survival, Warden Balanced; pattern source known, Knot's cache), Steadfast Libram 279247 (paladin x3), Onyxia Scale Breastplate 15141 (Warden x3), Depleted Thorium Sabatons 279263 (paladin Max threat, Max survival), Heavy Thorium Gauntlets 279264 (paladin Max survival), Lionheart Helm 12640 (warrior Balanced, Max threat; 80 Thorium Bars and a 0.2% plans drop, both priceable), Titanic Leggings 22385 (warrior Max threat), Idol of the Ursine Twins 279251 (bear Max threat, Max survival), Totem of Urgency 279249 (resto shaman), Eternity Pauldrons 279255 (holy paladin). Unpriced crafts ranked above the pick: Warder's Waistguard 250573 (+36.6) and Sentinel's Waistguard 250572 (+15.6) on paladin Max survival, both with known plans.
+  (b) Items with gold but no price for the list that picks or out-ranks with them: Totem of Rage 22395 (246.1g, priced only for enh; picked by all three Warden presets), Dawn Armor 252483 (270.1g; bear Max threat pick, bear Balanced +27.7 above its pick; priced only for bear Max survival), Brigam Girdle 13142 (183.5g; paladin Max survival +48.4), Idol of Brutality 23198 (192.3g; bear Max survival +54.1), Hide of the Wild 18510 (162.4g; the resto shaman Alliance row's pick: faction rows aren't priced). phase0_prices.py gives a spec a number for every item that beats its cheaper slot-mates, so these look like lists that changed after the last price run.
+  (c) Picks with no price and no source note: Legguards of the Chromatic Defier 12903 (Warden Balanced, Max survival), Mourning Handguards 279257 (Warden Max survival), Emberfury Talisman 12929 (priest_holy neck). Spaulders of Containment 287022 and Defias Enforcer's Mask 287019 say "no source" (standards 42, fine).
+  Quest, drop, vendor and Reals items without gold are fine. Mostly below-the-pick entries with no content entry (1,279) aren't counted.
+- proposed fix: (b) re-run `phase0_prices.py --write` on the final tank and healer lists, faction rows included, then the annotation step; (c) add source notes; (a) is the known gap: give crafts with a known recipe their materials price (Shifting Cloak, Lionheart Helm, the Waistguards), and for plans with no source decide whether a pick may be unpriced. Don't invent prices.
+- needs: user ruling (a, plans with no known source); worker fix (b, c)
+
+
 ### tank_fairness-20261125-1: The bear's Balanced preset no longer beats its Max threat preset at the Balanced weight
 - severity: low (1% or less, a tie within two sigma; the bear leads Balanced either way)
 - affects: Feral tank, Balanced preset (tools/tankbench/req/druid_bear_balanced.json, its UI preset and the DPS Report Tanking row)
@@ -9,6 +30,8 @@
 - evidence: tankbench, six scoring bosses, 3,000 iterations, score at w 1: seed 1 Max threat build 3377.7 against Balanced 3341.8 (about ±10 each); seed 2 3327.7 against 3321.0. Before 2f42f4a44 the Balanced build won its weight. That commit tripled Lacerate's threat (10/3, EV-0034 / EV-0037, 248 -> 825 TPS on Magmadar) and raised Primal Bite to 3x, so bear TPS rose 46% (Balanced 1626 -> 2371) and the Balanced build's survival-leaning enchants (1508 vs 1506, 1248665 vs 1885, 2646 vs 1248668) and Spirit of Zanza (vs R.O.I.D.S.) no longer pay at w 1. Same talents in both. Reproduce: `tools/audit/tank_fairness/bench.sh <dir> 3000 1 tools/tankbench/req/druid_bear_{balanced,max_threat}.json` and read the Balanced column.
 - proposed fix: bear worker: re-search the Balanced (and Max threat, Max survival) enchants, Zanza buff and APL under the new threat rules, paired at 10,000 on two seeds. The warrior's presets were tuned before Shield Slam's 2 x block value / 255 threat and Thunder Clap 1x (its TPS fell 50 to 77); still ordered, but worth the same re-search.
 - needs: worker fix
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; bear requests unchanged, all six-boss rows identical to pass 33.
+- pass 34 (2026-11-26, phase0-tankheal 3e9748641): worse on the Phase 0 sets. At w 1 the Max threat build scores 3889.4 against the Balanced build 3696.0 (two-seed mean, 3,000 iterations; seed 1 / 2 about ±10), 5% ahead, outside the error. Raise to medium; the bear notes ran the Balanced search with the no-Roar APL (tank_rotations-20261125-1), so re-search Balanced after that APL settles.
 
 ### tank_fairness-20261124-1: Only the warrior APLs cast Stoneform; Dwarf paladin and Dwarf Warden race rows go without it
 - severity: low (a race-table row, not a preset or the spec order; estimated about +10 Balanced and +40 Max survival on each Dwarf row, 0.5% and 3%)
@@ -19,6 +42,8 @@
 - needs: worker fix
 - pass 32 (2026-11-25, master 0404484fb): not fixed; no paladin or Warden request or APL casts Stoneform (20594).
 - pass 33 (2026-11-25, master 85691655a): not fixed; no paladin or Warden request casts 20594.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; no paladin or Warden request casts 20594.
+- pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed; only warrior_protection_balanced and _max_survival cast 20594.
 
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
@@ -40,6 +65,8 @@
 - pass 29 (2026-11-24, master 566067a39): not fixed; requests still Night Elf / Night Elf / Undead, Warden rows identical.
 - pass 32 (2026-11-25, master 0404484fb): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2600 / 1234 / -2306 (Greater Intellect now overwritten by Arcane Brilliance), still last at every weight.
 - pass 33 (2026-11-25, master 85691655a): not fixed; still Night Elf / Night Elf / Undead. Warden 2606 / 1244 / -2277, last at every weight.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; still Night Elf / Night Elf / Undead, Warden rows identical to pass 33.
+- pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed, and now baked into gear: the Phase 0 Warden lists were searched on Night Elf (Balanced, Max threat) and Undead (Max survival). Warden 2024.5 / 3399.5 / -1400.8 (two-seed means), last at every weight. A race change now needs the lists re-run for that race and faction.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -63,6 +90,7 @@
 - pass 29 (2026-11-24, master 566067a39): not fixed; requests unchanged. The warrior's Max survival fell to 1814.7 ± 12.2 (Unbridled Wrath off Shield Slam and Revenge) against the paladin's 1778.0 ± 15.9, seed 1; the potion (+374 last measured) would reverse it.
 - pass 32 (2026-11-25, master 0404484fb): not fixed; all three requests still Major Mana Potion, no potion action. Max survival warrior 1813.5 against paladin 1778.0 (seed 1); the potion (+374 last measured) would reverse it.
 - pass 33 (2026-11-25, master 85691655a): not fixed; requests unchanged. The paladin now leads Max survival without it (1874.5 against the warrior's 1617.0, seed 1) after the warrior threat batch 2f42f4a44, so it no longer decides a place; still the largest unequal term.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; requests unchanged, rows identical to pass 33.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -103,6 +131,7 @@
 - pass 27 (2026-11-23, master 5518f4873): unchanged (rows identical to pass 26); still waits on the user's calls (a), (b), (c).
 - pass 29 (2026-11-24, master 566067a39): unchanged in kind (Balanced healing needed paladin 243, warrior 342); still waits on the user's calls.
 - pass 33 (2026-11-25, master 85691655a): still true; Balanced healing needed paladin 233 against warrior 341, bear 468, Warden 664. Awaiting the user calls.
+- pass 34 (2026-11-26, master ab3fff7007): unchanged (rows identical to pass 33); awaiting the user calls.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low

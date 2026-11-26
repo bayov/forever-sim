@@ -5,11 +5,18 @@ import (
 )
 
 func (warrior *Warrior) registerSunderArmorSpell() {
-	warrior.SunderArmorAuras = warrior.NewEnemyAuraArray(core.SunderArmorAura)
+	levels := []int32{0, 10, 22, 34, 46, 58}
+	spellIDs := []int32{0, 7386, 7405, 8380, 11596, 11597}
+	rank := warrior.knownRank(levels, spellIDs)
+	if rank == 0 {
+		return
+	}
+	spellID := spellIDs[rank]
+	warrior.SunderArmorAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.SunderArmorAuraOfRank(target, spellID, 90*float64(rank))
+	})
 
-	spellID := int32(11597)
-
-	spell_level := 58
+	spell_level := levels[rank]
 	flatThreat := 2.25 * 2 * float64(spell_level)
 	apThreat := 0.0
 	// Under Forever rank 5 makes 206 threat (client 70753, spell 11597's E_THREAT effect) plus 5%
@@ -17,7 +24,7 @@ func (warrior *Warrior) registerSunderArmorSpell() {
 	// E_THREAT (34) + 0.05 x attack power (spell_overrides.go, 2026-10-07), and they give every
 	// rank that share. The sim gave Classic's 261 flat until 2026-11-03.
 	if warrior.Env.IsForever() {
-		flatThreat, apThreat = 206, 0.05
+		flatThreat, apThreat = []float64{0, 34, 75, 117, 158, 206}[rank], 0.05
 	}
 
 	var canApplySunder bool
