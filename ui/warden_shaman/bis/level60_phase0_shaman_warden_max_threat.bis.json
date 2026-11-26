@@ -63,7 +63,7 @@
         "name": "Black Dragonscale Helm",
         "dps": 3385.15,
         "loss": 35.02,
-        "note": "On AH ~296g · or Leatherworking 300 · pattern on AH ~91g · 39g per point of score"
+        "note": "On AH ~296g · or Leatherworking 300 · pattern on AH ~91g"
       },
       {
         "id": 20134,
@@ -493,7 +493,8 @@
         "id": 22212,
         "name": "Golem Fitted Pauldrons",
         "dps": 3324.27,
-        "loss": 95.89
+        "loss": 95.89,
+        "note": "Phalanx · Blackrock Depths · seen in game"
       },
       {
         "id": 277117,
@@ -771,14 +772,13 @@
         "name": "Savage Gladiator Chain",
         "dps": 3385.92,
         "loss": 34.25,
-        "note": "9g per point of score"
+        "note": "30g per point of score"
       },
       {
         "id": 18530,
         "name": "Ogre Forged Hauberk",
         "dps": 3384.91,
-        "loss": 35.25,
-        "note": "57g per point of score"
+        "loss": 35.25
       },
       {
         "id": 282027,
@@ -1920,7 +1920,9 @@
         "id": 11669,
         "name": "Naglering",
         "dps": 3358.65,
-        "loss": 61.52
+        "loss": 61.52,
+        "avail": "infeasible",
+        "note": "566g per point of score"
       },
       {
         "id": 19510,
@@ -1949,7 +1951,7 @@
         "name": "Myrmidon's Signet",
         "dps": 3355.75,
         "loss": 64.42,
-        "note": "Random world drop · 8g per point of score"
+        "note": "Random world drop"
       },
       {
         "id": 280015,
@@ -2222,7 +2224,7 @@
         "with": 279262,
         "bis": true,
         "enchant": 1248805,
-        "note": "Ras Frostwhisper (Scholo) · 1g per point of score"
+        "note": "Ras Frostwhisper (Scholo) · 0g per point of score"
       },
       {
         "id": 11684,
@@ -2264,7 +2266,8 @@
         "name": "Ripsaw",
         "dps": 2727.21,
         "loss": 692.96,
-        "with": 279262
+        "with": 279262,
+        "note": "17g per point of score"
       },
       {
         "id": 276419,
@@ -2281,7 +2284,7 @@
         "dps": 2719.45,
         "loss": 700.72,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 1g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 272091,
@@ -2314,7 +2317,7 @@
         "dps": 2708.87,
         "loss": 711.3,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 1g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 15240,
@@ -2323,7 +2326,7 @@
         "dps": 2708.84,
         "loss": 711.33,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 1g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 280068,
@@ -2347,7 +2350,7 @@
         "dps": 2703.61,
         "loss": 716.56,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 1g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 15239,
@@ -2439,7 +2442,7 @@
         "dps": 3372.62,
         "loss": 47.54,
         "with": 13952,
-        "note": "Random world drop · epic BoE, AH price not checked · 152g per point of score"
+        "note": "Random world drop · epic BoE, AH price not checked · 56g per point of score"
       },
       {
         "id": 19321,
@@ -2456,7 +2459,7 @@
         "dps": 3366.85,
         "loss": 53.31,
         "with": 13952,
-        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 13g per point of score"
+        "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 44g per point of score"
       },
       {
         "id": 12602,
@@ -2472,7 +2475,7 @@
         "dps": 3363.99,
         "loss": 56.17,
         "with": 13952,
-        "note": "Drop: Gordok Tribute, Dire Maul · 18g per point of score"
+        "note": "Drop: Gordok Tribute, Dire Maul · 4g per point of score"
       },
       {
         "id": 16998,
@@ -2505,7 +2508,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 3355.29,
         "loss": 64.87,
-        "with": 13952
+        "with": 13952,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 15687,

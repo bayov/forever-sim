@@ -210,7 +210,7 @@
         "name": "Talisman of Evasion",
         "dps": 1223.89,
         "loss": -5.22,
-        "note": "War Master Voone · Upper Blackrock Spire"
+        "note": "War Master Voone · Upper Blackrock Spire · 37g per point of score"
       },
       {
         "id": 19491,
@@ -2006,9 +2006,7 @@
         "id": 13098,
         "name": "Painweaver Band",
         "dps": 1077.78,
-        "loss": 140.89,
-        "avail": "infeasible",
-        "note": "2110g per DPS"
+        "loss": 140.89
       }
     ],
     "trinket": [
@@ -2496,7 +2494,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 1093.62,
         "loss": 125.05,
-        "with": 13952
+        "with": 13952,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 1168,

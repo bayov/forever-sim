@@ -295,7 +295,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 2945.76,
-        "loss": 19.56
+        "loss": 19.56,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 18381,
@@ -973,7 +974,7 @@
         "name": "Frozen Steel Vambraces",
         "dps": 2927.41,
         "loss": 37.91,
-        "avail": "doubtful",
+        "avail": "out",
         "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"
       },
       {
@@ -1229,7 +1230,8 @@
         "id": 279257,
         "name": "Mourning Handguards",
         "dps": 2881.36,
-        "loss": 83.96
+        "loss": 83.96,
+        "note": "Leatherworking 300 · pattern (279306) has no known source · reagents not in data"
       },
       {
         "id": 272719,
@@ -1366,7 +1368,8 @@
         "id": 250572,
         "name": "Sentinel's Waistguard",
         "dps": 2859.58,
-        "loss": 105.74
+        "loss": 105.74,
+        "note": "Blacksmithing 250 · Forever craft · plans (251424) from a Merchant's Favor vendor (90, Honored), like Warder's Waistguard · reagents not in data"
       },
       {
         "id": 14620,
@@ -1595,7 +1598,8 @@
         "id": 12903,
         "name": "Legguards of the Chromatic Defier",
         "dps": 2828.4,
-        "loss": 136.92
+        "loss": 136.92,
+        "note": "Quest: Legplates of the Chromatic Defier (5167, a choice with Legplates 12945; the reward is this item per forever_wowhead_items.json) · materials not in our data · Forever's quest not checked"
       },
       {
         "id": 252606,
@@ -1689,9 +1693,7 @@
         "id": 14616,
         "name": "Bloodmail Boots",
         "dps": 2884.63,
-        "loss": 80.69,
-        "avail": "infeasible",
-        "note": "408g per DPS"
+        "loss": 80.69
       },
       {
         "id": 16734,
@@ -1930,14 +1932,15 @@
         "id": 280015,
         "name": "Venomvessel Ring",
         "dps": 2914.63,
-        "loss": 50.69
+        "loss": 50.69,
+        "note": "70g per point of score"
       },
       {
         "id": 2246,
         "name": "Myrmidon's Signet",
         "dps": 2913.72,
         "loss": 51.6,
-        "note": "Random world drop · 25g per point of score"
+        "note": "Random world drop · 28g per point of score"
       },
       {
         "id": 22433,
@@ -2280,7 +2283,8 @@
         "dps": 2770.91,
         "loss": 194.41,
         "unsourced": true,
-        "with": 18168
+        "with": 18168,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 13952,
@@ -2313,7 +2317,8 @@
         "dps": 2762.99,
         "loss": 202.33,
         "unsourced": true,
-        "with": 18168
+        "with": 18168,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 18498,
@@ -2370,7 +2375,8 @@
         "dps": 2744.92,
         "loss": 220.4,
         "unsourced": true,
-        "with": 18168
+        "with": 18168,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15221,
@@ -2379,7 +2385,8 @@
         "dps": 2741.46,
         "loss": 223.86,
         "unsourced": true,
-        "with": 18168
+        "with": 18168,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15229,
@@ -2594,7 +2601,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 2844.64,
         "loss": 120.68,
-        "with": 2243
+        "with": 2243,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 15989,

@@ -202,7 +202,7 @@
         "name": "Talisman of Evasion",
         "dps": -1432.79,
         "loss": -13.99,
-        "note": "War Master Voone · Upper Blackrock Spire"
+        "note": "War Master Voone · Upper Blackrock Spire · 14g per point of score"
       },
       {
         "id": 19491,
@@ -226,7 +226,7 @@
         "name": "Evil Eye Pendant",
         "dps": -1454.38,
         "loss": 7.6,
-        "note": "Drop: Immol'thar, Dire Maul · 14g per point of score"
+        "note": "Drop: Immol'thar, Dire Maul"
       },
       {
         "id": 19534,
@@ -264,7 +264,7 @@
         "name": "Verek's Collar",
         "dps": -1475.13,
         "loss": 28.35,
-        "note": "Drop: Verek, Blackrock Depths · 81g per point of score"
+        "note": "Drop: Verek, Blackrock Depths"
       },
       {
         "id": 12046,
@@ -400,7 +400,7 @@
         "name": "Beaststalker's Mantle",
         "dps": -1442.86,
         "loss": -3.92,
-        "note": "Overlord Wyrmthalak · Lower Blackrock Spire · Beaststalker's set"
+        "note": "Overlord Wyrmthalak · Lower Blackrock Spire · Beaststalker's set · 63g per point of score"
       },
       {
         "id": 271956,
@@ -422,7 +422,8 @@
         "id": 22212,
         "name": "Golem Fitted Pauldrons",
         "dps": -1464.38,
-        "loss": 17.6
+        "loss": 17.6,
+        "note": "Phalanx · Blackrock Depths · seen in game"
       },
       {
         "id": 10274,
@@ -760,7 +761,8 @@
         "id": 11726,
         "name": "Savage Gladiator Chain",
         "dps": -1528.51,
-        "loss": 81.73
+        "loss": 81.73,
+        "note": "15g per point of score"
       },
       {
         "id": 282027,
@@ -773,15 +775,14 @@
         "id": 18530,
         "name": "Ogre Forged Hauberk",
         "dps": -1539.25,
-        "loss": 92.47,
-        "note": "211g per point of score"
+        "loss": 92.47
       },
       {
         "id": 16674,
         "name": "Beaststalker's Tunic",
         "dps": -1556.44,
         "loss": 109.66,
-        "note": "General Drakkisath · Upper Blackrock Spire · Dungeon Set 1 (Beaststalker) chest · 7g per point of score"
+        "note": "General Drakkisath · Upper Blackrock Spire · Dungeon Set 1 (Beaststalker) chest"
       },
       {
         "id": 13090,
@@ -810,8 +811,7 @@
         "suffix": 638,
         "name": "Masterwork Breastplate of the Monkey",
         "dps": -1570.01,
-        "loss": 123.23,
-        "note": "1g per point of score"
+        "loss": 123.23
       },
       {
         "id": 15680,
@@ -840,8 +840,7 @@
         "suffix": 990594,
         "name": "Masterwork Breastplate of the Beast",
         "dps": -1595.4,
-        "loss": 148.62,
-        "note": "1g per point of score"
+        "loss": 148.62
       },
       {
         "id": 15680,
@@ -936,14 +935,14 @@
         "name": "Pyremail Wristguards of the Monkey",
         "dps": -1402.04,
         "loss": -44.74,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 3g per point of score"
       },
       {
         "id": 11679,
         "name": "Rubicund Armguards",
         "dps": -1430.7,
         "loss": -16.08,
-        "note": "Eviscerator (Blackrock Depths)"
+        "note": "Eviscerator (Blackrock Depths) · 13g per point of score"
       },
       {
         "id": 10265,
@@ -973,7 +972,7 @@
         "name": "Beaststalker's Bindings",
         "dps": -1444.26,
         "loss": -2.52,
-        "note": "Drop, boss not in our data · Beaststalker's set · 0g per point of score"
+        "note": "Drop, boss not in our data · Beaststalker's set"
       },
       {
         "id": 18296,
@@ -990,7 +989,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1248665,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 3g per point of score"
       },
       {
         "id": 19587,
@@ -1006,7 +1005,7 @@
         "name": "Pyremail Wristguards of Agility",
         "dps": -1451.65,
         "loss": 4.87,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 3g per point of score"
       },
       {
         "id": 13135,
@@ -1021,7 +1020,7 @@
         "name": "Pyremail Wristguards of the Beast",
         "dps": -1460.68,
         "loss": 13.9,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 3g per point of score"
       },
       {
         "id": 11765,
@@ -1029,7 +1028,7 @@
         "name": "Pyremail Wristguards of Stamina",
         "dps": -1467.05,
         "loss": 20.27,
-        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 22g per point of score"
+        "note": "Lord Incendius (Blackrock Depths) · the of the Monkey roll is a random suffix · 3g per point of score"
       },
       {
         "id": 18394,
@@ -1297,7 +1296,7 @@
         "dps": -1446.78,
         "loss": 0,
         "bis": true,
-        "note": "Blackmaw Behemoth · Blackmaw Hold (Ashenvale) · seen in game Nov 24 · 2g per point of score"
+        "note": "Blackmaw Behemoth · Blackmaw Hold (Ashenvale) · seen in game Nov 24 · 1g per point of score"
       },
       {
         "id": 22232,
@@ -1360,7 +1359,7 @@
         "name": "Masterwork Girdle of the Monkey",
         "dps": -1555.75,
         "loss": 108.97,
-        "note": "Random world drop · 0g per point of score"
+        "note": "Random world drop"
       },
       {
         "id": 19088,
@@ -1374,7 +1373,7 @@
         "name": "Mercurial Girdle of the Monkey",
         "dps": -1556.98,
         "loss": 110.2,
-        "note": "Random world drop · 0g per point of score"
+        "note": "Random world drop"
       },
       {
         "id": 15683,
@@ -1390,7 +1389,7 @@
         "name": "Masterwork Girdle of the Beast",
         "dps": -1563.27,
         "loss": 116.49,
-        "note": "Random world drop · 0g per point of score"
+        "note": "Random world drop"
       },
       {
         "id": 10154,
@@ -1398,7 +1397,7 @@
         "name": "Mercurial Girdle of the Beast",
         "dps": -1564.44,
         "loss": 117.66,
-        "note": "Random world drop · 0g per point of score"
+        "note": "Random world drop"
       },
       {
         "id": 15673,
@@ -1659,7 +1658,8 @@
         "id": 13967,
         "name": "Windreaver Greaves",
         "dps": -1354.45,
-        "loss": -92.34
+        "loss": -92.34,
+        "note": "3g per point of score"
       },
       {
         "id": 14616,
@@ -1672,7 +1672,8 @@
         "name": "Octoclaw Chain Boots",
         "dps": -1394.33,
         "loss": -52.45,
-        "note": "Venomridge · Forever rare, zone not in our data · looted Nov 8"
+        "note": "Venomridge · Forever rare, zone not in our data · looted Nov 8 · 308g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 20051,
@@ -1696,21 +1697,21 @@
         "name": "Timmy's Galoshes",
         "dps": -1425.73,
         "loss": -21.05,
-        "note": "Timmy the Cruel · Stratholme · looted Nov 13"
+        "note": "Timmy the Cruel · Stratholme · looted Nov 13 · 77g per point of score"
       },
       {
         "id": 18716,
         "name": "Ash Covered Boots",
         "dps": -1427.77,
         "loss": -19.02,
-        "note": "Drop: Archivist Galford, Stratholme"
+        "note": "Drop: Archivist Galford, Stratholme · 1g per point of score"
       },
       {
         "id": 13284,
         "name": "Swiftdart Battleboots",
         "dps": -1428.03,
         "loss": -18.75,
-        "note": "Spirestone Battle Lord · Lower Blackrock Spire · looted Nov 12 · 11g per point of score"
+        "note": "Spirestone Battle Lord · Lower Blackrock Spire · looted Nov 12 · 36g per point of score"
       },
       {
         "id": 227023,
@@ -1779,7 +1780,7 @@
         "name": "Savage Gladiator Greaves",
         "dps": -1441.28,
         "loss": -5.51,
-        "note": "Anub'shiah · Blackrock Depths · 4g per point of score"
+        "note": "Anub'shiah · Blackrock Depths"
       },
       {
         "id": 14641,
@@ -1794,14 +1795,14 @@
         "loss": 0,
         "bis": true,
         "enchant": 1843,
-        "note": "Goraluk Anvilcrack · Blackrock Spire · seen in game Nov 24 · 2g per point of score"
+        "note": "Goraluk Anvilcrack · Blackrock Spire · seen in game Nov 24 · 1g per point of score"
       },
       {
         "id": 16675,
         "name": "Beaststalker's Boots",
         "dps": -1461.95,
         "loss": 15.17,
-        "note": "Nerub'enkan · Stratholme · Beaststalker's set · 3g per point of score"
+        "note": "Nerub'enkan · Stratholme · Beaststalker's set"
       },
       {
         "id": 227015,
@@ -1854,13 +1855,14 @@
         "name": "Drakeclaw Band of Eluding",
         "dps": -1420.53,
         "loss": -26.25,
-        "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple"
+        "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple · 42g per point of score"
       },
       {
         "id": 276396,
         "name": "Ezra's Seal of Authenticity",
         "dps": -1428.59,
-        "loss": -18.19
+        "loss": -18.19,
+        "note": "87g per point of score"
       },
       {
         "id": 12017,
@@ -1911,7 +1913,7 @@
         "name": "Myrmidon's Signet",
         "dps": -1463.31,
         "loss": 16.53,
-        "note": "Random world drop · 6g per point of score"
+        "note": "Random world drop"
       },
       {
         "id": 19325,
@@ -2314,7 +2316,7 @@
         "dps": -1899.75,
         "loss": 452.97,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 811,
@@ -2339,7 +2341,7 @@
         "dps": -1910.89,
         "loss": 464.11,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 15240,
@@ -2348,7 +2350,7 @@
         "dps": -1914.08,
         "loss": 467.3,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 15240,
@@ -2357,7 +2359,7 @@
         "dps": -1916.42,
         "loss": 469.64,
         "with": 279262,
-        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21 · 0g per point of score"
+        "note": "World drop (of the Sorcerer), no NPC in our data · revealed in game Oct 21"
       },
       {
         "id": 276419,
@@ -2441,7 +2443,7 @@
         "dps": -1532.83,
         "loss": 86.05,
         "with": 13952,
-        "note": "General Drakkisath · Upper Blackrock Spire · 7g per point of score"
+        "note": "General Drakkisath · Upper Blackrock Spire · 3g per point of score"
       },
       {
         "id": 19321,

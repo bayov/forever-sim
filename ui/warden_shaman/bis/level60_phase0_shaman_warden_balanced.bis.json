@@ -24,7 +24,7 @@
         "name": "Helm of Narv",
         "dps": 2028.92,
         "loss": -6.33,
-        "note": "Random world drop · 2g per point of score"
+        "note": "Random world drop · 4g per point of score"
       },
       {
         "id": 227021,
@@ -478,7 +478,8 @@
         "id": 22212,
         "name": "Golem Fitted Pauldrons",
         "dps": 1954.2,
-        "loss": 68.39
+        "loss": 68.39,
+        "note": "Phalanx · Blackrock Depths · seen in game"
       },
       {
         "id": 16679,
@@ -768,7 +769,8 @@
         "id": 11726,
         "name": "Savage Gladiator Chain",
         "dps": 1974.55,
-        "loss": 48.03
+        "loss": 48.03,
+        "note": "5g per point of score"
       },
       {
         "id": 18530,
@@ -1587,7 +1589,8 @@
         "id": 12964,
         "name": "Tristam Legguards",
         "dps": 1959.1,
-        "loss": 63.48
+        "loss": 63.48,
+        "note": "The Beast · Upper Blackrock Spire"
       },
       {
         "id": 252606,
@@ -1660,7 +1663,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1887,
-        "note": "7g per point of score"
+        "note": "3g per point of score"
       },
       {
         "id": 14616,
@@ -1673,14 +1676,14 @@
         "name": "Ash Covered Boots",
         "dps": 2005.02,
         "loss": 17.56,
-        "note": "Drop: Archivist Galford, Stratholme"
+        "note": "Drop: Archivist Galford, Stratholme · 6g per point of score"
       },
       {
         "id": 13402,
         "name": "Timmy's Galoshes",
         "dps": 2001.25,
         "loss": 21.34,
-        "note": "Timmy the Cruel · Stratholme · looted Nov 13"
+        "note": "Timmy the Cruel · Stratholme · looted Nov 13 · 15g per point of score"
       },
       {
         "id": 21532,
@@ -1695,14 +1698,13 @@
         "name": "Swiftdart Battleboots",
         "dps": 1993.06,
         "loss": 29.53,
-        "note": "Spirestone Battle Lord · Lower Blackrock Spire · looted Nov 12 · 6g per point of score"
+        "note": "Spirestone Battle Lord · Lower Blackrock Spire · looted Nov 12 · 14g per point of score"
       },
       {
         "id": 22240,
         "name": "Greaves of Withering Despair",
         "dps": 1992.91,
-        "loss": 29.67,
-        "note": "3g per point of score"
+        "loss": 29.67
       },
       {
         "id": 16675,
@@ -1930,7 +1932,7 @@
         "name": "Myrmidon's Signet",
         "dps": 1968.23,
         "loss": 54.35,
-        "note": "Random world drop"
+        "note": "Random world drop · 36g per point of score"
       },
       {
         "id": 19510,
@@ -1968,7 +1970,7 @@
         "name": "Drakeclaw Band of Eluding",
         "dps": 1963.52,
         "loss": 59.06,
-        "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple · 57g per point of score"
+        "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple"
       },
       {
         "id": 10795,
@@ -1976,7 +1978,7 @@
         "name": "Drakeclaw Band of the Monkey",
         "dps": 1961.03,
         "loss": 61.55,
-        "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple · 57g per point of score"
+        "note": "Drop: Dreamscythe, Weaver, Hazzas and Morphaz, Sunken Temple"
       },
       {
         "id": 22681,
@@ -2240,7 +2242,7 @@
         "with": 279262,
         "bis": true,
         "enchant": 1248805,
-        "note": "Ras Frostwhisper (Scholo) · 1g per point of score"
+        "note": "Ras Frostwhisper (Scholo) · 0g per point of score"
       },
       {
         "id": 11684,
@@ -2466,7 +2468,7 @@
         "dps": 1942.05,
         "loss": 80.53,
         "with": 13952,
-        "note": "General Drakkisath · Upper Blackrock Spire · 5g per point of score"
+        "note": "General Drakkisath · Upper Blackrock Spire · 10g per point of score"
       },
       {
         "id": 1168,
@@ -2520,7 +2522,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 1915.38,
         "loss": 107.2,
-        "with": 13952
+        "with": 13952,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 15687,
@@ -2624,7 +2628,7 @@
         "dps": 1897.7,
         "loss": 124.88,
         "with": 13952,
-        "note": "Drop: Gordok Tribute, Dire Maul · 3g per point of score"
+        "note": "Drop: Gordok Tribute, Dire Maul"
       },
       {
         "id": 10835,

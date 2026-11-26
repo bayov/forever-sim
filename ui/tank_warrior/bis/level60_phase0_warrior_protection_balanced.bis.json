@@ -1782,9 +1782,7 @@
         "id": 14616,
         "name": "Bloodmail Boots",
         "dps": 3231.04,
-        "loss": 129.5,
-        "avail": "infeasible",
-        "note": "408g per DPS"
+        "loss": 129.5
       },
       {
         "id": 14978,
@@ -1987,9 +1985,7 @@
         "id": 13098,
         "name": "Painweaver Band",
         "dps": 3257.92,
-        "loss": 102.62,
-        "avail": "infeasible",
-        "note": "2110g per DPS"
+        "loss": 102.62
       },
       {
         "id": 275982,
@@ -2019,9 +2015,7 @@
         "id": 22433,
         "name": "Don Mauricio's Band of Domination",
         "dps": 3250.62,
-        "loss": 109.92,
-        "avail": "infeasible",
-        "note": "731g per DPS"
+        "loss": 109.92
       },
       {
         "id": 275973,
@@ -2522,7 +2516,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 3258.54,
         "loss": 102,
-        "with": 13952
+        "with": 13952,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 1168,

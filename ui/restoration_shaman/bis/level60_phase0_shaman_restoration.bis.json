@@ -49,7 +49,8 @@
         "id": 252561,
         "name": "Living Crown",
         "dps": 127.42,
-        "loss": 0.2
+        "loss": 0.2,
+        "note": "628g per point of score"
       },
       {
         "id": 227021,
@@ -79,7 +80,8 @@
         "id": 18490,
         "name": "Insightful Hood",
         "dps": 127.14,
-        "loss": 0.48
+        "loss": 0.48,
+        "note": "707g per point of score"
       },
       {
         "id": 260212,
@@ -238,7 +240,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 127.21,
-        "loss": 0.42
+        "loss": 0.42,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 22657,
@@ -590,7 +593,8 @@
         "id": 18510,
         "name": "Hide of the Wild",
         "dps": 127.43,
-        "loss": 0.2
+        "loss": 0.2,
+        "note": "301g per point of score"
       },
       {
         "id": 272063,
@@ -755,7 +759,7 @@
         "name": "Robes of the Exalted",
         "dps": 127.39,
         "loss": 0.24,
-        "note": "Drop: Baron Rivendare, Stratholme"
+        "note": "Drop: Baron Rivendare, Stratholme · 131g per point of score"
       },
       {
         "id": 227016,
@@ -769,7 +773,8 @@
         "id": 22409,
         "name": "Tunic of the Crescent Moon",
         "dps": 127.13,
-        "loss": 0.5
+        "loss": 0.5,
+        "note": "629g per point of score"
       },
       {
         "id": 227004,
@@ -804,7 +809,8 @@
         "suffix": 990590,
         "name": "Masterwork Breastplate of the Physician",
         "dps": 126.87,
-        "loss": 0.76
+        "loss": 0.76,
+        "note": "74g per point of score"
       },
       {
         "id": 15680,
@@ -1108,7 +1114,8 @@
         "name": "Mooncloth Gloves",
         "dps": 127.24,
         "loss": 0.39,
-        "note": "Tailoring 280 · pattern from Knot Thimblejack's Cache (Dire Maul) 13% · BoE · 12 Runecloth bolts · 6 Mooncloth · 2 Golden Pearl · 2 Rune Thread"
+        "note": "Tailoring 280 · pattern from Knot Thimblejack's Cache (Dire Maul) 13% · BoE · 12 Runecloth bolts · 6 Mooncloth · 2 Golden Pearl · 2 Rune Thread · 2292g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 18309,
@@ -1149,7 +1156,8 @@
         "id": 18527,
         "name": "Harmonious Gauntlets",
         "dps": 126.95,
-        "loss": 0.68
+        "loss": 0.68,
+        "note": "King Gordok · Dire Maul"
       },
       {
         "id": 12554,
@@ -1444,7 +1452,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1254966,
-        "note": "On AH ~121g · or Leatherworking 300 · pattern on AH ~16g"
+        "note": "On AH ~121g · or Leatherworking 300 · pattern on AH ~16g · 1357g per point of score"
       },
       {
         "id": 12945,
@@ -1918,8 +1926,7 @@
         "id": 22433,
         "name": "Don Mauricio's Band of Domination",
         "dps": 127.22,
-        "loss": 0.41,
-        "note": "731g per DPS"
+        "loss": 0.41
       },
       {
         "id": 275973,
@@ -2198,14 +2205,17 @@
         "dps": 127.66,
         "loss": -0.03,
         "with": 279262,
-        "note": "Balnazzar · Stratholme"
+        "note": "Balnazzar · Stratholme · 6288g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 17710,
         "name": "Charstone Dirk",
         "dps": 127.63,
         "loss": -0.01,
-        "with": 279262
+        "with": 279262,
+        "avail": "infeasible",
+        "note": "Princess Theradras · Maraudon · 22346g per point of score"
       },
       {
         "id": 276404,
@@ -2420,7 +2430,7 @@
         "dps": 127.36,
         "loss": 0.27,
         "with": 276404,
-        "note": "King Gordok · Dire Maul North"
+        "note": "King Gordok · Dire Maul North · 591g per point of score"
       },
       {
         "id": 19312,
@@ -2616,7 +2626,8 @@
         "name": "Totem of Tides",
         "dps": 126.75,
         "loss": 0.88,
-        "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 4000g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 272431,

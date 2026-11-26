@@ -26,7 +26,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 2543,
-        "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known)"
+        "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known) · 29g per point of score"
       },
       {
         "id": 279253,
@@ -145,8 +145,7 @@
         "id": 13404,
         "name": "Mask of the Unforgiven",
         "dps": 3362.81,
-        "loss": 135.65,
-        "note": "58g per point of score"
+        "loss": 135.65
       },
       {
         "id": 284086,
@@ -344,7 +343,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 3414.07,
-        "loss": 84.39
+        "loss": 84.39,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 11755,
@@ -404,7 +404,7 @@
         "dps": 3498.46,
         "loss": 0,
         "bis": true,
-        "note": "Pyroguard Emberseer · Blackrock Spire · 15g per point of score"
+        "note": "Pyroguard Emberseer · Blackrock Spire · 29g per point of score"
       },
       {
         "id": 20175,
@@ -761,14 +761,14 @@
         "loss": 0,
         "bis": true,
         "enchant": 1891,
-        "note": "On AH ~350g · or Leatherworking craft"
+        "note": "On AH ~350g · or Leatherworking craft · 1g per point of score"
       },
       {
         "id": 252484,
         "name": "Timbermaw Tunic",
         "dps": 3444.49,
         "loss": 53.97,
-        "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 2g per point of score"
+        "note": "On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 1g per point of score"
       },
       {
         "id": 12757,
@@ -803,7 +803,8 @@
         "id": 280016,
         "name": "Spiderchitin Wrap",
         "dps": 3354.42,
-        "loss": 144.04
+        "loss": 144.04,
+        "note": "5g per point of score"
       },
       {
         "id": 13378,
@@ -817,7 +818,7 @@
         "name": "Defias Enforcer's Chest",
         "dps": 3332.31,
         "loss": 166.15,
-        "note": "On AH ~43g · 3g per point of score"
+        "note": "On AH ~43g · 4g per point of score"
       },
       {
         "id": 12603,
@@ -955,7 +956,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1885,
-        "note": "The Beast · Blackrock Spire · 6g per point of score"
+        "note": "The Beast · Blackrock Spire · 8g per point of score"
       },
       {
         "id": 22668,
@@ -978,7 +979,8 @@
         "name": "Bracers of the Eclipse",
         "dps": 3473.64,
         "loss": 24.82,
-        "note": "Prince Tortheldrin (Dire Maul)"
+        "note": "Prince Tortheldrin (Dire Maul) · 548g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 226796,
@@ -1482,7 +1484,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1506,
-        "note": "On AH ~56g · or Leatherworking 290 · pattern on AH ~22g · 1g per point of score"
+        "note": "On AH ~56g · or Leatherworking 290 · pattern on AH ~22g · 0g per point of score"
       },
       {
         "id": 22749,
@@ -1875,7 +1877,7 @@
         "name": "Myrmidon's Signet",
         "dps": 3389.7,
         "loss": 108.76,
-        "note": "Random world drop"
+        "note": "Random world drop · 4g per point of score"
       },
       {
         "id": 19514,
@@ -2005,8 +2007,7 @@
         "id": 17713,
         "name": "Blackstone Ring",
         "dps": 3328.55,
-        "loss": 169.91,
-        "note": "7g per point of score"
+        "loss": 169.91
       },
       {
         "id": 18500,
@@ -2225,7 +2226,8 @@
         "dps": 3498.46,
         "loss": 0,
         "bis": true,
-        "enchant": 1248668
+        "enchant": 1248668,
+        "note": "4g per point of score"
       },
       {
         "id": 18420,
@@ -2246,7 +2248,7 @@
         "name": "Manual Crowd Pummeler",
         "dps": 3436.5,
         "loss": 61.96,
-        "note": "Crowd Pummeler 9-60, Gnomeregan · 3 charges that never come back · one 30s haste per 180s fight (3 min cooldown) · 4g per point of score"
+        "note": "Crowd Pummeler 9-60, Gnomeregan · 3 charges that never come back · one 30s haste per 180s fight (3 min cooldown)"
       },
       {
         "id": 18531,
@@ -2621,7 +2623,7 @@
         "name": "Idol of Brutality",
         "dps": 3512.01,
         "loss": -13.55,
-        "note": "Magistrate Barthilas · Stratholme · 15g per point of score"
+        "note": "Magistrate Barthilas · Stratholme · 11g per point of score"
       },
       {
         "id": 279251,

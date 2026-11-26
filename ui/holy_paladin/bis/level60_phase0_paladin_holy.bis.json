@@ -49,7 +49,8 @@
         "id": 254137,
         "name": "Earthenweave Crown",
         "dps": 123.18,
-        "loss": 0.74
+        "loss": 0.74,
+        "note": "Tailoring 260 · pattern 1.64% drop from Searing Ghoul (Western Plaguelands), one drop sample only · 41g per point of score"
       },
       {
         "id": 252561,
@@ -69,7 +70,8 @@
         "id": 12633,
         "name": "Whitesoul Helm",
         "dps": 123.06,
-        "loss": 0.85
+        "loss": 0.85,
+        "note": "44g per point of score"
       },
       {
         "id": 276434,
@@ -108,7 +110,8 @@
         "id": 16693,
         "name": "Devout Crown",
         "dps": 122.23,
-        "loss": 1.68
+        "loss": 1.68,
+        "note": "Drop: Darkmaster Gandling, Scholomance · Vestments of the Devout"
       },
       {
         "id": 12636,
@@ -236,7 +239,8 @@
         "id": 12929,
         "name": "Emberfury Talisman",
         "dps": 123.87,
-        "loss": 0.05
+        "loss": 0.05,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 15856,
@@ -348,7 +352,8 @@
         "id": 13960,
         "name": "Heart of the Fiend",
         "dps": 123.29,
-        "loss": 0.62
+        "loss": 0.62,
+        "note": "Drop: Kirtonos the Herald, Scholomance"
       },
       {
         "id": 19426,
@@ -410,7 +415,8 @@
         "id": 15061,
         "name": "Living Shoulders",
         "dps": 123.52,
-        "loss": 0.39
+        "loss": 0.39,
+        "note": "Leatherworking 245 · pattern 1g40s from Pratt McGrubben and Jangdor Swiftstrider (Feralas) · 12 Rugged Leather, 4 Living Essence, Rune Thread · 84g per point of score"
       },
       {
         "id": 271957,
@@ -423,13 +429,16 @@
         "id": 14139,
         "name": "Mooncloth Shoulders",
         "dps": 123.32,
-        "loss": 0.59
+        "loss": 0.59,
+        "avail": "doubtful",
+        "note": "Tailoring 275 · pattern (14507) drops mainly from world bosses and raids, 1.19% from the Large Mithril Bound Chests (Blackrock Spire, Dire Maul), 0.09% from Blazing Fireguard (Blackrock Depths) · 5 Mooncloth, 5 Runecloth bolts, Rune Thread"
       },
       {
         "id": 14548,
         "name": "Royal Cap Spaulders",
         "dps": 123.13,
-        "loss": 0.78
+        "loss": 0.78,
+        "note": "Drop: Jandice Barov, Scholomance"
       },
       {
         "id": 22234,
@@ -453,7 +462,8 @@
         "id": 22405,
         "name": "Mantle of the Scarlet Crusade",
         "dps": 122.65,
-        "loss": 1.26
+        "loss": 1.26,
+        "note": "Cannon Master Willey · Stratholme"
       },
       {
         "id": 226979,
@@ -583,7 +593,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1888,
-        "note": "Tailoring 235, pattern from Overmaster Pyron, Searing Gorge"
+        "note": "Tailoring 235, pattern from Overmaster Pyron, Searing Gorge · 10g per point of score"
       },
       {
         "id": 18510,
@@ -602,13 +612,15 @@
         "id": 19530,
         "name": "Caretaker's Cape",
         "dps": 122.49,
-        "loss": 1.42
+        "loss": 1.42,
+        "note": "Silverwing Sentinels Honored (Illiyana Moonblaze, Ashenvale), Alliance only"
       },
       {
         "id": 19531,
         "name": "Caretaker's Cape",
         "dps": 122.19,
-        "loss": 1.72
+        "loss": 1.72,
+        "note": "Silverwing Sentinels Honored (Illiyana Moonblaze, Ashenvale), Alliance only"
       },
       {
         "id": 11623,
@@ -689,7 +701,8 @@
         "id": 276072,
         "name": "Soulwoven Drape",
         "dps": 121.73,
-        "loss": 2.19
+        "loss": 2.19,
+        "note": "Vectus · Scholomance"
       },
       {
         "id": 272411,
@@ -771,7 +784,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1891,
-        "note": "Drop: Vitrix (AtlasLoot) · Forever rare, zone not in our data · seen in game Nov 8"
+        "note": "Drop: Vitrix (AtlasLoot) · Forever rare, zone not in our data · seen in game Nov 8 · 97g per point of score"
       },
       {
         "id": 280013,
@@ -785,19 +798,22 @@
         "id": 276399,
         "name": "Plate of the Scarlet Bastion",
         "dps": 123.41,
-        "loss": 0.51
+        "loss": 0.51,
+        "note": "Drop: Malor the Zealous, Stratholme"
       },
       {
         "id": 13346,
         "name": "Robes of the Exalted",
         "dps": 123.12,
-        "loss": 0.79
+        "loss": 0.79,
+        "note": "Drop: Baron Rivendare, Stratholme"
       },
       {
         "id": 250601,
         "name": "Breastplate of Salvation",
         "dps": 123.05,
-        "loss": 0.86
+        "loss": 0.86,
+        "note": "Blacksmithing 300 · Forever craft · plans (251453) 4.37% from Legashi Summoner (Blackmaw Hold) · reagents not in data"
       },
       {
         "id": 254121,
@@ -949,7 +965,8 @@
         "dps": 123.91,
         "loss": 0,
         "bis": true,
-        "enchant": 2566
+        "enchant": 2566,
+        "note": "Drop: King Gordok, Dire Maul · 210g per point of score"
       },
       {
         "id": 19595,
@@ -963,7 +980,8 @@
         "id": 18459,
         "name": "Gallant's Wristguards",
         "dps": 123.53,
-        "loss": 0.38
+        "loss": 0.38,
+        "note": "Drop: Guard Mol'dar, Guard Fengus and Guard Slip'kik (Dire Maul)"
       },
       {
         "id": 19596,
@@ -1127,7 +1145,8 @@
         "dps": 123.91,
         "loss": 0,
         "bis": true,
-        "enchant": 17
+        "enchant": 17,
+        "note": "Quest reward, Dire Maul · quest not identified in our data, like Gordok's Gauntlets · seen in game Nov 24"
       },
       {
         "id": 271945,
@@ -1149,19 +1168,22 @@
         "id": 12547,
         "name": "Mar Alom's Grip",
         "dps": 123.34,
-        "loss": 0.58
+        "loss": 0.58,
+        "note": "Trash · Blackrock Depths"
       },
       {
         "id": 13344,
         "name": "Dracorian Gauntlets",
         "dps": 123.31,
-        "loss": 0.61
+        "loss": 0.61,
+        "note": "Drop: Baron Rivendare, Stratholme"
       },
       {
         "id": 18309,
         "name": "Gloves of Restoration",
         "dps": 123.29,
-        "loss": 0.62
+        "loss": 0.62,
+        "note": "Drop: Alzzin the Wildshaper, Dire Maul East"
       },
       {
         "id": 13184,
@@ -1173,7 +1195,8 @@
         "id": 18527,
         "name": "Harmonious Gauntlets",
         "dps": 123.13,
-        "loss": 0.78
+        "loss": 0.78,
+        "note": "King Gordok · Dire Maul"
       },
       {
         "id": 20716,
@@ -1194,7 +1217,8 @@
         "id": 13244,
         "name": "Gilded Gauntlets",
         "dps": 123.08,
-        "loss": 0.84
+        "loss": 0.84,
+        "note": "Drop: Mother Smolderweb, Lower Blackrock Spire"
       },
       {
         "id": 226982,
@@ -1316,13 +1340,16 @@
         "id": 279252,
         "name": "Elderwild Waistcord",
         "dps": 123.77,
-        "loss": 0.15
+        "loss": 0.15,
+        "avail": "doubtful",
+        "note": "Leatherworking 300 · pattern (279301) has no known source · reagents not in data, may need raid essence like Tranquil Wristguards"
       },
       {
         "id": 14553,
         "name": "Sash of Mercy",
         "dps": 123.42,
-        "loss": 0.49
+        "loss": 0.49,
+        "note": "Random world drop · epic BoE, AH price not checked"
       },
       {
         "id": 18391,
@@ -1491,7 +1518,8 @@
         "id": 250600,
         "name": "Martyr's Legplates",
         "dps": 123.98,
-        "loss": -0.07
+        "loss": -0.07,
+        "note": "Blacksmithing 300 · Forever craft · plans (251452) 6.2% from Gordok Brute (Dire Maul) · reagents not in data · 2267g per point of score"
       },
       {
         "id": 16694,
@@ -1500,25 +1528,30 @@
         "loss": 0,
         "bis": true,
         "enchant": 1254966,
-        "note": "Baron Rivendare · Stratholme"
+        "note": "Baron Rivendare · Stratholme · 335g per point of score"
       },
       {
         "id": 22753,
         "name": "Sentinel's Lamellar Legguards",
         "dps": 123.86,
-        "loss": 0.05
+        "loss": 0.05,
+        "avail": "infeasible",
+        "note": "Silverwing Sentinels Exalted (Illiyana Moonblaze, Ashenvale), Alliance only · also an Alterac Valley drop"
       },
       {
         "id": 279254,
         "name": "Elderwild Pants",
         "dps": 123.86,
-        "loss": 0.05
+        "loss": 0.05,
+        "avail": "doubtful",
+        "note": "Leatherworking 300 · pattern (279303) has no known source · reagents not in data, may need raid essence like Tranquil Wristguards"
       },
       {
         "id": 16719,
         "name": "Wildheart Kilt",
         "dps": 123.75,
-        "loss": 0.16
+        "loss": 0.16,
+        "note": "1208g per point of score"
       },
       {
         "id": 226980,
@@ -1531,7 +1564,8 @@
         "id": 18682,
         "name": "Ghoul Skin Leggings",
         "dps": 123.45,
-        "loss": 0.47
+        "loss": 0.47,
+        "note": "Drop: Scholomance trash"
       },
       {
         "id": 14137,
@@ -1591,7 +1625,8 @@
         "id": 12945,
         "name": "Legplates of the Chromatic Defier",
         "dps": 123.06,
-        "loss": 0.85
+        "loss": 0.85,
+        "note": "Quest: Legplates of the Chromatic Defier (5167, a choice with Legguards 12903) · materials not in our data, no raid material in Classic · Forever's quest not checked"
       },
       {
         "id": 11841,
@@ -1655,7 +1690,8 @@
         "dps": 123.91,
         "loss": 0,
         "bis": true,
-        "enchant": 1254966
+        "enchant": 1254966,
+        "note": "Drop: Captain Kromcrush, Dire Maul · 245g per point of score"
       },
       {
         "id": 13282,
@@ -1668,13 +1704,15 @@
         "id": 254093,
         "name": "Earthenweave Boots",
         "dps": 123.52,
-        "loss": 0.39
+        "loss": 0.39,
+        "note": "Tailoring 225 · pattern 1.29% drop from Elder Rage Scar (Feralas), one drop sample only · 40g per point of score"
       },
       {
         "id": 22247,
         "name": "Faith Healer's Boots",
         "dps": 123.42,
-        "loss": 0.49
+        "loss": 0.49,
+        "note": "Drop: Warchief Rend Blackhand, Blackrock Spire"
       },
       {
         "id": 15802,
@@ -1774,7 +1812,8 @@
         "id": 22245,
         "name": "Soot Encrusted Footwear",
         "dps": 122.92,
-        "loss": 0.99
+        "loss": 0.99,
+        "note": "Drop: Panzor the Invincible, Blackrock Depths"
       },
       {
         "id": 275621,
@@ -1822,7 +1861,8 @@
         "name": "Band of Rumination",
         "dps": 123.91,
         "loss": 0,
-        "bis": true
+        "bis": true,
+        "note": "Drop: Warchief Rend Blackhand, Blackrock Spire · 442g per point of score"
       },
       {
         "id": 22326,
@@ -1830,14 +1870,14 @@
         "dps": 123.91,
         "loss": 0,
         "bis": true,
-        "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 929g per DPS"
+        "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 126g per point of score"
       },
       {
         "id": 22433,
         "name": "Don Mauricio's Band of Domination",
         "dps": 123.79,
         "loss": 0.12,
-        "note": "731g per DPS"
+        "note": "1226g per point of score"
       },
       {
         "id": 275983,
@@ -1983,7 +2023,8 @@
         "id": 284079,
         "name": "High Clerist's Seal",
         "dps": 123.08,
-        "loss": 0.84
+        "loss": 0.84,
+        "note": "Drop: Scarlet High Clerist (Western Plaguelands) · Forever item, seen in game 2026-11-24 · drop rate not in data"
       },
       {
         "id": 22339,
@@ -2026,7 +2067,7 @@
         "dps": 123.91,
         "loss": 0,
         "bis": true,
-        "note": "Drop: Ambassador Flamelash, Blackrock Depths"
+        "note": "Drop: Ambassador Flamelash, Blackrock Depths · 1792g per point of score"
       },
       {
         "id": 271903,
@@ -2076,7 +2117,8 @@
         "dps": 124.32,
         "loss": -0.41,
         "unsourced": true,
-        "with": 14982
+        "with": 14982,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15240,
@@ -2094,7 +2136,8 @@
         "dps": 124.1,
         "loss": -0.19,
         "unsourced": true,
-        "with": 14982
+        "with": 14982,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15240,
@@ -2114,7 +2157,8 @@
         "dps": 123.91,
         "loss": 0,
         "unsourced": true,
-        "with": 14982
+        "with": 14982,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 15240,
@@ -2132,14 +2176,16 @@
         "dps": 123.69,
         "loss": 0.23,
         "unsourced": true,
-        "with": 14982
+        "with": 14982,
+        "note": "Random world drop · green BoE, of the Hierophant and of the Physician rolls"
       },
       {
         "id": 276404,
         "name": "Masterwork Crimson Hammer",
         "dps": 123.66,
         "loss": 0.26,
-        "with": 14982
+        "with": 14982,
+        "note": "Drop: Crimson Hammersmith, Stratholme"
       },
       {
         "id": 15220,
@@ -2204,7 +2250,8 @@
         "name": "The Hammer of Grace",
         "dps": 123.06,
         "loss": 0.86,
-        "with": 14982
+        "with": 14982,
+        "note": "Drop: Chest of The Seven, Blackrock Depths"
       },
       {
         "id": 15220,
@@ -2456,7 +2503,9 @@
         "name": "Barkskin Baubles",
         "dps": 123.34,
         "loss": 0.57,
-        "with": 15240
+        "with": 15240,
+        "avail": "doubtful",
+        "note": "Dala Fairmaw, Mount Hyjal · Hyjal quartermaster, standing unknown"
       },
       {
         "id": 276754,
@@ -2496,7 +2545,8 @@
         "name": "Libram of Economy",
         "dps": 123.91,
         "loss": 0,
-        "bis": true
+        "bis": true,
+        "note": "Vendor Pix Xizzix · Stranglethorn Vale · price not in data"
       },
       {
         "id": 279248,

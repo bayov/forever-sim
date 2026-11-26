@@ -1915,9 +1915,7 @@
         "id": 13098,
         "name": "Painweaver Band",
         "dps": 4673.96,
-        "loss": 51.73,
-        "avail": "infeasible",
-        "note": "2110g per DPS"
+        "loss": 51.73
       },
       {
         "id": 275976,
@@ -1970,9 +1968,7 @@
         "id": 22433,
         "name": "Don Mauricio's Band of Domination",
         "dps": 4664.5,
-        "loss": 61.19,
-        "avail": "infeasible",
-        "note": "731g per DPS"
+        "loss": 61.19
       },
       {
         "id": 19511,
@@ -2036,7 +2032,6 @@
         "name": "Amalgam's Band",
         "dps": 4653.95,
         "loss": 71.74,
-        "avail": "infeasible",
         "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       }
     ],
@@ -2501,7 +2496,9 @@
         "name": "Raptorscale Bulwark",
         "dps": 4661.97,
         "loss": 63.72,
-        "with": 13952
+        "with": 13952,
+        "avail": "doubtful",
+        "note": "Tor'Rel and Izha'Rel · Shaper's Terrace · only reported"
       },
       {
         "id": 280063,

@@ -49,7 +49,8 @@
         "id": 16693,
         "name": "Devout Crown",
         "dps": 133.42,
-        "loss": 0.17
+        "loss": 0.17,
+        "note": "Drop: Darkmaster Gandling, Scholomance · Vestments of the Devout · 1499g per point of score"
       },
       {
         "id": 279931,
@@ -328,7 +329,8 @@
         "dps": 133.59,
         "loss": 0,
         "bis": true,
-        "enchant": 1249058
+        "enchant": 1249058,
+        "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
       },
       {
         "id": 271918,
@@ -425,7 +427,8 @@
         "id": 16695,
         "name": "Devout Mantle",
         "dps": 133.4,
-        "loss": 0.19
+        "loss": 0.19,
+        "note": "Drop: Solakar Flamewreath, Upper Blackrock Spire · Vestments of the Devout"
       },
       {
         "id": 14633,
@@ -591,7 +594,8 @@
         "dps": 133.59,
         "loss": 0,
         "bis": true,
-        "enchant": 1888
+        "enchant": 1888,
+        "note": "774g per point of score"
       },
       {
         "id": 13386,
@@ -618,7 +622,8 @@
         "id": 11812,
         "name": "Cape of the Fire Salamander",
         "dps": 133.34,
-        "loss": 0.25
+        "loss": 0.25,
+        "note": "Drop: Ambassador Flamelash, Blackrock Depths"
       },
       {
         "id": 15138,
@@ -777,7 +782,8 @@
         "name": "Necropile Robe",
         "dps": 133.6,
         "loss": -0.01,
-        "note": "Scholomance bosses (Necropile set)"
+        "note": "Scholomance bosses (Necropile set) · 200117g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 16690,
@@ -786,7 +792,7 @@
         "loss": 0,
         "bis": true,
         "enchant": 1254966,
-        "note": "General Drakkisath · Upper Blackrock Spire"
+        "note": "General Drakkisath · Upper Blackrock Spire · 1446g per point of score"
       },
       {
         "id": 21527,
@@ -801,7 +807,7 @@
         "name": "The Postmaster's Tunic",
         "dps": 133.42,
         "loss": 0.17,
-        "note": "Postmaster Malown (Stratholme)"
+        "note": "Postmaster Malown (Stratholme) · 320g per point of score"
       },
       {
         "id": 13314,
@@ -976,7 +982,7 @@
         "name": "Gordok's Handwraps",
         "dps": 133.26,
         "loss": 0.33,
-        "note": "Quest reward · Dire Maul"
+        "note": "Quest reward, Dire Maul · quest not identified in our data, like Gordok's Gauntlets · seen in game Nov 24"
       },
       {
         "id": 273925,
@@ -1098,14 +1104,15 @@
         "dps": 133.59,
         "loss": 0,
         "bis": true,
-        "note": "Tailoring 295 · pattern on AH ~131g · Loom on AH ~10g"
+        "note": "Tailoring 295 · pattern on AH ~131g · Loom on AH ~10g · 1105g per point of score"
       },
       {
         "id": 22306,
         "name": "Ironweave Belt",
         "dps": 133.17,
         "loss": 0.42,
-        "note": "Mor Grayhoof · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "note": "Mor Grayhoof · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 2418g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 275605,
@@ -1129,7 +1136,7 @@
         "name": "Master's Belt of the Eagle",
         "dps": 133.11,
         "loss": 0.48,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 134g per point of score"
       },
       {
         "id": 226948,
@@ -1160,7 +1167,7 @@
         "name": "Master's Belt of the Physician",
         "dps": 133.07,
         "loss": 0.52,
-        "note": "Random world drop · BoE"
+        "note": "Random world drop · BoE · 134g per point of score"
       },
       {
         "id": 10144,
@@ -1261,14 +1268,15 @@
         "name": "Magister's Leggings",
         "dps": 133.75,
         "loss": -0.16,
-        "note": "Baron Rivendare (Stratholme)"
+        "note": "Baron Rivendare (Stratholme) · 3628g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 12965,
         "name": "Spiritshroud Leggings",
         "dps": 133.72,
         "loss": -0.13,
-        "note": "The Beast (Upper Blackrock Spire)"
+        "note": "The Beast (Upper Blackrock Spire) · 1594g per point of score"
       },
       {
         "id": 16699,
@@ -1453,7 +1461,7 @@
         "name": "Boots of the Full Moon",
         "dps": 133.58,
         "loss": 0.01,
-        "note": "Captain Kromcrush · Dire Maul North"
+        "note": "Drop: Captain Kromcrush, Dire Maul"
       },
       {
         "id": 13282,
@@ -1467,7 +1475,7 @@
         "name": "Faith Healer's Boots",
         "dps": 133.27,
         "loss": 0.32,
-        "note": "Warchief Rend Blackhand · Upper Blackrock Spire"
+        "note": "Drop: Warchief Rend Blackhand, Blackrock Spire"
       },
       {
         "id": 16691,
@@ -1493,7 +1501,8 @@
         "id": 13391,
         "name": "The Postmaster's Treads",
         "dps": 133.19,
-        "loss": 0.4
+        "loss": 0.4,
+        "note": "Drop: Postmaster Malown, Stratholme"
       },
       {
         "id": 16682,
@@ -1558,7 +1567,8 @@
         "id": 22245,
         "name": "Soot Encrusted Footwear",
         "dps": 133.03,
-        "loss": 0.56
+        "loss": 0.56,
+        "note": "Drop: Panzor the Invincible, Blackrock Depths"
       },
       {
         "id": 14631,
@@ -1675,25 +1685,30 @@
         "name": "Band of Mending",
         "dps": 133.8,
         "loss": -0.21,
-        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 40046g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 18395,
         "name": "Emerald Flame Ring",
         "dps": 133.78,
-        "loss": -0.19
+        "loss": -0.19,
+        "note": "1389g per point of score"
       },
       {
         "id": 11669,
         "name": "Naglering",
         "dps": 133.78,
-        "loss": -0.19
+        "loss": -0.19,
+        "avail": "infeasible",
+        "note": "5875g per point of score"
       },
       {
         "id": 22257,
         "name": "Bloodclot Band",
         "dps": 133.76,
-        "loss": -0.17
+        "loss": -0.17,
+        "note": "1012g per point of score"
       },
       {
         "id": 22681,
@@ -1709,7 +1724,7 @@
         "name": "Opal Ring of the Physician",
         "dps": 133.67,
         "loss": -0.08,
-        "note": "Random world drop"
+        "note": "Random world drop · 880g per point of score"
       },
       {
         "id": 12017,
@@ -1729,7 +1744,8 @@
         "id": 284079,
         "name": "High Clerist's Seal",
         "dps": 133.65,
-        "loss": -0.06
+        "loss": -0.06,
+        "note": "Drop: Scarlet High Clerist (Western Plaguelands) · Forever item, seen in game 2026-11-24 · drop rate not in data"
       },
       {
         "id": 13392,
@@ -1775,7 +1791,7 @@
         "name": "Amalgam's Band",
         "dps": 133.6,
         "loss": -0.01,
-        "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 929g per DPS"
+        "note": "Kormok · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 272407,
@@ -1797,8 +1813,7 @@
         "id": 13098,
         "name": "Painweaver Band",
         "dps": 133.49,
-        "loss": 0.1,
-        "note": "2110g per DPS"
+        "loss": 0.1
       },
       {
         "id": 284102,
@@ -1816,7 +1831,7 @@
         "name": "Hyper-Radiant Flame Reflector",
         "dps": 133.64,
         "loss": -0.05,
-        "note": "Engineering 290, schematic from Solakar Flamewreath, Upper Blackrock Spire"
+        "note": "Engineering 290, schematic from Solakar Flamewreath, Upper Blackrock Spire · 894g per point of score"
       },
       {
         "id": 272437,
@@ -2066,7 +2081,8 @@
         "name": "Charstone Dirk",
         "dps": 133.21,
         "loss": 0.38,
-        "with": 18523
+        "with": 18523,
+        "note": "Princess Theradras · Maraudon"
       },
       {
         "id": 15247,
@@ -2338,7 +2354,9 @@
         "name": "Barkskin Baubles",
         "dps": 133.42,
         "loss": 0.17,
-        "with": 13360
+        "with": 13360,
+        "avail": "doubtful",
+        "note": "Dala Fairmaw, Mount Hyjal · Hyjal quartermaster, standing unknown"
       },
       {
         "id": 11928,
@@ -2431,7 +2449,7 @@
         "name": "Lunar Wand of the Hierophant",
         "dps": 133.79,
         "loss": -0.2,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 15282,
@@ -2439,7 +2457,7 @@
         "name": "Dragon Finger of the Hierophant",
         "dps": 133.72,
         "loss": -0.13,
-        "note": "Random world drop"
+        "note": "Random world drop · 16g per point of score"
       },
       {
         "id": 15281,
@@ -2477,7 +2495,7 @@
         "name": "Lunar Wand of Spirit",
         "dps": 133.61,
         "loss": -0.02,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 15283,
@@ -2486,7 +2504,7 @@
         "dps": 133.59,
         "loss": 0,
         "bis": true,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 15282,
@@ -2494,7 +2512,7 @@
         "name": "Dragon Finger of the Channeler",
         "dps": 133.58,
         "loss": 0.01,
-        "note": "Random world drop"
+        "note": "Random world drop · 16g per point of score"
       },
       {
         "id": 15281,
@@ -2518,7 +2536,7 @@
         "name": "Lunar Wand of the Whale",
         "dps": 133.52,
         "loss": 0.07,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 284070,
@@ -2533,7 +2551,7 @@
         "name": "Lunar Wand of the Physician",
         "dps": 133.52,
         "loss": 0.07,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 13004,
@@ -2561,7 +2579,7 @@
         "name": "Dragon Finger of the Eagle",
         "dps": 133.46,
         "loss": 0.13,
-        "note": "Random world drop"
+        "note": "Random world drop · 16g per point of score"
       },
       {
         "id": 15281,
@@ -2583,7 +2601,7 @@
         "name": "Lunar Wand of the Boar",
         "dps": 133.45,
         "loss": 0.14,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 15283,
@@ -2591,7 +2609,7 @@
         "name": "Lunar Wand of the Eagle",
         "dps": 133.44,
         "loss": 0.15,
-        "note": "Random world drop"
+        "note": "Random world drop · 169g per point of score"
       },
       {
         "id": 15282,
@@ -2599,7 +2617,7 @@
         "name": "Dragon Finger of the Physician",
         "dps": 133.44,
         "loss": 0.15,
-        "note": "Random world drop"
+        "note": "Random world drop · 16g per point of score"
       },
       {
         "id": 15281,
