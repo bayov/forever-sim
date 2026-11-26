@@ -212,14 +212,6 @@
         "note": "Quest: Work Well Done"
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 3411.03,
-        "loss": 9.14,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 14558,
         "name": "Lady Maye's Pendant",
         "dps": 3408.57,
@@ -290,14 +282,6 @@
         "dps": 3399.26,
         "loss": 20.91,
         "unsourced": true
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 3397.69,
-        "loss": 22.47,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 12048,
@@ -966,14 +950,6 @@
         "note": "Warsong Gulch Exalted"
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 3392.8,
-        "loss": 27.37,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19582,
         "name": "Windtalker's Wristguards",
         "dps": 3392.31,
@@ -1104,14 +1080,6 @@
         "dps": 3374.5,
         "loss": 45.66,
         "note": "Rare world drop · BoE · Emerald Encrusted Chest"
-      },
-      {
-        "id": 22667,
-        "name": "Bracers of Hope",
-        "dps": 3374.24,
-        "loss": 45.92,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 14629,
@@ -1521,14 +1489,6 @@
         "loss": 18.38,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 3395.59,
-        "loss": 24.58,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 14612,
@@ -2014,14 +1974,6 @@
         "note": "Pix Xizzix · 75 Reals · owned"
       },
       {
-        "id": 22681,
-        "name": "Band of Piety",
-        "dps": 3345.23,
-        "loss": 74.93,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
-      },
-      {
         "id": 18500,
         "name": "Tarnished Elven Ring",
         "dps": 3345.19,
@@ -2073,14 +2025,6 @@
         "dps": 3346.61,
         "loss": 73.56,
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
-      },
-      {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 3345.55,
-        "loss": 74.62,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 19289,

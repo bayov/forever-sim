@@ -224,14 +224,6 @@
         "note": "Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 4691.8,
-        "loss": 33.89,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 277202,
         "name": "Artifact Seeker's Pendant",
         "dps": 4675.57,
@@ -382,14 +374,6 @@
         "name": "Tempest Talisman",
         "dps": 4645.37,
         "loss": 80.32
-      },
-      {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 4639.1,
-        "loss": 86.59,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       }
     ],
     "shoulder": [
@@ -986,14 +970,6 @@
         "name": "Black Steel Bindings",
         "dps": 4722.82,
         "loss": 2.87
-      },
-      {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 4722.36,
-        "loss": 3.33,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 226865,
@@ -1631,14 +1607,6 @@
         "name": "Imperial Plate Leggings",
         "dps": 4550.43,
         "loss": 175.26
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 4548.38,
-        "loss": 177.31,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 276746,
@@ -2323,15 +2291,6 @@
         "loss": 175,
         "with": 279262,
         "note": "Direhorn Matriarch"
-      },
-      {
-        "id": 22688,
-        "name": "Verimonde's Last Resort",
-        "dps": 4549.44,
-        "loss": 176.25,
-        "with": 279262,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 19542,

@@ -228,14 +228,6 @@
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 3330.41,
-        "loss": 30.13,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 277202,
         "name": "Artifact Seeker's Pendant",
         "dps": 3323.9,
@@ -370,14 +362,6 @@
         "dps": 3300.55,
         "loss": 59.99,
         "note": "War Master Voone · Upper Blackrock Spire"
-      },
-      {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 3285.35,
-        "loss": 75.19,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 19426,
@@ -1089,14 +1073,6 @@
         "note": "Forever drop, Western Plaguelands (NPC 1843 unnamed) · source unconfirmed"
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 3276.24,
-        "loss": 84.3,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19589,
         "name": "Forest Stalker's Bracers",
         "dps": 3269.26,
@@ -1638,14 +1614,6 @@
         "name": "Savage Gladiator Leggings",
         "dps": 3237.87,
         "loss": 122.67
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 3234.91,
-        "loss": 125.63,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       }
     ],
     "feet": [
@@ -2365,15 +2333,6 @@
         "loss": 187.08,
         "with": 279262,
         "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 22688,
-        "name": "Verimonde's Last Resort",
-        "dps": 3168.93,
-        "loss": 191.61,
-        "with": 279262,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 19099,

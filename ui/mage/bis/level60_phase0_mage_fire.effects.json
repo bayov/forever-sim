@@ -73,7 +73,6 @@
     "19812": {"name":"Rune of the Dawn","dps":0,"conditional":[{"label":"vs Undead","dps":31.8}]},
     "22268": {"name":"Draconic Infused Emblem","dps":8.2,"conditional":[{"label":"vs Dragonkin","dps":16.3}]},
     "22321": {"name":"Heart of Wyrmthalak","dps":0,"conditional":[{"label":"vs Orcs and Ogres","dps":0}]},
-    "22678": {"name":"Talisman of Ascendance","dps":10.2,"cooldown":0},
     "270226": {"name":"Golden Banana","dps":0.4,"cooldown":0,"conditional":[{"label":"in forest or grassland","dps":1.7}]},
     "272437": {"name":"Adaptive Combat Assistant","dps":0.4,"cooldown":0,"conditional":[{"label":"vs 4 mobs","dps":2}]},
     "272438": {"name":"Weakness Analyzer","dps":1.2,"cooldown":0},

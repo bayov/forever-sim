@@ -480,6 +480,13 @@ a sim or item data change. The ranking still puts in an item that beats its pick
 list it takes the picks from (the list itself by default), `OUT` writes somewhere else, and any
 arguments go on to rotopt after the script's, so `-iters 300` makes a quick check.
 
+A pick that is now `out` or a no-pick item gives its place to the best entry of its list that
+isn't one, so the rerun starts from that item and the ranking takes it from there. On 2026-11-26
+the Armaments of Battle rewards went out (the Argent Dawn quests aren't in Forever), and
+`RANK_ONLY SLOTS=trinket` replaced Talisman of Ascendance this way. An `out` item never joins the
+pool, and the script drops it from the lists a `SLOTS` run copies from `FROM` too. A copied
+list whose pick went out keeps it, and the run warns, so name that slot in `SLOTS`.
+
 A rerun (`RANK_ONLY`, `SLOTS`, `EFFECTS_ONLY`) reads `FROM`, so it stops when `FROM` was ranked on
 other lengths than `DUR` and `USE_DUR`: a few slots ranked on 180s next to lists copied from a 45s
 list would read as one list. `MIX_DURS=1` goes on anyway.

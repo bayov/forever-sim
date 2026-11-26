@@ -214,14 +214,6 @@
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 1050.82,
-        "loss": 0.5,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19491,
         "name": "Amulet of the Darkmoon",
         "dps": 1049.37,
@@ -1038,14 +1030,6 @@
         "note": "Drop, boss not in our data · Beaststalker's set"
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 1048.46,
-        "loss": 2.86,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 11764,
         "suffix": 267,
         "name": "Cinderhide Armsplints of Agility",
@@ -1572,14 +1556,6 @@
         "loss": 10.82,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 1037.37,
-        "loss": 13.95,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 276746,

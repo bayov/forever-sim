@@ -199,14 +199,6 @@
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 971.7,
-        "loss": 0.42,
-        "avail": "out",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · not in Forever: Quartermaster Miranda Breechlock has no quests (user, Nov 26)"
-      },
-      {
         "id": 18317,
         "name": "Tempest Talisman",
         "dps": 970.18,
@@ -248,14 +240,6 @@
         "dps": 968.12,
         "loss": 4,
         "note": "On AH ~125g"
-      },
-      {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 967.77,
-        "loss": 4.35,
-        "avail": "out",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · not in Forever: Quartermaster Miranda Breechlock has no quests (user, Nov 26)"
       },
       {
         "id": 22149,
@@ -999,14 +983,6 @@
         "note": "Warsong Gulch Exalted"
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 964.46,
-        "loss": 7.66,
-        "avail": "out",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · not in Forever: Quartermaster Miranda Breechlock has no quests (user, Nov 26)"
-      },
-      {
         "id": 19589,
         "name": "Forest Stalker's Bracers",
         "dps": 964.31,
@@ -1592,14 +1568,6 @@
         "loss": 17.99
       },
       {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 954,
-        "loss": 18.12,
-        "avail": "out",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · not in Forever: Quartermaster Miranda Breechlock has no quests (user, Nov 26)"
-      },
-      {
         "id": 22747,
         "name": "Outrider's Silk Leggings",
         "dps": 953.08,
@@ -2145,25 +2113,6 @@
           }
         ],
         "note": "Drop: Emperor Dagran Thaurissan, Blackrock Depths"
-      },
-      {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 967.49,
-        "loss": 4.63,
-        "conditional": [
-          {
-            "label": "vs 4 mobs",
-            "rank": 1,
-            "loss": -4.78,
-            "bis": true
-          }
-        ],
-        "cooldown": {
-          "loss": 16.09
-        },
-        "avail": "out",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · not in Forever: Quartermaster Miranda Breechlock has no quests (user, Nov 26)"
       },
       {
         "id": 13968,

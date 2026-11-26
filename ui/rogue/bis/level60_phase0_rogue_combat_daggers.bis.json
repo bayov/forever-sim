@@ -222,14 +222,6 @@
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 838.25,
-        "loss": 0.29,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 22150,
         "name": "Beads of Ogre Might",
         "dps": 837.48,
@@ -1013,14 +1005,6 @@
         "loss": 9.52,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
-      },
-      {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 828.01,
-        "loss": 10.53,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 13120,

@@ -246,14 +246,6 @@
         "note": "Classic world drop · Forever source unknown"
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 875.65,
-        "loss": -0.28,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19426,
         "name": "Orb of the Darkmoon",
         "dps": 875.37,
@@ -324,14 +316,6 @@
         "dps": 870.89,
         "loss": 4.48,
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 870.89,
-        "loss": 4.48,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 274384,
@@ -2215,24 +2199,6 @@
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
       },
       {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 869.02,
-        "loss": 6.35,
-        "conditional": [
-          {
-            "label": "vs 4 mobs",
-            "rank": 8,
-            "loss": 9.05
-          }
-        ],
-        "cooldown": {
-          "loss": 19.96
-        },
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 270276,
         "name": "Cleansed Vilebranch Icon",
         "dps": 868.7,
@@ -2554,15 +2520,6 @@
         "loss": 28.76,
         "with": 22329,
         "note": "Gorosh the Dervish · Blackrock Depths"
-      },
-      {
-        "id": 22688,
-        "name": "Verimonde's Last Resort",
-        "dps": 846.28,
-        "loss": 29.09,
-        "with": 22329,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 13161,

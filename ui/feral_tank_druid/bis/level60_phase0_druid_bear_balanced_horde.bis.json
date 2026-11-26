@@ -257,14 +257,6 @@
         "note": "price restored 2026-11-24 (warlock step 4): the Enhancement price pass of 5e556ff1e dropped it, not being on that list"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 3451.78,
-        "loss": 46.68,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 277202,
         "name": "Artifact Seeker's Pendant",
         "dps": 3445.52,
@@ -372,14 +364,6 @@
         "name": "Tempest Talisman",
         "dps": 3383.5,
         "loss": 114.96
-      },
-      {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 3372.56,
-        "loss": 125.9,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       }
     ],
     "shoulder": [
@@ -957,14 +941,6 @@
         "bis": true,
         "enchant": 1885,
         "note": "The Beast · Blackrock Spire · 8g per point of score"
-      },
-      {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 3498.13,
-        "loss": 0.33,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 19589,

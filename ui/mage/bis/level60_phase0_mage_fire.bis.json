@@ -250,14 +250,6 @@
         "note": "Quest: Work Well Done"
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 929.53,
-        "loss": 1.51,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 14558,
         "name": "Lady Maye's Pendant",
         "dps": 929.01,
@@ -368,14 +360,6 @@
         "dps": 923.95,
         "loss": 7.09,
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 923.95,
-        "loss": 7.09,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 19599,
@@ -2224,17 +2208,6 @@
         "note": "Pix Xizzix · 125 Reals · unique with ACA"
       },
       {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 927.28,
-        "loss": 3.76,
-        "cooldown": {
-          "loss": 16.66
-        },
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 13213,
         "name": "Smolderweb's Eye",
         "dps": 924.96,
@@ -2571,15 +2544,6 @@
         "loss": 25.65,
         "with": 18316,
         "note": "Gorosh the Dervish · Blackrock Depths"
-      },
-      {
-        "id": 22688,
-        "name": "Verimonde's Last Resort",
-        "dps": 904.94,
-        "loss": 26.09,
-        "with": 18316,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 271928,
