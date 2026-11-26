@@ -203,8 +203,10 @@ Revenge and Shield Block is what our plan does to 15.
 - Protection's safe pull shrinks in the mid 40s. Starting with 5 mobs is best at 40, but it dies
   at 42 and later. The most we can start with is 4 at 41 and 42, and 3 from 44 to 48. One mob more
   than that costs about 1 death every 20 minutes. XP an hour dips from 46k at 40 to 41k at 46 and
-  comes back at 48. The preset's rules for 41 to 48 were tuned at each of those levels, and they
-  save 1.2h over single pulls there.
+  comes back at 48. Hand-tuned at each of those levels, the rules for 41 to 48 saved 1.2h over
+  single pulls there. The search's rotations that the Prot plan has now go further. They bring up
+  to 5 mobs into a pull and keep up to 3 on us at 40 to 48, and take about 0.4 to 1 death every 20
+  minutes there for it, which still comes out ahead.
 - Recovery is worth 3 to 4 hours over the whole plan.
 - Mobs 1 level below us are best or tied from 16 to 58. At 10, 2 below is better.
 - The talent search's own order didn't beat the hand order above.
