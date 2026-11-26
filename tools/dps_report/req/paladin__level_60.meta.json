@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_ret",
   "apl": "level60",
   "published": {
-    "dps": 956.9,
-    "source": "verify.py on the Phase 0 gear set (level60_phase0_ret, the ret Phase 0 list's picks), 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24 (Phase 0 step 4)"
+    "dps": 923.62,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 956.9,
-    "stderr": 0.36,
+    "dps": 923.62,
+    "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, Phase 0 set level60_phase0_ret, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-24)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Retribution build that keeps Seal of Righteousness up and swaps to Seal of Command and back to spend its Unsealed Wrath copies.",
   "keyTalents": [

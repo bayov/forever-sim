@@ -1,0 +1,69 @@
+{
+ "gearSet": "level60_phase0_ele_alliance",
+ "equipment": {
+  "items": [
+   {
+    "id": 22267,
+    "enchant": 2544
+   },
+   {
+    "id": 19426,
+    "enchant": 1249057
+   },
+   {
+    "id": 227003
+   },
+   {
+    "id": 272411
+   },
+   {
+    "id": 227004,
+    "enchant": 1254966
+   },
+   {
+    "id": 227001,
+    "enchant": 1220624
+   },
+   {
+    "id": 227006,
+    "enchant": 1248645
+   },
+   {
+    "id": 227018
+   },
+   {
+    "id": 252486,
+    "enchant": 2544
+   },
+   {
+    "id": 227007,
+    "enchant": 1254966
+   },
+   {
+    "id": 272406
+   },
+   {
+    "id": 12543
+   },
+   {
+    "id": 10455
+   },
+   {
+    "id": 13968
+   },
+   {
+    "id": 22688,
+    "enchant": 1248805
+   },
+   {
+    "id": 11904,
+    "enchant": 1219579
+   },
+   {
+    "id": 272433
+   }
+  ]
+ },
+ "note": "Alliance: wears level60_phase0_ele_alliance, the set without the Horde rewards",
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_ele. It wears level60_phase0_ele_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}

@@ -84,6 +84,7 @@
               "dragonBreathChili":  true,
               "zanzaBuff":  "ROIDS",
               "sapperExplosive":  "SapperGoblinSapper",
+              "fillerExplosive":  "ExplosiveGoblinLandMine",
               "intellectElixir":  "ElixirOfGreaterIntellect",
               "spiritElixir":  "ElixirOfSages",
               "naturePowerBuff":  "ElixirOfNaturePower"

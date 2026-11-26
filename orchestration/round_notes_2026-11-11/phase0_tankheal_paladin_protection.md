@@ -30,7 +30,7 @@ Flags: D doubtful. Everything else is open.
 | Waist | Soulforge Belt | Soulforge Belt | Redeemer's Waistcord (Pix, 100 Reals) |
 | Legs | Soulforge Legguards | Soulforge Legguards | Soulforge Legguards |
 | Feet | Soulforge Sabatons | Depleted Thorium Sabatons (D, BS plans with no source) | Depleted Thorium Sabatons (D) |
-| Rings | Watcher's Signets of Brilliance and Vigilance (D, no rep source) | Watcher's and Tracker's Signets of Vigilance (D) | same as Max threat |
+| Rings | Tracker's and Watcher's Signets of Vigilance (D, no rep source) | Watcher's and Tracker's Signets of Vigilance (D) | same as Max threat |
 | Trinkets | Chained Essence of Eranikus, Adaptive Combat Assistant | same | same |
 | Main hand | Hand of Edward the Odd (world drop) | same | same |
 | Off hand | Evergreen Shield (D, BS plans with no source, may need raid essence) | Evergreen Shield | Evergreen Shield |
@@ -39,6 +39,23 @@ Flags: D doubtful. Everything else is open.
 - Nacreous Shell Necklace 22403 shows "infeasible" in the list from its DPS price (the price restored on
   2026-11-24), but the tank search allowed it. Next best is Orb of the Darkmoon, 11.5 behind.
 - Soulforge (1673) is the protection, retribution and holy D1 set. Mixing variants counts for the set.
+
+## Price re-rank (prices 23469c224)
+
+phase0_check.py flagged open items above the picks once the prices landed. RANK_ONLY over the flagged slots
+(Balanced neck, wrist, finger; Max survival neck, hands, waist, finger; Max threat neck), swaps must clear
+2 stderr at 5000 iterations:
+- Balanced: Tracker's Signet of Vigilance for Watcher's Signet of Brilliance, +17.4 (6.3), confirmed. The
+  wrist enchant moved too. List 2965.3.
+- Flags that stand, all below 2 stderr in the confirm: Balanced neck (Amulet of the Darkmoon -1.5 (5.0),
+  Horn of Ve'han -4.5 (6.5)) and wrist (Soulforge Wristguards +5.7 (3.6)). Max survival neck (Horn of Ve'han
+  +6.4 (13.1)), hands (Force Imbued Gauntlets +19.8 (16.9)), waist (Brigam Girdle -7.4 (13.6), the rest
+  lower). Max threat neck (Orb of the Darkmoon -6.1 (2.9)). The list ranking runs fewer iterations, and
+  Max survival's spread is wide, so those rows rank above the pick there and not in the confirm.
+- Alliance row re-ranked on the shoulder from the new Max survival list: unchanged.
+- Max survival confirms after the master merge, bench at 5000 iterations against the list's 775.5 (stderr
+  about 15): Warder's Waistguard +6.3, Soulforge Belt -26.3, Talisman of Evasion +0.7. None clears 2 stderr,
+  list kept. Balanced wrist and neck were confirmed above.
 
 ## Tags added
 
@@ -97,7 +114,7 @@ vaelastrasz and chromaggus. Synthetic is the request on origin/master.
 | Preset | Phase 0 | Synthetic | Gap |
 |---|---|---|---|
 | Max threat | 3912.5 | 3280.3 | +632.2 |
-| Balanced | 2914.8 | 2857.7 | +57.1 |
+| Balanced | 2965.3 | 2857.7 | +107.6 |
 | Max survival | 800.2 | 1858.0 | -1057.8 |
 
 Max survival falls short on Broodlord (-1093 against 336) and Chromaggus (-2113 against -583). The cause is

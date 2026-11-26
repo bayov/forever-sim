@@ -365,22 +365,25 @@ exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | 
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
 # The most gold an item may cost for each DPS it adds (user, 2026-11-22). An item over it is
 # infeasible like an Exalted reputation item: ranked, but never a pick. tools/rotopt/phase0_prices.py
-# writes each item's goldPerDps into the content check from our auction house scans, and
-# should run again after a rerun moves the picks.
+# writes each item's goldPerDps into the content check from our auction house scans, one number
+# per spec's list ({"mage_fire": 160}, since an item adds different DPS on each), and should run
+# again after a rerun moves the picks. nopick_of gives a spec's no-pick items.
 max_gpd="${MAX_GOLD_PER_DPS:-30}"
-nopick="$(jq -r --argjson max "$max_gpd" '[to_entries[] | select(.value.avail == "infeasible" or (.value.goldPerDps // 0) > $max) | .key] | join(",")' "$content")"
 # A tank or healer list's line is in its score (2026-11-25): 30g per DPS on a build near 1000 DPS
 # is about 3000g per 1% of DPS, so an item over MAX_GOLD_PER_PCT (3000) for each 1% of the spec's
 # score it adds is infeasible. 1% is of the table's scoreRef: a tank class's Balanced score on the
 # synthetic set for all three of its presets (Max survival scores can be near 0 or below), a
-# healer's damage carried on it. Only a price made for the spec's own list counts (goldPerDps by
-# spec, phase0_prices.py), since a DPS list's gold per DPS says nothing about a tank score.
+# healer's damage carried on it. goldPerDps by spec then reads as gold per score unit.
 max_gold_per_pct="${MAX_GOLD_PER_PCT:-3000}"
-if [ -n "$bench" ]; then
-	max_gpd="$(jq -n --argjson g "$max_gold_per_pct" --argjson r "$(field "$(echo "$spec" | cut -d, -f1)" scoreRef)" '$g * 100 / $r')"
-	nopick="$(jq -r --argjson max "$max_gpd" --arg s "$(echo "$spec" | cut -d, -f1)" '[to_entries[] | select(.value.avail == "infeasible"
-		or ((.value.goldPerDps | if type == "object" then .[$s] else null end) // 0) > $max) | .key] | join(",")' "$content")"
-fi
+nopick_of() {
+	local max="$max_gpd"
+	if [ -n "$(field "$1" bench)" ]; then
+		max="$(jq -n --argjson g "$max_gold_per_pct" --argjson r "$(field "$1" scoreRef)" '$g * 100 / $r')"
+	fi
+	jq -r --arg s "$1" --argjson max "$max" '[to_entries[] | select(.value.avail == "infeasible"
+		or ((.value.goldPerDps | if type == "object" then .[$s] else null end) // 0) > $max) | .key] | join(",")' "$content"
+}
+nopick="$(nopick_of "$(echo "$spec" | cut -d, -f1)")"
 # The gear search's pool, without the search: DRY_RUN=1 (see above).
 if [ -n "$DRY_RUN" ]; then
 	dry_dir="${DRY_RUN_DIR:-orchestration/round_notes_2026-11-11/phase0_pool}"
@@ -392,7 +395,7 @@ if [ -n "$DRY_RUN" ]; then
 		# shellcheck disable=SC2046
 		"$tmp/rotopt" -apl "$tmp/$s.apl.json" -settings "$tmp/$s.json" -durs "$dur" \
 			-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
-			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$nopick" \
+			-gear-exclude "$exclude" -gear-include "$include" -gear-no-pick "$(nopick_of "$s")" \
 			$(weapon_flags "$s") $(bench_flags "$s") -gear-pool-spec "$s" \
 			-gear-content "$content" -gear-pool-report "$dry_dir/$s.json" "$@" >/dev/null
 		jq -r '"\(.spec): \(.items) items, \(.unmodelled | length) unmodelled, \(.hiddenStats | length) hidden stats, \(.unlisted) unlisted, \(.factionDropped | length) left out as \(if .faction == "Horde" then "Alliance" else "Horde" end) only"' "$dry_dir/$s.json"
@@ -511,11 +514,19 @@ if [ -n "$EFFECTS_ONLY" ]; then
 fi
 
 # The content check's status on every entry. An item over the gold line is infeasible, and
-# its note says what a DPS costs on it.
-jq --slurpfile content "$content" --argjson max "$max_gpd" '.slots |= map_values(map(
+# its note says what a DPS (a tank or healer: a score unit) costs on it.
+spec1="$(echo "$spec" | cut -d, -f1)"
+list_max="$max_gpd"
+unit="DPS"
+if [ -n "$bench" ]; then
+	list_max="$(jq -n --argjson g "$max_gold_per_pct" --argjson r "$(field "$spec1" scoreRef)" '$g * 100 / $r')"
+	unit="point of score"
+fi
+jq --slurpfile content "$content" --argjson max "$list_max" --arg spec "$spec1" --arg unit "$unit" '.slots |= map_values(map(
 	. as $e | ($content[0][$e.id | tostring] // {}) as $c
-	| (($c.goldPerDps // 0) > $max) as $costly
-	| ([$c.note // empty] + (if $c.goldPerDps then ["\($c.goldPerDps | round)g per DPS"] else [] end) | join(" · ")) as $note
+	| ($c.goldPerDps | if type == "object" then .[$spec] else null end) as $gpd
+	| (($gpd // 0) > $max) as $costly
+	| ([$c.note // empty] + (if $gpd then ["\($gpd | round)g per \($unit)"] else [] end) | join(" · ")) as $note
 	| $e + (if $c.avail then {avail: $c.avail} elif $costly then {avail: "infeasible"} else {} end)
 		+ (if $note != "" then {note: $note} else {} end)))' \
 	"$out" >"$tmp/list.json"

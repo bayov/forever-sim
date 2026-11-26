@@ -4,6 +4,23 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261125-1: Feral cat APLs still cast the EZ-Thro Dark Bomb (260817) after the presets moved to the Goblin Land Mine
+- severity: low (correctness: a dead line naming an item the build no longer carries; +0.5 DPS at 180 s once fixed)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:4, level60_ff.apl.json:4, and the embedded req rotations)
+- found: 2026-11-25, master 85691655a
+- evidence: 22d2cf952 (EV-0088) moved `ui/feral_druid/presets.ts` to `fillerExplosive: ExplosiveGoblinLandMine`, but line 4 of both APLs is still
+  `{"action":{"castSpell":{"spellId":{"itemId":260817}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpLe","rhs":{"const":{"val":"60"}}}},{"cmp":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpGe",...autoSwingTime - 0.4s}}]}}}`
+  with the note "its 1 sec cast restarts the swing timer", which EV-0088 retired. With the Land Mine equipped that line is dead and the mine
+  goes out as an ungated major cooldown. Paired ab.py on the req with fillerExplosive set to ExplosiveGoblinLandMine (consumables-20261125-3's fix),
+  20k it, 8 blocks, A = the APL as is; B-A at 120 / 180 / 300 s:
+  - feral-cat, itemId 4395 + energy gate only (swing term dropped): 1e6 +0.47 / +0.53 / +0.01, 2e8 +0.51 / +0.62 / -0.03, pooled +0.49 / +0.58 / -0.01
+  - feral-cat, itemId 4395 keeping both gates: pooled +0.41 / +0.52 / -0.02
+  - feral-cat-duty-ff, 4395 + energy gate: 1e6 +0.49 / +0.39 / +0.05, 2e8 +0.75 / +0.65 / -0.12, pooled +0.62 / +0.52 / -0.04
+  - baseline at 180 s (A): feral-cat 1061.5, duty-ff 1056.4
+- proposed fix: in both APLs (and the req rotations when they are regenerated with the Land Mine), set the line's itemId to 4395, drop the
+  `autoTimeToNext >= autoSwingTime - 0.4s` term, keep `currentEnergy <= 60`, and rewrite the note. Land with consumables-20261125-3.
+- needs: orchestrator fix
+
 ### rotations-20261122-1: Shock Ret: Hammer of Wrath and Holy Strike ahead of Judgement and Seal of Command
 - severity: low (+2.2 at 180 s, 0.22%)
 - affects: paladin__level_60_shock_ret (its duty-crusader and duty-wisdom variants share the order; not measured)

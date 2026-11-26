@@ -1,13 +1,12 @@
 {
  "last": {
-  "master": "95962a7d3",
-  "branch": "phase0-tankheal"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T17:38:34Z",
+ "last_pass_at": "2026-11-25T18:57:43Z",
  "pass": 31,
  "result": "findings",
  "baseline": "ref/tank_bench/summary.tsv",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-25T13:10:47Z",
- "note": "Pass on phase0-tankheal, Phase 0 requests; baseline rewritten (bear on 95962a7d3). Report Tanking mode stale (tank_rotations-20261125-1). Windfury timing item not done."
+ "checked_at": "2026-11-25T19:23:36Z",
+ "note": "2f42f4a44 threat rules: bear +38 to +190% (Lacerate 10/3) now above warrior (-3 to -11%); paladin +1-4%, Warden noise. New: 20261125-1 bear Roar drop (high), 20261125-2 warrior Balanced Thunder Clap (low). Windfury timing item not done. Also 20261125-3 (phase0-tankheal pass 31b): report Tanking mode stale until publish (orchestrator)."
 }

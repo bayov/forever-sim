@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_hunter_lw",
   "apl": "lw",
   "published": {
-    "dps": 1173.97,
-    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1140.13,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 1173.97,
+    "dps": 1140.13,
     "stderr": 0.28,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It's ahead of Marksmanship with a cat: Forever pets get no player buffs.",
   "keyTalents": [
@@ -58,7 +58,7 @@
     "Flank au Poivre",
     "Major Mana Potion",
     "Demonic Rune",
-    "EZ-Thro Dark Bomb"
+    "Dense Dynamite"
   ],
   "caveats": [
     "Trueshot Aura's top rank gives 100 ranged attack power, from the launch realms' hotfix of 2026-11-03 (ranks 20, 35, 50, 75 and 100). Hunter's Mark gives 143 after a server hotfix (older clients said 71).",
@@ -68,10 +68,10 @@
     "Wildstalker Armor 4-piece and 5-piece bonuses aren't counted. They would add 17 DPS.",
     "Rapid Killing never triggers on a single boss.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
-    "Ranged slot is the Phase 0 list's pick, Ankle Slicers (a 1.8s thrown weapon). The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
+    "Ranged slot is the Phase 0 list's pick, Eaglehorn Long Bow (a 1.8s bow). Forever's Auto Shot and hunter shots need a bow, gun or crossbow, so the list has no thrown weapons. The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (2.7 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing.",
     "Improved Tracking 5/5 counts against the generic boss, unlike creature-type talents such as Beast Slaying: a hunter can track every raid boss type except Mechanical. It is worth 62.6 DPS (4.8%) here, which this build loses against a Mechanical boss."
   ],
-  "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone). Night Elf since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays."
+  "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone). Night Elf since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the Dense Dynamite stays."
 }

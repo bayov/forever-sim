@@ -1,30 +1,33 @@
-# Mechanics pass 105 (2026-11-25, master 0404484fb)
+# Mechanics pass 106 (2026-11-25, master 85691655a)
 
-Range: 5536db4bc..0404484fb. Client 1.60.1.71091 still newest (probe 300). No new Blizzard post:
-dev notes t/2360696 8 posts (newest 2026-11-04), hotfix thread t/2403040 15 posts (newest #15,
-2026-11-24 02:06Z, already read). No daily-update changes to TASKS.md or update_ledger.md in range.
+Range: c3bbe33ea..85691655a. Client 1.60.1.71091 still newest (gate). Blizzard: dev notes
+t/2360696 unchanged (8 posts, newest 2026-11-04); hotfix thread t/2403040 unchanged (#15,
+2026-11-24); blue tracker has a new Forever post, "Balance Druid Adjustments - November 25"
+(t/2429007, Kaivax, 2026-11-25 18:32Z, "now live"). Daily update: one TASKS.md item
+(85691655a, Blackhand's Breadth hotfix from foreverchanges, Nov 24 push).
 
 ## Commits checked
 
 | Commit | Change | Check | Verdict |
 |---|---|---|---|
-| f1942793d | Arcane Intellect / Divine Spirit overwrite Int / Spirit elixirs (incl. Cunning's Int) | 71091: Cunning 1250918 aura 29 25/25, Sages 1250941 25 Spi + aura 290 2%; rule from EV-0185 in-game sheet | OK (log/in-game) |
-| 75dee7458 | Armor Shatter + Puncture Armor in minor armor slot; Puncture 100/stack | 17315 aura 674 bp -100 | OK (tier 1 + EV-0147) |
-| 3275a60b1 | World buffs off in raid instance | AuraDescription "No effect while in a raid instance" on 22888, 16609, 15366, 22817/8/20, all Sayge's | OK (tier 1) |
-| 9701cff08 | Spirit of Zandalar off in raid too | 24425 lacks the text; user ruling | settled (ruling) |
-| 5dbc01412 | Raid/party buff scope comments | comment only | OK |
-| b4cab8498 | Damage-taken Rage: stance modifier; 2x for spells, ticks, Physical specials | stances carry no client damage-taken effect; log-sourced (rage_taken_by_stance.md, EV-0052, EV-0118); StanceDamageTakenMultiplier defaults to 1 | OK (logs) |
-| 6992f4e80 | compsearch duty-variant fillers | not a mechanic | n/a |
-
-## Shared run vs published
-
-60 of 68 builds moved. Largest: Enhancement -2.6% (preset runs Greater Intellect, Cunning and
-Sages under Arcane Brilliance and Divine Spirit, so all three elixirs' Int/Spirit now go unused;
-Sages' 2% crit still counts), Paladin -1.6%, Arcane/Frostfire mage -1.5 to -1.7%, warlocks
-about -1%, hunters -0.7%: consistent with f1942793d's mana loss. Warriors +0.2% (Rage change).
-Preset elixir choice under AI/DS is a preset question, not a mechanics finding.
+| 2f42f4a44 | Tank batch: rage-gain threat, damage-taken Rage armor rows, flat reduction cap, bear threat | log-sourced (EV-0032..0050, 0154); level 63 row unchanged | settled (ruling) |
+| efeb06b95 | Resist constant 8L+19, 75% partial cap, binary spells, Flurry vs Windfury Totem (shaman) | log-sourced (EV-0091, 0092, 0142, 0010); shaman totem swings no longer spend Flurry | settled; resolves mechanics-20261118-1 |
+| 60fde111f | Hunter hawk, pet white crit, Explosive Trap, pet autocast | log-sourced (EV-0073, 0127, 0134, 0068, 0187); class rules | settled (ruling) |
+| 295206ddf | Item PPMs, set procs, 49 on-hit weapons | Flame Wrath 16559 bp 154 matches; Ironfoe client 10% / 5 s vs sim 3% from logs (server side) | settled (logs) |
+| b663145ad | Weapon-proc chains, JoC double roll, Revelation, judgements refresh, damage shields | log-sourced (EV-0145, 0155, 0028, 0117, 0066 ...) | settled (ruling) |
+| 22d2cf952 | Explosives keep swing timer, stun explosives miss level 63, demon crit, extra attacks roll Windfury Totem, Shield Slam MH special | log-sourced, user ruling 2026-11-25 | settled (ruling) |
 
 ## Findings
 
-None new. mechanics-20261124-1 (Sayge's fortunes 10%) gets a note: it now matters only outside
-raid instances.
+| Id | Severity | Title |
+|---|---|---|
+| mechanics-20261125-1 | high (estimate) | Nov 25 Balance druid changes live; sim has none (Moonkin +10%, Eclipse Wrath crit, Moonfury removed, Improved Starfire 2 points, Starfire cast time) |
+| mechanics-20261125-2 | low (estimate) | Blackhand's Breadth mark still Shadow / can miss; Nov 24 hotfix made it physical, unresistable |
+
+Resolved: mechanics-20261118-1 (efeb06b95, shaman half).
+
+## Open items
+
+- Hotfix rows for Blackhand's Breadth and the Balance changes aren't cached (`hotfixes.py rows`
+  returned nothing); a fetch from wago.tools/hotfixes would give exact values.
+- No sims run: all commits are log-sourced rulings; DPS sizes above are estimates.
