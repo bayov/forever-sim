@@ -1348,6 +1348,7 @@
   "272063": {"name": "Darkspear Raider's Cloak", "note": "Darkspear Raiders Friendly · Creeg Bothunk (Barrens)", "faction": "Horde"},
   "272079": {"name": "Darkspear Raider's Reaper", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "272083": {"name": "Darkspear Insurgent's Spellblade", "note": "Vendor Creeg Bothunk · The Barrens"},
+  "272087": {"name": "Tome of the Darkspear Prophecy", "note": "Darkspear Raiders rep (Creeg Bothunk, Barrens) like the other Darkspear vendor items, its level not in our data", "faction": "Horde"},
   "272091": {"name": "Darkspear Skirmisher's Bludgeon", "note": "Darkspear Raiders Honored · Creeg Bothunk (Barrens)", "faction": "Horde"},
   "272095": {"name": "Raider Gauntlets", "note": "Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens)", "faction": "Horde"},
   "272096": {"name": "Raider Gauntlets", "note": "Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens)", "faction": "Horde"},
