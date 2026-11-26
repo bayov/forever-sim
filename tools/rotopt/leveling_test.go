@@ -18,7 +18,7 @@ func TestLevelingSession(t *testing.T) {
 	prevLevel := playerLevel
 	t.Cleanup(func() { playerLevel = prevLevel })
 	playerLevel = setup.player().Level
-	template := shamanEnhLeveling{}
+	template := templates["shaman_enh_leveling"]
 	rot := template.Build(defaultKnobs(template))
 
 	r, err := setup.run(rot, 0, 50)

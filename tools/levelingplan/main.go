@@ -10,6 +10,10 @@
 // runs from a file of the request, for a run without the UI:
 //
 //	go run --tags=with_db ./tools/levelingplan -in request.json -out result.json
+//
+// -in also takes a short config in place of a request (config.go, configs/), so a plan doesn't need
+// the browser. Besides searching, it can measure a plan's hours over several gear histories
+// (-hours), its stat weights (-weights) and its training schedule (-training).
 package main
 
 import (
@@ -22,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -35,7 +40,7 @@ import (
 
 func main() {
 	serve := flag.String("serve", "", "address to serve the UI's searches on, like localhost:3001")
-	in := flag.String("in", "", "a LevelingPlanSearchRequest JSON to search, without the UI")
+	in := flag.String("in", "", "a LevelingPlanSearchRequest JSON, or a config (configs/), to search without the UI")
 	out := flag.String("out", "", "with -in, where to write the LevelingPlanSearchResult JSON (stdout when empty)")
 	keep := flag.String("keep", "", "with -serve, a file to write each request to, to run it again with -in")
 	levelRequests := flag.String("level-requests", "", "with -in, write each level's sim request (the plan's gear, talents and rotation there) into this directory as level_NN.json and don't search, for rotopt -settings")
@@ -45,8 +50,25 @@ func main() {
 	ridingLevel := flag.Int("riding-level", 43, "with -training, the level we buy riding at, 0 for none")
 	ridingGold := flag.Float64("riding-gold", 90, "with -training, what riding costs us, in gold")
 	alwaysSpells := flag.String("always", "", "with -training, the spells the plan doesn't cast that we train anyway, comma separated, like \"Ghost Wolf,Astral Recall\" (the request's plan's when empty)")
+	makeConfig := flag.String("make", "", "a config JSON (config.go, configs/) to make the LevelingPlanSearchRequest of, written to -out")
+	hours := flag.Bool("hours", false, "with -in, play the plans and write their hours by level and band to -out as JSON (hours.go). -in takes several requests or configs, comma separated, which all play the same gear seeds and sessions")
+	gearSeeds := flag.Int("gear-seeds", 8, "with -hours and -weights, how many gear histories we play the plan with")
+	firstGearSeed := flag.Int("first-gear-seed", 1, "with -hours and -weights, the first gear seed, and the others follow it")
+	sessions := flag.Int("sessions", 0, "with -hours and -weights, sessions per level (and probe) and gear seed (500 and 2000 when 0)")
+	weights := flag.Bool("weights", false, "with -in (a request or a config), measure the stat weights of the plan's gear every 5 levels and write them to -out (weights.go)")
+	style := flag.String("style", "", "with -weights, measure this weapon style from level 1 (twoHand, dualWield, shield or free) in place of the plan's styles")
+	rounds := flag.Int("rounds", 3, "with -weights, rounds of gear and probes")
+	seed := flag.Int64("seed", 1, "with -hours and -weights, the sessions' random seed")
+	levels := flag.String("levels", "", "with -hours, only these levels, like 20-29")
 	flag.Parse()
 
+	if *makeConfig != "" {
+		if err := makeRequestFile(*makeConfig, *out); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
+	}
 	if !core.WITH_DB {
 		fmt.Fprintln(os.Stderr, "build with --tags=with_db, the search needs the item database")
 		os.Exit(2)
@@ -55,12 +77,46 @@ func main() {
 	sim.RegisterAll()
 	db := database.Load()
 
+	sessionsOr := func(count int) int {
+		if *sessions > 0 {
+			return *sessions
+		}
+		return count
+	}
 	switch {
 	case *serve != "":
 		log.Printf("serving leveling plan searches on http://%s/search", *serve)
 		http.HandleFunc("/search", searchHandler(db, *keep))
 		if err := http.ListenAndServe(*serve, nil); err != nil {
 			log.Fatal(err)
+		}
+	case *in != "" && *hours:
+		only, err := levelRange(*levels)
+		if err == nil {
+			opts := hoursOptions{firstGearSeed: int32(*firstGearSeed), gearSeeds: int32(*gearSeeds), sessions: int32(sessionsOr(500)), seed: *seed}
+			err = hoursFiles(db, strings.Split(*in, ","), *out, opts, only)
+		}
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	case *in != "" && *weights:
+		opts := weightsOptions{
+			hoursOptions: hoursOptions{firstGearSeed: int32(*firstGearSeed), gearSeeds: int32(*gearSeeds), sessions: int32(sessionsOr(2000)), seed: *seed},
+			rounds:       *rounds,
+		}
+		var err error
+		if *style != "" {
+			var s proto.LevelingWeaponStyle
+			s, err = styleNamed(*style)
+			opts.style = &s
+		}
+		if err == nil {
+			err = weightsOfFile(db, *in, *out, opts)
+		}
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
 	case *in != "" && *training:
 		var always []string
@@ -87,6 +143,26 @@ func main() {
 	}
 }
 
+// levelRange reads "20-29" or "20" as the first and the last level, nil for "".
+func levelRange(text string) ([]int32, error) {
+	if text == "" {
+		return nil, nil
+	}
+	from, to, isRange := strings.Cut(text, "-")
+	if !isRange {
+		to = from
+	}
+	first, err := strconv.Atoi(from)
+	if err != nil {
+		return nil, fmt.Errorf("-levels %s: want one like 20-29", text)
+	}
+	last, err := strconv.Atoi(to)
+	if err != nil || last < first {
+		return nil, fmt.Errorf("-levels %s: want one like 20-29", text)
+	}
+	return []int32{int32(first), int32(last)}, nil
+}
+
 func readRequest(data []byte) (*proto.LevelingPlanSearchRequest, error) {
 	req := &proto.LevelingPlanSearchRequest{}
 	if err := (protojson.UnmarshalOptions{DiscardUnknown: true}).Unmarshal(data, req); err != nil {
@@ -96,11 +172,7 @@ func readRequest(data []byte) (*proto.LevelingPlanSearchRequest, error) {
 }
 
 func searchFile(db *proto.UIDatabase, in, out string) error {
-	data, err := os.ReadFile(in)
-	if err != nil {
-		return err
-	}
-	req, err := readRequest(data)
+	req, err := readPlanRequest(in)
 	if err != nil {
 		return err
 	}
@@ -119,7 +191,7 @@ func searchFile(db *proto.UIDatabase, in, out string) error {
 		}
 	})
 	log.Printf("done in %.0fs, %d sims: %s", result.Seconds, result.Sims, summary(result))
-	data, err = protojson.MarshalOptions{Multiline: true}.Marshal(result)
+	data, err := protojson.MarshalOptions{Multiline: true}.Marshal(result)
 	if err != nil {
 		return err
 	}
@@ -133,11 +205,7 @@ func searchFile(db *proto.UIDatabase, in, out string) error {
 // writeLevelRequests writes the request the plan sims at each level, so rotopt can read its
 // sessions (-session) or try another rotation there (-apl).
 func writeLevelRequests(db *proto.UIDatabase, in, dir string) error {
-	data, err := os.ReadFile(in)
-	if err != nil {
-		return err
-	}
-	req, err := readRequest(data)
+	req, err := readPlanRequest(in)
 	if err != nil {
 		return err
 	}

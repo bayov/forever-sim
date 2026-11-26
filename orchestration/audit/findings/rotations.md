@@ -4,21 +4,17 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### rotations-20261125-1: Feral cat APLs still cast the EZ-Thro Dark Bomb (260817) after the presets moved to the Goblin Land Mine
-- severity: low (correctness: a dead line naming an item the build no longer carries; +0.5 DPS at 180 s once fixed)
-- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:4, level60_ff.apl.json:4, and the embedded req rotations)
-- found: 2026-11-25, master 85691655a
-- evidence: 22d2cf952 (EV-0088) moved `ui/feral_druid/presets.ts` to `fillerExplosive: ExplosiveGoblinLandMine`, but line 4 of both APLs is still
-  `{"action":{"castSpell":{"spellId":{"itemId":260817}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpLe","rhs":{"const":{"val":"60"}}}},{"cmp":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpGe",...autoSwingTime - 0.4s}}]}}}`
-  with the note "its 1 sec cast restarts the swing timer", which EV-0088 retired. With the Land Mine equipped that line is dead and the mine
-  goes out as an ungated major cooldown. Paired ab.py on the req with fillerExplosive set to ExplosiveGoblinLandMine (consumables-20261125-3's fix),
-  20k it, 8 blocks, A = the APL as is; B-A at 120 / 180 / 300 s:
-  - feral-cat, itemId 4395 + energy gate only (swing term dropped): 1e6 +0.47 / +0.53 / +0.01, 2e8 +0.51 / +0.62 / -0.03, pooled +0.49 / +0.58 / -0.01
-  - feral-cat, itemId 4395 keeping both gates: pooled +0.41 / +0.52 / -0.02
-  - feral-cat-duty-ff, 4395 + energy gate: 1e6 +0.49 / +0.39 / +0.05, 2e8 +0.75 / +0.65 / -0.12, pooled +0.62 / +0.52 / -0.04
-  - baseline at 180 s (A): feral-cat 1061.5, duty-ff 1056.4
-- proposed fix: in both APLs (and the req rotations when they are regenerated with the Land Mine), set the line's itemId to 4395, drop the
-  `autoTimeToNext >= autoSwingTime - 0.4s` term, keep `currentEnergy <= 60`, and rewrite the note. Land with consumables-20261125-3.
+### rotations-20261126-1: Balance APLs still pre-pull and gate Elune's Light on Chained Essence of Eranikus (10455) after the re-rank moved Balance to Talisman of Ascendance
+- severity: low (correctness: dead lines naming a trinket the build no longer wears; 0.0 DPS to clean up)
+- affects: druid__balance, druid__balance-wrath and their -duty-ff builds (ui/balance_druid/apls/level60{,_ff,_wrath,_wrath_ff}.apl.json lines 5 and 11, and the four req rotations)
+- found: 2026-11-26, master bfbee78fc
+- evidence: a60eb2ca1 swaps trinket 10455 for 22678 (Talisman of Ascendance) in the four Balance reqs, but the APLs keep the pre-pull
+  `{"action":{"castSpell":{"spellId":{"itemId":10455}}},"doAtValue":{"const":{"val":"-0.1s"}}}` and Elune's Light's (1259799) condition on
+  `auraIsActive/spellTimeToReady/spellUsesLostByDelay` of itemId 10455. Paired ab.py, 20k it, 8 blocks, CLI bfbee78fcca3, A = the req as is (802.6 at 180 s), B-A at 120 / 180 / 300 s:
+  - B3, drop the 10455 pre-pull and the Elune's Light condition (cast on cooldown): +0.00 / +0.00 / +0.00 on balance and balance-wrath (set 1): identical to A, so the lines are dead.
+  - B2, drop the pre-pull, gate Elune's Light on 22678: +0.00 / -0.03 / +0.07 (set 1).
+  - B1, 10455 -> 22678 everywhere (pre-pull the Talisman): set 1 -1.76 / -1.21 / -0.63, set 2 -1.73 / -1.17 / -0.73, pooled -1.75 / -1.19 / -0.68. Don't pre-pull it; autocast already fires it on cooldown (as rotations-20261125-1 on the warlock Talisman found).
+- proposed fix: B3 in the four APLs and four req rotations: delete the 10455 pre-pull line and the Elune's Light line's condition (rewrite its note: on cooldown). No re-sim needed (bit-identical).
 - needs: orchestrator fix
 
 ### rotations-20261122-1: Shock Ret: Hammer of Wrath and Holy Strike ahead of Judgement and Seal of Command
@@ -65,6 +61,24 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 
 ## Resolved
+
+### rotations-20261125-1: Feral cat APLs still cast the EZ-Thro Dark Bomb (260817) after the presets moved to the Goblin Land Mine
+- severity: low (correctness: a dead line naming an item the build no longer carries; +0.5 DPS at 180 s once fixed)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:4, level60_ff.apl.json:4, and the embedded req rotations)
+- found: 2026-11-25, master 85691655a
+- evidence: 22d2cf952 (EV-0088) moved `ui/feral_druid/presets.ts` to `fillerExplosive: ExplosiveGoblinLandMine`, but line 4 of both APLs is still
+  `{"action":{"castSpell":{"spellId":{"itemId":260817}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpLe","rhs":{"const":{"val":"60"}}}},{"cmp":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpGe",...autoSwingTime - 0.4s}}]}}}`
+  with the note "its 1 sec cast restarts the swing timer", which EV-0088 retired. With the Land Mine equipped that line is dead and the mine
+  goes out as an ungated major cooldown. Paired ab.py on the req with fillerExplosive set to ExplosiveGoblinLandMine (consumables-20261125-3's fix),
+  20k it, 8 blocks, A = the APL as is; B-A at 120 / 180 / 300 s:
+  - feral-cat, itemId 4395 + energy gate only (swing term dropped): 1e6 +0.47 / +0.53 / +0.01, 2e8 +0.51 / +0.62 / -0.03, pooled +0.49 / +0.58 / -0.01
+  - feral-cat, itemId 4395 keeping both gates: pooled +0.41 / +0.52 / -0.02
+  - feral-cat-duty-ff, 4395 + energy gate: 1e6 +0.49 / +0.39 / +0.05, 2e8 +0.75 / +0.65 / -0.12, pooled +0.62 / +0.52 / -0.04
+  - baseline at 180 s (A): feral-cat 1061.5, duty-ff 1056.4
+- proposed fix: in both APLs (and the req rotations when they are regenerated with the Land Mine), set the line's itemId to 4395, drop the
+  `autoTimeToNext >= autoSwingTime - 0.4s` term, keep `currentEnergy <= 60`, and rewrite the note. Land with consumables-20261125-3.
+- needs: orchestrator fix
+- resolved: 2026-11-26, 35a2e9dca (variant): both APLs cast the Land Mine (4395) and keep the `autoTimeToNext >= autoSwingTime - 0.4s` term with the energy gate; this pass measured that form at pooled +0.52 at 180 s against +0.58 without the term, within noise. The req rotations carry it too.
 
 ### rotations-20261125-1: Two of 78802e6e's live on-use trinket lines lose DPS: the warlock Talisman of Ascendance pre-pull and Fury DW's held Blackhand's Breadth
 - severity: medium (Affliction -0.5%, Fury DW -0.3%; no place in the ranking changes)

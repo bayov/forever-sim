@@ -7,6 +7,10 @@ import (
 )
 
 func (warrior *Warrior) RegisterShieldWallCD() {
+	if !warrior.KnowsRank(871, 28) {
+		return
+	}
+
 	duration := time.Second * 10
 	//This is the inverse of the tooltip since it is a damage TAKEN coefficient
 	damageTaken := 0.25

@@ -15,5 +15,5 @@
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf hit 8.8% against the 8% yellow cap, the set's own hit 7.8%: 0.8% (8 budget points) re-spent over the set's shares at the 1b prices (Strength 48.8%, CritRating 25.2%, Agility 15.0%, AttackPowerBoth 11.1%). Hit and crit are one pool for the gear, so each is written once. Dwarf 977.0 with the preset's gear, 981.5 with the swap; gain.se is the paired error (the same seeded fights), 0.66 unpaired."
+ "how": "race_gear.py: Dwarf hit 8.8% against the 8% yellow cap, the set's own hit 7.8%: 0.8% (8 budget points) re-spent over the set's shares at the 1b prices (Strength 48.8%, CritRating 25.2%, Agility 15.0%, AttackPowerBoth 11.1%). Hit and crit are one pool for the gear, so each is written once. Dwarf 979.2 with the preset's gear, 983.7 with the swap; gain.se is the paired error (the same seeded fights), 0.66 unpaired."
 }

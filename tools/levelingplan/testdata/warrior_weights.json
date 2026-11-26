@@ -1,0 +1,80 @@
+{
+ "levels": [
+  {
+   "level": 5,
+   "weights": {
+    "AttackPower": 1,
+    "Strength": 2,
+    "Agility": 0.8,
+    "Stamina": 0.7,
+    "MeleeHit": 8,
+    "MeleeCrit": 6,
+    "Armor": 0.02,
+    "Defense": 0.5,
+    "Dodge": 3,
+    "Parry": 3,
+    "MainHandDps": 12,
+    "OffHandDps": 4.8,
+    "Block": 0.5,
+    "BlockValue": 0.2
+   }
+  },
+  {
+   "level": 20,
+   "weights": {
+    "AttackPower": 1,
+    "Strength": 2,
+    "Agility": 0.8,
+    "Stamina": 0.7,
+    "MeleeHit": 8,
+    "MeleeCrit": 6,
+    "Armor": 0.02,
+    "Defense": 0.5,
+    "Dodge": 3,
+    "Parry": 3,
+    "MainHandDps": 12,
+    "OffHandDps": 4.8,
+    "Block": 0.5,
+    "BlockValue": 0.2
+   }
+  },
+  {
+   "level": 40,
+   "weights": {
+    "AttackPower": 1,
+    "Strength": 2,
+    "Agility": 0.8,
+    "Stamina": 0.7,
+    "MeleeHit": 8,
+    "MeleeCrit": 6,
+    "Armor": 0.02,
+    "Defense": 0.5,
+    "Dodge": 3,
+    "Parry": 3,
+    "MainHandDps": 14,
+    "OffHandDps": 5.6,
+    "Block": 0.5,
+    "BlockValue": 0.2
+   }
+  },
+  {
+   "level": 59,
+   "weights": {
+    "AttackPower": 1,
+    "Strength": 2,
+    "Agility": 0.8,
+    "Stamina": 0.7,
+    "MeleeHit": 8,
+    "MeleeCrit": 6,
+    "Armor": 0.02,
+    "Defense": 0.5,
+    "Dodge": 3,
+    "Parry": 3,
+    "MainHandDps": 16,
+    "OffHandDps": 6.4,
+    "Block": 0.5,
+    "BlockValue": 0.2
+   }
+  }
+ ]
+}

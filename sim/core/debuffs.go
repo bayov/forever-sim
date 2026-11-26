@@ -1051,6 +1051,14 @@ func SunderArmorAura(target *Unit) *Aura {
 	return sunderArmorAura(target, 450)
 }
 
+// SunderArmorAuraOfRank is a warrior's own Sunder Armor of a lower rank, which takes this much
+// armor a stack.
+func SunderArmorAuraOfRank(target *Unit, spellID int32, arpen float64) *Aura {
+	aura := sunderArmorAura(target, arpen)
+	aura.ActionID = ActionID{SpellID: spellID}
+	return aura
+}
+
 // arpen is the armor each stack takes.
 func sunderArmorAura(target *Unit, arpen float64) *Aura {
 	var effect *ExclusiveEffect

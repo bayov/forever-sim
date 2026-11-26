@@ -11,8 +11,8 @@
   ],
   "use_dur": 90,
   "dps": 1096.77,
-  "made": "2026-11-25",
-  "sim": "d38dae9a93dd",
+  "made": "2026-11-26",
+  "sim": "34fe148a589e+",
   "slots": {
     "head": [
       {
@@ -2131,7 +2131,7 @@
           }
         ],
         "cooldown": {
-          "loss": 17.23
+          "loss": 17.41
         },
         "note": "Quest: The Essence of Eranikus, Sunken Temple"
       },
@@ -2150,73 +2150,95 @@
           }
         ],
         "cooldown": {
-          "rank": 8,
-          "loss": 9.16
+          "rank": 9,
+          "loss": 8.82
         },
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
       },
       {
-        "id": 280065,
-        "name": "Behemoth Bones",
-        "dps": 1090.47,
-        "loss": 6.3,
-        "avail": "doubtful",
-        "note": "Blackmaw Hold? · no source in db"
+        "id": 22321,
+        "name": "Heart of Wyrmthalak",
+        "dps": 1092.9,
+        "loss": 3.88,
+        "conditional": [
+          {
+            "label": "vs Orcs and Ogres",
+            "rank": 1,
+            "loss": -27.45,
+            "bis": true
+          }
+        ],
+        "note": "Drop: Overlord Wyrmthalak, Lower Blackrock Spire"
       },
       {
         "id": 19120,
         "name": "Rune of the Guard Captain",
-        "dps": 1089.69,
-        "loss": 7.08,
+        "dps": 1091.6,
+        "loss": 5.18,
         "conditional": [
           {
             "label": "in forest or grassland",
             "rank": 1,
-            "loss": -0.21,
+            "loss": -2.85,
             "bis": true
           }
         ],
         "note": "Quest: Job Opening: Guard Captain of Revantusk Village, Hinterlands"
       },
       {
+        "id": 13213,
+        "name": "Smolderweb's Eye",
+        "dps": 1090.37,
+        "loss": 6.4,
+        "note": "Drop: Mother Smolderweb, Lower Blackrock Spire"
+      },
+      {
+        "id": 280065,
+        "name": "Behemoth Bones",
+        "dps": 1089.95,
+        "loss": 6.82,
+        "avail": "doubtful",
+        "note": "Blackmaw Hold? · no source in db"
+      },
+      {
         "id": 18537,
         "name": "Counterattack Lodestone",
-        "dps": 1089.36,
-        "loss": 7.41,
+        "dps": 1088.86,
+        "loss": 7.91,
         "note": "Drop: Gordok Tribute, Dire Maul"
       },
       {
         "id": 18473,
         "name": "Royal Seal of Eldre'Thalas",
-        "dps": 1089.21,
-        "loss": 7.56,
+        "dps": 1088.81,
+        "loss": 7.97,
         "note": "Quest: The Greatest Race of Hunters (Hunter), Dire Maul"
       },
       {
         "id": 14022,
         "name": "Barov Peasant Caller",
-        "dps": 1088.33,
-        "loss": 8.44,
+        "dps": 1088.6,
+        "loss": 8.17,
         "cooldown": {
-          "loss": 15.68
+          "loss": 16.02
         },
         "note": "Quest: The Last Barov (Horde), Western Plaguelands"
       },
       {
         "id": 280071,
         "name": "Flamebreak Talisman",
-        "dps": 1088.09,
-        "loss": 8.68,
+        "dps": 1087.86,
+        "loss": 8.91,
         "conditional": [
           {
             "label": "vs Elementals",
             "rank": 1,
-            "loss": -1.45,
+            "loss": -1.41,
             "bis": true
           }
         ],
         "cooldown": {
-          "loss": 17.21
+          "loss": 17.44
         },
         "avail": "doubtful",
         "note": "Drop: Unbound Spirit, Blackmaw Hold · not in guides yet"
@@ -2224,23 +2246,23 @@
       {
         "id": 274759,
         "name": "Everlook Pathcarver",
-        "dps": 1087.06,
-        "loss": 9.71,
+        "dps": 1086.14,
+        "loss": 10.64,
         "cooldown": {
-          "loss": 15.88
+          "loss": 16.72
         },
         "note": "Zippie Fizzbolt, Everlook"
       },
       {
         "id": 270225,
         "name": "Jewel of the Guard Captain",
-        "dps": 1086.12,
-        "loss": 10.65,
+        "dps": 1085.82,
+        "loss": 10.95,
         "conditional": [
           {
             "label": "in forest or grassland",
-            "rank": 11,
-            "loss": 10.77
+            "rank": 12,
+            "loss": 10.84
           }
         ],
         "note": "Quest: Job Opening: Guard Captain of Revantusk Village (Horde), Hinterlands"
@@ -2248,97 +2270,75 @@
       {
         "id": 276337,
         "name": "Thaelemaches' Talisman",
-        "dps": 1086.06,
-        "loss": 10.71,
+        "dps": 1085.6,
+        "loss": 11.17,
         "avail": "doubtful",
         "note": "Quest: Blind Vengeance"
       },
       {
-        "id": 13382,
-        "name": "Cannonball Runner",
-        "dps": 1085.82,
-        "loss": 10.95,
-        "note": "Drop: Cannon Master Willey, Stratholme"
-      },
-      {
-        "id": 13213,
-        "name": "Smolderweb's Eye",
-        "dps": 1085.82,
-        "loss": 10.95,
-        "note": "Drop: Mother Smolderweb, Lower Blackrock Spire"
-      },
-      {
-        "id": 280032,
-        "name": "Bolt's Charged Eyeball",
-        "dps": 1085.58,
-        "loss": 11.19,
-        "conditional": [
-          {
-            "label": "vs Dinosaurs",
-            "rank": 3,
-            "loss": 1.79
-          }
-        ],
-        "avail": "doubtful",
-        "note": "Drop: Bolt · zone unknown"
-      },
-      {
         "id": 286556,
         "name": "Winds of Tanaris",
-        "dps": 1085.51,
-        "loss": 11.26,
+        "dps": 1085.06,
+        "loss": 11.72,
         "note": "Drop: Soul of Tanaris, Tanaris"
       },
       {
         "id": 280074,
         "name": "Scalding Flamehoof",
-        "dps": 1085.09,
-        "loss": 11.68,
+        "dps": 1084.84,
+        "loss": 11.93,
         "avail": "doubtful",
         "note": "Drop: Varrox Bleakhoof, Blackmaw Hold · not in guides yet"
       },
       {
-        "id": 274760,
-        "name": "Everlook Delivery Bot",
-        "dps": 1085.03,
-        "loss": 11.74,
-        "cooldown": {
-          "loss": 17.22
-        },
-        "note": "Zippie Fizzbolt, Everlook"
+        "id": 13382,
+        "name": "Cannonball Runner",
+        "dps": 1084.82,
+        "loss": 11.96,
+        "note": "Drop: Cannon Master Willey, Stratholme"
       },
       {
         "id": 13171,
         "name": "Smokey's Lighter",
-        "dps": 1084.96,
-        "loss": 11.81,
+        "dps": 1084.29,
+        "loss": 12.48,
         "conditional": [
           {
             "label": "vs Plants",
-            "rank": 7,
-            "loss": 7.85
+            "rank": 10,
+            "loss": 8.59
           },
           {
             "label": "vs 4 mobs",
             "rank": 14,
-            "loss": 11.18
+            "loss": 11.69
           }
         ],
         "cooldown": {
-          "loss": 15.72
+          "loss": 16.23
         },
         "note": "Quest: The Great Ezra Grimm (Strat) · AoE pick"
       },
       {
+        "id": 274760,
+        "name": "Everlook Delivery Bot",
+        "dps": 1084.16,
+        "loss": 12.61,
+        "cooldown": {
+          "loss": 18.04
+        },
+        "note": "Zippie Fizzbolt, Everlook"
+      },
+      {
         "id": 11815,
         "name": "Hand of Justice",
-        "dps": 1084.41,
-        "loss": 12.36,
+        "dps": 1083.11,
+        "loss": 13.67,
         "conditional": [
           {
             "label": "vs Dwarves",
-            "rank": 19,
-            "loss": 12.32
+            "rank": 17,
+            "loss": 12.26
           }
         ],
         "note": "Drop: Emperor Dagran Thaurissan, Blackrock Depths"
@@ -2346,94 +2346,87 @@
       {
         "id": 272437,
         "name": "Adaptive Combat Assistant",
-        "dps": 1083.88,
-        "loss": 12.89,
+        "dps": 1082.99,
+        "loss": 13.79,
         "conditional": [
           {
             "label": "vs 4 mobs",
             "rank": 20,
-            "loss": 13.49
+            "loss": 13.98
           }
         ],
         "cooldown": {
-          "rank": 20,
-          "loss": 13.41
+          "rank": 21,
+          "loss": 14.31
         },
         "note": "Pix Xizzix · 125 Reals"
       },
       {
-        "id": 22321,
-        "name": "Heart of Wyrmthalak",
-        "dps": 1082.37,
-        "loss": 14.4,
+        "id": 280032,
+        "name": "Bolt's Charged Eyeball",
+        "dps": 1082.78,
+        "loss": 13.99,
         "conditional": [
           {
-            "label": "vs Orcs and Ogres",
-            "rank": 3,
-            "loss": 5.25
+            "label": "vs Dinosaurs",
+            "rank": 4,
+            "loss": 4.25
           }
         ],
-        "note": "Drop: Overlord Wyrmthalak, Lower Blackrock Spire"
-      },
-      {
-        "id": 11905,
-        "name": "Linken's Boomerang",
-        "dps": 1082.14,
-        "loss": 14.63,
-        "cooldown": {
-          "loss": 15.74
-        },
-        "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
+        "avail": "doubtful",
+        "note": "Drop: Bolt · zone unknown"
       },
       {
         "id": 270226,
         "name": "Golden Banana",
-        "dps": 1081.93,
-        "loss": 14.84,
+        "dps": 1081.74,
+        "loss": 15.04,
         "conditional": [
           {
             "label": "in forest or grassland",
-            "rank": 3,
-            "loss": 4.46
+            "rank": 4,
+            "loss": 5.05
           }
         ],
         "cooldown": {
-          "loss": 17.04
+          "loss": 17.42
         },
         "note": "Quest: Message in a Bottle, Stranglethorn Vale"
       },
       {
-        "id": 280060,
-        "name": "Lucky Shovelnose Tuft",
-        "dps": 1081.14,
-        "loss": 15.63,
-        "avail": "doubtful",
-        "note": "Bonesnout the Unbroken · Blackmaw Hold · not in guides yet"
+        "id": 11905,
+        "name": "Linken's Boomerang",
+        "dps": 1081.58,
+        "loss": 15.2,
+        "cooldown": {
+          "loss": 16.24
+        },
+        "note": "Quest: It's Dangerous to Go Alone, Un'Goro Crater"
       },
       {
-        "id": 12930,
-        "name": "Briarwood Reed",
-        "dps": 1081.11,
-        "loss": 15.66,
-        "conditional": [
-          {
-            "label": "in marsh or swamp",
-            "rank": 26,
-            "loss": 15.66
-          }
-        ],
-        "note": "Drop: Jed Runewatcher, Lower Blackrock Spire"
+        "id": 18371,
+        "name": "Mindtap Talisman",
+        "dps": 1081.13,
+        "loss": 15.65,
+        "note": "Drop: Magister Kalendris, Dire Maul"
+      },
+      {
+        "id": 10659,
+        "name": "Shard of the Splithooves",
+        "dps": 1081.13,
+        "loss": 15.65,
+        "note": "Quest: Heroes of Old, Blasted Lands"
       },
       {
         "id": 13209,
         "name": "Seal of the Dawn",
-        "dps": 1081.11,
-        "loss": 15.66,
+        "dps": 1080.7,
+        "loss": 16.07,
         "conditional": [
           {
             "label": "vs Undead",
             "rank": 1,
-            "loss": -4.82,
+            "loss": -3.96,
             "bis": true
           }
         ],
@@ -2452,267 +2445,297 @@
         "note": "Quest reward (Wowhead source quest, no quest id known) · on timesaver.gg's Forever hunter BiS"
       },
       {
-        "id": 2163,
-        "name": "Shadowblade",
-        "dps": 1086.74,
-        "loss": 10.03,
-        "with": 280021,
-        "note": "Random world drop"
-      },
-      {
         "id": 280056,
         "name": "Flameslash Crescent",
-        "dps": 1086.33,
-        "loss": 10.44,
+        "dps": 1088.79,
+        "loss": 7.99,
         "avail": "doubtful",
         "note": "Impaan the Imprisoner · Blackmaw Hold, not confirmed open"
       },
       {
+        "id": 13052,
+        "name": "Warmonger",
+        "dps": 1086.26,
+        "loss": 10.52,
+        "note": "Random world drop · rare BoE, AH price not checked"
+      },
+      {
         "id": 274419,
         "name": "Bear Poking Stick",
-        "dps": 1085.61,
-        "loss": 11.16,
+        "dps": 1084.26,
+        "loss": 12.52,
         "note": "Dala Fairmaw (npc 256629), zone 616, likely Mount Hyjal"
       },
       {
         "id": 18725,
         "name": "Peacemaker",
-        "dps": 1084.14,
-        "loss": 12.63,
+        "dps": 1083.32,
+        "loss": 13.45,
         "note": "Magistrate Barthilas (Strat)"
-      },
-      {
-        "id": 280021,
-        "name": "Tooth of the Matriarch",
-        "dps": 1084.06,
-        "loss": 12.71,
-        "with": 280021,
-        "note": "Direhorn Matriarch · 188g per DPS",
-        "avail": "infeasible"
-      },
-      {
-        "id": 12783,
-        "name": "Heartseeker",
-        "dps": 1083.79,
-        "loss": 12.98,
-        "with": 280021,
-        "avail": "infeasible",
-        "note": "Blacksmithing craft, plans from Cannon Master Willey · needs 6 Azerothian Diamond and 6 Large Opal, over 300g · 1050g per DPS"
-      },
-      {
-        "id": 286613,
-        "name": "King Mosh's Tooth",
-        "dps": 1083.53,
-        "loss": 13.24,
-        "with": 280021,
-        "note": "King Mosh · Un'Goro Crater"
-      },
-      {
-        "id": 22314,
-        "name": "Huntsman's Harpoon",
-        "dps": 1083.25,
-        "loss": 13.52,
-        "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 20220,
         "name": "Ironbark Staff",
-        "dps": 1083.22,
-        "loss": 13.55,
+        "dps": 1083.1,
+        "loss": 13.67,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed"
       },
       {
-        "id": 12527,
-        "suffix": 172,
-        "name": "Ribsplitter of Agility",
-        "dps": 1082.71,
-        "loss": 14.06,
-        "with": 280021
+        "id": 22314,
+        "name": "Huntsman's Harpoon",
+        "dps": 1082.82,
+        "loss": 13.95,
+        "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 18520,
+        "name": "Barbarous Blade",
+        "dps": 1081.3,
+        "loss": 15.47
+      },
+      {
+        "id": 11931,
+        "name": "Dreadforge Retaliator",
+        "dps": 1080.53,
+        "loss": 16.24
+      },
+      {
+        "id": 280082,
+        "name": "Staff of Sorrow",
+        "dps": 1080.43,
+        "loss": 16.35,
+        "note": "Mopes · Blackmaw Hold"
+      },
+      {
+        "id": 15256,
+        "suffix": 464,
+        "name": "Massacre Sword of the Falcon",
+        "dps": 1080.39,
+        "loss": 16.39,
+        "note": "Random world drop"
+      },
+      {
+        "id": 15256,
+        "suffix": 368,
+        "name": "Massacre Sword of Agility",
+        "dps": 1080.07,
+        "loss": 16.71,
+        "note": "Random world drop"
+      },
+      {
+        "id": 15271,
+        "suffix": 367,
+        "name": "Colossal Great Axe of Agility",
+        "dps": 1079.14,
+        "loss": 17.63
       },
       {
         "id": 15258,
         "suffix": 371,
         "name": "Divine Warblade of Agility",
-        "dps": 1082.54,
-        "loss": 14.23
+        "dps": 1079.11,
+        "loss": 17.66
       },
       {
-        "id": 18520,
-        "name": "Barbarous Blade",
-        "dps": 1082.5,
-        "loss": 14.27
+        "id": 2163,
+        "name": "Shadowblade",
+        "dps": 1078.87,
+        "loss": 17.9,
+        "with": 286613,
+        "note": "Random world drop"
       },
       {
-        "id": 279259,
-        "name": "Ironwood Blade",
-        "dps": 1082.34,
-        "loss": 14.43,
-        "with": 280021,
-        "avail": "doubtful",
-        "note": "Blacksmithing craft, plans have no known source"
+        "id": 12527,
+        "suffix": 172,
+        "name": "Ribsplitter of Agility",
+        "dps": 1078.8,
+        "loss": 17.98,
+        "with": 286613
       },
       {
-        "id": 10837,
-        "name": "Tooth of Eranikus",
-        "dps": 1082.34,
-        "loss": 14.43,
-        "with": 280021
+        "id": 15276,
+        "suffix": 464,
+        "name": "Magus Long Staff of the Falcon",
+        "dps": 1078.73,
+        "loss": 18.05
+      },
+      {
+        "id": 15255,
+        "suffix": 464,
+        "name": "Gallant Flamberge of the Falcon",
+        "dps": 1078.66,
+        "loss": 18.11
       },
       {
         "id": 15273,
         "suffix": 370,
         "name": "Death Striker of Agility",
-        "dps": 1081.85,
-        "loss": 14.92
+        "dps": 1078.64,
+        "loss": 18.14
       },
       {
-        "id": 15257,
-        "suffix": 370,
-        "name": "Shin Blade of Agility",
-        "dps": 1081.85,
-        "loss": 14.92
-      },
-      {
-        "id": 250618,
-        "name": "Bagh Nakh",
-        "dps": 1081.43,
-        "loss": 15.34,
-        "with": 280021,
+        "id": 12783,
+        "name": "Heartseeker",
+        "dps": 1078.52,
+        "loss": 18.26,
+        "with": 286613,
         "avail": "infeasible",
-        "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g)"
+        "note": "Blacksmithing craft, plans from Cannon Master Willey · needs 6 Azerothian Diamond and 6 Large Opal, over 300g · 1050g per DPS"
       },
       {
-        "id": 18737,
-        "name": "Bone Slicing Hatchet",
-        "dps": 1081.43,
-        "loss": 15.34,
-        "with": 280021,
-        "note": "Maleki the Pallid · Stratholme"
+        "id": 15273,
+        "suffix": 470,
+        "name": "Death Striker of the Falcon",
+        "dps": 1078.42,
+        "loss": 18.35
       },
       {
-        "id": 19542,
-        "name": "Scout's Blade",
-        "dps": 1081.43,
-        "loss": 15.34,
-        "with": 280021,
-        "note": "Warsong Outriders Revered · Kelm Hargunth, Ashenvale"
-      },
-      {
-        "id": 274383,
-        "name": "Kanai's Knife",
-        "dps": 1081.24,
-        "loss": 15.53,
-        "with": 280021,
-        "avail": "doubtful",
-        "note": "Quest: Soldier's Solace"
-      },
-      {
-        "id": 280085,
-        "name": "Tunnelweb Pincer",
-        "dps": 1081.21,
-        "loss": 15.56,
-        "with": 280021
-      },
-      {
-        "id": 287034,
-        "name": "Grove Subjugator's Blade",
-        "dps": 1080.94,
-        "loss": 15.83,
-        "with": 280021,
-        "avail": "doubtful",
-        "note": "No known source"
-      },
-      {
-        "id": 13036,
-        "name": "Assassination Blade",
-        "dps": 1080.91,
-        "loss": 15.86,
-        "with": 280021
+        "id": 250615,
+        "name": "Thorium Poleaxe",
+        "dps": 1078.41,
+        "loss": 18.37
       },
       {
         "id": 12940,
         "name": "Dal'Rend's Sacred Charge",
-        "dps": 1080.91,
-        "loss": 15.86,
-        "with": 280021,
+        "dps": 1078.37,
+        "loss": 18.4,
+        "with": 286613,
         "note": "Warchief Rend Blackhand · Blackrock Spire"
+      },
+      {
+        "id": 2244,
+        "name": "Krol Blade",
+        "dps": 1078.35,
+        "loss": 18.42,
+        "with": 286613,
+        "note": "Random world drop"
+      },
+      {
+        "id": 15271,
+        "suffix": 461,
+        "name": "Colossal Great Axe of the Falcon",
+        "dps": 1078.18,
+        "loss": 18.59
+      },
+      {
+        "id": 18538,
+        "name": "Treant's Bane",
+        "dps": 1075.38,
+        "loss": 21.39,
+        "conditional": [
+          {
+            "label": "vs Plants",
+            "rank": 25,
+            "loss": 18.42
+          }
+        ]
       },
       {
         "id": 18310,
         "name": "Fiendish Machete",
-        "dps": 1080.5,
-        "loss": 16.27,
-        "with": 280021,
+        "dps": 1075.1,
+        "loss": 21.68,
+        "with": 286613,
         "conditional": [
           {
             "label": "vs Elementals",
-            "rank": 4,
-            "loss": 10.47
-          }
-        ]
-      },
-      {
-        "id": 12709,
-        "name": "Pip's Skinner",
-        "dps": 1076.76,
-        "loss": 20.01,
-        "with": 280021,
-        "conditional": [
-          {
-            "label": "vs Beasts",
-            "rank": 4,
-            "loss": 11.13
-          }
-        ]
-      },
-      {
-        "id": 10696,
-        "name": "Enchanted Azsharite Felbane Sword",
-        "dps": 1076.22,
-        "loss": 20.55,
-        "with": 280021,
-        "conditional": [
-          {
-            "label": "vs Demons",
-            "rank": 23,
-            "loss": 15.57
+            "rank": 9,
+            "loss": 15.64
           }
         ]
       }
     ],
     "offhand": [
       {
-        "id": 280021,
-        "name": "Tooth of the Matriarch",
-        "dps": 1086.74,
-        "loss": 10.03,
-        "with": 2163,
-        "note": "Direhorn Matriarch · 188g per DPS",
-        "avail": "infeasible"
-      },
-      {
         "id": 12783,
         "name": "Heartseeker",
-        "dps": 1086.5,
-        "loss": 10.27,
+        "dps": 1079.9,
+        "loss": 16.87,
         "with": 2163,
         "avail": "infeasible",
         "note": "Blacksmithing craft, plans from Cannon Master Willey · needs 6 Azerothian Diamond and 6 Large Opal, over 300g · 1050g per DPS"
       },
       {
+        "id": 280021,
+        "name": "Tooth of the Matriarch",
+        "dps": 1079.81,
+        "loss": 16.96,
+        "with": 2163,
+        "avail": "infeasible",
+        "note": "Direhorn Matriarch · 188g per DPS"
+      },
+      {
         "id": 286613,
         "name": "King Mosh's Tooth",
-        "dps": 1086.03,
-        "loss": 10.74,
+        "dps": 1078.87,
+        "loss": 17.9,
         "with": 2163,
         "note": "King Mosh · Un'Goro Crater"
       },
       {
+        "id": 279259,
+        "name": "Ironwood Blade",
+        "dps": 1077.03,
+        "loss": 19.74,
+        "with": 2163,
+        "avail": "doubtful",
+        "note": "Blacksmithing craft, plans have no known source"
+      },
+      {
+        "id": 13036,
+        "name": "Assassination Blade",
+        "dps": 1076.99,
+        "loss": 19.78,
+        "with": 2163,
+        "note": "Random world drop · rare BoE, AH price not checked"
+      },
+      {
+        "id": 12774,
+        "name": "Dawn's Edge",
+        "dps": 1076.98,
+        "loss": 19.79,
+        "with": 2163
+      },
+      {
+        "id": 280085,
+        "name": "Tunnelweb Pincer",
+        "dps": 1076.93,
+        "loss": 19.85,
+        "with": 2163
+      },
+      {
+        "id": 15247,
+        "suffix": 437,
+        "name": "Bloodstrike Dagger of the Falcon",
+        "dps": 1076.83,
+        "loss": 19.94,
+        "with": 2163,
+        "note": "Random world drop"
+      },
+      {
+        "id": 15240,
+        "suffix": 437,
+        "name": "Demon's Claw of the Falcon",
+        "dps": 1076.83,
+        "loss": 19.94,
+        "with": 2163
+      },
+      {
+        "id": 15221,
+        "suffix": 437,
+        "name": "Holy War Sword of the Falcon",
+        "dps": 1076.83,
+        "loss": 19.94,
+        "unsourced": true,
+        "with": 2163
+      },
+      {
         "id": 250618,
         "name": "Bagh Nakh",
-        "dps": 1083.95,
-        "loss": 12.82,
+        "dps": 1076.82,
+        "loss": 19.95,
         "with": 2163,
         "avail": "infeasible",
         "note": "Blacksmithing · plans from Meilosh (Timbermaw Exalted, 10.5g)"
@@ -2720,48 +2743,51 @@
       {
         "id": 18737,
         "name": "Bone Slicing Hatchet",
-        "dps": 1083.95,
-        "loss": 12.82,
+        "dps": 1076.82,
+        "loss": 19.95,
         "with": 2163,
         "note": "Maleki the Pallid · Stratholme"
       },
       {
         "id": 19542,
         "name": "Scout's Blade",
-        "dps": 1083.95,
-        "loss": 12.82,
+        "dps": 1076.82,
+        "loss": 19.95,
         "with": 2163,
         "note": "Warsong Outriders Revered · Kelm Hargunth, Ashenvale"
       },
       {
         "id": 287034,
         "name": "Grove Subjugator's Blade",
-        "dps": 1083.56,
-        "loss": 13.21,
+        "dps": 1076.63,
+        "loss": 20.14,
         "with": 2163,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
-        "id": 13036,
-        "name": "Assassination Blade",
-        "dps": 1083.49,
-        "loss": 13.28,
-        "with": 2163
+        "id": 274383,
+        "name": "Kanai's Knife",
+        "dps": 1076.63,
+        "loss": 20.14,
+        "with": 2163,
+        "avail": "doubtful",
+        "note": "Quest: Soldier's Solace"
       },
       {
-        "id": 12774,
-        "name": "Dawn's Edge",
-        "dps": 1083.49,
-        "loss": 13.28,
-        "with": 2163
+        "id": 22317,
+        "name": "Lefty's Brass Knuckle",
+        "dps": 1076.14,
+        "loss": 20.64,
+        "with": 2163,
+        "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 15247,
         "suffix": 173,
         "name": "Bloodstrike Dagger of Agility",
-        "dps": 1083.23,
-        "loss": 13.54,
+        "dps": 1076.11,
+        "loss": 20.66,
         "with": 2163,
         "note": "Random world drop"
       },
@@ -2769,126 +2795,77 @@
         "id": 15246,
         "suffix": 173,
         "name": "Demon Blade of Agility",
-        "dps": 1083.23,
-        "loss": 13.54,
+        "dps": 1076.11,
+        "loss": 20.66,
         "with": 2163
       },
       {
         "id": 15240,
         "suffix": 173,
         "name": "Demon's Claw of Agility",
-        "dps": 1083.23,
-        "loss": 13.54,
+        "dps": 1076.11,
+        "loss": 20.66,
         "with": 2163
       },
       {
         "id": 15239,
         "suffix": 173,
         "name": "Felstone Reaver of Agility",
-        "dps": 1083.23,
-        "loss": 13.54,
+        "dps": 1076.11,
+        "loss": 20.66,
         "with": 2163
       },
       {
         "id": 15221,
         "suffix": 173,
         "name": "Holy War Sword of Agility",
-        "dps": 1083.23,
-        "loss": 13.54,
+        "dps": 1076.11,
+        "loss": 20.66,
         "unsourced": true,
         "with": 2163
       },
       {
-        "id": 22317,
-        "name": "Lefty's Brass Knuckle",
-        "dps": 1083.23,
-        "loss": 13.54,
-        "with": 2163,
-        "note": "Theldren · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 280085,
-        "name": "Tunnelweb Pincer",
-        "dps": 1083.09,
-        "loss": 13.68,
-        "with": 2163
-      },
-      {
-        "id": 274383,
-        "name": "Kanai's Knife",
-        "dps": 1082.98,
-        "loss": 13.79,
-        "with": 2163,
-        "avail": "doubtful",
-        "note": "Quest: Soldier's Solace"
-      },
-      {
-        "id": 279259,
-        "name": "Ironwood Blade",
-        "dps": 1082.82,
-        "loss": 13.95,
-        "with": 2163,
-        "avail": "doubtful",
-        "note": "Blacksmithing craft, plans have no known source"
-      },
-      {
-        "id": 280029,
-        "name": "Cinderedge Crescent",
-        "dps": 1082.5,
-        "loss": 14.27,
-        "with": 2163,
-        "avail": "doubtful",
-        "note": "Cinder · Shaper's Terrace · only reported"
-      },
-      {
-        "id": 15219,
-        "suffix": 172,
-        "name": "Dimensional Blade of Agility",
-        "dps": 1082.48,
-        "loss": 14.29,
-        "with": 2163
-      },
-      {
-        "id": 19543,
-        "name": "Scout's Blade",
-        "dps": 1082.48,
-        "loss": 14.29,
-        "with": 2163
-      },
-      {
-        "id": 15238,
-        "suffix": 172,
-        "name": "Warlord's Axe of Agility",
-        "dps": 1082.48,
-        "loss": 14.29,
-        "with": 2163
-      },
-      {
-        "id": 18347,
-        "name": "Well Balanced Axe",
-        "dps": 1082.48,
-        "loss": 14.29,
-        "with": 2163,
-        "note": "Illyanna Ravenoak · Dire Maul"
-      },
-      {
         "id": 250616,
         "name": "Bold Dirk",
-        "dps": 1082.43,
-        "loss": 14.34,
+        "dps": 1076.06,
+        "loss": 20.71,
+        "with": 2163
+      },
+      {
+        "id": 15237,
+        "suffix": 254,
+        "name": "Corpse Harvester of the Falcon",
+        "dps": 1075.76,
+        "loss": 21.01,
+        "with": 2163
+      },
+      {
+        "id": 15218,
+        "suffix": 254,
+        "name": "Crystal Sword of the Falcon",
+        "dps": 1075.76,
+        "loss": 21.01,
+        "with": 2163
+      },
+      {
+        "id": 15246,
+        "suffix": 254,
+        "name": "Demon Blade of the Falcon",
+        "dps": 1075.76,
+        "loss": 21.01,
         "with": 2163
       },
       {
         "id": 18310,
         "name": "Fiendish Machete",
-        "dps": 1082.28,
-        "loss": 14.49,
+        "dps": 1075.16,
+        "loss": 21.61,
         "with": 2163,
         "conditional": [
           {
             "label": "vs Elementals",
             "rank": 1,
-            "loss": 9.4
+            "loss": 15.74
           }
         ]
       }
@@ -3591,8 +3568,8 @@
         "spell": 27837,
         "name": "Enchant 2H Weapon - Agility",
         "effect": "+25 Agility",
-        "dps": 1079.8,
-        "loss": 15.38,
+        "dps": 1080.25,
+        "loss": 14.93,
         "note": "Timbermaw rep, tier unknown"
       },
       {
@@ -3600,9 +3577,19 @@
         "spell": 23800,
         "name": "Enchant Weapon - Agility",
         "effect": "+15 Agility",
-        "dps": 1071.96,
-        "loss": 23.22,
+        "dps": 1072.4,
+        "loss": 22.78,
         "note": "Timbermaw rep, tier unknown"
+      },
+      {
+        "id": 2568,
+        "spell": 23804,
+        "name": "Enchant Weapon - Mighty Intellect",
+        "effect": "+22 Intellect",
+        "dps": 1070.02,
+        "loss": 25.16,
+        "avail": "doubtful",
+        "note": "Thorium Brotherhood rep, tier unknown"
       },
       {
         "id": 1248510,
@@ -3610,28 +3597,18 @@
         "spell": 1248510,
         "name": "Enchant 2H Weapon - Lesser Agility",
         "effect": "+9 Agility",
-        "dps": 1067.7,
-        "loss": 27.48,
+        "dps": 1067.46,
+        "loss": 27.73,
         "avail": "doubtful",
         "note": "No known source"
-      },
-      {
-        "id": 2568,
-        "spell": 23804,
-        "name": "Enchant Weapon - Mighty Intellect",
-        "effect": "+22 Intellect",
-        "dps": 1066.98,
-        "loss": 28.2,
-        "avail": "doubtful",
-        "note": "Thorium Brotherhood rep, tier unknown"
       },
       {
         "id": 1904,
         "spell": 20036,
         "name": "Enchant 2H Weapon - Major Intellect",
         "effect": "+9 Intellect",
-        "dps": 1063.26,
-        "loss": 31.92,
+        "dps": 1064.28,
+        "loss": 30.9,
         "note": "Formula on AH ~69g"
       },
       {
@@ -3640,19 +3617,33 @@
         "spell": 7793,
         "name": "Enchant 2H Weapon - Lesser Intellect",
         "effect": "+5 Intellect",
-        "dps": 1061.93,
-        "loss": 33.25,
+        "dps": 1062.61,
+        "loss": 32.57,
         "note": "Formula 6349 vendor 5s, reagents 3 Greater Magic Essence"
       },
       {
-        "id": 2567,
-        "spell": 23803,
-        "name": "Enchant Weapon - Mighty Spirit",
-        "effect": "+20 Spirit",
-        "dps": 1060.65,
-        "loss": 34.53,
-        "avail": "doubtful",
-        "note": "Thorium Brotherhood rep, tier unknown"
+        "id": 803,
+        "spell": 13898,
+        "name": "Enchant Weapon - Fiery Weapon",
+        "dps": 1060.94,
+        "loss": 34.24,
+        "note": "41% formula drop"
+      },
+      {
+        "id": 1898,
+        "spell": 20032,
+        "name": "Enchant Weapon - Lifestealing",
+        "dps": 1060.93,
+        "loss": 34.25,
+        "note": "Formula on AH ~149g"
+      },
+      {
+        "id": 1896,
+        "spell": 20030,
+        "name": "Enchant 2H Weapon - Superior Impact",
+        "dps": 1060.66,
+        "loss": 34.52,
+        "note": "Formula on AH ~25g"
       }
     ],
     "ranged": [

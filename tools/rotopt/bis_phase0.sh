@@ -97,8 +97,10 @@
 # mobs. AOE_TARGETS=0 leaves it out.
 #
 # The talents are the ones the user plays (2026-11-14), not the report's: TALENTS sets them, and
-# the default is 053303102-054030110051212141-03. Next to the report's build it takes Improved
-# Ghost Wolf 2 for one point out of Ancestral Knowledge (4) and one out of Maelstrom Weapon (4).
+# the default is 053303102-055030110051202141-03. Next to the report's build it takes Improved
+# Ghost Wolf 2 for Spirit Weapons and one Maelstrom Weapon point (4). The user's string had
+# Ancestral Knowledge 4 and Spirit Weapons 1, 14 points above Flurry's row, so it broke the tree
+# rule (2026-11-25).
 #
 # The report's gear is the synthetic Phase 1 set, and the search keeps a slot's starting item
 # until something beats it, so we start from a real pre-raid set instead: timesaver.gg's level

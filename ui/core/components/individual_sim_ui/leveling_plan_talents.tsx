@@ -130,7 +130,7 @@ export class LevelingTalentsSection {
 			tracksPresets: false,
 			getMaxPoints: () => {
 				const plan = this.plan();
-				return Math.max(talentPointsAt(plan.toLevel - 1, plan.bonusTalentPoints), this.selectedBuild()?.picks.length ?? 0);
+				return Math.max(talentPointsAt(plan.toLevel - 1, plan), this.selectedBuild()?.picks.length ?? 0);
 			},
 			changedEvent: () => TypedEvent.onAny([this.player.levelingPlanChangeEmitter, this.selectedEmitter]),
 			getValue: () => countsToTalentsString(countsOf(this.selectedBuild()?.picks ?? [], this.shape)),
@@ -248,7 +248,7 @@ export class LevelingTalentsSection {
 		const segments = builds.flatMap((build, i) => {
 			const levels = buildLevels(plan, i);
 			if (!levels.length) return [];
-			const counts = countsOf(build.picks.slice(0, talentPointsAt(levels[levels.length - 1], plan.bonusTalentPoints)), this.shape);
+			const counts = countsOf(build.picks.slice(0, talentPointsAt(levels[levels.length - 1], plan)), this.shape);
 			const segment = (
 				<button
 					className={`leveling-plan-segment ${i == this.selected ? 'active' : ''}`}
@@ -270,7 +270,7 @@ export class LevelingTalentsSection {
 	private renderBuilds(plan: LevelingPlanSettings, builds: LevelingTalentBuild[]) {
 		const cards = builds.map((build, i) => {
 			const levels = buildLevels(plan, i);
-			const pointsAtEnd = levels.length ? talentPointsAt(levels[levels.length - 1], plan.bonusTalentPoints) : 0;
+			const pointsAtEnd = levels.length ? talentPointsAt(levels[levels.length - 1], plan) : 0;
 			const counts = countsOf(build.picks.slice(0, pointsAtEnd), this.shape);
 			const level = ref<HTMLInputElement>();
 			const remove = ref<HTMLButtonElement>();
@@ -358,7 +358,7 @@ export class LevelingTalentsSection {
 		const runs: PickRun[] = [];
 		build.picks.forEach((pick, i) => {
 			ranks[pick.tree][pick.talent]++;
-			const point = { level: pickLevel(i, start, plan.bonusTalentPoints), rank: ranks[pick.tree][pick.talent], problem: problems[i] };
+			const point = { level: pickLevel(i, start, plan), rank: ranks[pick.tree][pick.talent], problem: problems[i] };
 			const last = runs[runs.length - 1];
 			if (last && last.tree == pick.tree && last.talent == pick.talent) last.points.push(point);
 			else runs.push({ tree: pick.tree, talent: pick.talent, start: i, points: [point] });
@@ -390,7 +390,7 @@ export class LevelingTalentsSection {
 		}
 		const start = this.startLevel(plan, this.selected, build);
 		const lastLevel = plan.toLevel - 1;
-		const pointsAtEnd = talentPointsAt(lastLevel, plan.bonusTalentPoints);
+		const pointsAtEnd = talentPointsAt(lastLevel, plan);
 		const placed = Math.min(build.picks.length, pointsAtEnd);
 		this.orderTitleElem.textContent =
 			placed < pointsAtEnd
@@ -482,7 +482,7 @@ export class LevelingTalentsSection {
 			const start = this.startLevel(plan, this.selected, build);
 			build.picks.forEach((pick, i) => {
 				const key = `${pick.tree}-${pick.talent}`;
-				if (!first.has(key)) first.set(key, pickLevel(i, start, plan.bonusTalentPoints));
+				if (!first.has(key)) first.set(key, pickLevel(i, start, plan));
 			});
 		}
 		this.picker.trees.forEach((tree, t) =>

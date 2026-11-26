@@ -630,3 +630,12 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-25 19:23 | tank_rotations | pass 31 | master 85691655ab | 2 new findings | Bear should drop Demoralizing Roar at Max threat/Balanced; warrior Balanced Thunder Clap marginal.
 2026-11-25 19:23 | tank_gear | pass 18 | master 85691655ab | quiet | Tank gear untouched.
 2026-11-25 19:23 | tank_fairness | pass 33 | master 85691655ab | 1 new finding | Bear Balanced preset now ties its Max threat build.
+2026-11-26 01:04 | results | pass 107 | master bfbee78fcc | 1 new finding | Survival/Enhancement requests carry Goblin Land Mine that mksettings doesn't write (~5 DPS on regen).
+2026-11-26 01:04 | rotations | pass 81 | master bfbee78fcc | 1 new finding | Balance APLs still pre-pull Chained Essence of Eranikus, swapped out by the re-rank (0.00 DPS).
+2026-11-26 01:04 | gear | pass 80 | master bfbee78fcc | quiet | Phase 0 re-rank checks clean; two close calls already ruled in notes.
+2026-11-26 01:04 | consumables | pass 111 | master bfbee78fcc | quiet | Only unused world buffs changed in client 71139.
+2026-11-26 01:04 | mechanics | pass 107 | master bfbee78fcc | 3 new findings | Libram of Law should raise Judgement of Command (~0.5% Ret); Fengus' 115 spell dmg; world-buff raid flag comment.
+2026-11-26 01:04 | fairness | pass 61 | master bfbee78fcc | 2 new findings | Ten rogue/warrior/Survival lists searched on older sim; Undead racial gaps (Arcane, Fury).
+2026-11-26 01:04 | client_update | pass 18 | master bfbee78fcc | 2 new findings | Hawk and demon crit changed in Nov 25 fix; ledger section for 71139 added.
+2026-11-26 01:04 | healer_mechanics | pass 32 | master bfbee78fcc | 2 new findings | Oath of Light 60 min and Genesis-Tranquility hotfixes not in sim.
+2026-11-26 01:04 | tank_mechanics | pass 35 | master bfbee78fcc | quiet | No tank rows changed in client 71139.

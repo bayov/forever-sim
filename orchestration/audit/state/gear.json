@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
  },
- "last_pass_at": "2026-11-25T19:14:07Z",
- "pass": 79,
+ "last_pass_at": "2026-11-26T00:00:00Z",
+ "pass": 80,
  "result": "quiet",
- "note": "No gear files changed. standards.md 22d2cf952 (explosives, demon crit, Windfury, Shield Slam rulings) adds no Phase 0 gear ruling.",
- "client_build": "1.60.1.71037",
- "checked_at": "2026-11-25T19:23:36Z"
+ "note": "Price rerank (2026-11-25) re-listed all 27 DPS specs. phase0_check.py: 2 flags, both close calls in rerank notes (Destruction Spellblade, Enhancement Blackrock Slicer, 1.7-1.8 over, unconfirmed at 20000). Requests sim 0.1-1.6% under the list dps; notes say list dps is the search fight (uses), request matches its plain sim (Balance 802.1).",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T01:04:24Z"
 }

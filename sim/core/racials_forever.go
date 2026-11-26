@@ -110,6 +110,7 @@ func applyForeverRaceEffects(agent Agent) {
 		if on("touch") {
 			character.registerTouchOfTheGrave()
 		}
+		character.registerCannibalize()
 
 	case proto.Race_RaceTauren:
 		// Endurance (20550): 5% health. Development notes 2026-10-26: "Endurance no longer

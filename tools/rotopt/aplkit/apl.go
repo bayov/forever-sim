@@ -84,6 +84,10 @@ func Energy() Value {
 	return &proto.APLValue{Value: &proto.APLValue_CurrentEnergy{CurrentEnergy: &proto.APLValueCurrentEnergy{}}}
 }
 
+func CurrentRage() Value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentRage{CurrentRage: &proto.APLValueCurrentRage{}}}
+}
+
 func RemainingTime() Value {
 	return &proto.APLValue{Value: &proto.APLValue_RemainingTime{RemainingTime: &proto.APLValueRemainingTime{}}}
 }
@@ -206,6 +210,14 @@ func DotRemainingTime(spell *proto.ActionID) Value {
 
 func AuraNumStacks(aura *proto.ActionID) Value {
 	return &proto.APLValue{Value: &proto.APLValue_AuraNumStacks{AuraNumStacks: &proto.APLValueAuraNumStacks{AuraId: aura}}}
+}
+
+// TargetAuraNumStacks are the stacks of an aura on our current target.
+func TargetAuraNumStacks(aura *proto.ActionID) Value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraNumStacks{AuraNumStacks: &proto.APLValueAuraNumStacks{
+		SourceUnit: &proto.UnitReference{Type: proto.UnitReference_CurrentTarget},
+		AuraId:     aura,
+	}}}
 }
 
 // TalentPoints is our points in a talent, by its field name in the class's talents.
