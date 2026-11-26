@@ -116,6 +116,81 @@ The sim has Undead Warrior base stats for all 60 levels, rising smoothly (level 
 Agility, 23 Stamina, 18 Intellect, 25 Spirit. Level 60: 119, 78, 111, 28, 50). Naked health is 70 at
 level 1 and 89 at level 2, as our logs show.
 
+## Leveling 1-60
+
+Our plan for an Undead warrior is the "Leveling 1-60" build of the Protection Warrior sim
+(`ui/tank_warrior`, since every leveling session plays that spec). The config
+`tools/levelingplan/configs/undead_warrior_leveling_1_60.json` makes the same request for
+`tools/levelingplan`. Measured 2026-11-26.
+
+What every number below assumes: solo grinding, mobs 1 level below us in a camp, pulls of up to 12,
+1 point of Thrill of Adventure, Talented (the first talent at 5), the leveling gear plan's gear
+judged by our measured weights for the weapon style, food and bandages, and no potions or outside
+buffs. The hours compare builds. They aren't a forecast, since quests, travel and dungeons are left
+out.
+
+### The plan
+
+- 1 to 43: Arms with a two-hander. Improved Rend 3, Deflection 2, Improved Tactical Mastery 3,
+  Improved Charge 2, Deep Wounds 3, Anger Management, Improved Overpower, Two-Handed Weapon
+  Specialization 3, Impale 2, Improved Heroic Strike 1, Sweeping Strikes, Bloodthrill 2, Weaponmaster
+  5, Improved Slam 2, Mortal Strike, then Cruelty and Unbridled Wrath.
+- 44: a respec to Gore Drinker Fury with two weapons. Cruelty 5, Unbridled Wrath 5, Blood Craze 3,
+  Enrage 5, Reckless Swings, Lingering Rage, Gore Drinker 2, Death Wish, Dual Wield Specialization 5,
+  Flurry 3, Bloodthirst, then Arms: Improved Rend 3, Deflection 2, Improved Tactical Mastery 3,
+  Improved Overpower 2, Deep Wounds 3, Anger Management, Deflection 3.
+- Rotations from the `warrior_leveling` template: the talent and rotation search's to 39 ("Searched
+  1" and so on), and hand-tuned ones from 40 ("From 37" and so on).
+- Enchant Weapon - Recovery on the main hand from 20 (`recoveryFromLevel`).
+
+The weights are `ui/tank_warrior/leveling_weights_*.json` (two-hand, dual wield and shield), from
+`tools/levelingplan -weights`.
+
+### Hours
+
+1 to 60 with 8 gear seeds and 400 sessions a level, on seeds the search never saw: 99.6h with
+Recovery from 20 (21 deaths), 102.3h without.
+
+| Levels | 1-9 | 10-19 | 20-29 | 30-39 | 40-49 | 50-59 |
+|---|---|---|---|---|---|---|
+| Hours, with Recovery | 1.9 | 7.7 | 11.6 | 16.5 | 27.7 | 34.2 |
+
+The other plans we tried, with 6 gear seeds and 300 sessions, before the rotation search:
+
+| Plan | With Recovery | Without |
+|---|---|---|
+| Arms, then dual wield at 42, 44, 46 or 48 | 100.5 to 100.9 | 103.9 to 104.5 |
+| Arms, Protection with a shield at 30 to 39, dual wield from 40 | 101.0 | 104.5 |
+| Arms all the way | 102.7 | 106.6 |
+| Gore Drinker dual wield all the way | 102.7 | 105.4 |
+| Protection all the way | 103.7 | 107.4 |
+| Fury Protection 4/31/16 with a shield from 5 | 112.3 | 115.1 |
+
+Fury Protection is a known endgame build, not one people level with.
+
+### What we found
+
+- When to go dual wield is a tie from 42 to 48. The plan takes 44.
+- Protection with a shield at 30 to 39 dies more and gains nothing.
+- Mobs a pull counts every mob chained into one fight, so it overstates the danger. Mobs on us at
+  once is the better measure. At 58 Fury Protection has the most, 4.4 on average and 6.4 at the
+  peak, with no deaths and 54.0k XP an hour. That's about even with Protection (2.8 and 4.7) and
+  Gore Drinker dual wield (1.7 and 3.3, 54.7k XP an hour).
+- Pulls of 10 or more mobs lose, even with every heal on.
+- Recovery is worth 3 to 4 hours over the whole plan.
+- Mobs 1 level below us are best or tied from 16 to 58. At 10, 2 below is better.
+- The talent search's own order didn't beat the hand order above.
+
+### Doubts
+
+- The gear weights come from the sim's own gear plan, not real drops.
+- Our logs show more attack power at levels 1 and 2 than the sim has (notes.md).
+- Whirlwind's weapon timing.
+- Dual wield at 13 is a guess.
+- No gold for the respec and no second weapon set are counted.
+- Victory Rush's heal doesn't crit in the sim.
+- We only tried Beasts, not Humanoids.
+
 ## Open guesses
 
 Each is a line in `notes.md`, Need to Verify, section Warrior.
