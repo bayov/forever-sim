@@ -1,0 +1,20 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":20920}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+    ],
+    "priorityList": [
+        {"action":{"castSpell":{"spellId":{"itemId":10455}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentTime":{}},"op":"OpLt","rhs":{"const":{"val":"1s"}}}},{"isExecutePhase":{"threshold":"E20"}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"math":{"lhs":{"math":{"lhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"4"}}}},"op":"OpSub","rhs":{"currentTime":{}}}},"op":"OpDiv","rhs":{"const":{"val":"5"}}}},"minTimeLeft":{"const":{"val":"20s"}},"spellId":{"itemId":10455}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"The spell power on-use trinket at the pull, then held for the execute phase when that loses no use (the report's trinket rule, kept from the Shock preset)."},
+        {"action":{"castSpell":{"spellId":{"itemId":10646}}},"notes":"Goblin Sapper Charge on cooldown (the report's consumables, not in Grayston's rotation)."},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and other cooldowns, high in the list as in Grayston's rotation."},
+        {"action":{"sequence":{"name":"opener","actions":[{"castSpell":{"spellId":{"spellId":20924}}}]}},"notes":"Consecration first at the pull."},
+        {"action":{"castSpell":{"spellId":{"spellId":20271}}},"notes":"Judgement on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":20924}}},"notes":"Consecration on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":20920}},"condition":{"or":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20920}}}}},{"and":{"vals":[{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":20920}}},"op":"OpLe","rhs":{"const":{"val":"10s"}}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":20924}}},"op":"OpGe","rhs":{"const":{"val":"1.5s"}}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":20930}}},"op":"OpGe","rhs":{"const":{"val":"1.5s"}}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":10333}}},"op":"OpGe","rhs":{"const":{"val":"1.5s"}}}}]}}]}}},"notes":"Seal of Command when it is down, or with 10 sec or less left when Consecration, Holy Shock and Holy Strike are all more than a GCD away. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":10333}}},"notes":"Holy Strike on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":20216}},"condition":{"spellIsReady":{"spellId":{"spellId":20930}}}},"notes":"Divine Favor when Holy Shock is ready, so Holy Shock crits."},
+        {"action":{"castSpell":{"spellId":{"spellId":20930}}},"notes":"Holy Shock on cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":24239}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"spellCastTime":{"spellId":{"spellId":24239}}},"op":"OpEq","rhs":{"const":{"val":"0s"}}}},{"cmp":{"lhs":{"math":{"lhs":{"autoSwingTime":{"autoType":"MainHand"}},"op":"OpSub","rhs":{"autoTimeToNext":{"autoType":"MainHand"}}}},"op":"OpLt","rhs":{"const":{"val":"0.2s"}}}}]}}},"notes":"Hammer of Wrath below 20% health, when instant or right after a main hand swing."},
+        {"action":{"castSpell":{"spellId":{"spellId":10314}}},"notes":"Exorcism on cooldown, only against Undead and Demons."}
+    ]
+}
