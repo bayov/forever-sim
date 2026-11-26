@@ -47,10 +47,10 @@
     "id": 272408
    },
    {
-    "id": 13965
+    "id": 19289
    },
    {
-    "id": 10455
+    "id": 13965
    },
    {
     "id": 6622,
@@ -75,11 +75,11 @@
  },
  "note": "Alliance: wears level60_phase0_rogue_seal_fate_swords_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 6.6 Agility, 2.5 attack power and 0.13% crit",
  "gain": {
-  "dps": 0.76,
+  "dps": 0.44,
   "se": 0.13,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_seal_fate_swords. It wears level60_phase0_rogue_seal_fate_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 11.2% against the 8% yellow cap, the set's own hit 7.2%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (Agility 66.0%, CritRating 18.8%, AttackPowerBoth 12.5%, Strength 2.7%). Hit and crit are one pool for the gear, so each is written once. Dwarf 828.8 with the set, 829.6 with the swap; gain.se is the paired error (the same seeded fights), 0.37 unpaired."
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_rogue_seal_fate_swords. It wears level60_phase0_rogue_seal_fate_swords_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 11.2% against the 8% yellow cap, the set's own hit 7.2%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (Agility 66.0%, CritRating 18.8%, AttackPowerBoth 12.5%, Strength 2.7%). Hit and crit are one pool for the gear, so each is written once. Dwarf 838.0 with the set, 838.5 with the swap; gain.se is the paired error (the same seeded fights), 0.37 unpaired."
 }
