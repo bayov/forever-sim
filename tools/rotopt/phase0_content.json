@@ -623,6 +623,7 @@
   "17691": {"avail": "doubtful", "name": "Stormpike Insignia Rank 1", "note": "Quest: Proving Grounds · Stormpike rep, Alliance only · AV queue unconfirmed · unsure, used by standards 42", "faction": "Alliance", "include": true},
   "17705": {"name": "Thrash Blade", "note": "Maraudon"},
   "17707": {"name": "Gemshard Heart", "note": "Princess Theradras · Maraudon"},
+  "17710": {"name": "Charstone Dirk", "note": "Princess Theradras · Maraudon"},
   "17713": {"name": "Blackstone Ring", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "gold": 89.9, "goldPerDps": {"druid_bear_balanced": 7.1, "druid_bear_max_threat": 2.3, "fury_dw": 113.8, "rogue_assassination": 25.0, "rogue_combat_daggers": 52.0, "rogue_combat_swords": 76.8, "rogue_seal_fate_daggers": 43.4, "rogue_seal_fate_swords": 176.3, "rogue_subtlety": 48.9}},
   "17714": {"name": "Bracers of the Stone Princess", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "17715": {"name": "Eye of Theradras", "note": "Princess Theradras · Maraudon"},
