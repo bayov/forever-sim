@@ -144,3 +144,24 @@ Scores, tankbench 1000 iterations, Phase 0 vs synthetic (master): balanced 2022.
 
 Faction rows: balanced and max threat have no faction picks. Max survival's Alliance row is Dwarf: Theramore Epaulets
 and Flame Walkers, -1446.8.
+
+
+## Max survival vs synthetic
+
+`tankbench -iters 1000`, mean of the six scoring bosses. Synthetic is the origin/master request. Stats are tankbench's sheet against a level 63 boss. Block value is (sheet value + 0.05 Str) x the block value multiplier. Coverage is miss + dodge + parry + block (102.4% on the sheet is uncrushable). Both sets clear the 315 Defense that stops Forever's 0.6% boss crit, so crit plays no part. Max survival is 2 x SafeDPS less 3 x 900 / 300 x the healing that holds deaths to 5%, so healing needed is the survival side.
+
+| Stat | Phase 0 | Synthetic |
+|---|---|---|
+| Health | 10483 | 10119 |
+| Stamina | 650 | 663 |
+| Armor | 7423 | 7586 |
+| Defense | 337 | 355 |
+| Miss / dodge / parry / block | 7.9 / 31.7 / 5.9 / 5.9 | 8.6 / 19.6 / 6.6 / 6.6 |
+| Block value | 56 | 106 |
+| Coverage | 51.4% | 41.4% |
+| Crushing blows taken | 15.1% | 14.9% |
+| DTPS | 598 | 671 |
+| Healing needed | 549 | 630 |
+| Max survival | -1212.8 | -2234.0 |
+
+Non-gear differences are the race (Tauren on Phase 0, Undead on synthetic, the deliberate legal race change) and the APL's trinket item id, which follows the worn trinket. Synthetic on Tauren scores -2421.2, so the rise is the gear. Phase 0 dodge (+12.1, from 397 Agility against 202) outweighs the lost Defense, armor and block value.

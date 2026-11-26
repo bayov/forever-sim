@@ -216,3 +216,24 @@ Undead's lead comes from Touch of the Grave (sim/core/racials_forever.go, regist
 - Shield Slam's 2x block value may be reversed by the user. Every score here has it.
 - Touch of the Grave's real heal size ("up to 5%").
 - The doubtful picks above, chiefly the Watchers rep, the Evergreen Shield plans and the Lionheart Helm plans.
+
+
+## Max survival vs synthetic
+
+`tankbench -iters 1000`, mean of the six scoring bosses. Synthetic is the origin/master request. Stats are tankbench's sheet against a level 63 boss. Block value is (sheet value + 0.05 Str) x the block value multiplier. Coverage is miss + dodge + parry + block (102.4% on the sheet is uncrushable). Both sets clear the 315 Defense that stops Forever's 0.6% boss crit, so crit plays no part. Max survival is 2 x SafeDPS less 3 x 900 / 300 x the healing that holds deaths to 5%, so healing needed is the survival side.
+
+| Stat | Phase 0 | Synthetic |
+|---|---|---|
+| Health | 10269 | 10229 |
+| Stamina | 656 | 652 |
+| Armor | 8824 | 9300 |
+| Defense | 382 | 467 |
+| Miss / dodge / parry / block | 9.7 / 22.3 / 12.7 / 12.7 | 13.1 / 20.5 / 16.1 / 16.1 |
+| Block value | 115 | 154 |
+| Coverage | 57.3% | 65.7% |
+| Avoided / blocked / crushed | 44.3 / 45.9 / 3.4% | 49.5 / 43.5 / 3.0% |
+| DTPS | 363 | 321 |
+| Healing needed | 266 | 213 |
+| Max survival | 1218.8 | 1617.0 |
+
+No non-gear field differs except the APL's trinket item ids, which follow the worn trinkets. Shield Block keeps both nearly uncrushable. The drop is Defense (-85, 5.2 points less avoidance), armor (-476) and block value (-39), with health flat.
