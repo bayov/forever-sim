@@ -3,13 +3,13 @@
   "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
  },
  "last_pass_at": "2026-11-26T13:30:00Z",
- "pass": 32,
+ "pass": 33,
  "result": "quiet",
- "note": "Branch phase0-tankheal. Client 71091->71139: no heal, healing talent or healer item change (Sayge fortunes, Fengus, poisons, Holy Fire duration). healbench moved onto tools/healscore (eac7ba8b5): druid tank rows identical, so the refactor kept results.",
+ "note": "Branch phase0-tankheal. Client 71091->71139: no heal, healing talent or healer item change (Sayge fortunes, Fengus, poisons, Holy Fire duration). healbench moved onto tools/healscore (eac7ba8b5): druid tank rows identical, so the refactor kept results. Merged with master's pass 33 (ab3fff7007, 06:51Z, quiet: leveling-only spell_result.go) and master pass 32's open -20261126-18 (Genesis/Tranquility) and -19 (Oath of Light 60 min); pass counter kept at master's 33.",
  "client_build": "1.60.1.71139",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
-  "date": "2026-11-21T00:18:29Z"
+  "date": "2026-11-25T23:25:08Z"
  },
  "checked_at": "2026-11-26T13:30:00Z"
 }

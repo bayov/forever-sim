@@ -1,0 +1,31 @@
+{
+	"player": {
+		"race": "RaceUndead",
+		"class": "ClassWarrior",
+		"tankWarrior": {
+			"options": {
+				"stance": "WarriorStanceBattle",
+				"shout": "WarriorShoutBattle",
+				"queueDelay": 250
+			}
+		}
+	},
+	"leveling": {
+		"maxPackSize": 12,
+		"campMobs": -1,
+		"mobLevelOffset": -1,
+		"thrillOfAdventure": 1,
+		"recoveryFromLevel": 20
+	},
+	"planFile": "../../../ui/tank_warrior/apls/leveling_plan.json",
+	"rotationTemplate": "warrior_leveling",
+	"routeFile": "../../../ui/warrior/leveling_route.json",
+	"weights": {
+		"free": "../testdata/warrior_weights.json",
+		"twoHand": "../../../ui/tank_warrior/leveling_weights_two_hand.json",
+		"dualWield": "../../../ui/tank_warrior/leveling_weights_dual_wield.json",
+		"shield": "../../../ui/tank_warrior/leveling_weights_shield.json"
+	},
+	"gearSeed": 1,
+	"seed": 1
+}

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
- "last_pass_at": "2026-11-25T19:13:46Z",
- "pass": 80,
+ "last_pass_at": "2026-11-26T07:20:00Z",
+ "pass": 82,
  "result": "findings",
- "note": "c3bbe33ea..85691655a: no APL/req change; EV-* sim batches. Baseline refreshed; EV-0088 explosive swing gates measured (feral APL names dropped Dark Bomb: rotations-20261125-1). Caster-rule rechecks, Phase 0 trinkets, WF timing still open.",
+ "note": "bfbee78fc..ab3fff7007: warrior leveling sim, warrior/hunter re-rank. No APL change. Sim reaches only 7 Blackblade paladin builds (+0.8..1.6, rotations-20261126-3). Fury DW dead 13965 line (rotations-20261126-2).",
  "client_build": "1.60.1.71091",
- "baseline": "baseline_8569165_3000it_seed424242.tsv",
- "checked_at": "2026-11-25T19:23:36Z"
+ "baseline": "baseline_ab3fff7_3000it_seed424242.tsv",
+ "checked_at": "2026-11-26T07:11:41Z"
 }

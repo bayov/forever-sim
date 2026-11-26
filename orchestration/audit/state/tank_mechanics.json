@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
- "last_pass_at": "2026-11-25T18:55:00Z",
- "pass": 34,
+ "last_pass_at": "2026-11-26T06:53:43Z",
+ "pass": 36,
  "result": "quiet",
- "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T18:55:00Z",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T07:11:41Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -19,8 +19,8 @@
   },
   "hotfixes_thread": {
    "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
-   "last_post": 15,
-   "date": "2026-11-24T02:06:52Z"
+   "last_post": 16,
+   "date": "2026-11-25T23:25:08Z"
   }
  },
  "note": "Racial lines pinned by racials_apl_test.go; Eureka! scope item stays open."

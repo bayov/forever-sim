@@ -8,6 +8,10 @@ import (
 )
 
 func (warrior *Warrior) RegisterShieldBlockCD() {
+	if !warrior.KnowsRank(2565, 16) {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 2565}
 	cooldownDur := time.Second * 5
 	duration := time.Second * 5

@@ -7,9 +7,15 @@ import (
 )
 
 func (warrior *Warrior) registerSlamSpell() {
-	requiredLevel := 54
-	spellID := int32(11605)
-	flatDamageBonus := 87.0
+	levels := []int32{0, 20, 30, 38, 46, 54}
+	spellIDs := []int32{0, 1240193, 1464, 8820, 11604, 11605}
+	rank := warrior.knownRank(levels, spellIDs)
+	if rank == 0 {
+		return
+	}
+	requiredLevel := int(levels[rank])
+	spellID := spellIDs[rank]
+	flatDamageBonus := []float64{0, 16, 32, 43, 68, 87}[rank]
 
 	// Improved Slam now takes the same amount off the global cooldown as it does the cast time,
 	// and stops Slam from resetting the swing timer entirely.

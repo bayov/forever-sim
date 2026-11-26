@@ -6808,7 +6808,7 @@
    "title": "Phase 0 gear priced for every spec",
    "date": "2026-11-25",
    "baselineData": "226ada86b09bc6bd5ec28f695c68bd550befbb34",
-   "endData": null,
+   "endData": "94d6cd2e4ab463f77cf64ab1779c6020ba9d636f",
    "lines": [
     {
      "title": "The 30 gold per DPS line now prices every spec's own gear list",
@@ -7846,6 +7846,310 @@
     {
      "commit": "86fbcf456",
      "why": "comp search and raid sim data only"
+    }
+   ]
+  },
+  {
+   "id": "2026-11-26-phase0-rerank",
+   "type": "sim",
+   "title": "Phase 0 gear lists ranked again",
+   "date": "2026-11-26",
+   "baselineData": "94d6cd2e4ab463f77cf64ab1779c6020ba9d636f",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Phase 0 gear lists ranked again, with newer gold prices",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Hunter",
+      "Mage",
+      "Paladin",
+      "Priest",
+      "Rogue",
+      "Shaman",
+      "Warlock",
+      "Warrior"
+     ],
+     "builds": [],
+     "note": "Every DPS spec's Phase 0 list was ranked again on the current sim, with prices from a newer auction house scan, and each preset wears its list's picks. Heart of Wyrmthalak tops the trinket list of 12 specs but costs too much gold per DPS on all of them, so no preset wears it. Fire, Frost, Frostfire, Demonology, Shadow, Smite, Beast Mastery, Marksmanship, Survival, Arms and Fury 2H keep their gear.",
+     "commits": [
+      "41615e521",
+      "1de0c1df2",
+      "821892e20",
+      "bec27efed",
+      "629c7b306",
+      "518f23165",
+      "3594f31f2"
+     ]
+    },
+    {
+     "title": "Balance wears Talisman of Ascendance and Spirit of Aquementas",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff"
+     ],
+     "note": "Talisman of Ascendance replaces Chained Essence, and Spirit of Aquementas replaces Obsidian Bauble, which costs too much gold per DPS. Balance gains 5.6 DPS at 180s.",
+     "commits": [
+      "a60eb2ca1",
+      "f4e2b6e46",
+      "d2570c616",
+      "9751f992a"
+     ]
+    },
+    {
+     "title": "Feral throws Goblin Land Mine instead of Dark Bomb",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Dark Bomb does nothing to level 63 bosses, so the rotation uses Goblin Land Mine in its place. Feral gains 0.5 DPS.",
+     "commits": [
+      "35a2e9dca"
+     ]
+    },
+    {
+     "title": "Lone Wolf takes Hawkeye Bow of Agility",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__lone-wolf"
+     ],
+     "note": "Eaglehorn Long Bow costs too much gold per DPS, so Lone Wolf wears Hawkeye Bow of Agility and loses 4.6 DPS at 180s.",
+     "commits": [
+      "02c06a709",
+      "13592ab69",
+      "c1bf6ca50",
+      "205b45318",
+      "5f50e8841",
+      "9c1cf0b4d",
+      "7fb108796"
+     ]
+    },
+    {
+     "title": "Arcane enchants its staff with Revelation",
+     "kind": "sim",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__arcane"
+     ],
+     "note": "Revelation replaces Spellblasting on Arcane's staff, for 3.9 more DPS.",
+     "commits": [
+      "841d6747d",
+      "a7eef5188"
+     ]
+    },
+    {
+     "title": "Retribution wields Destiny",
+     "kind": "sim",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy-duty-crusader"
+     ],
+     "note": "Destiny replaces Warblade of Caer Darrow for Twist and Sub Holy Retribution, about 9.5 more DPS at 180s. Shock Retribution keeps Warblade, which still suits it best.",
+     "commits": [
+      "4a39a50be",
+      "8e536aa0d",
+      "1a6600121"
+     ]
+    },
+    {
+     "title": "Dagger rogues wear the Devilsaur pair, Seal Fate Swords takes Ancient Bone Bow",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__seal-fate-swords",
+      "rogue__combat-daggers",
+      "rogue__seal-fate-daggers",
+      "rogue__subtlety",
+      "rogue__mutilate"
+     ],
+     "note": "Combat Daggers, Mutilate, Subtlety and Seal Fate Daggers wear Devilsaur Gauntlets and Leggings in place of the Darkmantle pieces, since the two piece Devilsaur bonus beats the six piece Darkmantle one. Each gains 0.7 to 1.7 DPS. Deep Jungle Rifle costs too much gold per DPS, so Seal Fate Swords wears Ancient Bone Bow and loses 9.2 DPS.",
+     "commits": [
+      "b4eecbf1a",
+      "4be74dfaa",
+      "a8dea3f5d",
+      "e9da0ddcd",
+      "f3bf14c7c",
+      "26e4300f1",
+      "57fbb3401"
+     ]
+    },
+    {
+     "title": "Shamans change trinkets, Improved Ghost Wolf talents fixed",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide"
+     ],
+     "note": "Elemental wears Talisman of Ascendance in place of Eye of the Beast, for 3.5 more DPS. Enhancement wears Blackhand's Breadth in place of Adaptive Combat Assistant and loses about 1.3 DPS. The Improved Ghost Wolf preset now has talents the game allows, with the same DPS.",
+     "commits": [
+      "c3884acc6"
+     ]
+    },
+    {
+     "title": "Warlocks change their enchant and trinket",
+     "kind": "sim",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__affliction_shadow_bolt",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "note": "Affliction enchants its main hand with Revelation in place of Mighty Intellect, for 2.9 more DPS, and Shadow Bolt Affliction gains 27.1. Destruction wears Eye of the Beast in place of Weakness Analyzer at the same DPS. Fire Destruction shares that gear and loses 3.4 DPS.",
+     "commits": [
+      "140f0f767",
+      "c15219593"
+     ]
+    },
+    {
+     "title": "Dual-wield Fury takes Thrash Blade and Bloodseeker",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder"
+     ],
+     "note": "Thrash Blade replaces Ironwood Blade in the main hand, the trinkets are Darkmoon Card: Maelstrom and Blackhand's Breadth, and Bloodseeker replaces Satyr's Bow, which costs too much gold per DPS. Dual-wield Fury gains 2.1 DPS at 180s.",
+     "commits": [
+      "f79e810e1",
+      "7a3b753cb",
+      "bb218ef46",
+      "ef9dbff7a",
+      "832070749",
+      "dac79e5f6"
+     ]
+    },
+    {
+     "title": "Seal Fate Swords wears Darkmoon Card: Maelstrom",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__seal-fate-swords"
+     ],
+     "note": "Darkmoon Card: Maelstrom replaces Chained Essence of Eranikus beside Blackhand's Breadth, for about 9 more DPS.",
+     "commits": [
+      "8c5ebbb30",
+      "f4b9f6908"
+     ]
+    }
+   ],
+   "internal": [
+    {
+     "commit": "c377aaf95",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "6a447e231",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "565f32155",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "adb69fdc7",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "1d20f40d4",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "81a2e51fc",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "c747e7ccd",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "1223e764e",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "30bb3a590",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "ddd9dab00",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "a5fc8ae2a",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "8f5b59325",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "a7e0abce1",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "143bf4f72",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "51ba1c542",
+     "why": "leveling sim only, no level 60 preset moved"
+    },
+    {
+     "commit": "eae05254e",
+     "why": "the request generator now writes the explosives the requests already carry; no request changed"
+    },
+    {
+     "commit": "c1ebe2d79",
+     "why": "removes Balance rotation lines for a trinket it no longer wears, which the sim already ignored; DPS unchanged"
+    },
+    {
+     "commit": "31d2f59e8",
+     "why": "refreshes the requests' recorded reference numbers only; no sim input changed"
     }
    ]
   }

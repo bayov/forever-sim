@@ -451,7 +451,7 @@ raid logs. The list records them as `durations` and `use_dur`, and the effects f
 It runs the DPS Report's default
 Enhancement fight (Orc, Engineering and Leatherworking, level 63 boss) with the talents
 the user plays, from a real pre-raid set. `TALENTS` sets the talents, and the default is
-`053303102-054030110051212141-03` (2026-11-14). The search uses `-gear-no-raids` and
+`053303102-055030110051202141-03` (2026-11-14). The search uses `-gear-no-raids` and
 `-gear-phase 2`, so only what Forever has before its raids open can come up
 (`tools/rotopt/phase0.go`). It also leaves out the items `tools/rotopt/phase0_content.json`
 marks `out`, and ranks the ones marked `infeasible` without ever picking them (`-gear-no-pick`,

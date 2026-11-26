@@ -122,6 +122,16 @@ var ForeverEnchants = []*proto.UIEnchant{
 	// Enchanting 140. The proc is a weapon effect in sim/common.
 	foreverEnchant(1248805, "Enchant Weapon - Revelation", proto.ItemType_ItemTypeWeapon),
 
+	// Enchanting 140, its formula for Merchant's Favor. It heals the wearer (sim/common), so only a
+	// tank or a leveling session gets something out of it.
+	foreverKeepEffect(8721, 1248760, "Enchant Weapon - Recovery", proto.ItemType_ItemTypeWeapon),
+
+	// Shield spikes, put on with Blacksmithing 150, 215 and 250. No level rule for the wearer or the
+	// shield. The damage is in sim/common.
+	foreverShieldSpike(43, 6042, 7216, "Iron Shield Spike"),
+	foreverShieldSpike(463, 7967, 9781, "Mithril Shield Spike"),
+	foreverShieldSpike(1704, 12645, 16623, "Thorium Shield Spike"),
+
 	// Off-hand, for held in off hand items only (not shields).
 	foreverOffHand(1219579, "Enchant Off-Hand - Wisdom"),
 
@@ -162,6 +172,13 @@ func foreverTwoHand(spellID int32, name string) *proto.UIEnchant {
 func foreverOffHand(spellID int32, name string) *proto.UIEnchant {
 	enchant := foreverEnchant(spellID, name, proto.ItemType_ItemTypeWeapon)
 	enchant.EnchantType = proto.EnchantType_EnchantTypeOffHand
+	return enchant
+}
+
+func foreverShieldSpike(effectID int32, itemID int32, spellID int32, name string) *proto.UIEnchant {
+	enchant := foreverKeepEffect(effectID, spellID, name, proto.ItemType_ItemTypeWeapon)
+	enchant.ItemId = itemID
+	enchant.EnchantType = proto.EnchantType_EnchantTypeShield
 	return enchant
 }
 

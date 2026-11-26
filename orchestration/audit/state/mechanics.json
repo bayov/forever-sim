@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
- "last_pass_at": "2026-11-25T18:55:00Z",
- "pass": 106,
+ "last_pass_at": "2026-11-26T06:54:08Z",
+ "pass": 108,
  "result": "findings",
- "note": "6 wowsims/forever log-adoption commits (user ruling 2026-11-25) settled; shaman Flurry/WF totem resolved by efeb06b95. New: Nov 25 Balance druid blue post (high), Blackhand's Breadth Nov 24 hotfix (low). Client 71091 still newest.",
- "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T18:55:00Z",
+ "note": "Warrior leveling commits (143bf4f72..81a2e51fc): core changes leveling-gated; new ungated stun rule lets Might of Shahram (boss stun, no StunImmune check) remove boss dodge/parry: ret +1 DPS (low). No new Blizzard posts past Nov 25 23:25.",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T07:11:41Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -29,11 +29,11 @@
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)",
   "note": "114138-114326 read through the daily update's TASKS.md entries (region 93 rows)"
  },
- "blue_tracker_seen": "2026-11-25T18:40:39Z",
+ "blue_tracker_seen": "2026-11-25T23:25:08Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/15",
-  "date": "2026-11-24",
-  "note": "notes dated November 23"
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/16",
+  "date": "2026-11-25T23:25:08Z",
+  "note": "notes dated November 25"
  },
  "blue_post_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2429007",

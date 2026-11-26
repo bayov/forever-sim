@@ -7,6 +7,6 @@
  "result": "findings",
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Phase 0 gear (branch phase0-tankheal). Bear first at Max threat and Balanced (21% over warrior), warrior first at Max survival, paladin drops to third there; Titans +120 for paladin Max survival (-20261126-1); price coverage gaps (-20261126-2). Baseline refreshed.",
+ "note": "Phase 0 gear (branch phase0-tankheal). Bear first at Max threat and Balanced (21% over warrior), warrior first at Max survival, paladin drops to third there; Titans +120 for paladin Max survival (-20261126-1); price coverage gaps (-20261126-2). Baseline refreshed. Master's pass 34 (ab3fff7007, 06:52Z, quiet): leveling-only batch left all 12 synthetic-gear presets identical to pass 33.",
  "checked_at": "2026-11-26T13:05:00Z"
 }

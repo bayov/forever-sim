@@ -51,9 +51,15 @@ func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, 
 }
 
 func (warrior *Warrior) registerBattleShout() {
+	levels, spellIDs := []int32{0, 1, 12, 22, 32, 42, 52}, core.BattleShoutSpellId[:7]
 	// Ranks from the Ahn'Qiraj books are out under Forever (no source in client 70338).
-	aq := warrior.Env.IncludeAQRanks()
-	rank := core.TernaryInt32(aq, 7, 6)
+	if warrior.Env.IncludeAQRanks() {
+		levels, spellIDs = append(levels, 60), core.BattleShoutSpellId[:]
+	}
+	rank := int32(warrior.knownRank(levels, spellIDs))
+	if rank == 0 {
+		return
+	}
 	actionId := core.BattleShoutSpellId[rank]
 	has3pcWrath := warrior.HasSetBonus(ItemSetBattleGearOfWrath, 3)
 

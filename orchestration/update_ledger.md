@@ -42,16 +42,16 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 | Class / system | Rows | Landed | In flight | Missing | Partial | Wrong | Not simulated on purpose | Ambiguous | n/a | Other |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 90 | 54 | 0 | 2 | 0 | 3 | 0 | 6 | 25 | 0 |
-| Paladin | 72 | 42 | 5 | 2 | 0 | 3 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 98 | 54 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
+| Paladin | 74 | 44 | 5 | 2 | 0 | 3 | 1 | 3 | 14 | 2 superseded |
+| Hunter | 100 | 55 | 2 | 8 | 1 | 4 | 3 | 3 | 23 | 1 info |
 | Rogue | 72 | 41 | 0 | 1 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 57 | 21 | 15 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 114 | 67 | 12 | 4 | 0 | 3 | 2 | 2 | 24 | 0 |
+| Shaman | 115 | 67 | 12 | 4 | 0 | 3 | 2 | 2 | 24 | 1 not checked |
 | Mage | 69 | 19 | 9 | 9 | 0 | 2 | 5 | 7 | 18 | 0 |
-| Warlock | 96 | 50 | 5 | 0 | 0 | 3 | 3 | 1 | 33 | 1 covered by another row |
-| Druid | 77 | 33 | 1 | 2 | 3 | 2 | 2 | 0 | 34 | 0 |
-| Shared (races, mechanics, items) | 86 | 33 | 2 | 5 | 3 | 4 | 4 | 10 | 25 | 0 |
-| **Total** | **831** | **414** | **51** | **35** | **9** | **27** | **22** | **36** | **233** | **4** |
+| Warlock | 98 | 50 | 5 | 0 | 0 | 4 | 3 | 2 | 33 | 1 covered by another row |
+| Druid | 80 | 33 | 1 | 5 | 3 | 2 | 2 | 0 | 34 | 0 |
+| Shared (races, mechanics, items) | 89 | 36 | 2 | 5 | 3 | 5 | 4 | 9 | 25 | 0 |
+| **Total** | **844** | **420** | **51** | **38** | **9** | **30** | **22** | **36** | **233** | **5** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -402,8 +402,30 @@ Text, cosmetic or out of scope, no rows: a new druid-themed NPC encounter (Lunar
 | WL-HF-06 | Blizzard 11-23; client 71091 | Intensity 18135 covers Incinerate | n/a (pushback) | SpellEffect 695261 mask_1 0 -> 64, push 114320 | in flight (PR #137) | `tools/database/gen_db/main.go` |
 | DRU-HF-03 | Blizzard 11-23; client 71091 | Feralheart 4P and Wildheart 5P: Nature's Bounty 27784 restores 4 Energy a second for 5 s (was mana) | yes (feral Phase 0 Feralheart lists) | SpellEffect 704635 EffectMiscValue 0 -> 3, push 114314 | in flight (`forever-update/2026-11-24-71091` 3f1c2708d) | `sim/common/item_sets/forever_dungeon_sets.go` |
 | SHR-HF-07 | Blizzard 11-23; foreverchanges "Found in the game" (71091) | Fengus' Ferocity 22817: 115 spell damage and healing (was 230), 200 AP unchanged | minor | server | in flight (3f1c2708d) | finding client_update-20261030-4 |
-| SHR-HF-08 | Blizzard 11-23 | "Darkmoon Faire buffs were granting twice as much power as intended", no numbers | minor (no request takes Sayge's fortune) | client 71091 Sayge's 23735-23738, 23766-23769 still 10 | ambiguous (needs verify) | `sim/core/buffs.go:2451` ApplySaygesFortunes, 10%; finding client_update-20261124-1 |
+| SHR-HF-08 | Blizzard 11-23 | "Darkmoon Faire buffs were granting twice as much power as intended", no numbers | minor (no request takes Sayge's fortune) | client 71091 Sayge's 23735-23738, 23766-23769 still 10 | landed (71139, SHR-HF-11) | `sim/core/buffs.go:2451` ApplySaygesFortunes, 10%; finding client_update-20261124-1 (resolved) |
 | SHR-HF-09 | Blizzard 11-20; client 71091 | Stormshroud Armor 3P (Revitalize 23863/23864): 3% for 18 Energy (was 4% for 30) | minor | SpellAuraOptions 134496 ProcChance 4 -> 3, SpellEffect 700855 30 -> 18 | landed | `sim/common/item_sets/crafted.go:263-264` (PR #136) |
+
+## Build 1.60.1.71139 (first seen 2026-11-26)
+
+71139 writes the November 23 world-buff and Darkmoon Faire fixes and the November 24 launch-realm hotfixes into the client. Blizzard's November 25 hotfixes (t/2403040 post 16, Kaivax, 2026-11-25 23:25 UTC; the Balance part also in t/2429007, 18:32 UTC) are server side: the Trait* tables are identical, so none of the Balance talent changes is in this client. foreverchanges.pro lists 71139 as current. `table_summary.py 71091 71139`: SpellEffect +3 / 23 changed, SpellMisc 67 changed, SpellInterrupts -15 / 3 changed, SpellAuraOptions -7, SpellClassOptions -7, ItemSparse +2 / 82 changed, ItemEffect 6 changed; Trait*, SpellPower, SpellCooldowns, SpellItemEnchantment and ChrRaces identical. Diff: `$AUDIT_WORK/diffs/71091-71139.md`.
+
+Text, cosmetic or out of scope, no rows: world buffs (Battle Shout 25101, Warchief's Blessing, Rallying Cry, Might of Stormwind, Songflower, Spirit of Zandalar, the Dire Maul buffs, Sayge's) lose the zone-change interrupt and gain Attributes_6 0x800 (Blizzard 11-23 "World Buffs would fall off when changing areas"); poisons, Vanish and Blinding Powder Attributes_5 0x2 and the poison items bind on pickup (Blizzard 11-25, temporary); Reagent Economy loses its 30 min duration; Hurricane tooltips; Paladin and Warlock epic mounts teach riding; lockboxes, junkboxes and AV quest items flags; Engineer's Renewal Gifts 11422/11423 added; Food and Drink ItemEffect spell swaps; Explosive Runeshard (NPC Mortal Strike), Reinforce (durability), Night Watchman's Torch, Enveloping Winds, Weight of Duty 1307762 (+8 Strength with full bags, was 7); Holy Fire item procs 17140-17142/18165/18167/23860 lose their class options; Flamebreak 16785 class options removed; Fengus' Ferocity 22817/1304759 115 spell power now in the client (SHR-HF-07, still in flight on `forever-update/2026-11-24-71091`). Blizzard 11-25 lines with no Level 60 DPS reading: Hurricane's final hit and Genesis on Hurricane (AoE), Dreamstate (Innervate), Moon and Stars' pushback protection, Improved Starfire's stun, hawks obeying Passive and dismissal, Holy's Oath of Light, Poised on Sap, Weaponmaster in battlegrounds, Revelation's AoE roll, dungeons, quests and Alterac Valley.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| DRU-HF-04 | Blizzard 11-25 (post 16; t/2429007) | Improved Wrath becomes Starlight Wrath and also takes 0.1 s a point off Starfire; Improved Moonfire becomes Moon and Stars; Improved Starfire 2 points (8/15% stun), talents reset at 3+ points | yes (every Balance request) | server (Trait* identical in 71139) | missing | Balance talent strings change shape; finding mechanics-20261125-1 |
+| DRU-HF-05 | Blizzard 11-25 | Eclipse also gives Wrath 7/13/20% crit at all times | yes (Balance, Balance Wrath) | server | missing | finding mechanics-20261125-1 |
+| DRU-HF-06 | Blizzard 11-25 | Moonkin Form gives 10% Arcane and Nature damage; Moonfury removed (replaced by Dreamstate) | yes (every Balance request) | server | missing | finding mechanics-20261125-1 |
+| HUN-HF-11 | Blizzard 11-25 | Pets had 0% crit on melee basic attacks | yes (every hunter pet) | server | landed | `sim/hunter/pet_forever.go:317-321`: basic attacks roll crit at the hunter's melee crit (`pet.go:382`) |
+| HUN-HF-12 | Blizzard 11-25 | Summoned Hawks had about 5% less crit than intended | yes (hawk builds) | server | wrong | `sim/hunter/summon_hawk.go:56-71`: half the hunter's crit plus Ferocity, read off pre-fix logs; finding client_update-20261126-1 |
+| PAL-HF-10 | Blizzard 11-25 | Judgements failed to refresh from attacks once under 20 s | yes (Retribution) | server | landed | `sim/core/debuffs.go:771-784` refreshes on any qualifying hit |
+| PAL-HF-11 | Blizzard 11-25 | Exorcism could not crit | minor | server | landed | `sim/paladin/exorcism.go:86` OutcomeMagicHitAndCrit |
+| WL-HF-07 | Blizzard 11-25 | Demons had 0% crit on melee basic attacks | yes (7 Succubus requests) | server | wrong | `sim/warlock/pet.go:258-283`: 0.7% melee crit from EV-0081's pre-fix logs (user ruling 2026-11-25); finding client_update-20261126-2 |
+| WL-HF-08 | Blizzard 11-25 | Succubus and Incubus had 5% more crit than intended | yes (7 Succubus requests) | server | ambiguous (which crit) | finding client_update-20261126-2 |
+| SHA-HF-11 | Blizzard 11-25 | Chain Lightning consumes Clearcasting with 5 Maelstrom Weapon stacks up | minor | server | not checked | `sim/shaman/` |
+| SHR-HF-10 | Blizzard 11-25; client 71139 | Blackblade of Shahram's Fist of Shahram hastes the wielder (was the spirit) | yes (10 paladin requests wear 12592) | SpellEffect 693406 ImplicitTarget 1 -> 27 (the spirit's master) | landed | `sim/common/item_effects.go:573-578` gives the wielder 30% |
+| SHR-HF-11 | client 71139 (Blizzard 11-23 "Darkmoon Faire buffs twice as much power") | Sayge's Dark Fortunes: the cast spells 23735-23738/23766-23769 become dummies; only the self copies 1304769-1304782 (10%, stat fortunes now aura 137) remain, so the doubling was two 10% auras stacking | minor (no request takes a fortune) | SpellEffect 696766 aura 79 -> 4 (23768); 1304769 aura 79 bp 10 unchanged; 1304782 aura 80 -> 137 bp 10 | landed | `sim/core/buffs.go` ApplySaygesFortunes 10% once; closes SHR-HF-08 and finding client_update-20261124-1 |
+| SHR-HF-12 | foreverchanges hotfix 11-24 | Blackhand's Breadth's mark physical and unresistable | yes (24 requests) | server | wrong | `sim/common/item_effects.go` BlackhandsBreadth still Shadow / magic hit; finding mechanics-20261125-2 |
 
 ## Per-class ledgers
 

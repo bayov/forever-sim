@@ -1072,6 +1072,16 @@ export const specToEligibleRaces: Record<Spec, Array<Race>> = {
 // Enhancement Shaman learn dual wield from a talent.
 export const dualWieldClasses: Array<Class> = [Class.ClassHunter, Class.ClassRogue, Class.ClassWarrior];
 
+// The level a class learns Dual Wield at, for the leveling plan.
+//
+// A warrior's is a guess (notes.md, Need to Verify). The client doesn't give the trainer's level,
+// but a beta combat log has a warrior dual wielding at 13, so it's not Classic's 20.
+export const dualWieldLevels: Partial<Record<Class, number>> = {
+	[Class.ClassHunter]: 20,
+	[Class.ClassRogue]: 10,
+	[Class.ClassWarrior]: 13,
+};
+
 export function canDualWield(player: Player<Spec>): boolean {
 	return dualWieldClasses.includes(player.getClass());
 }

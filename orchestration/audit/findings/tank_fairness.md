@@ -30,6 +30,7 @@
 - evidence: tankbench, six scoring bosses, 3,000 iterations, score at w 1: seed 1 Max threat build 3377.7 against Balanced 3341.8 (about ±10 each); seed 2 3327.7 against 3321.0. Before 2f42f4a44 the Balanced build won its weight. That commit tripled Lacerate's threat (10/3, EV-0034 / EV-0037, 248 -> 825 TPS on Magmadar) and raised Primal Bite to 3x, so bear TPS rose 46% (Balanced 1626 -> 2371) and the Balanced build's survival-leaning enchants (1508 vs 1506, 1248665 vs 1885, 2646 vs 1248668) and Spirit of Zanza (vs R.O.I.D.S.) no longer pay at w 1. Same talents in both. Reproduce: `tools/audit/tank_fairness/bench.sh <dir> 3000 1 tools/tankbench/req/druid_bear_{balanced,max_threat}.json` and read the Balanced column.
 - proposed fix: bear worker: re-search the Balanced (and Max threat, Max survival) enchants, Zanza buff and APL under the new threat rules, paired at 10,000 on two seeds. The warrior's presets were tuned before Shield Slam's 2 x block value / 255 threat and Thunder Clap 1x (its TPS fell 50 to 77); still ordered, but worth the same re-search.
 - needs: worker fix
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; bear requests unchanged, all six-boss rows identical to pass 33.
 - pass 34 (2026-11-26, phase0-tankheal 3e9748641): worse on the Phase 0 sets. At w 1 the Max threat build scores 3889.4 against the Balanced build 3696.0 (two-seed mean, 3,000 iterations; seed 1 / 2 about ±10), 5% ahead, outside the error. Raise to medium; the bear notes ran the Balanced search with the no-Roar APL (tank_rotations-20261125-1), so re-search Balanced after that APL settles.
 
 ### tank_fairness-20261124-1: Only the warrior APLs cast Stoneform; Dwarf paladin and Dwarf Warden race rows go without it
@@ -41,6 +42,7 @@
 - needs: worker fix
 - pass 32 (2026-11-25, master 0404484fb): not fixed; no paladin or Warden request or APL casts Stoneform (20594).
 - pass 33 (2026-11-25, master 85691655a): not fixed; no paladin or Warden request casts 20594.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; no paladin or Warden request casts 20594.
 - pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed; only warrior_protection_balanced and _max_survival cast 20594.
 
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
@@ -63,6 +65,7 @@
 - pass 29 (2026-11-24, master 566067a39): not fixed; requests still Night Elf / Night Elf / Undead, Warden rows identical.
 - pass 32 (2026-11-25, master 0404484fb): not fixed; requests still Night Elf / Night Elf / Undead. Warden 2600 / 1234 / -2306 (Greater Intellect now overwritten by Arcane Brilliance), still last at every weight.
 - pass 33 (2026-11-25, master 85691655a): not fixed; still Night Elf / Night Elf / Undead. Warden 2606 / 1244 / -2277, last at every weight.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; still Night Elf / Night Elf / Undead, Warden rows identical to pass 33.
 - pass 34 (2026-11-26, phase0-tankheal 3e9748641): not fixed, and now baked into gear: the Phase 0 Warden lists were searched on Night Elf (Balanced, Max threat) and Undead (Max survival). Warden 2024.5 / 3399.5 / -1400.8 (two-seed means), last at every weight. A race change now needs the lists re-run for that race and faction.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
@@ -87,6 +90,7 @@
 - pass 29 (2026-11-24, master 566067a39): not fixed; requests unchanged. The warrior's Max survival fell to 1814.7 ± 12.2 (Unbridled Wrath off Shield Slam and Revenge) against the paladin's 1778.0 ± 15.9, seed 1; the potion (+374 last measured) would reverse it.
 - pass 32 (2026-11-25, master 0404484fb): not fixed; all three requests still Major Mana Potion, no potion action. Max survival warrior 1813.5 against paladin 1778.0 (seed 1); the potion (+374 last measured) would reverse it.
 - pass 33 (2026-11-25, master 85691655a): not fixed; requests unchanged. The paladin now leads Max survival without it (1874.5 against the warrior's 1617.0, seed 1) after the warrior threat batch 2f42f4a44, so it no longer decides a place; still the largest unequal term.
+- pass 34 (2026-11-26, master ab3fff7007): not fixed; requests unchanged, rows identical to pass 33.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -127,6 +131,7 @@
 - pass 27 (2026-11-23, master 5518f4873): unchanged (rows identical to pass 26); still waits on the user's calls (a), (b), (c).
 - pass 29 (2026-11-24, master 566067a39): unchanged in kind (Balanced healing needed paladin 243, warrior 342); still waits on the user's calls.
 - pass 33 (2026-11-25, master 85691655a): still true; Balanced healing needed paladin 233 against warrior 341, bear 468, Warden 664. Awaiting the user calls.
+- pass 34 (2026-11-26, master ab3fff7007): unchanged (rows identical to pass 33); awaiting the user calls.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low

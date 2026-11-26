@@ -4,7 +4,7 @@
     python3 tools/rotopt/phase0_prices.py                     # print the tables of every spec
     python3 tools/rotopt/phase0_prices.py --write             # save gold and goldPerDps in phase0_content.json
     python3 tools/rotopt/phase0_prices.py --spec mage_fire    # one spec, or a comma list
-    python3 tools/rotopt/phase0_prices.py --sets              # each spec's gear set's total gold
+    python3 tools/rotopt/phase0_prices.py --sets              # each spec's gear set's total gold, faction and build copies too
 
 One run prices every spec's list in tools/rotopt/phase0_specs.json (the one
 bis_phase0.sh writes for it). An item's gold is the same on every list, but its
@@ -425,6 +425,37 @@ def content_text(content):
                             f'{"," if i < len(keys) - 1 else ""}\n' for i, k in enumerate(keys)) + '}\n'
 
 
+def set_paths(root, spec, row, table=None):
+    """The gear sets of a spec to price, as [(label, path)]: its gearOut and every set named
+    <gearOut minus .gear.json>_<variant>.gear.json next to it, the faction copies (_horde, _alliance,
+    bis_phase0.sh RACE) and build variants such as Retribution's _shock and _undead. A set that
+    belongs to another spec of the table (fury_dw next to fury) is left to that spec."""
+    def base(s, r):
+        p = os.path.join(root, r.get('gearOut') or f"ui/{r['dir']}/gear_sets/level60_phase0_{s}.gear.json")
+        return p[:-len('.gear.json')] if p.endswith('.gear.json') else p
+    mine = base(spec, row)
+    others = [base(s, r) for s, r in (table or {}).items() if s != spec]
+    out = [(spec, mine + '.gear.json')]
+    for path in sorted(glob.glob(glob.escape(mine) + '_*.gear.json')):
+        if any(o.startswith(mine + '_') and path.startswith(o) for o in others):
+            continue
+        out.append((spec + path[len(mine):-len('.gear.json')], path))
+    return out
+
+
+def set_gold(items, prices, recipes, effort, names=None, content=None):
+    """A gear set's total gold, items only, and its priced items as 'name 12g (how)'."""
+    names, content = names or {}, content or {}
+    total, parts = 0, []
+    for i in items:
+        gold, how = item_gold(i['id'], prices, recipes, effort)
+        if gold:
+            total += gold
+            name = names.get(str(i['id'])) or content.get(str(i['id']), {}).get('name') or i['id']
+            parts.append(f"{name} {gold:.0f}g ({how.split(':')[0]})")
+    return total, parts
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--write', action='store_true', help='save gold and goldPerDps in phase0_content.json')
@@ -478,10 +509,9 @@ def main():
     sets = {}
     if args.sets:
         for spec in specs:
-            row = table[spec]
-            path = os.path.join(ROOT, row.get('gearOut') or f"ui/{row['dir']}/gear_sets/level60_phase0_{spec}.gear.json")
-            with open(path) as f:
-                sets[spec] = [i for i in json.load(f)['items'] if i and i.get('id')]
+            for label, path in set_paths(ROOT, spec, table[spec], table):
+                with open(path) as f:
+                    sets[label] = [i for i in json.load(f)['items'] if i and i.get('id')]
     effort, unknown = {}, set()
     for e in ([e for bis in lists.values() for es in bis['slots'].values() for e in es]
               + [{'id': i['id'], 'name': str(i['id'])} for items in sets.values() for i in items]):
@@ -500,14 +530,8 @@ def main():
     if args.sets:
         names = {str(e['id']): e['name'] for bis in lists.values() for es in bis['slots'].values() for e in es}
         for spec, items in sets.items():
-            total, parts = 0, []
-            for i in items:
-                gold, how = item_gold(i['id'], prices, recipes, effort)
-                if gold:
-                    total += gold
-                    name = names.get(str(i['id'])) or content.get(str(i['id']), {}).get('name') or i['id']
-                    parts.append(f"{name} {gold:.0f}g ({how.split(':')[0]})")
-            print(f"{spec:24s} {total:8.0f}g  {', '.join(parts)}")
+            total, parts = set_gold(items, prices, recipes, effort, names, content)
+            print(f"{spec:28s} {total:8.0f}g  {', '.join(parts)}")
         return
     priced = {}
     for spec, bis in lists.items():

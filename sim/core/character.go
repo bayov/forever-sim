@@ -64,6 +64,8 @@ type Character struct {
 
 	// What happens when we die in a leveling session (RegisterLevelingDeathEffect).
 	levelingDeathEffects []func(sim *Simulation)
+	// What a mob we killed there gives us (RegisterKillEffect).
+	levelingKillEffects []func(sim *Simulation, target *Unit, gaveXP bool)
 	// The stand-in healer's heals (applyHealingModel), nil without one.
 	healingModelMetrics *ResourceMetrics
 
@@ -403,6 +405,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyWeaponSkills()
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
+	character.applyLevelingHeals()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
 	playerStats.GearStats = measureStats()
 

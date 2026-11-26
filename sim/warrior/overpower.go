@@ -7,8 +7,13 @@ import (
 )
 
 func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
-	bonusDamage := 35.0
-	spellID := int32(11585)
+	spellIDs := []int32{0, 7384, 7887, 11584, 11585}
+	rank := warrior.knownRank([]int32{0, 12, 28, 44, 60}, spellIDs)
+	if rank == 0 {
+		return
+	}
+	bonusDamage := []float64{0, 5, 15, 25, 35}[rank]
+	spellID := spellIDs[rank]
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Overpower Trigger",

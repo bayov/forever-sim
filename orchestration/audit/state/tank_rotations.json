@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
  },
- "last_pass_at": "2026-11-25T18:57:43Z",
- "pass": 31,
- "result": "findings",
+ "last_pass_at": "2026-11-26T06:52:54Z",
+ "pass": 32,
+ "result": "quiet",
  "baseline": "ref/tank_bench/summary.tsv",
  "client_build": "1.60.1.70959",
- "checked_at": "2026-11-25T19:23:36Z",
- "note": "2f42f4a44 threat rules: bear +38 to +190% (Lacerate 10/3) now above warrior (-3 to -11%); paladin +1-4%, Warden noise. New: 20261125-1 bear Roar drop (high), 20261125-2 warrior Balanced Thunder Clap (low). Windfury timing item not done. Also 20261125-3 (phase0-tankheal pass 31b): report Tanking mode stale until publish (orchestrator)."
+ "checked_at": "2026-11-26T01:04:24Z",
+ "note": "ab3fff7007: warrior leveling only (ranks by level, leveling hooks, leveling plan); all 104 bench rows bit-identical to pass 31. Five open findings unchanged. Windfury timing item not done. Also 20261125-3 (phase0-tankheal pass 31b): report Tanking mode stale until publish (orchestrator). After the merge ref/tank_bench/summary.tsv is phase0-tankheal's Phase 0 baseline, not the synthetic-gear rows this pass compared."
 }

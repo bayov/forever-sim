@@ -73,7 +73,7 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 		return &routeSearch{
 			shape:    p.shape,
 			levels:   levels,
-			bonus:    plan.BonusTalentPoints,
+			points:   talentPointsOf(plan),
 			required: plan.RequiredTalents,
 			ctx:      ctx,
 			cache:    map[string]levelHours{},
@@ -103,7 +103,7 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 		}
 		route = found
 	} else {
-		template, err := templateFor(req.Base.GetRaid().GetParties()[0].GetPlayers()[0])
+		template, err := aplkit.LevelingTemplateFor(req.Base.GetRaid().GetParties()[0].GetPlayers()[0], req.RotationTemplate)
 		if err != nil {
 			return fail(err)
 		}

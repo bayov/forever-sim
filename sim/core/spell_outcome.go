@@ -670,7 +670,10 @@ func (spell *Spell) outcomeEnemyMeleeWhite(sim *Simulation, result *SpellResult,
 	chance := 0.0
 
 	didHit := !result.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance, countHits)
-	if !result.Target.IsCasting(sim) {
+	// We can't avoid a swing that comes from behind (leveling_facing.go).
+	leveling := sim.Encounter.leveling
+	behind := leveling != nil && result.Target == leveling.player && leveling.swingFromBehind(sim)
+	if !behind && !result.Target.IsCasting(sim) {
 		didHit = didHit &&
 			!result.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance, countHits) &&
 			!result.applyEnemyAttackTableParry(spell, attackTable, roll, &chance, countHits) &&
@@ -718,6 +721,9 @@ func (result *SpellResult) applyAttackTableMissNoDWPenalty(spell *Spell, attackT
 }
 
 func (result *SpellResult) applyAttackTableBlock(spell *Spell, attackTable *AttackTable, roll float64, chance *float64, countHits bool) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
 	*chance += attackTable.BaseBlockChance
 	if roll < *chance {
 		isCrit := result.DidCrit()
@@ -746,6 +752,9 @@ func (result *SpellResult) applyAttackTableBlock(spell *Spell, attackTable *Atta
 }
 
 func (result *SpellResult) applyAttackTableDodge(spell *Spell, attackTable *AttackTable, roll float64, chance *float64, countHits bool) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
 	// In SoD this works like crit or hit chance.
 	expertiseDodgeReduction := attackTable.Attacker.stats[stats.Expertise] / 100
 
@@ -763,6 +772,9 @@ func (result *SpellResult) applyAttackTableDodge(spell *Spell, attackTable *Atta
 }
 
 func (result *SpellResult) applyAttackTableParry(spell *Spell, attackTable *AttackTable, roll float64, chance *float64, countHits bool) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
 	// In SoD this works like crit or hit chance.
 	expertiseParryReduction := attackTable.Attacker.stats[stats.Expertise] / 100
 
