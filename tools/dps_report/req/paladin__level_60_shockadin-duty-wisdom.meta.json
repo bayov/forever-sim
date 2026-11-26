@@ -13,6 +13,10 @@
   ],
   "gearSet": "level60_phase0_ret_shock",
   "apl": "level60_shockadin_wisdom_duty",
+  "published": {
+    "dps": 888.08,
+    "source": "verify.py on this request (wowsimcli, 20,000 iterations, 180 ± 20 s, seed 1), before the DPS Report's main run"
+  },
   "summary": "Keeps Judgement of Wisdom on the boss for the raid.",
   "keyTalents": [
     "Holy Shock",
@@ -70,5 +74,12 @@
   ],
   "notes": "Grayston's \"2H Shockadin\" Phase 1 pre-raid build (his video https://www.youtube.com/watch?v=XuUccSoLa0I, spreadsheet \"Grayston - WoW Forever - Pre-Raid BIS\" and rotation file shock_mcp_sor_2.siml). Talents 21/0/30 decoded from the video's talent screenshot against the October 30 tree. Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed (as paladin__level_60_shock_ret-duty-wisdom) with talentsString 05005210222101--0523300120131135, Retribution Aura and the rotation translated from his .siml, the same edits mksettings -apl would make. Gear: the report's level60_phase0_ret_shock set, so the comparison with Ret Shock isolates talents and rotation (standards 43: every DPS preset wears a Phase 0 list; his own set has Destiny, which is over the Phase 0 gold line). Rotation differences from his file: no Manual Crowd Pummeler swap (the sim registers a swap weapon's use effect only when it starts equipped, and has no APL value for the active swap set), so Seal of Righteousness never comes up; presets start in melee range, so his move-to-melee sequence becomes a one-time opener; the trinket and Goblin Sapper lines are the report's; Exorcism's undead/demon clause in the reseal check is left out (the boss is neither). His own set (Stalwart Helm, Nacreous Shell Necklace, Soulforge pieces, Arcanoweave Cloak, Champion's Legplates, Channeler's Ring, Don Julio's Band, Hand of Justice, Blackhand's Breadth, Libram of Law, Destiny, Manual Crowd Pummeler swap) is not simmed.",
   "duty": "Judgement of Wisdom",
-  "baseBuild": "paladin__level_60_shockadin"
+  "baseBuild": "paladin__level_60_shockadin",
+  "verify": {
+    "dps": 888.08,
+    "stderr": 0.29,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-26"
+  }
 }
