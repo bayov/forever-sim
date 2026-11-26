@@ -3467,8 +3467,9 @@ func init() {
 	// so our Lightning Bolts and Flame Shock ticks crit more on the marked target too. Only our
 	// own hits count, not those of the rest of the raid.
 	//
-	// The mark is a Shadow spell with the magic defense type (SpellCategories 188830), so it rolls
-	// spell hit and can miss. A missed mark still costs the cooldown. The 10% against Orcs and
+	// Server hotfix push 114402 (Blizzard's Nov 25 hotfixes: "can no longer be resisted") makes
+	// the mark Physical (SpellMisc 864728 SchoolMask 32 -> 1) with no defense type (SpellCategories
+	// 188830 DefenseType 1 -> 0), so it no longer rolls hit and always lands. The 10% against Orcs and
 	// Ogres follows the target's mob_family. The client has no number for it, so we take the
 	// tooltip's word that it doubles.
 	//
@@ -3500,8 +3501,8 @@ func init() {
 
 		spell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: BlackhandsBreadth},
-			SpellSchool: core.SpellSchoolShadow,
-			DefenseType: core.DefenseTypeMagic,
+			SpellSchool: core.SpellSchoolPhysical,
+			DefenseType: core.DefenseTypeNone,
 			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
 
@@ -3517,10 +3518,8 @@ func init() {
 			},
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
-				if result.Landed() {
-					marks.Get(target).Activate(sim)
-				}
+				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+				marks.Get(target).Activate(sim)
 			},
 		})
 
@@ -5533,7 +5532,6 @@ const MasterworkStormhammerForeverJump = 0.7
 
 // EV-0179: the heal each tick of Barovian Family Sword's drain gives under Forever.
 const BarovianFamilySwordForeverTickHeal = 49
-
 
 // EV-0125: under Forever Shahram picks Flames, Will, Might, Blessing, Fist and Curse about 7:5:2:2:2:2
 // (wowsims/forever, Warcraft Logs). ShahramForeverSpell turns a roll in [0, 1) into the index in

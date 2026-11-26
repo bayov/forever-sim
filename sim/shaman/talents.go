@@ -287,10 +287,12 @@ func (shaman *Shaman) rollElementalFocus(sim *core.Simulation) {
 
 // noteClearcastingKept runs as a Lightning Bolt or Chain Lightning applies its effects, before the
 // cast completes and takes off Maelstrom Weapon and Maelstrom Ready!. EV-0180: under Forever a
-// Lightning Bolt that consumes five Maelstrom Weapon stacks keeps Clearcasting, and so does a Chain
-// Lightning cast while Maelstrom Ready! is up, which still costs nothing under it (a level 60
-// Enhancement shaman's combat log of 2026-11-19: 7 of 7 five-stack bolts and 5 of 5 such Chain
-// Lightnings kept the charge, against 35 of 37 Chain Lightnings below five stacks spending it).
+// Lightning Bolt that consumes five Maelstrom Weapon stacks keeps Clearcasting (a level 60
+// Enhancement shaman's combat log of 2026-11-19: 7 of 7 five-stack bolts kept the charge). That log
+// had Chain Lightning keep it too while Maelstrom Ready! was up (5 of 5), but Blizzard's Nov 25
+// hotfixes fixed that as a bug: "Fixed an issue where Chain Lightning would not consume
+// Clearcasting if the Shaman had both Clearcasting and 5 stacks of Maelstrom Weapon active at the
+// same time." So Chain Lightning always spends it now.
 func (shaman *Shaman) noteClearcastingKept(spell *core.Spell) {
 	if spell.ActionID.Tag == CastTagLightningOverload {
 		return
@@ -300,15 +302,8 @@ func (shaman *Shaman) noteClearcastingKept(spell *core.Spell) {
 		return
 	}
 	maelstrom := shaman.MaelstromWeaponAura
-	switch spell.SpellCode {
-	case SpellCode_ShamanLightningBolt:
-		if maelstrom != nil && maelstrom.IsActive() && maelstrom.GetStacks() == maelstrom.MaxStacks {
-			shaman.clearcastingKeptBy = spell
-		}
-	case SpellCode_ShamanChainLightning:
-		if shaman.MaelstromReadyAura != nil && shaman.MaelstromReadyAura.IsActive() {
-			shaman.clearcastingKeptBy = spell
-		}
+	if spell.SpellCode == SpellCode_ShamanLightningBolt && maelstrom != nil && maelstrom.IsActive() && maelstrom.GetStacks() == maelstrom.MaxStacks {
+		shaman.clearcastingKeptBy = spell
 	}
 }
 
@@ -665,8 +660,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	// EV-0180: under Forever Maelstrom Ready! (408501) goes up as the stacks reach five and comes off
 	// with them, or at the next Lightning Bolt, Chain Lightning, Healing Wave or Lesser Healing Wave,
 	// the heals and Chain Lightning leaving the stacks in place (combat logs of 2026-11-13 to 19:
-	// up at five stacks 179 of 179, 168 of 169 and 122 of 123 times). While it is up a Chain
-	// Lightning keeps Clearcasting (noteClearcastingKept).
+	// up at five stacks 179 of 179, 168 of 169 and 122 of 123 times).
 	if shaman.Env.IsForever() {
 		shaman.MaelstromReadyAura = shaman.RegisterAura(core.Aura{
 			Label:    "Maelstrom Ready!",

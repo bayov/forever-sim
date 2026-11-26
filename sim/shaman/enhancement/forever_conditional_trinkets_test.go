@@ -41,7 +41,8 @@ func casts(spell *core.Spell) int32 {
 }
 
 // Blackhand's Breadth's mark raises our crit chance on the marked target by 5% for melee and
-// spells alike, and by 10% on Orcs and Ogres. It rolls spell hit, so some uses miss.
+// spells alike, and by 10% on Orcs and Ogres. Since push 114402 it is Physical with no defense
+// type, so it always lands.
 func TestForeverBlackhandsBreadth(t *testing.T) {
 	for _, tc := range []struct {
 		family proto.MobFamily
@@ -81,23 +82,14 @@ func TestForeverBlackhandsBreadth(t *testing.T) {
 			t.Error("Everlook Delivery Bot is ready right after Blackhand's Breadth")
 		}
 
-		// Use it until the mark lands, and count the misses on the way. About 1000 uses
-		// give a few dozen misses at a boss's spell hit table.
-		uses, misses := 1, 0
-		if !mark.IsActive() {
-			misses++
-		}
-		for !mark.IsActive() || uses < 1000 {
+		// Every use lands, even against a level 63 boss.
+		for uses := 0; uses < 1000; uses++ {
+			if !mark.IsActive() {
+				t.Fatalf("%s: mark missed on use %d", tc.family, uses+1)
+			}
 			sim.CurrentTime += 5 * time.Minute
 			mark.Deactivate(sim)
 			use.Cast(sim, target)
-			uses++
-			if !mark.IsActive() {
-				misses++
-			}
-		}
-		if misses == 0 || misses > uses/4 {
-			t.Errorf("%s: %d of %d marks missed, want some but not many", tc.family, misses, uses)
 		}
 
 		if got := enh.Stormstrike.PhysicalCritChance(attackTable) - meleeBefore; math.Abs(got-tc.bonus) > 1e-9 {
