@@ -1,4 +1,6 @@
 {
+  "2832": {"name": "Medium Armor Kit", "source": "Leatherworking craft, 4 Medium Leather + Coarse Thread · or 26% drop from Olaf (Uldaman)", "note": "Leatherworking craft"},
+  "2833": {"name": "Heavy Armor Kit", "source": "Leatherworking craft, 5 Heavy Leather + Fine Thread · or 14% drop from Olaf (Uldaman)", "note": "Leatherworking craft"},
   "6296": {"name": "Fiery Blaze Enchantment", "note": "Alliance quest only", "source": "Quest 706 reward (item 5421), Alliance side only", "faction": "Alliance"},
   "7218": {"name": "Iron Counterweight", "note": "Iron Counterweight on AH ~0.2g", "source": "Plans: Iron Counterweight, 0.4% from many mobs (blacksmith craft)"},
   "7779": {"name": "Enchant Bracer - Minor Agility", "source": "Trainer: Godan (Orgrimmar) and others, skill 80"},
@@ -18,6 +20,7 @@
   "13695": {"name": "Enchant 2H Weapon - Impact", "source": "Trainer: Hgarth (Stonetalon) and others"},
   "13700": {"name": "Enchant Chest - Lesser Stats", "source": "Trainer: Hgarth (Stonetalon) and others, skill 200"},
   "13746": {"name": "Enchant Cloak - Greater Defense", "source": "Trainer: enchanting trainers, 42s, skill 205"},
+  "13794": {"name": "Enchant Cloak - Resistance", "source": "Trainer: enchanting trainers (no formula in our data), skill not in data · Lesser Nether Essence + Runed Truesilver Rod"},
   "13815": {"name": "Enchant Gloves - Agility", "source": "Trainer: Hgarth (Stonetalon) and others"},
   "13817": {"name": "Enchant Shield - Stamina", "note": "Formula on AH, price not checked", "source": "Drop: Formula 11202, 10% Digmaster Shovelphlange (Uldaman), 0.9% Caretaker Weston and about 250 other mobs, skill 210"},
   "13822": {"name": "Enchant Bracer - Intellect", "source": "Trainer: Hgarth (Stonetalon) and others"},
