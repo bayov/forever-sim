@@ -814,7 +814,7 @@
   "19108": {"avail": "doubtful", "name": "Wand of Biting Cold", "note": "Quest reward, Alterac Valley · AV queue unconfirmed · unsure, used by standards 42", "include": true},
   "19109": {"avail": "doubtful", "name": "Deep Rooted Ring", "note": "No known source"},
   "19111": {"avail": "doubtful", "name": "Winteraxe Epaulets", "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"},
-  "19112": {"avail": "doubtful", "name": "Frozen Steel Vambraces", "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"},
+  "19112": {"avail": "out", "name": "Frozen Steel Vambraces", "note": "Not in Forever's client data (the server calls it invalid) · Classic stats"},
   "19113": {"avail": "doubtful", "name": "Yeti Hide Bracers", "note": "No known source · hidden stats, Classic stats only"},
   "19120": {"name": "Rune of the Guard Captain", "note": "Quest: Job Opening: Guard Captain of Revantusk Village, Hinterlands"},
   "19141": {"name": "Luffa", "note": "Quest: Incendosaurs? Whateverosaur is More Like It, Searing Gorge"},
