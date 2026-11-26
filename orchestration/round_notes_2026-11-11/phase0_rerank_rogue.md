@@ -69,3 +69,7 @@ Heart of Wyrmthalak (46.6 to 251.2 g/dps), Blackcrow (78.9) and Deep Jungle Rifl
 - Alliance sets rebuilt from the new Horde sets with the Theramore Pauldrons swap. Human rows: Combat Swords 833.84, Seal Fate Swords 833.92.
 - Race rows rewritten with `race_gear.py --write`, rogue rows only.
 - Effects files were not refreshed this round.
+
+## Seal Fate Swords trinket confirm (2026-11-26)
+
+- `phase0_check.py` had Darkmoon Card: Maelstrom 1.10 above the trinket picks. Paired on the report's request (verify.py, 20,000 iterations), Maelstrom in place of Chained Essence of Eranikus is +8.9 at 180 sec on seeds 1 and 1000003 (839.50 -> 848.35, 839.90 -> 848.91), +5.0 at 120 and +12.0 at 300; in place of Blackhand's Breadth +4.0. Maelstrom is now the pick with Blackhand's Breadth (list flag, `GEAR_ONLY`, Alliance copy, request, race rows).

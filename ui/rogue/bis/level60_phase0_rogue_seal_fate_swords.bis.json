@@ -2140,7 +2140,8 @@
         "dps": 854.12,
         "loss": -1.1,
         "avail": "doubtful",
-        "note": "Darkmoon Faire deck · Forever card drops unconfirmed"
+        "note": "Darkmoon Faire deck · Forever card drops unconfirmed · pick since 2026-11-26 in place of Chained Essence of Eranikus: on the report's request +8.9 at 180 sec (seeds 1 and 1000003), +5.0 at 120 and +12.0 at 300 (20,000 iterations, paired), where this list's rank had it 1.1 ahead",
+        "bis": true
       },
       {
         "id": 13965,
@@ -2167,7 +2168,6 @@
         "name": "Chained Essence of Eranikus",
         "dps": 853.02,
         "loss": 0,
-        "bis": true,
         "conditional": [
           {
             "label": "vs Trolls",
