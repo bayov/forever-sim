@@ -15,11 +15,11 @@
   "gearSet": "level60_phase0_feral",
   "apl": "level60",
   "published": {
-    "dps": 1060.26,
-    "source": "verify.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 re-rank (Heart of Wyrmthalak for Darkmoon Card: Maelstrom, and the Goblin Land Mine for the dead Dark Bomb APL line)"
+    "dps": 1058.89,
+    "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Darkmoon Card: Maelstrom back for Heart of Wyrmthalak, over the 30g line)"
   },
   "verify": {
-    "dps": 1060.26,
+    "dps": 1058.89,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
