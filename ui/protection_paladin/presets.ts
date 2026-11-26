@@ -176,17 +176,18 @@ export const BalancedConsumes = Consumes.create({
 	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
 
-// Max threat takes Balanced's consumables with the Ground Scorpok Assay (25 Agility) in the Zanza slot.
+// Max threat takes Balanced's consumables. On the Phase 0 set the Spirit of Zanza beats the Ground Scorpok Assay by
+// +21.5 / +12.3 (3,000 iterations, seeds 1 / 2, paladin Phase 0 notes 2026-11-26).
 export const MaxThreatConsumes = Consumes.create({
 	...BalancedConsumes,
-	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
-// Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina). Since client 70862 halved the Natural flasks, it
-// takes Balanced's Flask of Supreme Power for Natural Precision (+145.6 / +151.5, 10,000 iterations, seeds 1 / 2; the
-// Titans +132.7 / +141.3, 13.0 / 10.2 behind Supreme Power; tank_fairness-20261111-1).
+// Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina). On the synthetic set Supreme Power led the Titans by
+// 13.0 / 10.2 (tank_fairness-20261111-1). On the Phase 0 set the Flask of the Titans leads Supreme Power by +108.5 /
+// +131.2 (3,000 iterations, seeds 1 / 2, tank_fairness-20261126-1), so it takes the Titans.
 export const MaxSurvivalConsumes = Consumes.create({
 	...BalancedConsumes,
+	flask: Flask.FlaskOfTheTitans,
 	food: Food.FoodDirgesKickChimaerokChops,
 });
 
