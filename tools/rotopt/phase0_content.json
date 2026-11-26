@@ -369,8 +369,6 @@
   "13944": {"name": "Tombstone Breastplate", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "13950": {"avail": "doubtful", "name": "Detention Strap", "note": "Darkmaster Gandling · Scholomance"},
   "13951": {"name": "Vigorsteel Vambraces", "note": "Darkmaster Gandling · Scholomance"},
-  "14139": {"avail": "doubtful", "name": "Mooncloth Shoulders", "note": "Tailoring 275 · pattern drops from raid and world bosses, lockboxes (0.1%) and Greater Darkmoon Prize (0.7%) only · Mooncloth"},
-  "14528": {"name": "Rattlecage Buckler", "note": "Rattlegore · Scholomance (Warden max threat top 5, not a pick)"},
   "13952": {"name": "Iceblade Hacker", "include": true, "note": "Ras Frostwhisper (Scholo)", "gold": 298.7, "goldPerDps": {"fury_dw": 46.2, "shaman_warden_balanced": 0.5, "shaman_warden_max_survival": 0.6, "shaman_warden_max_threat": 0.5, "warrior_protection_balanced": 0.8, "warrior_protection_max_survival": 1.0, "warrior_protection_max_threat": 1.4}},
   "13956": {"name": "Clutch of Andros", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "13957": {"name": "Gargoyle Slashers", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
