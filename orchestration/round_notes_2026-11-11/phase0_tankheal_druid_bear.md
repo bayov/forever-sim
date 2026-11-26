@@ -154,3 +154,23 @@ Chromaggus drives most of it: -2127 against -1470.
 | mainhand | Unyielding Maul | Tribute run, Dire Maul · 5g per point of score |  |
 | ranged | Idol of the Ursine Twins | Enchanting 300 craft · Formula: Idol of the Ursine Twins (279300) has no known source | avail doubtful |
 
+
+
+## Max survival vs synthetic
+
+`tankbench -iters 1000`, mean of the six scoring bosses. Synthetic is the origin/master request. Stats are tankbench's sheet against a level 63 boss. Block value is (sheet value + 0.05 Str) x the block value multiplier. Coverage is miss + dodge + parry + block (102.4% on the sheet is uncrushable). Both sets clear the 315 Defense that stops Forever's 0.6% boss crit, so crit plays no part. Max survival is 2 x SafeDPS less 3 x 900 / 300 x the healing that holds deaths to 5%, so healing needed is the survival side.
+
+| Stat | Phase 0 | Synthetic |
+|---|---|---|
+| Health | 11931 | 12530 |
+| Stamina | 682 | 739 |
+| Armor | 9473 | 10159 |
+| Defense | 370 | 437 |
+| Miss / dodge | 9.2 / 35.0 | 11.9 / 38.1 |
+| Coverage | 44.2% | 50.0% |
+| Crushing blows taken | 14.8% | 14.8% |
+| DTPS | 603 | 556 |
+| Healing needed | 345 | 284 |
+| Max survival | 1048.0 | 1618.3 |
+
+The only non-gear field that differs is the APL's Lacerate refresh (10 sec on Phase 0, 4 sec on master, the deliberate a2f62f579 change). Synthetic is scored here on the 10 sec rule (1618.3, master's 4 sec gives 1477.7), so the gap is the gear. A bear can't block or parry, so it is never uncrushable. Phase 0 loses health (-599), armor (-686) and avoidance (-5.8).

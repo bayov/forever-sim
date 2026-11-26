@@ -131,4 +131,25 @@ vaelastrasz and chromaggus. Synthetic is the request on origin/master.
 | Max survival | 906.5 | 1858.0 | -951.5 |
 
 Max survival falls short on Broodlord (-628 against 336) and Chromaggus (-2145 against -583). The cause is
-not traced.
+traced under Max survival vs synthetic below (the gear).
+
+
+## Max survival vs synthetic
+
+`tankbench -iters 1000`, mean of the six scoring bosses. Synthetic is the origin/master request. Stats are tankbench's sheet against a level 63 boss. Block value is (sheet value + 0.05 Str) x the block value multiplier. Coverage is miss + dodge + parry + block (102.4% on the sheet is uncrushable). Both sets clear the 315 Defense that stops Forever's 0.6% boss crit, so crit plays no part. Max survival is 2 x SafeDPS less 3 x 900 / 300 x the healing that holds deaths to 5%, so healing needed is the survival side.
+
+| Stat | Phase 0 | Synthetic |
+|---|---|---|
+| Health | 9471 | 8691 |
+| Stamina | 627 | 669 |
+| Armor | 9391 | 9816 |
+| Defense | 382 | 463 |
+| Miss / dodge / parry / block | 9.7 / 18.4 / 12.7 / 7.7 | 12.9 / 20.3 / 15.9 / 17.9 |
+| Block value | 135 | 282 |
+| Coverage | 48.5% | 67.0% |
+| Crushing blows taken | 9.8% | 2.5% |
+| DTPS | 380 | 284 |
+| Healing needed | 293 | 197 |
+| Max survival | 906.5 | 1858.0 |
+
+The only non-gear field that differs is the flask (Titans on Phase 0, Supreme Power on synthetic, deliberate). The synthetic request on Titans scores 1825.3 (healing needed 160), so the gap is the gear. Holy Shield's 30% lifts synthetic to about 97% coverage, close to uncrushable, but Phase 0 only to about 78%. Lost Defense (-81), block chance (-10.2) and block value (-147) put crushing blows back on the table.
