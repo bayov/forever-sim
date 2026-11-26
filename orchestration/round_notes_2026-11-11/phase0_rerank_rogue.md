@@ -51,3 +51,21 @@ Sims at 5000 iterations, seed 1, against the build's new set. Sets a rogue can w
 
 - The container had no `protoc`. Installed `protobuf-compiler` and `protoc-gen-go` v1.36.6 to build.
 - Effects files refreshed with `EFFECTS_ONLY` for all six specs.
+
+## Prices round 2 (master 6a5cace)
+
+Heart of Wyrmthalak (46.6 to 251.2 g/dps), Blackcrow (78.9) and Deep Jungle Rifle (123.1) went over the 30g line, so `bis_phase0.sh` treats them as no-picks. Trinkets re-ranked on all six (`RANK_ONLY=1 SLOTS=trinket`), ranged too on the two sword builds. Devilsaur stays under the line (0.7 to 4.5). Request dps as above (verify.py, 20,000 iterations, seed 1).
+
+| Build | Picks now | Request dps |
+|---|---|---|
+| Combat Swords | Maelstrom and Chained Essence of Eranikus, ranged Bloodseeker | 853.07 -> 840.39 |
+| Seal Fate Swords | Blackhand's Breadth and Eranikus, ranged Ancient Bone Bow | 850.31 -> 839.50 |
+| Combat Daggers | Eranikus and Maelstrom | 830.58 -> 829.20 |
+| Mutilate | Eranikus and Maelstrom | 788.45 -> 787.14 |
+| Subtlety | Eranikus and Maelstrom | 788.79 -> 787.33 |
+| Seal Fate Daggers | Eranikus and Maelstrom | 821.30 -> 820.02 |
+
+- Each request sims to its list's final measure within 0.5.
+- Alliance sets rebuilt from the new Horde sets with the Theramore Pauldrons swap. Human rows: Combat Swords 833.84, Seal Fate Swords 833.92.
+- Race rows rewritten with `race_gear.py --write`, rogue rows only.
+- Effects files were not refreshed this round.
