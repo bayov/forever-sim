@@ -116,6 +116,9 @@ func (w healWarrior) fight(t *testing.T) (*core.Simulation, *warrior.Warrior) {
 	return nil, nil
 }
 
+// recoveryEnchant is Enchant Weapon - Recovery.
+const recoveryEnchant = 8721
+
 // deal has the spell land on the target with this outcome, for 1 damage if it hits.
 func deal(sim *core.Simulation, spell *core.Spell, target *core.Unit, outcome core.HitOutcome) {
 	result := spell.NewResult(target)
@@ -163,6 +166,34 @@ func TestLevelingRecovery(t *testing.T) {
 	deal(sim, revenge, mob, core.OutcomeParry)
 	if casts() != 2 {
 		t.Errorf("%d heals, the parry after 10 sec gave none", casts())
+	}
+}
+
+// TestLevelingRecoveryFromLevel: the recoveryFromLevel option puts Recovery on the main hand from
+// that level on, and never over an enchant the weapon already has.
+func TestLevelingRecoveryFromLevel(t *testing.T) {
+	const crusader = 1900
+	from := func(level int32) *proto.LevelingOptions {
+		return &proto.LevelingOptions{RecoveryFromLevel: level}
+	}
+	for _, c := range []struct {
+		name    string
+		w       healWarrior
+		enchant int32
+	}{
+		{"never", healWarrior{}, 0},
+		{"from 41 at 40", healWarrior{level: 40, options: from(41)}, 0},
+		{"from 41 at 41", healWarrior{options: from(41)}, recoveryEnchant},
+		{"from 20 at 41", healWarrior{options: from(20)}, recoveryEnchant},
+		{"from 41 on Crusader", healWarrior{mainHand: crusader, options: from(41)}, crusader},
+	} {
+		_, war := c.w.start(t)
+		if got := war.GetMHWeapon().Enchant.EffectID; got != c.enchant {
+			t.Errorf("%s: main hand enchant %d, want %d", c.name, got, c.enchant)
+		}
+		if on, want := war.HasAura("Recovery"), c.enchant == recoveryEnchant; on != want {
+			t.Errorf("%s: Recovery is on: %v, want %v", c.name, on, want)
+		}
 	}
 }
 

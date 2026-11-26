@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func shamanPlayer() *proto.Player {
@@ -64,5 +65,41 @@ func TestWarriorLevelingAbilities(t *testing.T) {
 	}
 	if (WarriorLeveling{Level: 25}).NewRank() || !(WarriorLeveling{Level: 26}).NewRank() {
 		t.Error("the second rank of Charge isn't at 26")
+	}
+}
+
+// TestWarriorLevelingGoreDrinker: the lines that feed Gore Drinker (Reckless Swings, Bloodrage and
+// Berserker Rage with its stance) cast only with the talent, and switched off there are none.
+func TestWarriorLevelingGoreDrinker(t *testing.T) {
+	knobs := Knobs{}
+	for _, k := range (WarriorLeveling{}).Knobs() {
+		knobs[k.Name] = k.Default
+	}
+	knobs["goreFeedBelow"], knobs["goreDance"] = 80, 1
+	goreLines := func(k Knobs) []*proto.APLListItem {
+		var lines []*proto.APLListItem
+		for _, item := range (WarriorLeveling{Level: 50}).Build(k).PriorityList {
+			if strings.Contains(item.Notes, "Gore Drinker") || strings.Contains(item.Notes, "for Berserker Rage") {
+				lines = append(lines, item)
+			}
+		}
+		return lines
+	}
+	lines := goreLines(knobs)
+	if len(lines) != 4 {
+		t.Fatalf("%d Gore Drinker lines at 50 with goreDance, want Reckless Swings, Bloodrage, Berserker Stance and Berserker Rage", len(lines))
+	}
+	for _, item := range lines {
+		condition, err := protojson.Marshal(item.Action.Condition)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(string(condition), `"talent":"goreDrinker"`) {
+			t.Errorf("%q casts without the talent: %s", item.Notes, condition)
+		}
+	}
+	knobs["goreFeedBelow"] = 0
+	if lines := goreLines(knobs); len(lines) != 0 {
+		t.Errorf("%d Gore Drinker lines with goreFeedBelow 0, want none", len(lines))
 	}
 }

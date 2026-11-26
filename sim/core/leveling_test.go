@@ -95,3 +95,24 @@ func TestPrepareLevelingEncounter(t *testing.T) {
 		t.Errorf("mob levels %v, want 29 to 33", levels)
 	}
 }
+
+// TestCombineLevelingMetrics: the threads' leveling averages add up by their share of the
+// iterations, the mobs on us at once and the peak too.
+func TestCombineLevelingMetrics(t *testing.T) {
+	base := &proto.LevelingMetrics{}
+	combineLevelingMetrics(base, &proto.LevelingMetrics{MobsKilled: 40, MobsPerPull: 2, MobsOnUs: 1.5, PeakMobs: 2}, false, 0.75)
+	combineLevelingMetrics(base, &proto.LevelingMetrics{MobsKilled: 60, MobsPerPull: 4, MobsOnUs: 3.5, PeakMobs: 6}, true, 0.25)
+	for _, c := range []struct {
+		name      string
+		got, want float64
+	}{
+		{"mobs killed", base.MobsKilled, 45},
+		{"mobs a pull", base.MobsPerPull, 2.5},
+		{"mobs on us", base.MobsOnUs, 2},
+		{"peak mobs", base.PeakMobs, 3},
+	} {
+		if math.Abs(c.got-c.want) > 1e-9 {
+			t.Errorf("%s %.3f, want %.3f", c.name, c.got, c.want)
+		}
+	}
+}
