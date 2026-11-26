@@ -37,10 +37,16 @@ def faction_of(race):
     return 'Alliance' if race in ALLIANCE else 'Horde' if race in HORDE else None
 
 
+# The bench ranks run at 1000 iterations, and their noise is far above 0.1% of scoreRef: about 2 standard errors is
+# 0.5% of scoreRef on tankbench (warrior 17, paladin 14 points) and 1.5% on healbench (about 2 points at 130),
+# as measured in the 2026-11-25 Phase 0 tank and healer round.
+BENCH_NOISE_PCT = {'tank': 0.5, 'heal': 1.5}
+
+
 def noise_of(row, noise):
-    """The noise an open item may sit above the pick: noise DPS, or for a bench row noise * scoreRef / 1000 points."""
+    """The noise an open item may sit above the pick: noise DPS, or for a bench row noise * BENCH_NOISE_PCT% of scoreRef."""
     if row.get('bench'):
-        return noise * row['scoreRef'] / 1000
+        return noise * row['scoreRef'] * BENCH_NOISE_PCT[row['bench']] / 100
     return noise
 
 
@@ -64,9 +70,8 @@ def load(p):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--noise', type=float, default=1.0, help='DPS an open item may sit above the pick (default 1.0). A tank or healer row (bench) is scored in '
-                    'points of score, so it gets the same noise relative to its scoreRef: --noise * scoreRef / 1000, '
-                    '0.1%% of scoreRef per 1.0 (a ~1000 DPS spec has 1 DPS of noise): 3.45 points on the 3454 warrior, '
-                    '0.13 on a healer at 130')
+                    'points of score, and its 1000-iteration rank is noisier: --noise * 0.5%% of scoreRef on a tank '
+                    '(17 points on the 3454 warrior), --noise * 1.5%% on a healer (about 2 points at 130)')
     ap.add_argument('--max-gpd', type=float, default=float(os.environ.get('MAX_GOLD_PER_DPS', 30)))
     ap.add_argument('--max-gold-per-pct', type=float, default=float(os.environ.get('MAX_GOLD_PER_PCT', 3000)),
                     help="a tank or healer list's line: gold per 1%% of its scoreRef (default 3000)")

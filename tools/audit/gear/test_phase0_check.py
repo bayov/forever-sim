@@ -34,8 +34,8 @@ class Noise(unittest.TestCase):
 
     def test_bench_row(self):
         # 0.1% of the scoreRef per 1.0 of noise
-        self.assertAlmostEqual(phase0_check.noise_of({'bench': 'tank', 'scoreRef': 3000}, 1.0), 3.0)
-        self.assertAlmostEqual(phase0_check.noise_of({'bench': 'heal', 'scoreRef': 130}, 2.0), 0.26)
+        self.assertAlmostEqual(phase0_check.noise_of({'bench': 'tank', 'scoreRef': 3000}, 1.0), 15.0)
+        self.assertAlmostEqual(phase0_check.noise_of({'bench': 'heal', 'scoreRef': 130}, 2.0), 3.9)
 
 
 class Run(unittest.TestCase):
