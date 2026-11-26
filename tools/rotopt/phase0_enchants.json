@@ -102,6 +102,7 @@
   "1248665": {"name": "Enchant Bracer - Superior Deflection", "note": "Merchant's Favor Honored", "source": "Vendor: Beneris, Barrens (240 Merchant's Favor, Honored), Formula 249539, skill 300"},
   "1248668": {"name": "Enchant 2H Weapon - Strength", "avail": "doubtful", "note": "No known source", "source": "Formula 249523 has no source in data"},
   "1248805": {"name": "Enchant Weapon - Revelation", "note": "45 Merchant's Favor", "source": "Vendor: Beneris, Barrens (45 Merchant's Favor)"},
+  "1248760": {"name": "Enchant Weapon - Recovery", "note": "45 Merchant's Favor", "source": "Vendor: Beneris, Barrens (45 Merchant's Favor, formula 249480 sold beside Revelation's)"},
   "1249019": {"name": "Enchant Necklace - Strength", "note": "120 Merchant's Favor", "source": "Vendor: Beneris, Barrens (120 Merchant's Favor, Friendly)"},
   "1249057": {"name": "Enchant Necklace - Spell Power", "note": "120 Merchant's Favor", "source": "Vendor: Beneris, Barrens (120 Merchant's Favor, Friendly)"},
   "1249058": {"name": "Enchant Necklace - Healing Power", "note": "120 Merchant's Favor", "source": "Vendor: Beneris, Barrens (120 Merchant's Favor, Friendly)"},
