@@ -124,14 +124,6 @@ sections 2 and 6 have the format).
 - **Next step**: fix `isArray` in the addon so it always writes an object.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
-### NPC debuffs on us are spread over the whole window
-
-- **Flag**: `Melee: raw`, level 62 (Vanndar Stormpike, Alterac Valley).
-- **Windows**: `112526_195841 20:30:35-20:32:59`: log 288.3 in 11 hits (229 to 401) vs the sim's 366.4 (283 to 408).
-- **What we think**: Stonehearth Marshal's Demoralizing Shout (23511) landed on us at 20:32:19.5 and again at :37.7. Our AP dropped from 1663 to 1059 each time. Hits at full AP were 401 to 415, hits under the shout 229 to 267. logcheck applies the shout as a share of the whole window (21%), not at the time of each hit, so the sim's average stays high. Not a sim error.
-- **Next step**: have logcheck apply debuffs on us by their real start and end times in the log. Until then, battleground windows with NPC debuffs on us read low on physical damage.
-- **Status**: open, first seen 2026-11-26.
-
 ## Watching
 
 ### Flametongue Attack rounds up at level 29
@@ -162,6 +154,10 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Mob Demoralizing Shout read as -40 attack power
+
+On Nov 25 (`112526_195841 20:30:35-20:32:59`) our melee hits on Vanndar Stormpike were 288.3 in the log vs the sim's 366.4 (11 hits). A Stonehearth Marshal's Demoralizing Shout (23511) was on us for most of them. logcheck already applied it only while it was up, but it read the client row's -40 attack power and left out its -8 per caster level, so it took 40 where the game took 520 (AP 1579 to 1059 in the log). logcheck now scales mob debuffs by the caster's level (`casterAmount` in `tools/logcheck/buffs.go`, SpellLevels in `wago.go`). The row is now 288.3 vs 300.8 (2026-11-26).
 
 ### Searing Totem crits high at level 37 once
 

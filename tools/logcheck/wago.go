@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"time"
 
@@ -40,6 +41,9 @@ type clientTables struct {
 	// buffDurations holds how long each of those buffs lasts, 0 for one that lasts until it's
 	// removed (a paladin aura).
 	buffDurations map[int32]time.Duration
+	// buffLevels holds the SpellLevels row of the buffs whose amount grows with the caster's
+	// level, like the mobs' Demoralizing Shout.
+	buffLevels map[int32]spellLevels
 	// bonusShares holds the stat shares of each item bonus list, by its ID. Forever gives an
 	// item its random suffix ("of the Falcon") as a bonus list in the item link.
 	bonusShares map[int32][]statShare
@@ -160,12 +164,17 @@ func loadClientTables(dir, build string) (*clientTables, error) {
 			continue
 		}
 		amount, _ := strconv.ParseFloat(row.get("EffectBasePointsF"), 64)
+		perLevel, _ := strconv.ParseFloat(row.get("EffectRealPointsPerLevel"), 64)
 		spell := row.int("SpellID")
-		tables.buffEffects[spell] = append(tables.buffEffects[spell], buffEffect{aura: aura, misc: row.int("EffectMiscValue_0"), amount: amount})
+		tables.buffEffects[spell] = append(tables.buffEffects[spell], buffEffect{aura: aura, misc: row.int("EffectMiscValue_0"), amount: amount, perLevel: perLevel})
 	}
 	if err := tables.loadBuffDurations(dir); err != nil {
 		// Without them a buff whose removal the log missed stays on to the window's end.
 		fmt.Fprintln(os.Stderr, "buff durations:", err)
+	}
+	if err := tables.loadBuffLevels(dir); err != nil {
+		// Without them a mob's debuff counts its growth from level 0.
+		fmt.Fprintln(os.Stderr, "buff levels:", err)
 	}
 
 	if err := tables.loadItemBonuses(dir); err != nil {
@@ -201,6 +210,24 @@ func (t *clientTables) loadBuffDurations(dir string) error {
 			if d, ok := byIndex[row.int("DurationIndex")]; ok {
 				t.buffDurations[spell] = d
 			}
+		}
+	}
+	return nil
+}
+
+// loadBuffLevels reads SpellLevels for the buffs in buffEffects whose amount grows with the
+// caster's level (casterAmount in buffs.go).
+func (t *clientTables) loadBuffLevels(dir string) error {
+	build := t.build
+	levels, err := wagoTable(dir, &build, "SpellLevels")
+	if err != nil {
+		return err
+	}
+	t.buffLevels = map[int32]spellLevels{}
+	for _, row := range levels.rows {
+		spell := row.int("SpellID")
+		if slices.ContainsFunc(t.buffEffects[spell], func(e buffEffect) bool { return e.perLevel != 0 }) {
+			t.buffLevels[spell] = spellLevels{base: int(row.int("BaseLevel")), max: int(row.int("MaxLevel"))}
 		}
 	}
 	return nil

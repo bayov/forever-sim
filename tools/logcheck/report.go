@@ -179,7 +179,7 @@ func (r *report) sheet() {
 		return
 	}
 	ids := buffIDs(r.ex.Buffs)
-	s, err := r.sheetStats(r.tables.buffTotal(ids, base, r.char.camp))
+	s, err := r.sheetStats(r.tables.buffTotal(ids, nil, base, r.char.camp))
 	if err != nil {
 		fmt.Println("Sheet check failed:", err)
 		return
@@ -230,7 +230,7 @@ func (r *report) sheet() {
 	}
 	if r.char.camp.chair || r.char.camp.lute {
 		r.char.camp.level = r.ex.Who.Level
-		if s, err = r.sheetStats(r.tables.buffTotal(ids, base, r.char.camp)); err != nil {
+		if s, err = r.sheetStats(r.tables.buffTotal(ids, nil, base, r.char.camp)); err != nil {
 			fmt.Println("Sheet check failed:", err)
 			return
 		}

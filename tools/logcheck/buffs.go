@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/json"
+	"maps"
 	"math"
 	"slices"
 	"strings"
@@ -27,9 +28,41 @@ import (
 )
 
 // buffEffect is one stat aura of a buff in the client's SpellEffect table.
+//
+// perLevel is what the amount grows by for each level of the caster (EffectRealPointsPerLevel).
+// It's 0 on the buffs players cast, but a mob's spell can have it. See casterAmount.
 type buffEffect struct {
 	aura, misc int32
 	amount     float64
+	perLevel   float64
+}
+
+// spellLevels is a spell's SpellLevels row: the level its per level growth counts from, and the
+// level it stops growing at (0 when it never stops).
+type spellLevels struct{ base, max int }
+
+// casterAmount is the effect's amount when a caster of that level cast it. A level of 0 means
+// we don't know it, and then we use the client row's amount as it is.
+//
+// The mobs' Demoralizing Shout (23511) in Alterac Valley is -40 attack power in the client row,
+// plus -8 for each level. The Stonehearth Marshal is level 60 and the spell's base level is 0, so
+// it's -520. On Nov 25 at 20:32:19 the Stonehearth Marshal's shout took our logged attack power
+// from 1579 to 1059, which is that -520. Until 2026-11-26 we used the -40, and the replay's
+// melee hits on Vanndar Stormpike were about 80 over the log's (366 vs 288), because most of them
+// landed under the shout.
+//
+// A player's level isn't in the log (the level field on a player's lines is the item level), so
+// a player's buff keeps the row's amount. That's fine because the players' buffs have no per
+// level growth.
+func (t *clientTables) casterAmount(id int32, e buffEffect, level int) float64 {
+	if e.perLevel == 0 || level <= 0 {
+		return e.amount
+	}
+	levels := t.buffLevels[id]
+	if levels.max > 0 && level > levels.max {
+		level = levels.max
+	}
+	return e.amount + e.perLevel*float64(max(level-levels.base, 0))
 }
 
 // buffAuras are the aura types we read from the client. The misc value says which stat.
@@ -175,7 +208,9 @@ func (t *clientTables) hasBuffStats(id int32) bool {
 // buffTotal is what the buffs add to base, the sim's stats without buffs. The crit auras (290)
 // don't add up: the game keeps the biggest one. A percent goes on the stat with the other buffs
 // in it, and the game shows whole stats, so we round it.
-func (t *clientTables) buffTotal(ids []int32, base stats.Stats, camp campItems) stats.Stats {
+//
+// levels holds the caster's level for the buffs a mob put on us (casterAmount). It can be nil.
+func (t *clientTables) buffTotal(ids []int32, levels map[int32]int, base stats.Stats, camp campItems) stats.Stats {
 	var total stats.Stats
 	multiplier := [5]float64{1, 1, 1, 1, 1}
 	crit := 0.0
@@ -198,6 +233,7 @@ func (t *clientTables) buffTotal(ids []int32, base stats.Stats, camp campItems) 
 			total = total.Add(luteBuff(camp.level))
 		}
 		for _, e := range t.buffEffects[id] {
+			e.amount = t.casterAmount(id, e, levels[id])
 			switch e.aura {
 			case 29:
 				primary(e.misc, func(i int) { total[primaryStats[i]] += e.amount })
@@ -262,14 +298,20 @@ func buffIDs(raw json.RawMessage) []int32 {
 	return ids
 }
 
-// buffStep is the buffs with stats on us from a time in the window on.
+// buffStep is the buffs with stats on us from a time in the window on. levels holds the
+// caster's level for the ones a mob cast (casterAmount).
 type buffStep struct {
-	at  time.Duration // from the start of the window
-	ids []int32
+	at     time.Duration // from the start of the window
+	ids    []int32
+	levels map[int32]int
 }
 
-// buffSpan is a time a buff was up, from `from` up to `to`.
-type buffSpan struct{ from, to time.Time }
+// buffSpan is a time a buff was up, from `from` up to `to`. level is the caster's level when a
+// mob cast it, and 0 otherwise.
+type buffSpan struct {
+	from, to time.Time
+	level    int
+}
 
 // timelineSpans reads BayovCore's buff records up to `to` and returns the times each buff was up.
 // The records count from the first full one, and that record's time is `from`. ok is false when
@@ -291,7 +333,7 @@ func timelineSpans(records []buffRecord, to time.Time) (spans map[int32][]buffSp
 			at = b.ends
 		}
 		if at.After(b.since) {
-			spans[id] = append(spans[id], buffSpan{b.since, at})
+			spans[id] = append(spans[id], buffSpan{from: b.since, to: at})
 		}
 		delete(ups, id)
 	}
@@ -422,7 +464,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 	if guessUntil.After(all[0].t) {
 		for _, id := range buffIDs(ex.Buffs) {
 			if unlogged(id) {
-				spans[id] = []buffSpan{{all[0].t, guessUntil}}
+				spans[id] = []buffSpan{{from: all[0].t, to: guessUntil}}
 			}
 		}
 	}
@@ -443,6 +485,15 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 	type state struct {
 		on, seen    bool
 		since, last time.Time
+		level       int
+	}
+	// A mob's level is on its own lines in the log (newCombatLog), so a debuff it puts on us
+	// gets that level. A player's is 0, since the log doesn't have it.
+	casterLevel := func(e *event) int {
+		if isCreature(e.srcGUID) {
+			return cl.levels[e.srcGUID]
+		}
+		return 0
 	}
 	states := map[int32]*state{}
 	ends := func(id int32, st *state) time.Time {
@@ -455,7 +506,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 		if end := ends(id, st); end.Before(t) {
 			t = end
 		}
-		spans[id] = append(spans[id], buffSpan{st.since, t})
+		spans[id] = append(spans[id], buffSpan{st.since, t, st.level})
 		st.on = false
 	}
 	for _, e := range all {
@@ -487,7 +538,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 			if d := tables.buffDurations[id]; d > 0 && e.t.Add(-d).After(from) {
 				from = e.t.Add(-d)
 			}
-			spans[id] = append(spans[id], buffSpan{from, e.t})
+			spans[id] = append(spans[id], buffSpan{from, e.t, casterLevel(e)})
 		case e.kind == "SPELL_AURA_REMOVED":
 		default:
 			if st.on && ends(id, st).Before(e.t) {
@@ -496,6 +547,14 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 			if !st.on {
 				st.on, st.since = true, e.t
 			}
+			// Another mob's shout that refreshes this one replaces it, so its level counts
+			// from here on. Both Alterac Valley marshals are level 60, so this doesn't split
+			// the span there.
+			if level := casterLevel(e); level != st.level && st.on && st.since.Before(e.t) {
+				stop(id, st, e.t)
+				st.on, st.since = true, e.t
+			}
+			st.level = casterLevel(e)
 			st.last = e.t
 		}
 		st.seen = true
@@ -507,15 +566,24 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 	}
 
 	// The set changes only where a span starts or ends.
-	at := func(t time.Time) []int32 {
+	at := func(t time.Time) ([]int32, map[int32]int) {
 		var ids []int32
+		var levels map[int32]int
 		for id, list := range spans {
-			if slices.ContainsFunc(list, func(s buffSpan) bool { return !t.Before(s.from) && t.Before(s.to) }) {
-				ids = append(ids, id)
+			i := slices.IndexFunc(list, func(s buffSpan) bool { return !t.Before(s.from) && t.Before(s.to) })
+			if i < 0 {
+				continue
+			}
+			ids = append(ids, id)
+			if list[i].level > 0 {
+				if levels == nil {
+					levels = map[int32]int{}
+				}
+				levels[id] = list[i].level
 			}
 		}
 		slices.Sort(ids)
-		return ids
+		return ids, levels
 	}
 	times := []time.Time{cl.from}
 	for _, list := range spans {
@@ -530,11 +598,11 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, 
 	slices.SortFunc(times, time.Time.Compare)
 	var steps []buffStep
 	for _, t := range times {
-		ids := at(t)
-		if len(steps) > 0 && slices.Equal(ids, steps[len(steps)-1].ids) {
+		ids, levels := at(t)
+		if last := len(steps) - 1; last >= 0 && slices.Equal(ids, steps[last].ids) && maps.Equal(levels, steps[last].levels) {
 			continue
 		}
-		steps = append(steps, buffStep{at: t.Sub(cl.from), ids: ids})
+		steps = append(steps, buffStep{at: t.Sub(cl.from), ids: ids, levels: levels})
 	}
 	return steps
 }
