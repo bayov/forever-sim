@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"slices"
 	"strings"
 	"testing"
 
@@ -59,5 +60,51 @@ func TestRealTrinket(t *testing.T) {
 	}
 	if rotationJSON(rot) != synthetic {
 		t.Errorf("withRealTrinket changed the template's rotation")
+	}
+}
+
+// A template with two synthetic trinkets (the warrior tank's bulwark and battle trinkets) casts
+// each of the gear's two on-use trinkets, the first synthetic one the first trinket slot's, not
+// one of them twice. With one use worn, both cast it.
+func TestRealTrinketPerSlot(t *testing.T) {
+	sim.RegisterAll()
+	data, err := os.ReadFile("../tankbench/req/warrior_protection_balanced.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rot := warriorTank{}.Build(defaultKnobs(warriorTank{}))
+	casts := func(r *proto.APLRotation) []int32 {
+		var ids []int32
+		for _, l := range r.PriorityList {
+			if id := l.GetAction().GetCastSpell().GetSpellId().GetItemId(); id != 0 && id != 10646 {
+				ids = append(ids, id)
+			}
+		}
+		return ids
+	}
+	if got := casts(rot); !slices.Equal(got, []int32{990617, 991018}) {
+		t.Fatalf("the template's trinket lines cast %v, want the bulwark then the battle trinket", got)
+	}
+	cases := []struct {
+		name   string
+		t1, t2 int32
+		want   []int32
+	}{
+		// Chained Essence of Eranikus and Adaptive Combat Assistant have uses, Hand of Justice none.
+		{"two uses", 10455, 272437, []int32{10455, 272437}},
+		{"two uses, swapped", 272437, 10455, []int32{272437, 10455}},
+		{"one use", 11815, 272437, []int32{272437, 272437}},
+	}
+	for _, c := range cases {
+		rsr := &proto.RaidSimRequest{}
+		if err := protojson.Unmarshal(data, rsr); err != nil {
+			t.Fatal(err)
+		}
+		items := rsr.Raid.Parties[0].Players[0].Equipment.Items
+		items[proto.ItemSlot_ItemSlotTrinket1] = &proto.ItemSpec{Id: c.t1}
+		items[proto.ItemSlot_ItemSlotTrinket2] = &proto.ItemSpec{Id: c.t2}
+		if got := casts(withRealTrinket(rot, rsr)); !slices.Equal(got, c.want) {
+			t.Errorf("%s: casts %v, want %v", c.name, got, c.want)
+		}
 	}
 }

@@ -112,6 +112,8 @@ tank_gear-1 was that the bench scored the lists 5 to 11% under their list score.
 
 Open for rotopt: both synthetic ids map to one real trinket. A set whose second trinket also has a use (Adaptive Combat Assistant beside Chained Essence on Balanced and Max threat) never casts the second one in either tool.
 
+Fixed (trinket mapping round): rotopt's withRealTrinket now gives each synthetic id its own worn on-use trinket (first synthetic id to the first trinket slot's, the second to the second's; TestRealTrinketPerSlot). The Balanced and Max threat requests' second trinket line casts Adaptive Combat Assistant. tankbench, 3000 iterations, first seed 1, labeled, six bosses: Balanced 3305.8 to 3380.0, Max threat 4700.3 to 4728.0. rotopt -eval on the same requests: 3364.0 and 4720.7. The list scores (3299.4, 4692.0) predate this and are 2.4% and 0.8% under; a re-rank would refresh them. Max survival is unchanged (Royal Seal of Eldre'Thalas has no modelled use).
+
 tank_gear-2: Frozen Steel Vambraces 19112 is now out (the server calls it invalid). The Max threat wrist was re-ranked:
 - Horde: Bracers of Heroism, list 4692.0 (-7.7).
 - Alliance: Vambraces of the Sadist, list 4565.3 (-4.7).
