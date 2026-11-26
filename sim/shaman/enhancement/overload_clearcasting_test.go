@@ -116,11 +116,11 @@ func TestOrcShamanChainLightningOverloadPerTarget(t *testing.T) {
 }
 
 // TestOrcShamanClearcastingKeptByMaelstrom checks EV-0180: a Lightning Bolt that consumes five
-// Maelstrom Weapon stacks keeps Clearcasting, and so does a Chain Lightning cast while Maelstrom
-// Ready! is up, which costs nothing and takes off Maelstrom Ready! with the stacks left. Maelstrom
-// Ready! goes up at the fifth stack and comes off with the stacks or at a Healing Wave. A Chain
-// Lightning without Maelstrom Ready! spends the charge (Elemental Focus gives it back 10% of the
-// time).
+// Maelstrom Weapon stacks keeps Clearcasting. A Chain Lightning cast while Maelstrom Ready! is up
+// costs nothing and takes off Maelstrom Ready! with the stacks left, and since Blizzard's Nov 25
+// hotfixes it spends the charge like any other Chain Lightning (Elemental Focus gives it back 10%
+// of the time). Maelstrom Ready! goes up at the fifth stack and comes off with the stacks or at a
+// Healing Wave.
 func TestOrcShamanClearcastingKeptByMaelstrom(t *testing.T) {
 	const trials = 40
 	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 10*trials + 20}.start()
@@ -138,7 +138,7 @@ func TestOrcShamanClearcastingKeptByMaelstrom(t *testing.T) {
 		cc.Activate(sim)
 		cc.SetStacks(sim, 1)
 	}
-	var clKept, lbKept, clSpent int
+	var clReadySpent, lbKept, clSpent int
 	for i := range trials {
 		start := float64(1 + 10*i)
 		at(sim, start, func(sim *core.Simulation) {
@@ -154,8 +154,8 @@ func TestOrcShamanClearcastingKeptByMaelstrom(t *testing.T) {
 			castNow(t, sim, enh, cl)
 		})
 		at(sim, start+3, func(sim *core.Simulation) {
-			if cc.IsActive() {
-				clKept++
+			if !cc.IsActive() {
+				clReadySpent++
 			}
 			if ready.IsActive() || mw.GetStacks() != 5 {
 				t.Errorf("Chain Lightning left Maelstrom Ready! up: %t, %d stacks, want down and 5", ready.IsActive(), mw.GetStacks())
@@ -203,8 +203,11 @@ func TestOrcShamanClearcastingKeptByMaelstrom(t *testing.T) {
 	}
 	runSim(sim)
 
-	if clKept != trials || lbKept != trials {
-		t.Errorf("Clearcasting kept by %d of %d Chain Lightnings under Maelstrom Ready! and %d of %d five stack bolts, want all", clKept, trials, lbKept, trials)
+	if lbKept != trials {
+		t.Errorf("Clearcasting kept by %d of %d five stack bolts, want all", lbKept, trials)
+	}
+	if clReadySpent < trials*7/10 {
+		t.Errorf("Chain Lightning under Maelstrom Ready! spent Clearcasting %d of %d times, want about 90%%", clReadySpent, trials)
 	}
 	if clSpent < trials*7/10 {
 		t.Errorf("Chain Lightning without Maelstrom Ready! spent Clearcasting %d of %d times, want about 90%%", clSpent, trials)
