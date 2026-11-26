@@ -15,11 +15,11 @@
   "gearSet": "level60_phase0_arms",
   "apl": "level60_arms_sunder",
   "published": {
-    "dps": 963.85,
-    "source": "tools/dps_report/verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 re-rank of the trinkets and Fury DW main hand"
+    "dps": 962.35,
+    "source": "tools/dps_report/verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 prices round 2 (trinkets and ranged)"
   },
   "verify": {
-    "dps": 963.85,
+    "dps": 962.35,
     "stderr": 0.42,
     "iters": 20000,
     "ok": true,
