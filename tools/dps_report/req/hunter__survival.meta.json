@@ -15,11 +15,11 @@
   "gearSet": "level60_phase0_hunter_sv",
   "apl": "sv",
   "published": {
-    "dps": 963.18,
-    "source": "wowsimcli on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 weapon and trinket re-rank"
+    "dps": 950.39,
+    "source": "wowsimcli on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 prices round 2 re-rank"
   },
   "verify": {
-    "dps": 963.18,
+    "dps": 950.39,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
