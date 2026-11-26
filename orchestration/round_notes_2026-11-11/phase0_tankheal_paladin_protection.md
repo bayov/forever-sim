@@ -57,6 +57,19 @@ phase0_check.py flagged open items above the picks once the prices landed. RANK_
   about 15): Warder's Waistguard +6.3, Soulforge Belt -26.3, Talisman of Evasion +0.7. None clears 2 stderr,
   list kept. Balanced wrist and neck were confirmed above.
 
+## Consumables on the Phase 0 sets (tank_fairness-20261126-1, 2026-11-26)
+
+- Max survival takes the Flask of the Titans for Supreme Power, per the audit (+108.5 / +131.2, 3000
+  iterations, seeds 1 / 2). Request and `MaxSurvivalConsumes` changed.
+- Screen, one swap at a time against each preset's set, 1000 iterations seed 1: flask, food, Agility, armor,
+  health and mana elixirs, oil and stone, Greater Arcane Elixir, potion, Zanza, Juju Power and Might.
+  Brilliant Wizard Oil leads at every preset (+26 to +45) but stays out (Zandalar vendor, raid-only, as in
+  docs/tank_paladin.md), as does the Mageblood Potion. The potion swaps score exactly the base: the default
+  potion is never drunk.
+- Confirmed at 3000 on seeds 1 and 2: Max threat Spirit of Zanza for the Ground Scorpok Assay +21.5 (4.2) /
+  +12.3 (4.3), taken (request and `MaxThreatConsumes`). Balanced Dirge's Chops +5.5 / +3.8, not taken.
+- No gear re-search: Spirit of Zanza swaps 25 Agility for 50 Spirit and 50 Stamina.
+
 ## Tags added
 
 - phase0_content.json: the searches' unlisted picks and top 5s, mostly dungeon drops and crafts (open).
@@ -113,9 +126,9 @@ vaelastrasz and chromaggus. Synthetic is the request on origin/master.
 
 | Preset | Phase 0 | Synthetic | Gap |
 |---|---|---|---|
-| Max threat | 3912.5 | 3280.3 | +632.2 |
+| Max threat | 3936.3 | 3280.3 | +656.0 |
 | Balanced | 2965.3 | 2857.7 | +107.6 |
-| Max survival | 800.2 | 1858.0 | -1057.8 |
+| Max survival | 906.5 | 1858.0 | -951.5 |
 
-Max survival falls short on Broodlord (-1093 against 336) and Chromaggus (-2113 against -583). The cause is
+Max survival falls short on Broodlord (-628 against 336) and Chromaggus (-2145 against -583). The cause is
 not traced.
