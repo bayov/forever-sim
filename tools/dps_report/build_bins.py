@@ -54,7 +54,7 @@ INPUTS = ['sim', 'proto', 'cmd/wowsimcli', 'go.mod', 'go.sum', 'assets/database'
 # the tools/ packages the binaries build or import (go list -deps, and build() checks no other module package is used): only
 # their .go files and default.pgo (the profile go build optimises a main package with) count, not the bench requests next
 # to them, which are read at run time
-TOOL_PACKAGES = ['tools/dashstats', 'tools/tankbench', 'tools/healbench', 'tools/tankscore']
+TOOL_PACKAGES = ['tools/dashstats', 'tools/tankbench', 'tools/healbench', 'tools/tankscore', 'tools/healscore']
 NOT_BUILT = re.compile(r'(_test\.go|\.md|\.results|\.results\.tmp)$|(^|/)testdata/')
 STAMP = 'STAMP.json'
 OVERRIDE = 'DASH_ALLOW_BIN_MISMATCH'

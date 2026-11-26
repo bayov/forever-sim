@@ -97,7 +97,7 @@ one `wowsimcli` serves every DPS step, with the step's switches in its environme
 `bin/STAMP.json` records what the binaries were built from: the input hash, the commit, each binary's sha256, and the
 Go, `protoc` and `protoc-gen-go` versions. The input hash covers exactly what goes into a binary: all of `sim/` but
 `_test.go`, `.md`, `.results` and `testdata/`, `proto/`, `cmd/wowsimcli`, `go.mod`, `go.sum`, the Go files of
-`tools/dashstats`, `tools/tankbench`, `tools/healbench` and `tools/tankscore`, all of `assets/database`, and the table
+`tools/dashstats`, `tools/tankbench`, `tools/healbench`, `tools/tankscore` and `tools/healscore`, all of `assets/database`, and the table
 and flags themselves. It hashes git blob ids at the commit, as `stale.mjs` does, so a commit that changes none of these
 gives the same hash and `bins` builds nothing. The build also checks with `go list -deps` that the binaries use no
 package of this repository outside these inputs. With `-trimpath` and `-buildvcs=false` the same inputs give
@@ -407,7 +407,7 @@ fresh mode records its provenance (`stale.mjs --record-bench <modes> --iteration
 
 Staleness is per preset, like the DPS builds. `stale.mjs` reports the stale presets of each mode separately from the DPS
 builds (`benches` in `--json`, so probe.py's ids are unchanged). A preset's fingerprint covers the shared sim code and
-the top-level `sim/*.go`, the bench's sources (its `req/` left out), `tools/tankscore`, the seven boss files,
+the top-level `sim/*.go`, the bench's sources (its `req/` left out), `tools/tankscore`, `tools/healscore`, the seven boss files,
 `tankheal.py`, `bench_races.py`, `adaptive.py`, `dashpaths.py` and `run_build.py` (its `CLASS_RACES`), then its own request and the code of every class in its raid with the db items those requests wear. A tank
 preset's raid is the tank alone. A healing preset's raid is the healer and healbench's frost mage fillers, plus the
 warrior tank for a tank healer (a raid healer's raid has no tank). So a `sim/shaman` change stales the shaman presets, a
