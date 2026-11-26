@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
  "last_pass_at": "2026-11-25T18:48:13Z",
  "pass": 18,
  "result": "quiet",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-26T01:04:24Z",
+ "checked_at": "2026-11-26T07:11:41Z",
  "note": "Only standards.md changed (item 11 explosives per EV-0088, item 17 Windfury extra attacks). No tank gear, set, enchant or Tanks row input changed."
 }

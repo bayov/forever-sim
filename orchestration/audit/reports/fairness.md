@@ -1,66 +1,61 @@
-# Fairness pass 61 (2026-11-26, master bfbee78fc)
+# Fairness pass 62 (2026-11-26, master ab3fff700)
 
-Full pass: range 85691655a..bfbee78fc is the Phase 0 gold-line re-rank (every DPS list and all 68 requests changed;
-no sim/, proto, database or standards.md change). 5k race sweep (seed 1, every race, the report's own requests with
-only the race changed) on the shared bfbee78fc CLI, table.py against the 85691655a baseline, phase0_check.py, the
-loop's 20k run against published, paired 20k race checks and a paired 10k explosive check
-(tools/audit/fairness/explosives.py, now committed).
+Full pass: range bfbee78fc..ab3fff700 (29 commits) is the warrior and hunter Phase 0 re-rank (Arms, Fury DW, Survival
+requests and race rows) plus warrior leveling-mode work that touched sim/core and sim/warrior. 5k race sweep (seed 1,
+every race, the report's own requests with only the race changed) on the shared ab3fff700 CLI, table.py against the
+bfbee78fc baseline, phase0_check.py, the loop's 20k run against published, and paired 20k binary checks
+(bfbee78fc / 26ecec3f1 vs ab3fff700, same requests).
 
 ## What moved, and why
 
-Every build moved with its own request (gear re-ranked under the gold line); no class moved without a request change
-and no shared code changed, so nothing leaked. Most specs fell 0.3% to 1.9% (Smite -1.9%, Balance -1.7%, Fury DW
--1.6%, Seal Fate Daggers -1.6%); Enhancement +0.9% (re-rank plus Land Mine), Combat Swords +0.9%, Feral +0.6%.
-Top over bottom 1.68x (was 1.66x).
+| Build | Before | Now | Cause |
+|---|---|---|---|
+| Survival (and wolf / tallstrider) | 950.5 | 963.5 (+1.4%) | own requests: 02c06a709, 7fb108796, 9c1cf0b4d (new trinkets) |
+| Fury DW | 986.2 | 994.6 (+0.9%) | own request: f79e810e1 (Thrash Blade, Heart of Wyrmthalak) |
+| Arms | 1010.6 | 1012.9 (+0.2%) | own request: 7a3b753cb / bb218ef46 |
+| Ret, Sub Holy | 930.0 / 903.9 | 931.1 / 905.2 | **leak**, no paladin change: fairness-20261126-3 |
+
+Every other build is identical to the baseline (same seed, so exactly 0.0). The warrior and core leveling code is gated:
+paired 20k, 26ecec3f1 (re-rank branch before the leveling merge) vs ab3fff700 binaries, Fury, Arms, Fury 2H and Arms
+sunder duty move 0.00. TargetsNear, InExecuteRange and Cannibalize all fall back to the Level 60 behaviour outside a
+leveling session (sim/core/aoe.go:33, leveling_melee.go:161, :197).
+
+## New finding
+
+- **fairness-20261126-3 (low):** 8f5b59325 made a stunned target unable to dodge, parry or block
+  (spell_outcome.go). Blackblade of Shahram's Might of Shahram stuns every target with no StunImmune check
+  (item_effects.go:545-565), so the stun-immune boss now loses its avoidance for 5 s per proc. Paired 20k:
+  paladin__level_60 +1.20, sub_holy +1.22, shock_ret 0.00 (other weapon). Fix: skip StunImmune targets under Forever,
+  as the explosives do.
 
 ## Published against current (results-20261104-2; not filed again)
 
-94d6cd2e4 re-simmed the report before the last re-rank commits (4a39a50be shaman / Ret, c15219593 warlock,
-1a6600121 Elemental). Gaps at the report race, 5k: Ret +6.4, Sub Holy +6.6, Shock Ret +3.5, Elemental +3.9,
-mana-tide +4.0, Affliction +3.4, Enhancement +2.3 (variants +3.5 to +5.2), Destruction Fire -3.2, Affliction Shadow Bolt
-+26.3 (at Orc). The loop's 20k comparison agrees (25 of 68 off by >0.5). No place in the ranking changes. Fix: re-sim.
+The re-ranked warriors and hunters match their metas (<=1.6). Still lagging at the report race, 5k: Ret +7.5 (now
+including the leak), Elemental +3.9, Affliction +3.4, Enhancement +2.3, Destruction Fire -3.2, Affliction Shadow Bolt
++26 (at Orc). No place in the ranking changes.
 
 ## Gear (standards 43)
 
-- phase0_check.py: every DPS request wears its spec's set; two '!' close calls (Destruction Spellblade +1.75, Enhancement
-  Blackrock Slicer +1.77) already noted by the gear pass.
-- **New, fairness-20261126-1 (medium):** the rogue (6), warrior (3) and Survival lists were searched on sims without
-  295206ddf / b663145ad / efeb06b95 / 22d2cf952 (proc rules, weapon PPMs, set procs, explosives); every other list is on
-  a sim equal to master. Their picks are due a re-search.
-- List `dps` sits 1.2 to 16.5 above the report race's sweep DPS (gear pass: the list number is the search fight with
-  uses). The gap doesn't follow the stale-sim split (BM 1.8, Fury 2H 1.5 vs MM 14.4, Shadow 16.5), so not a finding here.
+- phase0_check.py: every DPS request wears its spec's set; the same two close calls the gear pass holds (Destruction
+  Spellblade +1.75, Enhancement Blackrock Slicer +1.77).
+- fairness-20261126-1: Arms, Fury, Fury DW and Survival lists are now on 34fe148a5 (batch rules in). Open for the six
+  rogue lists only.
 
-## Explosives (fairness-20261125-2, still open)
+## Explosives and race (open findings, no change in range)
 
-Survival and Enhancement now carry Goblin Land Mine. Paired 10k, mine / Dynamite over none:
+- fairness-20261125-2: Fury, Fury 2H, four rogues and Ret still carry no filler explosive (not re-measured).
+- Race, 5k: Demonology Undead +4.2 (paired +5.9 last pass), MM High Order +5.1 (variants +6.6), Balance Wrath High
+  Order +4.1, Arcane Undead +1.9, Destruction Undead +1.7, Fire Gnome +1.1, Fury DW Undead +0.7 (now noise after its
+  regear). Survival tallstrider High Order +0.5 (noise).
 
-| Build | Mine | Dynamite |
-|---|---|---|
-| Fury DW | +4.1 | +3.4 |
-| Fury 2H | +2.1 | +1.4 |
-| Mutilate | +6.8 | +5.8 |
-| Combat Swords | +6.5 | +5.7 |
-| Combat Daggers | +6.1 | +5.2 |
-| Seal Fate Swords | +6.5 | +5.8 |
-| Ret | +6.5 | +5.7 |
-| Shock Ret | +7.7 | +6.8 |
-| Arms | -1.2 | -1.9 |
+## Ranking
 
-## Race (paired 20k unless noted)
-
-| Build | Report race | Best | Gain | Finding |
-|---|---|---|---|---|
-| Demonology | Orc 877.1 | Undead 883.0 | +5.9 | fairness-20261125-3 |
-| Destruction | Orc 868.2 | Undead 870.0 | +1.85 | fairness-20261125-3 |
-| Marksmanship (5k) | Orc 1082.4 | High Order 1087.5 | +5.1 | fairness-20261125-1 |
-| MM wolf / tallstrider (5k) | Orc | High Order | +6.6 / +6.6 | fairness-20261125-1 |
-| Arcane | Gnome 833.9 | Undead 836.05 | +2.15 | fairness-20261126-2 (new) |
-| Fury DW | Orc 983.8 | Undead 985.35 | +1.55 | fairness-20261126-2 (new) |
-| Fire (5k) | Human 917.8 | Gnome 918.9 | +1.1 | fairness-20261124-2 |
-| Balance Wrath (5k) | Night Elf 714.2 | High Order 718.3 | +4.1 | fairness-20261118-1 |
-
-Shadow, Balance (base), Lone Wolf (+0.3), BM, Survival, Feral, the rogues and the paladins are at their best race.
+Top over bottom 1.68x (Lone Wolf 1140.5 over Smite 679.5). Survival rises from 10th to 9th (past Affliction); Fury DW stays 7th, 0.2 behind Fury 2H.
+Full table in orchestration/fairness_report.md §1.
 
 ## Baseline
 
-sweep_baseline.log and table_baseline.md replaced with this sweep (bfbee78fc). Ranking in orchestration/fairness_report.md §1.
+sweep_baseline.log and table_baseline.md replaced with this sweep (ab3fff700).
+
+Note: origin/master had moved to 6a447e231 (warrior leveling presets only) during the pass; ab3fff700 was audited as
+instructed.

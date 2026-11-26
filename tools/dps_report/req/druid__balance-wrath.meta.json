@@ -15,11 +15,11 @@
   "gearSet": "level60_phase0_balance",
   "apl": "level60_wrath",
   "published": {
-    "dps": 713.65,
-    "source": "verify.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 re-rank (Talisman of Ascendance for Chained Essence of Eranikus)"
+    "dps": 714.29,
+    "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Spirit of Aquementas for Obsidian Bauble, over the 30g line)"
   },
   "verify": {
-    "dps": 713.65,
+    "dps": 714.29,
     "stderr": 0.22,
     "iters": 20000,
     "ok": true,

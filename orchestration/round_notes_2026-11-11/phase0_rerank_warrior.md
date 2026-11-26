@@ -61,3 +61,20 @@ Heroism was checked at step 3 and lost. No set comes within 10, so the lists sta
   `phase0_content.json`. Its whelp proc is modelled.
 - No open items for this group.
 - Container note: a fresh container needs `protobuf-compiler` (apt) and `protoc-gen-go` before bis_phase0.sh builds.
+
+## Prices round 2 (master 6a5cace)
+
+Heart of Wyrmthalak is over the 30g line for Arms (155.2g per DPS) and Fury DW (51.9), Satyr's Bow for Fury DW (31.4).
+RANK_ONLY SLOTS=trinket (Arms) and SLOTS=trinket,ranged (Fury DW).
+
+| Spec | Slot changes | List dps | Request (verify) |
+|---|---|---|---|
+| Arms | Trinket: Heart of Wyrmthalak -> Darkmoon Card: Maelstrom | 1017.05 -> 1016.65 | 1012.14 -> 1010.49 |
+| Fury DW | Trinkets: Heart of Wyrmthalak + Maelstrom -> Maelstrom + Blackhand's Breadth. Ranged: Satyr's Bow -> Bloodseeker | 993.76 -> 991.53 | 992.33 -> 986.50 |
+
+Duties: Arms Battle Shout 1008.06, Sunder 962.35, Dragonkin 1037.88. Fury DW Sunder 952.83, Battle Shout 981.43.
+Fury 2H unchanged (994.16, no drift). Requests vs lists: Arms -6.2, Fury DW -5.0, in line with the 5 DPS gap Arms has
+shown since step 4 (lists at exactly 180s, requests 180s ± 20s).
+
+Alliance copies follow. race_gear: Fury DW hit at Orc is 9% (was 10%). The Fury Dwarf trade loses (-1.28), so no bonus
+stats. Arms Dwarf trade kept, +5.79. Fury 2H Dwarf kept, +4.52.

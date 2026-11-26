@@ -50,7 +50,7 @@
     "id": 13965
    },
    {
-    "id": 22321
+    "id": 19289
    },
    {
     "id": 13982,
@@ -72,11 +72,11 @@
  },
  "note": "Alliance: wears level60_phase0_arms_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 4.3 Strength, 3.6 attack power, 0.18% crit and 1.4 Agility",
  "gain": {
-  "dps": 5.78,
+  "dps": 5.79,
   "se": 0.06,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_arms. It wears level60_phase0_arms_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 9.1% against the 8% yellow cap, the set's own hit 8.1%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (Strength 42.7%, CritRating 25.4%, AttackPowerBoth 18.2%, Agility 13.7%). Hit and crit are one pool for the gear, so each is written once. Dwarf 996.9 with the set, 1002.7 with the swap; gain.se is the paired error (the same seeded fights), 0.60 unpaired."
+ "how": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_arms. It wears level60_phase0_arms_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 9.1% against the 8% yellow cap, the set's own hit 8.1%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (Strength 42.7%, CritRating 25.4%, AttackPowerBoth 18.2%, Agility 13.7%). Hit and crit are one pool for the gear, so each is written once. Dwarf 995.2 with the set, 1001.0 with the swap; gain.se is the paired error (the same seeded fights), 0.60 unpaired."
 }

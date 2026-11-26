@@ -52,3 +52,21 @@ Nothing within 5 of the list, so no full search from a set start.
   quest giver not in our data), which 42 says is no reason to leave a good item out. It is the head pick on Shadow
   (+0.38 over Spellweaver's Turban, noise) and Smite (+7.5 over Virtuous Crown). phase0_content.json already has it as
   include, doubtful, with that note.
+
+## Prices round 2 (2026-11-26, master 6a5cace)
+
+Heart of Wyrmthalak (107.1 g/DPS) and Obsidian Bauble (88.6) went over the 30g line. RANK_ONLY SLOTS=trinket (Feral)
+and SLOTS=offhand (Balance) on the rebuilt binaries.
+
+| Build | Slot change | List before -> after | Request before -> after |
+|---|---|---|---|
+| druid__balance | offhand Obsidian Bauble -> Spirit of Aquementas | 814.43 -> 813.29 | 802.06 -> 801.74 |
+| druid__balance-duty-ff | same set | | 766.72 -> 766.31 |
+| druid__balance-wrath | same set | | 713.65 -> 714.29 |
+| druid__balance-wrath-duty-ff | same set | | 685.22 -> 685.83 |
+| druid__feral-cat | trinket Heart of Wyrmthalak -> Darkmoon Card: Maelstrom | 1073.52 -> 1073.31 | 1060.26 -> 1058.89 |
+| druid__feral-cat-duty-ff | same set | | 1055.04 -> 1053.69 |
+
+Requests match the lists' plain sims (Balance 801.7, Feral 1058.6). Horde copies re-ranked at Tauren (Balance keeps
+Eye of Orgrimmar over the tied Watcher's Signet again, Feral the same shoulder and rings), race rows rewritten by
+race_gear.py, only the off hand and trinket move. Tauren requests: Balance 793.81 -> 793.42, Feral 1036.78 -> 1035.43.

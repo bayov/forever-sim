@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
+  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
  },
- "last_pass_at": "2026-11-26T00:52:07Z",
- "pass": 32,
- "result": "findings",
- "note": "71139 touches no player heal; Nov 25 hotfix: Oath of Light 60 min (-19), Genesis on Tranquility (-18); Dreamstate in mechanics-20261125-1.",
+ "last_pass_at": "2026-11-26T06:51:17Z",
+ "pass": 33,
+ "result": "quiet",
+ "note": "Only sim/core/spell_result.go changed (1223e764e): leveling-only swing-from-behind hook, unreachable in healing fights (Encounter.leveling nil). Client and Nov 25 hotfix thread unchanged.",
  "client_build": "1.60.1.71139",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-25T23:25:08Z"
  },
- "checked_at": "2026-11-26T01:04:24Z"
+ "checked_at": "2026-11-26T07:11:41Z"
 }

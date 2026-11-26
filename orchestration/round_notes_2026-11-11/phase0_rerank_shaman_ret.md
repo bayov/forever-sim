@@ -73,3 +73,45 @@ copy) 854.01 and 841.74 against its list's 866.17. No pick changed hit, so the r
   10000 iterations. Level 60 downrank at 30 mana a second 872.5 / 853.0 / 795.0, 24 ties at 180s and loses 2.1
   at 300s, 36 loses 5.2 at 180s, rank 8 in place of 9 loses 4.2 at 300s. Mana Tide at 20 841.5 / 815.6 (180 / 300s),
   16 ties at 120 and 180s and gains 1.6 at 300s only, 26 loses 14.3 at 300s, rank 9 ties. Both presets stay.
+
+## Prices round 2 (master 6a5cace, 2026-11-26)
+
+Heart of Wyrmthalak went over the line (enh 89.0, ret 78.5 g/DPS). Destiny is 195g at 17.3 g/DPS for ret.
+Blackblade of Shahram (Drakkisath, about 2500g) had no goldPerDps. It loses 5.05 to Destiny and gains 5.89
+over Warblade of Caer Darrow, so 2500 / 5.89 = 424.4 g/DPS, now in `phase0_content.json` by hand with a note.
+`phase0_prices.py --write` may drop it on its next run. Master changed the protos, so this round runs on a
+rebuilt sim. `RANK_ONLY` trinket (Enh) and main hand plus trinket (Ret):
+
+| Spec | Slot | Old | New | List dps |
+|---|---|---|---|---|
+| Enhancement | trinket | Heart of Wyrmthalak | Blackhand's Breadth | 972.57 -> 971.45 |
+| Ret | main hand | Blackblade of Shahram | Destiny | 941.01 -> 943.25 |
+| Ret | trinket | Heart of Wyrmthalak | Blackhand's Breadth | |
+
+- Darkmoon Card: Maelstrom (doubtful) came out 0.4 and 0.9 over Blackhand's Breadth, not confirmed.
+- Shock (own set): trinket Heart -> Blackhand's Breadth. Destiny gains only 3.9 over Warblade on the Shock
+  request (908.2 against 904.3), 50 g/DPS, so Shock keeps Warblade. Talisman of Ascendance (doubtful) sims 907.2
+  in the trinket against 900.9 for Blackhand's Breadth, but the Shock list's score has them 0.4 apart, so the
+  list's pick stands.
+- vs Undead: Blackblade over the line. Destiny 1026.6 against Warblade 1024.5 is 95 g/DPS, so Warblade again.
+- Sub Holy: Destiny with Blackhand's Breadth 904.8 against Warblade 895.4. Destiny holds.
+- No pick carries hit or a faction tag, so race rows and faction copies stand.
+
+| Build | Round 1 | Round 2 |
+|---|---|---|
+| Enh Level 60 | 971.28 | 967.01 |
+| Enh Imp GW | 965.39 | 960.40 |
+| Enh Mana Tide | 880.44 | 876.02 |
+| Enh Water Shield | 923.12 | 918.62 |
+| Ret Twist | 930.29 | 932.43 |
+| Twist, Crusader duty | 920.62 | 919.78 |
+| Twist, Wisdom duty | 919.67 | 921.19 |
+| Sub Holy | 901.77 | 904.83 |
+| Sub Holy, Crusader duty | 891.00 | 891.82 |
+| Sub Holy, Wisdom duty | 890.28 | 892.38 |
+| Sub Holy, vs Undead | 1025.55 | 1024.51 |
+| Shock | 904.27 | 900.87 |
+| Shock, Crusader duty | 898.09 | 894.88 |
+| Shock, Wisdom duty | 898.39 | 895.19 |
+
+Elemental is unchanged. List minus request: Enh 4.4 (Level 60) and 11.0 (Imp GW, the list's talents), Ret 10.8.

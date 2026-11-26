@@ -215,7 +215,7 @@
   "12588": {"avail": "doubtful", "name": "Bonespike Shoulder", "note": "Warchief Rend Blackhand · Blackrock Spire"},
   "12589": {"name": "Dustfeather Sash", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "12590": {"name": "Felstriker", "note": "Warchief Rend Blackhand · Blackrock Spire", "gold": 2352.9, "goldPerDps": {"fury_dw": 622.5, "rogue_assassination": 148.1, "rogue_combat_daggers": 150.0, "rogue_seal_fate_daggers": 136.7, "rogue_subtlety": 152.3}},
-  "12592": {"name": "Blackblade of Shahram", "note": "General Drakkisath · Blackrock Spire"},
+  "12592": {"name": "Blackblade of Shahram", "note": "General Drakkisath · Blackrock Spire · about 2500g (prices round 2) · ret: loses 5.05 to Destiny (195g), +5.89 over Warblade of Caer Darrow (quest), so 2500 / 5.89 = 424.4g per DPS (2026-11-26, by hand, phase0_prices.py gave it none)", "gold": 2500.0, "goldPerDps": {"ret": 424.4}},
   "12603": {"name": "Nightbrace Tunic", "note": "Solakar Flamewreath (Blackrock Spire)"},
   "12604": {"name": "Starfire Tiara", "note": "Jed Runewatcher (Lower Blackrock Spire)", "gold": 141.3, "goldPerDps": {"mage_arcane": 33.4}},
   "12605": {"name": "Serpentine Skuller", "note": "Jed Runewatcher · Blackrock Spire", "gold": 116.6, "goldPerDps": {"shadow": 45.5}},
