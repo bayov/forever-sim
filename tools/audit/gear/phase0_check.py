@@ -37,6 +37,13 @@ def faction_of(race):
     return 'Alliance' if race in ALLIANCE else 'Horde' if race in HORDE else None
 
 
+def noise_of(row, noise):
+    """The noise an open item may sit above the pick: noise DPS, or for a bench row noise * scoreRef / 1000 points."""
+    if row.get('bench'):
+        return noise * row['scoreRef'] / 1000
+    return noise
+
+
 def gold_line(row, max_gpd, max_gold_per_pct):
     """The most gold a spec's list may pay per unit it adds: max_gpd per DPS, or for a tank or healer row (bench)
     max_gold_per_pct per 1% of its scoreRef, as bis_phase0.sh's nopick_of has it."""
@@ -56,7 +63,10 @@ def load(p):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--noise', type=float, default=1.0, help='DPS an open item may sit above the pick (default 1.0)')
+    ap.add_argument('--noise', type=float, default=1.0, help='DPS an open item may sit above the pick (default 1.0). A tank or healer row (bench) is scored in '
+                    'points of score, so it gets the same noise relative to its scoreRef: --noise * scoreRef / 1000, '
+                    '0.1%% of scoreRef per 1.0 (a ~1000 DPS spec has 1 DPS of noise): 3.45 points on the 3454 warrior, '
+                    '0.13 on a healer at 130')
     ap.add_argument('--max-gpd', type=float, default=float(os.environ.get('MAX_GOLD_PER_DPS', 30)))
     ap.add_argument('--max-gold-per-pct', type=float, default=float(os.environ.get('MAX_GOLD_PER_PCT', 3000)),
                     help="a tank or healer list's line: gold per 1%% of its scoreRef (default 3000)")
@@ -129,7 +139,7 @@ def main():
                 if (r.get('bis') or c.get('avail') in ('infeasible', 'out') or r.get('avail') in ('infeasible', 'out')
                         or gpd(c, spec) > line(spec)):
                     continue
-                if r['loss'] < best - a.noise:
+                if r['loss'] < best - noise_of(row, a.noise):
                     flag(f"{spec} {slot}: open {r['name']} ({r['id']}) sits {best - r['loss']:.2f} above the pick")
         for slot, rows in (lst.get('enchants') or {}).items():
             for r in rows:
