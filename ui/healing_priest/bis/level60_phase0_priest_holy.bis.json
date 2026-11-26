@@ -24,7 +24,7 @@
   ],
   "dps": 132.85,
   "made": "2026-11-26",
-  "sim": "7db40896721d",
+  "sim": "ae0541d5368b",
   "slots": {
     "head": [
       {
@@ -1260,14 +1260,14 @@
       {
         "id": 16687,
         "name": "Magister's Leggings",
-        "dps": 133.02,
+        "dps": 133.01,
         "loss": -0.16,
         "note": "Baron Rivendare (Stratholme)"
       },
       {
         "id": 12965,
         "name": "Spiritshroud Leggings",
-        "dps": 132.99,
+        "dps": 132.98,
         "loss": -0.13,
         "note": "The Beast (Upper Blackrock Spire)"
       },
@@ -1280,7 +1280,7 @@
       {
         "id": 14577,
         "name": "Skullsmoke Pants",
-        "dps": 132.92,
+        "dps": 132.91,
         "loss": -0.06,
         "avail": "doubtful",
         "note": "Vectus · Scholomance"
@@ -1303,13 +1303,13 @@
       {
         "id": 10807,
         "name": "Kilt of the Atal'ai Prophet",
-        "dps": 132.86,
+        "dps": 132.85,
         "loss": 0
       },
       {
         "id": 16694,
         "name": "Devout Skirt",
-        "dps": 132.86,
+        "dps": 132.85,
         "loss": 0,
         "note": "Baron Rivendare · Stratholme"
       },
@@ -1324,7 +1324,7 @@
       {
         "id": 13389,
         "name": "The Postmaster's Trousers",
-        "dps": 132.74,
+        "dps": 132.73,
         "loss": 0.12,
         "note": "Postmaster Malown (Stratholme)"
       },
@@ -1352,13 +1352,13 @@
       {
         "id": 14137,
         "name": "Mooncloth Leggings",
-        "dps": 132.59,
+        "dps": 132.58,
         "loss": 0.27
       },
       {
         "id": 13206,
         "name": "Wolfshear Leggings",
-        "dps": 132.48,
+        "dps": 132.47,
         "loss": 0.38
       },
       {
@@ -1371,7 +1371,7 @@
         "id": 14334,
         "suffix": 990557,
         "name": "Eternal Sarong of the Hierophant",
-        "dps": 132.45,
+        "dps": 132.44,
         "loss": 0.41,
         "note": "Prince Tortheldrin (Dire Maul West) · also random world drop · BoE"
       },
@@ -1379,7 +1379,7 @@
         "id": 10141,
         "suffix": 990557,
         "name": "High Councillor's Pants of the Hierophant",
-        "dps": 132.45,
+        "dps": 132.44,
         "loss": 0.41,
         "note": "Random world drop · BoE"
       },
@@ -1387,7 +1387,7 @@
         "id": 10252,
         "suffix": 990557,
         "name": "Master's Leggings of the Hierophant",
-        "dps": 132.45,
+        "dps": 132.44,
         "loss": 0.41,
         "note": "Random world drop · BoE"
       },
@@ -1403,14 +1403,14 @@
         "id": 10217,
         "suffix": 990567,
         "name": "Elegant Leggings of the Hierophant",
-        "dps": 132.34,
+        "dps": 132.33,
         "loss": 0.52,
         "note": "Random world drop · BoE"
       },
       {
         "id": 286640,
         "name": "High Priestess's Kilt",
-        "dps": 132.3,
+        "dps": 132.29,
         "loss": 0.56,
         "unsourced": true
       },
@@ -1431,7 +1431,7 @@
       {
         "id": 20707,
         "name": "Cenarion Reservist's Pants",
-        "dps": 132.18,
+        "dps": 132.17,
         "loss": 0.68,
         "avail": "doubtful",
         "note": "Quest: Armaments of War · end of the Roman'khan chain (Geologist Larksbane) · no badges"
@@ -1448,12 +1448,168 @@
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · Anthion chain (Strat, Dire Maul), step gold unknown · or the vendor after"
       },
       {
+        "id": 18507,
+        "name": "Boots of the Full Moon",
+        "dps": 132.85,
+        "loss": 0.01
+      },
+      {
+        "id": 13282,
+        "name": "Ogreseer Tower Boots",
+        "dps": 132.6,
+        "loss": 0.25,
+        "note": "Spirestone Lord Magus · Lower Blackrock Spire"
+      },
+      {
+        "id": 22247,
+        "name": "Faith Healer's Boots",
+        "dps": 132.53,
+        "loss": 0.32
+      },
+      {
+        "id": 16691,
+        "name": "Devout Sandals",
+        "dps": 132.53,
+        "loss": 0.33
+      },
+      {
         "id": 226959,
         "name": "Virtuous Slippers",
-        "dps": 132.85,
-        "loss": 0,
-        "enchant": 1254966,
+        "dps": 132.5,
+        "loss": 0.35,
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · Anthion chain (Strat, Dire Maul), step gold unknown · or the vendor after"
+      },
+      {
+        "id": 18102,
+        "name": "Dragonrider Boots",
+        "dps": 132.5,
+        "loss": 0.36
+      },
+      {
+        "id": 13391,
+        "name": "The Postmaster's Treads",
+        "dps": 132.45,
+        "loss": 0.4
+      },
+      {
+        "id": 16682,
+        "name": "Magister's Boots",
+        "dps": 132.44,
+        "loss": 0.41,
+        "note": "Hearthsinger Forresten (Stratholme)"
+      },
+      {
+        "id": 14329,
+        "suffix": 1047,
+        "name": "Eternal Boots of the Whale",
+        "dps": 132.43,
+        "loss": 0.42,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10137,
+        "suffix": 1047,
+        "name": "High Councillor's Boots of the Whale",
+        "dps": 132.43,
+        "loss": 0.42,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10247,
+        "suffix": 1047,
+        "name": "Master's Boots of the Whale",
+        "dps": 132.43,
+        "loss": 0.42,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10039,
+        "name": "Stormcloth Boots",
+        "dps": 132.43,
+        "loss": 0.43
+      },
+      {
+        "id": 13101,
+        "name": "Wolfrunner Shoes",
+        "dps": 132.39,
+        "loss": 0.46,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10247,
+        "suffix": 990448,
+        "name": "Master's Boots of the Physician",
+        "dps": 132.37,
+        "loss": 0.49,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 15802,
+        "name": "Mooncloth Boots",
+        "dps": 132.32,
+        "loss": 0.53,
+        "note": "Tailoring 250 craft · recipe source not in our data (trainer in Classic) · 6 Runecloth bolts · 4 Mooncloth · 2 Black Pearl · Rune Thread · BoE"
+      },
+      {
+        "id": 22245,
+        "name": "Soot Encrusted Footwear",
+        "dps": 132.29,
+        "loss": 0.56
+      },
+      {
+        "id": 14631,
+        "name": "Necropile Boots",
+        "dps": 132.25,
+        "loss": 0.6,
+        "note": "Scholomance bosses (Necropile set)"
+      },
+      {
+        "id": 22311,
+        "name": "Ironweave Boots",
+        "dps": 132.24,
+        "loss": 0.62
+      },
+      {
+        "id": 18735,
+        "name": "Maleki's Footwraps",
+        "dps": 132.22,
+        "loss": 0.64
+      },
+      {
+        "id": 16704,
+        "name": "Dreadmist Sandals",
+        "dps": 132.18,
+        "loss": 0.67
+      },
+      {
+        "id": 19056,
+        "name": "Argent Boots",
+        "dps": 132.17,
+        "loss": 0.69
+      },
+      {
+        "id": 14329,
+        "suffix": 990453,
+        "name": "Eternal Boots of the Hierophant",
+        "dps": 132.16,
+        "loss": 0.69,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10137,
+        "suffix": 990453,
+        "name": "High Councillor's Boots of the Hierophant",
+        "dps": 132.16,
+        "loss": 0.69,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10247,
+        "suffix": 990446,
+        "name": "Master's Boots of the Hierophant",
+        "dps": 131.99,
+        "loss": 0.87,
+        "note": "Random world drop · BoE"
       }
     ],
     "finger": [
@@ -2903,8 +3059,105 @@
         "item": 15564,
         "name": "Rugged Armor Kit",
         "effect": "+5 Stamina, +40 armor",
+        "dps": 133.11,
+        "loss": 0.04,
+        "note": "Leatherworking craft"
+      }
+    ],
+    "feet": [
+      {
+        "id": 1255124,
+        "game": 8482,
+        "spell": 1255124,
+        "name": "Mystic Medium Armor Kit",
+        "effect": "+2 spell power, +16 armor",
+        "dps": 133.16,
+        "loss": -0.01
+      },
+      {
+        "id": 1255074,
+        "game": 8489,
+        "spell": 1255074,
+        "name": "Mystic Thick Armor Kit",
+        "effect": "+5 spell power, +32 armor",
+        "dps": 133.16,
+        "loss": -0.01
+      },
+      {
+        "id": 1254966,
+        "game": 8492,
+        "spell": 1254966,
+        "name": "Mystic Rugged Armor Kit",
+        "effect": "+6 spell power, +40 armor",
+        "dps": 133.15,
+        "loss": 0,
+        "bis": true,
+        "note": "90 Merchant's Favor, Honored"
+      },
+      {
+        "id": 851,
+        "spell": 20024,
+        "name": "Enchant Boots - Spirit",
+        "effect": "+5 Spirit",
+        "dps": 133.14,
+        "loss": 0.01,
+        "note": "Formula on AH ~0.9g"
+      },
+      {
+        "id": 1255096,
+        "game": 8485,
+        "spell": 1255096,
+        "name": "Mystic Heavy Armor Kit",
+        "effect": "+4 spell power, +24 armor",
+        "dps": 133.13,
+        "loss": 0.02
+      },
+      {
+        "id": 929,
+        "spell": 20020,
+        "name": "Enchant Boots - Greater Stamina",
+        "effect": "+7 Stamina",
+        "dps": 133.12,
+        "loss": 0.03
+      },
+      {
+        "id": 1843,
+        "game": 8490,
+        "spell": 19057,
+        "item": 15564,
+        "name": "Rugged Armor Kit",
+        "effect": "+5 Stamina, +40 armor",
         "dps": 133.12,
         "loss": 0.04,
+        "note": "Leatherworking craft"
+      },
+      {
+        "id": 13687,
+        "game": 8203,
+        "spell": 13687,
+        "name": "Enchant Boots - Lesser Spirit",
+        "effect": "+4 Spirit",
+        "dps": 133.1,
+        "loss": 0.05,
+        "note": "Formula on AH ~0.1g"
+      },
+      {
+        "id": 852,
+        "spell": 13836,
+        "name": "Enchant Boots - Stamina",
+        "effect": "+5 Stamina",
+        "dps": 133.09,
+        "loss": 0.06
+      },
+      {
+        "id": 18,
+        "game": 8487,
+        "spell": 10344,
+        "item": 8173,
+        "name": "Thick Armor Kit",
+        "effect": "+4 Stamina, +32 armor",
+        "dps": 133.08,
+        "loss": 0.07,
         "note": "Leatherworking craft"
       }
     ],
