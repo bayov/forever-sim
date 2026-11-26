@@ -6,6 +6,15 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
+### Cloud of Chained Essence ticks crit far less than the sim
+
+- **Found by**: search (trends across logs).
+- **Windows**: every log from Nov 12 to Nov 24 for `Player-6940-0038ED1A`: 57 crits in 2151 ticks (2.7%, 52 of them for 210). The reports' sim expects 16.6 to 17.7%, about 360 crits. Per report it never flags (5 to 16 ticks a window).
+- **What we think**: the sim rolls the ticks with our spell crit (`dot.OutcomeTick` in `sim/common/item_effects.go`, the Chained Essence of Eranikus use effect), but the game crits them at about 3%. The sim's comment there says 6 of about 300 ticks crit on Nov 12 and 13, which is the same low rate, and it read that as "crits like other Forever dots".
+- **Next step**: with the user's go, give the ticks a fixed crit chance of about 3% in place of our spell crit. It's worth about 100 damage per 10 min use, so small.
+- **Status**: open, first seen 2026-11-26.
+
+
 ## Collect more data
 
 ### Fixed-damage hits move with the mob's level around 60
@@ -20,8 +29,9 @@ sections 2 and 6 have the format).
 - **Nov 22 update**: `112126_201216` and `112226_113558` (45 windows run, 9 skipped under 50 attacks, levels 50 to 62), summed hits log vs sim by mob level. Magma Totem: 0.989 at 54 (118 hits), 1.007 to 1.010 at 58 to 60 (856 hits), 1.023 at 61 (27), 1.058 at 62 (24 hits, 95.2 vs 90.0 in `13:42:21`). Flame Shock ticks: 1.024 to 1.026 at 58 to 60 (240 hits), 1.032 at 61 (14), 1.074 at 62 (14 hits, 101 vs 94). Fire Nova 1.012 at 58, 1.039 at 61, 1.071 at 62 (6 hits). Earth Shock 1.011 to 1.015 at 58 and 59, 1.047 at 61, 1.068 at 62 (7 hits). Fiery Weapon 38.0 vs 40 at 54 (33 hits, 0.95), 42.0 vs 40 at 62 (22 hits, 1.05). Windfury Weapon 1.011 at 60, 1.10 at 61, 1.174 at 62 (15 hits). Cloud of Chained Essence 138 at 53 and 56, 143 at 61 (5 hits). Same shape as Nov 20, with the 62 step a little larger on Windfury Weapon and Melee.
 - **Nov 25 update**: `112326_183423`, `112426_110702` and `112426_172127` (34 windows run, levels 55 to 63), flagged hits only, so few at 61 and above. Magma Totem 1.010 at 56 to 58 (53 hits), 0.989 at 60 (10 hits), 0.996 at 61 (20 hits, 90.3 vs 90.7). Flame Shock ticks 1.00 at 56, 1.02 at 55 and 58, 0.989 at 61 (11 hits). Windfury Weapon 1.033 at 58 (18 hits) and 1.056 at 63 (10 hits, 436.1 vs 412.8). No level 62 spell window, so the 62 step is not rechecked.
 - **Nov 26 update**: `112526_195841` `22:00:52` (Alterac Valley NPCs): Flame Shock ticks 96.7 vs 93.5 at level 58 (6 hits, 1.034) and 98.3 vs 93.1 at 61 (6 hits, 1.056), Magma Totem 91 vs 90.5 at 58 and 60 (22 hits, 1.010). Same curve as before. No level 62 spell hits.
+- **Nov 26 update, level 63**: `112626_185144` `19:27:04` (Vanndar Stormpike, level 63, 49s). Vanndar had Curse of the Elements, Curse of Recklessness, Faerie Fire, Sunder and Expose Armor from other players, but they change the hit's amount, not the raw field logcheck compares (spell amount/raw is 1.10 on him and 1.00 to 1.03 on the level 59 lieutenants, and raw is the same with or without each debuff). Raw vs the sim: Fiery Weapon 43 on all 8 hits (1.075, after 41 at 61 and 42 at 62), Magma Totem 98 vs 90 (6 hits, 1.09), Flame Shock ticks 100.1 vs 91.0 (14 hits, 1.10), Earth Shock 653 vs 590 (4 hits, 1.11), Fire Nova 341.5 vs about 308 (4 hits, 1.11). Physical runs higher: Melee 410 vs 337 (12 hits, 1.22), Stormstrike 438 vs 371 (1.18), Windfury Weapon 488 vs 417 (1.17), against 345 and 372 on the level 59 to 60 lieutenants in the same battleground. Level 61 Commanders Mortimer and Duffy: Magma Totem 91 to 92 (3 hits). So spells step about 2.5 to 3.5% a level from 60 to 63, and physical more. **Found by**: the audit and search (mob side).
 - **Decision (2026-11-26)**: the user wants more data on mobs above level 60 before the sim gets a damage factor by mob level. Collect hits on level 61 to 63 mobs (melee and fixed-damage spells), then fit the factor and ask again.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-26.
+- **Status**: open, first seen 2026-11-16, last updated 2026-11-26 (level 63 data).
 
 ### Fiery Weapon rounding
 
@@ -80,7 +90,24 @@ sections 2 and 6 have the format).
 - **Next step**: read Thorns 9910 in the newest client tables (SpellEffect base points and bonus coefficient), and look for Thorns hits from other druids in the logs.
 - **Status**: open, first seen 2026-11-26.
 
+### Build 71139 changed two world buffs
+
+- **Found by**: search (build changes), 71091 to 71139 (the Nov 26 log and history).
+- **What changed**: Fengus' Ferocity's spell damage and healing effects went from 230 to 115 (`1304759` effects 2 and 3, aura 13 and 135, and the dummy twins in `22817`). Its 200 AP stays. Sayge's Dark Fortune of Damage (`23768`) lost its aura 79 (+10% damage done) and is now a dummy aura. Every world buff also got a new flag (SpellMisc Attributes_6 2048), likely the "no effect in a raid instance" mark.
+- **What the sim does**: `sim/core/buffs.go` Fengus' Ferocity gives 200 AP and 200 ranged AP and no spell damage. Sayge's Damage multiplies all damage by 1.10. The `ForeverRaidInstance` comment says no spell attribute marks the raid rule, which the new flag may now do.
+- **Next step**: when a log has us with Fengus or Sayge's Damage, read which spell ID lands and whether spell hits rise (Fengus) or damage rises 10% (Sayge), then update the sim. Not in the Nov 26 log.
+- **Status**: open, first seen 2026-11-26.
+
 ## logcheck issues
+
+### Melee parries and blocks far below the sim, from standing behind the mob
+
+- **Found by**: search (trends across logs).
+- **Windows**: level 60 mobs, Nov 14 to 25, 2059 melee attempts summed over the reports: parry 26 vs 101 the sim expects (1.3% vs 4.9%), block 30 vs 98, hits 1260 vs 1126. Dodge (111 vs 103), crit and glance match. Every date is low, but no single window has enough swings to flag.
+- **What we think**: logcheck sims us in front of the mob (`-behind` is off by default, `tools/logcheck/main.go`), which fits questing. In dungeons and battlegrounds a tank or another player holds the mob and we hit it from behind, where it can't parry or block. So the outcome rows count the wrong table for part of each window.
+- **Next step**: have logcheck decide front or behind per swing from the advanced log's positions and facing, and replay with that share. Until then, read low parry and block in group windows as position, not a sim error.
+- **Status**: open, first seen 2026-11-26.
+
 
 ### Sheet Attack power far from the sim's on some exports
 
@@ -94,7 +121,8 @@ sections 2 and 6 have the format).
 - **Nov 18 update**: `111726_171435` Nov 17 (61 windows run): sheet AP is within 4 of the sim's in every window the digest lists (-1 to -4) and Nature power is 17 over in the windows with a Mageblood export, yet `Melee: raw` is still high: 1.03 to 1.05x at levels 55 to 60 (8 to 78 hits a level), 1.06 at 54 (54 hits), 1.07 to 1.11 at 50 to 53 (few hits), 1.09 at 61 (73 hits) and 1.13 at 62 (66 hits, 383.4 vs 340.4). So the gap is not AP. It looks level shaped like the fixed-damage drift above, plus a flat 3 to 5%. Windfury Weapon raw 1.01 at 60, 1.09 at 61 and 62 (52 hits at 62). Next step stays: pin the melee gap with `tools/combat_log/` once the level shape is known.
 - **Nov 22 update**: `112226_113558` (37 windows run, 9 skipped) and `112126_201216` (8 windows): every window has the sheet flag, the Nature power gap is -16.5 as before (`11:53:19`), and sheet AP is within 7 of the sim's in the morning, -53 to -59 in the afternoon (`13:08` to `13:42`, -165 at `13:28`), +113 at `112126 20:42`. `Melee: raw` is 1.05x at levels 60 and below on Nov 21 (40 hits), 1.25x in the Nov 22 morning (164 hits, 355.3 vs 283.8) and 1.11x in the afternoon (180 hits, 398.0 vs 360.0), 1.17x at 61 and 62 (53 hits). The morning sim average is low because its Melee range starts at 41 (`11:53:19`, `12:04:35`, `12:08`: sim avg 125 to 217 vs the log's 336 to 371), a weak weapon the sim swings far more than the log did, in windows the trinket and weapon swap `change` flags cover. Stormstrike fits there (0.99x, 30 hits), so it isn't the AP. Not pinned, only the weapon mix is a guess.
 - **Nov 25 update**: all 34 windows run have the sheet flag. Nature power is within +1.2 to +2.3 of the sim's in 26 windows and -13.6 to -16.6 in 5, Attack power is within 3 in most (-80 in 2, -16 in 1). `Melee: raw` is 1.04 to 1.06x at 57 and 58 (124 hits), 0.98x at 59 (20 hits), 1.08x at 61 (30 hits), 1.07x at 63 (12 hits). The Nov 22 morning 1.25x does not come back.
-- **Status**: open, first seen 2026-11-12, updated 2026-11-25.
+- **Nov 26 update**: `112626_185144` `19:27:04` (Vanndar, sheet read with the fishing pole and other trinkets, which the check now uses): every stat matches except Nature power, 143 on the sheet vs 143.6 in the sim. That's the same small sim-over gap as the +1.2 to +2.3 of Nov 25, likely a fractional spell power source the game floors.
+- **Status**: open, first seen 2026-11-12, updated 2026-11-26.
 
 ### Trinket swaps and skill ups flag as a character change
 
@@ -120,13 +148,30 @@ sections 2 and 6 have the format).
 
 ## Watching
 
+### Fiery Weapon and Windfury Weapon procs about 1.2x the sim per white swing
+
+- **Found by**: search (trends across logs).
+- **Windows**: level 60, Nov 14 to 24 summed: Fiery Weapon 762 procs vs 632 expected (1.21), Windfury Weapon 590 vs 502 (1.18), over about 2000 landed white swings. Noisy by date (0.97 to 1.4), no step, and no window flags it.
+- **What we think**: probably our rotation mix. Both can proc from Stormstrike and other main hand hits too, and we press those more per white swing than the sim's player, the same reason Searing Totem's per swing rate is off (known). Not a proc rate error until a per hit count says so.
+- **Status**: watching, first seen 2026-11-26.
+
+
 ### Whirlwind hits on us didn't give a Water Shield globe
 
 - **Found by**: search (resources).
 - **Windows**: `112526_195841` 20:16:07 (Dun Baldar North Marshal) and 20:47:00 (Icewing Marshal): Whirlwind (15589) landed on us at 3 globes with the 3.5s cooldown ready, and no globe came. The other 18 such hits (swings, Cleave, Shoot, Frost Nova) all gave one.
 - **What we think**: maybe Whirlwind doesn't trigger Water Shield, or it's chance. The sim gives a globe on any landed hit (`OnSpellHitTaken` in `sim/shaman/water_shield.go`). Only 2 hits.
-- **Next step**: count more Whirlwind hits on us outside the cooldown in later logs.
-- **Status**: open, first seen 2026-11-26.
+- **Nov 26 update**: `112626_185144` (Alterac Valley): 3 more landed AoE hits with a charge and the cooldown ready gave no globe, all in 2 sec: Blizzard at `19:25:56.442` and `19:25:58.397` (a player mage) and Thunder Clap (11580) at `19:25:57.091`. A Frost Nova at `19:26:02.130` gave one. The other way round, 3 globes came from enemy spells that did no damage (Judgement `19:20:09.573`, Concussion Blow `19:21:49.316`, Faerie Fire `19:23:50.574`), which the sim's mobs never cast. **Found by**: search (resources).
+- **Next step**: count more AoE hits on us (Whirlwind, Blizzard, Thunder Clap) outside the cooldown in later logs.
+- **Status**: open, first seen 2026-11-26, updated 2026-11-26.
+
+### Judgement of Wisdom procs less than half the time on our hits
+
+- **Found by**: search (resources).
+- **Windows**: `112626_185144` `19:27:40` to `19:27:52`, a paladin's Judgement of Wisdom on Vanndar: 2 mana procs (59 each) from 12 of our direct hits and swings. At the sim's 50% that's p about 0.02.
+- **What we think**: chance in a small sample, or the proc has a cooldown or counts fewer of our hits than `judgementOfWisdomAura` in `sim/core/debuffs.go`. The 59 mana per proc matches.
+- **Next step**: count our hits and procs over more windows with a paladin's Judgement of Wisdom up.
+- **Status**: watching, first seen 2026-11-26.
 
 ### Flametongue Attack rounds up at level 29
 
@@ -156,6 +201,12 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Water Shield gives 4 globes with Totem of Sustaining
+
+- **Found by**: search (resources), `112626_185144`: each Water Shield gave 4 globes (the first leaves 3 charges, a recast shows 4), where the sim gave 3.
+- **Done**: 2026-11-26. Forever's Totem of Sustaining (23200) is "Increases the maximum number of charges on your Water Shield by 1" (spell 28856), and we've worn it since Nov 14 14:08:22. The first 4-globe shield came at 14:09:07, and every log since has them (about 700 shields). `sim/shaman/water_shield.go` now gives a 4th globe with it on.
+
 
 ### Stormstrike hit about 1.6x the sim from Nov 11 10:37 to Nov 13 04:59
 
