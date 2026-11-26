@@ -157,5 +157,6 @@
   "463871": {"name": "Enchant Shield - Law of Nature", "note": "Timbermaw Hold Honored · Wowhead delisted the formula on 2026-11-04, the game may still have it", "source": "Vendor: Meilosh (Felwood, Timbermaw Hold Honored), Formula 228982, skill 300"},
   "22725": {"name": "Core Armor Kit", "avail": "out", "note": "Core Leather is a Molten Core material", "source": "Leatherworking recipe needing Core Leather (Molten Core)"},
   "2831": {"name": "Light Armor Kit", "source": "Leatherworking craft, 1 Light Leather · or 28% drop from Olaf (Uldaman)", "note": "Leatherworking craft"},
+  "7454": {"name": "Enchant Cloak - Minor Resistance", "source": "Enchanting trainers, skill 45, 1s"},
   "20016": {"name": "Enchant Shield - Superior Spirit", "source": "Formula 16222: 1.5% from Scarlet Warder (Eastern Plaguelands), rare in lockboxes · 2 Greater Eternal Essence, 4 Illusion Dust", "note": "Formula on the AH, price not checked"}
 }
