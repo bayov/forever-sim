@@ -743,6 +743,7 @@
   "18527": {"name": "Harmonious Gauntlets", "note": "King Gordok · Dire Maul"},
   "18530": {"name": "Ogre Forged Hauberk", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "gold": 212.6, "goldPerDps": {"shaman_warden_max_survival": 210.6, "shaman_warden_max_threat": 56.9}},
   "18531": {"name": "Unyielding Maul", "note": "Tribute run, Dire Maul", "gold": 211.0, "goldPerDps": {"druid_bear_max_survival": 4.9}},
+  "18533": {"name": "Gordok Bracers of Power", "note": "Dire Maul Tribute chest (King Gordok's tribute run), Dire Maul North"},
   "18534": {"name": "Rod of the Ogre Magi", "note": "Tribute run, King Gordok · Dire Maul"},
   "18537": {"name": "Counterattack Lodestone", "note": "Drop: Gordok Tribute, Dire Maul"},
   "18538": {"name": "Treant's Bane"},
