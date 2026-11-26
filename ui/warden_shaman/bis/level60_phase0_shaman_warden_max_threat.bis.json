@@ -14,7 +14,7 @@
     4,
     5
   ],
-  "dps": 3420.17,
+  "dps": 3427.9,
   "made": "2026-11-26",
   "sim": "6adc8f19c1eb+",
   "slots": {
@@ -565,51 +565,51 @@
         "id": 18511,
         "name": "Shifting Cloak",
         "dps": 3427.9,
-        "loss": -7.73,
-        "note": "Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul"
+        "loss": 0.0,
+        "note": "Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul",
+        "bis": true,
+        "enchant": 1219587
       },
       {
         "id": 272415,
         "name": "Stalwart Cloak",
         "dps": 3420.17,
-        "loss": 0,
-        "bis": true,
-        "enchant": 1219587,
+        "loss": 7.73,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 272414,
         "name": "Howler's Furs",
         "dps": 3419.06,
-        "loss": 1.11,
+        "loss": 8.84,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 22269,
         "name": "Shadow Prowler's Cloak",
         "dps": 3414.13,
-        "loss": 6.04,
+        "loss": 13.77,
         "note": "Drop: General Drakkisath, Upper Blackrock Spire"
       },
       {
         "id": 272411,
         "name": "Arcanoweave Cloak",
         "dps": 3414.08,
-        "loss": 6.09,
+        "loss": 13.82,
         "note": "Pix Xizzix · 75 Reals"
       },
       {
         "id": 13397,
         "name": "Stoneskin Gargoyle Cape",
         "dps": 3410.44,
-        "loss": 9.73,
+        "loss": 17.46,
         "note": "Drop: Stonespine, Stratholme"
       },
       {
         "id": 279270,
         "name": "Cloak of Earth and Sky",
         "dps": 3409.49,
-        "loss": 10.68,
+        "loss": 18.41,
         "avail": "doubtful",
         "note": "Tailoring 300, pattern has no known source"
       },
@@ -617,7 +617,7 @@
         "id": 287044,
         "name": "Predator's Shroud",
         "dps": 3408.17,
-        "loss": 11.99,
+        "loss": 19.73,
         "avail": "doubtful",
         "note": "No known source · revealed in game Nov 12"
       },
@@ -625,27 +625,27 @@
         "id": 18734,
         "name": "Pale Moon Cloak",
         "dps": 3407.93,
-        "loss": 12.24
+        "loss": 19.97
       },
       {
         "id": 280045,
         "name": "Regal Direhorn Drape",
         "dps": 3407.24,
-        "loss": 12.92,
+        "loss": 20.66,
         "note": "Direhorn Matriarch · Forever rare, zone not in our data · seen in game Nov 9"
       },
       {
         "id": 276737,
         "name": "Cloak of the Tidemistress",
         "dps": 3406.77,
-        "loss": 13.39,
+        "loss": 21.13,
         "note": "Tidemistress Ca'zass (Alcaz Prison) · Forever custom"
       },
       {
         "id": 20068,
         "name": "Deathguard's Cloak",
         "dps": 3406.19,
-        "loss": 13.98,
+        "loss": 21.71,
         "avail": "infeasible",
         "note": "Defilers Exalted · Rutherford Twing · Arathi Basin in Forever unconfirmed · Exalted grind too long before the raids (apply_checks.py rule), ranked but not picked"
       },
@@ -653,7 +653,7 @@
         "id": 279269,
         "name": "Fel Cape",
         "dps": 3405.29,
-        "loss": 14.87,
+        "loss": 22.61,
         "avail": "doubtful",
         "note": "Tailoring 300 · pattern (279318) has no known source · its sibling crafts (Robes of Fiery Devastation, Rime-encrusted Boots) need raid essence"
       },
@@ -661,42 +661,42 @@
         "id": 18509,
         "name": "Chromatic Cloak",
         "dps": 3404.97,
-        "loss": 15.2,
+        "loss": 22.93,
         "note": "Leatherworking 300 · pattern 5.3% from object 179501 (location not checked) · 12 Brilliant Chromatic Scale + 30 Black/30 Red Dragonscale · no raid material"
       },
       {
         "id": 284100,
         "name": "Horseman's Unyielding Shroud",
         "dps": 3403.53,
-        "loss": 16.64,
+        "loss": 24.37,
         "unsourced": true
       },
       {
         "id": 13340,
         "name": "Cape of the Black Baron",
         "dps": 3402.84,
-        "loss": 17.32,
+        "loss": 25.06,
         "note": "Drop: Baron Rivendare, Stratholme"
       },
       {
         "id": 22337,
         "name": "Shroud of Domination",
         "dps": 3400.98,
-        "loss": 19.18,
+        "loss": 26.92,
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
         "id": 11930,
         "name": "The Emperor's New Cape",
         "dps": 3399.51,
-        "loss": 20.65,
+        "loss": 28.39,
         "note": "Drop: Emperor Dagran Thaurissan, Blackrock Depths"
       },
       {
         "id": 12552,
         "name": "Blisterbane Wrap",
         "dps": 3397.04,
-        "loss": 23.13,
+        "loss": 30.86,
         "note": "Drop: Blackrock Depths trash"
       },
       {
@@ -704,7 +704,7 @@
         "suffix": 696,
         "name": "Adventurer's Cape of the Tiger",
         "dps": 3396.96,
-        "loss": 23.2,
+        "loss": 30.94,
         "note": "Random world drop · other suffixes on AH ~2.6g"
       },
       {
@@ -712,7 +712,7 @@
         "suffix": 696,
         "name": "Master's Cloak of the Tiger",
         "dps": 3396.96,
-        "loss": 23.2,
+        "loss": 30.94,
         "note": "Random world drop"
       },
       {
@@ -720,7 +720,7 @@
         "suffix": 696,
         "name": "Masterwork Cape of the Tiger",
         "dps": 3396.96,
-        "loss": 23.2,
+        "loss": 30.94,
         "note": "Random world drop"
       },
       {
@@ -728,14 +728,14 @@
         "suffix": 696,
         "name": "Supreme Cape of the Tiger",
         "dps": 3396.96,
-        "loss": 23.2,
+        "loss": 30.94,
         "note": "Random world drop"
       },
       {
         "id": 3475,
         "name": "Cloak of Flames",
         "dps": 3394.87,
-        "loss": 25.3,
+        "loss": 33.03,
         "unsourced": true,
         "avail": "doubtful",
         "note": "No known source"
@@ -744,7 +744,7 @@
         "id": 284866,
         "name": "Windserpent Scaled Cloak",
         "dps": 3392.95,
-        "loss": 27.22,
+        "loss": 34.95,
         "note": "On AH ~5.1g"
       }
     ],

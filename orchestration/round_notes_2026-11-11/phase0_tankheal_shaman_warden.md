@@ -165,3 +165,20 @@ and Flame Walkers, -1446.8.
 | Max survival | -1212.8 | -2234.0 |
 
 Non-gear differences are the race (Tauren on Phase 0, Undead on synthetic, the deliberate legal race change) and the APL's trinket item id, which follows the worn trinket. Synthetic on Tauren scores -2421.2, so the rise is the gear. Phase 0 dodge (+12.1, from 397 Agility against 202) outweighs the lost Defense, armor and block value.
+
+## Final price round flags (2026-11-26)
+
+Bench swaps at 5000 iterations, preset column, against the list's set. Seed 1 for all flagged items, seeds 2 and 3 for
+the four best. Per-run stderr about 3 to 4 (max threat), 6 (balanced), 14 (max survival).
+
+- max_threat back, Shifting Cloak for Stalwart Cloak: +5.9, +15.0, +11.8, about 3 stderr pooled. Swapped (list,
+  gear set, request). List score 3427.9.
+- balanced head, Helm of Narv: +8.2, +2.2, +0.4. Noise, the Face stays.
+- max_survival trinket 1, Chained Essence of Eranikus: +12.8, -32.0, +14.3. Wrist, Pyremail Wristguards of the Monkey:
+  +6.2, -14.2, +21.8. Noise.
+- max_survival seed 1 only, all at or below base: Rubicund Armguards -16.5, Cutthroat's Signet -18.3 or +3.7 (by ring
+  slot), Drakeclaw Band -36.7 or -55.8, Chained Essence in trinket 2 -26.3, Darkmoon Card: Heroism -4.3 or -62.5, Ash
+  Covered Boots -26.5, Talisman of Evasion -12.2.
+
+The max survival flags stand: its rank pass sits 10 to 48 above the picks, but no swap holds on the bench. Its
+picks and the Alliance row are unchanged.
