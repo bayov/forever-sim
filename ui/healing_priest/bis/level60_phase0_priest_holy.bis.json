@@ -24,7 +24,7 @@
   ],
   "dps": 132.64,
   "made": "2026-11-26",
-  "sim": "8aa00e2f3725+",
+  "sim": "296b0b0f40d7+",
   "slots": {
     "head": [
       {
@@ -912,7 +912,7 @@
       {
         "id": 22667,
         "name": "Bracers of Hope",
-        "dps": 132.6,
+        "dps": 132.59,
         "loss": 0.05,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
@@ -936,7 +936,8 @@
         "id": 18709,
         "name": "Arena Wristguards",
         "dps": 132.23,
-        "loss": 0.41
+        "loss": 0.41,
+        "note": "Gurubashi Arena chest (Short John Mithril event, Stranglethorn Vale)"
       }
     ],
     "hands": [
@@ -952,9 +953,140 @@
       {
         "id": 226958,
         "name": "Virtuous Hands",
-        "dps": 132.64,
-        "loss": 0,
+        "dps": 132.49,
+        "loss": 0.15,
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · gloves and belt quest, after the bracer quest · or the vendor after"
+      },
+      {
+        "id": 18387,
+        "name": "Brightspark Gloves",
+        "dps": 132.43,
+        "loss": 0.21
+      },
+      {
+        "id": 285066,
+        "name": "Ooze Rummagers",
+        "dps": 132.4,
+        "loss": 0.24,
+        "unsourced": true
+      },
+      {
+        "id": 18369,
+        "name": "Gordok's Handwraps",
+        "dps": 132.32,
+        "loss": 0.33
+      },
+      {
+        "id": 273925,
+        "name": "Handguards of Conviction",
+        "dps": 132.27,
+        "loss": 0.37
+      },
+      {
+        "id": 16705,
+        "name": "Dreadmist Wraps",
+        "dps": 132.26,
+        "loss": 0.38
+      },
+      {
+        "id": 271945,
+        "name": "Theramore Handwraps",
+        "dps": 132.12,
+        "loss": 0.52,
+        "avail": "infeasible",
+        "note": "Alliance only · Theramore Exalted · Bryanna Embreeze"
+      },
+      {
+        "id": 20717,
+        "name": "Desert Bloom Gloves",
+        "dps": 132.11,
+        "loss": 0.53,
+        "avail": "doubtful",
+        "note": "Quest: Armaments of War · end of the Roman'khan chain (Geologist Larksbane) · no badges"
+      },
+      {
+        "id": 14333,
+        "suffix": 876,
+        "name": "Eternal Gloves of the Eagle",
+        "dps": 132.04,
+        "loss": 0.6,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10140,
+        "suffix": 876,
+        "name": "High Councillor's Gloves of the Eagle",
+        "dps": 132.04,
+        "loss": 0.6,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 10251,
+        "suffix": 876,
+        "name": "Master's Gloves of the Eagle",
+        "dps": 132.04,
+        "loss": 0.6,
+        "note": "Random world drop · BoE"
+      },
+      {
+        "id": 275604,
+        "name": "Venomspew Gloves",
+        "dps": 132.02,
+        "loss": 0.62
+      },
+      {
+        "id": 276395,
+        "name": "Grimm's Packing Gloves",
+        "dps": 132.02,
+        "loss": 0.62,
+        "note": "Looted Nov 15 · source unknown"
+      },
+      {
+        "id": 16684,
+        "name": "Magister's Gloves",
+        "dps": 131.99,
+        "loss": 0.65
+      },
+      {
+        "id": 22304,
+        "name": "Ironweave Gloves",
+        "dps": 131.97,
+        "loss": 0.67,
+        "note": "Isalien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 18693,
+        "name": "Shivery Handwraps",
+        "dps": 131.97,
+        "loss": 0.67
+      },
+      {
+        "id": 20716,
+        "name": "Sandworm Skin Gloves",
+        "dps": 131.96,
+        "loss": 0.68,
+        "avail": "doubtful",
+        "note": "Quest: Armaments of War · end of the Roman'khan chain (Geologist Larksbane) · no badges"
+      },
+      {
+        "id": 271946,
+        "name": "Theramore Handwraps",
+        "dps": 131.92,
+        "loss": 0.72,
+        "avail": "infeasible",
+        "note": "Alliance only · Theramore Exalted · Bryanna Embreeze"
+      },
+      {
+        "id": 11634,
+        "name": "Silkweb Gloves",
+        "dps": 131.79,
+        "loss": 0.86
+      },
+      {
+        "id": 16692,
+        "name": "Devout Gloves",
+        "dps": 131.78,
+        "loss": 0.87
       }
     ],
     "waist": [
@@ -2202,7 +2334,7 @@
         "spell": 20008,
         "name": "Enchant Bracer - Greater Intellect",
         "effect": "+7 Intellect",
-        "dps": 132.66,
+        "dps": 132.67,
         "loss": 0.02,
         "note": "Formula on AH ~9g"
       },
@@ -2246,7 +2378,7 @@
         "spell": 13642,
         "name": "Enchant Bracer - Spirit",
         "effect": "+5 Spirit",
-        "dps": 132.6,
+        "dps": 132.61,
         "loss": 0.08
       },
       {
@@ -2264,9 +2396,100 @@
         "spell": 13945,
         "name": "Enchant Bracer - Greater Stamina",
         "effect": "+7 Stamina",
-        "dps": 132.59,
+        "dps": 132.6,
         "loss": 0.09,
         "note": "Formula drop, rare"
+      }
+    ],
+    "hands": [
+      {
+        "id": 1254966,
+        "game": 8492,
+        "spell": 1254966,
+        "name": "Mystic Rugged Armor Kit",
+        "effect": "+6 spell power, +40 armor",
+        "dps": 132.81,
+        "loss": -0.13,
+        "note": "90 Merchant's Favor, Honored"
+      },
+      {
+        "id": 1255074,
+        "game": 8489,
+        "spell": 1255074,
+        "name": "Mystic Thick Armor Kit",
+        "effect": "+5 spell power, +32 armor",
+        "dps": 132.74,
+        "loss": -0.05
+      },
+      {
+        "id": 1255096,
+        "game": 8485,
+        "spell": 1255096,
+        "name": "Mystic Heavy Armor Kit",
+        "effect": "+4 spell power, +24 armor",
+        "dps": 132.69,
+        "loss": 0,
+        "bis": true
+      },
+      {
+        "id": 1843,
+        "game": 8490,
+        "spell": 19057,
+        "item": 15564,
+        "name": "Rugged Armor Kit",
+        "effect": "+5 Stamina, +40 armor",
+        "dps": 132.65,
+        "loss": 0.03,
+        "note": "Leatherworking craft"
+      },
+      {
+        "id": 16,
+        "game": 8481,
+        "spell": 2832,
+        "item": 2313,
+        "name": "Medium Armor Kit",
+        "effect": "+2 Stamina, +16 armor",
+        "dps": 132.65,
+        "loss": 0.04
+      },
+      {
+        "id": 17,
+        "game": 8484,
+        "spell": 2833,
+        "item": 4265,
+        "name": "Heavy Armor Kit",
+        "effect": "+3 Stamina, +24 armor",
+        "dps": 132.65,
+        "loss": 0.04
+      },
+      {
+        "id": 18,
+        "game": 8487,
+        "spell": 10344,
+        "item": 8173,
+        "name": "Thick Armor Kit",
+        "effect": "+4 Stamina, +32 armor",
+        "dps": 132.64,
+        "loss": 0.04,
+        "note": "Leatherworking craft"
+      },
+      {
+        "id": 15,
+        "spell": 2831,
+        "item": 2304,
+        "name": "Light Armor Kit",
+        "effect": "+1 Stamina, +8 armor",
+        "dps": 132.62,
+        "loss": 0.07
+      },
+      {
+        "id": 1255124,
+        "game": 8482,
+        "spell": 1255124,
+        "name": "Mystic Medium Armor Kit",
+        "effect": "+2 spell power, +16 armor",
+        "dps": 132.6,
+        "loss": 0.08
       }
     ],
     "mainhand": [
