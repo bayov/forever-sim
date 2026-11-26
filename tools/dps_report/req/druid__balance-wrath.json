@@ -113,20 +113,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 10455
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-0.1s"
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "itemId": 250937
                       }
                     }
@@ -165,76 +151,9 @@
                       "spellId": {
                         "spellId": 1259799
                       }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "itemId": 10455
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellTimeToReady": {
-                                  "spellId": {
-                                    "itemId": 10455
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "math": {
-                                  "lhs": {
-                                    "remainingTime": {}
-                                  },
-                                  "op": "OpSub",
-                                  "rhs": {
-                                    "const": {
-                                      "val": "10s"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "itemId": 10455
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 1259799
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
                     }
                   },
-                  "notes": "Elune's Light with the trinket, unless waiting for it would lose a use."
+                  "notes": "Elune's Light on cooldown."
                 },
                 {
                   "action": {

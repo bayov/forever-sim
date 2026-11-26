@@ -20,20 +20,6 @@
     "action": {
      "castSpell": {
       "spellId": {
-       "itemId": 10455
-      }
-     }
-    },
-    "doAtValue": {
-     "const": {
-      "val": "-0.1s"
-     }
-    }
-   },
-   {
-    "action": {
-     "castSpell": {
-      "spellId": {
        "itemId": 250937
       }
      }
