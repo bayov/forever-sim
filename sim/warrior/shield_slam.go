@@ -11,7 +11,9 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		return
 	}
 
-	spellID := int32(23925)
+	spellIDs := []int32{0, 23922, 23923, 23924, 23925}
+	rank := max(1, warrior.knownRank([]int32{0, 40, 48, 54, 60}, spellIDs))
+	spellID := spellIDs[rank]
 	damageLow := 421.0
 	damageHigh := 439.0
 	threat := 254.0
@@ -34,7 +36,8 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	// ruling of 2026-11-25). The off-hand weapon modifiers pass it by (isShieldStrike).
 	flags := core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOffensive
 	if warrior.Env.IsForever() {
-		damageLow, damageHigh = 625, 685
+		damageLow = []float64{0, 411, 483, 554, 625}[rank]
+		damageHigh = []float64{0, 449, 527, 606, 685}[rank]
 		apCoef = 0
 		threat = 255
 		flags |= core.SpellFlagSuppressWeaponProcs | core.SpellFlagNoWindfuryTotem

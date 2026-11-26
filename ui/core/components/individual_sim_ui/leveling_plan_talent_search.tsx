@@ -2,7 +2,7 @@ import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { IndividualSimUI } from '../../individual_sim_ui';
-import { countsOf, pickLevel, planLevels, sortedBuilds, talentName, talentPointsAt, talentsAt, talentsStringToCounts } from '../../leveling_plan';
+import { countsOf, pickLevel, planLevels, sortedBuilds, talentName, talentPointsAt, TalentPointSettings, talentsAt, talentsStringToCounts } from '../../leveling_plan';
 import { Player } from '../../player';
 import { Spec } from '../../proto/common';
 import {
@@ -211,7 +211,7 @@ export class LevelingTalentSearch {
 		const shape = this.talents.shape;
 		const config = shape.trees[tree].talents[talent];
 		const before = Math.max(config.row * shape.pointsPerRow, config.prereq !== undefined ? shape.trees[tree].talents[config.prereq].maxPoints : 0);
-		return pickLevel(before + points - 1, plan.fromLevel, plan.bonusTalentPoints);
+		return pickLevel(before + points - 1, plan.fromLevel, plan);
 	}
 
 	private addRequirement(tree: number, talent: number) {
@@ -441,7 +441,7 @@ export class LevelingTalentSearch {
 			</p>,
 			routeLine,
 			...(withRotations ? this.rotationElems(result) : []),
-			this.routeElem(route, result.fromLevel, plan.bonusTalentPoints),
+			this.routeElem(route, result.fromLevel, plan),
 			<div className="leveling-plan-buttons">
 				<button className="btn btn-outline-primary" ref={useRoute}>
 					<i className="fas fa-check me-1" />
@@ -474,7 +474,7 @@ export class LevelingTalentSearch {
 			const picks = respec.route.map(pick => LevelingTalentPick.fromJson(pick as any));
 			const respecSaved = respec.keptHours - respec.respecHours;
 			const big = respecSaved > respec.noise && respecSaved > BIG_SAVING * respec.keptHours;
-			const points = talentPointsAt(respec.level, plan.bonusTalentPoints);
+			const points = talentPointsAt(respec.level, plan);
 			const counts = countsOf(picks.slice(0, points), shape);
 			const kept = countsOf(route.slice(0, points), shape);
 			const add = ref<HTMLButtonElement>();
@@ -537,7 +537,7 @@ export class LevelingTalentSearch {
 	}
 
 	// The route's talents in the order we take them, a chip for each run of points in one talent.
-	private routeElem(route: LevelingTalentPick[], fromLevel: number, bonusPoints: number): Element {
+	private routeElem(route: LevelingTalentPick[], fromLevel: number, plan: TalentPointSettings): Element {
 		const shape = this.talents.shape;
 		const elem = (<div className="leveling-plan-search-route" />) as HTMLElement;
 		let i = 0;
@@ -545,8 +545,8 @@ export class LevelingTalentSearch {
 			let j = i;
 			while (j + 1 < route.length && route[j + 1].tree == route[i].tree && route[j + 1].talent == route[i].talent) j++;
 			const rank = route.slice(0, j + 1).filter(pick => pick.tree == route[i].tree && pick.talent == route[i].talent).length;
-			const first = pickLevel(i, fromLevel, bonusPoints);
-			const last = pickLevel(j, fromLevel, bonusPoints);
+			const first = pickLevel(i, fromLevel, plan);
+			const last = pickLevel(j, fromLevel, plan);
 			const icon = (<span className="leveling-plan-talent-icon small" />) as HTMLElement;
 			this.talents.talentIcon(route[i].tree, route[i].talent, url => (icon.style.backgroundImage = `url('${url}')`));
 			elem.appendChild(

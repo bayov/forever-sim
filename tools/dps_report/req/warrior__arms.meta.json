@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 1011.08,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 1010.49,
+    "source": "tools/dps_report/verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 prices round 2 (trinkets and ranged)"
   },
   "verify": {
-    "dps": 1011.08,
+    "dps": 1010.49,
     "stderr": 0.43,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-26; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Two-hand Arms with Mortal Strike, Slam and Rend, plus Overpower after dodges and Bloodthrill procs.",
   "keyTalents": [
@@ -74,5 +74,5 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase0_arms -apl level60_arms -talents 30303213032215201-05050005012-2 -race Orc -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the knob search over 120, 180 and 300 s moved nothing; the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++0.8 / +0.8 / +0.4 and +0.7 / +2.0 / +1.9 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_arms, Phase 0 step 4), was the synthetic level60_phase1_synthetic_arms (1078.7 at 180s)."
+  "notes": "Request from mksettings -spec arms -gear level60_phase0_arms -apl level60_arms -talents 30303213032215201-05050005012-2 -race Orc -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the knob search over 120, 180 and 300 s moved nothing; the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++0.8 / +0.8 / +0.4 and +0.7 / +2.0 / +1.9 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms. Phase 0 gear since 2026-11-24 (the step 3 list, level60_phase0_arms, Phase 0 step 4), was the synthetic level60_phase1_synthetic_arms (1078.7 at 180s). Trinket Darkmoon Card: Maelstrom again since the 2026-11-26 prices round 2 (Heart of Wyrmthalak for a few hours that day)."
 }

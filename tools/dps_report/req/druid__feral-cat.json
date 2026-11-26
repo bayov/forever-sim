@@ -98,7 +98,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 260817
+                        "itemId": 4395
                       }
                     },
                     "condition": {

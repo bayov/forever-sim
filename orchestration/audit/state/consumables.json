@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
  },
- "last_pass_at": "2026-11-25T18:50:00Z",
- "pass": 110,
- "result": "findings",
- "note": "elixir overwrite by AB/DS; world buffs off in raids (no preset uses them).",
- "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T13:10:47Z"
+ "last_pass_at": "2026-11-26T02:10:00Z",
+ "pass": 112,
+ "result": "quiet",
+ "note": "11 files moved; no preset or enchant value affected.",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T01:04:24Z"
 }

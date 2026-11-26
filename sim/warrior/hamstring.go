@@ -5,9 +5,15 @@ import (
 )
 
 func (warrior *Warrior) registerHamstringSpell() {
-	damage := 45.0
-	spellID := int32(7373)
-	spell_level := 54.0
+	levels := []int32{0, 8, 32, 54}
+	spellIDs := []int32{0, 1715, 7372, 7373}
+	rank := warrior.knownRank(levels, spellIDs)
+	if rank == 0 {
+		return
+	}
+	damage := []float64{0, 5, 18, 45}[rank]
+	spellID := spellIDs[rank]
+	spell_level := levels[rank]
 
 	warrior.Hamstring = warrior.RegisterSpell(BattleStance|BerserkerStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},

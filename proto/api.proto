@@ -592,6 +592,10 @@ message LevelingMetrics {
 	double seconds_dead = 9;
 	// Average number of mobs a pull came to, chain pulls included.
 	double mobs_per_pull = 10;
+	// How many mobs swing at us at once: the average while at least one does, and the most in a
+	// pull, averaged over the pulls.
+	double mobs_on_us = 15;
+	double peak_mobs = 16;
 	// Food, water and bandages used a session.
 	double food = 11;
 	double drinks = 12;

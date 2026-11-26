@@ -140,7 +140,9 @@ func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLAc
 		numTargets = int32(len(unit.Env.Raid.AllPlayerUnits))
 	}
 	if numTargets < maxDots {
-		rot.ValidationWarning("Encounter only has %d targets. Using that for Max Dots instead of %d", numTargets, maxDots)
+		if unit.Env.Encounter.leveling == nil {
+			rot.ValidationWarning("Encounter only has %d targets. Using that for Max Dots instead of %d", numTargets, maxDots)
+		}
 		maxDots = numTargets
 	}
 
@@ -169,8 +171,13 @@ func (action *APLActionMultidot) IsReady(sim *Simulation) bool {
 			}
 		}
 	} else {
-		for i := int32(0); i < action.maxDots; i++ {
-			target := sim.Encounter.TargetUnits[i]
+		// A leveling session's targets are a pool of mobs that come and go, so we take the
+		// first ones on us instead.
+		targets := sim.Encounter.TargetUnits[:action.maxDots]
+		if sim.Encounter.leveling != nil {
+			targets = sim.Encounter.leveling.arrivedMobs(action.maxDots)
+		}
+		for _, target := range targets {
 			dot := action.spell.Dot(target)
 			if (!dot.IsActive() || dot.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
 				action.nextTarget = target

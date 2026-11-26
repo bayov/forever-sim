@@ -1,25 +1,18 @@
-# Results pass 106 (master 85691655a)
+# Results pass 108 (master ab3fff700)
 
-Range 0404484fb..85691655a. Watched paths changed: sim/core, sim/hunter, items, procs, warrior/tank, casters (efeb06b95, 60fde111f,
-295206ddf, b663145ad, 2f42f4a44 via merges, 22d2cf952), and tools/rotopt/mksettings (spec_hunter.go, spec_feral.go). No request change.
+Range bfbee78fc..ab3fff700. Watched changes: 92 files, mostly the warrior leveling sim (sim/warrior, sim/core hooks for leveling sessions,
+tank_warrior tests), proto and db files, Phase 0 re-rank requests for warrior and hunter (Survival, MM, LW, BM). Shared run: 68 builds, 20k, seed 1.
 
-Shared run (68 builds, 20k, seed 1) vs the previous binary (0404484fb, same requests): 64 of 68 moved by more than 1 DPS.
+## Run vs metas (published.dps)
+29 of 68 off by more than 0.5 (38 over 0.15), largest warlock affliction_shadow_bolt +27.1; the same families as pass 107 (paladin level_60 +1.7 to +10.3,
+shaman enhancement/elemental +2.6 to +4.7, warlock destruction_fire -1.0 to -3.6, Affliction +2.5 to +3.3) plus warrior arms +0.9, arms duty-sunder +1.9,
+arms duty-battle-shout +1.0, fury +1.1 and balance-wrath-duty-ff +0.6. Hunters now match.
 
-| Build | 0404484fb | efeb06b95 | merged batches | 85691655a |
-|---|---|---|---|---|
-| hunter beast-mastery | 1002.9 | 1002.9 | 1054.8 | 1044.1 |
-| hunter survival | 919.9 | 919.9 | 949.1 | 949.1 |
-| hunter lone-wolf | 1164.9 | 1164.9 | 1164.9 | 1152.0 |
-| priest shadow | 854.2 | 854.2 | 869.2 | 869.2 |
-| shaman elemental-level60 | 852.4 | 854.6 | 867.3 | 867.3 |
-| rogue mutilate | 821.1 | 821.1 | 795.3 | 795.3 |
-| warrior fury | 1014.9 | 1014.9 | 997.3 | 1001.8 |
-| warlock affliction_shadow_bolt | 800.0 | 800.0 | 800.0 | 794.2 |
+## Sim change check (paired, 20k seed 1)
+Binaries 26ecec3f1 (warrior re-rank merge) and ab3fff700 on warrior__arms, warrior__fury, warrior__arms-duty-sunder: identical to the digit
+(1013.01, 993.43, 965.79). So the warrior leveling work (rage from hits taken by stance in leveling sessions, ranks, Charge, big pulls) moves no
+DPS request; the +1 warrior lag is meta vs request, not a sim effect.
 
-The casters batch moves none of these; the hunter, items, procs and tank batches (merge becbcd30d) move most; 22d2cf952 moves
-hunter Dark Bomb, demon crit, Windfury Totem and Shield Slam rules. Other rogue builds -11 to -17, Enhancement -22 to -28 vs metas.
-Moves under 1.5% were not individually bisected.
-
-Drift: new. Hunter and feral requests carry EZ-Thro Dark Bomb; mksettings writes Dense Dynamite (hunters) and Goblin Land Mine
-(feral). Regenerated: BM +9.6, MM +9.3, Lone Wolf +11.5, feral +3.8 (finding results-20261125-1). Feral sapper line unchanged.
-Unread fields not run (no request change). Metas and builds.json need the full re-sim (results-20261104-2).
+## Drift
+Same as pass 107: Survival (3) and Enhancement (4) Land Mine (results-20261126-1), feral sapper line (results-20261105-1), expected duty/encounter lines.
+No new drift. Warrior and hunter requests match mksettings. Unread fields: only notes.

@@ -2,6 +2,33 @@
 
 ## Open
 
+### healer_mechanics-20261126-19: Oath of Light lasts 60 min since the Nov 25 hotfix; the sim keeps 5 min
+- severity: low (Holy paladin tank healer: one extra Oath recast, 8% of base mana and a GCD, on fights past 5 min; estimated, not simmed)
+- affects: Holy paladin (tank_healer APL, which recasts Oath when it drops; every build with Oath of Light)
+- found: 2026-11-26, master bfbee78fcc
+- evidence: tier 1, Blizzard "WoW: Forever Hotfixes - November 25, 2026" (us.forums.blizzard.com/en/wow/t/2403040 post 16,
+  Kaivax 2026-11-25T23:25Z), Paladin, Holy: "Oath of Light duration increased to 60 minutes." Client 1.60.1.71139 still has
+  SpellMisc DurationIndex 5 (300 s) on 1328548 (server-side change). Sim: `sim/paladin/holy_talents.go:114`
+  `Duration: time.Minute * 5`; ui/holy_paladin/apls/tank_healer.apl.json:60-85 recasts it when the aura is down.
+  docs/healing_paladin.md:117,159 say 5 min. Retires the verdicts row "Oath of Light ... 5 min".
+- proposed fix: under Forever set the Oath aura's Duration to 60 min (holy_talents.go:114), cite the hotfix, update
+  docs/healing_paladin.md:117,159 and the verdicts row; a test that the Oath is still up at 6 min.
+- needs: worker fix
+
+### healer_mechanics-20261126-18: Genesis reaches Tranquility since the Nov 25 hotfix; the sim leaves Tranquility out
+- severity: low (no healer preset APL casts Tranquility; +10% Tranquility healing at Genesis 5/5, which the Restoration preset talents '05302001--...' take)
+- affects: Restoration druid (Tranquility under Genesis; Hurricane damage is the DPS side, for mechanics)
+- found: 2026-11-26, master bfbee78fcc
+- evidence: tier 1, Blizzard Nov 25 hotfixes (t/2403040 post 16): "Fixed a bug where Genesis was not increasing the damage of
+  Hurricane or the healing of Tranquility." Client 71139 shows no Genesis (1223081) row change (server-side). Sim:
+  `sim/druid/healing.go:255-263` comment "not on Tranquility"; docs/healing_druid.md:164 "not Tranquility (not in its mask)".
+  Whether it is 2% a point on all of Tranquility's healing is inferred from Genesis's periodic modifier (Tranquility heals by
+  periodic trigger); fairly sure, not read from a client row.
+- proposed fix: multiply Tranquility's heal by genesisHealingMultiplier() under Forever (the Tranquility config in healing.go),
+  and Hurricane's damage by Genesis's periodic bonus (talents.go applyGenesis); update healing.go:255, docs/healing_druid.md:164,
+  the verdicts Genesis row; a test pinning Tranquility x1.10 at 5/5.
+- needs: worker fix
+
 ### healer_mechanics-20261124-17: Innervate and Energized scale the camp Mana Well's MP5, a periodic energize they should leave alone
 - severity: low (Horde healers with camp buffs on and Innervate on them; about 464 mana too many per Innervate, estimated, not simmed)
 - affects: engine; whoever is Innervated (Restoration druid self-Innervate) or has Read Leyline, with the camp Mana Well (no Blessing of Wisdom)

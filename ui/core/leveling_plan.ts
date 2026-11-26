@@ -87,17 +87,35 @@ export const LEVELING_PLAN_MAX_LEVEL = 60;
 // Forever gives its extra talent points from level 25 on.
 export const BONUS_TALENT_POINTS_LEVEL = 25;
 const MAX_TALENT_POINTS = 51;
+// The level the game gives the first talent point at. The Legacy perk Talented moves it as low
+// as 5.
+export const DEFAULT_FIRST_TALENT_LEVEL = 10;
 
-export function talentPointsAt(level: number, bonusPoints: number): number {
-	const bonus = level >= BONUS_TALENT_POINTS_LEVEL ? bonusPoints : 0;
-	return Math.min(MAX_TALENT_POINTS, Math.max(0, level - 9) + bonus);
+// What a plan says about its talent points: the points Forever adds from level 25, and the
+// level of the first point (0 for the game's 10).
+export type TalentPointSettings = Pick<LevelingPlanSettings, 'bonusTalentPoints' | 'firstTalentLevel'>;
+
+export function firstTalentLevel(plan: TalentPointSettings): number {
+	return plan.firstTalentLevel > 0 ? plan.firstTalentLevel : DEFAULT_FIRST_TALENT_LEVEL;
+}
+
+export function talentPointsAt(level: number, plan: TalentPointSettings): number {
+	const bonus = level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0;
+	return Math.min(MAX_TALENT_POINTS, Math.max(0, level - firstTalentLevel(plan) + 1) + bonus);
+}
+
+// The points at a level on top of the level minus 9 that the player's settings count on their
+// own (Player.bonus_talent_points).
+export function bonusTalentPointsAt(level: number, plan: TalentPointSettings): number {
+	if (firstTalentLevel(plan) != DEFAULT_FIRST_TALENT_LEVEL) return talentPointsAt(level, plan) - Math.max(0, level - DEFAULT_FIRST_TALENT_LEVEL + 1);
+	return level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0;
 }
 
 // The level we put in a build's point number index (0 for the first point), when the build
 // starts at startLevel. A respec puts all the points it has at its level back at once.
-export function pickLevel(index: number, startLevel: number, bonusPoints: number): number {
-	for (let level = Math.max(startLevel, 10); level <= LEVELING_PLAN_MAX_LEVEL; level++) {
-		if (talentPointsAt(level, bonusPoints) > index) return level;
+export function pickLevel(index: number, startLevel: number, plan: TalentPointSettings): number {
+	for (let level = Math.max(startLevel, firstTalentLevel(plan)); level <= LEVELING_PLAN_MAX_LEVEL; level++) {
+		if (talentPointsAt(level, plan) > index) return level;
 	}
 	return LEVELING_PLAN_MAX_LEVEL + 1;
 }
@@ -271,7 +289,7 @@ export function buildTalentsString(build: LevelingTalentBuild | undefined, count
 // take that build instead, like the one we had before a respec.
 export function talentsAt(plan: LevelingPlanSettings, level: number, shape: TalentShape, buildIndex?: number): string {
 	const build = sortedBuilds(plan)[buildIndex ?? buildIndexAt(plan, level)];
-	return buildTalentsString(build, talentPointsAt(level, plan.bonusTalentPoints), shape);
+	return buildTalentsString(build, talentPointsAt(level, plan), shape);
 }
 
 // Whether a point in a talent is allowed when we have the counts: the tree has the points its
@@ -313,7 +331,7 @@ export function routeProblem(plan: LevelingPlanSettings, shape: TalentShape): st
 		const start = b == 0 ? plan.fromLevel : builds[b].level;
 		const problems = pickProblems(builds[b].picks, shape);
 		for (let i = 0; i < problems.length; i++) {
-			const level = pickLevel(i, start, plan.bonusTalentPoints);
+			const level = pickLevel(i, start, plan);
 			if (level >= plan.toLevel) break;
 			if (!problems[i]) continue;
 			const pick = builds[b].picks[i];

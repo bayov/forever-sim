@@ -1,6 +1,14 @@
-# Consumables pass 110, master 85691655a
+# Consumables pass 112 (master ab3fff700)
 
-Findings: consumables-20261125-3 (medium): report requests keep the Dark Bomb that EV-0088 makes useless on bosses.
+Result: quiet, no new findings. Open findings 20261125-1, -2, -3, 20261110-1, 20261105-1 unchanged.
 
-Verified: client 71091 unchanged (no newer build). scan.sh: banned list and NONSYN lines unchanged in kind (gear-set enchants 2544/Revelation are Phase 0 sets owned by the gear pass); minor-armor count 3 by design (see 20261125-2). consumes.go stunExplosives and swing-keep, buffs.go Windfury extra-attack rolls, debuffs.go JoW/Gift of Arthas, sim/common proc changes: no consumable or enchant value change. Hunter (Dense Dynamite) and feral (Land Mine) presets.ts match their mksettings; enhancement keeps Goblin Land Mine, marked due a re-check by its owner.
-Open: 20261125-3, -2, -1, 20261110-1, 20261105-1.
+## Moved since bfbee78fc (11 files)
+- sim/common/leveling_enchants.go (new): Weapon - Recovery (8721) and Iron/Mithril/Thorium shield spikes. Tank or leveling only; no DPS preset uses them.
+- forever_enchants.go: entries for those enchants. No DPS preset affected.
+- sim/core/consumes.go: explosives, Dragonbreath Chili, Dragonfire and Caustic Smog now use TargetsNear(radius). Single-target presets unchanged (stun-immune rule kept).
+- debuffs.go: SunderArmorAuraOfRank added (warrior lower ranks); Sunder values unchanged.
+- ui/tank_warrior/presets.ts: out of scope.
+- Hunter SV and warrior Arms/Fury Phase 0 gear: trinket/weapon swaps only, enchants unchanged. Heart of Wyrmthalak (22321, LBRS drop), Thrash Blade (17705, Desolace vendor) are not raid-only. The nonexistent Blackhand's Breadth (13965) is gone. Gear pass owns legality.
+
+## scan.sh
+Banned list: only Phase 0 enchants 2544/Revelation (gear pass owns), as last pass. Revelation-outside-shamans, trinkets, crit-elixir lists empty. Minor-armor count 3 (known, 20261125-2). Totem and Sunder/MobType lines unchanged.

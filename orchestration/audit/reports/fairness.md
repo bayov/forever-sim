@@ -1,63 +1,61 @@
-# Fairness pass 60 (2026-11-25, master 85691655a)
+# Fairness pass 62 (2026-11-26, master ab3fff700)
 
-Full pass: sim/core, every class, the item database and standards.md changed (range c3bbe33e..85691655a, the
-wowsims/forever evidence batches). 5k race sweep (seed 1, every race, the report's own requests with only the race
-changed) on the 85691655a CLI, table.py against the 0404484fb baseline, phase0_check.py, the loop's 20k run against
-published, paired 20k race checks and a paired explosive check (new helper tools/audit/fairness/explosives.py).
+Full pass: range bfbee78fc..ab3fff700 (29 commits) is the warrior and hunter Phase 0 re-rank (Arms, Fury DW, Survival
+requests and race rows) plus warrior leveling-mode work that touched sim/core and sim/warrior. 5k race sweep (seed 1,
+every race, the report's own requests with only the race changed) on the shared ab3fff700 CLI, table.py against the
+bfbee78fc baseline, phase0_check.py, the loop's 20k run against published, and paired 20k binary checks
+(bfbee78fc / 26ecec3f1 vs ab3fff700, same requests).
 
 ## What moved, and why
 
-| Commit | Rule | Effect on report builds (5k sweep vs 0404484fb) |
-|---|---|---|
-| 60fde111f | pet white swing takes the hunter's crit (EV-0134) | Beast Mastery +41.7, Survival +29.7, MM +12.1 (Lone Wolf has no pet) |
-| 295206ddf, b663145ad | Forever weapon PPMs, dungeon set procs, proc chains, JoC double roll, judgement refresh | rogues -11.6 to -26.4 (set procs and weapon PPMs), Ret / Enh small |
-| efeb06b95 | resist constant 8L+19, binary spells, overloads, Flurry | Shadow +13.3, Elemental +14.2, Fire +5.9, Arcane +2.4 |
-| 22d2cf952 | Dark Bomb misses stun-immune bosses, demon crit, extra attacks roll WF Totem, Shield Slam / Sweeping Strikes | Lone Wolf -12.5 (Dark Bomb now wasted), Fury DW -13.0 net with the procs batch |
-| 2f42f4a44 | tank threat and damage-taken rules | DPS builds within noise |
+| Build | Before | Now | Cause |
+|---|---|---|---|
+| Survival (and wolf / tallstrider) | 950.5 | 963.5 (+1.4%) | own requests: 02c06a709, 7fb108796, 9c1cf0b4d (new trinkets) |
+| Fury DW | 986.2 | 994.6 (+0.9%) | own request: f79e810e1 (Thrash Blade, Heart of Wyrmthalak) |
+| Arms | 1010.6 | 1012.9 (+0.2%) | own request: 7a3b753cb / bb218ef46 |
+| Ret, Sub Holy | 930.0 / 903.9 | 931.1 / 905.2 | **leak**, no paladin change: fairness-20261126-3 |
 
-Every move matches a commit that touches the class's mechanics, items or a shared rule it uses (the results pass's
-bisect agrees). No class moved without a cause: no leak.
+Every other build is identical to the baseline (same seed, so exactly 0.0). The warrior and core leveling code is gated:
+paired 20k, 26ecec3f1 (re-rank branch before the leveling merge) vs ab3fff700 binaries, Fury, Arms, Fury 2H and Arms
+sunder duty move 0.00. TargetsNear, InExecuteRange and Cannibalize all fall back to the Level 60 behaviour outside a
+leveling session (sim/core/aoe.go:33, leveling_melee.go:161, :197).
 
-## Published against current (results-20261104-2 and results-20261125-1; not filed again)
+## New finding
 
-The report lags by -27.8 (Enhancement) to +34.9 (Beast Mastery). Confirmed independently by this sweep. At current
-numbers BM goes from 6th to 4th, Survival passes Ret, Shadow and Elemental pass Frostfire and the rogues, and
-Mutilate drops to 26th. Fix: the full re-sim.
+- **fairness-20261126-3 (low):** 8f5b59325 made a stunned target unable to dodge, parry or block
+  (spell_outcome.go). Blackblade of Shahram's Might of Shahram stuns every target with no StunImmune check
+  (item_effects.go:545-565), so the stun-immune boss now loses its avoidance for 5 s per proc. Paired 20k:
+  paladin__level_60 +1.20, sub_holy +1.22, shock_ret 0.00 (other weapon). Fix: skip StunImmune targets under Forever,
+  as the explosives do.
 
-## Explosives (new, fairness-20261125-2, high)
+## Published against current (results-20261104-2; not filed again)
 
-Standards 11 now says the explosive picks are due a re-check (throws keep the swing timer, stun bombs miss bosses).
-Only hunters and Feral were re-picked. Paired 10k, seeds 1 / 1000003, Goblin Land Mine over none:
+The re-ranked warriors and hunters match their metas (<=1.6). Still lagging at the report race, 5k: Ret +7.5 (now
+including the leak), Elemental +3.9, Affliction +3.4, Enhancement +2.3, Destruction Fire -3.2, Affliction Shadow Bolt
++26 (at Orc). No place in the ranking changes.
 
-| Build | Mine | Dynamite | Build | Mine | Dynamite |
-|---|---|---|---|---|---|
-| Fury DW | +3.3 | +2.5 | Ret | +7.3 | +6.5 |
-| Fury 2H | +2.7 | +1.9 | Shock Ret | +6.8 | +6.0 |
-| Arms | -1.4 | -2.1 | Sub Holy Ret | +7.1 | +6.3 |
-| Arms dragonkin | +0.3 | -0.5 | Enhancement | +6.3 | +5.5 |
-| Mutilate | +6.8 | +5.8 | Enh imp-gw | +5.0 | +4.2 |
-| Combat Swords | +6.5 | +5.3 | Survival | +4.6 | +3.7 |
-| Combat Daggers | +6.2 | +5.6 | Survival wolf | +5.2 | +4.3 |
-| Seal Fate Swords | +6.9 | +6.1 | Fire / Affliction / Elemental | +0.0 | -5 to -6 |
+## Gear (standards 43)
 
-Subtlety and Seal Fate Daggers already carry the mine (worth +7.0 / +6.6). With it, Mutilate passes Subtlety.
+- phase0_check.py: every DPS request wears its spec's set; the same two close calls the gear pass holds (Destruction
+  Spellblade +1.75, Enhancement Blackrock Slicer +1.77).
+- fairness-20261126-1: Arms, Fury, Fury DW and Survival lists are now on 34fe148a5 (batch rules in). Open for the six
+  rogue lists only.
 
-## Race
+## Explosives and race (open findings, no change in range)
 
-- Demonology: Undead +5.7 over Orc, paired 20k (fairness-20261125-3, new); Destruction Undead +2.2 (same finding).
-- Marksmanship High Order +5.0 over Orc; wolf +6.7, tallstrider +6.4 (fairness-20261125-1, still open).
-- Shadow: Undead (the report race) best again by 3.7 paired; Fire Undead +1.05 / Gnome +0.45 over Human paired, at the
-  edge of noise (fairness-20261124-2, now Fire only).
-- Balance: Night Elf best on the base rotation; Wrath High Order +3.8 (fairness-20261118-1, still open).
-- Frostfire Gnome +1.6 over Human (5k), Fury DW Undead +1.4 over Orc (5k spread over 10 races 13), Ret variants
-  Dwarf +2.8 / +3.0 over Undead (variants): noise or variant-only; not filed.
+- fairness-20261125-2: Fury, Fury 2H, four rogues and Ret still carry no filler explosive (not re-measured).
+- Race, 5k: Demonology Undead +4.2 (paired +5.9 last pass), MM High Order +5.1 (variants +6.6), Balance Wrath High
+  Order +4.1, Arcane Undead +1.9, Destruction Undead +1.7, Fire Gnome +1.1, Fury DW Undead +0.7 (now noise after its
+  regear). Survival tallstrider High Order +0.5 (noise).
 
-## Gear
+## Ranking
 
-phase0_check.py: the same 3 '!' lines (Balance finger, Shadow chest, Shadow finger), the gear pass's. Every DPS request
-wears its spec's Phase 0 set. The lists' `dps` predate this range's rules and the elixir rule; part of the re-sim.
+Top over bottom 1.68x (Lone Wolf 1140.5 over Smite 679.5). Survival rises from 10th to 9th (past Affliction); Fury DW stays 7th, 0.2 behind Fury 2H.
+Full table in orchestration/fairness_report.md §1.
 
-## Ranking (report race, 5k)
+## Baseline
 
-Top over bottom 1.66x (Lone Wolf 1152.3 / Smite 692.8). Full table: orchestration/audit/ref/fairness/table_baseline.md
-(new baseline, 85691655a).
+sweep_baseline.log and table_baseline.md replaced with this sweep (ab3fff700).
+
+Note: origin/master had moved to 6a447e231 (warrior leveling presets only) during the pass; ab3fff700 was audited as
+instructed.

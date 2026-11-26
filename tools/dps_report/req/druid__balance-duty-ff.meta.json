@@ -15,12 +15,12 @@
   "gearSet": "level60_phase0_balance",
   "apl": "level60_ff",
   "published": {
-    "dps": 762.71,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 766.31,
+    "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Spirit of Aquementas for Obsidian Bauble, over the 30g line)"
   },
   "verify": {
-    "dps": 762.71,
-    "stderr": 0.28,
+    "dps": 766.31,
+    "stderr": 0.29,
     "iters": 20000,
     "ok": true,
     "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"

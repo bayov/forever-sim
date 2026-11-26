@@ -899,11 +899,7 @@ func (ts *trainingSearch) report(ranks []*spellRank, minutes map[int32]float64, 
 }
 
 func trainingFile(db *proto.UIDatabase, in, out string, sessions int32, goldAt40 float64, ridingLevel int32, ridingGold float64, alwaysSpells []string) error {
-	data, err := os.ReadFile(in)
-	if err != nil {
-		return err
-	}
-	req, err := readRequest(data)
+	req, err := readPlanRequest(in)
 	if err != nil {
 		return err
 	}
@@ -926,7 +922,7 @@ func trainingFile(db *proto.UIDatabase, in, out string, sessions int32, goldAt40
 		return err
 	}
 	log.Printf("%d sims", p.sims.Load())
-	data, err = protojson.MarshalOptions{Multiline: true}.Marshal(result)
+	data, err := protojson.MarshalOptions{Multiline: true}.Marshal(result)
 	if err != nil {
 		return err
 	}

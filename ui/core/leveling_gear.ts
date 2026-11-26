@@ -12,7 +12,7 @@ import {
 	Stat,
 	WeaponType,
 } from './proto/common.js';
-import { UIItem as Item, UIItem_FactionRestriction as FactionRestriction } from './proto/ui.js';
+import { LevelingWeaponStyle, LevelingWeaponStyleRange, UIItem as Item, UIItem_FactionRestriction as FactionRestriction } from './proto/ui.js';
 import { Stats } from './proto_utils/stats.js';
 
 // The leveling gear plan: what a character wears at each level from 1 to 60, when it gears
@@ -172,8 +172,8 @@ const SLOT_TYPE: Record<number, ItemType> = {
 };
 
 // Where an item came from in the plan: the white starting gear, a quest reward, a drop, a
-// dungeon boss, or a pin.
-export type LevelingGearSource = 'start' | 'quest' | 'drop' | 'dungeon' | 'pinned';
+// dungeon boss, a vendor's white weapon, or a pin.
+export type LevelingGearSource = 'start' | 'quest' | 'drop' | 'dungeon' | 'vendor' | 'pinned';
 
 export interface LevelingGearPiece {
 	item: Item;
@@ -212,6 +212,8 @@ export interface LevelingGearClassRules {
 	weaponTypes: Array<{ weaponType: WeaponType; canUseTwoHand?: boolean }>;
 	rangedWeaponTypes: Array<RangedWeaponType>;
 	canDualWield: boolean;
+	// The level we learn Dual Wield at. Only a plan with weapon styles reads it.
+	dualWieldLevel?: number;
 }
 
 // A leveling route's quests and dungeons (LevelingRoute), with the quests' items looked up.
@@ -232,8 +234,11 @@ export interface LevelingGearInputs {
 	route?: LevelingGearRoute;
 	// We wear a one-hander and a shield all the way: no two-handers, nothing held in the off hand.
 	oneHandAndShield?: boolean;
-	// The stat weights we judge items by at a level.
-	weightsAt: (level: number) => Stats;
+	// The weapon style of each level range (LevelingPlanSettings.weapon_styles). With any,
+	// oneHandAndShield doesn't count.
+	weaponStyles?: Array<LevelingWeaponStyleRange>;
+	// The stat weights we judge items by at a level, for a weapon style.
+	weightsAt: (level: number, style: LevelingWeaponStyle) => Stats;
 	// A zone's name, for the dungeons.
 	zoneName?: (zoneId: number) => string | undefined;
 	maxLevel?: number;
@@ -247,6 +252,9 @@ export interface LevelingGearPlan {
 
 // planLevelingGear plays out one leveling journey and says what we wear at each level.
 export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
+	const weaponStyles = sortedWeaponStyles(inputs.weaponStyles ?? []);
+	inputs = { ...inputs, weaponStyles, oneHandAndShield: inputs.oneHandAndShield && weaponStyles.length == 0 };
+	const bag = weaponStyles.length ? new WeaponBag(inputs, weaponStyles) : undefined;
 	const maxLevel = inputs.maxLevel ?? LEVELING_GEAR_MAX_LEVEL;
 	const pool = new ItemPool(inputs);
 	const gear: Partial<Record<ItemSlot, LevelingGearPiece>> = {};
@@ -254,18 +262,35 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 	const dungeonRuns = planDungeonRuns(inputs, pool);
 
 	// We start in white chest, legs and boots, with a white weapon, and a white shield if we level
-	// with one.
+	// with one. With weapon styles these go in the bag.
 	for (const slot of [ItemSlot.ItemSlotChest, ItemSlot.ItemSlotLegs, ItemSlot.ItemSlotFeet, ItemSlot.ItemSlotMainHand]) {
 		const item = pool.plainItem(SLOT_TYPE[slot], 1, 1, () => 0);
-		if (item) gear[slot] = { item, source: 'start', since: 1 };
+		if (!item) continue;
+		const piece: LevelingGearPiece = { item, source: 'start', since: 1 };
+		if (bag && slot == ItemSlot.ItemSlotMainHand) bag.add(piece);
+		else gear[slot] = piece;
 	}
-	if (inputs.oneHandAndShield) gear[ItemSlot.ItemSlotOffHand] = { item: pool.plainShield(1), source: 'start', since: 1 };
+	if (bag && pool.canWield(WeaponType.WeaponTypeShield, false)) bag.add({ item: pool.plainShield(1), source: 'start', since: 1 });
+	else if (inputs.oneHandAndShield) gear[ItemSlot.ItemSlotOffHand] = { item: pool.plainShield(1), source: 'start', since: 1 };
 
 	for (let level = 1; level <= maxLevel; level++) {
-		const weights = inputs.weightsAt(level);
+		const weights = inputs.weightsAt(level, weaponStyleAt(weaponStyles, level));
 		const changed: Array<ItemSlot> = [];
-		const gainOf = (piece: LevelingGearPiece) => bestSlotFor(piece, gear, weights, inputs.classRules);
+		const inBag = (piece: LevelingGearPiece) => !!bag && piece.item.type == ItemType.ItemTypeWeapon;
+		// With weapon styles a weapon has no slot of its own, because the bag has the set we wear.
+		const gainOf = (piece: LevelingGearPiece): { slot?: ItemSlot; gain: number; helps: boolean } => {
+			if (inBag(piece)) {
+				const gain = bag!.gain(piece, level);
+				return { gain, helps: gain > 0 };
+			}
+			const best = bestSlotFor(piece, gear, weights, inputs.classRules);
+			return { ...best, helps: best.slot !== undefined };
+		};
 		const offer = (piece: LevelingGearPiece) => {
+			if (inBag(piece)) {
+				bag!.add(piece);
+				return;
+			}
 			const slot = gainOf(piece).slot;
 			if (slot === undefined) return;
 			gear[slot] = piece;
@@ -313,7 +338,13 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 					if (usable.length == 0) continue;
 					const piece = pool.withSuffix(usable[Math.floor(rand() * usable.length)], rand, 'dungeon', level);
 					piece.dungeon = run.name;
-					if (gainOf(piece).slot === undefined || rand() >= DUNGEON_WIN_CHANCE) continue;
+					const helps = gainOf(piece).helps;
+					// With weapon styles we roll for every drop, so a plan with other styles gets the
+					// same drops.
+					if (bag) {
+						const won = rand() < DUNGEON_WIN_CHANCE;
+						if (!helps || !won) continue;
+					} else if (!helps || rand() >= DUNGEON_WIN_CHANCE) continue;
 					finds++;
 					offer(piece);
 				}
@@ -323,9 +354,199 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 			if (pin.level == level) offer({ item: pin.item, randomSuffix: pin.randomSuffix, source: 'pinned', since: level });
 		}
 
+		if (bag) {
+			bag.buy(pool, level);
+			changed.push(...bag.wear(gear, level));
+		}
 		levels.push({ level, gear: { ...gear }, changed, finds });
 	}
 	return { levels, madeUpItems: pool.madeUpItems() };
+}
+
+// The ranges by level, lowest first.
+export function sortedWeaponStyles(ranges: Array<LevelingWeaponStyleRange>): Array<LevelingWeaponStyleRange> {
+	return ranges.slice().sort((a, b) => a.level - b.level);
+}
+
+// The style the sorted ranges have at a level. The lowest range counts below its level too, as
+// with the rotations.
+export function weaponStyleAt(sorted: Array<LevelingWeaponStyleRange>, level: number): LevelingWeaponStyle {
+	let style = sorted[0]?.style ?? LevelingWeaponStyle.LevelingWeaponStyleFree;
+	for (const range of sorted) {
+		if (range.level <= level) style = range.style;
+	}
+	return style;
+}
+
+// What a find for a style we switch to later counts, next to one that helps now. It's small, so a
+// quest reward for a later style only wins over rewards that don't help us now.
+const LATER_STYLE_SHARE = 0.001;
+
+// The level we can buy white weapons from.
+const BUY_WHITE_LEVEL = 5;
+
+// What we hold: the main hand and the off hand, either of them nothing.
+interface HandSet {
+	mainHand?: LevelingGearPiece;
+	offHand?: LevelingGearPiece;
+	score: number;
+	// Whether it's a set of the style we asked for.
+	full?: boolean;
+}
+
+// The weapons of a plan with weapon styles, the same as weaponBag in tools/levelingplan.
+//
+// It keeps every weapon, shield and held off-hand we find, and we wear the best set of the level's
+// style from it. So a warrior who levels with a two-hander and takes a shield at 25 has the
+// shields it came across before. The items we come across don't depend on the styles, so two
+// plans with other styles and the same seed find the same items.
+class WeaponBag {
+	private readonly pieces: Array<LevelingGearPiece> = [];
+
+	constructor(
+		private readonly inputs: LevelingGearInputs,
+		private readonly styles: Array<LevelingWeaponStyleRange>,
+	) {}
+
+	add(piece: LevelingGearPiece) {
+		this.pieces.push(piece);
+	}
+
+	private canDualWield(level: number): boolean {
+		return this.inputs.classRules.canDualWield && level >= (this.inputs.classRules.dualWieldLevel ?? 0);
+	}
+
+	// The set we wear of a style at a level, by the style's weights. Without a full set of the style
+	// (no two-hander found yet, or no Dual Wield yet) we wear the best set of any style.
+	private bestOf(pieces: Array<LevelingGearPiece>, level: number, style: LevelingWeaponStyle): HandSet {
+		const weights = this.inputs.weightsAt(level, style);
+		let twoHand: HandSet = { score: -Infinity };
+		let mainHand: HandSet = { score: -Infinity };
+		let shield: HandSet = { score: -Infinity };
+		const offHands: Array<LevelingGearPiece> = [];
+		const mainHands: Array<LevelingGearPiece> = [];
+		const inMainHand = (set: HandSet, piece: LevelingGearPiece): HandSet => {
+			const score = scorePiece(piece, ItemSlot.ItemSlotMainHand, weights);
+			return score > set.score + 1e-9 ? { mainHand: piece, score } : set;
+		};
+		const inOffHand = (set: HandSet, piece: LevelingGearPiece): HandSet => {
+			const score = scorePiece(piece, ItemSlot.ItemSlotOffHand, weights);
+			return score > set.score + 1e-9 ? { offHand: piece, score } : set;
+		};
+		const canDualWield = this.canDualWield(level);
+		for (const piece of pieces) {
+			const item = piece.item;
+			if (item.weaponType == WeaponType.WeaponTypeShield) {
+				shield = inOffHand(shield, piece);
+				offHands.push(piece);
+			} else if (item.weaponType == WeaponType.WeaponTypeOffHand) {
+				offHands.push(piece);
+			} else if (item.handType == HandType.HandTypeTwoHand) {
+				twoHand = inMainHand(twoHand, piece);
+			} else {
+				if (item.handType != HandType.HandTypeOffHand) {
+					mainHand = inMainHand(mainHand, piece);
+					mainHands.push(piece);
+				}
+				if (item.handType != HandType.HandTypeMainHand && canDualWield) offHands.push(piece);
+			}
+		}
+		// The best main hand with an off hand from the list. One weapon can't be in both hands, so
+		// the best main hand may have to go in the off hand.
+		const pair = (allowed: (piece: LevelingGearPiece) => boolean): HandSet => {
+			let best: HandSet = { score: -Infinity };
+			for (const offHand of offHands.filter(allowed)) {
+				const offHandScore = scorePiece(offHand, ItemSlot.ItemSlotOffHand, weights);
+				for (const piece of mainHands) {
+					if (piece === offHand) continue;
+					const score = scorePiece(piece, ItemSlot.ItemSlotMainHand, weights) + offHandScore;
+					if (score > best.score + 1e-9) best = { mainHand: piece, offHand, score };
+				}
+			}
+			return best;
+		};
+		const isWeapon = (piece: LevelingGearPiece) => ![WeaponType.WeaponTypeShield, WeaponType.WeaponTypeOffHand].includes(piece.item.weaponType);
+		let set: HandSet = { score: -Infinity };
+		switch (style) {
+			case LevelingWeaponStyle.LevelingWeaponStyleTwoHand:
+				set = twoHand;
+				break;
+			case LevelingWeaponStyle.LevelingWeaponStyleDualWield:
+				set = pair(isWeapon);
+				break;
+			case LevelingWeaponStyle.LevelingWeaponStyleOneHandShield:
+				if (mainHand.mainHand && shield.offHand) {
+					set = { mainHand: mainHand.mainHand, offHand: shield.offHand, score: mainHand.score + shield.score };
+				}
+				break;
+		}
+		if (set.mainHand) return { ...set, full: true };
+		for (const other of [twoHand, mainHand, pair(() => true)]) {
+			if (other.mainHand && other.score > set.score + 1e-9) set = other;
+		}
+		return set.mainHand ? set : { score: 0 };
+	}
+
+	// What a find adds to the set of the level's style, or a small share of what it adds to a style
+	// we switch to later. The first full set of a style counts from nothing, so a plan with a shield
+	// takes its first shield even when a two-hander would score more.
+	gain(piece: LevelingGearPiece, level: number): number {
+		const withPiece = [...this.pieces, piece];
+		const gainFor = (style: LevelingWeaponStyle): number => {
+			const old = this.bestOf(this.pieces, level, style);
+			const found = this.bestOf(withPiece, level, style);
+			return found.full && !old.full ? found.score : found.score - old.score;
+		};
+		const now = gainFor(weaponStyleAt(this.styles, level));
+		if (now > 1e-9) return now;
+		const later = this.styles.filter(range => range.level > level).map(range => gainFor(range.style));
+		return Math.max(0, ...later) * LATER_STYLE_SHARE;
+	}
+
+	// Gets the white pieces the level's style misses, like a first two-hander.
+	//
+	// We'd buy a white weapon from a vendor rather than play another style until we come across
+	// one. Below BUY_WHITE_LEVEL we don't have the money, and we wear what we started with.
+	buy(pool: ItemPool, level: number) {
+		const style = weaponStyleAt(this.styles, level);
+		const full = () => !!this.bestOf(this.pieces, level, style).full;
+		if (level < BUY_WHITE_LEVEL || full()) return;
+		const add = (item: Item | undefined) => {
+			if (item) this.add({ item, source: 'vendor', since: level });
+		};
+		switch (style) {
+			case LevelingWeaponStyle.LevelingWeaponStyleTwoHand:
+				add(pool.plainWeapon(true, level));
+				break;
+			case LevelingWeaponStyle.LevelingWeaponStyleDualWield:
+				for (let i = 0; i < 2 && this.canDualWield(level) && !full(); i++) add(pool.plainWeapon(false, level));
+				break;
+			case LevelingWeaponStyle.LevelingWeaponStyleOneHandShield:
+				if (pool.canWield(WeaponType.WeaponTypeShield, false)) add(pool.plainShield(level));
+				if (!full()) add(pool.plainWeapon(false, level));
+				break;
+		}
+	}
+
+	// Puts the level's set in the gear, and says which slots changed.
+	wear(gear: Partial<Record<ItemSlot, LevelingGearPiece>>, level: number): Array<ItemSlot> {
+		const set = this.bestOf(this.pieces, level, weaponStyleAt(this.styles, level));
+		const changed: Array<ItemSlot> = [];
+		const hands: Array<[ItemSlot, LevelingGearPiece | undefined]> = [
+			[ItemSlot.ItemSlotMainHand, set.mainHand],
+			[ItemSlot.ItemSlotOffHand, set.offHand],
+		];
+		for (const [slot, piece] of hands) {
+			const worn = gear[slot];
+			if (!piece) {
+				delete gear[slot];
+			} else if (worn?.item.id != piece.item.id || worn.randomSuffix?.id != piece.randomSuffix?.id) {
+				gear[slot] = { ...piece, since: level };
+				changed.push(slot);
+			}
+		}
+		return changed;
+	}
 }
 
 interface DungeonRun {
@@ -522,7 +743,7 @@ class ItemPool {
 		return this.canUse(item) && this.canWearAt(item, level);
 	}
 
-	private canWield(weaponType: WeaponType, twoHand: boolean): boolean {
+	canWield(weaponType: WeaponType, twoHand: boolean): boolean {
 		if (twoHand && this.inputs.oneHandAndShield) return false;
 		return this.inputs.classRules.weaponTypes.some(wt => wt.weaponType == weaponType && (!twoHand || wt.canUseTwoHand));
 	}
@@ -573,16 +794,28 @@ class ItemPool {
 		if (type == ItemType.ItemTypeWeapon) {
 			const kinds = PLAIN_WEAPONS.filter(([weaponType, twoHand]) => this.canWield(weaponType, twoHand));
 			if (kinds.length == 0) return undefined;
-			// A shield is one more kind of white item we can come across, if we level with one.
-			const kind = Math.floor(rand() * (kinds.length + (this.inputs.oneHandAndShield ? 1 : 0)));
+			// A shield is one more kind of white item we can come across, if we level with one or have
+			// weapon styles.
+			const styled = !!this.inputs.weaponStyles?.length;
+			const shield = this.inputs.oneHandAndShield || (styled && this.canWield(WeaponType.WeaponTypeShield, false));
+			const kind = Math.floor(rand() * (kinds.length + (shield ? 1 : 0)));
 			if (kind == kinds.length) return this.plainShield(ilvl);
 			const [weaponType, twoHand] = kinds[kind];
-			item = this.plain.weapon(weaponType, twoHand, ilvl);
+			item = this.plain.weapon(weaponType, twoHand, ilvl, styled);
 		} else {
 			const armorType = type == ItemType.ItemTypeBack ? ArmorType.ArmorTypeCloth : this.inputs.classRules.maxArmorTypeAt(level);
 			item = this.plain.armor(type, armorType, ilvl);
 		}
 		if (item) this.usedPlain.set(item.id, item);
+		return item;
+	}
+
+	// The first kind of plain one-hander or two-hander we can use.
+	plainWeapon(twoHand: boolean, ilvl: number): Item | undefined {
+		const kind = PLAIN_WEAPONS.find(([weaponType, isTwoHand]) => isTwoHand == twoHand && this.canWield(weaponType, twoHand));
+		if (!kind) return undefined;
+		const item = this.plain.weapon(kind[0], twoHand, ilvl, !!this.inputs.weaponStyles?.length);
+		this.usedPlain.set(item.id, item);
 		return item;
 	}
 
@@ -679,18 +912,20 @@ export class PlainItems {
 		return item;
 	}
 
-	weapon(weaponType: WeaponType, twoHand: boolean, ilvl: number): Item {
+	// A plain weapon. A one-hander goes in the main hand only, as it always has, unless it's for a
+	// plan with weapon styles (eitherHand).
+	weapon(weaponType: WeaponType, twoHand: boolean, ilvl: number, eitherHand = false): Item {
 		const speed = twoHand ? 3.3 : 2.4;
 		const [a, b] = this.weaponFit.get(String(twoHand)) ?? [0, 0];
 		const dps = Math.max(1, 0.85 * (a + b * ilvl));
 		const item = madeUpItem(
-			plainId(ItemType.ItemTypeWeapon, weaponType * 10 + (twoHand ? 1 : 0), ilvl),
+			plainId(ItemType.ItemTypeWeapon, weaponType * 10 + (twoHand ? 1 : eitherHand ? 2 : 0), ilvl),
 			`Plain ${weaponName(weaponType, twoHand)}`,
 			ItemType.ItemTypeWeapon,
 			ilvl,
 		);
 		item.weaponType = weaponType;
-		item.handType = twoHand ? HandType.HandTypeTwoHand : HandType.HandTypeMainHand;
+		item.handType = twoHand ? HandType.HandTypeTwoHand : eitherHand ? HandType.HandTypeOneHand : HandType.HandTypeMainHand;
 		item.weaponSpeed = speed;
 		item.weaponDamageMin = Math.round(dps * speed * 0.8);
 		item.weaponDamageMax = Math.round(dps * speed * 1.2);
@@ -718,7 +953,10 @@ export class PlainItems {
 					if (item) out.push(item);
 				}
 			}
-			for (const [weaponType, twoHand] of PLAIN_WEAPONS) out.push(this.weapon(weaponType, twoHand, ilvl));
+			for (const [weaponType, twoHand] of PLAIN_WEAPONS) {
+				out.push(this.weapon(weaponType, twoHand, ilvl));
+				if (!twoHand) out.push(this.weapon(weaponType, twoHand, ilvl, true));
+			}
 			out.push(this.shield(ilvl));
 		}
 		return out;

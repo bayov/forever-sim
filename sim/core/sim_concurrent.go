@@ -699,6 +699,8 @@ func combineLevelingMetrics(base, add *proto.LevelingMetrics, isLast bool, weigh
 	base.SecondsSearching += add.SecondsSearching * weight
 	base.SecondsDead += add.SecondsDead * weight
 	base.MobsPerPull += add.MobsPerPull * weight
+	base.MobsOnUs += add.MobsOnUs * weight
+	base.PeakMobs += add.PeakMobs * weight
 	base.Food += add.Food * weight
 	base.Drinks += add.Drinks * weight
 	base.Bandages += add.Bandages * weight

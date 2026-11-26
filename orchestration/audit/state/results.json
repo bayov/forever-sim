@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
+  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
  },
- "last_pass_at": "2026-11-25T15:00:00Z",
- "pass": 106,
+ "last_pass_at": "2026-11-26T14:00:00Z",
+ "pass": 108,
  "result": "findings",
- "note": "pass 106: evidence batches (hunter, items, procs, tank, casters) and 22d2cf952 moved 64 of 68 vs 0404484fb; bisected; new drift finding results-20261125-1.",
- "client_build": "1.60.1.71091",
- "checked_at": "2026-11-25T19:23:36Z",
+ "note": "pass 108: warrior leveling sim work moves no request (paired); 29 of 68 metas off >0.5 (4 warrior +0.9..1.9); drift as pass 107 (Land Mine on Survival/Enhancement, feral sapper).",
+ "client_build": "1.60.1.71139",
+ "checked_at": "2026-11-26T01:04:24Z",
  "baseline": "0facd9428"
 }
