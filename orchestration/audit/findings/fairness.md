@@ -4,11 +4,20 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261126-3: Blackblade of Shahram's Might of Shahram stuns the stun-immune boss, and since 8f5b59325 a stunned target can't dodge, parry or block, so seven Ret paladin builds gain about 1.2 DPS
+- severity: low (0.13%; no place in the ranking changes)
+- affects: paladin__level_60, paladin__level_60_sub_holy, paladin__level_60_sub_holy_undead and their four duty variants (every request wearing Blackblade of Shahram 12592); not Shock Ret (other weapon)
+- found: 2026-11-26, master ab3fff700
+- evidence: no paladin file changed in bfbee78fc..ab3fff700, yet the 5k sweep moved Ret +1.1 and Sub Holy +1.3 at every race (Shock Ret, warlocks, rogues 0.0). Paired 20k, seeds 1 / 1000003, same request, bfbee78fc vs ab3fff700 binaries: paladin__level_60 930.2 / 930.6 -> 931.5 / 931.7 (+1.20), sub_holy 902.3 / 901.7 -> 903.5 / 903.0 (+1.22), shock_ret +0.00, Affliction +0.00. Cause: 8f5b59325 added `if result.Target.PseudoStats.Stunned { return false }` to applyAttackTableBlock / Dodge / Parry (sim/core/spell_outcome.go); the only Level 60 stun on the boss is Might of Shahram (sim/common/item_effects.go:545-565), which sets Stunned on every ActiveTargetUnit with no StunImmune check, though the boss is StunImmune (sim/core/target.go:192; EV-0088: a stun misses a raid boss whole, as consumes.go:1438 does for explosives). Fairly sure of the cause (only stun setter at Level 60, only Blackblade builds moved); not confirmed with a patched binary. Script: $AUDIT_WORK/fairness/shahram/paired.py (scratch).
+- proposed fix: in Might of Shahram's ApplyEffects skip targets with StunImmune when sim.IsForever() (as the explosives do); expected -1.2 on the seven builds.
+- needs: orchestrator fix
+
 ### fairness-20261126-1: The Phase 0 lists of the six rogues, the three warriors and Survival were searched on a sim without the proc, PPM, set-proc and explosive rules every other list had
 - severity: medium (pick effect not measured; those rules moved the rogues 11.6 to 26.4 DPS and Fury DW 13, so set and weapon picks may differ)
 - affects: rogue__mutilate, rogue__combat-swords, rogue__combat-daggers, rogue__seal-fate-swords, rogue__seal-fate-daggers, rogue__subtlety, warrior__arms, warrior__fury, warrior__fury_2h, hunter__survival (and their variants)
 - found: 2026-11-26, master bfbee78fc
 - evidence: the lists' `sim` stamps (phase0_check.py, ui/<class>/bis/level60_phase0_*.bis.json): rogues ac75336346de / c6fd1275d90e / 8c9f0e3b77dc / 10d171144cea, warriors c6fd1275d90e / 6c2211c6d565, Survival 6c2211c6d565; none has 295206ddf (Forever weapon PPMs, dungeon set procs), b663145ad (proc rules), efeb06b95 or 22d2cf952 as an ancestor (`git merge-base --is-ancestor`), and their effects.json stamps (ab9f67d6, 179335bf, c7e3b3e1, d28dd52c, 741ce1da) don't either. Mage, warlock, druid, priest, shaman, Ret and the other hunter lists are on 34fe148a5 / c815dd28f / d38dae9a9, which have no sim/ diff to master. 51a4f44a3 says "some on the pre-merge sim, to be redone"; these were not redone. Standards 43 / the pass doc: no spec's search may run on an older sim than the rest.
+- 2026-11-26 (pass 62, ab3fff700): the Arms, Fury, Fury DW and Survival lists were re-ranked on 34fe148a5 (7a3b753cb, f79e810e1, 5f50e8841, 02c06a709; phase0_check.py), which has the batch rules; their requests moved (Survival +13.0, Fury DW +8.4, Arms +2.3 at 5k). The six rogue lists are still on ac75336346de / c6fd1275d90e / 8c9f0e3b77dc / 10d171144cea. Open for the rogues only.
 - proposed fix: re-run the Phase 0 search for these ten specs on the current sim (with fairness-20261125-2's explosive in place) and re-sim the changed requests.
 - needs: orchestrator fix
 
@@ -17,6 +26,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - affects: mage__arcane (report race Gnome), warrior__fury (report race Orc)
 - found: 2026-11-26, master bfbee78fc
 - evidence: paired 20k, seeds 1 / 1000003, report request with only the race changed (Arcane Undead on its committed Horde race file req/races/mage__arcane.Undead.json): Arcane Gnome 833.9 / 833.9, Undead 836.1 / 836.0 (+2.15); Fury DW Orc 983.6 / 984.0, Undead 985.5 / 985.2 (+1.55). 5k sweep agrees (Arcane Undead 836.2 vs Gnome 834.3; Fury DW Undead 986.2 vs Orc 984.2). Both came with the Phase 0 re-rank (at 85691655a Gnome and Orc were best). Script: $AUDIT_WORK/fairness/race.py (scratch).
+- 2026-11-26 (pass 62, ab3fff700): 5k sweep Arcane Undead 836.2 vs Gnome 834.3 (+1.9, unchanged); Fury DW after its regear Undead 994.6 vs Orc 993.9 (+0.7, now noise). Open for Arcane.
 - proposed fix: re-pick the report race (standards 16 / 29) with a race rotation check, or record why Gnome / Orc stay.
 - needs: orchestrator fix
 
@@ -26,6 +36,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-11-25, master 85691655a
 - evidence: standards 11 (22d2cf952) says a thrown explosive now keeps the swing timer and "the picks are due a re-check"; 22d2cf952 re-picked only hunter (Dense Dynamite) and feral (Goblin Land Mine) in mksettings / presets (results-20261125-1 covers those requests' drift). Rogue Subtlety and Seal Fate Daggers already carry the Land Mine (-7.0 / -6.6 without it). Paired, report request with only fillerExplosive changed, 10k iterations, seeds 1 / 1000003, CLI 85691655a (tools/audit/fairness/explosives.py): Goblin Land Mine over none: Fury DW +3.3, Fury 2H +2.7, Mutilate +6.8, Combat Swords +6.5, Combat Daggers +6.2, Seal Fate Swords +6.9, Ret +7.3, Shock Ret +6.8, Sub Holy +7.1, Enhancement +6.3, Enh imp-gw +5.0, Survival +4.6, Survival wolf +5.2; Arms dragonkin +0.3 (noise); Dense Dynamite 0.6 to 1.2 below the mine on each; EZ-Thro Dark Bomb loses on all (stun-immune boss). Arms keeps none (mine -1.4, Dynamite -2.1). Casters gain nothing (Fire, Affliction, Elemental: mine +0.0, Dynamite -5 to -6). Sure of the numbers.
 - 2026-11-26 (pass 61, bfbee78fc): Survival and the four Enhancement requests now carry Goblin Land Mine. Still none on the rest; paired 10k, seeds 1 / 1000003, tools/audit/fairness/explosives.py, mine / Dynamite over none: Fury DW +4.1 / +3.4, Fury 2H +2.1 / +1.4, Mutilate +6.8 / +5.8, Combat Swords +6.5 / +5.7, Combat Daggers +6.1 / +5.2, Seal Fate Swords +6.5 / +5.8, Ret +6.5 / +5.7, Shock Ret +7.7 / +6.8; Arms -1.2 / -1.9 (stays none). Still open for Fury, four rogues and Ret.
+- 2026-11-26 (pass 62, ab3fff700): Fury, Fury 2H, Mutilate, Combat, Seal Fate Swords and the Ret requests still have no fillerExplosive (the Fury DW regear did not add one). Not re-measured. Still open.
 - proposed fix: set fillerExplosive Goblin Land Mine in the listed requests, their presets.ts and mksettings (Fury, rogues, Ret, Enhancement, Survival), confirm the duty variants with explosives.py, and re-sim; Arms and the casters stay on none.
 - needs: orchestrator fix
 
@@ -35,6 +46,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-11-25, master 85691655a
 - evidence: paired 20k, seeds 1 / 1000003, report request with only the race changed (no Undead race rotation exists): Demonology Orc 885.2 / 884.5, Undead 890.4 / 890.7 (+5.7); Destruction Orc 870.0 / 869.9, Undead 871.9 / 872.4 (+2.2). 5k sweep agrees (Demonology Undead 891.1, Orc 885.4; Destruction Undead 871.7, Orc 870.2). At 0404484fb Human / Orc / Undead were within 1.6 on Demonology. The likely cause is efeb06b95 (resist constant 8L+19 raises the boss's resist, which makes Undead's racial worth more; Shadow priest's Undead also overtook Troll), not checked further. Script: $AUDIT_WORK/fairness/paired/race.py (scratch).
 - 2026-11-26 (pass 61, bfbee78fc): after the warlock re-rank, paired 20k: Demonology Orc 877.6 / 876.5, Undead 882.6 / 883.3 (+5.9); Destruction Orc 868.4 / 867.9, Undead 869.8 / 870.2 (+1.85). Still open.
+- 2026-11-26 (pass 62, ab3fff700): no warlock change; 5k sweep Demonology Undead 882.1 vs Orc 877.9, Destruction 870.9 vs 869.2. Still open.
 - proposed fix: move Demonology (and Destruction if the +2.2 holds with a race rotation check, standards 29) to Undead and re-sim; or record why Orc stays.
 - needs: orchestrator fix
 
@@ -46,6 +58,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-11-25 (pass 59, 0404484fb): 5k sweep MM High Order 1088.8 vs Orc 1082.2 (+6.6) after the elixir overwrite; variants +7.1 / +7.7. Still open.
 - 2026-11-25 (pass 60, 85691655a): 5k sweep MM High Order 1100.9 vs Orc 1095.9 (+5.0); wolf +6.7, tallstrider +6.4. Still open.
 - 2026-11-26 (pass 61, bfbee78fc): after the hunter re-rank, 5k sweep MM High Order 1087.5 vs Orc 1082.4 (+5.1); wolf 1067.5 vs 1060.9 (+6.6), tallstrider 1059.5 vs 1052.9 (+6.6). Still open.
+- 2026-11-26 (pass 62, ab3fff700): no MM request change in range, still Orc; 5k sweep unchanged (High Order 1087.5 vs Orc 1082.4, variants +6.6). Still open.
 - proposed fix: move the three Marksmanship requests, metas and preset to Skyborne High Order on level60_phase0_hunter_mm_alliance (or check a High Order race rotation first, standards 29) and re-sim; or record why Orc stays.
 - needs: orchestrator fix
 

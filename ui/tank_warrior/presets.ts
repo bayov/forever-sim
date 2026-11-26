@@ -471,7 +471,7 @@ export const PresetBuildLeveling1to60 = makeLevelingBuild(
 // make the same plans for the command line.
 export const PresetBuildLevelingProt = makeLevelingBuild(
 	'Leveling: Prot',
-	'Protection with a one-hander and shield all the way. Sim: 103.4h, 24 deaths.',
+	'Protection with a one-hander and shield all the way. Sim: 102.3h, 30 deaths.',
 	LevelingPlanSettings.fromJson(LevelingPlanProtJSON as any),
 );
 // A well-known endgame build (4/31/16), not one people level with.

@@ -1,11 +1,9 @@
-# Gear pass 80, master bfbee78fcc
+# Gear pass 81 (master ab3fff7007)
 
-Trigger: 2026-11-25 Phase 0 price rerank touched all 27 DPS lists, gear sets, content checks, requests.
+Trigger: 2026-11-26 hunter and warrior re-rank (lists, gear sets, requests, content tags).
 
-- phase0_check.py: 2 flags, 27 specs read. Destruction main hand Darkspear Insurgent's Spellblade (+1.75 over pick;
-  rerank_warlock notes it as a -0.5 close call not taken). Enhancement main hand The Blackrock Slicer (+1.77; shaman_ret notes: 1.5 at 20000 iterations, unconfirmed, Brain Hacker stays). Both explained, not findings.
-- No standards.md commits since last pass. No faction, set or request/gear-set mismatches flagged.
-- List dps vs shared run: requests sit 0.1-1.6% (1-16 DPS) under the list dps for nearly all specs
-  (Shadow -16.5, MM -14, Affliction -14.3, Feral -13.5; Enhancement -0.9, Fury -2). No sim/ change since list sim 34fe148 beyond class
-  rerank commits. Balance rerank notes state the list dps is the search fight (use-adjusted) and the request matches its plain sim (802.1; I reran 20k iterations: 802.29). Treated as the settled search-fight difference; worth a worker note if the gap should be closed.
-- Not done this pass: per-pick source rechecks, set-bonus counts, hit totals (checker clean; no new rulings).
+- phase0_check.py: 2 flags, both unchanged close calls (Destruction Darkspear Insurgent's Spellblade +1.75, Enhancement Blackrock Slicer +1.77; below the 20000-iteration confirm).
+- New picks: Arms and Fury DW trinket Heart of Wyrmthalak (LBRS drop, open); Fury DW main hand Thrash Blade (Maraudon, open, sword so imbue unchanged); Survival trinkets Maelstrom + Heart of Wyrmthalak. No faction restriction on any. Dragon's Call tagged open, proc modelled.
+- Shared run vs lists: Arms 1013.0 (req 1012.1), Fury DW 993.4, Fury 2H 994.4, BM 1038.45, MM 1082.6, LW 1140.1, SV 963.2: requests equal the published numbers; gaps to list dps are the known uses-on-90s search fight (notes explain).
+- Set trap searched for both groups in the rerank notes; all variants lose 9+.
+- Result: no findings.

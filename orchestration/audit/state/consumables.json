@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
+  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
  },
- "last_pass_at": "2026-11-26T00:50:00Z",
- "pass": 111,
+ "last_pass_at": "2026-11-26T02:10:00Z",
+ "pass": 112,
  "result": "quiet",
- "note": "71139 changes only world buffs (Fengus, Sayge); no preset uses them.",
+ "note": "11 files moved; no preset or enchant value affected.",
  "client_build": "1.60.1.71139",
  "checked_at": "2026-11-26T01:04:24Z"
 }

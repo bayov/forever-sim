@@ -9,6 +9,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - affects: hunter__survival (3), shaman__enhancement (4) (tools/dps_report/req/, mksettings spec_hunter_sv, spec_enh.go)
 - found: 2026-11-26, master bfbee78fc
 - evidence: regen.py: `consumes.fillerExplosive: committed=ExplosiveGoblinLandMine regen=<absent>` on 3 Survival and 4 Enhancement requests (new against the reference; 68380891b and c3884acc6 era edits, requests set by hand). Paired 20k seed 1 (regen JSON vs committed): Survival 945.5 vs 950.4 (-4.9), Enhancement level60 966.5 vs 971.7 (-5.2). Feral-cat regen 1059.3 vs 1060.0 (the sapper line alone now costs 0.7). Sure of the numbers.
+- update 2026-11-26, master ab3fff700: unchanged (3 Survival, 4 Enhancement, feral sapper line); no mksettings change since.
 - proposed fix: set FillerExplosive: ExplosiveGoblinLandMine in the Survival and Enhancement mksettings specs (as 22d2cf952 did for BM/MM/LW/feral), then refresh ref/results/drift_report.txt.
 - needs: orchestrator fix
 

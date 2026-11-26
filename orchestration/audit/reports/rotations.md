@@ -1,38 +1,32 @@
-# Rotations pass 81 (2026-11-26, master bfbee78fc)
+# Rotations pass 82 (2026-11-26, master ab3fff7007)
 
-Result: findings (1 new, low). Range 85691655a..bfbee78fc: the Phase 0 pricing and re-rank rounds (gear, weapons, trinkets,
-race rows, rotopt Phase 0 tools) and 35a2e9dca (Feral Land Mine line). No sim change.
+Result: findings (2 new, low). Range bfbee78fc..ab3fff7007 (29 commits): warrior leveling sim (ranks by level,
+stances, leveling sessions, big pulls, area reach), and the Phase 0 re-rank for warriors and hunters (weapons,
+trinkets, race rows). No Level 60 APL file changed.
 
 ## Checked
 
 | Check | Result |
 |---|---|
-| `apl_logic_diff.py 85691655a bfbee78fc` | 2 files: feral `level60`, `level60_ff`, line 4 itemId 260817 -> 4395 |
-| Non-test sim `.go` changed | none; regression baseline kept (`baseline_8569165_3000it_seed424242.tsv`) |
-| Req rotations changed | feral-cat, feral-cat-duty-ff only (same Land Mine line) |
-| Open findings landed? | rotations-20261125-1 (Feral Dark Bomb) resolved as a variant (keeps the swing term, measured +0.52 vs +0.58); 20261122-1 and 20261112-1 stay open |
-| Phase 0 trinket lines, re-ranked builds | trinket changes in the reqs: Balance 10455 -> 22678 (on-use), Feral 19289 -> 22321 and Ret/Shock Ret/Sub Holy 13965 -> 22321 (both procs, no APL line). Feral and Ret still wear 10455, which their APLs name. Balance APLs still name 10455: rotations-20261126-1 |
+| `apl_logic_diff.py bfbee78fc ab3fff7007` | 0 APL files touched |
+| Req rotations changed | none (only equipment in warrior and hunter reqs) |
+| Non-test sim `.go` changed | 40 files (core and warrior), almost all gated on `encounter.leveling`; `InExecuteRange` equals `IsExecutePhase*` outside leveling |
+| `regress.py` old bfbee78fcca3 vs new ab3fff700700, new reqs, 3000 it, seed 424242, min 0.05 | only the 7 paladin builds wearing Blackblade of Shahram moved (+0.8 to +1.6); all warriors unchanged. Cause: stunned targets no longer dodge/parry/block, and Might of Shahram stuns the stun-immune boss: rotations-20261126-3 |
+| Open findings landed? | none of 20261126-1, 20261122-1, 20261112-1 (no APL change) |
+| Phase 0 trinket lines, warriors and hunters | Fury DW now wears 22321+19289 (procs) but its APLs still cast 13965: rotations-20261126-2. Arms, Fury 2H wear 13965 with no line (autocast). BM/MM/LW wear 10455 and name it. Survival wears 19289+22321, no line. |
+| Baseline | moved (paladin Shahram, plus re-rank gear since 8569165); new `baseline_ab3fff7_3000it_seed424242.tsv` |
 
-## Balance trinket lines (druid__balance, 20k it, 8 blocks, CLI bfbee78fcca3, A 802.6 at 180 s)
+## Baseline moves vs baseline_8569165 (3000 it, seed 424242)
 
-| variant | set | 120 | 180 | 300 |
-|---|---|---|---|---|
-| B3 drop 10455 pre-pull, Elune's Light on cooldown | 1e6 | +0.00 | +0.00 | +0.00 |
-| B3 on balance-wrath (A 714.3) | 1e6 | +0.00 | +0.00 | +0.00 |
-| B2 drop pre-pull, gate Elune's Light on 22678 | 1e6 | +0.00 | -0.03 | +0.07 |
-| B1 pre-pull 22678 and gate on it | 1e6 | -1.76 | -1.21 | -0.63 |
-| B1 | 2e8 | -1.73 | -1.17 | -0.73 |
+Most moves come from req gear changes in the Phase 0 re-rank between 8569165 and ab3fff7 (passes 81-82), not sim
+changes: the sim-only signal is the regress row above. Largest: warlock affliction_shadow_bolt +25.8, Balance -12 to
+-17, MM -11.6 to -14.5, Survival +14 to +15, Smite -12.9, rogues -13 to +8, warriors -0.2 to -8.4.
 
-The dead lines cost nothing (B3 is bit-identical); pre-pulling the Talisman loses, as it did for warlocks.
+## Not done this pass
+
+- Phase 0 trinket check still pending for mage, priest, rogue, shaman, warlock (open item in passes/rotations.md).
+- Windfury timing item, Flametongue-imbue item: untouched.
 
 ## Optional
 
 None new.
-
-## Still open (pass doc items)
-
-Phase 0 trinkets: done for the builds re-ranked in this range (Balance, Feral, Ret family); other classes were checked by
-earlier passes only where their trinkets moved. Warrior HS/Cleave re-search, paladin hasted-GCD re-timing, Windfury
-main-hand timing, Night Elf vs Tauren Balance, Elemental Mastery hold, Enhancement imbue: unchanged, not run this pass.
-
-Note: a scratch slip left copies of the A and B1-B3 Balance APL JSONs in `/rotations` on the audit machine (outside the repo); safe to delete.

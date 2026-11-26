@@ -170,7 +170,7 @@ Only the main plan had the talent and rotation search. The others have hand-tune
 | Leveling: Arms, Prot, DW | Arms, Protection with a shield at 30, dual wield at 40 | 101.2 | 20 |
 | Leveling: Dual Wield | Gore Drinker dual wield all the way | 102.5 | 10 |
 | Leveling: Arms | Arms with a two-hander all the way | 103.0 | 11 |
-| Leveling: Prot | Protection with a shield all the way | 103.4 | 24 |
+| Leveling: Prot | Protection with a shield all the way | 102.3 | 30 |
 | Leveling: Fury Prot | Fury Protection 4/31/16 with a shield from 5 | 112.7 | 30 |
 
 Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer.
@@ -187,6 +187,11 @@ Fury Protection is a known endgame build, not one people level with.
   peak, with no deaths and 54.0k XP an hour. That's about even with Protection (2.8 and 4.7) and
   Gore Drinker dual wield (1.7 and 3.3, 54.7k XP an hour).
 - Pulls of 10 or more mobs lose, even with every heal on.
+- Protection's safe pull shrinks in the mid 40s. Starting with 5 mobs is best at 40, but it dies
+  at 42 and later. The most we can start with is 4 at 41 and 42, and 3 from 44 to 48. One mob more
+  than that costs about 1 death every 20 minutes. XP an hour dips from 46k at 40 to 41k at 46 and
+  comes back at 48. The preset's rules for 41 to 48 were tuned at each of those levels, and they
+  save 1.2h over single pulls there.
 - Recovery is worth 3 to 4 hours over the whole plan.
 - Mobs 1 level below us are best or tied from 16 to 58. At 10, 2 below is better.
 - The talent search's own order didn't beat the hand order above.
