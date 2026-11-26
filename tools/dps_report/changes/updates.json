@@ -8273,6 +8273,40 @@
       "23469c224",
       "b79f9be20"
      ]
+    },
+    {
+     "title": "New Ret paladin preset: Grayston's 2H Shockadin",
+     "kind": "sim",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60_shockadin",
+      "paladin__level_60_shockadin-duty-crusader",
+      "paladin__level_60_shockadin-duty-wisdom"
+     ],
+     "moves": false,
+     "note": "Grayston's 21/0/30 Holy Shock build with Divine Favor, Infusion of Light and Oath of Light and his rotation, with Crusader and Wisdom duty versions. It wears the report's Ret Shock gear, so the gap to Ret Shock comes from talents and rotation. His Manual Crowd Pummeler swap isn't simmed yet.",
+     "source": {
+      "label": "Grayston's Shockadin guide (video)",
+      "url": "https://www.youtube.com/watch?v=XuUccSoLa0I"
+     },
+     "commits": [
+      "27a8031",
+      "ce6fc41"
+     ]
+    },
+    {
+     "title": "Totem of Sustaining gives Water Shield a 4th globe",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "As its Forever tooltip says. No preset's numbers moved.",
+     "commits": [
+      "7de8438"
+     ]
     }
    ],
    "internal": [
@@ -8355,6 +8389,18 @@
     {
      "commit": "a5b8f9d4b",
      "why": "test only"
+    },
+    {
+     "commit": "6d31c79",
+     "why": "leveling plan only, no report preset reads it"
+    },
+    {
+     "commit": "bfbee78",
+     "why": "merge commit; the merged commits carry their own lines"
+    },
+    {
+     "commit": "a589203",
+     "why": "merge commit; the merged commits carry their own lines"
     }
    ]
   }
