@@ -74,9 +74,9 @@ they had no blessings and Alchemy + Enchanting before), and each build loads its
 
 | Preset | Race | Talents | On-use trinket (knobs) | Flask | Wrist / cloak / shield | Six-boss mean, own weight |
 |---|---|---|---|---|---|---|
-| Max threat | Night Elf | `05350002-050032313251012201-05` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=0`) | Natural Precision | 1886 / 1889 / 1886 | 2,514.7 |
-| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1219587 / 1886 | 1,176.5 |
-| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1889 / 1886 | -2,396.0 |
+| Max threat | Troll | `05350002-050032313251012201-05` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=0`) | Natural Precision | 1886 / 1889 / 1886 | 2,514.7 |
+| Balanced | Troll | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1219587 / 1886 | 1,176.5 |
+| Max survival | Tauren | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1889 / 1886 | -2,396.0 |
 
 The table is 2026-11-12's (talents, knobs, flasks and the six-boss means at 10,000 iterations, seed 1; previous
 section); the rest of this section is round 5's. The six-boss means were round 5's (tankbench, 1,000 iterations, seed 1; round 4's were 2,588.2 +/- 10.5, 944.3 +/-
@@ -239,6 +239,13 @@ Listed as Max threat / Balanced / Max survival where all three were run.
   Elf: Max threat -58.7 +/- 13.7, Balanced -34.4 +/- 11.0. Troll +38.2 / +2.3 / -188.6, Gnome +33.9 / -5.9 / -159.9,
   Orc +27.8 / -3.5 / -176.2, Human, Dwarf and the Skyborne lower at every weight. So Night Elf at Max threat and
   Balanced (call (g)), Undead at Max survival.
+- **Race, legal races only** (tank_fairness-20261105-2, 2026-11-26). A Forever shaman can be Dwarf, Orc, Tauren, Troll
+  or Skyborne Windshaper (client CharBaseInfo, tools/dps_report/run_build.py), so Night Elf and Undead are out. On the
+  Phase 0 sets, 3000 iterations, seeds 1 and 2, own column: Max threat Troll 3396.2, Orc 3350.2, Windshaper 3322.7,
+  Tauren 3316.9, Dwarf 3301.5. Balanced Troll 1996.2, Tauren 1945.0, Orc 1940.5, Windshaper 1936.7, Dwarf 1904.8. Max
+  survival Tauren -1535.8, Troll -1589.4, Orc -1666.7, Dwarf -1683.8, Windshaper -1692.0. So Troll at Max threat and
+  Balanced, Tauren at Max survival, all Horde. The Alliance row is Dwarf, the only Alliance shaman race. Calls (f) and
+  (g) below predate this and are replaced by it.
 - **Talents** (rotopt talent searches on Tauren, then again after the race change; paired against the round 2 build).
   Max threat, Elemental Devastation 1 and Toughness 5 (Night Elf): +16.4 +/- 6.4, s2 +17.2 +/- 6.3. Balanced, Elemental
   Warding 3 and Toughness 4: +5.0 +/- 1.7, s2 +8.1 +/- 1.9. Max survival, Guardian Totems 2 for Improved Lightning
@@ -361,11 +368,11 @@ scoring encounters (Ragnaros is reported, not scored). The other tanks' rows are
 - **(f) Undead at Max survival** (tank round 3). Undead beats Tauren by about +43 +/- 11 pooled over four seeds
   (+14.0 +/- 33.7, s2 +100.1 +/- 30.9, 10k s3 +38.9 +/- 18.4, 10k s7 +27.5 +/- 17.5), but no single run clears 3
   sigma. The gain rests on how the sim models Touch of the Grave's drain, and Undead loses Tauren's Broodlord margin
-  (the 5% health that kept his death floor lowest). Default: Undead; Tauren is the alternative.
+  (the 5% health that kept his death floor lowest). Superseded 2026-11-26: Undead can't be a shaman, Tauren is the default.
 - **(g) Faction.** Night Elf (Alliance) now leads Max threat and Balanced by about 100 (+104.2 +/- 8.7 and +111.3 +/-
   10.4 against Tauren, seed 2 alike) through Elune's Light, which reverses round 1's Tauren-first conclusion; Undead
   is the best Horde race there (-58.7 +/- 13.7 and -34.4 +/- 11.0 against Night Elf). The faction is the user's choice.
-  Default: Night Elf at Max threat and Balanced, Undead at Max survival (a mixed-faction set of presets).
+  Superseded 2026-11-26: neither race can be a shaman. Troll at Max threat and Balanced, Tauren at Max survival.
 - **(h) Superior Deflection wrists at Balanced and Max survival.** Taken on small pooled gains: Balanced +1.0 to +15.8
   over five runs, Max survival +6.7 to +34.5 over six runs but -2.7 +/- 10.5 on the final build at 10k seed 6.
   Default: Superior Deflection (1248665); Superior Stamina (1886) is the alternative.
