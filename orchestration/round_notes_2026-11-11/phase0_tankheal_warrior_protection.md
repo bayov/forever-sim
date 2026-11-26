@@ -9,9 +9,9 @@ The mean of the six scored bosses (magmadar, golemagg, onyxia, broodlord, vaelas
 
 | Preset | Phase 0 | Synthetic | Gap |
 |---|---|---|---|
-| Balanced | 3080.2 | 3262.8 | -182.6 |
-| Max threat | 4470.0 | 4110.0 | +360.0 |
-| Max survival | 1076.5 | 1617.8 | -541.3 |
+| Balanced | 3309.7 | 3262.8 | +46.9 |
+| Max threat | 4698.5 | 4110.0 | +588.5 |
+| Max survival | 1203.8 | 1617.8 | -414.0 |
 
 The Phase 0 set has more threat than the synthetic set but less mitigation and health. Survival loses most on onyxia, broodlord and chromaggus.
 The search's own figures (3299.4, 4699.7, 1202.2) use the search's scoring, not the bench's.
@@ -52,7 +52,7 @@ enchants: head Lesser Arcanum of Voracity, neck Enchant Necklace - Agility, back
 | shoulder | Spaulders of Containment | doubtful | No source in our data · revealed Nov 8 |
 | back | Howler's Furs |  | Pix Xizzix · 75 Reals |
 | chest | Breastplate of Heroism | doubtful | Quest (NPC not in our data yet) · Helm of Valor (Gandling, Scholo) + Breastplate of Valor (Drakkisath, UBRS) · end of the Valthalak chain, s |
-| wrist | Frozen Steel Vambraces | doubtful | Not in Forever's client data (the server calls it invalid) · Classic stats |
+| wrist | Bracers of Heroism |  | Not in Forever's client data (the server calls it invalid) · Classic stats |
 | hands | Raider Gauntlets |  | Darkspear Raiders Revered · Revered per the item data, not Exalted · Creeg Bothunk (Barrens) |
 | waist | Brigam Girdle |  | General Drakkisath · Upper Blackrock Spire |
 | legs | Titanic Leggings | doubtful | Blacksmithing 300 · Armorsmith · plans (22388) have no source in Forever data · 2 Flask of the Titans |
@@ -102,6 +102,21 @@ New tags this round:
 - open: Petrified Bark Shield, Avalanchion's Stony Hide, Tunnelweb Pincer, Enchant Weapon Striking (weapon re-rank top 5s)
 - doubtful: Officer's Gloves 250551 (a Forever Blacksmithing recipe, plans source not in our data).
 
+## Audit fix round (849024cbb)
+
+tank_gear-1 was that the bench scored the lists 5 to 11% under their list score. The cause: the request APLs still cast the synthetic set's on-use trinkets (990617, 991018). The Phase 0 sets don't wear them, so tankbench never used a trinket. rotopt (setRotation, real_trinket.go) swaps them for the first worn trinket with a use, so the search was right and the requests were wrong.
+- The requests now cast that trinket: Chained Essence of Eranikus on Balanced and Max threat, Adaptive Combat Assistant on Max survival.
+- At Magmadar, tankbench SafeDPS went from 2254 to 2344. rotopt's is 2342.
+- The bench now matches the lists: Balanced 3309.7 against 3299.4, Max threat 4698.5 against 4692.0, Max survival 1203.8 against 1218.7.
+- No re-search was needed.
+
+Open for rotopt: both synthetic ids map to one real trinket. A set whose second trinket also has a use (Adaptive Combat Assistant beside Chained Essence on Balanced and Max threat) never casts the second one in either tool.
+
+tank_gear-2: Frozen Steel Vambraces 19112 is now out (the server calls it invalid). The Max threat wrist was re-ranked:
+- Horde: Bracers of Heroism, list 4692.0 (-7.7).
+- Alliance: Vambraces of the Sadist, list 4565.3 (-4.7).
+- Gordok Bracers of Power 18533 tagged open (Dire Maul Tribute).
+
 ## Price check round (fc39e5000)
 
 tools/audit/gear/phase0_check.py flagged three open items ranked above the pick. The slots were re-ranked with a 20000-iteration confirm. Swaps must clear 2 stderr.
@@ -143,7 +158,7 @@ Dropping Thunder Clap loses on both seeds, well beyond noise, so it stays. A lik
 Max threat's hands, Raider Gauntlets, need Darkspear Raiders Revered (Horde). The Alliance row is ranked at RaceHuman over the hands slot.
 - The best Alliance hands are Gauntlets of Heroism.
 - The Theramore Gauntlets would rank higher but are infeasible.
-- The Alliance list scores 4570.0 in the search, against Horde's 4699.7. That includes the race change.
+- The Alliance list scores 4565.3 in the search, against Horde's 4692.0. That includes the race change.
 
 It is written to ui/tank_warrior/gear_sets/level60_phase0_warrior_protection_max_threat_alliance.gear.json. Balanced and max survival have no faction reward. The Watchers rings are for both factions.
 
@@ -173,9 +188,9 @@ All four races wear the preset's gear.
 | Synthetic, after (current code) | Balanced | 3199.0 | 3182.2 | 3127.7 | **3262.8** |
 | | Max threat | **4114.3** | 4066.7 | 4004.7 | 4110.0 |
 | | Max survival | 1349.8 | 1418.7 | 1360.7 | **1617.8** |
-| Phase 0 set, after (current code) | Balanced | 2974.2 | 2994.7 | 2941.5 | **3080.2** |
-| | Max threat | 4457.8 | 4451.8 | 4368.3 | **4470.0** |
-| | Max survival | 731.2 | 846.5 | 782.0 | **1076.5** |
+| Phase 0 set, after (current code) | Balanced | 3198.7 | 3221.3 | 3175.3 | **3309.7** |
+| | Max threat | 4678.2 | 4672.5 | 4598.3 | **4698.5** |
+| | Max survival | 854.0 | 974.8 | 903.3 | **1203.8** |
 | Synthetic, rage stance rule off (final go code) | Balanced | 3217.2 | 3199.0 | 3144.7 | 3279.7 |
 | | Max threat | 4124.0 | 4077.7 | 4013.5 | 4120.0 |
 | | Max survival | 1371.3 | 1441.7 | 1380.8 | 1635.7 |

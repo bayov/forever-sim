@@ -30,7 +30,7 @@
                   "enchant": 1891
                 },
                 {
-                  "id": 19112,
+                  "id": 226863,
                   "enchant": 1885
                 },
                 {
@@ -129,7 +129,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 990617
+                        "itemId": 10455
                       }
                     }
                   },
@@ -139,7 +139,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 991018
+                        "itemId": 10455
                       }
                     }
                   },
