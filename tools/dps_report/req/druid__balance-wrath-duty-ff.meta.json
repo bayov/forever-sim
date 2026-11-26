@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_balance",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 702.79,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 684.41,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 702.29,
-    "stderr": 0.22,
+    "dps": 684.41,
+    "stderr": 0.21,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "The Wrath-only build, keeping Faerie Fire on the boss for the raid. The armor cut doesn't help its spells, so it only costs GCDs.",
   "keyTalents": [

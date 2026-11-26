@@ -1,7 +1,9 @@
-# healer_gear report, pass 15 (master 0404484fb)
+# healer_gear report, pass 16 (master 85691655ab)
 
-Quiet. Diffed 5536db4bc..0404484fb on the pass's watched paths: tools/database/forever_synthetic_items_*,
-ui/*/gear_sets, ui healer dirs, sim/*/items.go, orchestration/gear_targets.md, assets/db_inputs,
-orchestration/tools/healers: no changes. Only standards.md changed: item 21 (warrior damage-taken Rage by stance,
-doubled for non-melee hits), item 24 (raid hit Rage numbers) and the Phase 0 gold-line rule (item 43). None touches
-standards 1b, 5, 5a or 35. The sets and rows audited in pass 14 are therefore unchanged; no per-piece recompute done.
+Quiet. Diffed c3bbe33eab..85691655ab on the pass's watched paths: tools/database/forever_synthetic_items_*,
+ui/*/gear_sets, sim/{shaman,druid,paladin,priest}/items.go, orchestration/gear_targets.md, assets/db_inputs,
+orchestration/tools/healers: no changes. Only standards.md changed: rule 11 (explosives: Land Mine keeps the swing
+timer, stun explosives do nothing to a level 63 boss, picks due a re-check) and rule 17 (Windfury Totem rolls on
+extra attack swings). Neither touches healer gear, stat mixes or trinkets. No set or row recomputed; the pass 15
+verdicts stand. Open findings: none.
+Note: rule 11's explosive re-check may affect healer preset consumes (a consumables/fairness matter, not gear).

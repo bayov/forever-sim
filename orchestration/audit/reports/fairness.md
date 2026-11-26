@@ -1,47 +1,63 @@
-# Fairness pass 59 (2026-11-25, master 0404484fb)
+# Fairness pass 60 (2026-11-25, master 85691655a)
 
-Full pass: sim/core, warrior, shaman totems and standards.md changed (range 5536db4bc..0404484fb). 5k race sweep
-(seed 1, every race, the report's own requests with only the race changed) on the shared 0404484fb CLI, table.py
-against the 63129ce35 baseline, phase0_check.py, and the loop's 20k run against published.
+Full pass: sim/core, every class, the item database and standards.md changed (range c3bbe33e..85691655a, the
+wowsims/forever evidence batches). 5k race sweep (seed 1, every race, the report's own requests with only the race
+changed) on the 85691655a CLI, table.py against the 0404484fb baseline, phase0_check.py, the loop's 20k run against
+published, paired 20k race checks and a paired explosive check (new helper tools/audit/fairness/explosives.py).
 
 ## What moved, and why
 
-| Commit | Rule | Effect on report builds |
+| Commit | Rule | Effect on report builds (5k sweep vs 0404484fb) |
 |---|---|---|
-| f1942793d, b3d294a00 | Arcane Intellect / Divine Spirit overwrite Int and Spirit elixirs (Cunning's Int too) | casters, hunters, paladins, shamans down: Enh -25.9, Ret -16.0, Arcane -13.4, Frostfire -13.6, warlocks -6 to -9, hunters -7 to -9 |
-| b4cab8498 | Rage from hits taken by stance; spell hits and ticks twice | warriors up: Fury DW +5.5, Fury 2H +4.3, Arms +2.8 |
-| 3275a60b1, 9701cff08 | world buffs (and Zandalar) off in raids | none (no report build ticks one; no report hash moved) |
-| 75dee7458 | Armor Shatter / Puncture Armor share the minor armor slot | none (no report hash moved) |
-| 78802e6e5, 02cf1139b (earlier, now re-simmed) | Feral trinket APLs | Feral +2.5, already published |
+| 60fde111f | pet white swing takes the hunter's crit (EV-0134) | Beast Mastery +41.7, Survival +29.7, MM +12.1 (Lone Wolf has no pet) |
+| 295206ddf, b663145ad | Forever weapon PPMs, dungeon set procs, proc chains, JoC double roll, judgement refresh | rogues -11.6 to -26.4 (set procs and weapon PPMs), Ret / Enh small |
+| efeb06b95 | resist constant 8L+19, binary spells, overloads, Flurry | Shadow +13.3, Elemental +14.2, Fire +5.9, Arcane +2.4 |
+| 22d2cf952 | Dark Bomb misses stun-immune bosses, demon crit, extra attacks roll WF Totem, Shield Slam / Sweeping Strikes | Lone Wolf -12.5 (Dark Bomb now wasted), Fury DW -13.0 net with the procs batch |
+| 2f42f4a44 | tank threat and damage-taken rules | DPS builds within noise |
 
-Rogues and Feral match the baseline within noise (largest +0.8). No class whose code and consumables were
-untouched moved: no shared change leaked. Each rule applies to every spec that has the stat or resource; only the
-report has not been re-simmed. Enhancement and Ret lose most because Elixir of Cunning's Intellect now counts as
-an Intellect elixir; Mongoose would give the same (their Sages / Owl already carry the one elixir crit; paired 20k,
-Cunning = Mongoose to 0.1).
+Every move matches a commit that touches the class's mechanics, items or a shared rule it uses (the results pass's
+bisect agrees). No class moved without a cause: no leak.
 
-## Published against current (confirms results-20261104-2, updated today by the results pass; not filed again)
+## Published against current (results-20261104-2 and results-20261125-1; not filed again)
 
-Published numbers (re-simmed at 226ada86b) lag 0404484fb by -26.7 (Enh) to +6.0 (Fury 2H). The 20k run lists 61
-builds outside noise. At current numbers Frostfire drops below Seal Fate Swords, Arcane below Seal Fate Daggers and
-Balance below Mutilate. Fix: regenerate the report for the moved hashes.
+The report lags by -27.8 (Enhancement) to +34.9 (Beast Mastery). Confirmed independently by this sweep. At current
+numbers BM goes from 6th to 4th, Survival passes Ret, Shadow and Elemental pass Frostfire and the rogues, and
+Mutilate drops to 26th. Fix: the full re-sim.
+
+## Explosives (new, fairness-20261125-2, high)
+
+Standards 11 now says the explosive picks are due a re-check (throws keep the swing timer, stun bombs miss bosses).
+Only hunters and Feral were re-picked. Paired 10k, seeds 1 / 1000003, Goblin Land Mine over none:
+
+| Build | Mine | Dynamite | Build | Mine | Dynamite |
+|---|---|---|---|---|---|
+| Fury DW | +3.3 | +2.5 | Ret | +7.3 | +6.5 |
+| Fury 2H | +2.7 | +1.9 | Shock Ret | +6.8 | +6.0 |
+| Arms | -1.4 | -2.1 | Sub Holy Ret | +7.1 | +6.3 |
+| Arms dragonkin | +0.3 | -0.5 | Enhancement | +6.3 | +5.5 |
+| Mutilate | +6.8 | +5.8 | Enh imp-gw | +5.0 | +4.2 |
+| Combat Swords | +6.5 | +5.3 | Survival | +4.6 | +3.7 |
+| Combat Daggers | +6.2 | +5.6 | Survival wolf | +5.2 | +4.3 |
+| Seal Fate Swords | +6.9 | +6.1 | Fire / Affliction / Elemental | +0.0 | -5 to -6 |
+
+Subtlety and Seal Fate Daggers already carry the mine (worth +7.0 / +6.6). With it, Mutilate passes Subtlety.
 
 ## Race
 
-- Marksmanship High Order +6.6 over Orc (fairness-20261125-1, still open); MM variants +7.1 / +7.7.
-- Fire Undead +0.8 (was +2.9; near noise now), Shadow Troll +1.7 (fairness-20261124-2, still open).
-- Balance: Night Elf best on the base rotation; Wrath High Order +4.7 (fairness-20261118-1, still open).
-- Fury DW Undead +1.1 over Orc, High Order +0.7: a spread of 3.6 over eight races at 5k, within noise; not filed.
-- Demonology Human +0.9, Frostfire Gnome +0.6, Lone Wolf High Order tie: noise. sub_holy Dwarf +1.7 and
-  affliction_shadow_bolt Human +2.4 as before (variants).
+- Demonology: Undead +5.7 over Orc, paired 20k (fairness-20261125-3, new); Destruction Undead +2.2 (same finding).
+- Marksmanship High Order +5.0 over Orc; wolf +6.7, tallstrider +6.4 (fairness-20261125-1, still open).
+- Shadow: Undead (the report race) best again by 3.7 paired; Fire Undead +1.05 / Gnome +0.45 over Human paired, at the
+  edge of noise (fairness-20261124-2, now Fire only).
+- Balance: Night Elf best on the base rotation; Wrath High Order +3.8 (fairness-20261118-1, still open).
+- Frostfire Gnome +1.6 over Human (5k), Fury DW Undead +1.4 over Orc (5k spread over 10 races 13), Ret variants
+  Dwarf +2.8 / +3.0 over Undead (variants): noise or variant-only; not filed.
 
 ## Gear
 
-phase0_check.py: 3 '!' lines (Balance finger, Shadow chest, Shadow finger), already in the gear pass's report.
-Every DPS request wears its spec's Phase 0 set. The lists' `dps` predate the elixir rule, so they now sit 5 to 27
-above the current sims for the Int users (part of the same re-sim); rogues, Feral and warriors match within 2-6.
+phase0_check.py: the same 3 '!' lines (Balance finger, Shadow chest, Shadow finger), the gear pass's. Every DPS request
+wears its spec's Phase 0 set. The lists' `dps` predate this range's rules and the elixir rule; part of the re-sim.
 
 ## Ranking (report race, 5k)
 
-Top over bottom 1.69x (Lone Wolf 1164.8 / Smite 690.6). Full table: orchestration/audit/ref/fairness/table_baseline.md
-(new baseline, 0404484fb).
+Top over bottom 1.66x (Lone Wolf 1152.3 / Smite 692.8). Full table: orchestration/audit/ref/fairness/table_baseline.md
+(new baseline, 85691655a).

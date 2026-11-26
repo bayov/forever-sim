@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_demonology",
   "apl": "level60_demonology",
   "published": {
-    "dps": 894.19,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 877.59,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 893.65,
-    "stderr": 0.36,
+    "dps": 877.59,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Demonic Pact build. It sacrifices the Imp before the pull for 15% Shadow damage, then keeps the Succubus out.",
   "keyTalents": [

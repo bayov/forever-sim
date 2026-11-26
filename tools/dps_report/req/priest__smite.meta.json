@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 696.5,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 679.14,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 695.29,
+    "dps": 679.14,
     "stderr": 0.12,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Holy priest casting Smite, on its own gear with 3% hit. It keeps Shadow Word: Pain up for Power in Light. Smite's high mana cost holds it back.",
   "keyTalents": [

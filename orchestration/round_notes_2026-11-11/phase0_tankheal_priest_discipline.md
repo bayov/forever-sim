@@ -3,6 +3,14 @@
 Tank healer role only (healRoles tank, no raid request). Sim at origin/phase0-tankheal a1904ac (all six sim batches and
 the Premier drop merged).
 
+## Prices (re-rank round)
+
+With the Phase 0 prices (23469c224), Band of Mending costs 21381.6g per point of score, over the 2358.5g line, so it is
+no-pick. RANK_ONLY SLOTS=finger at 2000 iterations put Blessed Band of Light in its place (122.3 (0.3)). The best open
+ring above the picks is Amalgam's Band, +0.27, within noise. phase0_check.py is clean for the spec. The rest of the set
+is unchanged (rings don't touch the Virtuous 6pc). New mean carry 122.8% vs synthetic 126.6% (-3.8 points, -3.1%).
+The table below is from before the swap.
+
 ## Score (step 9)
 
 `healbench -carry -role tank -iters 1000` on the seven bosses, damage carried:
@@ -34,7 +42,7 @@ Phase 0 is 3.7 points (2.9%) under synthetic. The search's own score (rotopt) on
 | Waist | Belt of the Archmage | Tailoring 295, pattern ~131g | |
 | Legs | Virtuous Skirt | Dungeon Set 2 copy | |
 | Feet | Virtuous Sandals | Dungeon Set 2 copy | |
-| Finger | Band of Mending | Sothos and Jarien summon | summon unconfirmed, included by standards 42 |
+| Finger | Blessed Band of Light | Pix Xizzix, Reals | replaced Band of Mending (prices, see below) |
 | Finger | Fordring's Seal | Quest: In Dreams | |
 | Trinket | Second Wind | Argelmach, BRD | |
 | Trinket | Serenity Field | Pix Xizzix, 125 Reals | |

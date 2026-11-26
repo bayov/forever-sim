@@ -14,8 +14,8 @@
   "gearSet": "level60_phase0_ret",
   "apl": "level60_shock_ret",
   "published": {
-    "dps": 922.95,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the real on-use trinket lines and the Auto Time To Next fix"
+    "dps": 900.96,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "summary": "Holy Shock with most points in Retribution, Seal of Command up with no twisting.",
   "keyTalents": [
@@ -69,10 +69,10 @@
   ],
   "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Undead; primarySeal set to Command to match the shipped preset's options. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-15 (Judgement of Command melee again, rolling Windfury Totem and on-hit procs): rotation re-searched with tools/rotopt over 120 / 180 / 300 sec, kept only where it won all six cells (seeds 1 and 1000003, 20,000 iterations); see tools/rotopt/paladin_presets.sh. Seal of Command kept up instead of Seal of Righteousness: +29.2 / +29.8 / +29.9 (seed 1), +28.7 / +29.8 / +29.9 (seed 1000003). The published and verify numbers predate it. Re-checked after Two-Handed Weapon Specialization was ruled to reach the seals, Holy Strike, Judgement of Command and Consecration: the same pick wins +37.4 / +37.9 / +38.0 (seed 1), +36.9 / +37.9 / +38.0 (seed 1000003). 2026-11-24 (Phase 0 step 4, orchestration/round_notes_2026-11-11/phase0_step4_shaman_ret.md): gear moved from the synthetic set (level60_phase1_synthetic, published 1009.9) to the Phase 0 set (level60_phase0_ret); request from mksettings -gear level60_phase0_ret with the same edits as above. Talents re-searched on the Phase 0 set (melee hit 5% from gear) and kept.",
   "verify": {
-    "dps": 922.4,
-    "stderr": 0.34,
+    "dps": 900.96,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, Phase 0 set level60_phase0_ret, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-24)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   }
 }

@@ -1,235 +1,303 @@
 {
-  "rotation": {
-    "type": "TypeAPL",
-    "prepullActions": [
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 9876
-            }
-          }
-        },
-        "doAtValue": {
-          "const": {
-            "val": "-2.5s"
-          }
-        }
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "itemId": 10455
-            }
-          }
-        },
-        "doAtValue": {
-          "const": {
-            "val": "-0.1s"
-          }
-        }
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "itemId": 250937
-            }
-          }
-        },
-        "doAtValue": {
-          "const": {
-            "val": "-0.1s"
-          }
-        }
+ "rotation": {
+  "type": "TypeAPL",
+  "prepullActions": [
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 9876
       }
-    ],
-    "priorityList": [
-      {
-        "action": {
-          "autocastOtherCooldowns": {}
-        },
-        "notes": "Racials, trinkets, potions and runes."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 24977
-            }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "not": {
-                    "val": {
-                      "dotIsActive": {
-                        "spellId": {
-                          "spellId": 24977
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "cmp": {
-                    "lhs": {
-                      "remainingTime": {}
-                    },
-                    "op": "OpGt",
-                    "rhs": {
-                      "const": {
-                        "val": "8s"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 9835
-            }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "not": {
-                    "val": {
-                      "dotIsActive": {
-                        "spellId": {
-                          "spellId": 9835
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "cmp": {
-                    "lhs": {
-                      "remainingTime": {}
-                    },
-                    "op": "OpGt",
-                    "rhs": {
-                      "const": {
-                        "val": "8s"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "notes": "Moonfire whenever its dot is down."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 9835
-            }
-          },
-          "condition": {
-            "cmp": {
-              "lhs": {
-                "remainingTime": {}
-              },
-              "op": "OpLt",
-              "rhs": {
-                "spellCastTime": {
-                  "spellId": {
-                    "spellId": 9876
-                  }
-                }
-              }
-            }
-          }
-        },
-        "notes": "Moonfire when a Starfire would not land before the end."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 9912
-            }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "cmp": {
-                    "lhs": {
-                      "auraNumStacks": {
-                        "auraId": {
-                          "spellId": 408255
-                        }
-                      }
-                    },
-                    "op": "OpLe",
-                    "rhs": {
-                      "const": {
-                        "val": "2"
-                      }
-                    }
-                  }
-                },
-                {
-                  "not": {
-                    "val": {
-                      "spellInFlight": {
-                        "spellId": {
-                          "spellId": 9912
-                        }
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 9876
-            }
-          }
-        },
-        "notes": "Starfire."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 9912
-            }
-          }
-        },
-        "notes": "Wrath when Starfire's mana is not there, rather than waiting for it."
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-2.5s"
+     }
+    }
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "itemId": 10455
       }
-    ]
-  },
-  "note": "Rotation tuned for 2% haste: the pre-pull Starfire goes 2.5 s out (was 3), since a hasted 2.94 s Starfire from 3 s lands before the pull and its damage isn't counted",
-  "gain": {
-    "dps": 7.7,
-    "se": 0.42,
-    "iterations": 20000,
-    "seed": 1,
-    "duration": 180
-  },
-  "how": "The High Order rotation (rotopt -template druid_balance -race SkyborneHighOrder -durs 180 from the preset's knobs (innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=0): prepullTime 3 -> 2.5); Windshaper has the same Wind Blessed and no Read Leyline. Same rotation at the preset race (Tauren): -2.1 +- 0.3; wrathFallback=1,clearcastStarfire=0 added 2026-11-03 (+0.9/+0.6/+2.4 at 120/180/300 s) Re-checked on the Phase 0 set (2026-11-24): +7.7 at 180s, 20,000 iterations, unpaired."
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-0.1s"
+     }
+    }
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "itemId": 250937
+      }
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-0.1s"
+     }
+    }
+   }
+  ],
+  "priorityList": [
+   {
+    "action": {
+     "autocastOtherCooldowns": {}
+    },
+    "notes": "Racials, trinkets, potions and runes."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 24977
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "dotIsActive": {
+            "spellId": {
+             "spellId": 24977
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGt",
+          "rhs": {
+           "const": {
+            "val": "8s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 9835
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "dotIsActive": {
+            "spellId": {
+             "spellId": 9835
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGt",
+          "rhs": {
+           "const": {
+            "val": "8s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Moonfire whenever its dot is down."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 9835
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "remainingTime": {}
+       },
+       "op": "OpLt",
+       "rhs": {
+        "spellCastTime": {
+         "spellId": {
+          "spellId": 9876
+         }
+        }
+       }
+      }
+     }
+    },
+    "notes": "Moonfire when a Starfire would not land before the end."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 9912
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "cmp": {
+          "lhs": {
+           "auraNumStacks": {
+            "auraId": {
+             "spellId": 408255
+            }
+           }
+          },
+          "op": "OpLe",
+          "rhs": {
+           "const": {
+            "val": "2"
+           }
+          }
+         }
+        },
+        {
+         "not": {
+          "val": {
+           "spellInFlight": {
+            "spellId": {
+             "spellId": 9912
+            }
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 9876
+      }
+     }
+    },
+    "notes": "Starfire."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 9912
+      }
+     }
+    },
+    "notes": "Wrath when Starfire's mana is not there, rather than waiting for it."
+   }
+  ]
+ },
+ "note": "Rotation tuned for 2% haste: the pre-pull Starfire goes 2.5 s out (was 3), since a hasted 2.94 s Starfire from 3 s lands before the pull and its damage isn't counted",
+ "gain": {
+  "dps": 7.7,
+  "se": 0.42,
+  "iterations": 20000,
+  "seed": 1,
+  "duration": 180
+ },
+ "how": "The High Order rotation (rotopt -template druid_balance -race SkyborneHighOrder -durs 180 from the preset's knobs (innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=0): prepullTime 3 -> 2.5); Windshaper has the same Wind Blessed and no Read Leyline. Same rotation at the preset race (Tauren): -2.1 +- 0.3; wrathFallback=1,clearcastStarfire=0 added 2026-11-03 (+0.9/+0.6/+2.4 at 120/180/300 s) Re-checked on the Phase 0 set (2026-11-24): +7.7 at 180s, 20,000 iterations, unpaired.",
+ "gearSet": "level60_phase0_balance_horde",
+ "equipment": {
+  "items": [
+   {
+    "id": 226773,
+    "enchant": 2544
+   },
+   {
+    "id": 19426,
+    "enchant": 1249057
+   },
+   {
+    "id": 226778
+   },
+   {
+    "id": 272411
+   },
+   {
+    "id": 226776,
+    "enchant": 1254966
+   },
+   {
+    "id": 226775,
+    "enchant": 1220624
+   },
+   {
+    "id": 226777,
+    "enchant": 1213626
+   },
+   {
+    "id": 10259,
+    "randomSuffix": 990454
+   },
+   {
+    "id": 252486,
+    "enchant": 2544
+   },
+   {
+    "id": 226774,
+    "enchant": 1254966
+   },
+   {
+    "id": 272406
+   },
+   {
+    "id": 12545
+   },
+   {
+    "id": 10455
+   },
+   {
+    "id": 13968
+   },
+   {
+    "id": 287034,
+    "enchant": 1248805
+   },
+   {
+    "id": 18316,
+    "enchant": 1219579
+   },
+   {
+    "id": 23197
+   }
+  ]
+ },
+ "gearNote": "Horde: wears level60_phase0_balance_horde, the set without the Alliance rewards",
+ "gearHow": "race_gear.py: SkyborneWindshaper is Horde, so it can't wear the Alliance rewards of the preset's level60_phase0_balance. It wears level60_phase0_balance_horde, the same set with those slots re-ranked at a Horde race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
 }

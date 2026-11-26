@@ -20,7 +20,7 @@
                   "id": 272106
                 },
                 {
-                  "id": 13340,
+                  "id": 272414,
                   "enchant": 1219587
                 },
                 {
@@ -28,7 +28,7 @@
                   "enchant": 1891
                 },
                 {
-                  "id": 18375,
+                  "id": 226885,
                   "enchant": 1248599
                 },
                 {
@@ -40,7 +40,7 @@
                 },
                 {
                   "id": 15062,
-                  "enchant": 1508
+                  "enchant": 2543
                 },
                 {
                   "id": 226881,
@@ -59,15 +59,15 @@
                   "id": 19289
                 },
                 {
-                  "id": 13952,
+                  "id": 6622,
                   "enchant": 803
                 },
                 {
-                  "id": 12590,
+                  "id": 18392,
                   "enchant": 2564
                 },
                 {
-                  "id": 18323
+                  "id": 18680
                 }
               ]
             },
@@ -83,6 +83,7 @@
               "dragonBreathChili": true,
               "zanzaBuff": "GroundScorpokAssay",
               "sapperExplosive": "SapperGoblinSapper",
+              "fillerExplosive":  "ExplosiveGoblinLandMine",
               "intellectElixir": "ElixirOfGreaterIntellect"
             },
             "buffs": {
