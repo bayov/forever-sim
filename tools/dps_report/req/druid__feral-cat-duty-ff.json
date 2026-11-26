@@ -20,7 +20,7 @@
                   "id": 271955
                 },
                 {
-                  "id": 13340,
+                  "id": 272414,
                   "enchant": 1219587
                 },
                 {
@@ -74,7 +74,7 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "fillerExplosive": "ExplosiveEZThroDarkBomb",
+              "fillerExplosive": "ExplosiveGoblinLandMine",
               "sapperExplosive": "SapperGoblinSapper",
               "mainHandImbue": "DenseWeightstone",
               "defaultPotion": "MightyRagePotion",

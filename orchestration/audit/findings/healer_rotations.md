@@ -2,12 +2,21 @@
 
 ## Open
 
+### healer_rotations-20261125-2: Healer baseline moved with efeb06b95 (Forever resist constant 8L+19 and the 75% partial cap); 14 of 63 rows by more than 0.02 carry, nearly all raid healers, Restoration shaman raid Broodlord +0.076, Holy paladin raid Onyxia -0.051
+- severity: low (carry only, mixed signs, mean +0.007, mana left -4; an evidence-backed rule, so no ruling is needed)
+- affects: raid-healer rows mostly (shaman/paladin/priest/druid raid); one tank row past 0.02 (paladin_holy golemagg +0.022)
+- found: 2026-11-25, master 85691655a (last audited c3bbe33ea)
+- evidence: `tools/audit/healer_rotations/baseline.sh`, 1,000 it, default seed vs the old ref: 56 of 63 rows moved. Over 0.02: shaman_restoration_raid broodlord 0.852 -> 0.928 (other deaths 13.1% -> 10.1%), magmadar +0.025; paladin_holy_raid onyxia 0.988 -> 0.937 (other deaths 5.8% -> 6.4%, still over 5%), chromaggus -0.036, broodlord +0.036, golemagg +0.038, vaelastrasz +0.021; priest_holy_raid magmadar +0.055, golemagg +0.024; druid_restoration_raid vaelastrasz 0.964 -> 0.995 (other deaths 6.7% -> 5.4%), magmadar +0.025, ragnaros +0.021, chromaggus -0.020; paladin_holy golemagg +0.022. Cause confirmed: healbench built at efeb06b95 (first parent after c3bbe33ea) already gives the new numbers on four sample rows (0.928 / 0.937 / 2.058 / 1.800) and they hold unchanged at 4f39862f4, becbcd30d and 22d2cf952. efeb06b95 changes the resist formula players face from boss spells (9L -> 8L+19, partials capped at 75%, a new partial-resist roll), so raid magic damage and the random stream both move. No healer APL, request, encounter or filler change.
+- proposed fix: none to the code (EV-0091/0092, wowsims/forever log evidence). Ref re-based on master 85691655a this pass. The paladin raid Onyxia 5% floor miss is the only verdict that flipped further; it was already over.
+- needs: none (recorded for the baseline's history; close at the next pass unless someone disputes the rule)
+
 ### healer_rotations-20261125-1: Holy priest tank healer now runs out of mana on Chromaggus at the fight's own length (113 of 115 s), since f1942793d made Arcane Intellect and Divine Spirit overwrite the healers' Greater Intellect and Sages elixirs (-455 mana left on every bench row)
 - severity: medium (a mana failure at a judged length; carry 0.970 -> 0.911, other deaths 4.6% -> 11.4%, over the 5% floor)
 - affects: priest_holy tank healer (`ui/healing_priest/apls/*tank*`, `tools/healbench/req/priest_holy.json`) on Chromaggus; the whole bench's mana scale (60 of 63 rows moved, mean carry -0.006, mean mana left -455)
 - found: 2026-11-25, master 0404484fb (last audited 5536db4bc)
 - evidence: cause confirmed by healbench built at f1942793d^ (= 5536db4bc) and at f1942793d, 1,000 it, default seed: priest_holy tank chromaggus 0.970 / 782 mana / no OOM -> 0.912 / 486 / 10.4% other deaths; golemagg 2.000 / 6,501 -> 1.990 / 6,019. The rule change itself is right (wowsims/forever EV-0185, in-game character sheet) and needs no ruling; the healer requests' `intellectElixir: ElixirOfGreaterIntellect` and `spiritElixir: ElixirOfSages` are now (nearly) dead slots under AI and Divine Spirit (dropping both: 0.904 / 463, within noise). Rows over 0.02 on master 0404484fb vs the ref: priest_holy chromaggus -0.059 (OOM 113 s), priest_discipline chromaggus -0.043 (OOM 101 -> 95 s, other deaths 23.6% -> 44.0%), druid_restoration golemagg -0.050, chromaggus -0.026 (mana 2,711 -> 1,874), druid_restoration_raid magmadar -0.038, onyxia -0.027, priest_holy_raid golemagg -0.028, paladin_holy golemagg -0.028, shaman_restoration magmadar -0.026, priest_discipline broodlord -0.023, paladin_holy_raid broodlord -0.022, shaman_restoration_raid chromaggus +0.045, onyxia +0.032, broodlord -0.032 (the raid shaman moves are mixed-sign, likely a reshuffled stream). Other watched changes (spell_result.go PreAbsorbDamage for warrior Rage, totem comments) don't reach healers; world buffs (3275a60b1, 9701cff08) aren't in the healer requests.
 - proposed fix: a worker re-tunes the Holy tank healer's mana use for long heavy tank fights (as -20261104-2 asks for Disc), e.g. a lower bound Greater Heal rank under a mana-percent line; not measured this pass. Separately the healer requests (and presets) could drop the now-dead intellect and spirit elixirs, or the gear pass could check what fills those slots best under AI and Divine Spirit (healer_gear).
+- update 2026-11-25, master 85691655a: unchanged within noise (Chromaggus 0.914, 504 mana, OOM 114 s, other deaths 11.6%). Tried paired, 1,000 it, all 7 files plus Golemagg/Ragnaros at 300 s: Greater Heal 5 (line 7) only at 30% mana or more: Chromaggus 0.912, OOM 114 s, Golemagg 300 0.932 (same); at 50%: Chromaggus 0.920 (+0.006), OOM 114 s, others same; Renew (line 3) only at 30% mana: Chromaggus 0.905, no OOM (116 s), Golemagg 300 0.911 (-0.021); Renew at 50%: Chromaggus 0.902, Golemagg 300 0.895. None stops the OOM without losing carry; the cheaper pattern needs more than a one-line gate.
 - needs: worker fix
 
 ### healer_rotations-20261124-1: Raid-role healer bench moved with the DPS report's Frost mage preset (28 raid rows, 16 by more than 0.02 carry, Holy paladin raid Golemagg +0.096), because healbench's filler is `tools/dps_report/req/mage__frost.json`
@@ -17,6 +26,7 @@
 - evidence: `tools/audit/healer_rotations/baseline.sh`, 1,000 it, default seed. Only raid rows moved, e.g. paladin_holy_raid golemagg 2.679 -> 2.775, ragnaros 1.270 -> 1.315, onyxia 1.008 -> 0.984; druid_restoration_raid vaelastrasz 1.042 -> 1.094, magmadar 1.857 -> 1.907; priest_holy_raid vaelastrasz 1.264 -> 1.217, magmadar 2.100 -> 2.145; shaman_restoration_raid vaelastrasz 1.139 -> 1.096, chromaggus 1.092 -> 1.127; shaman raid Onyxia other deaths 10.6% -> 7.8%. Cause confirmed: the master healbench with `-filler` set to `git show b8b89d6a8^:tools/dps_report/req/mage__frost.json` gives paladin_holy_raid golemagg 2.679 (the old ref) exactly. b8b89d6a8 (Ice Lance re-tune) changed the Frost mage's talents (`0502050030001-4-...` -> `050203203-5-...`) and one APL timing (6s -> 2s), so the raid that healers keep alive changed. The watched druid changes (rake.go, rip.go, tuning_70753.go comment) don't reach healers.
 - update 2026-11-24, master eceb09019: it happened again. 058a07457 (mage report builds on the Phase 0 sets) rewrote `tools/dps_report/req/mage__frost.json`, and all 28 raid rows moved, 20 by more than 0.02 carry, nearly all down: paladin_holy_raid golemagg 2.775 -> 2.527 (-0.248), shaman_restoration_raid golemagg 2.667 -> 2.495, priest_holy_raid magmadar 2.145 -> 2.014, druid_restoration_raid vaelastrasz 1.094 -> 0.971 (other deaths 3.2% -> 5.7%, over the 5% floor), priest_holy_raid onyxia other deaths 4.6% -> 7.0%. Cause confirmed: master healbench with `-filler` = `git show e29cfe00f:tools/dps_report/req/mage__frost.json` gives the old ref on all 28 rows within 0.013 (paladin and shaman exact), except druid_restoration_raid magmadar -0.032 (Innervate/Windshaper changes, see the report). Tank rows don't depend on the filler. The pin is now more pressing: each DPS gear refresh re-scales the raid healers' carry and the 5% floor verdicts.
 - proposed fix: pin the filler: copy the pre- or post-b8b89d6a8 frost request to `tools/healbench/req/filler_mage.json` and make it healbench's `-filler` default, so DPS preset tuning stops moving the healer score (and the healer_fairness/healer_mechanics baselines with it). Otherwise accept and refresh the ref whenever the mage preset changes. Ref refreshed this pass on the current filler.
+- update 2026-11-25, master 85691655a: the filler file did not change this time; raid rows moved with efeb06b95 instead (-20261125-2). Pin still open.
 - needs: orchestrator fix
 
 ### healer_rotations-20261118-1: Healer baseline moved without a rotation change (42 of 63 rows; 9 by more than 0.02 carry, Restoration shaman raid Magmadar -0.109), most likely by 7199c8f9c (idle skip now wakes for hits a healer sees a reaction time late)
@@ -29,6 +39,7 @@
 - update 2026-11-20, master e07e8fdb8: no new evidence; all 63 rows byte-identical (shaman raid Magmadar 1.778). Paired confirmation still not run.
 - update 2026-11-22, master 8b5137c6d: no new evidence; all 63 rows byte-identical (shaman raid Magmadar 1.778). Paired confirmation still not run.
 - update 2026-11-22, master 7a6d1beb9: no new evidence; all 63 rows byte-identical (shaman raid Magmadar 1.778). Paired confirmation still not run.
+- update 2026-11-25, master 85691655a: no new evidence; rows re-based by efeb06b95 (-20261125-2; shaman raid Magmadar 1.806). Paired confirmation still not run.
 - needs: orchestrator fix (confirm with paired runs; rule whether the new baseline stands)
 
 ### healer_rotations-20261115-1: Wild Growth at 0.066 a tick lowers the Restoration druid raid healer's carry (mean -0.022, Vaelastrasz -0.104, Onyxia -0.047), because its gate now waits for twice the missing health; the gate at 0.75x of expected healing wins back +0.018
@@ -54,6 +65,7 @@
 - update 2026-11-20, master e07e8fdb8: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical).
 - update 2026-11-22, master 8b5137c6d: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical).
 - update 2026-11-22, master 7a6d1beb9: unchanged (Onyxia 0.946, 5.8% other deaths; byte-identical).
+- update 2026-11-25, master 85691655a: moved with -20261125-2 (Onyxia 0.948, 5.9% other deaths, still over 5%; Vaelastrasz 0.995). Gate fix not re-measured.
 - needs: worker fix
 
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
@@ -95,6 +107,7 @@
 - update 2026-11-20, master e07e8fdb8: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
 - update 2026-11-22, master 8b5137c6d: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
 - update 2026-11-22, master 7a6d1beb9: unchanged (Chromaggus 0.871, 341 mana, OOM 101 s; byte-identical).
+- update 2026-11-25, master 85691655a: unchanged (Chromaggus 0.828, 327 mana, OOM 95 s, other deaths 42.8%).
 - needs: worker fix
 
 ## Resolved

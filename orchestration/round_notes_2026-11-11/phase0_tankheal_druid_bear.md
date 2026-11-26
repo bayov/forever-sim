@@ -15,6 +15,20 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
   Max threat Enrage under 80 Rage (+3), Max survival Lacerate refresh at 6s (+19). Talents kept.
 - Rotation and talents re-checked on the Phase 0 gear (knob and talent search, paired checks): nothing
   beats noise (best: Balanced Frenzied Regeneration at any Rage +7 ± 11, Max survival Roar at 2s +8 ± 9). No change.
+- Lacerate first-hit fix (95962a7d3): Max survival now refreshes Lacerate under 10s, not 6 (+69 ± 11, +88 ± 12
+  on seeds 1 and 2; 10 is past rotopt's knob range of 1 to 9). Balanced and Max threat keep 4. RANK_ONLY over all
+  slots on the fix: no pick changed.
+- No Demoralizing Roar for Balanced and Max threat (audit tank_rotations-20261125-1, roarRefresh 0, 09709d8):
+  paired +46 ± 6 and +52 ± 6 (Balanced), +143 ± 3 and +150 ± 3 (Max threat) on seeds 1 and 2. Max survival keeps
+  Roar (-120 ± 22 without).
+- Re-rank on the no-Roar APL and the prices (fc39e50): Balanced over all slots, no pick changed. Max threat over all
+  slots: Hammer of Thundering Hooves for Manual Crowd Pummeler (+21.3 ± 6.4 at 5000) and Dawn Armor for Timbermaw
+  Tunic (+15.8 ± 3.6). Feralheart Girdle (+7.6 ± 3.4) didn't add on top of Dawn Armor. Max survival chest, trinket
+  and ranged: no change. Tauren row 3494.0 against 3683.5.
+- phase0_check.py flags that stand, each item failed its 5000-iteration confirmation over the pick: Balanced neck
+  Horn of Ve'han (-0.6 ± 8.5), shoulder Truestrike Shoulders (-3.9 ± 8.9), chest Dawn Armor (+7.0 ± 8.5); Max
+  survival chest Shadowcraft Tunic (-50.0 ± 14.7), trinket Adaptive Combat Assistant (-6.5 ± 21.8), ranged Idol of
+  Brutality (-17.7 ± 21.6). The flags compare the 1000-iteration ranking.
 
 ## Tags added
 
@@ -51,7 +65,7 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
 ## Faction row
 
 - Balanced wears Theramore Pauldrons (Alliance only). Horde row (Tauren, RANK_ONLY SLOTS=shoulder):
-  Truestrike Shoulders, 3262.4 against 3458.7. `level60_phase0_druid_bear_balanced_horde.bis.json` and
+  Truestrike Shoulders, 3494.0 against 3683.5 (no-Roar APL). `level60_phase0_druid_bear_balanced_horde.bis.json` and
   `gear_sets/level60_phase0_druid_bear_balanced_horde.gear.json`.
 - Max threat and Max survival: no faction pick, skipped. (Max survival's top mainhand is The Unstoppable
   Force, infeasible, so not picked.)
@@ -63,12 +77,12 @@ with origin/master's gear.
 
 | Preset | Phase 0 | Synthetic | Gap | TPS Phase 0 / synthetic |
 |---|---|---|---|---|
-| Balanced | 3467.2 | 3338.3 | +128.9 | 2393 / 2424 |
-| Max threat | 5202.3 | 4544.3 | +658.0 | 2574 / 2550 |
-| Max survival | 847.5 | 1357.3 | -509.8 | 1797 / 1856 |
+| Balanced | 3686.2 | 3701.2 | -15.0 | 2477 / 2519 |
+| Max threat | 5606.7 | 4959.7 | +647.0 | 2931 / 2645 |
+| Max survival | 1048.0 | 1618.3 | -570.3 | 1905 / 1972 |
 
-Max survival loses 510 because the synthetic set has 10159 armor and 437 defense against 9473 and 370.
-Chromaggus drives it: -2286 against -1770.
+Max survival loses 570 because the synthetic set has 10159 armor and 437 defense against 9473 and 370.
+Chromaggus drives most of it: -2127 against -1470.
 
 ## Picks
 
@@ -76,22 +90,22 @@ Chromaggus drives it: -2286 against -1770.
 
 | Slot | Pick | Source | Flag |
 |---|---|---|---|
-| head | Mask of the Unforgiven |  |  |
+| head | Mask of the Unforgiven | 58g per point of score |  |
 | neck | Amulet of the Darkmoon | Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), J |  |
 | shoulder | Theramore Pauldrons | Alliance only (Theramore rep, like the other Theramore shoulders) | faction Alliance |
 | back | Howler's Furs | Pix Xizzix · 75 Reals |  |
-| chest | Timbermaw Tunic | On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 16g per DPS |  |
+| chest | Timbermaw Tunic | On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 2g per point of score |  |
 | wrist | Bracers of Subterfuge | Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest,  | avail doubtful |
-| hands | Devilsaur Gauntlets |  |  |
+| hands | Devilsaur Gauntlets | 0g per point of score |  |
 | waist | Shifter's Belt | Pix Xizzix · Reals (price not in data) · Druid only |  |
-| legs | Devilsaur Leggings | On AH ~56g · or Leatherworking 290 · pattern on AH ~22g |  |
+| legs | Devilsaur Leggings | On AH ~56g · or Leatherworking 290 · pattern on AH ~22g · 1g per point of score |  |
 | feet | Drudge Boots | Quest: The Nightmare Manifests | avail doubtful |
 | finger | Watcher's Signet of Vigilance | Watchers Revered · no rep source found yet | avail doubtful |
 | finger | Tracker's Signet of Vigilance | Watchers Honored · no rep source found yet | avail doubtful |
 | trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |  |
 | trinket | Adaptive Combat Assistant | Pix Xizzix · 125 Reals |  |
 | mainhand | Manual Crowd Pummeler | Crowd Pummeler 9-60, Gnomeregan · 3 charges that never come back · one 30s haste per 180s  |  |
-| ranged | Idol of Brutality | Magistrate Barthilas · Stratholme |  |
+| ranged | Idol of Brutality | Magistrate Barthilas · Stratholme · 15g per point of score |  |
 
 ### Max threat (Night Elf)
 
@@ -99,19 +113,19 @@ Chromaggus drives it: -2286 against -1770.
 |---|---|---|---|
 | head | Defias Enforcer's Mask | Trash, likely Alcaz Prison like its set (zone 16620, no NPC known) |  |
 | neck | Beads of Ogre Might | Quest: Falrin's Vendetta (Dire Maul) · 25 Ogre Warbeads from Dire Maul or Blackrock Spire  |  |
-| shoulder | Truestrike Shoulders | Pyroguard Emberseer · Blackrock Spire |  |
+| shoulder | Truestrike Shoulders | Pyroguard Emberseer · Blackrock Spire · 7g per point of score |  |
 | back | Howler's Furs | Pix Xizzix · 75 Reals |  |
-| chest | Timbermaw Tunic | On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 16g per DPS |  |
-| wrist | Blackmist Armguards | The Beast · Blackrock Spire |  |
-| hands | Devilsaur Gauntlets |  |  |
+| chest | Dawn Armor | On AH ~350g · or Leatherworking craft |  |
+| wrist | Blackmist Armguards | The Beast · Blackrock Spire · 2g per point of score |  |
+| hands | Devilsaur Gauntlets | 0g per point of score |  |
 | waist | Shifter's Belt | Pix Xizzix · Reals (price not in data) · Druid only |  |
-| legs | Devilsaur Leggings | On AH ~56g · or Leatherworking 290 · pattern on AH ~22g |  |
+| legs | Devilsaur Leggings | On AH ~56g · or Leatherworking 290 · pattern on AH ~22g · 0g per point of score |  |
 | feet | Drudge Boots | Quest: The Nightmare Manifests | avail doubtful |
 | finger | Watcher's Signet of Vigilance | Watchers Revered · no rep source found yet | avail doubtful |
 | finger | Tracker's Signet of Vigilance | Watchers Honored · no rep source found yet | avail doubtful |
 | trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |  |
 | trinket | Adaptive Combat Assistant | Pix Xizzix · 125 Reals |  |
-| mainhand | Manual Crowd Pummeler | Crowd Pummeler 9-60, Gnomeregan · 3 charges that never come back · one 30s haste per 180s  |  |
+| mainhand | Hammer of Thundering Hooves | 30g per point of score |  |
 | ranged | Idol of the Ursine Twins | Enchanting 300 craft · Formula: Idol of the Ursine Twins (279300) has no known source | avail doubtful |
 
 ### Max survival (Tauren)
@@ -122,7 +136,7 @@ Chromaggus drives it: -2286 against -1770.
 | neck | Amulet of the Darkmoon | Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), J |  |
 | shoulder | Feralheart Pauldrons | Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver  |  |
 | back | Shifting Cloak | Leatherworking 300, pattern from Knot Thimblejack's Cache, Dire Maul |  |
-| chest | Dawn Armor | On AH ~350g · or Leatherworking craft |  |
+| chest | Dawn Armor | On AH ~350g · or Leatherworking craft · 2g per point of score |  |
 | wrist | Feralheart Wristguards | Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver  |  |
 | hands | Feralheart Grips | Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver  |  |
 | waist | Feralheart Waistguard | Forever's Dungeon Set 2 copy (set 1667) · quest, Dungeon Set 1 pieces + gold, quest giver  |  |
@@ -132,6 +146,6 @@ Chromaggus drives it: -2286 against -1770.
 | finger | Tracker's Signet of Vigilance | Watchers Honored · no rep source found yet | avail doubtful |
 | trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |  |
 | trinket | Darkmoon Card: Heroism | Darkmoon Faire deck · Forever card drops unconfirmed | avail doubtful |
-| mainhand | Unyielding Maul | Tribute run, Dire Maul |  |
+| mainhand | Unyielding Maul | Tribute run, Dire Maul · 5g per point of score |  |
 | ranged | Idol of the Ursine Twins | Enchanting 300 craft · Formula: Idol of the Ursine Twins (279300) has no known source | avail doubtful |
 

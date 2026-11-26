@@ -96,3 +96,15 @@ set meets.
 Warcraft Tavern "Shaman Tanking Progressive Pre-Raid BiS" (Classic Era, undated): Annihilator, Draconian
 Deflector, Helm of Narv, Mark of Tyranny and others. It agrees on Narv for max survival. Its other picks are Classic items, and
 Forever items outrank them in our lists.
+
+## Re-rank on Phase 0 prices (fc39e50)
+
+phase0_check.py flagged open items above four picks. RANK_ONLY on those slots kept every pick, and a swap on the
+bench (3000 iterations, seeds 1 and 2, preset column) clears no flag, so all four stand:
+
+- balanced head, Helm of Narv for Face of The Five Thunders: -0.3, -5.4. The rank misses the 4-piece set proc.
+- max_survival neck, Verek's Collar: -3.9, -37.4. Evil Eye Pendant: +12.0, -38.4.
+- max_survival feet, Flame Walkers for Defiler's Chain Greaves: +8.5, -8.4.
+
+The two seeds differ by about 55 on max survival, so these are within noise and the cheaper fallbacks are near
+equal. Scores vs synthetic are unchanged (list scores 1962.8, 3418.1, -1336.9).

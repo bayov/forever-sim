@@ -1,48 +1,53 @@
-# Rotations pass 79 (2026-11-25, master 0404484fb)
+# Rotations pass 80 (2026-11-25, master 85691655a)
 
-Result: quiet (sim changed, no new finding). Range 5536db4bc..0404484fb (24 commits).
+Result: findings (1 new, low). Range c3bbe33ea..85691655a (21 commits): the wowsims/forever evidence batches (tank
+threat, caster resists and overloads, hunter pet rules, item procs, proc rules) and the 2026-11-25 ruling batch
+(22d2cf952: EV-0088 explosive throws keep the swing timer and stun explosives miss level 63 bosses; EV-0008 extra
+attacks roll Windfury Totem; EV-0081 demon melee crit).
 
 ## Checked
 
 | Check | Result |
 |---|---|
-| `apl_logic_diff.py 5536db4bc 0404484fb` | 0 APL files touched |
-| `tools/dps_report/req/*.json` changed | none |
-| Non-test sim `.go` changed | rage.go + warrior/stances.go (Rage from hits taken: stance modifier, x2 for spells, ticks and specials, b4cab8498); world buffs and Spirit of Zandalar do nothing in a raid instance (3275a60b1, 9701cff08); buff party/raid scope vs client 71091 (5dbc01412); AI / Divine Spirit overwrite their stat's elixir (f1942793d); Armor Shatter and Puncture Armor share the minor armor slot (75dee7458); compsearch duty fillers (not read by the presets) |
-| Regression baseline (68 presets, 3000 it, seed 424242) | refreshed: `ref/rotations/baseline_0404484_3000it_seed424242.tsv` replaces the eceb090 one |
-| Resource check (shared 20k run, `secondsOomAvg`) | no build starves: worst warlock Affliction SB 4.5 s OOM, other warlocks about 3 s, Enhancement 2.5-2.9 s, feral 1.7 s, mages 0.6-1.1 s, all others under 0.4 s |
-| Warrior rage (more Rage from raid hits): Fury Heroic Strike at rage >= 60 (req line 14) vs 50 and 70 | 60 holds, see below |
+| `apl_logic_diff.py c3bbe33ea origin/master` | 0 APL files touched |
+| `tools/dps_report/req/*.json` changed | none (the hunter/feral explosive move landed only in presets.ts and mksettings; filed by consumables-20261125-3 and results-20261125-1) |
+| Non-test sim `.go` changed | 68 files, all EV-* batches above; reached by every class |
+| Open findings landed? | no: rotations-20261122-1 and rotations-20261112-1 stay open |
+| Regression baseline (68 presets, 3000 it, seed 424242) | refreshed: `ref/rotations/baseline_8569165_3000it_seed424242.tsv` replaces the 0404484 one |
+| Resource check (shared 20k run, `secondsOomAvg`) | unchanged: worst warlock Affliction SB 4.5 s, other warlocks 3.1-3.4 s, Enhancement 2.5 s, all fine |
+| EV-0088 swing-timer gates on explosive lines (rogue, feral) | measured below; feral filed as rotations-20261125-1 |
 
-### Baseline moves vs eceb090 (3000 it, seed 424242)
+### Baseline moves vs 0404484 (3000 it, seed 424242)
 
-Mostly the world-buff removal in raids: rogue Combat Swords -11.1%, hunters BM/MM -9.9 to -10.0%, the other physical
-and caster builds down less. Warriors gain +0.4 to +0.8% (Berserker Stance x1.1 and the x2 for spell hits on the raid
-hits' Rage); feral +0.3%. Against the published report (`runs/vs_published.txt`) Enhancement moves -2.2 to -2.6%,
-paladin -1.0 to -1.7%, mage Arcane/Frostfire -1.5 to -1.7%, warriors +0.2 to +0.6%. These are sim mechanic changes,
-not rotation faults.
+Hunters +3.0 to +4.9% (pet white swing takes the hunter's crit, EV-0134); rogues -1.4 to -3.0% (Mutilate -3.0%; weapon
+PPMs and set procs, EV-0144); Fury duty Battle Shout -1.5%; other builds within about 1-2%. Sim mechanic changes, not
+rotation faults.
 
-### Fury Heroic Strike threshold (paired, 20k it, 8 blocks; B-A ± SE)
+### Explosive swing gates after EV-0088 (paired, 20k it, 8 blocks, B-A pooled over seed sets 1e6 and 2e8)
 
-| Variant | Seed set | 120 s | 180 s | 300 s |
+| Build | Variant | 120 s | 180 s | 300 s |
 |---|---|---|---|---|
-| HS >= 50 | 1e6 | -1.91 ±0.31 | -1.34 ±0.54 | -0.78 ±0.44 |
-| HS >= 50 | 2e8 | -0.62 ±0.71 | -0.57 ±0.48 | +0.52 ±0.32 |
-| HS >= 70 | 1e6 | -2.40 ±0.69 | -2.28 ±0.38 | -2.05 ±0.36 |
-| HS >= 70 | 2e8 | -1.01 ±0.68 | -0.89 ±0.41 | -1.91 ±0.70 |
+| rogue__subtlety | Land Mine without the swing gate | +0.47 | +0.44 | +0.41 |
+| rogue__seal-fate-daggers | Land Mine without the swing gate | +0.14 | +0.10 | +0.50 |
+| druid__feral-cat (req with Land Mine) | 260817 -> 4395, energy gate only | +0.49 | +0.58 | -0.01 |
+| druid__feral-cat (req with Land Mine) | 260817 -> 4395, both gates | +0.41 | +0.52 | -0.02 |
+| druid__feral-cat-duty-ff (req with Land Mine) | 260817 -> 4395, energy gate only | +0.62 | +0.52 | -0.04 |
 
-Baseline Fury at 180 s: 1015. Both directions lose; the extra Rage from raid hits doesn't move the threshold. The
-full warrior Heroic Strike / Cleave re-search (open item, ruling 2026-11-17) is still owed to the next warrior search.
+Per-set SEs 0.1-0.3. All under the 1 DPS bar; the feral line is filed for its wrong item id (correctness).
 
 ## Open findings
 
-Unchanged: rotations-20261122-1 (Shock Ret ordering) and rotations-20261112-1 (rogue poison hands) have not landed
-(no APL or request change in range).
+New: rotations-20261125-1 (feral APLs name the Dark Bomb the presets dropped). Unchanged: rotations-20261122-1,
+rotations-20261112-1.
 
 ## Optional
 
-None new.
+- Rogue Land Mine lines (all six rogue APLs): drop the `autoTimeToNext >= autoSwingTime - 0.4s` term and the stale
+  "1 sec cast loses no swing time" note; +0.4 Subtlety, +0.1 Seal Fate Daggers at 180 s (above). Mostly a note fix.
 
 ## Open items
 
-Carried over from passes/rotations.md "Open items and pending rulings"; none other advanced this pass (the Phase 0
-trinket check and Windfury timing remain to do).
+Not done this pass (bounded by time and a loaded machine): the Phase 0 trinket line check, the Windfury main-hand timing
+tests, and rotation re-checks for the new caster rules (Maelstrom Ready! keeping Clearcasting for Enhancement/Elemental
+Chain Lightning, EV-0180; judgements refreshing only on white swings and totem hits for paladins, EV-0117; Revelation
+spent on cast completion, EV-0028). The last three moved builds 1-2% and are worth a fan-out pass.

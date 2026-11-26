@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "c3bbe33eabdd4c64dcbfc9083f69857a0a96cec4"
+  "master": "85691655ab99aa4db0798efeb407de3a02ef5517"
  },
- "last_pass_at": "2026-11-25T08:00:00Z",
- "pass": 17,
+ "last_pass_at": "2026-11-25T18:48:13Z",
+ "pass": 18,
  "result": "quiet",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-25T13:10:47Z",
- "note": "Only standards.md changed: gold line is Phase 0 only (item 1b DPS), warrior Rage taken by stance (21, 24). No tank gear, set, enchant or Tanks row input changed."
+ "checked_at": "2026-11-25T19:23:36Z",
+ "note": "Only standards.md changed (item 11 explosives per EV-0088, item 17 Windfury extra attacks). No tank gear, set, enchant or Tanks row input changed."
 }

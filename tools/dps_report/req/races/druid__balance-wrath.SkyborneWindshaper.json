@@ -1,0 +1,70 @@
+{
+ "gearSet": "level60_phase0_balance_horde",
+ "equipment": {
+  "items": [
+   {
+    "id": 226773,
+    "enchant": 2544
+   },
+   {
+    "id": 19426,
+    "enchant": 1249057
+   },
+   {
+    "id": 226778
+   },
+   {
+    "id": 272411
+   },
+   {
+    "id": 226776,
+    "enchant": 1254966
+   },
+   {
+    "id": 226775,
+    "enchant": 1220624
+   },
+   {
+    "id": 226777,
+    "enchant": 1213626
+   },
+   {
+    "id": 10259,
+    "randomSuffix": 990454
+   },
+   {
+    "id": 252486,
+    "enchant": 2544
+   },
+   {
+    "id": 226774,
+    "enchant": 1254966
+   },
+   {
+    "id": 272406
+   },
+   {
+    "id": 12545
+   },
+   {
+    "id": 10455
+   },
+   {
+    "id": 13968
+   },
+   {
+    "id": 287034,
+    "enchant": 1248805
+   },
+   {
+    "id": 18316,
+    "enchant": 1219579
+   },
+   {
+    "id": 23197
+   }
+  ]
+ },
+ "note": "Horde: wears level60_phase0_balance_horde, the set without the Alliance rewards",
+ "how": "race_gear.py: SkyborneWindshaper is Horde, so it can't wear the Alliance rewards of the preset's level60_phase0_balance. It wears level60_phase0_balance_horde, the same set with those slots re-ranked at a Horde race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim."
+}

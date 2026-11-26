@@ -1,9 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_0404484_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  0404484fb (pass 79), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/0404484fb68f/wowsimcli`). Moves since
-  eceb09019 come mostly from world buffs doing nothing in raids (rogue Combat Swords -11%, hunters -10%); warriors +0.4 to
-  +0.8% from the stance-modified Rage from hits taken.
+- `baseline_8569165_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  85691655a (pass 80), all 68 rows, 3000 it, seed 424242 (CLI `/tmp/audit-cache/cli/85691655ab99/wowsimcli`). Moves since
+  0404484fb come from the wowsims/forever evidence batches (EV-*): hunters +3 to +4.9% (pet white swing takes the
+  hunter's crit, EV-0134), rogues -1.4 to -3.0% (weapon PPMs and set procs, EV-0144), warriors and casters about 1-2%.
 
 ## Not committed (kept locally, re-create as needed)
 

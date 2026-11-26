@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_hunter_mm",
   "apl": "mm",
   "published": {
-    "dps": 1070.33,
-    "source": "verify.py on this request with the Phase 0 gear set (2026-11-24), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1061.39,
+    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
   },
   "verify": {
-    "dps": 1070.33,
-    "stderr": 0.24,
+    "dps": 1061.39,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-24; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Marksmanship with a wolf instead of Lone Wolf. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
   "keyTalents": [
@@ -58,7 +58,7 @@
     "Flank au Poivre",
     "Major Mana Potion",
     "Demonic Rune",
-    "EZ-Thro Dark Bomb"
+    "Dense Dynamite"
   ],
   "caveats": [
     "The wolf costs 32.6 DPS at 180s against the same build without it (1083.1 against 1115.7, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",
@@ -73,12 +73,12 @@
     "Holds back Sniper Shot and the melee weave to save mana. It does 1014.7 DPS at 300s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2 DPS (Savage Rend), but none that fast is known.",
-    "Ranged slot is the Phase 0 list's pick, Ankle Slicers (a 1.8s thrown weapon). The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
+    "Ranged slot is the Phase 0 list's pick, Hyper Deluxe Sniper Rifle Mk XVII (a 2.5s gun). Forever's Auto Shot and hunter shots need a bow, gun or crossbow, so the list has no thrown weapons. The old 2.5s bow against 2.6s gun comparison was for the synthetic gear.",
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (2.8 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing.",
     "Improved Tracking 5/5 counts against the generic boss, unlike creature-type talents such as Beast Slaying: a hunter can track every raid boss type except Mechanical. It is worth 52.8 DPS (4.3%) here, which this build loses against a Mechanical boss."
   ],
-  "notes": "Request: hunter__marksmanship with hunter.options.petType Wolf instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays.",
+  "notes": "Request: hunter__marksmanship with hunter.options.petType Wolf instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the Dense Dynamite stays.",
   "pet": "Wolf",
   "baseBuild": "hunter__marksmanship"
 }

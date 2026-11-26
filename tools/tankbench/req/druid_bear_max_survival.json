@@ -232,7 +232,7 @@
                               "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "6s"
+                                  "val": "10s"
                                 }
                               }
                             }
@@ -241,7 +241,7 @@
                       }
                     }
                   },
-                  "notes": "Lacerate to 5 stacks, and again before they drop (under 6 sec left)."
+                  "notes": "Lacerate to 5 stacks, and again before they drop (under 10 sec left)."
                 },
                 {
                   "action": {
