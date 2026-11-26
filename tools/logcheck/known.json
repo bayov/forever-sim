@@ -188,5 +188,276 @@
     "kind": "procs",
     "ability": "Weakening Disease (18633) ticks",
     "why": "Ticks per 100 swings depend on how long mobs live, not on the proc rate. Dungeon trash dies inside the disease's 14 sec, and the sim's mob lives all fight. The proc rate itself (22% of landed hits, Nov 13) is in the sim as 3.9 PPM."
+  },
+  {
+    "kind": "partial",
+    "ability": "Fiery Weapon (13897)",
+    "why": "Mobs with real fire resistance take partial resists, and the sim's mob has none (Fiery Weapon finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "immune",
+    "ability": "Fiery Weapon (13897)",
+    "why": "Fire-immune mobs, and the sim's mob never is (Fiery Weapon finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "raw",
+    "ability": "Magma Totem (10581)",
+    "levels": [
+      56,
+      57
+    ],
+    "why": "Mindless Undead in Stratholme (levels 56 and 57) take about 0.67x Fire damage, 60 per Magma Totem hit vs the sim's 89.5 and 195 to 208 per Fire Nova vs 306 to 311. A mob trait, not a sim error. Finding closed 2026-11-26."
+  },
+  {
+    "kind": "raw",
+    "ability": "Fire Nova (408428)",
+    "levels": [
+      56,
+      57
+    ],
+    "why": "Mindless Undead in Stratholme (levels 56 and 57) take about 0.67x Fire damage, 60 per Magma Totem hit vs the sim's 89.5 and 195 to 208 per Fire Nova vs 306 to 311. A mob trait, not a sim error. Finding closed 2026-11-26."
+  },
+  {
+    "kind": "immune",
+    "ability": "Attack (10435)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Mobs immune to the school, and the sim's mob never is (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "immune",
+    "ability": "Fire Nova (408427)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Mobs immune to the school, and the sim's mob never is (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "immune",
+    "ability": "Lightning Shield (26370)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Mobs immune to the school, and the sim's mob never is (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "immune",
+    "ability": "Lightning Bolt (15207)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Mobs immune to the school, and the sim's mob never is (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Fire Nova (408428)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Magma Totem (10581)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Lightning Shield (26370)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Lightning Bolt (15207)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Lightning Bolt (15208)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Flame Shock (10448)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Flame Shock (10448) ticks",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "partial",
+    "ability": "Attack (10436)",
+    "levels": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "why": "Fire or Nature resistant mobs give partial resists, and the sim's mob has none (levels 48 to 59 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "procs",
+    "ability": "Attack (10436)",
+    "why": "Searing Totem bolts per 100 white swings depends on the rotation, not a mechanic: the sim's player casts and barely melees while we melee all the time (Nov 15 and 16 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "never",
+    "ability": "Smokey's Lighter (17283)",
+    "why": "Our on-use trinket, which the sim's rotation doesn't use (Nov 15 and 16 finding, closed 2026-11-26)."
+  },
+  {
+    "kind": "never",
+    "ability": "Windfury Totem (10610)",
+    "why": "Another shaman's Windfury Totem in our party, which the sim doesn't run (Nov 15 and 16 finding, closed 2026-11-26)."
   }
 ]

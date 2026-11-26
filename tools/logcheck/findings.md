@@ -38,15 +38,13 @@ sections 2 and 6 have the format).
 - **Nov 26 update**: `112526_195841` `22:00:52` (Alterac Valley NPCs): Flame Shock ticks 96.7 vs 93.5 at level 58 (6 hits, 1.034) and 98.3 vs 93.1 at 61 (6 hits, 1.056), Magma Totem 91 vs 90.5 at 58 and 60 (22 hits, 1.010). Same curve as before. No level 62 spell hits.
 - **Status**: open, first seen 2026-11-16, last updated 2026-11-26.
 
-### Fiery Weapon partial resists and rounding
+### Fiery Weapon rounding
 
-- **Flag**: `Fiery Weapon (13897): partial` (10 windows), `amount` (11 windows plus 7 all-levels), `immune` 1 of 31, `absorb` 1 of 5, `other` 3 of 7 (NEW).
-- **Windows**: partial on fire-resistant mobs, like 8 of 8 at level 57 and 5 of 5 at 58 in `111526_162618 20:34:12-20:41:06`, 10 of 10 at level 60 in `20:47:39-20:52:21`, and 2 to 4 of 6 to 14 in `111626_123605 14:14` to `16:09`. `amount` rounds up on 1 to 4 of 4 to 13 hits, mostly at level 61 (the log's hit is 40.0 to 40.7 vs the sim's flat 40.0).
-- **What we think**: the partials are mobs with real fire resistance, the same cause as the Searing Totem and Flame Shock partials in `known.json`. The rounding is the 16 spell power the sim lacks (see the sheet finding) or the level effect above, not a separate mechanic.
-- **Next step**: add `Fiery Weapon (13897): partial` to `known.json` at the next `/log-audit` if the user agrees, then recheck `amount` after the sheet gap is found.
-- **Nov 18 update**: `111726_171435` has `Fiery Weapon (13897): immune` in 17 flag lines (4 of 9 at 52, 6 of 8 at 54, 11 of 11 at 54 in `17:56:40`, 5 of 8 at level 50), on the same fire-immune mobs as the known `Magma Totem (10581): immune` and `Fire Nova (408428): immune` rows. Same cause, so add it to `known.json` with them. `amount` (Magma Totem rounds up on 46 of 59 and 34 of 41 hits, the log's hit 90.7 to 90.9 vs 90.2) is the spell power gap.
-- **Nov 22 update**: `112226_113558` `11:44` to `11:52` (levels 54 and 55): `Fiery Weapon (13897): partial` 4 of 14, 15 of 16 and 4 of 6, with `Magma Totem (10581): partial` 23 of 50, 47 of 57, `Fire Nova (408428): partial` 5 of 13, 13 of 14 in the same windows (fire-resistant mobs). `Fiery Weapon (13897): immune` 3 of 6, 6 of 6 and 12 of 12 in `112126_201216` `20:17` to `20:29` (levels 52 to 56, fire-immune mobs), and `Magma Totem (10581): amount` rounds up on 13 to 20 of 14 to 23 hits at 52 to 58 (the log's hit 90.6 to 90.99 vs the sim's 90.19). Same causes as above.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-22.
+- **Flag**: `Fiery Weapon (13897): amount` (11 windows plus 7 all-levels), `absorb` 1 of 5, `other` 3 of 7.
+- **Windows**: `amount` rounds up on 1 to 4 of 4 to 13 hits, mostly at level 61 (the log's hit is 40.0 to 40.7 vs the sim's flat 40.0). Magma Totem rounds up the same way (the log's hit 90.6 to 90.99 vs the sim's 90.19, 46 of 59 and 34 of 41 hits).
+- **What we think**: the 16 spell power the sim lacks (see the sheet finding) or the level effect above, not a separate mechanic.
+- **Next step**: recheck `amount` after the sheet gap is found.
+- **Status**: open, first seen 2026-11-16, last updated 2026-11-26. The partial and immune flags are in `known.json` (see Done).
 
 ### Shadow Oil's Shadow Bolt hits about 11 harder than the sim
 
@@ -118,22 +116,6 @@ sections 2 and 6 have the format).
 - **Nov 25 update**: `112326_183423`, `112426_110702` and `112426_172127`: 16 of 34 windows run say "the character changed" (Jewel of the Guard Captain, Blackhand's Breadth, Chained Essence of Eranikus, Seal of the Dawn, Barov Peasant Caller trinket swaps).
 - **Status**: open, first seen 2026-11-13, updated 2026-11-25.
 
-### Mindless Undead take a third less Fire damage
-
-- **Flag**: `Magma Totem (10581): raw` and `Fire Nova (408428): raw`, mob levels 56 and 57 (not NEW, the rows existed).
-- **Windows**: `111526_162618 19:48:25-19:50:58` (Stratholme): Magma Totem 60.0 on every hit (30 hits) vs the sim's 89.5, Fire Nova 208.4 and 207.2 vs 306.4 (30 hits). `22:25:53-22:28:45`: Magma Totem 63.6 and 65.7 (32 hits, 62 or 63 on the Mindless Undead and 90 on level 59 to 61 mobs next to them), Fire Nova 195.1 and 194.4 vs 309 to 311. Ramstein the Gorger, Venom Belcher and Bile Spewer in the same fights take the sim's 90 and 313.
-- **What we think**: a mob trait, not our character: Mindless Undead (level 56 and 57, Stratholme) take about 0.67x Fire damage, like the odd per mob rows in "Dungeon mobs take about 2 less". It is either a fire resistance that the log counts in raw or a damage taken modifier on the mob. Not a sim error.
-- **Next step**: at the next `/log-audit` add a `known.json` entry for these two abilities with this reason, or have logcheck drop Mindless Undead from the fight. Check Flame Shock and Searing Totem on them too.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-16.
-
-### Melee and Stormstrike a few percent high in the Nov 10 morning
-
-- **Flag**: `Stormstrike (17364): raw` and `Melee: raw`, mob levels 43 to 49.
-- **Windows**: `WoWCombatLog-111026_075640.txt` 08:26 to 12:32. After the Enchanted Lute fix (see Done) the sheet matches, but Stormstrike still runs +2% to +4% in the log in some windows (09:27: 660.8 vs 638.1 in 19 hits, 652.2 vs 633.2 in 17) and Melee up to +4% (12:20: 441.4 vs 421.2 in 9).
-- **What we think**: the Lute (and its 9 Strength and Agility) may have been up during fights where logcheck's Camp Benefits stretches don't reach, or another camp item came and went. Smaller than before, and few hits.
-- **Next step**: watch new logs, now with the elixir and Lute fixes. Dig only if it recurs.
-- **Status**: open, first seen 2026-11-10, last updated 2026-11-11.
-
 ### BayovCore cuts the gear list short
 
 - **Flag**: none now (logcheck works around it).
@@ -151,14 +133,6 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-26.
 
 ## Watching
-
-### Searing Totem crits high at level 37 once
-
-- **Flag**: `Attack (6352): crit` (NEW), mob level 37.
-- **Windows**: `WoWCombatLog-110826_085019.txt 18:22:24-18:57:33`: 26 of 133 (19.5%) vs the sim's 9.7%.
-- **What we think**: noise. Across all of Nov 8 and 9 our Searing Totem bolts crit 290 of 2623 (11.1%) and rank 3 (6351) 76 of 663 (11.5%). The sim gives 9.7% to 10.9%, which is about 1.8 standard deviations from 11.1%.
-- **Next step**: none unless it shows again.
-- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
 
 ### Flametongue Attack rounds up at level 29
 
@@ -179,28 +153,6 @@ sections 2 and 6 have the format).
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
-### Immunes, partial resists and odd mobs at levels 48 to 59
-
-- **Flag**: `immune` and `partial` on Lightning Bolt (15207), Fire Nova (408427, 408428), Magma Totem (10580), Searing Totem (10435), Lightning Shield (26370), Flame Shock (10448) ticks, Stormstrike, Melee. `never` on Cloud of Chained Essence (1300240) ticks and M73 Frag Grenade (13808). `procs` on Searing Totem (10435), `amount` on Lightning Shield (26370) and Magma Totem, `miss` on Earth Shock (10413) (3 of 8), `absorb` on Magma Totem.
-- **Windows**: `111126_095013` Nov 11 10:37 to Nov 12 07:41. Most are the same causes as the known entries: Nature-immune mobs (Lightning Bolt 5 of 5 at level 55 in `01:26-02:02`, Magma Totem 8 of 39 at level 54 in `07:20-07:22`), resistant mobs (Lightning Bolt partial 12 of 20 at 50 in `00:26-00:55`, Flametongue Attack 24 of 65 at level 56 in `07:04-07:17`), and the Searing Totem rank 10435 rotation gap, the same as ranks 6350 to 6352. Cloud of Chained Essence and the grenade are from mobs or others, not us.
-- **What we think**: noise or the same causes as the `known.json` entries, which don't have these ranks yet. One window each for `miss` and `amount`.
-- **Nov 13 update**: the same causes in the new windows. `Fire Nova (408428)` partial in 14 windows, immune in 6 and raw in 8 (`251 to 266` vs the sim's 258 to 259, both ways), `Magma Totem (10581)` partial 5 and immune 2, `Lightning Bolt (15208)` immune 2, partial 2, other 1 (all `111226_132121 16:22-16:40`), Lightning Shield (26363) immune, partial and never/procs 1 each, Earth Shock (10413) immune and absorb 1, `Attack (10435)` partial 10 and absorb 3, `Flame Shock (10448) ticks` absorb and partial 1 each. `Cloud of Chained Essence (1300240)` never (14 windows) is a mob's. The `Attack (10435): procs` flag (84 windows) is the known rotation gap, and `Earthbind (3600)` at `11:51` is known.
-- **Next step**: at the next `/log-audit` add `Attack (10435): procs` and the immune and partial rows above to `known.json` with the same reasons, if the user agrees.
-- **Status**: open, first seen 2026-11-12, updated 2026-11-13.
-
-### Nov 15 and 16 one-off flags
-
-- **Flag**: `Stormstrike (17364): dodge` 7 of 10 (NEW, level 60), `Attack (10436): immune` 1 of 19 (NEW, level 58), `Flame Shock (10448): partial` 2 of 6, 2 of 7 and 5 of 5 (NEW, levels 57 and 60), `Cloud of Chained Essence (1300240) ticks: absorb` 1 of 6, `Windfury Totem (10610): never` and `procs` (another shaman's totem in 12 and 6 windows).
-- **Windows**: `111526_162618 20:47:39-20:52:21` (dodge, Flame Shock partial), `20:58:37-21:06:15` (immune), `22:13:51-22:16:13` (absorb).
-- **What we think**: noise. 10 Stormstrikes in one window, one immune hit, and partials on fire-resistant mobs of the same window as the Fiery Weapon partials. The Windfury Totem rows are a party member's totem, which the sim doesn't run.
-- **Nov 17 update**: `111626_123605` Nov 16 18:32 to 23:04, same kinds: `Windfury Totem (10610): never` in 8 windows and `procs` in 5 (24 to 56 per 100 white swings, a party member's totem). `Smokey's Lighter (17283): never` in 4 windows (`18:39`, `22:39`, `22:50`, `22:51`, our on-use trinket, which the sim doesn't use). `Attack (10436): procs` in 4 windows (`18:39:24` 66.7 vs 195.4, `22:21:59` 900 vs 104.8, `22:51:58` 150 vs 826.7 and 80 vs 392.4), the Searing Totem rotation gap of `known.json`'s other ranks. `Magma Totem (10581): partial` 6 of 23 and 2 of 9 and `Fiery Weapon (13897): partial` 4 of 7 in `22:25:09` (resistant mobs). `Cloud of Chained Essence (1300240) ticks: raw` 280.0 vs 140 in 16 hits at `22:23:55`, exactly double, so two clouds at once. Nothing new.
-- **Nov 18 update**: `111726_171435` Nov 17 (61 windows): `Windfury Totem (10610): never` in 19 windows and `procs` in 13 (22.7 to 46.2 per 100 white swings, avg 32), `Smokey's Lighter (17283): never` in 7, `Attack (10436): procs` in 5 (20.8 to 57.4 vs the sim's 105 to 151, one 350.0 vs 49.7), all the same causes (a party member's totem, our on-use trinket, the totem rotation gap). `Melee: miss` 3 of 31 and 3 of 25 at level 60 (the sim gives 0) is noise. All kinds were seen before (no NEW flags).
-- **Next step**: none unless they come back. At the next `/log-audit` add `Attack (10436): procs` and `Smokey's Lighter (17283): never` to `known.json`.
-- **Nov 20 update**: `111926_175614` and `112026_111427` (36 windows): `Windfury Totem (10610): never` in many windows (a party member's totem, 24 windows in the ledger), `Smokey's Lighter (17283): never`, `Attack (10436): procs` (17.0 to 17.1 per 100 white swings vs the sim's 81 to 95 at levels 59 and 60 in `22:13:58`), and partial resists on fire-resistant mobs (`Magma Totem`, `Fire Nova`, `Fiery Weapon`, `Flame Shock` ticks, `Attack (10436)`), plus `Fiery Weapon (13897): immune` 3 of 27 at level 60. Same causes as above, no NEW flags beyond Grounded Electroshock and Earth Shock (see their findings).
-- **Nov 22 update**: `112126_201216` and `112226_113558` (45 windows run): `Windfury Totem (10610): never` in 18 windows and `procs` in 11 (16.7 to 41.7 per 100 white swings, a party member's totem), `Attack (10436): procs` in 5 (17.9 to 66.7 vs the sim's 65 to 352, the totem rotation gap), `Fiery Weapon (13897): procs` 92 to 125 per 100 vs the sim's 14 to 50 in 3 windows (`11:56`, `12:04`, `12:08`, level 55 and 56, the rotation melees more than the sim), `Windfury Weapon (439440): procs` 85.7 and 150 per 100 in 2 (`11:53`, `12:04`, same cause), `Melee: miss` 2 of 11 and 8 of 42 (level 50 and 59, noise), `Melee: glance` 1 of 11, `Stormstrike (17364): miss` 1 of 13, `Windfury Weapon (439440): miss` 1 of 20, `Cloud of Chained Essence (1300240) ticks: absorb` 1 of 6. All kinds were seen before (no NEW flags). `Smokey's Lighter (17283): never` didn't show.
-- **Nov 25 update**: `112326_183423`, `112426_110702` and `112426_172127` (34 windows run): `Windfury Totem (10610): never` in 5 windows and `procs` in 2 (30.0 and 33.3 per 100 white swings, a party member's totem), `Earthbind (3600): never` and `procs` in 2 (known), `Attack (10436): procs` in 1, `Flame Shock (10448) ticks: never` in 1.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-25.
-
 ### Frost Shock raw and one Melee miss at level 58 and 59
 
 - **Flag**: `Frost Shock (10473): raw` (level 58), `Melee: miss` (level 59).
@@ -210,6 +162,30 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Searing Totem crits high at level 37 once
+
+26 of 133 crits (19.5%) at level 37 in `110826_085019` was noise: all of Nov 8 and 9 gave 11.1%. Closed 2026-11-26, later logs fit.
+
+### Melee and Stormstrike a few percent high in the Nov 10 morning
+
+Stormstrike ran +2% to +4% and Melee up to +4% in `111026_075640` 08:26 to 12:32 after the Lute fix, in few hits. Closed 2026-11-26, later logs fit.
+
+### Fiery Weapon partial resists and immunes
+
+`Fiery Weapon (13897): partial` and `immune` were fire-resistant and fire-immune mobs, the same as the Magma Totem and Fire Nova rows. Now in `known.json` (`partial` and `immune`, `Fiery Weapon (13897)`). Closed 2026-11-26. The rounding part stays open in "Fiery Weapon rounding".
+
+### Mindless Undead take a third less Fire damage
+
+Mindless Undead in Stratholme (levels 56 and 57) take about 0.67x Fire damage, a mob trait. Now in `known.json` (`raw`, `Magma Totem (10581)` and `Fire Nova (408428)`, levels 56 and 57). Closed 2026-11-26.
+
+### Immunes, partial resists and odd mobs at levels 48 to 59
+
+Nature-immune and resistant mobs, the same causes as the older entries. Now in `known.json`: `immune` for `Attack (10435)`, `Fire Nova (408427)`, `Lightning Shield (26370)`, `Lightning Bolt (15207)`, and `partial` for `Fire Nova (408428)`, `Magma Totem (10581)`, `Lightning Shield (26370)`, `Lightning Bolt (15207)` and `(15208)`, `Flame Shock (10448)` and its ticks, `Attack (10436)`, all limited to mob levels 48 to 59 so resists at 60 and above still flag. `Attack (10435): procs` was already known. Closed 2026-11-26.
+
+### Nov 15 and 16 one-off flags
+
+Noise, a party member's totem, our trinket and the totem rotation gap. Now in `known.json`: `procs` for `Attack (10436)`, `never` for `Smokey's Lighter (17283)` and `Windfury Totem (10610)`. We kept Windfury Totem procs and the Cloud of Chained Essence ticks out, since our own totem's proc rate and the cloud's level drift ("Fixed-damage hits move with the mob's level around 60") still need the flags. Closed 2026-11-26.
 
 ### Sheet read with a fishing pole equipped
 
