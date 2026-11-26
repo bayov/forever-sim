@@ -407,6 +407,10 @@ message LevelingPlanSettings {
 	// keeps every weapon and shield it finds and wears the best set of the level's style, so a
 	// switch finds the weapons we came across before it.
 	repeated LevelingWeaponStyleRange weapon_styles = 13;
+	// A build with stat weights of its own, like "Fury Prot". Each style then judges items by the
+	// spec's "<style's weights group> (<name>)" presets when there are any, and by the style's own
+	// group otherwise. Empty takes the style's group.
+	string weights_build = 14;
 }
 
 // What we hold in our hands at a level.

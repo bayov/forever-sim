@@ -302,7 +302,7 @@ export class LevelingGearSection {
 			// change the gear.
 			const weaponsKey = () => {
 				const plan = this.player.getLevelingPlan();
-				return JSON.stringify([plan.oneHandAndShield, plan.weaponStyles]);
+				return JSON.stringify([plan.oneHandAndShield, plan.weaponStyles, plan.weightsBuild]);
 			};
 			let weapons = weaponsKey();
 			this.player.levelingPlanChangeEmitter.on(() => {
@@ -337,13 +337,17 @@ export class LevelingGearSection {
 	// They're the "Leveling Gear Plan" presets, measured on the plan's own gear, or the "Leveling
 	// Gear Plan Shield" ones when we level with a shield. A plan with weapon styles takes the
 	// presets of the style (STYLE_WEIGHTS_GROUP), or the "Leveling Gear Plan" ones for a style that
-	// has none. A spec without any falls back to its "Leveling" presets.
+	// has none. A plan with a weights build takes the style's presets of that build first, like
+	// "Leveling Gear Plan Shield (Fury Prot)". A spec without any falls back to its "Leveling" presets.
 	weightPresets(style = LevelingWeaponStyle.LevelingWeaponStyleFree): Array<{ level: number; weights: Stats }> {
 		const presets = this.simUI.individualConfig.presets.epWeights ?? [];
 		const plan = this.player.getLevelingPlan();
 		const shield = plan.oneHandAndShield && !plan.weaponStyles.length;
 		const ofGroup = (group: string) => presets.filter(preset => preset.group == group);
-		let planPresets = shield ? this.shieldWeightPresets() : ofGroup(STYLE_WEIGHTS_GROUP[style]);
+		const ofBuild = (group: string) => (plan.weightsBuild && ofGroup(`${group} (${plan.weightsBuild})`)) || [];
+		const styleGroup = shield ? 'Leveling Gear Plan Shield' : STYLE_WEIGHTS_GROUP[style];
+		let planPresets = ofBuild(styleGroup);
+		if (!planPresets.length) planPresets = shield ? this.shieldWeightPresets() : ofGroup(styleGroup);
 		if (!planPresets.length && !shield) planPresets = ofGroup('Leveling Gear Plan');
 		return (planPresets.length ? planPresets : ofGroup('Leveling'))
 			.map(preset => ({ level: Number(/Level (\d+)/.exec(preset.name)?.[1] ?? 60), weights: preset.epWeights }))

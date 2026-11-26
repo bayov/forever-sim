@@ -432,7 +432,8 @@ The search, the training schedule and the two commands below take a request the 
 short config file that stands for one. `tools/levelingplan/configs` has three undead warriors
 (arms with a two-hander, fury with dual wield from 20, protection with a shield). Their talents
 and rotations are only a place to start from. `undead_warrior_leveling_1_60.json` is our finished
-warrior plan (docs/leveling_warrior.md, Leveling 1-60).
+warrior plan, and the other `undead_warrior_leveling_*.json` are the builds we compared it with
+(docs/leveling_warrior.md, Leveling 1-60).
 
     go run --tags=with_db ./tools/levelingplan -make tools/levelingplan/configs/undead_warrior_prot_shield.json -out request.json
 

@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -64,6 +65,33 @@ func TestExampleConfigs(t *testing.T) {
 		}
 		if _, err := readRequest(data); err != nil {
 			t.Errorf("%s: %v", name, err)
+		}
+	}
+}
+
+// TestWarriorLevelingConfigs: our warrior plan and the builds we compared it with (the
+// "Leveling: ..." presets of ui/tank_warrior) make whole requests from the repo's files. Their
+// weapon styles are the build's, and only Fury Prot judges shields by its own weights.
+func TestWarriorLevelingConfigs(t *testing.T) {
+	shieldWeights := func(req *proto.LevelingPlanSearchRequest) []float64 {
+		for _, w := range req.GearWeights {
+			if w.Style == proto.LevelingWeaponStyle_LevelingWeaponStyleOneHandShield {
+				return w.Weights.Stats
+			}
+		}
+		return nil
+	}
+	prot := shieldWeights(exampleRequest(t, "undead_warrior_leveling_prot"))
+	for name, styles := range map[string]int{"1_60": 2, "prot": 1, "fury_prot": 1, "arms": 1, "dual_wield": 1, "arms_prot_dw": 3} {
+		req := exampleRequest(t, "undead_warrior_leveling_"+name)
+		if n := len(req.Plan.WeaponStyles); n != styles {
+			t.Errorf("%s: %d weapon styles, want %d", name, n, styles)
+		}
+		if req.Plan.FirstTalentLevel != 5 || len(req.Plan.Rotations) < 10 || req.Base.Encounter.Leveling.RecoveryFromLevel != 20 {
+			t.Errorf("%s: first talent at %d, %d rotations, leveling %v", name, req.Plan.FirstTalentLevel, len(req.Plan.Rotations), req.Base.Encounter.Leveling)
+		}
+		if same := slices.Equal(shieldWeights(req), prot); same == (name == "fury_prot") {
+			t.Errorf("%s: shield weights the same as Prot's: %v", name, same)
 		}
 	}
 }

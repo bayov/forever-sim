@@ -36,6 +36,11 @@ import { TankWarrior_Options as TankWarriorOptions, WarriorShout, WarriorStance 
 import APLNoReckJSON from './apls/dps_no_reck.apl.json';
 import APLReckJSON from './apls/dps_reck.apl.json';
 import LevelingPlanJSON from './apls/leveling_plan.json';
+import LevelingPlanArmsJSON from './apls/leveling_plan_arms.json';
+import LevelingPlanArmsProtDualWieldJSON from './apls/leveling_plan_arms_prot_dw.json';
+import LevelingPlanDualWieldJSON from './apls/leveling_plan_dual_wield.json';
+import LevelingPlanFuryProtJSON from './apls/leveling_plan_fury_prot.json';
+import LevelingPlanProtJSON from './apls/leveling_plan_prot.json';
 import Level60BalancedAPLJSON from './apls/level60_balanced.apl.json';
 import Level60MaxSurvivalAPLJSON from './apls/level60_max_survival.apl.json';
 import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
@@ -48,6 +53,7 @@ import P0BISSwordBoardGear from './gear_sets/p0.bis_sword_board.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
 import LevelingWeightsDualWieldJSON from './leveling_weights_dual_wield.json';
 import LevelingWeightsShieldJSON from './leveling_weights_shield.json';
+import LevelingWeightsShieldFuryProtJSON from './leveling_weights_shield_fury_prot.json';
 import LevelingWeightsTwoHandJSON from './leveling_weights_two_hand.json';
 import LevelingRouteJSON from '../warrior/leveling_route.json';
 
@@ -393,7 +399,16 @@ export const EPLevelingGearPlanShield = levelingGearWeights(
 	'Protection warrior with a one-hander and shield',
 );
 
-export const EPPresets = [...EPLevelingGearPlanTwoHand, ...EPLevelingGearPlanDualWield, ...EPLevelingGearPlanShield];
+// The shield weights measured on the Fury Prot build, which its plan takes in place of the ones
+// above (LevelingPlanSettings.weights_build).
+export const EPLevelingGearPlanShieldFuryProt = levelingGearWeights(
+	LevelingWeightsShieldFuryProtJSON,
+	'Shield (Fury Prot)',
+	'Leveling Gear Plan Shield (Fury Prot)',
+	'Fury Prot warrior with a one-hander and shield',
+);
+
+export const EPPresets = [...EPLevelingGearPlanTwoHand, ...EPLevelingGearPlanDualWield, ...EPLevelingGearPlanShield, ...EPLevelingGearPlanShieldFuryProt];
 
 // The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 1 to 60, with
 // Talented's first talent at 5 (docs/leveling_warrior.md, Leveling 1-60). Arms with a two-hander
@@ -427,11 +442,56 @@ export const EncounterLevelingPlan = PresetUtils.makePresetEncounter(
 	}),
 	{ group: 'Leveling', healingModel: HealingModel.create({}) },
 );
-export const PresetBuildLeveling1to60 = PresetUtils.makePresetBuild('Leveling 1-60', {
-	group: 'Leveling',
-	tooltip: 'The Leveling mode with our 1 to 60 plan: an Undead grinding alone, Arms with a two-hander, then Gore Drinker with two weapons from 44.',
-	encounter: EncounterLevelingPlan,
-	race: Race.RaceUndead,
-	options: TankWarriorOptions.create({ queueDelay: 250, startingRage: 0, shout: WarriorShout.WarriorShoutBattle, stance: WarriorStance.WarriorStanceBattle }),
-	levelingPlan: DefaultLevelingPlan,
+const levelingOptions = TankWarriorOptions.create({
+	queueDelay: 250,
+	startingRage: 0,
+	shout: WarriorShout.WarriorShoutBattle,
+	stance: WarriorStance.WarriorStanceBattle,
 });
+const makeLevelingBuild = (name: string, tooltip: string, levelingPlan: LevelingPlanSettings) =>
+	PresetUtils.makePresetBuild(name, {
+		group: 'Leveling',
+		tooltip,
+		encounter: EncounterLevelingPlan,
+		race: Race.RaceUndead,
+		options: levelingOptions,
+		levelingPlan,
+	});
+
+// The hours are 1 to 60 with Recovery from 20, 8 gear seeds and 400 sessions a level on master of
+// 2026-11-26 (docs/leveling_warrior.md, Leveling 1-60). They compare builds, not real time.
+export const PresetBuildLeveling1to60 = makeLevelingBuild(
+	'Leveling: Arms then DW',
+	'Our 1 to 60 plan: Arms with a two-hander, then Gore Drinker with two weapons from 44. Sim: 99.5h, 21 deaths.',
+	DefaultLevelingPlan,
+);
+
+// The other builds we compared it with. Their rotations are hand-tuned for each build, without the
+// talent and rotation search the main plan had. tools/levelingplan/configs/undead_warrior_leveling_*.json
+// make the same plans for the command line.
+export const PresetBuildLevelingProt = makeLevelingBuild(
+	'Leveling: Prot',
+	'Protection with a one-hander and shield all the way. Sim: 103.4h, 24 deaths.',
+	LevelingPlanSettings.fromJson(LevelingPlanProtJSON as any),
+);
+// A well-known endgame build (4/31/16), not one people level with.
+export const PresetBuildLevelingFuryProt = makeLevelingBuild(
+	'Leveling: Fury Prot',
+	'The endgame Fury Prot build (4/31/16) with a shield from level 5. Sim: 112.7h, 30 deaths.',
+	LevelingPlanSettings.create({ ...LevelingPlanSettings.fromJson(LevelingPlanFuryProtJSON as any), weightsBuild: 'Fury Prot' }),
+);
+export const PresetBuildLevelingArms = makeLevelingBuild(
+	'Leveling: Arms',
+	'Arms with a two-hander all the way. Sim: 103.0h, 11 deaths.',
+	LevelingPlanSettings.fromJson(LevelingPlanArmsJSON as any),
+);
+export const PresetBuildLevelingDualWield = makeLevelingBuild(
+	'Leveling: Dual Wield',
+	'Gore Drinker Fury with two weapons all the way. Sim: 102.5h, 10 deaths.',
+	LevelingPlanSettings.fromJson(LevelingPlanDualWieldJSON as any),
+);
+export const PresetBuildLevelingArmsProtDualWield = makeLevelingBuild(
+	'Leveling: Arms, Prot, DW',
+	'Arms with a two-hander, Protection with a shield at 30, Gore Drinker with two weapons at 40. Sim: 101.2h, 20 deaths.',
+	LevelingPlanSettings.fromJson(LevelingPlanArmsProtDualWieldJSON as any),
+);

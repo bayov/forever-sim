@@ -118,10 +118,16 @@ level 1 and 89 at level 2, as our logs show.
 
 ## Leveling 1-60
 
-Our plan for an Undead warrior is the "Leveling 1-60" build of the Protection Warrior sim
-(`ui/tank_warrior`, since every leveling session plays that spec). The config
+Our plan for an Undead warrior is the "Leveling: Arms then DW" build of the Protection Warrior
+sim (`ui/tank_warrior`, since every leveling session plays that spec). The config
 `tools/levelingplan/configs/undead_warrior_leveling_1_60.json` makes the same request for
 `tools/levelingplan`. Measured 2026-11-26.
+
+The builds we compared it with are presets next to it: "Leveling: Arms", "Leveling: Dual
+Wield", "Leveling: Arms, Prot, DW", "Leveling: Prot" and "Leveling: Fury Prot". Their configs are
+`undead_warrior_leveling_<build>.json` in the same folder. Their rotations are hand-tuned for each
+build, without the talent and rotation search. The Fury Prot plan judges shield gear by its own
+weights ("Leveling Gear Plan Shield (Fury Prot)"), which the plan's `weights_build` picks.
 
 What every number below assumes: solo grinding, mobs 1 level below us in a camp, pulls of up to 12,
 1 point of Thrill of Adventure, Talented (the first talent at 5), the leveling gear plan's gear
@@ -155,16 +161,20 @@ Recovery from 20 (21 deaths), 102.3h without.
 |---|---|---|---|---|---|---|
 | Hours, with Recovery | 1.9 | 7.7 | 11.6 | 16.5 | 27.7 | 34.2 |
 
-The other plans we tried, with 6 gear seeds and 300 sessions, before the rotation search:
+Every build's preset, on the same 8 gear seeds and 400 sessions a level, with Recovery from 20.
+Only the main plan had the talent and rotation search. The others have hand-tuned rotations.
 
-| Plan | With Recovery | Without |
-|---|---|---|
-| Arms, then dual wield at 42, 44, 46 or 48 | 100.5 to 100.9 | 103.9 to 104.5 |
-| Arms, Protection with a shield at 30 to 39, dual wield from 40 | 101.0 | 104.5 |
-| Arms all the way | 102.7 | 106.6 |
-| Gore Drinker dual wield all the way | 102.7 | 105.4 |
-| Protection all the way | 103.7 | 107.4 |
-| Fury Protection 4/31/16 with a shield from 5 | 112.3 | 115.1 |
+| Preset | Build | Hours | Deaths |
+|---|---|---|---|
+| Leveling: Arms then DW | Arms with a two-hander, Gore Drinker dual wield from 44 | 99.5 | 21 |
+| Leveling: Arms, Prot, DW | Arms, Protection with a shield at 30, dual wield at 40 | 101.2 | 20 |
+| Leveling: Dual Wield | Gore Drinker dual wield all the way | 102.5 | 10 |
+| Leveling: Arms | Arms with a two-hander all the way | 103.0 | 11 |
+| Leveling: Prot | Protection with a shield all the way | 103.4 | 24 |
+| Leveling: Fury Prot | Fury Protection 4/31/16 with a shield from 5 | 112.7 | 30 |
+
+Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer.
+Earlier runs without Recovery took 3 to 4h longer on every build.
 
 Fury Protection is a known endgame build, not one people level with.
 
