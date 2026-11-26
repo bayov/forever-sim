@@ -9,7 +9,7 @@ slots over the line re-ranked. Group notes: `phase0_rerank_<group>.md`.
 - Arcane: staff enchant Spellblasting -> Revelation. 830.65 -> 834.05
 - Fire, Frost, Frostfire, Demonology, Shadow, Smite, Beast Mastery, Marksmanship, Fury 2H: no pick change
 - Affliction: main hand enchant Mighty Intellect -> Revelation. 959.6 -> 962.5, Shadow Bolt Affliction 793.4 -> 820.5
-- Destruction: trinket Weakness Analyzer -> Eye of the Beast. 868.2 -> 868.0, Fire Destruction 825.5 -> 828.9
+- Destruction: trinket Weakness Analyzer -> Eye of the Beast. 868.2 -> 868.0, Fire Destruction (same set) 828.9 -> 825.5
 - Balance: trinket Chained Essence -> Talisman of Ascendance, off hand Obsidian Bauble -> Spirit of Aquementas (Bauble
   over the line). 796.08 -> 801.74
 - Feral: Dark Bomb (does nothing to level 63 bosses) -> Goblin Land Mine in the APL. 1058.41 -> 1058.89
