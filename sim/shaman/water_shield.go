@@ -17,6 +17,13 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 	actionID := core.ActionID{SpellID: 408510}
 	manaMetrics := shaman.NewManaMetrics(actionID)
 	globes := int32(3)
+	// Totem of Sustaining (23200) is "Increases the maximum number of charges on your Water
+	// Shield by 1" under Forever (spell 28856, client 1.60.1.71139). Classic's tooltip has a
+	// Lesser Healing Wave bonus instead. Our logs agree: from Nov 14 14:08, when we put it on, each
+	// Water Shield gave 4 globes (the first globe leaves 3 charges, in about 700 shields to Nov 26).
+	if shaman.Ranged().ID == TotemOfSustaining {
+		globes++
+	}
 
 	// We use a globe when an enemy lands a direct hit on us or one of our spells crits, at most
 	// one globe every 3.5 sec. Until client 1.60.1.70425 only our heals' crits counted; 70425 adds
