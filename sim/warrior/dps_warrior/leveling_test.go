@@ -501,8 +501,9 @@ func TestLevelingRageDecay(t *testing.T) {
 	}
 }
 
-// TestLevelingDamageTakenRage: a mob's hit gives 2.5 x 0.8 x damage / conversion (level 42 and under,
-// TestForeverWarriorDamageTakenRage), 10% less in Defensive Stance and 10% more in Berserker Stance.
+// TestLevelingDamageTakenRage: a mob's hit gives 2.5 x (1 - 0.218) x damage / conversion (the armor
+// ForeverDamageTakenRage assumes up to level 38), 10% less in Defensive Stance and 10% more in
+// Berserker Stance.
 func TestLevelingDamageTakenRage(t *testing.T) {
 	for stance, factor := range map[proto.WarriorStance]float64{
 		proto.WarriorStance_WarriorStanceBattle:    1,
@@ -519,7 +520,7 @@ func TestLevelingDamageTakenRage(t *testing.T) {
 		result.AttackerDamage, result.Damage = 100, 100
 		swing.DealDamage(sim, result)
 		l := float64(mob.Level)
-		want := factor * 2.5 * 0.8 * 100 / (0.0091107836*l*l + 3.225598133*l + 4.2652911)
+		want := factor * 2.5 * (1 - 0.218) * 100 / (0.0091107836*l*l + 3.225598133*l + 4.2652911)
 		if got := war.CurrentRage(); math.Abs(got-want) > 1e-6 {
 			t.Errorf("in stance %v a hit for 100 gave %.3f Rage, want %.3f", stance, got, want)
 		}

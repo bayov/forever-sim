@@ -83,7 +83,8 @@ func TestLevelingTank(t *testing.T) {
 }
 
 // TestLevelingShieldBlockManyMobs: Shield Block's 2 blocks go to whichever mobs hit first, and Last
-// Stand adds 30% of max health.
+// Stand adds 30% of max health. The block that spends the last charge leaves it up to the end of its
+// spell batch, so a third mob hitting at the same moment is blocked too.
 func TestLevelingShieldBlockManyMobs(t *testing.T) {
 	sim, war := newLevelingTank(t, 40, "--0000001", bulwark)
 	war.AddRage(sim, 100, war.RageRefundMetrics)
@@ -95,9 +96,13 @@ func TestLevelingShieldBlockManyMobs(t *testing.T) {
 		result.Outcome = core.OutcomeBlock
 		result.Damage = 1
 		mob.AutoAttacks.MHAuto().DealDamage(sim, result)
-		if active := war.ShieldBlockAura.IsActive(); active != (i < 1) {
-			t.Errorf("after %d blocks Shield Block is up: %v", i+1, active)
+		if !war.ShieldBlockAura.IsActive() {
+			t.Errorf("after %d blocks at once Shield Block is down", i+1)
 		}
+	}
+	advance(sim, core.SpellBatchWindow+time.Millisecond)
+	if war.ShieldBlockAura.IsActive() {
+		t.Error("Shield Block is up after its spell batch, with both blocks spent")
 	}
 	health := war.MaxHealth()
 	last := war.GetSpell(core.ActionID{SpellID: 12975})

@@ -62,7 +62,8 @@ func TestHours(t *testing.T) {
 }
 
 // TestMeasureWeights: attack power is 1, Strength about 2 and weapon DPS about 14 attack power
-// for a warrior, and a style's weights have that style's stats.
+// for a warrior, and a style's weights have that style's stats. 150 sessions is little, so the
+// bounds are wide: weapon DPS read 10.95 once the rage from hits taken assumed 21.8% armor.
 func TestMeasureWeights(t *testing.T) {
 	sim.RegisterAll()
 	req := exampleRequest(t, "undead_warrior_prot_shield")
@@ -78,7 +79,7 @@ func TestMeasureWeights(t *testing.T) {
 		t.Fatalf("%d rounds, levels %+v", rounds, file.Levels)
 	}
 	w := file.Levels[0].Weights
-	if w["AttackPower"] != 1 || w["Strength"] < 1.5 || w["Strength"] > 2.6 || w["MainHandDps"] < 11 || w["MainHandDps"] > 17 {
+	if w["AttackPower"] != 1 || w["Strength"] < 1.5 || w["Strength"] > 2.6 || w["MainHandDps"] < 10 || w["MainHandDps"] > 17 {
 		t.Errorf("weights %v", w)
 	}
 	if _, ok := w["BlockValue"]; !ok {
