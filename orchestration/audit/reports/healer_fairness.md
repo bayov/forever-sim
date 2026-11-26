@@ -1,4 +1,13 @@
-# Healer fairness pass 31 (2026-11-25, master 85691655a)
+# Healer fairness pass 32 (2026-11-26, master ab3fff700)
+
+Result: quiet. Due for one watched file, `sim/core/spell_result.go` (1223e764e, leveling big pulls): the new branch
+(`onHitFromBehind`) sits inside `if leveling := sim.Encounter.leveling; leveling != nil`, which is set only when the
+request has an `Encounter.Leveling` (`sim/core/environment.go:149`). No healbench request, boss file or the raid filler
+has one, and no healer request, the filler or healbench changed in bfbee78fc..ab3fff700 (git diff empty), so the code
+is inert for the bench; not re-benched. Table below is pass 31's, still current. Open findings unchanged:
+-20261124-1, -20261115-1, -20261104-4.
+
+## Pass 31 (2026-11-25, master 85691655a)
 
 Result: quiet. Still open: -20261124-1 (high, raid filler on Phase 0 gear; user ruled to keep it; new evidence added),
 -20261115-1 (high, raid druid not re-tuned for the 0.066 Wild Growth), -20261104-4 (low, no healing by class in the
