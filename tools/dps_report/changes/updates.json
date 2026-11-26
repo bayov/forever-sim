@@ -6675,7 +6675,7 @@
       "Warlock",
       "Warrior"
      ],
-     "note": "Every DPS preset now wears gear you can get at level 60 in the first phase of the game, with each faction's own rewards for its races. Before, they wore synthetic items made for the report. Every DPS preset drops, from 5.6% (Mutilate) to 20.8% (Affliction Shadow Bolt); most lose 7 to 13%. The ranking moves with the gear each spec can get now. Tanking and Healing presets keep their synthetic gear and are unchanged.",
+     "note": "Every DPS preset now wears gear you can get at level 60 in the first phase of the game, with each faction's own rewards for its races. Before, they wore synthetic items made for the report. Every DPS preset drops, from 5.6% (Mutilate) to 20.8% (Affliction Shadow Bolt); most lose 7 to 13%. The ranking moves with the gear each spec can get now.",
      "commits": [
       "b5277c3f1",
       "1fed43cbf",
@@ -8076,6 +8076,203 @@
       "8c5ebbb30",
       "f4b9f6908"
      ]
+    },
+    {
+     "title": "Tanking presets now wear real Phase 0 gear instead of synthetic gear",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Paladin",
+      "Shaman",
+      "Warrior"
+     ],
+     "moves": false,
+     "note": "Protection Warrior, Protection Paladin, Bear and Warden presets now wear gear you can get at level 60 in the first phase of the game, with one list for each of Balanced, Max threat and Max survival. Each faction's races wear their own faction's rewards. Before, they wore synthetic items made for the report.",
+     "commits": [
+      "12e6132b2",
+      "b7b411a01",
+      "2f20719e4",
+      "ecf1cbb50",
+      "06a460b5a",
+      "0741191ab",
+      "3ae9da70a",
+      "9f5bd2d71",
+      "1fe75412e",
+      "a7682e0ec",
+      "06cee142c",
+      "6741a469a",
+      "8629f5da5",
+      "182f314d2",
+      "196415355",
+      "01ae5640f",
+      "a2f62f579",
+      "091d7a4b8",
+      "161799e11",
+      "4a5da9220",
+      "b2324b08e",
+      "7753b07c6",
+      "6f2b57e9b",
+      "5c0036bf1",
+      "983a6d20c",
+      "a2297a301",
+      "a6ed07464",
+      "d91a2c7df",
+      "ba4e57a84",
+      "b1f2ba9ae",
+      "970d4bd3b",
+      "722d6a680",
+      "c916a72cf",
+      "c738cf3a4",
+      "4c122eae9",
+      "7bcdbe3a4",
+      "bb0221701",
+      "faf426f27",
+      "bc07fc31d",
+      "f709e28aa",
+      "250b364d9",
+      "a1904ac61",
+      "500d6f9f9",
+      "1c3c603b5",
+      "ec915c712",
+      "7115cb483",
+      "9f0ffa31e",
+      "cccca7055",
+      "98dbc95da",
+      "00a450b42",
+      "8b63fffc0",
+      "e00594e66",
+      "360cffe06",
+      "a9b350045",
+      "934230088",
+      "ec9e945ab",
+      "b78b70a60",
+      "56cddda04",
+      "8a3638855",
+      "73101aa5c",
+      "d0729fcc7",
+      "4515b6728",
+      "ecba46ae2",
+      "25b14b680",
+      "8dd4b0d53",
+      "999a0aa85",
+      "57009ffc1",
+      "601239d5b",
+      "73bb540f2",
+      "1b6290270",
+      "7738b164d",
+      "730bfe121",
+      "65c8afda2",
+      "21186875b",
+      "288c5b429",
+      "5be266e3c",
+      "a76dfa430",
+      "02d575f64",
+      "c970da448"
+     ]
+    },
+    {
+     "title": "Bear: Lacerate's first hit deals damage, Balanced and Max threat skip Demoralizing Roar",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "moves": false,
+     "note": "Lacerate's hit grows with the stacks the cast leaves, as tested in game, so the first cast hits for 10% of weapon damage. Before, it hit for nothing. Balanced and Max threat no longer use Demoralizing Roar, since its global cooldown and Rage do more on attacks.",
+     "commits": [
+      "09709d889",
+      "60b66c9d1",
+      "95962a7d3",
+      "5c33b79e3"
+     ]
+    },
+    {
+     "title": "Warden presets play races a shaman can be",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Balanced and Max threat are now Troll (was Night Elf), and Max survival is Tauren (was Undead).",
+     "commits": [
+      "eae898b24",
+      "6c94809c3",
+      "23723f005"
+     ]
+    },
+    {
+     "title": "Healing presets now wear real Phase 0 gear instead of synthetic gear",
+     "kind": "sim",
+     "classes": [
+      "Druid",
+      "Paladin",
+      "Priest",
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Discipline Priest, Holy Priest, Holy Paladin, Restoration Shaman and Restoration Druid now wear gear you can get at level 60 in the first phase of the game, one list per spec for both tank and raid healing. Each faction's races wear their own faction's rewards. Before, they wore synthetic items made for the report.",
+     "commits": [
+      "29f49c34c",
+      "7371cc06e",
+      "9ff2895da",
+      "e9922d058",
+      "74ee06c94",
+      "ab2d73909",
+      "aa1d56ed0",
+      "652488b50",
+      "7a7fd7538",
+      "701f08a0e",
+      "01a54a988",
+      "9b2e64287",
+      "ecb44df1a",
+      "07a6a7b06",
+      "9b4a7d64c",
+      "74aa9e630",
+      "ae0541d53",
+      "f9808629a",
+      "19a0aa0fc",
+      "7db408967",
+      "2e31951aa",
+      "6680d3482",
+      "065361621",
+      "d21a05e97",
+      "296b0b0f4",
+      "8aa00e2f3",
+      "3cca88170",
+      "470d1c8ac",
+      "11f332468",
+      "f313b97a8",
+      "084322bf9",
+      "0a4d36103",
+      "687346663",
+      "4a73d7298",
+      "b327157be",
+      "374e9e603",
+      "7143a86ed",
+      "8cec2feea",
+      "1352e5a34",
+      "0afa82611",
+      "eac7ba8b5"
+     ]
+    },
+    {
+     "title": "Tank and healer gear skips items over 3000g for each 1% of score",
+     "kind": "method",
+     "classes": [
+      "Druid",
+      "Paladin",
+      "Priest",
+      "Shaman",
+      "Warrior"
+     ],
+     "moves": false,
+     "note": "The same gold line as the DPS gear's 30g per DPS, scaled to each preset's own score.",
+     "commits": [
+      "266e5357f",
+      "e26d2c0fb",
+      "3e9748641",
+      "23469c224",
+      "b79f9be20"
+     ]
     }
    ],
    "internal": [
@@ -8150,6 +8347,14 @@
     {
      "commit": "31d2f59e8",
      "why": "refreshes the requests' recorded reference numbers only; no sim input changed"
+    },
+    {
+     "commit": "48902239f",
+     "why": "leveling plan only, no report preset reads it"
+    },
+    {
+     "commit": "a5b8f9d4b",
+     "why": "test only"
     }
    ]
   }
