@@ -1,12 +1,11 @@
 {
  "last": {
-  "master": "bfbee78fcca334478a8cedf63fcd83ac17fd3315"
+  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
  },
- "last_pass_at": "2026-11-25T19:05:00Z",
- "pass": 33,
- "result": "findings",
+ "last_pass_at": "2026-11-26T06:52:35Z",
+ "pass": 34,
+ "result": "quiet",
  "client_build": "1.60.1.70959",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Re-simmed all 12 presets after 2f42f4a44 (logged tank threat rules): bear +46% TPS from Lacerate 10/3 / Primal Bite 3x, now first at Max threat and Balanced; warrior -132/-208/-197; paladin leads Max survival. Bear Balanced ties its Max threat build at w 1 (new finding -20261125-1). Baseline refreshed.",
- "checked_at": "2026-11-26T01:04:24Z"
+ "note": "Leveling-only batch (warrior ranks by level, leveling stuns/behind swings, Cannibalize in leveling sessions): all 12 presets x 6 bosses identical to pass 33. Ranking and baseline unchanged."
 }

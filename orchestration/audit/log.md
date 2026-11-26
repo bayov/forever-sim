@@ -639,3 +639,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-26 01:04 | client_update | pass 18 | master bfbee78fcc | 2 new findings | Hawk and demon crit changed in Nov 25 fix; ledger section for 71139 added.
 2026-11-26 01:04 | healer_mechanics | pass 32 | master bfbee78fcc | 2 new findings | Oath of Light 60 min and Genesis-Tranquility hotfixes not in sim.
 2026-11-26 01:04 | tank_mechanics | pass 35 | master bfbee78fcc | quiet | No tank rows changed in client 71139.
+2026-11-26 07:11 | results | pass 108 | master ab3fff7007 | quiet | 29 of 68 builds >0.5 off metas, same families; warrior gap is meta lag.
+2026-11-26 07:11 | rotations | pass 82 | master ab3fff7007 | 2 new findings | Might of Shahram stuns immune bosses (+0.8-1.6 paladin DPS); dead Blackhand's Breadth line in Fury DW APLs.
+2026-11-26 07:11 | gear | pass 81 | master ab3fff7007 | quiet | Hunter/warrior re-rank picks verified; same 2 close calls.
+2026-11-26 07:11 | consumables | pass 112 | master ab3fff7007 | quiet | No DPS preset consumes changed.
+2026-11-26 07:11 | mechanics | pass 108 | master ab3fff7007 | 1 new finding | Might of Shahram stuns raid bosses despite stun immunity.
+2026-11-26 07:11 | fairness | pass 62 | master ab3fff7007 | 1 new finding | Blackblade Ret paladins sim ~1.2 DPS high from boss stun.
+2026-11-26 07:11 | healer_mechanics | pass 33 | master ab3fff7007 | quiet | Only leveling-gated code changed.
+2026-11-26 07:11 | healer_rotations | pass 29 | master ab3fff7007 | quiet | Bench rebased; filler change moved raid rows (update to -20261124-1).
+2026-11-26 07:11 | healer_fairness | pass 32 | master ab3fff7007 | quiet | No healer-affecting change.
+2026-11-26 07:11 | tank_mechanics | pass 36 | master ab3fff7007 | quiet | Warrior leveling batch, level 60 unchanged.
+2026-11-26 07:11 | tank_rotations | pass 32 | master ab3fff7007 | quiet | All 104 tank rows match pass 31.
+2026-11-26 07:11 | tank_fairness | pass 34 | master ab3fff7007 | quiet | All 84 tankbench rows match baseline.

@@ -61,3 +61,27 @@ is not a trap. The lists stay.
 - **Hyper Deluxe Sniper Rifle Mk XVII:** include, doubtful, under standard 42. It is an Engineering 300 craft. Its
   schematic (279322) has no known source, but nothing shows it is raid loot. The note says so. BM's backup is Dwarven
   Hand Cannon at 2.39 behind, a sure source at 77.8g.
+
+## Prices round 2 (2026-11-26, master 6a5cace)
+
+Heart of Wyrmthalak (SV trinket, 119.9 g/DPS) and Eaglehorn Long Bow (LW ranged, 31.8 g/DPS, 131g AH) are over the
+30g line and now no-picks. Re-ranked `SLOTS=trinket` on Survival and `SLOTS=ranged` on Lone Wolf.
+
+| Build | Pick old -> new | List dps | Request dps |
+|---|---|---|---|
+| Survival | trinkets Maelstrom + Heart of Wyrmthalak -> Maelstrom + Chained Essence of Eranikus | 963.70 -> 960.01 | 963.18 -> 950.39 |
+| Survival, wolf | same | | 941.19 -> 927.82 |
+| Survival, tallstrider | same | | 931.59 -> 918.73 |
+| Lone Wolf | ranged Eaglehorn Long Bow -> Hawkeye Bow of Agility (random suffix 168, world drop) | 1155.45 -> 1151.88 | 1140.13 -> 1135.46 |
+
+- Survival is back on its pre-re-rank trinkets.
+- The run's 180s measures are 950.6 for Survival and 1135.4 for Lone Wolf, so both requests match within noise. The
+  requests were checked at 20,000 iterations.
+- Faction copies:
+  - Survival Alliance: shoulder re-ranked at Human, Theramore Epaulets.
+  - Lone Wolf Horde: shoulder re-ranked at Orc, Darkspear Epaulets.
+  - Both carry the new picks.
+- The Lone Wolf meta caveat now names the 1.7s Hawkeye Bow.
+- race_gear.py `--write` was run on Lone Wolf and the three Survival builds.
+  - Survival Dwarf: the 1% excess-hit trade is now +0.44 ± 0.15, so it is kept.
+  - Lone Wolf: its preset hit is 6.6% without Eaglehorn, so the Dwarf has no excess and its old +5.0 trade is gone.
