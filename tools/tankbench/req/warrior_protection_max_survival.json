@@ -129,7 +129,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 990617
+                        "itemId": 272437
                       }
                     },
                     "condition": {
@@ -171,7 +171,7 @@
                                     }
                                   },
                                   "spellId": {
-                                    "itemId": 990617
+                                    "itemId": 272437
                                   }
                                 }
                               },
@@ -193,7 +193,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 991018
+                        "itemId": 18466
                       }
                     },
                     "condition": {
@@ -235,7 +235,7 @@
                                     }
                                   },
                                   "spellId": {
-                                    "itemId": 991018
+                                    "itemId": 18466
                                   }
                                 }
                               },
