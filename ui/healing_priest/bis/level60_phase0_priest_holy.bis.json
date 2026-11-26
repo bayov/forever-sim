@@ -24,7 +24,7 @@
   ],
   "dps": 133.38,
   "made": "2026-11-26",
-  "sim": "01a54a9880ef",
+  "sim": "701f08a0ea8a",
   "slots": {
     "head": [
       {
@@ -108,7 +108,7 @@
       {
         "id": 17715,
         "name": "Eye of Theradras",
-        "dps": 132.33,
+        "dps": 132.34,
         "loss": 1.04,
         "note": "Princess Theradras · Maraudon"
       },
@@ -172,7 +172,7 @@
         "id": 14307,
         "suffix": 990538,
         "name": "Bonecaster's Crown of the Physician",
-        "dps": 132.17,
+        "dps": 132.18,
         "loss": 1.2,
         "note": "Random world drop · BoE"
       },
@@ -180,7 +180,7 @@
         "id": 10219,
         "suffix": 990538,
         "name": "Elegant Circlet of the Physician",
-        "dps": 132.17,
+        "dps": 132.18,
         "loss": 1.2,
         "note": "Random world drop · BoE"
       },
@@ -196,7 +196,7 @@
         "id": 10139,
         "suffix": 890,
         "name": "High Councillor's Circlet of the Eagle",
-        "dps": 132.1,
+        "dps": 132.11,
         "loss": 1.27,
         "note": "Random world drop · BoE"
       },
@@ -204,7 +204,7 @@
         "id": 10250,
         "suffix": 890,
         "name": "Master's Hat of the Eagle",
-        "dps": 132.1,
+        "dps": 132.11,
         "loss": 1.27,
         "note": "Random world drop · BoE"
       },
@@ -221,184 +221,187 @@
       {
         "id": 22657,
         "name": "Amulet of the Dawn",
-        "dps": 133.56,
-        "loss": -0.18,
+        "dps": 133.69,
+        "loss": -0.31,
         "avail": "doubtful",
         "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
-        "id": 12929,
-        "name": "Emberfury Talisman",
+        "id": 19426,
+        "name": "Orb of the Darkmoon",
         "dps": 133.56,
         "loss": -0.18,
-        "bis": true,
-        "enchant": 1249058
+        "note": "Quest: 1200 Tickets - Orb of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
       },
       {
         "id": 21531,
         "name": "Drake Tooth Necklace",
-        "dps": 133.51,
-        "loss": -0.13,
+        "dps": 133.55,
+        "loss": -0.18,
         "avail": "doubtful",
         "note": "Quest: The Nightmare Manifests"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 133.5,
-        "loss": -0.12,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
-        "id": 18723,
-        "name": "Animated Chain Necklace",
-        "dps": 133.49,
-        "loss": -0.11,
-        "note": "Drop: Ramstein the Gorger, Stratholme"
-      },
-      {
-        "id": 271917,
-        "name": "Seal of the Expedition",
-        "dps": 133.49,
-        "loss": -0.11
-      },
-      {
-        "id": 13960,
-        "name": "Heart of the Fiend",
-        "dps": 133.48,
-        "loss": -0.1
-      },
-      {
-        "id": 17707,
-        "name": "Gemshard Heart",
-        "dps": 133.48,
-        "loss": -0.1,
-        "note": "Princess Theradras · Maraudon"
-      },
-      {
-        "id": 22327,
-        "name": "Amulet of the Redeemed",
-        "dps": 133.47,
-        "loss": -0.09,
-        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 13141,
-        "name": "Tooth of Gnarr",
-        "dps": 133.46,
-        "loss": -0.08,
-        "note": "General Drakkisath · Upper Blackrock Spire"
-      },
-      {
-        "id": 1315,
-        "name": "Lei of Lilies",
-        "dps": 133.46,
-        "loss": -0.08,
-        "avail": "doubtful",
-        "note": "No known source"
-      },
-      {
-        "id": 19592,
-        "name": "The Eye of Zuldazar",
-        "dps": 133.43,
-        "loss": -0.05
-      },
-      {
-        "id": 19593,
-        "name": "The Eye of Zuldazar",
-        "dps": 133.43,
-        "loss": -0.05
-      },
-      {
-        "id": 18317,
-        "name": "Tempest Talisman",
-        "dps": 133.42,
-        "loss": -0.04
-      },
-      {
-        "id": 22149,
-        "name": "Beads of Ogre Mojo",
-        "dps": 133.42,
-        "loss": -0.04,
-        "note": "Quest: Falrin's Vendetta · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
-      },
-      {
-        "id": 281636,
-        "name": "Museum Keeper's Chain",
-        "dps": 133.42,
-        "loss": -0.04,
-        "note": "Quest: Greater Friend of the Library (Forever quest, giver not in our data)"
-      },
-      {
-        "id": 12048,
-        "suffix": 990401,
-        "name": "Prismatic Pendant of the Physician",
-        "dps": 133.41,
-        "loss": -0.03,
-        "note": "Random world drop"
-      },
-      {
         "id": 14558,
         "name": "Lady Maye's Pendant",
-        "dps": 133.41,
-        "loss": -0.03,
+        "dps": 133.54,
+        "loss": -0.16,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Classic world drop · Forever source unknown"
       },
       {
+        "id": 17707,
+        "name": "Gemshard Heart",
+        "dps": 133.52,
+        "loss": -0.15,
+        "note": "Princess Theradras · Maraudon"
+      },
+      {
+        "id": 22327,
+        "name": "Amulet of the Redeemed",
+        "dps": 133.49,
+        "loss": -0.11,
+        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 12048,
+        "suffix": 990401,
+        "name": "Prismatic Pendant of the Physician",
+        "dps": 133.45,
+        "loss": -0.08,
+        "note": "Random world drop"
+      },
+      {
+        "id": 22149,
+        "name": "Beads of Ogre Mojo",
+        "dps": 133.45,
+        "loss": -0.07,
+        "note": "Quest: Falrin's Vendetta · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+      },
+      {
+        "id": 13141,
+        "name": "Tooth of Gnarr",
+        "dps": 133.45,
+        "loss": -0.07,
+        "note": "General Drakkisath · Upper Blackrock Spire"
+      },
+      {
+        "id": 19593,
+        "name": "The Eye of Zuldazar",
+        "dps": 133.44,
+        "loss": -0.07
+      },
+      {
         "id": 12036,
         "suffix": 990412,
         "name": "Granite Necklace of the Physician",
-        "dps": 133.39,
-        "loss": -0.01,
+        "dps": 133.4,
+        "loss": -0.02,
         "note": "Random world drop · other suffixes on AH ~5.8g"
       },
       {
         "id": 12046,
         "suffix": 990412,
         "name": "Jungle Necklace of the Physician",
-        "dps": 133.39,
-        "loss": -0.01,
+        "dps": 133.4,
+        "loss": -0.02,
         "note": "Random world drop"
       },
       {
         "id": 12027,
         "suffix": 990412,
         "name": "Vermilion Necklace of the Physician",
-        "dps": 133.39,
-        "loss": -0.01,
+        "dps": 133.4,
+        "loss": -0.02,
         "note": "Random world drop"
       },
       {
-        "id": 19426,
-        "name": "Orb of the Darkmoon",
+        "id": 271917,
+        "name": "Seal of the Expedition",
+        "dps": 133.38,
+        "loss": -0.01
+      },
+      {
+        "id": 12929,
+        "name": "Emberfury Talisman",
         "dps": 133.38,
         "loss": 0,
-        "enchant": 1249058,
-        "note": "Quest: 1200 Tickets - Orb of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
+        "bis": true,
+        "enchant": 1249058
       },
       {
-        "id": 19491,
-        "name": "Amulet of the Darkmoon",
-        "dps": 133.36,
-        "loss": 0.02,
-        "note": "Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
+        "id": 271918,
+        "name": "Seal of the Expedition",
+        "dps": 133.35,
+        "loss": 0.03
       },
       {
-        "id": 1443,
-        "name": "Jeweled Amulet of Cainwyn",
-        "dps": 133.28,
-        "loss": 0.1,
-        "note": "On AH ~125g"
+        "id": 16309,
+        "name": "Drakefire Amulet",
+        "dps": 133.31,
+        "loss": 0.06
+      },
+      {
+        "id": 12035,
+        "suffix": 990292,
+        "name": "Obsidian Pendant of the Physician",
+        "dps": 133.31,
+        "loss": 0.07,
+        "note": "On AH ~3.5g"
+      },
+      {
+        "id": 12026,
+        "suffix": 990292,
+        "name": "Quicksilver Pendant of the Physician",
+        "dps": 133.31,
+        "loss": 0.07,
+        "note": "Random world drop"
+      },
+      {
+        "id": 12045,
+        "suffix": 990292,
+        "name": "Swamp Pendant of the Physician",
+        "dps": 133.31,
+        "loss": 0.07,
+        "note": "Random world drop"
       },
       {
         "id": 12048,
-        "suffix": 990402,
-        "name": "Prismatic Pendant of the Prophet",
-        "dps": 133.22,
-        "loss": 0.16,
+        "suffix": 867,
+        "name": "Prismatic Pendant of the Eagle",
+        "dps": 133.27,
+        "loss": 0.11,
+        "note": "Random world drop"
+      },
+      {
+        "id": 22659,
+        "name": "Medallion of the Dawn",
+        "dps": 133.26,
+        "loss": 0.11,
+        "avail": "doubtful",
+        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
+      },
+      {
+        "id": 18317,
+        "name": "Tempest Talisman",
+        "dps": 133.24,
+        "loss": 0.14
+      },
+      {
+        "id": 12036,
+        "suffix": 866,
+        "name": "Granite Necklace of the Eagle",
+        "dps": 133.23,
+        "loss": 0.15,
+        "note": "Random world drop · other suffixes on AH ~5.8g"
+      },
+      {
+        "id": 12046,
+        "suffix": 866,
+        "name": "Jungle Necklace of the Eagle",
+        "dps": 133.23,
+        "loss": 0.15,
         "note": "Random world drop"
       }
     ],
@@ -2630,7 +2633,7 @@
         "item": 11646,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Stamina",
-        "dps": 133.44,
+        "dps": 133.45,
         "loss": -0.07
       },
       {
@@ -2639,7 +2642,7 @@
         "item": 11644,
         "name": "Lesser Arcanum of Resilience",
         "effect": "+20 FireResistance",
-        "dps": 133.42,
+        "dps": 133.43,
         "loss": -0.05
       },
       {
@@ -2667,7 +2670,7 @@
         "item": 11643,
         "name": "Lesser Arcanum of Tenacity",
         "effect": "+125 armor",
-        "dps": 133.33,
+        "dps": 133.34,
         "loss": 0.04
       },
       {
@@ -2686,7 +2689,7 @@
         "item": 11647,
         "name": "Lesser Arcanum of Voracity",
         "effect": "+8 Agility",
-        "dps": 133.28,
+        "dps": 133.29,
         "loss": 0.09
       }
     ],
@@ -2700,6 +2703,16 @@
         "dps": 133.38,
         "loss": 0,
         "bis": true,
+        "note": "120 Merchant's Favor"
+      },
+      {
+        "id": 1249057,
+        "game": 8218,
+        "spell": 1249057,
+        "name": "Enchant Necklace - Spell Power",
+        "effect": "+6 spell power",
+        "dps": 133.27,
+        "loss": 0.11,
         "note": "120 Merchant's Favor"
       }
     ],
