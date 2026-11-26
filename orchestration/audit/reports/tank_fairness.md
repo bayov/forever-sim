@@ -1,17 +1,16 @@
-# tank_fairness pass 34: 2026-11-26, master ab3fff7007
+# tank_fairness pass 35: 2026-11-26, master 2af970d748
 
-Due: 38 watched files changed since bfbee78. They are the warrior leveling batch (565f32155, 270731faa, 143bf4f72,
-8f5b59325, 1223e764e and others): warrior spells take the rank known at the character's level (`knownRank`; at 60 the
-same top ranks as before: Shield Slam 23925, Revenge 11601, Sunder 11597, Thunder Clap 11581), Defensive Stance only once
-known, and core rules that apply only inside a leveling session (swings from behind can't be avoided, Cannibalize,
-kill hooks). Stunned targets can no longer block, dodge or parry (`sim/core/spell_outcome.go`); no tank preset is
-stunned on the six scoring bosses. No change to `tools/tankbench`, its requests or `tools/encounters`.
+Due: 8 watched files changed since ab3fff7007, all warrior leveling (48902239f, c377aaf95, 6a447e231): leveling plan
+APLs, Fury Prot shield weights, leveling presets in `ui/tank_warrior/presets.ts` (the raid tank presets unchanged), a
+`weights_build` proto field, and a Barov servant guardian swing guard. No change to `tools/tankbench`, its requests,
+`tools/encounters` or tank mechanics.
 
 ## Method
 
-tankbench built in the master worktree (/tmp/audit-cache/cli/ab3fff700700/tree, `--tags=with_db`), `bench.sh` on the
+tankbench built in the master worktree (/tmp/audit-cache/cli/2af970d7489d/tree, `--tags=with_db`), `bench.sh` on the
 12 preset requests x six scoring bosses, 3,000 iterations, seed 1; `summary.py --tsv` diffed against
-ref/tank_fairness/summary.tsv: all 84 rows (72 boss rows and 12 means) identical. Baseline kept.
+ref/tank_fairness/summary.tsv: all 84 rows identical (the legacy warrior_protection request, finding 20261104-5, is
+outside the baseline). Baseline kept.
 
 ## Ranking (unchanged from pass 33)
 

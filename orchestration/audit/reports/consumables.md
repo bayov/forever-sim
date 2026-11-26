@@ -1,14 +1,13 @@
-# Consumables pass 112 (master ab3fff700)
+# Consumables pass 113 (master 2af970d74)
 
-Result: quiet, no new findings. Open findings 20261125-1, -2, -3, 20261110-1, 20261105-1 unchanged.
+Result: quiet, no new findings. Resolved: 20261125-3, 20261105-1. Open: 20261125-1, -2, 20261110-1.
 
-## Moved since bfbee78fc (11 files)
-- sim/common/leveling_enchants.go (new): Weapon - Recovery (8721) and Iron/Mithril/Thorium shield spikes. Tank or leveling only; no DPS preset uses them.
-- forever_enchants.go: entries for those enchants. No DPS preset affected.
-- sim/core/consumes.go: explosives, Dragonbreath Chili, Dragonfire and Caustic Smog now use TargetsNear(radius). Single-target presets unchanged (stun-immune rule kept).
-- debuffs.go: SunderArmorAuraOfRank added (warrior lower ranks); Sunder values unchanged.
+## Moved since ab3fff700 (29 files)
+- spec_hunter.go: Survival filler explosive Goblin Land Mine, ranged Dense Dynamite. Matches ui/hunter/presets.ts and the dps_report req files.
+- spec_feral.go: SapperGoblinSapper added (comment fixed); the feral filler is the Land Mine as in presets.ts and the requests. Resolves 20261105-1 and, with the req files, 20261125-3.
+- spec_enh.go: FillerExplosive Goblin Land Mine; matches presets.ts and the shaman requests.
+- barov_servant.go: guardian wait guard (crash fix); no consumable effect.
+- level60_phase0* gear sets: item swaps only (trinkets, weapons, rings); no enchant lines changed. Legality is the gear pass's.
 - ui/tank_warrior/presets.ts: out of scope.
-- Hunter SV and warrior Arms/Fury Phase 0 gear: trinket/weapon swaps only, enchants unchanged. Heart of Wyrmthalak (22321, LBRS drop), Thrash Blade (17705, Desolace vendor) are not raid-only. The nonexistent Blackhand's Breadth (13965) is gone. Gear pass owns legality.
-
-## scan.sh
-Banned list: only Phase 0 enchants 2544/Revelation (gear pass owns), as last pass. Revelation-outside-shamans, trinkets, crit-elixir lists empty. Minor-armor count 3 (known, 20261125-2). Totem and Sunder/MobType lines unchanged.
+- scan.sh banned list shows only the Phase 0 sets' 2544 / 1248805, unchanged baseline (gear pass owns).
+- Client build 1.60.1.71139, unchanged per the gate.

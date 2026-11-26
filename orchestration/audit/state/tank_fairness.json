@@ -1,11 +1,12 @@
 {
  "last": {
-  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
- "last_pass_at": "2026-11-26T06:52:35Z",
- "pass": 34,
+ "last_pass_at": "2026-11-26T12:51:34Z",
+ "pass": 35,
  "result": "quiet",
  "client_build": "1.60.1.70959",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Leveling-only batch (warrior ranks by level, leveling stuns/behind swings, Cannibalize in leveling sessions): all 12 presets x 6 bosses identical to pass 33. Ranking and baseline unchanged."
+ "note": "Leveling-only batch (warrior leveling plans, Fury Prot weights, leveling presets): all 12 presets x 6 bosses identical to pass 34. Ranking and baseline unchanged.",
+ "checked_at": "2026-11-26T13:01:11Z"
 }

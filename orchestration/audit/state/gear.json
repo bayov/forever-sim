@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
- "last_pass_at": "2026-11-26T06:54:24Z",
- "pass": 81,
+ "last_pass_at": "2026-11-26T12:53:05Z",
+ "pass": 82,
  "result": "quiet",
- "note": "Rerank 2026-11-26 (hunter, warrior) checked: phase0_check.py same 2 close calls (Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77). New picks Heart of Wyrmthalak (LBRS), Thrash Blade (Maraudon), Dragon's Call tagged open; no faction. Requests match published runs within 1.1 DPS.",
+ "note": "Pass 82: phase0_check.py 3 flags, all close calls (Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77, Ret Darkmoon Maelstrom 1.87, doubtful, rerank notes say 0.4/0.9 unconfirmed). No new gear ruling. Lists and requests changed only by the 2026-11-26 rerank already audited in pass 81; report builds sit 0.5-1.4% under list dps (uses-on-90s search fight).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T07:11:41Z"
+ "checked_at": "2026-11-26T13:01:11Z"
 }

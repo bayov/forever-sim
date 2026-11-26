@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
- "last_pass_at": "2026-11-26T14:00:00Z",
- "pass": 108,
- "result": "findings",
- "note": "pass 108: warrior leveling sim work moves no request (paired); 29 of 68 metas off >0.5 (4 warrior +0.9..1.9); drift as pass 107 (Land Mine on Survival/Enhancement, feral sapper).",
+ "last_pass_at": "2026-11-26T16:00:00Z",
+ "pass": 109,
+ "result": "quiet",
+ "note": "pass 109: metas within 1.4 of the run; drift equals the reference; Land Mine and sapper drift findings resolved.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T01:04:24Z",
+ "checked_at": "2026-11-26T13:01:11Z",
  "baseline": "0facd9428"
 }

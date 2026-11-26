@@ -4,24 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261126-1: Survival and the four Enhancement requests carry Goblin Land Mine that mksettings does not write (drift, -5 DPS)
-- severity: low (no published number is wrong; regenerating by the README loses about 0.5%)
-- affects: hunter__survival (3), shaman__enhancement (4) (tools/dps_report/req/, mksettings spec_hunter_sv, spec_enh.go)
-- found: 2026-11-26, master bfbee78fc
-- evidence: regen.py: `consumes.fillerExplosive: committed=ExplosiveGoblinLandMine regen=<absent>` on 3 Survival and 4 Enhancement requests (new against the reference; 68380891b and c3884acc6 era edits, requests set by hand). Paired 20k seed 1 (regen JSON vs committed): Survival 945.5 vs 950.4 (-4.9), Enhancement level60 966.5 vs 971.7 (-5.2). Feral-cat regen 1059.3 vs 1060.0 (the sapper line alone now costs 0.7). Sure of the numbers.
-- update 2026-11-26, master ab3fff700: unchanged (3 Survival, 4 Enhancement, feral sapper line); no mksettings change since.
-- proposed fix: set FillerExplosive: ExplosiveGoblinLandMine in the Survival and Enhancement mksettings specs (as 22d2cf952 did for BM/MM/LW/feral), then refresh ref/results/drift_report.txt.
-- needs: orchestrator fix
-
-### results-20261105-1: mksettings -spec feral lacks the Goblin Sapper Charge the committed feral requests carry (drift, -3.6 DPS)
-- severity: low (no published number is wrong; regenerating the request by the README would lose 3.6 DPS)
-- affects: druid__feral-cat, druid__feral-cat-duty-ff (tools/rotopt/mksettings/spec_feral.go)
-- found: 2026-11-05, master a079415316
-- evidence: drift report vs reference differs only here: `.consumes.sapperExplosive: committed=SapperGoblinSapper regen=<absent>`. The meta note says the sapper was added by hand on 2026-11-04 (+3.1 at 180 s). Paired 20k seed 1: committed 1169.5 (shared run), regen 1165.9 (`/tmp/audit-work/results/drift/druid__feral-cat.regen.json`). spec_enh.go:43 and spec_ret.go:44 set the sapper; spec_feral.go does not. Sure of the numbers.
-- update 2026-11-25, master 85691655a: still drifting (feral-cat and duty-ff), now together with the Land Mine line in results-20261125-1.
-- proposed fix: set SapperExplosive: SapperGoblinSapper in spec_feral.go (and refresh ref/results/drift_report.txt).
-- needs: orchestrator fix
-
 ### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
 - severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)
 - affects: druid feral-cat (+2), paladin level_60 (+3), mage arcane, rogue (6), shaman (6), warlock destruction_fire (3), warrior arms/fury (builds.json only)
@@ -62,6 +44,27 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 
 ## Resolved
+
+### results-20261126-1: Survival and the four Enhancement requests carry Goblin Land Mine that mksettings does not write (drift, -5 DPS)
+- severity: low (no published number is wrong; regenerating by the README loses about 0.5%)
+- affects: hunter__survival (3), shaman__enhancement (4) (tools/dps_report/req/, mksettings spec_hunter_sv, spec_enh.go)
+- found: 2026-11-26, master bfbee78fc
+- evidence: regen.py: `consumes.fillerExplosive: committed=ExplosiveGoblinLandMine regen=<absent>` on 3 Survival and 4 Enhancement requests (new against the reference; 68380891b and c3884acc6 era edits, requests set by hand). Paired 20k seed 1 (regen JSON vs committed): Survival 945.5 vs 950.4 (-4.9), Enhancement level60 966.5 vs 971.7 (-5.2). Feral-cat regen 1059.3 vs 1060.0 (the sapper line alone now costs 0.7). Sure of the numbers.
+- update 2026-11-26, master ab3fff700: unchanged (3 Survival, 4 Enhancement, feral sapper line); no mksettings change since.
+- proposed fix: set FillerExplosive: ExplosiveGoblinLandMine in the Survival and Enhancement mksettings specs (as 22d2cf952 did for BM/MM/LW/feral), then refresh ref/results/drift_report.txt.
+- needs: orchestrator fix
+- resolved: 2026-11-26, master 2af970d74 (mksettings Survival/Enhancement write the Goblin Land Mine; drift report now equals the reference)
+
+### results-20261105-1: mksettings -spec feral lacks the Goblin Sapper Charge the committed feral requests carry (drift, -3.6 DPS)
+- severity: low (no published number is wrong; regenerating the request by the README would lose 3.6 DPS)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (tools/rotopt/mksettings/spec_feral.go)
+- found: 2026-11-05, master a079415316
+- evidence: drift report vs reference differs only here: `.consumes.sapperExplosive: committed=SapperGoblinSapper regen=<absent>`. The meta note says the sapper was added by hand on 2026-11-04 (+3.1 at 180 s). Paired 20k seed 1: committed 1169.5 (shared run), regen 1165.9 (`/tmp/audit-work/results/drift/druid__feral-cat.regen.json`). spec_enh.go:43 and spec_ret.go:44 set the sapper; spec_feral.go does not. Sure of the numbers.
+- update 2026-11-25, master 85691655a: still drifting (feral-cat and duty-ff), now together with the Land Mine line in results-20261125-1.
+- proposed fix: set SapperExplosive: SapperGoblinSapper in spec_feral.go (and refresh ref/results/drift_report.txt).
+- needs: orchestrator fix
+- resolved: 2026-11-26, master 2af970d74 (spec_feral.go writes the Goblin Sapper Charge and Land Mine; drift report now equals the reference)
+
 
 ### results-20261125-1: 32 metas' published.dps lag 78802e6e and 1fed43cb (up to 4.8 DPS)
 - severity: low (the report's builds.json agrees with the shared run within its own method's noise; only the metas lag)

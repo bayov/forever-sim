@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
  "last_pass_at": "2026-11-26T07:06:17Z",
  "pass": 29,
@@ -8,5 +8,5 @@
  "note": "Watched spell_result.go change is leveling-only (inert in healbench). Bench re-based: 28 raid rows moved by the filler mage__frost.json item swap (7829e00f1/14de5d62d), confirmed with the old filler; logged under -20261124-1. -20261125-2 closed.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71037",
- "checked_at": "2026-11-26T07:11:41Z"
+ "checked_at": "2026-11-26T13:01:11Z"
 }

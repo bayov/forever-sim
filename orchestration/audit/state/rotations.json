@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "6a447e2317b43feb1461aab420c780e8bafe34af"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
- "last_pass_at": "2026-11-26T07:20:00Z",
- "pass": 82,
- "result": "findings",
- "note": "bfbee78fc..ab3fff7007: warrior leveling sim, warrior/hunter re-rank. No APL change. Sim reaches only 7 Blackblade paladin builds (+0.8..1.6, rotations-20261126-3). Fury DW dead 13965 line (rotations-20261126-2).",
+ "last_pass_at": "2026-11-26T12:52:22Z",
+ "pass": 83,
+ "result": "quiet",
+ "note": "6a447e231..2af970d74: Phase 0 prices round 2 (gear only), Balance 10455 cleanup (resolves -1), Fury DW back on 13965 (resolves -2), Barov servant crash guard (no preset wears 14022). Baseline unchanged.",
  "client_build": "1.60.1.71091",
  "baseline": "baseline_ab3fff7_3000it_seed424242.tsv",
- "checked_at": "2026-11-26T07:11:41Z"
+ "checked_at": "2026-11-26T13:01:11Z"
 }

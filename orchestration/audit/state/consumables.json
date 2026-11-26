@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "ab3fff700700482aba24eb0d99ace7b9e8313b49"
+  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
  },
- "last_pass_at": "2026-11-26T02:10:00Z",
- "pass": 112,
+ "last_pass_at": "2026-11-26T12:00:00Z",
+ "pass": 113,
  "result": "quiet",
- "note": "11 files moved; no preset or enchant value affected.",
+ "note": "29 files moved; mksettings explosives now match presets; two findings resolved.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T01:04:24Z"
+ "checked_at": "2026-11-26T13:01:11Z"
 }

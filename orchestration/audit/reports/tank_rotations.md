@@ -1,20 +1,19 @@
-# tank_rotations pass 32
+# tank_rotations pass 33
 
-Master ab3fff7007 (2026-11-26), against pass 31's master bfbee78fcc. Quiet: no new finding.
+Master 2af970d748 (2026-11-26), against pass 32's master ab3fff7007. Quiet: no new finding.
 
 ## What changed
 
-The 38 watched files the gate listed are the warrior leveling work (143bf4f72, 8f5b59325, 30bb3a590, 1223e764e,
-c747e7ccd, 270731faa, 565f32155 and their tests): every rank at the level it's learned, leveling hooks (charges,
-stuns, kills, Rage decay, abilities that reach only nearby mobs), Rage from hits taken by stance in leveling
-sessions, and `ui/tank_warrior` leveling plan, weights and presets. `sim/core/debuffs.go` and `target_death.go`
-changed with them. No tank request, level 60 UI apl, encounter, tankbench, tankscore or rotopt tank template
-changed. The `ui/tank_warrior/presets.ts` and `sim.ts` diffs add only the leveling plan and its EP weights.
+The 8 watched files the gate listed are warrior leveling only: `ui/tank_warrior/apls/leveling_plan_*.json` (five
+plans), `leveling_weights_shield_fury_prot.json`, and `presets.ts` / `sim.ts`, which add the leveling builds (Prot as
+the default plan, 48902239f, c377aaf95) and the Fury Prot shield EP weights. The rest of the range is Phase 0 DPS
+re-rank work (non-tank requests, rotopt mksettings for Enh/Feral/Hunter, `sim/common/guardians/barov_servant.go`).
+No tank request, level 60 UI apl, encounter, tankbench, tankscore, rotopt tank template or tank sim code changed.
 
 ## Baseline (1,000 iterations, default seed; `ref/tank_bench/summary.tsv` rewritten)
 
-All 104 rows (13 requests x 7 bosses, plus scoring means) are bit-identical to pass 31 on score, SafeDPS, TPS,
-DTPS and healing needed, so the leveling code doesn't reach the level 60 tank sims. Scoring means:
+All 104 rows (13 requests x 7 bosses, plus scoring means) are bit-identical to pass 32 on score, SafeDPS, TPS,
+DTPS and healing needed, so nothing in the range reaches the level 60 tank sims. Scoring means:
 
 | request | weight | score | SafeDPS | TPS | DTPS | healing needed |
 |---|---|---|---|---|---|---|
@@ -36,7 +35,7 @@ DTPS and healing needed, so the leveling code doesn't reach the level 60 tank si
 
 No rotation changed and the baseline is identical, so pass 31's line checks stand; no A/B re-run. The five open
 findings (20261125-1 bear Roar, 20261125-2 warrior Balanced Thunder Clap, 20261122-1 paladin Consecration floor,
-20261104-11 and 20261104-3 Broodlord user calls) are untouched on master and get a pass 32 note.
+20261104-11 and 20261104-3 Broodlord user calls) are untouched on master and get a pass 33 note.
 
 ## Open items
 
@@ -47,4 +46,4 @@ findings (20261125-1 bear Roar, 20261125-2 warrior Balanced Thunder Clap, 202611
 
 A fresh session needs `make sim/core/proto/api.pb.go` (Go protos) before `go build -tags=with_db ./tools/tankbench`;
 `tools/audit/setup.sh` installs protoc and protoc-gen-go but doesn't generate them. The full bench (91 runs,
-4 parallel) takes about 25 s.
+4 parallel) takes about 15 s at full parallelism.
