@@ -18,8 +18,10 @@ func init() {
 			raidBuffs.MoonkinAura = false
 		},
 		// The consumes the Level 60 preset uses (ui/feral_druid/presets.ts says what each is
-		// worth). Under Forever the cat drinks in form and its weapon takes a stone; it still
-		// can use no explosives.
+		// worth). Under Forever the cat drinks in form and its weapon takes a stone. The Goblin
+		// Sapper Charge and the Goblin Land Mine work in form (tank_mechanics-15): the Sapper since
+		// 2026-11-04, the Land Mine since 2026-11-25 in place of the EZ-Thro Dark Bomb, a stun that
+		// does nothing to a raid boss (EV-0088); the APL throws it.
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
@@ -31,6 +33,7 @@ func init() {
 				Flask:             proto.Flask_FlaskOfNaturalAggression,
 				Food:              proto.Food_FoodFlankAuPoivre,
 				MainHandImbue:     proto.WeaponImbue_DenseWeightstone,
+				SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
 				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 			}
