@@ -15,8 +15,8 @@
   "gearSet": "level60_phase0",
   "apl": "optimized",
   "published": {
-    "dps": 960.23,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 960.4,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
   },
   "verify": {
     "dps": 960.23,

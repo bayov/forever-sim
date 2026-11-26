@@ -14,8 +14,8 @@
   "gearSet": "level60_phase0_ret_shock",
   "apl": "level60_shock_ret",
   "published": {
-    "dps": 900.96,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 900.87,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
   },
   "summary": "Holy Shock with most points in Retribution, Seal of Command up with no twisting.",
   "keyTalents": [

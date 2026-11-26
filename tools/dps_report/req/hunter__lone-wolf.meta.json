@@ -15,8 +15,8 @@
   "gearSet": "level60_phase0_hunter_lw",
   "apl": "lw",
   "published": {
-    "dps": 1135.46,
-    "source": "wowsimcli on this request (2026-11-26), 20,000 iterations, seed 1, after the Phase 0 prices round 2 re-rank"
+    "dps": 1135.51,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
   },
   "verify": {
     "dps": 1135.46,
