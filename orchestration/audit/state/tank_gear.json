@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T13:00:00Z",
- "pass": 19,
- "result": "findings",
+ "last_pass_at": "2026-11-26T18:55:00Z",
+ "pass": 20,
+ "result": "quiet",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:00:00Z",
- "note": "First Phase 0 pass (branch phase0-tankheal). 12 tank lists, requests wear them. Warrior lists sim 5-11% below list score (-1); Frozen Steel Vambraces pick (-2); stale Warden infeasible tags (-3); phase0_check noise (-4)."
+ "checked_at": "2026-11-26T19:06:21Z",
+ "note": "Pass 20: warrior bench gap, Frozen Steel Vambraces and stale annotations resolved; -4 (check noise) still open. No new findings."
 }

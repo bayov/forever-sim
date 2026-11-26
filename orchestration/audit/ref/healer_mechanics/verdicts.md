@@ -39,6 +39,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | Mana Spring Totem 1-4 | 26/36/46/56, 40/60/80/100 mana, 4/6/8/10 per 2 s | same | match | 1 |
 | Mana Tide Totem 1-4 | 16190 1, 17354 38, 17359 48, 1325256 58; 10/20/30/60 mana; 88/133/197/290 per 3 s; 13 s; 300 s category; GCD 1 s | same; 4 ticks | match | 1 |
 | Water Shield | 408510: 3 charges, 3.5 s proc ICD, 600 s, 1.5 s GCD, ProcTypeMask 0x362a8 (no periodic); 408511: 2% max mana | same | match | 1 |
+| Totem of Sustaining (23200) | ItemEffect 104176 -> 28856 "Increased Water Shield Charges": aura 107 (flat mod), misc 4 (charges), +1, class mask [1]=0x20 = Water Shield 408510's (71139) | 4th globe when the ranged slot holds 23200 (7de8438a6) | match; no test | 1 |
 | Nature's Swiftness | 16188: -100% cast, mask HW/LHW/CH/LB/CL/Ghost Wolf/Healing Rain, 1 charge, 180 s, CD starts when used up | Nature spells with a cast time; 3 min from consumption | match | 1 |
 | Improved Healing Wave | -100 ms/pt, aura 107 misc 10, mask HW | flat -0.1 s/pt on HW | match | 1 |
 | Tidal Focus | -1%/pt cost (misc 14), mask HW/LHW/CH/Riptide; +1% melee+spell hit/pt | cost factor on all shaman healing spells (= those 4); hit | match | 1 |

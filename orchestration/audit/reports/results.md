@@ -1,10 +1,10 @@
-# Results pass 109 (master 2af970d74)
+# Results pass 110 (master f9fa79917)
 
-Range ab3fff700..2af970d74 (47 commits, 176 watched files). Sim/proto/mksettings changes: Barov servant swing wait guard (barov_servant.go, no request moves),
-proto weights_build field (UI only), mksettings Land Mine (Survival, Enhancement, feral) and Sapper (feral). Rest: Phase 0 requests and metas.
+Range 2af970d74..f9fa79917 (233 commits listed, 30 watched files). Sim changes: Rend and Tear style bear hit scaling (sim/druid/bear_attacks.go, tank only),
+Totem of Sustaining +1 Water Shield charge (sim/shaman/water_shield.go, items.go; healer/Warden only). Presets and gear: tank warrior, protection paladin, warden shaman, healers, bear.
+No change to proto, mksettings, database, assets/database, DPS requests or builds.json.
 
-- Shared run (68, 20k, seed 1) vs metas: 14 of 68 differ by more than 0.5, largest +1.4 (warrior fury_2h-duty-sunder), all noise-level; the rest within 0.5.
-- Drift (regen.py): identical to the reference. The Land Mine and feral sapper lines are gone, so results-20261126-1 and results-20261105-1 are resolved.
-- builds.json vs shared run: 68 builds checked (compare.py builds against the shared summary; two fury_2h duty rows are missing from the reference summary, a reference gap).
-- Unread fields: none printed.
-- results-20261104-2 (metas and builds.json lag) is effectively closed: metas now within 1.4.
+- Shared run (68, 20k, seed 1) vs metas: 14 of 68 differ by more than 0.5, largest +1.4 (warrior fury_2h-duty-sunder), noise-level; none explained by a commit.
+- builds.json unchanged against the previous pass; compare.py builds checked 68.
+- Drift: mksettings and requests unchanged, so equal to the reference (regen.py not re-run).
+- Open finding results-20261104-2 stays as is (metas within 1.4).

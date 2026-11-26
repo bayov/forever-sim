@@ -666,3 +666,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-26 13:30 | healer_mechanics | pass 32 | phase0-tankheal 3e9748641 | quiet | Client 71139 touches no heal; healscore refactor keeps bench results.
 2026-11-26 13:30 | healer_rotations | pass 29 | phase0-tankheal 3e9748641 | quiet | Baseline re-based on Phase 0 gear (41 of 63 rows); Holy and Disc tank OOM on Chromaggus earlier (106 s, 102 s).
 2026-11-26 13:30 | healer_gear | pass 17 | phase0-tankheal 3e9748641 | 1 new finding | Holy priest and Holy paladin lists 1.4% above the bench; druid_restoration pending.
+2026-11-26 19:06 | results | pass 110 | master f9fa79917 | quiet | 14 of 68 builds off the metas by >0.5, largest +1.4, noise; no DPS inputs changed.
+2026-11-26 19:06 | rotations | pass 84 | master f9fa79917 | quiet | Only bear APLs and bear/shaman sim changes; no DPS preset moves.
+2026-11-26 19:06 | gear | pass 83 | master f9fa79917 | quiet | Changes are tank/healer lists; DPS flags same three close calls.
+2026-11-26 19:06 | consumables | pass 114 | master f9fa79917 | quiet | 25 changed files out of scope; scan matches baseline.
+2026-11-26 19:06 | mechanics | pass 110 | master f9fa79917 | 1 new finding | Revelation rolls once per wave and not per channel after Nov 25 hotfix; Arcane mage -0.66%.
+2026-11-26 19:06 | fairness | pass 64 | master f9fa79917 | quiet | All changes tank/healer; published ranking holds.
+2026-11-26 19:06 | healer_mechanics | pass 34 | master f9fa79917 | quiet | Totem of Sustaining 4th Water Shield globe matches client; untested.
+2026-11-26 19:06 | healer_rotations | pass 30 | master f9fa79917 | quiet | 63 rows byte-identical to baseline; Urgency stays over Sustaining.
+2026-11-26 19:06 | healer_gear | pass 18 | master f9fa79917 | quiet | No heal row changed; druid_restoration still has no list.
+2026-11-26 19:06 | healer_fairness | pass 33 | master f9fa79917 | 1 new finding | Restoration druid still on synthetic gear but ranked first tank healer with no page note.
+2026-11-26 19:06 | tank_mechanics | pass 37 | master f9fa79917 | quiet | Lacerate stack scaling and Totem of Sustaining verified; no tank mechanic changed.
+2026-11-26 19:06 | tank_rotations | pass 34 | master f9fa79917 | quiet | All bench moves come from request changes; 4 findings resolved.
+2026-11-26 19:06 | tank_gear | pass 20 | master f9fa79917 | quiet | 3 findings resolved; 27 check-noise flags remain bench-tested.
+2026-11-26 19:06 | tank_fairness | pass 35 | master f9fa79917 | 1 new finding | Paladin Max threat beats Balanced by ~1% at Balanced weight; 2 resolved.

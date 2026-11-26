@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T12:50:52Z",
- "pass": 109,
- "result": "quiet",
- "note": "Quiet: 57fbb3401 Barov servant swing-wait guard (crash fix, no mechanic); eae05254e mksettings explosives (Land Mine filler for Survival/Enh, Sapper for Feral) follow EV-0088 and verified in-form/reach rows. Client 71139 still newest; no Blizzard posts past Nov 25 23:25.",
+ "last_pass_at": "2026-11-26T18:53:10Z",
+ "pass": 110,
+ "result": "findings",
+ "note": "Findings: mechanics-20261126-5 Revelation (Nov 25 hotfix: once per wave, not the whole channel; Arcane -5.5 DPS probe). Verified Totem of Sustaining 28856 (+1 Water Shield charge) and accepted Lacerate 1:2:3:4:5 (EV-0040). Client 71139 still newest; no Blizzard posts past Nov 25 23:25.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:01:11Z",
+ "checked_at": "2026-11-26T19:06:21Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
