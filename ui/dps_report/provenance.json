@@ -679,11 +679,11 @@
 			}
 		},
 		"druid__balance": {
-			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
-			"recordedAt": "2026-11-26T10:25:43.773Z",
+			"commit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
+			"recordedAt": "2026-11-26T15:43:58.626Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"simCommit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -705,7 +705,7 @@
 				"tools/dps_report/assumptions_def.py": "bb5b48afa06f87b7ede465b3321a84d46f2ee9c4405544dd062fbe0f627455ef",
 				"tools/dps_report/race_override.py": "2faf42d5603a2f9bc93429dd0d84a0dd904ea372831a2352731dfcc1aad50516",
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
-				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
+				"sim/druid": "1cc23c8fca246f93ce9d0f54cd63186b90a4844bb3935d86653b446e595328bd",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 				"tools/dps_report/req/druid__balance.json": "5e748ec066b96e0abb4d3683fd0b937b0b52339ca8bd5bd7f0841b1d5c256c6d",
 				"tools/dps_report/req/druid__balance.meta.json (sim fields)": "4b01dcfc8305d18b3bc2748e2d36b80b62fa6c51d16efd93d9131ef92ccf5d4d",
@@ -716,11 +716,11 @@
 			}
 		},
 		"druid__balance-wrath": {
-			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
-			"recordedAt": "2026-11-26T10:25:43.800Z",
+			"commit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
+			"recordedAt": "2026-11-26T15:43:58.858Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"simCommit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -742,7 +742,7 @@
 				"tools/dps_report/assumptions_def.py": "bb5b48afa06f87b7ede465b3321a84d46f2ee9c4405544dd062fbe0f627455ef",
 				"tools/dps_report/race_override.py": "2faf42d5603a2f9bc93429dd0d84a0dd904ea372831a2352731dfcc1aad50516",
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
-				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
+				"sim/druid": "1cc23c8fca246f93ce9d0f54cd63186b90a4844bb3935d86653b446e595328bd",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 				"tools/dps_report/req/druid__balance-wrath.json": "fe264add3cf545d5163c51f559605bcc6d14829cfc6c6bef2caced11fdbb912c",
 				"tools/dps_report/req/druid__balance-wrath.meta.json (sim fields)": "4b01dcfc8305d18b3bc2748e2d36b80b62fa6c51d16efd93d9131ef92ccf5d4d",
@@ -752,11 +752,11 @@
 			}
 		},
 		"druid__feral-cat": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:31.811Z",
+			"commit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
+			"recordedAt": "2026-11-26T15:43:58.891Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -778,7 +778,7 @@
 				"tools/dps_report/assumptions_def.py": "bb5b48afa06f87b7ede465b3321a84d46f2ee9c4405544dd062fbe0f627455ef",
 				"tools/dps_report/race_override.py": "2faf42d5603a2f9bc93429dd0d84a0dd904ea372831a2352731dfcc1aad50516",
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
-				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
+				"sim/druid": "1cc23c8fca246f93ce9d0f54cd63186b90a4844bb3935d86653b446e595328bd",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 				"tools/dps_report/req/druid__feral-cat.json": "3b96b908e98c33de9954c93986990625c124bd6f2811d455c40d919b50a00a30",
 				"tools/dps_report/req/druid__feral-cat.meta.json (sim fields)": "c2af797dc7da78a0d9db5a5645209f6e2c63300dad180dca61ecd3e29563ab94",
@@ -1492,11 +1492,11 @@
 			}
 		},
 		"druid__balance-duty-ff": {
-			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
-			"recordedAt": "2026-11-26T10:25:43.821Z",
+			"commit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
+			"recordedAt": "2026-11-26T15:43:58.836Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"simCommit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -1518,7 +1518,7 @@
 				"tools/dps_report/assumptions_def.py": "bb5b48afa06f87b7ede465b3321a84d46f2ee9c4405544dd062fbe0f627455ef",
 				"tools/dps_report/race_override.py": "2faf42d5603a2f9bc93429dd0d84a0dd904ea372831a2352731dfcc1aad50516",
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
-				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
+				"sim/druid": "1cc23c8fca246f93ce9d0f54cd63186b90a4844bb3935d86653b446e595328bd",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 				"tools/dps_report/req/druid__balance-duty-ff.json": "acfaac04c8aa6a90b0f4d8049c7b330cb5fbe1a263bcad5cc80cdeb44e2ba1ba",
 				"tools/dps_report/req/druid__balance-duty-ff.meta.json (sim fields)": "f3aeca68b483021e4c1dd6378ea6b056001b1f69e7edd251d61239f76d9f796b",
@@ -1532,11 +1532,11 @@
 			}
 		},
 		"druid__balance-wrath-duty-ff": {
-			"commit": "f4b9f690866925083edd77982b68f8446fbb4efd",
-			"recordedAt": "2026-11-26T10:25:43.842Z",
+			"commit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
+			"recordedAt": "2026-11-26T15:43:58.878Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "f4b9f690866925083edd77982b68f8446fbb4efd",
+			"simCommit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -1558,7 +1558,7 @@
 				"tools/dps_report/assumptions_def.py": "bb5b48afa06f87b7ede465b3321a84d46f2ee9c4405544dd062fbe0f627455ef",
 				"tools/dps_report/race_override.py": "2faf42d5603a2f9bc93429dd0d84a0dd904ea372831a2352731dfcc1aad50516",
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
-				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
+				"sim/druid": "1cc23c8fca246f93ce9d0f54cd63186b90a4844bb3935d86653b446e595328bd",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 				"tools/dps_report/req/druid__balance-wrath-duty-ff.json": "6f31d4d71d13d2c41b402fd46a1e794dc71fe941c33aada6f28568251ceb09a3",
 				"tools/dps_report/req/druid__balance-wrath-duty-ff.meta.json (sim fields)": "ba50175380719e1c609f904c3af9e1b573118885467e2ad8243869354cb21035",
@@ -1569,11 +1569,11 @@
 			}
 		},
 		"druid__feral-cat-duty-ff": {
-			"commit": "482158ae19b1b65d66063de7c8d3553d06e925db",
-			"recordedAt": "2026-11-26T10:05:32.158Z",
+			"commit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
+			"recordedAt": "2026-11-26T15:43:58.912Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "482158ae19b1b65d66063de7c8d3553d06e925db",
+			"simCommit": "875abbecfa3bf787e54b8ecf781435ca21af6dd7",
 			"format": 3,
 			"inputs": {
 				"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -1595,7 +1595,7 @@
 				"tools/dps_report/assumptions_def.py": "bb5b48afa06f87b7ede465b3321a84d46f2ee9c4405544dd062fbe0f627455ef",
 				"tools/dps_report/race_override.py": "2faf42d5603a2f9bc93429dd0d84a0dd904ea372831a2352731dfcc1aad50516",
 				"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
-				"sim/druid": "36eaac744515feec27c7656431065cb7f95a23dc61d85150723191629d65172b",
+				"sim/druid": "1cc23c8fca246f93ce9d0f54cd63186b90a4844bb3935d86653b446e595328bd",
 				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 				"tools/dps_report/req/druid__feral-cat-duty-ff.json": "1f700011df06e609ec702d45a7151e58b744ca4afd8327271a27dc28584900b9",
 				"tools/dps_report/req/druid__feral-cat-duty-ff.meta.json (sim fields)": "79da420ed6de97ec350cc5bb92bb8b5e057b3910db48e2c3ba0fb44009017543",
