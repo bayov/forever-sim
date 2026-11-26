@@ -1,33 +1,31 @@
-# Mechanics pass 106 (2026-11-25, master 85691655a)
+# Mechanics pass 107 (2026-11-26)
 
-Range: c3bbe33ea..85691655a. Client 1.60.1.71091 still newest (gate). Blizzard: dev notes
-t/2360696 unchanged (8 posts, newest 2026-11-04); hotfix thread t/2403040 unchanged (#15,
-2026-11-24); blue tracker has a new Forever post, "Balance Druid Adjustments - November 25"
-(t/2429007, Kaivax, 2026-11-25 18:32Z, "now live"). Daily update: one TASKS.md item
-(85691655a, Blackhand's Breadth hotfix from foreverchanges, Nov 24 push).
+- Master: bfbee78fc (last audited 85691655a). Client 1.60.1.71091 -> 1.60.1.71139.
+- Result: findings (1 medium, 2 low).
 
-## Commits checked
+## Repo since 85691655a
 
-| Commit | Change | Check | Verdict |
-|---|---|---|---|
-| 2f42f4a44 | Tank batch: rage-gain threat, damage-taken Rage armor rows, flat reduction cap, bear threat | log-sourced (EV-0032..0050, 0154); level 63 row unchanged | settled (ruling) |
-| efeb06b95 | Resist constant 8L+19, 75% partial cap, binary spells, Flurry vs Windfury Totem (shaman) | log-sourced (EV-0091, 0092, 0142, 0010); shaman totem swings no longer spend Flurry | settled; resolves mechanics-20261118-1 |
-| 60fde111f | Hunter hawk, pet white crit, Explosive Trap, pet autocast | log-sourced (EV-0073, 0127, 0134, 0068, 0187); class rules | settled (ruling) |
-| 295206ddf | Item PPMs, set procs, 49 on-hit weapons | Flame Wrath 16559 bp 154 matches; Ironfoe client 10% / 5 s vs sim 3% from logs (server side) | settled (logs) |
-| b663145ad | Weapon-proc chains, JoC double roll, Revelation, judgements refresh, damage shields | log-sourced (EV-0145, 0155, 0028, 0117, 0066 ...) | settled (ruling) |
-| 22d2cf952 | Explosives keep swing timer, stun explosives miss level 63, demon crit, extra attacks roll Windfury Totem, Shield Slam MH special | log-sourced, user ruling 2026-11-25 | settled (ruling) |
+No commit touches `sim/**/*.go` or `tools/rotopt/mksettings/**`; no TASKS.md / ledger change, no forever-update merge. Only Phase 0 re-rank preset work.
 
-## Findings
+## Client 71091 -> 71139 (81 spell rows, `wago.py diff --by-spell`)
 
-| Id | Severity | Title |
+| Spells | Change | Sim |
 |---|---|---|
-| mechanics-20261125-1 | high (estimate) | Nov 25 Balance druid changes live; sim has none (Moonkin +10%, Eclipse Wrath crit, Moonfury removed, Improved Starfire 2 points, Starfire cast time) |
-| mechanics-20261125-2 | low (estimate) | Blackhand's Breadth mark still Shadow / can miss; Nov 24 hotfix made it physical, unresistable |
+| World buffs 22888, 16609, 460939, 15366, 22817, 22818, 22820, 23735-38, 23766-69, 24425, 25101 | Attributes_6 0x800 (not in raid instances) | Matches ForeverRaidInstance; comment stale (mechanics-20261126-3) |
+| Fengus' Ferocity 22817 | e2/e3 bp 230 -> 115 (spell damage, Nov 23 hotfix baked) | No spell part at all (mechanics-20261126-2) |
+| Sayge's fortunes | effect 0 aura -> 4 (dummy), bp kept (23768: 10) | Server side; added to mechanics-20261124-1 |
+| Rogue poisons, Reagent Economy 1262636-47 | Attributes_5 0x2, Attributes_0 / duration | Reagents, no DPS |
+| Fist of Shahram 16601 | ImplicitTarget 1 -> 27 (wielder only) | Sim buffs wielder only |
+| Holy Fire ranks | default SpellAuraOptions rows removed | No effect |
+| Reinforce 1225497, Summon Charger / Dreadsteed, Enveloping Winds | legacy / mounts / NPC | n/a |
 
-Resolved: mechanics-20261118-1 (efeb06b95, shaman half).
+## Blizzard
 
-## Open items
-
-- Hotfix rows for Blackhand's Breadth and the Balance changes aren't cached (`hotfixes.py rows`
-  returned nothing); a fetch from wago.tools/hotfixes would give exact values.
-- No sims run: all commits are log-sourced rulings; DPS sizes above are estimates.
+- Dev notes t/2360696: still 8 posts, newest post 10 (2026-11-04). Nothing new.
+- Hotfix post t/2403040/16 (2026-11-25 23:25Z), not yet in TASKS.md:
+  - "Fixed a bug causing Libram of Law to not affect Judgement of Command." Sim misses it: mechanics-20261126-1 (JoC is 13.4% of Shock Ret damage, 1000 iterations; about +0.5% DPS).
+  - "The Blackhand's Breadth's trinket can no longer be resisted." Evidence added to mechanics-20261125-2.
+  - "The Blackblade of Shahram will now correctly perform its haste buff, but only to the wielder." Sim already does.
+  - Balance druid items repeat the Nov 25 blue post (mechanics-20261125-1).
+  - Class items for the class auditors: pet melee crit 0% fixed (hunter, warlock), Succubus/Incubus -5% crit, hawks +5% crit, Exorcism can crit (sim already), Judgement refresh below 20 s, Hurricane final hit, Genesis on Hurricane, Chain Lightning Clearcasting with 5 Maelstrom stacks.
+- Blue tracker: newest 2026-11-25 23:25Z (the hotfix post above); AV adjustments (PvP, not simmed).

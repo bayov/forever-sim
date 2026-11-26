@@ -1,39 +1,38 @@
-# client_update pass 16 (2026-11-24, master eceb090196)
+# client_update pass 18 (2026-11-26, master bfbee78fcc)
 
-Build: **1.60.1.71091** (wago.tools `latest --probe 300`), baseline 71037. Note for `.agents/skills/dps-report/state.json` `foreverClientBuild`: 1.60.1.71091.
+Build: **1.60.1.71139** (wago.tools `latest --probe 300`), baseline 71091. Note for `.agents/skills/dps-report/state.json` `foreverClientBuild`: 1.60.1.71139.
 
 ## What was checked
 
-- `table_summary.py 71037 71091`: 75 spells changed (SpellEffect +15/-5/~42, SpellMisc ~34), ItemSparse +1/~3, ItemEffect -1/~1. Trait*, SpellItemEnchantment, ChrRaces identical.
-- `db2diff.py 71037 71091` (337 lines) and `items_diff.py 71037 71091` (no request item, nothing at ilvl 55+).
-- Sources: foreverchanges.pro (71091 current, "No item reads differently"; Blizzard's November 23 hotfix notes and "Found in the game"). Blizzard forum JSON rate-limited ("performed this action too many times"); the Nov 23 notes were read through foreverchanges.
-- Each player-relevant change grepped in `sim/` and read; open branches `forever-update/2026-11-22` (PR #137) and `forever-update/2026-11-24-71091` checked.
+- `table_summary.py 71091 71139`: SpellEffect +3/~23, SpellMisc ~67, SpellInterrupts -15/~3, SpellAuraOptions -7, SpellClassOptions -7, ItemSparse +2/~82 (flags and bonding only), ItemEffect ~6. Trait*, SpellPower, SpellCooldowns, SpellItemEnchantment, ChrRaces identical.
+- `db2diff.py 71091 71139` (346 lines), `items_diff.py` (no request item, no stat change), `enchant_diff.py` (nothing).
+- Sources: Blizzard hotfix thread t/2403040 posts 14-16 (JSON read fine this time), foreverchanges.pro (71139 current; hotfixes 11-24 and 11-25).
+- Each DPS-relevant line grepped in `sim/` and its value read. Open findings in `findings/mechanics.md` checked so nothing is filed twice.
 
-## What 71091 is
+## What 71139 is
 
-The client copy of server pushes 114268, 114283, 114309, 114313, 114314 and 114320 (Nov 19-23), plus a new druid-themed NPC encounter (~45 NPC spells). No talent, enchant, racial or item-stat change.
+The client copy of the November 23 world-buff fix (zone-change interrupts removed), the Darkmoon Faire fix, the November 24 realm hotfixes (Fist of Shahram on the wielder) and the temporary bind-on-pickup poisons. Blizzard's November 25 hotfixes (Balance druid rework, pet crit, hawk crit, Judgement refresh, Exorcism crit) are server side; the client's talent tables are unchanged.
 
-## DPS-relevant rows (ledger section "Build 1.60.1.71091", 12 rows)
+## DPS-relevant rows (ledger section "Build 1.60.1.71139", 13 rows)
 
 | Row | Change | Status |
 |---|---|---|
-| WAR-HF-05 | Execute casts: Suppress Weapon Procs, Suppress Caster Procs off (push 114313) + Blizzard "fewer weapon procs" | ambiguous; update on client_update-20261120-1 (`warr_exec_wf2`) |
-| ROG-HF-07 | Mutilate casts suppress weapon procs | landed (no separate cast in sim) |
-| ROG-HF-08 | Shank procs again, Boot Knife as a target proc aura | landed |
-| PAL-HF-08 | Judgement 20271 suppresses weapon procs | landed |
-| PAL-HF-09 | JoL/JoW/JoJ 40 s | landed |
-| PRI-HF-01 | Chastise in Shadowform | in flight (PR #137) |
-| PRI-HF-02 | Dark Inspiration Spirit % via Mind Flay | landed |
-| WL-HF-06 | Intensity on Incinerate | in flight, n/a |
-| DRU-HF-03 | Feralheart 4P / Wildheart 5P Nature's Bounty gives Energy | in flight (3f1c2708d) |
-| SHR-HF-07 | Fengus' Ferocity 115 SP | in flight (3f1c2708d); update on client_update-20261030-4 |
-| SHR-HF-08 | Darkmoon Faire buffs "twice as much power" | ambiguous; new finding client_update-20261124-1 (low) |
-| SHR-HF-09 | Stormshroud 3P 3% / 18 Energy now in client | landed (PR #136) |
+| DRU-HF-04/05/06 | Balance: Starlight Wrath (-0.5 s Starfire), Improved Starfire 2 pts, Eclipse +20% Wrath crit, Moonkin Form +10% Arcane/Nature, Moonfury removed | missing; already filed as mechanics-20261125-1 (high) |
+| HUN-HF-11 | Pets crit on basic attacks | landed |
+| HUN-HF-12 | Hawks +~5% crit | wrong; new client_update-20261126-1 (medium) |
+| PAL-HF-10 | Judgement refresh under 20 s | landed |
+| PAL-HF-11 | Exorcism can crit | landed |
+| WL-HF-07/08 | Demons' melee crit was 0%; Succubus 5% too much crit | wrong / ambiguous; new client_update-20261126-2 (medium) |
+| SHA-HF-11 | Chain Lightning, Clearcasting with 5 Maelstrom stacks | minor, not checked |
+| SHR-HF-10 | Blackblade of Shahram hastes the wielder | landed |
+| SHR-HF-11 | Sayge's fortunes: the doubling was two 10% auras; 71139 keeps one | landed (sim 10%); resolves client_update-20261124-1 |
+| SHR-HF-12 | Blackhand's Breadth physical, unresistable | wrong; already mechanics-20261125-2 |
 
-Also in the client: Two-Handed Weapon Specialization 20111 Attributes_5 0x10000 (PAL-HF-07, landed).
+Also: Fengus' Ferocity 115 spell power is now in the client (SHR-HF-07); its fix is still unmerged on `forever-update/2026-11-24-71091` (update on client_update-20261030-4).
 
 ## Conclusions
 
-- One new low finding (Darkmoon Faire values unverified). Nothing missing or wrong at yes-level beyond what is in flight or already open.
-- Open findings: none resolved on master since pass 15 (11 sim commits, none touching them).
-- Left open: Blizzard forum thread 2403040 not re-read (rate limit); the Nov 23 notes came from foreverchanges.
+- Two new medium findings (hawk crit, demon crit), neither sized: both are server-side numbers with no client value.
+- The Balance rework is the biggest change this build window; it is mechanics-20261125-1, not refiled here.
+- Resolved: client_update-20261124-1 (Sayge's 10% is right). mechanics-20261124-1 asks the same question and can close on SHR-HF-11.
+- Left open: the Shahram sim lets up to 8 Fist auras stack (`item_effects.go:573`); whether the game refreshes instead is untested and not part of this hotfix.
