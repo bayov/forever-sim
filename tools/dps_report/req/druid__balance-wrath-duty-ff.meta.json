@@ -15,11 +15,11 @@
   "gearSet": "level60_phase0_balance",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 684.41,
-    "source": "tools/audit/run_reqs.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 pricing round and the master sim batches of November 24 and 25"
+    "dps": 685.22,
+    "source": "verify.py on this request (2026-11-25), 20,000 iterations, seed 1, after the Phase 0 re-rank (Talisman of Ascendance for Chained Essence of Eranikus)"
   },
   "verify": {
-    "dps": 684.41,
+    "dps": 685.22,
     "stderr": 0.21,
     "iters": 20000,
     "ok": true,
