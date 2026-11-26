@@ -56,6 +56,9 @@ type export struct {
 		} `json:"talents"`
 	} `json:"talents"`
 	Stats map[string]json.RawMessage `json:"stats"`
+	// SheetGear is the gear we wore when the sheet (Stats) was read, in Gear's shape. Only
+	// history records have it. It differs from Gear when we changed gear after the last sheet.
+	SheetGear []exportItem `json:"sheetGear"`
 	// Buffs are the buffs that were up when the sheet was read, as spell IDs (or names for a
 	// buff without one). Only history records have them, since 2026-11-05.
 	Buffs json.RawMessage `json:"buffs"`

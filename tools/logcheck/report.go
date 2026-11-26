@@ -22,9 +22,15 @@ import (
 // report prints what logcheck found. Every line that the sim can't explain also goes in
 // flagged, which the report repeats at the end.
 type report struct {
-	cl          *combatLog
-	ex          *export
-	char        *character
+	cl   *combatLog
+	ex   *export
+	char *character
+	// sheetPlayer is the sim's player with the gear we wore when the sheet was read, or nil
+	// when that's the window's gear (useSheetGear).
+	sheetPlayer *proto.Player
+	// sheetWeapon is the main hand we held when the sheet was read when it has no weapon skill,
+	// like a fishing pole. The sheet's melee crit then says nothing about the sim's.
+	sheetWeapon string
 	tables      *clientTables
 	logPath     string
 	minAttempts int
@@ -81,7 +87,16 @@ func (r *report) header() {
 
 // sheetStats are the sim's stats for our character with extra stats on top.
 func (r *report) sheetStats(extra stats.Stats) (stats.Stats, error) {
-	c := &character{player: googleproto.Clone(r.char.player).(*proto.Player)}
+	player := r.char.player
+	if r.sheetPlayer != nil {
+		player = r.sheetPlayer
+	}
+	return r.playerStats(player, extra)
+}
+
+// playerStats are the sim's stats for the player with extra stats on top.
+func (r *report) playerStats(player *proto.Player, extra stats.Stats) (stats.Stats, error) {
+	c := &character{player: googleproto.Clone(player).(*proto.Player)}
 	// Under Forever the sim takes bonus stats like gear, whose crit goes on melee and spells
 	// alike. A buff's crit is with everything too, so it goes in once.
 	extra[stats.SpellCrit] = 0
@@ -96,15 +111,73 @@ func (r *report) sheetStats(extra stats.Stats) (stats.Stats, error) {
 	return stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats.Stats), nil
 }
 
+// useSheetGear sets sheetPlayer when we wore other gear when the sheet was read than in the
+// window, so the sheet check compares the sheet with the gear it was read with. The window's
+// replay keeps the window's gear.
+func (r *report) useSheetGear() error {
+	if r.ex.SheetGear == nil || slices.Equal(r.ex.SheetGear, r.ex.Gear) {
+		return nil
+	}
+	ex := *r.ex
+	ex.Gear = r.ex.SheetGear
+	c, err := buildPlayer(&ex, r.tables)
+	if err != nil {
+		return err
+	}
+	p := googleproto.Clone(r.char.player).(*proto.Player)
+	p.Equipment = c.player.Equipment
+	p.BonusStats = c.player.BonusStats
+	// The sheet shows our real weapon skill even when the replay assumes full skill.
+	setSkillGaps(p, &ex)
+	r.sheetPlayer = p
+
+	var changed []string
+	for i, item := range r.ex.SheetGear {
+		var now exportItem
+		if i < len(r.ex.Gear) {
+			now = r.ex.Gear[i]
+		}
+		if item.ID != now.ID {
+			changed = append(changed, fmt.Sprintf("%s in place of %s", gearName(item), gearName(now)))
+		}
+	}
+	// Slot 16 is the main hand.
+	if len(r.ex.SheetGear) >= 16 {
+		if mainHand := r.ex.SheetGear[15]; mainHand.ID != 0 && weaponSkillName(core.ItemsByID[mainHand.ID]) == "" {
+			r.sheetWeapon = gearName(mainHand)
+		}
+	}
+	if len(changed) > 0 {
+		fmt.Printf("The sheet was read with other gear, and the sheet check uses it: %s\n", strings.Join(changed, ", "))
+	}
+	return nil
+}
+
+func gearName(item exportItem) string {
+	if item.ID == 0 {
+		return "nothing"
+	}
+	return fmt.Sprintf("%s (%d)", item.Name, item.ID)
+}
+
 // sheet compares the export's character sheet with the sim's stats for the same character,
 // with the buffs that were up when BayovCore read the sheet (buffs.go).
 func (r *report) sheet() {
+	unbuffed, err := r.playerStats(r.char.player, stats.Stats{})
+	if err != nil {
+		fmt.Println("Sheet check failed:", err)
+		return
+	}
+	r.char.unbuffed = unbuffed
+	if err := r.useSheetGear(); err != nil {
+		fmt.Println("Sheet check failed:", err)
+		return
+	}
 	base, err := r.sheetStats(stats.Stats{})
 	if err != nil {
 		fmt.Println("Sheet check failed:", err)
 		return
 	}
-	r.char.unbuffed = base
 	ids := buffIDs(r.ex.Buffs)
 	s, err := r.sheetStats(r.tables.buffTotal(ids, base, r.char.camp))
 	if err != nil {
@@ -188,6 +261,12 @@ func (r *report) sheet() {
 	for _, row := range rows {
 		want, ok := row.sheet()
 		if !ok {
+			continue
+		}
+		if row.name == "Melee crit %" && r.sheetWeapon != "" {
+			// On Nov 25 the sheet read with a fishing pole had 5.3 to 5.7% less melee crit than
+			// the sim's empty main hand, and nothing else off.
+			fmt.Printf("  %-14s %8.2f  not checked, read with %s in the main hand\n", row.name, want, r.sheetWeapon)
 			continue
 		}
 		diff := row.sim - want
@@ -411,6 +490,9 @@ func (r *report) weaponSkills(fullSkill bool) {
 // The client's sheet takes 0.04% crit off for each point, and the sim's crit stat doesn't (its
 // attack table does).
 func (r *report) mainHandSkillGap() float64 {
+	if r.sheetPlayer != nil {
+		return float64(r.sheetPlayer.MainHandSkillGap)
+	}
 	return float64(r.char.player.MainHandSkillGap)
 }
 

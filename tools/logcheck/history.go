@@ -285,6 +285,12 @@ func replayHistory(path string) ([]*export, error) {
 				list[i] = item
 			}
 		}
+		// The sheet goes with the gear it was read with too. On Nov 25 we fished between
+		// battleground fights, and the sheet read with the fishing pole in hand stayed on the
+		// exports after Bonecrusher came back.
+		if rec.Stats != "" {
+			state["sheetGear"] = list
+		}
 		out := map[string]any{}
 		for k, v := range state {
 			out[k] = v

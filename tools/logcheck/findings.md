@@ -150,14 +150,6 @@ sections 2 and 6 have the format).
 - **Next step**: have logcheck apply debuffs on us by their real start and end times in the log. Until then, battleground windows with NPC debuffs on us read low on physical damage.
 - **Status**: open, first seen 2026-11-26.
 
-### Sheet read with a fishing pole equipped
-
-- **Flag**: `sheet` (Strength +26 to +29, AP +60 to +66, melee crit +5.3 to +6.7%, spell crit +1%).
-- **Windows**: `112526_195841 20:14:12-20:16:11` and `22:00:52-22:02:57`.
-- **What we think**: we fished between fights. History line 36499 swaps the main hand to the fishing pole (6256), the sheet is read at 36544, and Bonecrusher (18420) comes back at 36546. Line 36798 to 36827 repeats this. Bonecrusher's 26 Strength and 14 crit rating (29 Strength with Kings) are the whole gap. `buildExports` in `tools/logcheck/history.go` carries the last sheet onto later gear.
-- **Next step**: skip the sheet check (or say "sheet read with another weapon") when the weapon slots at the sheet's line differ from the window's gear.
-- **Status**: open, first seen 2026-11-26.
-
 ## Watching
 
 ### Searing Totem crits high at level 37 once
@@ -218,6 +210,10 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Sheet read with a fishing pole equipped
+
+On Nov 25 (`112526_195841` `20:14` and `22:00`) we fished between battleground fights, and the sheet read with the fishing pole stayed on the exports after Bonecrusher came back. That gave Strength +26 to +29, AP +60 and melee crit +5 to +7 over the sheet. History exports now carry the gear the sheet was read with (`sheetGear`, `tools/logcheck/history.go`), and the sheet check builds the character from it, with that weapon's skill gap (`useSheetGear` in `tools/logcheck/report.go`). With a main hand that has no weapon skill, like a fishing pole, the melee crit row isn't checked (2026-11-26).
 
 ### Warchief's Blessing left out of the sheet check
 
