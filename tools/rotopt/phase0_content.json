@@ -736,6 +736,7 @@
   "18524": {"name": "Leggings of Destruction", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted"},
   "18525": {"name": "Bracers of Prosperity", "note": "Drop: King Gordok, Dire Maul"},
   "18526": {"name": "Crown of the Ogre King", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "gold": 125.6, "goldPerDps": {"mage_arcane": 146.7}},
+  "18527": {"name": "Harmonious Gauntlets", "note": "King Gordok · Dire Maul"},
   "18530": {"name": "Ogre Forged Hauberk", "checked": "open: the Enhancement check of 2026-11-12 left it unlisted", "gold": 212.6, "goldPerDps": {"shaman_warden_max_survival": 210.6, "shaman_warden_max_threat": 56.9}},
   "18531": {"name": "Unyielding Maul", "note": "Tribute run, Dire Maul", "gold": 211.0, "goldPerDps": {"druid_bear_max_survival": 4.9}},
   "18534": {"name": "Rod of the Ogre Magi", "note": "Tribute run, King Gordok · Dire Maul"},

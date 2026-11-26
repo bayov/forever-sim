@@ -85,4 +85,13 @@ the gear's mp5, not the rotation.
 
 ## Faction row
 
-FACTION_ROW
+Alliance row as RaceDwarf on back and hands, the two Horde picks. Files
+`..._shaman_restoration_alliance.bis.json` and `.gear.json`.
+
+- back: Hide of the Wild (Leatherworking, Dire Maul pattern), +0.5 (0.2) at 5000 iterations, with Minor
+  Resistance.
+- hands: Desert Bloom Gloves (Roman'khan chain, doubtful), +0.8 (0.2), with Mystic Thick Armor Kit. Next is
+  Mooncloth Gloves at -0.2.
+- List score 126.0 vs 127.6 for the Horde list. Most of the drop is the race. Five Thunders (Mokvar, Orgrimmar)
+  has no faction tag, so the Alliance row keeps 6 pieces. If Mokvar is Horde only, the user should rule.
+- Tagged Harmonious Gauntlets (King Gordok) for the ranking.
