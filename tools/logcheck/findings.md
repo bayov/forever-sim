@@ -35,7 +35,8 @@ sections 2 and 6 have the format).
 - **Nov 20 update**: `111926_175614` and `112026_111427` (36 windows run, 17 skipped under 50 attacks, levels 57 to 62), summed hits log vs sim by mob level. Magma Totem: 1.011 at 58 to 60 (1522 hits), 1.033 at 61 (232), 1.055 at 62 (192, 94.9 vs 90.0). Flame Shock ticks: 1.02 at 58 to 60, 1.041 at 61 (69), 1.061 at 62 (67, 99.3 vs 93.6). Fire Nova 1.015 at 60, 1.031 at 61, 1.075 at 62 (22 hits). Earth Shock 1.013 at 59 and 60, 1.077 at 62 (19 hits, 642.4 vs 596.6). Fiery Weapon 41 vs 40 at 61 and 62 (113 hits, 1.025). Windfury Weapon 1.024 at 59, 1.047 at 60, 1.094 at 61. Same shape as Nov 18: flat to 60, rising about 2% a level above it. `Grounded Electroshock (1315996)` (NEW, our proc) is 62 vs 60 at level 62 (5 hits), the same drift.
 - **Nov 22 update**: `112126_201216` and `112226_113558` (45 windows run, 9 skipped under 50 attacks, levels 50 to 62), summed hits log vs sim by mob level. Magma Totem: 0.989 at 54 (118 hits), 1.007 to 1.010 at 58 to 60 (856 hits), 1.023 at 61 (27), 1.058 at 62 (24 hits, 95.2 vs 90.0 in `13:42:21`). Flame Shock ticks: 1.024 to 1.026 at 58 to 60 (240 hits), 1.032 at 61 (14), 1.074 at 62 (14 hits, 101 vs 94). Fire Nova 1.012 at 58, 1.039 at 61, 1.071 at 62 (6 hits). Earth Shock 1.011 to 1.015 at 58 and 59, 1.047 at 61, 1.068 at 62 (7 hits). Fiery Weapon 38.0 vs 40 at 54 (33 hits, 0.95), 42.0 vs 40 at 62 (22 hits, 1.05). Windfury Weapon 1.011 at 60, 1.10 at 61, 1.174 at 62 (15 hits). Cloud of Chained Essence 138 at 53 and 56, 143 at 61 (5 hits). Same shape as Nov 20, with the 62 step a little larger on Windfury Weapon and Melee.
 - **Nov 25 update**: `112326_183423`, `112426_110702` and `112426_172127` (34 windows run, levels 55 to 63), flagged hits only, so few at 61 and above. Magma Totem 1.010 at 56 to 58 (53 hits), 0.989 at 60 (10 hits), 0.996 at 61 (20 hits, 90.3 vs 90.7). Flame Shock ticks 1.00 at 56, 1.02 at 55 and 58, 0.989 at 61 (11 hits). Windfury Weapon 1.033 at 58 (18 hits) and 1.056 at 63 (10 hits, 436.1 vs 412.8). No level 62 spell window, so the 62 step is not rechecked.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-25.
+- **Nov 26 update**: `112526_195841` `22:00:52` (Alterac Valley NPCs): Flame Shock ticks 96.7 vs 93.5 at level 58 (6 hits, 1.034) and 98.3 vs 93.1 at 61 (6 hits, 1.056), Magma Totem 91 vs 90.5 at 58 and 60 (22 hits, 1.010). Same curve as before. No level 62 spell hits.
+- **Status**: open, first seen 2026-11-16, last updated 2026-11-26.
 
 ### Fiery Weapon partial resists and rounding
 
@@ -141,6 +142,22 @@ sections 2 and 6 have the format).
 - **Next step**: fix `isArray` in the addon so it always writes an object.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
+### NPC debuffs on us are spread over the whole window
+
+- **Flag**: `Melee: raw`, level 62 (Vanndar Stormpike, Alterac Valley).
+- **Windows**: `112526_195841 20:30:35-20:32:59`: log 288.3 in 11 hits (229 to 401) vs the sim's 366.4 (283 to 408).
+- **What we think**: Stonehearth Marshal's Demoralizing Shout (23511) landed on us at 20:32:19.5 and again at :37.7. Our AP dropped from 1663 to 1059 each time. Hits at full AP were 401 to 415, hits under the shout 229 to 267. logcheck applies the shout as a share of the whole window (21%), not at the time of each hit, so the sim's average stays high. Not a sim error.
+- **Next step**: have logcheck apply debuffs on us by their real start and end times in the log. Until then, battleground windows with NPC debuffs on us read low on physical damage.
+- **Status**: open, first seen 2026-11-26.
+
+### Sheet read with a fishing pole equipped
+
+- **Flag**: `sheet` (Strength +26 to +29, AP +60 to +66, melee crit +5.3 to +6.7%, spell crit +1%).
+- **Windows**: `112526_195841 20:14:12-20:16:11` and `22:00:52-22:02:57`.
+- **What we think**: we fished between fights. History line 36499 swaps the main hand to the fishing pole (6256), the sheet is read at 36544, and Bonecrusher (18420) comes back at 36546. Line 36798 to 36827 repeats this. Bonecrusher's 26 Strength and 14 crit rating (29 Strength with Kings) are the whole gap. `buildExports` in `tools/logcheck/history.go` carries the last sheet onto later gear.
+- **Next step**: skip the sheet check (or say "sheet read with another weapon") when the weapon slots at the sheet's line differ from the window's gear.
+- **Status**: open, first seen 2026-11-26.
+
 ## Watching
 
 ### Searing Totem crits high at level 37 once
@@ -201,6 +218,10 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Warchief's Blessing left out of the sheet check
+
+All three Nov 25 battleground sheets (`112526_195841`) were 300 health over the sim. Warchief's Blessing (16609) has dummy auras in the client (300, 15, 10), so logcheck read no stats from it. We added it to `buffOverrides` in `tools/logcheck/buffs.go` as 300 health and 10 mana per 5 sec (2026-11-26).
 
 ### Shadow Oil replaced Windfury Weapon in logcheck
 

@@ -80,7 +80,13 @@ var resistanceBits = map[int32]stats.Stat{
 //
 // Veteran Adventurer's Loyal Companion is a pet that follows us, and the sheets with it up are
 // the same as without it.
+//
+// Warchief's Blessing (Rend's buff) has three dummy auras in the client, 300, 15 and 10. They are
+// the Classic +300 health, 15% melee haste and 10 mana every 5 sec. We count the health and the
+// mana here. The haste isn't a stat, so the sheet check leaves it out. The Nov 25 battleground
+// sheets all had it up and were 300 health over the sim without this row.
 var buffOverrides = map[int32]stats.Stats{
+	16609:   {stats.Health: 300, stats.MP5: 10},
 	1248421: {stats.Intellect: 3},
 	1248422: {stats.Strength: 3},
 	1249519: {stats.AttackPower: 6, stats.RangedAttackPower: 6},
