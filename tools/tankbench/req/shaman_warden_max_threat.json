@@ -5,7 +5,7 @@
     "players": [
      {
       "inFrontOfTarget": true,
-      "race": "RaceNightElf",
+      "race": "RaceTroll",
       "class": "ClassShaman",
       "level": 60,
       "talentsString": "0535-051031303351012201-050002",
@@ -36,13 +36,13 @@
         },
         {
          "id": 12632,
-         "enchant": 1248640
+         "enchant": 1248645
         },
         {
          "id": 227018
         },
         {
-         "id": 227020,
+         "id": 227005,
          "enchant": 1508
         },
         {

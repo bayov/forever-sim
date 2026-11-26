@@ -87,7 +87,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 
 	defaults: {
 		// Balanced's race (the default build).
-		race: Race.RaceNightElf,
+		race: Race.RaceTroll,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -215,8 +215,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceNightElf,
-				[Faction.Horde]: Race.RaceTauren,
+				[Faction.Alliance]: Race.RaceDwarf,
+				[Faction.Horde]: Race.RaceTroll,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

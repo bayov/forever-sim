@@ -230,7 +230,7 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
 	// Balanced's race (the default build).
-	race: Race.RaceNightElf,
+	race: Race.RaceTroll,
 };
 
 // The tank bench's boss (docs/tank_sim.md, The bench; tools/tankbench/req/shaman_warden_*.json): the shared Level 60
@@ -276,31 +276,31 @@ export const EncounterLevel60TankMaxSurvival = benchEncounter('Generic boss, tan
 // The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip:
-		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova all fight, the attack power trinket on cooldown. Round 5 consumables: Natural Precision, Ground Scorpok Assay, Greater Stoneshield Potion on cooldown.",
+		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Troll, Mana Spring Totem, Searing Totem and Fire Nova all fight, the attack power trinket on cooldown. Round 5 consumables: Natural Precision, Ground Scorpok Assay, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60TankMaxThreat,
 	rotation: APLLevel60MaxThreat,
 	encounter: EncounterLevel60TankMaxThreat,
-	race: Race.RaceNightElf,
+	race: Race.RaceTroll,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip:
-		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Healing Stream Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
+		"Scored with survival weighed at 1 (docs/tank_sim.md). Troll, Healing Stream Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60SyntheticArmorTrinketBalanced,
 	talents: TalentsLevel60Tank,
 	rotation: APLLevel60Balanced,
 	encounter: EncounterLevel60Tank,
-	race: Race.RaceNightElf,
+	race: Race.RaceTroll,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
 	tooltip:
-		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Healing Stream Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown, no Mageblood.',
+		'Scored with survival weighed at 3 (docs/tank_sim.md). Tauren, Healing Stream Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown, no Mageblood.',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60TankMaxSurvival,
 	rotation: APLLevel60MaxSurvival,
 	encounter: EncounterLevel60TankMaxSurvival,
-	race: Race.RaceUndead,
+	race: Race.RaceTauren,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
 });
