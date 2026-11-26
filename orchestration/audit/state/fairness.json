@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T13:00:32Z",
- "pass": 63,
- "result": "findings",
+ "last_pass_at": "2026-11-26T19:06:06Z",
+ "pass": 64,
+ "result": "quiet",
  "baseline": "2af970d7489db7d0e85b44f402046ff1462b0f63",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:01:11Z",
+ "checked_at": "2026-11-26T19:06:21Z",
  "baseline_note": "2af970d74 full re-sweep (5k, seed 1, every race) after the Phase 0 prices round 2 re-ranks of every class",
- "note": "1 new: fairness-20261126-4 (Ret / Sub Holy leave out Darkmoon Card: Maelstrom, +3.8 / +2.5, medium). fairness-20261126-1 resolved (rogue lists on 6a5cacef8). Shahram leak no longer on any report request."
+ "note": "Quiet: range is tank/healer Phase 0 work, Bear Lacerate, Water Shield totem; no DPS build moves (loop run within 1.4 of published). Baseline kept at 2af970d74."
 }

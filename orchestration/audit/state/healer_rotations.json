@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T13:30:00Z",
- "pass": 29,
+ "last_pass_at": "2026-11-26T19:02:38Z",
+ "pass": 30,
  "result": "quiet",
- "note": "Phase 0 gear (equipment only changed in the 7 finished requests): 41 of 63 rows moved >0.02, mean carry down 0.008 to 0.075 by spec; baseline re-based. Holy and Disc tank still OOM on Chromaggus (106 s, 102 s of 115; open -20261125-1, -20261104-2). No other OOM at 180/300 s. Master's pass 29 (ab3fff7007, 07:06Z) also logged the filler mage__frost.json item swap moving 28 raid rows under -20261124-1 and closed -20261125-2; its synthetic-gear baseline is superseded by this one.",
+ "note": "All 63 bench rows identical to the pass 29 baseline (only bis-list notes, leveling-only core and Totem of Sustaining changed). Totem of Sustaining A/B on the shaman requests: mixed (tank mean +0.001, raid and 300 s lose), Urgency stays.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:30:00Z"
+ "checked_at": "2026-11-26T19:06:21Z"
 }

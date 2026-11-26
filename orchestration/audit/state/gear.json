@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T12:53:05Z",
- "pass": 82,
+ "last_pass_at": "2026-11-26T19:04:39Z",
+ "pass": 83,
  "result": "quiet",
- "note": "Pass 82: phase0_check.py 3 flags, all close calls (Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77, Ret Darkmoon Maelstrom 1.87, doubtful, rerank notes say 0.4/0.9 unconfirmed). No new gear ruling. Lists and requests changed only by the 2026-11-26 rerank already audited in pass 81; report builds sit 0.5-1.4% under list dps (uses-on-90s search fight).",
+ "note": "Pass 83: no DPS list, gear set or request changed since pass 82; the 46 files are the tank/healer Phase 0 lists plus shared tools (specs, content, enchants, bis_phase0.sh, standards 43 tank/healer extension). phase0_check.py DPS flags unchanged: Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77, Ret Darkmoon Maelstrom 1.87 (close calls, doubtful). Tank/healer flags are for their passes.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:01:11Z"
+ "checked_at": "2026-11-26T19:06:21Z"
 }

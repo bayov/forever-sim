@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T12:52:22Z",
- "pass": 83,
+ "last_pass_at": "2026-11-26T19:04:06Z",
+ "pass": 84,
  "result": "quiet",
- "note": "6a447e231..2af970d74: Phase 0 prices round 2 (gear only), Balance 10455 cleanup (resolves -1), Fury DW back on 13965 (resolves -2), Barov servant crash guard (no preset wears 14022). Baseline unchanged.",
+ "note": "2af970d74..f9fa79917: bear tank APLs + Lacerate fix (tank only), Totem of Sustaining Water Shield globe (no req wears 23200), rotopt tank/heal prices. Baseline unchanged.",
  "client_build": "1.60.1.71091",
  "baseline": "baseline_ab3fff7_3000it_seed424242.tsv",
- "checked_at": "2026-11-26T13:01:11Z"
+ "checked_at": "2026-11-26T19:06:21Z"
 }

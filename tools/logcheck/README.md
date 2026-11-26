@@ -160,8 +160,16 @@ slow quartile.
   turns that off). Misses, dodges, parries, glances and crits follow them. When we swung a
   weapon below full skill in the window, the report prints a warning and puts it in the flagged
   list ahead of the melee rows, because skill rises as we swing and the sim holds it still.
-- We stand in front of the mob, where it can parry and block, as when questing (`-behind` for
-  the other way).
+- The log's share of our melee attempts from behind the mob, where it can't parry or block. In a
+  dungeon a tank holds the mob and we hit it from behind, while questing we face it. So for each
+  mob level we take the share of our white swings and Physical spells (Stormstrike, Windfury
+  attacks) that the log puts behind the mob, and run that share of the replays behind it and the
+  rest in front. Behind is outside the mob's front 180 degrees. We take where we and the mob
+  stood from the log's advanced fields, within a second of the attack. A mob faces the one it
+  swung at in the last 3 seconds, and otherwise we use its logged facing, which lags behind (it
+  pointed within 90 degrees of us on only 73% of the swings mobs landed on us on Nov 22). With no
+  positions in the log we stand in front. `-behind` puts every run behind the mob. Before this,
+  the Nov 14 to 25 windows at level 60 mobs had 26 parries where the sim expected 101.
 - Our shaman imbue, from the last imbue we cast before the window ends (the export can't see it
   under Forever). When the cast is in an earlier log file, the imbue's procs in the window say
   which one it is.
@@ -218,6 +226,8 @@ replayed in every level's run.
   Weapon's attacks are 8232 in the sim and 439440 in the log). The report pairs a sim-only spell
   with a log-only spell of the same client name and says so. `nameAliases` in `report.go` holds
   the pairs whose names differ too (Flametongue Totem Proc and Flametongue Attack).
+- **Behind the mob.** Each mob level says on what share of our melee attempts we stood behind
+  the mob, and how many of the sim's runs stand there too (above).
 - **Only in the sim** lists what the sim did that the log never had.
 - `-min` (default 5) hides abilities with fewer attempts in the log.
 

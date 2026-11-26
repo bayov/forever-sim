@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "3e9748641164f5717f36438d23665cc80f1d5c7c"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T13:30:00Z",
- "pass": 17,
- "result": "findings",
+ "last_pass_at": "2026-11-26T18:49:54Z",
+ "pass": 18,
+ "result": "quiet",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:30:00Z",
- "note": "First Phase 0 pass. 4 finished lists (druid pending), requests wear them, shaman Alliance row clean. Holy priest and Holy paladin lists 1.4% above the bench (-20261126-1). Price coverage gaps in tank_fairness-20261126-2."
+ "checked_at": "2026-11-26T19:06:21Z",
+ "note": "Watched change was the enh row talents only. Healer lists changed only in price notes (266e5357f); requests wear the lists; Water Shield Totem of Sustaining now modelled, not in the shaman list. Open: -20261126-1 unchanged, druid_restoration list pending."
 }

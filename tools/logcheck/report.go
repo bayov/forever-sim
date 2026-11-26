@@ -45,6 +45,8 @@ type report struct {
 	pooledOrder []abilityKey
 	// rounding is how the server turns the raw field into whole points: "floor" or "round".
 	rounding string
+	// behind is -behind: every run stands behind the mob, whatever the log says.
+	behind bool
 }
 
 // toWhole turns a sim hit into the whole points the log's raw field would show.
@@ -649,6 +651,7 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 	runs := float64(simT.iterations)
 	fmt.Printf("Replayed %d casts a run in %d runs, %.0f%% of them late (cast after a retry), mob hits on us %.1f a minute\n",
 		len(p.casts), simT.iterations, 100*float64(rs.late)/math.Max(1, float64(rs.cast)), p.hitsPerMinute)
+	r.meleeSide(p, simT.iterations)
 	var missing []string
 	for name, id := range rs.missing {
 		if !r.missing[name] {
@@ -808,6 +811,25 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 }
 
 // shares lists the partial resist steps, as counts (scale 1) or percents of the landed hits.
+// meleeSide says which side of the mob the sim's runs stood on, and why.
+func (r *report) meleeSide(p *plan, runs int) {
+	m := p.melee
+	switch {
+	case r.behind:
+		fmt.Printf("  behind the mob in every run (-behind), the log has %.0f%% of %d melee attempts behind it\n", 100*m.share(), m.known)
+	case m.attempts == 0:
+	case m.known == 0:
+		fmt.Printf("  in front of the mob, the log has no positions for our %d melee attempts\n", m.attempts)
+	default:
+		unknown := ""
+		if m.known < m.attempts {
+			unknown = fmt.Sprintf(" (%d more without positions)", m.attempts-m.known)
+		}
+		fmt.Printf("  behind the mob on %.0f%% of %d melee attempts%s, so the sim is in %d of its %d runs\n",
+			100*m.share(), m.known, unknown, behindRuns(p.behind, runs), runs)
+	}
+}
+
 func shares(partial map[int]int, scale float64) string {
 	var steps []int
 	for step := range partial {

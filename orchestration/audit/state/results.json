@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "2af970d7489db7d0e85b44f402046ff1462b0f63"
+  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
  },
- "last_pass_at": "2026-11-26T16:00:00Z",
- "pass": 109,
+ "last_pass_at": "2026-11-26T19:03:22Z",
+ "pass": 110,
  "result": "quiet",
- "note": "pass 109: metas within 1.4 of the run; drift equals the reference; Land Mine and sapper drift findings resolved.",
+ "note": "pass 110: 14 of 68 differ from metas by 0.5 to 1.4 (noise); no DPS request moved by the sim changes; mksettings unchanged.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T13:01:11Z",
+ "checked_at": "2026-11-26T19:06:21Z",
  "baseline": "0facd9428"
 }

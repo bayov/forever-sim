@@ -99,24 +99,47 @@ swing, in windows of 50 attacks or more against mobs. Anything else the game doe
 from the sim passes silently. So after the triage, send agents to read the new play sessions
 themselves and look for what logcheck can't see.
 
-Run it when the audit had new windows (run or skipped). Start one `sonnet` agent per lens below,
-all in one message, each on every log file with new windows. Each brief gives the log paths
-(`~/forever-logs/<flavor>/`, a `.txt.gz` needs `zcat` into a scratch file), the time ranges,
-our character's GUID from the digest, and the report paths. It points the agent at
-`tools/combat_log/` (`cl.py` parses lines) and tells it to grep and count with scripts, never
-to read a log whole. It tells the agent to read `tools/logcheck/findings.md`, `known.json` and
-`notes.md` "Need to Verify" first, so it reports only what's new.
+Run it when the audit had new windows (run or skipped). Start the agents all in one message,
+as `sonnet`. Each brief gives the log paths (`~/forever-logs/<flavor>/`, a `.txt.gz` needs
+`zcat` into a scratch file), the time ranges, our character's GUID from the digest, and the
+report paths. It points the agent at `tools/combat_log/` (`cl.py` parses lines) and tells it to
+grep and count with scripts, never to read a log whole. It tells the agent to read
+`tools/logcheck/findings.md`, `known.json` and `notes.md` "Need to Verify" first, so it reports
+only what's new, and gives it its own scratch folder.
 
-- **Spells and auras the sim doesn't have**: every spell ID in our events (casts, damage,
-  auras, energizes, procs from gear and enchants) and on our targets that the sim never
-  produces. Check with `rg` in `sim/` and the sim's spell IDs, and say what each does.
-- **Timing**: cooldowns from cast gaps, buff and debuff durations, totem lifetimes, cast times,
-  swing speed under haste, internal cooldowns of procs (the shortest gap between two procs),
-  and the GCD. Compare each with the sim's value in `sim/`.
-- **Resources and what logcheck skips**: mana costs and regen (energize events, the power
-  fields of advanced logging), damage taken by us, healing, threat, the skipped windows under
-  50 attacks, fights against players, and odd log events (reflects, absorbs, extra attacks,
-  evades) that logcheck drops.
+How many agents:
+
+- The first four lenses run once per new log file, so each agent reads at most one play
+  session. Past about 8 agents in all, give each agent two or three neighbouring logs instead.
+- The trends and build lenses run once per audit, over all the new logs.
+
+The lenses:
+
+1. **Spells and auras the sim doesn't have**: every spell ID in our events (casts, damage,
+   auras, energizes, procs from gear and enchants) and on our targets that the sim never
+   produces. Check with `rg` in `sim/` and the sim's spell IDs, and say what each does.
+2. **Timing**: cooldowns from cast gaps, buff and debuff durations, totem lifetimes, cast times,
+   swing speed under haste, internal cooldowns of procs (the shortest gap between two procs),
+   and the GCD. Compare each with the sim's value in `sim/`.
+3. **Resources and what logcheck skips**: mana costs and regen (energize events, the power
+   fields of advanced logging), damage taken by us, healing, threat, the skipped windows under
+   50 attacks, fights against players, and odd log events (reflects, absorbs, extra attacks,
+   evades) that logcheck drops.
+4. **Mob side**: what the mobs we hit are like. That's their armor (from our melee damage
+   against the same weapon roll on other mobs), resistances and immunities by school, their own
+   buffs and debuffs that change what they take, and how our damage on each changes with mob
+   level. Group by mob name and level. Mob levels above 60 matter most: every hit on a level 61
+   to 63 mob goes to the "Fixed-damage hits move with the mob's level around 60" finding.
+5. **Trends across logs**: the same ability's damage per hit, crit rate and procs per 100 swings
+   in the new logs next to the last few weeks of the ledger (`~/forever-logs/audit/ledger.jsonl`
+   and the reports), at the same mob levels. Look for slow drift that no single window flags,
+   and for a step on one date (a server change).
+6. **Build changes**: the client build in the new logs (`BUILD_VERSION` on the first line) and
+   exports (`when.build`) against the build of the last audited logs. When it changed, diff the
+   client data (`tools/sources/db2diff.py <old> <new> <out>` for spells and talents,
+   `tools/audit/client_update/items_diff.py` for items), keep the changes to our class's spells,
+   our talents and the gear we wear, and check each against the sim and the new logs. When the
+   build didn't change, it says so in one line and stops.
 
 Each agent hands back at most ten candidates. Each one has the rule the sim gets wrong, the
 counts from the log and the sim's value with its file and line, and three example log lines.
@@ -184,8 +207,8 @@ The user may be away and other sessions share the working copy. So an unattended
   (`.txt.gz`) needs `zcat` into a scratch file before a Python script reads it.
 
 Run the audit (section 1). With no new windows, say so in one line and stop. Otherwise also run
-the agent search (section 2b), but with only one lens per run: the first, second or third by the
-hour of the day mod 3. Its verified candidates go into `findings.md` like flags. Otherwise, for
+the agent search (section 2b), but with only one lens per run: lens number (hour of the day mod
+6) + 1, over all the new logs in one agent. Its verified candidates go into `findings.md` like flags. Otherwise, for
 each new window, read the report of each flag that isn't `known`, triage it as in section 2,
 and update `findings.md`:
 

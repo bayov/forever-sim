@@ -1,32 +1,29 @@
-# Mechanics pass 108 (2026-11-26)
+# Mechanics pass 110 (2026-11-26)
 
-- Master: ab3fff700 (last audited bfbee78fc). Client 1.60.1.71139 (unchanged).
-- Result: findings (1 low).
+- Master: f9fa79917 (last audited 2af970d74). Client 1.60.1.71139 (unchanged; probe of 300 builds found none newer).
+- Result: findings (1 medium).
 
-## Repo since bfbee78fc
+## Get current
 
-Four sim commits, all warrior leveling work: 143bf4f72 (ranks by learn level, leveling hooks), 8f5b59325 (Charge, Intercept, Victory Rush, Retaliation, Concussion Blow, Gore Drinker, Cannibalize, Rage decay, stances by level), 1223e764e (big pulls: facing, camps, area reach), 81a2e51fc (Recovery, shield spikes, leveling heals).
+- Blizzard: blue tracker and the hotfix thread (2403040, last post 16, 2026-11-25 23:25, not edited since) have nothing newer than the last pass read. Development notes thread 2360696 unchanged (8 posts, 2026-11-04).
+- Daily update f9fa79917 (TASKS.md): build 71139, Revelation per wave, Chain Lightning Clearcasting, Blackhand's Breadth and Sayge notes. Blackhand's Breadth (mechanics-20261125-2) and Sayge (mechanics-20261124-1) are already open here; Chain Lightning Clearcasting is a shaman class item. Revelation was not filed anywhere: re-checked against the sim, now mechanics-20261126-5.
 
-| Change | Level 60 effect | Verdict |
-|---|---|---|
-| aoe.go AoETargetCount / TargetsNear, consumes.go explosives, Dragon Breath Chili, Dragonfire, Caustic Smog | Outside leveling returns ActiveTargetUnits as before | Gated, no change |
-| apl_values_encounter.go execute phase -> InExecuteRange | Outside leveling = sim.executePhase <= N, as before | No change |
-| environment.go NextTargetUnit, spell_result.go, outcomeEnemyMeleeWhite from behind | Gated on leveling | No change |
-| spell_outcome.go: stunned target can't block / dodge / parry | Ungated; Era rule (tier 3) | Right rule; Might of Shahram stuns StunImmune bosses: mechanics-20261126-4 |
-| debuffs.go SunderArmorAuraOfRank (90 x rank) | Rank 5 = 450, same as SunderArmorAura | No change |
-| Warrior ranks (knownRank) for BT, MS, Execute, HS, Cleave, Rend, Revenge, Shield Slam, Slam, Sunder, TC, Overpower, Pummel, Hamstring, Battle Shout, Demo Shout | Rank max at 60; values equal the old constants | No change |
-| Retaliation registered at 60 outside leveling; Victory Rush, Intercept, Concussion Blow, Gore Drinker, Cannibalize, Recovery heal | Leveling-gated or unused by presets | No change |
-| MaxRange on melee specials, Thunder Clap 8 yd | Only checked in a leveling session (spell.go:589) | No change |
+## Repo since 2af970d74
 
-## Measured (paired seeds, 10k iterations, run_reqs.py, bfbee78fc vs ab3fff700)
-
-| Preset | Old | New | Delta |
+| Commit | Change | Check | Verdict |
 |---|---|---|---|
-| paladin__level_60 | 930.27 | 931.52 | +1.25 |
-| paladin__level_60-duty-crusader | 920.27 | 921.22 | +0.95 |
+| 7de8438a6 | Water Shield 4 globes with Totem of Sustaining (23200) | 71139 spell 28856: effect 6, aura 107 (flat modifier) misc 4 (charges) bp 1, mask word 1 0x20 (Water Shield); tier 1 | Verified |
+| a589203b7 | Lacerate hit 10% weapon x min(stacks after cast, 5), was x stacks before | wowsims/forever EV-0040 in-game test (15 hits, within 0.5% of the 1:2:3:4:5 model); tooltip says "per existing application" | Log-sourced, accepted; bear only, no DPS preset |
+| a589203b7 | Rest of the Phase 0 tags merge | gate lists only bear_attacks.go and the two shaman files as changed sim code | No change |
 
-Only Blackblade of Shahram's stun reaches ret in this range.
+## Revelation (mechanics-20261126-5)
 
-## Blizzard and daily update
+Probe: the next hit of the channel holding the charge spends it ($AUDIT_WORK/mechanics/revelation_channel.patch). 20,000 iterations, seed 1, paired, tools/dps_report/req requests.
 
-No forum post past 2026-11-25T23:25:08Z (Hotfixes Nov 25, 2403040/16); dev notes thread 2360696 unchanged (8 posts, last 2026-11-04). No TASKS.md or update_ledger change, no forever-update merge. Client build 71139 still newest per the gate.
+| Build | Master | Probe | Delta |
+|---|---|---|---|
+| mage__arcane | 833.89 | 828.42 | -5.47 (-0.66%) |
+| priest__shadow | 861.81 | 861.81 | 0 |
+| druid__balance | 801.90 | 801.90 | 0 |
+
+The per-wave half (area spells roll once a wave) moves no single-target preset; not measured.

@@ -1,11 +1,45 @@
-# Healer fairness pass 32 (2026-11-26, master ab3fff700)
+# Healer fairness pass 33 (2026-11-26, master f9fa79917)
 
-Result: quiet. Due for one watched file, `sim/core/spell_result.go` (1223e764e, leveling big pulls): the new branch
-(`onHitFromBehind`) sits inside `if leveling := sim.Encounter.leveling; leveling != nil`, which is set only when the
-request has an `Encounter.Leveling` (`sim/core/environment.go:149`). No healbench request, boss file or the raid filler
-has one, and no healer request, the filler or healbench changed in bfbee78fc..ab3fff700 (git diff empty), so the code
-is inert for the bench; not re-benched. Table below is pass 31's, still current. Open findings unchanged:
--20261124-1, -20261115-1, -20261104-4.
+Result: findings (1 new: healer_fairness-20261126-1, high). Still open: -20261124-1 (raid filler tracks the DPS report;
+ruled, new evidence added), -20261115-1 (raid druid not re-tuned for the 0.066 Wild Growth), -20261104-4 (no healing by
+class in the boss files).
+
+Due for 22 watched files in 2af970d74..f9fa79917: the Phase 0 tank/healer merge (7 healbench requests, their bis and
+gear_set files, standards 1b/8a/29/35/36/43 updates), healbench `main.go` (Phase 0 search plumbing), Water Shield's 4th
+globe with Totem of Sustaining (7de8438a6), bear attacks.
+
+Same terms (step 1): with `.raid.parties[0].players[0].equipment` dropped, all 7 changed requests are byte-identical to
+2af970d74 (consumables, buffs, race, professions Engineering/Alchemy, rotation, assignment). Equipment: 16-17 real items
+each; both druid requests still wear 15 synthetic pieces (990401-...). Standards 43 allows that until the druid's list
+lands "and the page says so"; the page ranks the tank druid first with no note, and `changes.json` says the druid moved
+to Phase 0 too, hence -20261126-1.
+
+Numbers (step 2): all 63 cells re-benched (healbench `-tags with_db` in the build_cli.sh worktree of f9fa79917,
+`tools/audit/healer_fairness/screen.sh`, seed 101, 1,000 it; `ref/healer_fairness/bench_f9fa799.tsv`). All 63 within
+0.015 of healer_rotations' Phase 0 `ref/healer_bench/summary.tsv` (3e9748641), so the Water Shield globe and the sim
+changes since then move nothing past noise. Means against pass 31 (synthetic sets) in brackets:
+
+| Preset (role) | Onyxia | Brood | Chrom | Golemagg | Magmadar | Ragnaros | Vael | Mean (pass 31) | Largest move |
+|---|---|---|---|---|---|---|---|---|---|
+| priest_holy_raid (raid) | 0.971 | 0.904 | 1.108 | 2.516 | 2.000 | 1.330 | 1.253 | 1.440 (1.448) | magmadar -0.058 |
+| druid_restoration_raid (raid, synthetic) | 0.953 | 0.893 | 1.095 | 2.494 | 1.824 | 1.238 | 0.963 | 1.351 (1.370) | golemagg -0.042 |
+| shaman_restoration_raid (raid) | 0.954 | 0.891 | 1.132 | 2.438 | 1.750 | 1.210 | 1.062 | 1.348 (1.372) | golemagg -0.080 |
+| paladin_holy_raid (raid) | 0.947 | 0.899 | 1.110 | 2.510 | 1.727 | 1.227 | 0.979 | 1.343 (1.392) | magmadar -0.145 |
+| druid_restoration (tank, synthetic) | 1.387 | 0.885 | 1.011 | 1.902 | 2.049 | 0.623 | 0.931 | 1.255 (1.255) | none |
+| priest_discipline (tank) | 1.354 | 0.926 | 0.866 | 1.938 | 2.015 | 0.601 | 0.893 | 1.228 (1.266) | magmadar -0.144 |
+| shaman_restoration (tank) | 1.328 | 0.927 | 0.924 | 1.831 | 1.980 | 0.558 | 0.859 | 1.201 (1.276) | golemagg -0.144 |
+| priest_holy (tank) | 1.316 | 0.881 | 0.878 | 1.861 | 2.011 | 0.567 | 0.841 | 1.194 (1.267) | golemagg -0.139 |
+| paladin_holy (tank) | 1.201 | 0.869 | 0.834 | 1.676 | 1.788 | 0.548 | 0.785 | 1.100 (1.151) | golemagg -0.124 |
+
+Explanations: the Phase 0 lists carry less than the synthetic Phase 1 sets, so every spec on one lost carry, unevenly
+(tank shaman -0.075, Holy -0.073, paladin -0.051, Disc -0.038; raid paladin -0.049, shaman -0.024, Holy -0.008). The
+druid's tank cells are identical (no request or druid healing change); its raid row's -0.019 is the filler mage's item
+swap (evidence under -20261124-1). The druid's first place in the tank role and second in the raid role are its gear
+(-20261126-1). Among Phase 0 healers: tank Disc 1.228 leads shaman and Holy; Disc's list is searched tank-only while
+Holy's weighs both roles alike (standards 43), which likely explains part of Disc's 0.034 over Holy (owned doc, open
+question 9; not a finding, the standard sets it). Raid: Holy first by 0.09; druid, shaman and paladin a tie in noise.
+
+Logs: still blocked by -20261104-4. Roles (step 3): unchanged; tank presets benched in the tank role, raid in the raid role.
 
 ## Pass 31 (2026-11-25, master 85691655a)
 

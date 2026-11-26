@@ -14,6 +14,7 @@ const (
 	TotemOfTides             = 22345
 	TotemOfRage              = 22395
 	TotemOfTheStorm          = 23199
+	TotemOfSustaining        = 23200
 	TotemOfThunder           = 228176
 	PolishedDriftwoodIcon    = 249398
 	TotemOfChargedFlames     = 263412
