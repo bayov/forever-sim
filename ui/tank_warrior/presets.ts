@@ -411,12 +411,12 @@ export const EPLevelingGearPlanShieldFuryProt = levelingGearWeights(
 export const EPPresets = [...EPLevelingGearPlanTwoHand, ...EPLevelingGearPlanDualWield, ...EPLevelingGearPlanShield, ...EPLevelingGearPlanShieldFuryProt];
 
 // The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 1 to 60, with
-// Talented's first talent at 5 (docs/leveling_warrior.md, Leveling 1-60). Arms with a two-hander
-// to 43, then a respec at 44 into Gore Drinker Fury with two weapons. The rotations to 39 are the
-// talent and rotation search's ("Searched 1" and so on), and the hand-tuned ones from 40 ("From
-// 37" and so on). tools/levelingplan/configs/undead_warrior_leveling_1_60.json makes the same plan
-// for the command line.
-export const DefaultLevelingPlan = LevelingPlanSettings.fromJson(LevelingPlanJSON as any);
+// Talented's first talent at 5 (docs/leveling_warrior.md, Leveling 1-60). Protection all the way,
+// with a two-hander until Shield Block at 16 and a shield from then on. Its talent order and its
+// rotations ("Searched 1" and so on) are the talent and rotation search's.
+// tools/levelingplan/configs/undead_warrior_leveling_prot.json makes the same plan for the
+// command line.
+export const DefaultLevelingPlan = LevelingPlanSettings.fromJson(LevelingPlanProtJSON as any);
 
 // Our RestedXP route for an Undead Warrior (tools/leveling_route): the quest rewards we take on it
 // and the dungeons we run, at the levels we're at then. The leveling gear plan takes them in place
@@ -460,19 +460,19 @@ const makeLevelingBuild = (name: string, tooltip: string, levelingPlan: Leveling
 
 // The hours are 1 to 60 with Recovery from 20, 8 gear seeds and 400 sessions a level on master of
 // 2026-11-26 (docs/leveling_warrior.md, Leveling 1-60). They compare builds, not real time.
-export const PresetBuildLeveling1to60 = makeLevelingBuild(
-	'Leveling: Arms then DW',
-	'Our 1 to 60 plan: Arms with a two-hander, then Gore Drinker with two weapons from 44. Sim: 99.5h, 21 deaths.',
+export const PresetBuildLevelingProt = makeLevelingBuild(
+	'Leveling: Prot',
+	'Our 1 to 60 plan: Protection, with a two-hander until 16 and a shield from then on. Sim: 96.6h, 28 deaths.',
 	DefaultLevelingPlan,
 );
 
-// The other builds we compared it with. Their rotations are hand-tuned for each build, without the
-// talent and rotation search the main plan had. tools/levelingplan/configs/undead_warrior_leveling_*.json
-// make the same plans for the command line.
-export const PresetBuildLevelingProt = makeLevelingBuild(
-	'Leveling: Prot',
-	'Protection with a one-hander and shield all the way. Sim: 102.3h, 30 deaths.',
-	LevelingPlanSettings.fromJson(LevelingPlanProtJSON as any),
+// The other builds we compared it with. Arms then DW had the talent and rotation search to 39 and
+// hand-tuned rotations from 40. The others have hand-tuned rotations.
+// tools/levelingplan/configs/undead_warrior_leveling_*.json make the same plans for the command line.
+export const PresetBuildLeveling1to60 = makeLevelingBuild(
+	'Leveling: Arms then DW',
+	'Arms with a two-hander, then Gore Drinker with two weapons from 44. Sim: 99.5h, 21 deaths.',
+	LevelingPlanSettings.fromJson(LevelingPlanJSON as any),
 );
 // A well-known endgame build (4/31/16), not one people level with.
 export const PresetBuildLevelingFuryProt = makeLevelingBuild(

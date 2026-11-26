@@ -118,15 +118,16 @@ level 1 and 89 at level 2, as our logs show.
 
 ## Leveling 1-60
 
-Our plan for an Undead warrior is the "Leveling: Arms then DW" build of the Protection Warrior
-sim (`ui/tank_warrior`, since every leveling session plays that spec). The config
-`tools/levelingplan/configs/undead_warrior_leveling_1_60.json` makes the same request for
+Our plan for an Undead warrior is the "Leveling: Prot" build of the Protection Warrior sim
+(`ui/tank_warrior`, since every leveling session plays that spec). The config
+`tools/levelingplan/configs/undead_warrior_leveling_prot.json` makes the same request for
 `tools/levelingplan`. Measured 2026-11-26.
 
-The builds we compared it with are presets next to it: "Leveling: Arms", "Leveling: Dual
-Wield", "Leveling: Arms, Prot, DW", "Leveling: Prot" and "Leveling: Fury Prot". Their configs are
-`undead_warrior_leveling_<build>.json` in the same folder. Their rotations are hand-tuned for each
-build, without the talent and rotation search. The Fury Prot plan judges shield gear by its own
+The builds we compared it with are presets next to it: "Leveling: Arms then DW" (the config
+`undead_warrior_leveling_1_60.json`), "Leveling: Arms", "Leveling: Dual Wield", "Leveling: Arms,
+Prot, DW" and "Leveling: Fury Prot". Their configs are `undead_warrior_leveling_<build>.json` in
+the same folder. Arms then DW had the talent and rotation search to 39. The others have hand-tuned
+rotations. The Fury Prot plan judges shield gear by its own
 weights ("Leveling Gear Plan Shield (Fury Prot)"), which the plan's `weights_build` picks.
 
 What every number below assumes: solo grinding, mobs 1 level below us in a camp, pulls of up to 12,
@@ -137,16 +138,16 @@ out.
 
 ### The plan
 
-- 1 to 43: Arms with a two-hander. Improved Rend 3, Deflection 2, Improved Tactical Mastery 3,
-  Improved Charge 2, Deep Wounds 3, Anger Management, Improved Overpower, Two-Handed Weapon
-  Specialization 3, Impale 2, Improved Heroic Strike 1, Sweeping Strikes, Bloodthrill 2, Weaponmaster
-  5, Improved Slam 2, Mortal Strike, then Cruelty and Unbridled Wrath.
-- 44: a respec to Gore Drinker Fury with two weapons. Cruelty 5, Unbridled Wrath 5, Blood Craze 3,
-  Enrage 5, Reckless Swings, Lingering Rage, Gore Drinker 2, Death Wish, Dual Wield Specialization 5,
-  Flurry 3, Bloodthirst, then Arms: Improved Rend 3, Deflection 2, Improved Tactical Mastery 3,
-  Improved Overpower 2, Deep Wounds 3, Anger Management, Deflection 3.
-- Rotations from the `warrior_leveling` template: the talent and rotation search's to 39 ("Searched
-  1" and so on), and hand-tuned ones from 40 ("From 37" and so on).
+- Protection all the way. A two-hander until 15, and a one-hander and shield from Shield Block at
+  16. With the shield from 1 it takes 0.5h longer, all of it before 20.
+- Talents, from the talent search: Shield Specialization 5, Anticipation 2, Improved Revenge 3, Last
+  Stand, Master of Defense 2, Improved Thunder Clap 1, Anticipation 4, Improved Thunder Clap 2,
+  Improved Bloodrage 2, Vanguard, Focused Rage 3, Improved Thunder Clap 3, Concussion Blow, Bastion
+  5, Shield Slam at 35. Then Cruelty 4, Improved Rend 1, Cruelty 5, Unbridled Wrath 5, Enrage 5,
+  Improved Rend 3, Improved Execute 2.
+- No Defiance. It only adds threat, which does nothing alone.
+- Rotations from the `warrior_leveling` template, all the talent and rotation search's ("Searched
+  1" and so on).
 - Enchant Weapon - Recovery on the main hand from 20 (`recoveryFromLevel`).
 
 The weights are `ui/tank_warrior/leveling_weights_*.json` (two-hand, dual wield and shield), from
@@ -154,29 +155,41 @@ The weights are `ui/tank_warrior/leveling_weights_*.json` (two-hand, dual wield 
 
 ### Hours
 
-1 to 60 with 8 gear seeds and 400 sessions a level, on seeds the search never saw: 99.6h with
-Recovery from 20 (21 deaths), 102.3h without.
+1 to 60 with Recovery from 20, 8 gear seeds and 400 sessions a level: 96.6h on seeds the search
+never saw (gear seeds 41 to 48), and 96.6h on the seeds of the table below (28 deaths).
 
 | Levels | 1-9 | 10-19 | 20-29 | 30-39 | 40-49 | 50-59 |
 |---|---|---|---|---|---|---|
-| Hours, with Recovery | 1.9 | 7.7 | 11.6 | 16.5 | 27.7 | 34.2 |
+| Hours, with Recovery | 2.0 | 8.0 | 11.3 | 16.3 | 26.0 | 32.9 |
 
-Every build's preset, on the same 8 gear seeds and 400 sessions a level, with Recovery from 20.
-Only the main plan had the talent and rotation search. The others have hand-tuned rotations.
+Every build's preset, on the same 8 gear seeds (21 to 28) and 400 sessions a level, with Recovery
+from 20.
 
 | Preset | Build | Hours | Deaths |
 |---|---|---|---|
+| Leveling: Prot | Protection, two-hander until 16, then a shield | 96.6 | 28 |
 | Leveling: Arms then DW | Arms with a two-hander, Gore Drinker dual wield from 44 | 99.5 | 21 |
 | Leveling: Arms, Prot, DW | Arms, Protection with a shield at 30, dual wield at 40 | 101.2 | 20 |
 | Leveling: Dual Wield | Gore Drinker dual wield all the way | 102.5 | 10 |
 | Leveling: Arms | Arms with a two-hander all the way | 103.0 | 11 |
-| Leveling: Prot | Protection with a shield all the way | 102.3 | 30 |
 | Leveling: Fury Prot | Fury Protection 4/31/16 with a shield from 5 | 112.7 | 30 |
 
-Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer.
-Earlier runs without Recovery took 3 to 4h longer on every build.
+How Prot got there, on gear seeds 41 to 48: Prot with hand-tuned rotations 102.4h, with the
+search's rotations 99.5h, with its talents too 97.1h, and with the two-hander until 16 96.6h.
+Arms then DW took 99.2h on those seeds.
+
+Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer and
+more. Earlier runs without Recovery took 3 to 4h longer on every build.
 
 Fury Protection is a known endgame build, not one people level with.
+
+### Leveling guides
+
+The Forever guides we read (2026-11) all level deep Protection with Shield Slam at 40 (35 with
+Talented) and Fury after it: wowforeverinfo.com, kami-labs.fr, method.gg, warcrafttavern.com. Our
+talents share their core. Theirs differ in a few points each: Improved Thunder Clap 3 early,
+Defiance, Improved Sunder Armor, Lingering Rage, Deflection. Wowforeverinfo's two-hander until
+Revenge and Shield Block is what our plan does to 15.
 
 ### What we found
 

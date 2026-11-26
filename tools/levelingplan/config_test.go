@@ -82,7 +82,7 @@ func TestWarriorLevelingConfigs(t *testing.T) {
 		return nil
 	}
 	prot := shieldWeights(exampleRequest(t, "undead_warrior_leveling_prot"))
-	for name, styles := range map[string]int{"1_60": 2, "prot": 1, "fury_prot": 1, "arms": 1, "dual_wield": 1, "arms_prot_dw": 3} {
+	for name, styles := range map[string]int{"1_60": 2, "prot": 2, "fury_prot": 1, "arms": 1, "dual_wield": 1, "arms_prot_dw": 3} {
 		req := exampleRequest(t, "undead_warrior_leveling_"+name)
 		if n := len(req.Plan.WeaponStyles); n != styles {
 			t.Errorf("%s: %d weapon styles, want %d", name, n, styles)
