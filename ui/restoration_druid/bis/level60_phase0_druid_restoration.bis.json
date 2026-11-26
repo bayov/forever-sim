@@ -31,7 +31,8 @@
         "id": 252561,
         "name": "Living Crown",
         "dps": 126.86,
-        "loss": -0.32
+        "loss": -0.32,
+        "note": "732g per point of score"
       },
       {
         "id": 226786,
@@ -45,7 +46,8 @@
         "id": 18490,
         "name": "Insightful Hood",
         "dps": 126.62,
-        "loss": -0.08
+        "loss": -0.08,
+        "note": "175g per point of score"
       },
       {
         "id": 226773,
@@ -92,7 +94,7 @@
         "name": "Helm of Fire",
         "dps": 126.31,
         "loss": 0.24,
-        "note": "Leatherworking craft · Fireball use modelled (step 2 notes)"
+        "note": "Leatherworking craft · Fireball use modelled (step 2 notes) · 1g per point of score"
       },
       {
         "id": 13390,
@@ -160,7 +162,7 @@
         "name": "Deathmaw's Guise",
         "dps": 126.01,
         "loss": 0.54,
-        "note": "Drop: Deathmaw (rare), Burning Steppes · revealed Nov 8, seen in game Nov 24"
+        "note": "Drop: Deathmaw (rare), Burning Steppes · revealed Nov 8, seen in game Nov 24 · 375g per point of score"
       },
       {
         "id": 279448,
@@ -198,14 +200,17 @@
         "id": 18317,
         "name": "Tempest Talisman",
         "dps": 126.93,
-        "loss": -0.39
+        "loss": -0.39,
+        "avail": "infeasible",
+        "note": "2454g per point of score"
       },
       {
         "id": 13960,
         "name": "Heart of the Fiend",
         "dps": 126.89,
         "loss": -0.35,
-        "note": "Drop: Kirtonos the Herald, Scholomance"
+        "note": "Drop: Kirtonos the Herald, Scholomance · 23990g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 279833,
@@ -400,7 +405,8 @@
         "id": 16718,
         "name": "Wildheart Spaulders",
         "dps": 126.7,
-        "loss": -0.15
+        "loss": -0.15,
+        "note": "Drop: Gizrul the Slavener, Lower Blackrock Spire · Wildheart set"
       },
       {
         "id": 272103,
@@ -651,7 +657,7 @@
         "name": "Mooncloth Robe",
         "dps": 126.66,
         "loss": -0.11,
-        "note": "Tailoring 275 · pattern from Shen'dralar Provisioner (Dire Maul) 4g, one in stock, or Wildspawn Hellcaller 1% drop · BoE · 6 Runecloth bolts · 4 Mooncloth · 2 Golden Pearl · 2 Rune Thread"
+        "note": "Tailoring 275 · pattern from Shen'dralar Provisioner (Dire Maul) 4g, one in stock, or Wildspawn Hellcaller 1% drop · BoE · 6 Runecloth bolts · 4 Mooncloth · 2 Golden Pearl · 2 Rune Thread · 1174g per point of score"
       },
       {
         "id": 226783,
@@ -689,14 +695,15 @@
         "name": "Chestplate of Tranquility",
         "dps": 126.53,
         "loss": 0.02,
-        "note": "Prince Tortheldrin · Dire Maul"
+        "note": "Prince Tortheldrin · Dire Maul · 3030g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 15066,
         "name": "Ironfeather Breastplate",
         "dps": 126.49,
         "loss": 0.05,
-        "note": "Leatherworking 265 · pattern 8.6% drop"
+        "note": "Leatherworking 265 · pattern 8.6% drop · 187g per point of score"
       },
       {
         "id": 14626,
@@ -762,7 +769,8 @@
         "id": 17050,
         "name": "Chan's Imperial Robes",
         "dps": 126.3,
-        "loss": 0.24
+        "loss": 0.24,
+        "note": "70g per point of score"
       },
       {
         "id": 16688,
@@ -834,7 +842,8 @@
         "id": 260183,
         "name": "Sacred Bangle",
         "dps": 126.66,
-        "loss": -0.11
+        "loss": -0.11,
+        "note": "Quest: Blackmaw Counter-Offensive, Ashenvale (Gatekeeper Rageroar)"
       },
       {
         "id": 22668,
@@ -1010,7 +1019,8 @@
         "id": 13184,
         "name": "Fallbrush Handgrips",
         "dps": 126.75,
-        "loss": -0.2
+        "loss": -0.2,
+        "note": "Drop: Crystal Fang, Lower Blackrock Spire"
       },
       {
         "id": 272097,
@@ -1023,7 +1033,9 @@
         "id": 273885,
         "name": "Grovekeeper Grips",
         "dps": 126.65,
-        "loss": -0.11
+        "loss": -0.11,
+        "avail": "out",
+        "note": "Leatherworking 300 · pattern from Aisarra Nightmeadow (Mount Hyjal) for 6 Malleable Essence of Nature, disenchanted from raid items · like the Grovekeeper Gauntlets"
       },
       {
         "id": 18369,
@@ -1173,7 +1185,7 @@
         "name": "Sash of Mercy",
         "dps": 126.84,
         "loss": -0.29,
-        "note": "Random world drop · epic BoE, AH price not checked"
+        "note": "Random world drop · epic BoE, AH price not checked · 1112g per point of score"
       },
       {
         "id": 279267,
@@ -1187,7 +1199,8 @@
         "id": 272398,
         "name": "Caretaker's Cord",
         "dps": 126.67,
-        "loss": -0.12
+        "loss": -0.12,
+        "note": "Vendor Pix Xizzix, Stranglethorn Vale · Druid only · price not in data, the sibling belts cost Reals"
       },
       {
         "id": 18391,
@@ -1351,13 +1364,14 @@
         "name": "Dreadmist Leggings",
         "dps": 126.86,
         "loss": -0.31,
-        "note": "Baron Rivendare (Stratholme)"
+        "note": "Baron Rivendare (Stratholme) · 1354g per point of score"
       },
       {
         "id": 14545,
         "name": "Ghostloom Leggings",
         "dps": 126.79,
-        "loss": -0.25
+        "loss": -0.25,
+        "note": "Drop: Jandice Barov, Scholomance"
       },
       {
         "id": 12756,
@@ -1386,14 +1400,15 @@
         "name": "The Postmaster's Trousers",
         "dps": 126.71,
         "loss": -0.17,
-        "note": "Postmaster Malown (Stratholme)"
+        "note": "Postmaster Malown (Stratholme) · 16417g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 18745,
         "name": "Sacred Cloth Leggings",
         "dps": 126.7,
         "loss": -0.16,
-        "note": "Drop: Stratholme trash"
+        "note": "Drop: Stratholme trash · 212g per point of score"
       },
       {
         "id": 12965,
@@ -1537,7 +1552,8 @@
         "id": 10039,
         "name": "Stormcloth Boots",
         "dps": 126.72,
-        "loss": -0.18
+        "loss": -0.18,
+        "note": "Tailoring 205 · pattern from Hatecrest Serpent Guard (Azshara), 1.4% drop"
       },
       {
         "id": 22245,
@@ -1550,7 +1566,9 @@
         "id": 18424,
         "name": "Sedge Boots",
         "dps": 126.61,
-        "loss": -0.06
+        "loss": -0.06,
+        "avail": "doubtful",
+        "note": "Quest reward, Dire Maul, quest not named in our data"
       },
       {
         "id": 22247,
@@ -1723,7 +1741,8 @@
         "id": 22257,
         "name": "Bloodclot Band",
         "dps": 126.87,
-        "loss": -0.33
+        "loss": -0.33,
+        "note": "1359g per point of score"
       },
       {
         "id": 275970,
@@ -1748,7 +1767,8 @@
         "name": "Band of Mending",
         "dps": 126.81,
         "loss": -0.27,
-        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
+        "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42) · 171053g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 284079,
@@ -2069,7 +2089,8 @@
         "name": "Glowing Brightwood Staff",
         "dps": 126.75,
         "loss": -0.2,
-        "note": "Random world drop · epic BoE, AH price not checked"
+        "note": "Random world drop · epic BoE, AH price not checked · 8433g per point of score",
+        "avail": "infeasible"
       },
       {
         "id": 15247,
@@ -2078,7 +2099,7 @@
         "dps": 126.72,
         "loss": -0.17,
         "with": 16768,
-        "note": "Random world drop"
+        "note": "Random world drop · 24g per point of score"
       },
       {
         "id": 13249,
@@ -2111,7 +2132,7 @@
         "dps": 126.54,
         "loss": 0,
         "with": 16768,
-        "note": "Random world drop"
+        "note": "Random world drop · 24g per point of score"
       },
       {
         "id": 17710,
@@ -2158,7 +2179,7 @@
         "dps": 126.3,
         "loss": 0.25,
         "with": 16768,
-        "note": "Random world drop"
+        "note": "Random world drop · 24g per point of score"
       },
       {
         "id": 18353,
@@ -2281,7 +2302,8 @@
         "name": "Furbolg Medicine Pouch",
         "dps": 126.72,
         "loss": -0.17,
-        "with": 15247
+        "with": 15247,
+        "note": "Timbermaw Hold Honored · Gorn One Eye, Felwood"
       },
       {
         "id": 18523,
@@ -2488,7 +2510,9 @@
         "id": 279250,
         "name": "Idol of Swiftness",
         "dps": 126.33,
-        "loss": 0.22
+        "loss": 0.22,
+        "avail": "doubtful",
+        "note": "Enchanting 300 · formula (279299) has no known source"
       }
     ]
   },
