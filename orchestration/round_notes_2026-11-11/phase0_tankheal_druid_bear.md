@@ -29,6 +29,11 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
   Horn of Ve'han (-0.6 ± 8.5), shoulder Truestrike Shoulders (-3.9 ± 8.9), chest Dawn Armor (+7.0 ± 8.5); Max
   survival chest Shadowcraft Tunic (-50.0 ± 14.7), trinket Adaptive Combat Assistant (-6.5 ± 21.8), ranged Idol of
   Brutality (-17.7 ± 21.6). The flags compare the 1000-iteration ranking.
+- Balanced re-searched from the Max threat list (audit 849024cbb: the Max threat set beat the Balanced list by 193 at
+  the Balanced weight): Horn of Ve'han for Beads of Ogre Might (+12.2 ± 5.3), the rest kept from Max threat. 3767.9
+  against 3683.5 for the old list re-ranked on the same code. Theramore Pauldrons are out, so Balanced has no faction
+  pick now. The Tauren row is the same set at Tauren, 3516.8. Flag that stands: ranged Idol of Brutality (-22.0 ± 10.2
+  at 5000).
 
 ## Tags added
 
@@ -64,7 +69,7 @@ preset's `tools/tankbench/req/druid_bear_<preset>.json`.
 
 ## Faction row
 
-- Balanced wears Theramore Pauldrons (Alliance only). Horde row (Tauren, RANK_ONLY SLOTS=shoulder):
+- Balanced wore Theramore Pauldrons (Alliance only) until the 2026-11-26 re-search. Horde row (Tauren, RANK_ONLY SLOTS=shoulder):
   Truestrike Shoulders, 3494.0 against 3683.5 (no-Roar APL). `level60_phase0_druid_bear_balanced_horde.bis.json` and
   `gear_sets/level60_phase0_druid_bear_balanced_horde.gear.json`.
 - Max threat and Max survival: no faction pick, skipped. (Max survival's top mainhand is The Unstoppable
@@ -77,7 +82,7 @@ with origin/master's gear.
 
 | Preset | Phase 0 | Synthetic | Gap | TPS Phase 0 / synthetic |
 |---|---|---|---|---|
-| Balanced | 3686.2 | 3701.2 | -15.0 | 2477 / 2519 |
+| Balanced | 3771.5 | 3701.2 | +70.3 | 2822 / 2519 |
 | Max threat | 5606.7 | 4959.7 | +647.0 | 2931 / 2645 |
 | Max survival | 1048.0 | 1618.3 | -570.3 | 1905 / 1972 |
 
@@ -90,12 +95,12 @@ Chromaggus drives most of it: -2127 against -1470.
 
 | Slot | Pick | Source | Flag |
 |---|---|---|---|
-| head | Mask of the Unforgiven | 58g per point of score |  |
-| neck | Amulet of the Darkmoon | Quest: 1200 Tickets - Amulet of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), J |  |
-| shoulder | Theramore Pauldrons | Alliance only (Theramore rep, like the other Theramore shoulders) | faction Alliance |
+| head | Defias Enforcer's Mask | Trash, likely Alcaz Prison like its set (zone 16620, no NPC known) |  |
+| neck | Horn of Ve'han | Quest: Work Well Done | avail doubtful |
+| shoulder | Truestrike Shoulders | Pyroguard Emberseer · Blackrock Spire · 15g per point of score |  |
 | back | Howler's Furs | Pix Xizzix · 75 Reals |  |
-| chest | Timbermaw Tunic | On AH ~251g · or Leatherworking 300 · pattern on AH ~256g · 2g per point of score |  |
-| wrist | Bracers of Subterfuge | Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest,  | avail doubtful |
+| chest | Dawn Armor | On AH ~350g · or Leatherworking craft |  |
+| wrist | Blackmist Armguards | The Beast · Blackrock Spire · 6g per point of score |  |
 | hands | Devilsaur Gauntlets | 0g per point of score |  |
 | waist | Shifter's Belt | Pix Xizzix · Reals (price not in data) · Druid only |  |
 | legs | Devilsaur Leggings | On AH ~56g · or Leatherworking 290 · pattern on AH ~22g · 1g per point of score |  |
@@ -104,8 +109,8 @@ Chromaggus drives most of it: -2127 against -1470.
 | finger | Tracker's Signet of Vigilance | Watchers Honored · no rep source found yet | avail doubtful |
 | trinket | Chained Essence of Eranikus | Quest: The Essence of Eranikus, Sunken Temple |  |
 | trinket | Adaptive Combat Assistant | Pix Xizzix · 125 Reals |  |
-| mainhand | Manual Crowd Pummeler | Crowd Pummeler 9-60, Gnomeregan · 3 charges that never come back · one 30s haste per 180s  |  |
-| ranged | Idol of Brutality | Magistrate Barthilas · Stratholme · 15g per point of score |  |
+| mainhand | Hammer of Thundering Hooves |  |  |
+| ranged | Idol of the Ursine Twins | Enchanting 300 craft · Formula: Idol of the Ursine Twins (279300) has no known source | avail doubtful |
 
 ### Max threat (Night Elf)
 
