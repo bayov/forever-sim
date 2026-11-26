@@ -91,15 +91,6 @@ sections 2 and 6 have the format).
 
 ## logcheck issues
 
-### Melee parries and blocks far below the sim, from standing behind the mob
-
-- **Found by**: search (trends across logs).
-- **Windows**: level 60 mobs, Nov 14 to 25, 2059 melee attempts summed over the reports: parry 26 vs 101 the sim expects (1.3% vs 4.9%), block 30 vs 98, hits 1260 vs 1126. Dodge (111 vs 103), crit and glance match. Every date is low, but no single window has enough swings to flag.
-- **What we think**: logcheck sims us in front of the mob (`-behind` is off by default, `tools/logcheck/main.go`), which fits questing. In dungeons and battlegrounds a tank or another player holds the mob and we hit it from behind, where it can't parry or block. So the outcome rows count the wrong table for part of each window.
-- **Next step**: have logcheck decide front or behind per swing from the advanced log's positions and facing, and replay with that share. Until then, read low parry and block in group windows as position, not a sim error.
-- **Status**: open, first seen 2026-11-26.
-
-
 ### Sheet Attack power far from the sim's on some exports
 
 - **Flag**: `sheet` (Attack power), and `Melee: raw` in the same windows.
@@ -192,6 +183,14 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
 
 ## Done
+
+### Melee parries and blocks far below the sim, from standing behind the mob
+
+- **Found by**: search (trends across logs).
+- **Windows**: level 60 mobs, Nov 14 to 25, 2059 melee attempts summed over the reports: parry 26 vs 101 the sim expects (1.3% vs 4.9%), block 30 vs 98, hits 1260 vs 1126. Dodge (111 vs 103), crit and glance match. Every date is low, but no single window has enough swings to flag.
+- **What we think**: logcheck sims us in front of the mob (`-behind` is off by default, `tools/logcheck/main.go`), which fits questing. In dungeons and battlegrounds a tank or another player holds the mob and we hit it from behind, where it can't parry or block. So the outcome rows count the wrong table for part of each window.
+- **Done**: 2026-11-26. logcheck now finds, for each melee attempt, whether we stood behind the mob (`tools/logcheck/behind.go`), from the advanced log's positions and the direction to whoever the mob last swung at (its logged facing lags). It runs that share of the replays behind the mob, and the report prints the share under each level. Over five group windows: parries 12 in the log, the sim 32.8 before and 11.0 after. Blocks 10 in the log, 42.0 before and 16.7 after. Solo windows come out 0% behind. Old reports keep the in-front numbers until a `-redo`.
+
 
 ### Cloud of Chained Essence ticks crit far less than the sim
 

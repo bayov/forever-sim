@@ -51,7 +51,7 @@ func main() {
 	minAttempts := flag.Int("min", 5, "leave out abilities with fewer attempts than this in the log")
 	rounding := flag.String("rounding", "floor", "how the server turns damage into whole points, floor or round")
 	fullSkill := flag.Bool("full-skill", false, "sim full weapon skill instead of the export's")
-	behind := flag.Bool("behind", false, "sim us behind the mob, where it can't parry or block (by default we're in front, as when questing)")
+	behind := flag.Bool("behind", false, "sim us behind the mob in every run, where it can't parry or block (by default we take the log's share of melee attempts from behind the mob, or in front with no positions)")
 	charFlag := flag.String("char", "", "the character who played the window, as its GUID, or a Name or Name-Realm (default: the one of ours with lines in the window)")
 	flagsOut := flag.String("flags-out", "", "also write the flagged list to this file as JSON")
 	audit := flag.Bool("audit", false, "check every stretch of the archived logs we haven't checked yet (audit.go), instead of one window")
@@ -168,13 +168,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	char.player.InFrontOfTarget = !*behind
 	if !*fullSkill {
 		setSkillGaps(char.player, ex)
 	}
 	setImbue(char, all, cl, ex, tables)
 
 	r := &report{cl: cl, ex: ex, char: char, tables: tables, logPath: *logPath, minAttempts: *minAttempts, missing: map[string]bool{}, aliased: map[int32]bool{}, pooled: map[abilityKey]*pooledHits{}, rounding: *rounding}
+	r.behind = *behind
 	r.header()
 	r.sheet()
 	r.weaponSkills(*fullSkill)
@@ -184,7 +184,15 @@ func main() {
 	r.windowBuffs(steps)
 
 	logTallies := tallyLog(cl)
+	sides := cl.meleeSides()
 	for _, p := range plans(cl) {
+		if s := sides[p.level]; s != nil {
+			p.melee = *s
+		}
+		p.behind = p.melee.share()
+		if *behind {
+			p.behind = 1
+		}
 		for _, step := range steps {
 			p.buffs = append(p.buffs, timedStats{at: step.at, stats: tables.buffTotal(step.ids, step.levels, char.unbuffed, char.camp)})
 		}

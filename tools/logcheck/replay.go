@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"runtime"
 	"strings"
 	"sync"
@@ -38,6 +39,11 @@ type plan struct {
 	hitsPerMinute float64
 	// buffs are the stats of others' buffs on us (buffs.go), from each time on.
 	buffs []timedStats
+	// melee counts our melee attempts at this level by the side of the mob we stood on
+	// (behind.go), and behind is the share of runs where the sim puts us behind the mob. It's
+	// the share of those attempts, or 1 with -behind.
+	melee  meleeSide
+	behind float64
 }
 
 // timedStats are stats from a time in the window on.
@@ -151,6 +157,9 @@ func replay(player *proto.Player, p *plan, iterations int) (*tallies, *replaySta
 	stats := &replayStats{failed: map[string]int{}, missing: map[string]int32{}}
 	var mu sync.Mutex
 
+	// The first runs stand behind the mob and the rest in front, so the runs together have
+	// the log's share of attempts from behind.
+	behindRuns := behindRuns(p.behind, iterations)
 	jobs := make(chan int)
 	var wg sync.WaitGroup
 	for range runtime.NumCPU() {
@@ -158,7 +167,7 @@ func replay(player *proto.Player, p *plan, iterations int) (*tallies, *replaySta
 		go func() {
 			defer wg.Done()
 			for seed := range jobs {
-				t, s := replayOnce(player, p, int64(seed))
+				t, s := replayOnce(player, p, int64(seed), seed <= behindRuns)
 				mu.Lock()
 				total.merge(t)
 				stats.cast += s.cast
@@ -181,8 +190,14 @@ func replay(player *proto.Player, p *plan, iterations int) (*tallies, *replaySta
 	return total, stats
 }
 
-func replayOnce(base *proto.Player, p *plan, seed int64) (*tallies, *replayStats) {
+// behindRuns is how many of the runs stand behind the mob, for a share of them.
+func behindRuns(share float64, runs int) int {
+	return int(math.Round(share * float64(runs)))
+}
+
+func replayOnce(base *proto.Player, p *plan, seed int64, behind bool) (*tallies, *replayStats) {
 	player := googleproto.Clone(base).(*proto.Player)
+	player.InFrontOfTarget = !behind
 	target := &proto.Target{
 		Level:     int32(p.level),
 		MobType:   proto.MobType_MobTypeUnknown,
