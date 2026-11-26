@@ -75,7 +75,8 @@ sections 2 and 6 have the format).
 - **Per cast** (2026-11-10): there's no 0.5 sec floor. At 4/5, 26 bolts at 5 stacks took 0.21 to 0.47 sec (avg 0.31). At 5/5, 4 stacks took 0.50 to 0.51 on 10 of 13 casts, one bolt at 3 stacks took 1.01 and one at 2 stacks 1.50. Those fit 0.5 sec per stack short of 5 at 5/5. Ranks 2 to 4 fit the sim's straight line.
 - **What we think**: 5 stacks fit the sim exactly, but 4 stacks at 5/5 cut 67%, not 80%. Maybe the stack count at cast start is off by one in our reading, or the cut isn't linear in stacks. It matters little since we cast at 5 stacks.
 - **Next step**: count more 2 to 4 stack casts in new logs before changing anything (`mw/cast.py` in the scratch dir did it, worth moving into `tools/combat_log/`).
-- **Status**: open, first seen 2026-11-09, last updated 2026-11-10.
+- **Nov 26 update**: found by search (timing). `112526_195841` `22:00:05.8`: one Lightning Bolt at 4 stacks took 0.429s with Warchief's Blessing (15% haste), so 0.49s unhasted. That fits the 0.5s per missing stack reading. The sim's 80% cut gives about 0.26s.
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-26.
 
 ### Earth Shock is never partly resisted once it lands
 
@@ -85,6 +86,14 @@ sections 2 and 6 have the format).
 - **Next step**: the user's ruling (2026-11-08) is to keep monitoring. Count Earth Shock partials on resistant mobs in each new log.
 - **Nov 20 update**: Blackwing Lair Chromatic mobs show it again, now with a high Nature resist. `111926_175614 23:23:28-23:25:09`: Earth Shock `miss` (RESIST) 5 of 7 on Chromatic Elite Guards at level 59 (the sim gives 0.7%), and `Grounded Electroshock (1315996)` partial 7 of 7 landed on the same mobs. `112026_111427 15:53:34-16:01:48`: Earth Shock RESIST 3 of 7 at level 62 (sim 1.5%): Chromatic Whelp, Dragonspawn and Gyth. These are Nature-resistant mobs, logcheck's mob has no resist, so the rates don't tell us whether landed hits can be partial. Nothing to change.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-20.
+
+### Thorns on us hits for 30, the sim's rank 6 is 18
+
+- **Found by**: search (spells and auras), level 60 mobs in Alterac Valley.
+- **Windows**: `112526_195841` 20:16 to 20:47: a druid's Thorns (9910, rank 6) on us dealt 30 raw on all 19 hits (27 to 31 after resists).
+- **What we think**: the sim's Forever Thorns rank 6 is a flat 18 with no Improved Thorns (`ThornsAura` and `foreverThornsDamage` in `sim/core/buffs.go`, from the 2026-10-08 beta build). 30 is 1.67x. The caster's talents or spell power may scale it, or Forever raised it again. It only matters where the sim gives us Thorns as a raid buff.
+- **Next step**: read Thorns 9910 in the newest client tables (SpellEffect base points and bonus coefficient), and look for Thorns hits from other druids in the logs.
+- **Status**: open, first seen 2026-11-26.
 
 ## logcheck issues
 
@@ -125,6 +134,14 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
 ## Watching
+
+### Whirlwind hits on us didn't give a Water Shield globe
+
+- **Found by**: search (resources).
+- **Windows**: `112526_195841` 20:16:07 (Dun Baldar North Marshal) and 20:47:00 (Icewing Marshal): Whirlwind (15589) landed on us at 3 globes with the 3.5s cooldown ready, and no globe came. The other 18 such hits (swings, Cleave, Shoot, Frost Nova) all gave one.
+- **What we think**: maybe Whirlwind doesn't trigger Water Shield, or it's chance. The sim gives a globe on any landed hit (`OnSpellHitTaken` in `sim/shaman/water_shield.go`). Only 2 hits.
+- **Next step**: count more Whirlwind hits on us outside the cooldown in later logs.
+- **Status**: open, first seen 2026-11-26.
 
 ### Flametongue Attack rounds up at level 29
 
