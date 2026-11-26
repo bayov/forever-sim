@@ -8146,6 +8146,10 @@
     {
      "commit": "c1ebe2d79",
      "why": "removes Balance rotation lines for a trinket it no longer wears, which the sim already ignored; DPS unchanged"
+    },
+    {
+     "commit": "31d2f59e8",
+     "why": "refreshes the requests' recorded reference numbers only; no sim input changed"
     }
    ]
   }
