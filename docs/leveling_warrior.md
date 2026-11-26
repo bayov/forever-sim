@@ -170,7 +170,7 @@ Only the main plan had the talent and rotation search. The others have hand-tune
 | Leveling: Arms, Prot, DW | Arms, Protection with a shield at 30, dual wield at 40 | 101.2 | 20 |
 | Leveling: Dual Wield | Gore Drinker dual wield all the way | 102.5 | 10 |
 | Leveling: Arms | Arms with a two-hander all the way | 103.0 | 11 |
-| Leveling: Prot | Protection with a shield all the way | 103.4 | 24 |
+| Leveling: Prot | Protection with a shield all the way | 102.3 | 30 |
 | Leveling: Fury Prot | Fury Protection 4/31/16 with a shield from 5 | 112.7 | 30 |
 
 Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer.
