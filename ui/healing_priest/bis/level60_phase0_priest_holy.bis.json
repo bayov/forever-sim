@@ -24,7 +24,7 @@
   ],
   "dps": 132.64,
   "made": "2026-11-26",
-  "sim": "470d1c8ac920",
+  "sim": "8aa00e2f3725+",
   "slots": {
     "head": [
       {
@@ -820,7 +820,7 @@
       {
         "id": 11924,
         "name": "Robes of the Royal Crown",
-        "dps": 132.4,
+        "dps": 132.39,
         "loss": 0.25,
         "note": "Emperor Dagran Thaurissan · Blackrock Depths"
       },
@@ -833,7 +833,7 @@
       {
         "id": 22301,
         "name": "Ironweave Robe",
-        "dps": 132.08,
+        "dps": 132.07,
         "loss": 0.57,
         "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
@@ -910,12 +910,33 @@
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · bracer quest · or the vendor after"
       },
       {
+        "id": 22667,
+        "name": "Bracers of Hope",
+        "dps": 132.6,
+        "loss": 0.05,
+        "avail": "doubtful",
+        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
+      },
+      {
         "id": 226953,
         "name": "Virtuous Wraps",
-        "dps": 132.64,
-        "loss": 0,
-        "enchant": 2566,
+        "dps": 132.53,
+        "loss": 0.11,
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · bracer quest · or the vendor after"
+      },
+      {
+        "id": 11766,
+        "suffix": 1036,
+        "name": "Flameweave Cuffs of the Whale",
+        "dps": 132.28,
+        "loss": 0.36,
+        "note": "Lord Incendius (Blackrock Depths)"
+      },
+      {
+        "id": 18709,
+        "name": "Arena Wristguards",
+        "dps": 132.23,
+        "loss": 0.41
       }
     ],
     "hands": [
@@ -2077,7 +2098,7 @@
         "spell": 1255074,
         "name": "Mystic Thick Armor Kit",
         "effect": "+5 spell power, +32 armor",
-        "dps": 132.7,
+        "dps": 132.71,
         "loss": -0.02
       },
       {
@@ -2105,7 +2126,7 @@
         "spell": 13941,
         "name": "Enchant Chest - Stats",
         "effect": "+3 all stats",
-        "dps": 132.63,
+        "dps": 132.64,
         "loss": 0.05
       },
       {
@@ -2122,7 +2143,7 @@
         "spell": 13700,
         "name": "Enchant Chest - Lesser Stats",
         "effect": "+2 all stats",
-        "dps": 132.6,
+        "dps": 132.61,
         "loss": 0.08
       },
       {
@@ -2131,7 +2152,7 @@
         "spell": 1255096,
         "name": "Mystic Heavy Armor Kit",
         "effect": "+4 spell power, +24 armor",
-        "dps": 132.6,
+        "dps": 132.61,
         "loss": 0.08
       },
       {
@@ -2154,6 +2175,98 @@
         "effect": "+3 Stamina, +24 armor",
         "dps": 132.6,
         "loss": 0.09
+      }
+    ],
+    "wrist": [
+      {
+        "id": 2566,
+        "spell": 23802,
+        "name": "Enchant Bracer - Healing Power",
+        "effect": "+24 healing",
+        "dps": 132.69,
+        "loss": 0,
+        "bis": true,
+        "note": "Argent Dawn Revered, 6g formula"
+      },
+      {
+        "id": 907,
+        "spell": 13846,
+        "name": "Enchant Bracer - Greater Spirit",
+        "effect": "+7 Spirit",
+        "dps": 132.68,
+        "loss": 0.01,
+        "note": "Formula on AH ~0.4g"
+      },
+      {
+        "id": 1883,
+        "spell": 20008,
+        "name": "Enchant Bracer - Greater Intellect",
+        "effect": "+7 Intellect",
+        "dps": 132.66,
+        "loss": 0.02,
+        "note": "Formula on AH ~9g"
+      },
+      {
+        "id": 905,
+        "spell": 13822,
+        "name": "Enchant Bracer - Intellect",
+        "effect": "+5 Intellect",
+        "dps": 132.65,
+        "loss": 0.04
+      },
+      {
+        "id": 1884,
+        "spell": 20009,
+        "name": "Enchant Bracer - Superior Spirit",
+        "effect": "+9 Spirit",
+        "dps": 132.63,
+        "loss": 0.06,
+        "note": "Formula on AH ~0.6g"
+      },
+      {
+        "id": 2565,
+        "spell": 23801,
+        "name": "Enchant Bracer - Mana Regeneration",
+        "effect": "+4 mp5",
+        "dps": 132.62,
+        "loss": 0.07,
+        "note": "Argent Dawn rep, tier unknown"
+      },
+      {
+        "id": 1886,
+        "spell": 20011,
+        "name": "Enchant Bracer - Superior Stamina",
+        "effect": "+9 Stamina",
+        "dps": 132.61,
+        "loss": 0.08,
+        "note": "Formula drop, rare"
+      },
+      {
+        "id": 851,
+        "spell": 13642,
+        "name": "Enchant Bracer - Spirit",
+        "effect": "+5 Spirit",
+        "dps": 132.6,
+        "loss": 0.08
+      },
+      {
+        "id": 1248661,
+        "game": 1901,
+        "spell": 1248661,
+        "name": "Enchant Bracer - Superior Intellect",
+        "effect": "+9 Intellect",
+        "dps": 132.6,
+        "loss": 0.09,
+        "note": "Merchant's Favor Honored"
+      },
+      {
+        "id": 929,
+        "spell": 13945,
+        "name": "Enchant Bracer - Greater Stamina",
+        "effect": "+7 Stamina",
+        "dps": 132.59,
+        "loss": 0.09,
+        "note": "Formula drop, rare"
       }
     ],
     "mainhand": [
