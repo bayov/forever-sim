@@ -411,19 +411,7 @@
   "stepSet": "level60_phase0_hunter_sv_alliance",
   "faction": "Alliance",
   "presetFaction": "Horde",
-  "shares": {
-   "Agility": 47.2,
-   "CritRating": 24.3,
-   "AttackPowerBoth": 21.1,
-   "Intellect": 7.5
-  },
-  "dpsPreset": 949.67,
-  "dpsSwap": 949.69,
-  "gain": 0.02,
-  "se": 0.15,
-  "seUnpaired": 0.35,
-  "bonusKept": false,
-  "dropped": {
+  "bonusStats": {
    "MeleeHit": -1.0,
    "MeleeCrit": 0.173,
    "Agility": 4.72,
@@ -431,8 +419,20 @@
    "RangedAttackPower": 4.213,
    "Intellect": 0.747
   },
+  "shares": {
+   "Agility": 47.2,
+   "CritRating": 24.3,
+   "AttackPowerBoth": 21.1,
+   "Intellect": 7.5
+  },
+  "dpsPreset": 936.29,
+  "dpsSwap": 936.72,
+  "gain": 0.44,
+  "se": 0.15,
+  "seUnpaired": 0.34,
+  "bonusKept": true,
   "keep": true,
-  "note": "Alliance: wears level60_phase0_hunter_sv_alliance, the set without the Horde rewards"
+  "note": "Alliance: wears level60_phase0_hunter_sv_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 4.7 Agility, 4.2 attack power, 0.17% crit and 0.7 Intellect"
  },
  "hunter__survival.NightElf": {
   "build": "hunter__survival",
