@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T19:03:22Z",
- "pass": 110,
+ "last_pass_at": "2026-11-27T00:50:00Z",
+ "pass": 111,
  "result": "quiet",
- "note": "pass 110: 14 of 68 differ from metas by 0.5 to 1.4 (noise); no DPS request moved by the sim changes; mksettings unchanged.",
+ "note": "pass 111: shared run within 1.5 of metas on all 68; Chained Essence crit change and Phase 0 list edits move no request; mksettings unchanged.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T19:06:21Z",
+ "checked_at": "2026-11-27T01:05:00Z",
  "baseline": "0facd9428"
 }

@@ -680,3 +680,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-26 19:06 | tank_rotations | pass 34 | master f9fa79917 | quiet | All bench moves come from request changes; 4 findings resolved.
 2026-11-26 19:06 | tank_gear | pass 20 | master f9fa79917 | quiet | 3 findings resolved; 27 check-noise flags remain bench-tested.
 2026-11-26 19:06 | tank_fairness | pass 35 | master f9fa79917 | 1 new finding | Paladin Max threat beats Balanced by ~1% at Balanced weight; 2 resolved.
+2026-11-27 01:05 | results | pass 111 | master 34994816e | quiet | Chained Essence crit change touches only seal-fate-swords; all 68 builds within 1.5 of metas.
+2026-11-27 01:05 | rotations | pass 85 | master 34994816e | quiet | Only warlock Doom-hold trinket ids changed; 31 moved builds within ±0.15%.
+2026-11-27 01:05 | gear | pass 84 | master 34994816e | 1 new finding | 29 DPS requests still wear the removed Armaments of Battle gear.
+2026-11-27 01:05 | consumables | pass 115 | master 34994816e | quiet | No consumable, buff or enchant change.
+2026-11-27 01:05 | mechanics | pass 111 | master 34994816e | quiet | Chained Essence cloud ticks crit at 2.7% (logs, tier 1); client build unchanged.
+2026-11-27 01:05 | fairness | pass 65 | master 34994816e | 1 new finding | 9 DPS gear sets changed without requests: Affliction -17.2, Demonology -9.6; ranking shifts.
+2026-11-27 01:05 | healer_rotations | pass 31 | master 34994816e | quiet | All 63 bench rows identical to ref.
+2026-11-27 01:05 | healer_gear | pass 19 | master 34994816e | 1 new finding | Holy paladin and resto shaman requests wear removed items.
+2026-11-27 01:05 | healer_fairness | pass 34 | master 34994816e | 1 new finding | Same stale healbench requests; ranking unchanged.
+2026-11-27 01:05 | tank_rotations | pass 35 | master 34994816e | quiet | Only 10455 wearers moved (bears -1.1% threat).
+2026-11-27 01:05 | tank_gear | pass 21 | master 34994816e | quiet | Bear wrist swap fine; noise flags stay open.
+2026-11-27 01:05 | tank_fairness | pass 36 | master 34994816e | quiet | Only alternative rows removed from BiS lists.

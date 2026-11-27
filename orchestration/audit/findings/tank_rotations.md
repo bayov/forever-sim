@@ -32,6 +32,7 @@
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
 - pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 - pass 34: still open (user call); the Phase 0 requests now cast the worn trinkets (0741191ab, 2f20719e4), Max survival still holds both for the last 35 s; not re-tested.
+- pass 35: still open (user call); 34994816e7 touches no warrior request or APL (only the Chained Essence tick crit and BiS lists); not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -63,6 +64,7 @@
 - pass 32: still open; ab3fff7007 changes only warrior leveling code and the leveling plan, tank baseline bit-identical; not re-tested.
 - pass 33: still open; 2af970d748 changes only the warrior leveling plans, weights and presets (and non-tank DPS requests), tank baseline bit-identical; not re-tested.
 - pass 34: still open (user ruling); paladin requests changed only consumables and talents on f9fa79917b, Bulwark line untouched; not re-tested.
+- pass 35: still open (user ruling); 34994816e7 moves paladin rows -5 to -11 only through the Chained Essence tick crit, Bulwark line untouched; not re-tested.
 
 ## Resolved
 

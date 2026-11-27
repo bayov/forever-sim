@@ -6,6 +6,8 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 
 ## 1. Cross-spec table (master 2af970d74: Phase 0 prices round 2, every class's over-the-gold-line picks out and trinkets, weapons and ranged re-ranked; rogue lists re-ranked on the current sim; report re-sim and published DPS refresh (aeaae077c, db7482a0f, 31d2f59e8); client 1.60.1.71139; pass 63, 2026-11-26)
 
+Re-checked at 34994816e (pass 65, findings): the Armaments of Battle rewards are out and nine DPS gear sets changed (plus Enhancement to Maelstrom after the Chained Essence crit fix), but no report request followed. On the current gear sets Affliction loses 17.2 (below Survival), Demonology 9.6 (below Destruction), Balance 5.7, Feral 3.3, Fury 2H 2.8, Enhancement gains 6.1 (fairness-20261127-1). The table below still matches the requests as committed.
+
 Re-checked at f9fa79917 (pass 64, quiet): the range is tank and healer Phase 0 work, the Bear Lacerate fix and Water Shield's Totem of Sustaining globe; no DPS build moves (the loop's 20k run is within 1.4 of published), so this table stands.
 
 Full pass: 5k race sweep (seed 1, every race, report requests with only the race changed) on the 2af970d74 CLI. "Report's published" is meta `published.dps`. "Before" is the ab3fff700 sweep at the best race. This sweep is the new baseline.

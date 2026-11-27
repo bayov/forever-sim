@@ -1,4 +1,16 @@
-# tank_fairness pass 35
+# tank_fairness pass 36
+
+Master 34994816e (last: f9fa79917). Due: 15 watched files, all tank `.bis.json` lists. Quiet, no sims run.
+- The diffs only delete alternative rows (24 to 64 lines per list): the Armaments of Battle / Insignia rewards
+  22657 22659 22667 22668 22678 22681 22688 22689 22690 (287da91da, 6bd2d60a2; no quests at Light's Hope). Each was
+  an alternative with loss 0.33 or more, and none is in any `tools/tankbench/req/*.json`, so no worn item changed.
+- No change under `tools/tankbench`, `tools/encounters`, `sim/core` or the four class packages. The only sim change,
+  `sim/common/item_effects.go` (Chained Essence cloud ticks at a fixed 2.7% crit, 5591bd019), touches only
+  the tanks wearing 10455: its ticks crit at 2.7% instead of at the wearer's spell crit. Not measured; a few threat per
+  second at most, and a log-backed fix, so not a fairness finding. The next pass with sims picks it up.
+- So the pass-35 tables below and the baseline ref/tank_fairness/summary.tsv still hold. All open findings stay open.
+
+## Pass 35 (master f9fa79917), still current
 
 Master f9fa79917 (last: 3e9748641, the Phase 0 tank batch now merged). Due: 80 watched files. Tank-relevant: the
 Phase 0 merge's request changes (bear Balanced re-searched from the Max threat list, b7b411a01; paladin Max survival

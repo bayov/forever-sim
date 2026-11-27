@@ -2,6 +2,22 @@
 
 ## Open
 
+### healer_fairness-20261127-1: the Holy paladin and Restoration shaman healbench requests still wear the Armaments of Battle rewards their gear sets dropped
+- severity: medium (items not in Forever on two benched presets; the shipped sets measure tank paladin +0.006, tank shaman +0.005, raid paladin 0.000, raid shaman -0.002, no rank change)
+- affects: `tools/healbench/req/paladin_holy{,_raid}.json`, `tools/healbench/req/shaman_restoration{,_raid}.json`, and the healer ranking the DPS Report shows from them
+- found: 2026-11-27, master 34994816e
+- evidence: 6bd2d60a2 took the 9 Armaments of Battle rewards out of the Phase 0 lists (not in Forever, 287da91d) and changed
+  `ui/holy_paladin/gear_sets/level60_phase0_paladin_holy.gear.json` (head 22689 -> 14140 with enchant 1505 -> 1503, trinket
+  22678 -> 272438) and `ui/restoration_shaman/gear_sets/level60_phase0_shaman_restoration.gear.json` (finger Band of Piety
+  22681 -> 16058), but not the healbench requests: their `.raid.parties[0].players[0].equipment.items` still equal the
+  f9fa79917 gear sets item for item (22689, 22678, 22681). Bench with the requests' items replaced by the current gear
+  sets (seed 101, 1,000 it, `screen.sh`, `ref/healer_fairness/reqsync_3499481.tsv` against `bench_3499481.tsv`): tank paladin
+  1.100 -> 1.106, tank shaman 1.201 -> 1.206, raid paladin 1.343 -> 1.343, raid shaman 1.348 -> 1.346; largest cell +0.028
+  (paladin Golemagg tank). The same stale ids sit in 15 DPS report requests (Balance, Elemental, the warlocks), outside this pass.
+- proposed fix: copy each gear set's items into its two healbench requests (as 7371cc06e did) and re-bench; consider a
+  check that a healbench request's equipment equals its preset's gear set.
+- needs: worker fix
+
 ### healer_fairness-20261126-1: the Restoration druid alone still wears its synthetic set, ranks first tank healer on it, and the page's changes entry says it wears Phase 0 gear
 - severity: high (a spec's place in the ranking: tank druid first by 0.027, raid druid first of a three-way tie)
 - affects: Restoration druid, both presets (`tools/healbench/req/druid_restoration{,_raid}.json`), and the healer ranking the DPS Report shows

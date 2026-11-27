@@ -2,6 +2,14 @@
 
 ## Open
 
+### healer_gear-20271127-1: The Holy paladin and Restoration shaman requests still wear Armaments of Battle rewards that 6bd2d60a2 took out of the lists
+- severity: medium (the requests the healbench and the race sims run are not the lists the report names; paladin_holy list score fell 123.91 to 122.89 in the re-rank)
+- affects: paladin_holy (tools/healbench/req/paladin_holy.json and _raid.json), shaman_restoration (shaman_restoration.json and _raid.json)
+- found: 2026-11-27, master 34994816e7
+- evidence: python3 tools/audit/gear/phase0_check.py says both requests do not wear their gear sets. Commit 6bd2d60a2 (Armaments of Battle quests not in Forever) changed the sets: Holy paladin slot items 22689 (enchant 1505) -> 14140 (1503), 22678 -> 11832, 11832 -> 272438; Resto shaman 22681 -> 16058 (Alliance copy also 20717 -> 18527). The four requests still carry 22689, 22678, 22681 (ids from the removed quests' rewards, e.g. 22681 Feralheart Wrists is the 2269xx/226815 family in the db). Compared per slot with /tmp/audit-work/hg_cmp.py.
+- proposed fix: copy each gear set into its two requests (the step the worker did in 7371cc06e / f9808629a), then rerun the healer bench and refresh the lists' reported carry.
+- needs: worker fix
+
 ### healer_gear-20261126-1: The Holy priest and Holy paladin lists score about 1.4% above what their requests sim on the bench
 - severity: low (1.9 and 1.7 points of carry; picks may be ranked on a biased estimate)
 - affects: priest_holy (ui/healing_priest/bis/level60_phase0_priest_holy.bis.json), paladin_holy (ui/holy_paladin/bis/level60_phase0_paladin_holy.bis.json)

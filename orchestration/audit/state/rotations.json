@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T19:04:06Z",
- "pass": 84,
+ "last_pass_at": "2026-11-27T00:51:16Z",
+ "pass": 85,
  "result": "quiet",
- "note": "2af970d74..f9fa79917: bear tank APLs + Lacerate fix (tank only), Totem of Sustaining Water Shield globe (no req wears 23200), rotopt tank/heal prices. Baseline unchanged.",
+ "note": "f9fa79917..34994816e: warlock Doom-hold trinket ids moved to Phase 0 trinkets (13968/10455, match gear sets), Chained Essence fixed 2.7% tick crit (trinket damage only). Baseline not refreshed.",
  "client_build": "1.60.1.71091",
  "baseline": "baseline_ab3fff7_3000it_seed424242.tsv",
- "checked_at": "2026-11-26T19:06:21Z"
+ "checked_at": "2026-11-27T01:05:00Z"
 }

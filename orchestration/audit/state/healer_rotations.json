@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T19:02:38Z",
- "pass": 30,
+ "last_pass_at": "2026-11-27T01:02:06Z",
+ "pass": 31,
  "result": "quiet",
- "note": "All 63 bench rows identical to the pass 29 baseline (only bis-list notes, leveling-only core and Totem of Sustaining changed). Totem of Sustaining A/B on the shaman requests: mixed (tank mean +0.001, raid and 300 s lose), Urgency stays.",
+ "note": "All 63 bench rows identical to the pass 30 baseline. Changes were Phase 0 bis/gear lists (Armaments of Battle rewards out; healbench requests embed their own gear, unchanged) and the Chained Essence fixed 2.7% tick crit (trinket on the Frost mage filler; raid rows still byte-identical).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T19:06:21Z"
+ "checked_at": "2026-11-27T01:05:00Z"
 }
