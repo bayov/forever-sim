@@ -54,12 +54,12 @@ func (druidBalance) Knobs() []Knob {
 		// Improved Wrath, so the spell lands at 0 plus its travel time).
 		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "prepullTime", Default: 3, Min: 1.5, Max: 3.5, Step: 0.5},
-		// Use the synthetic spell power trinket 0.1 sec before the pull, so it is up when the
-		// pre-pull cast lands, 0/1 (only with the trinket worn).
-		{Name: "prepullTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
+		// No trinket lines: the Phase 0 sets wear no synthetic trinket, and a synthetic id in the
+		// rotation becomes a hold on the worn on-use trinket (withRealTrinket), which the report's
+		// Balance rotations do not have (2026-11-26). The autocast line uses the trinkets.
 		// Cooldown stacking (rotation auditor), 0/1: Major Spellblasting Potion and the Night Elf's
 		// Elune's Light 0.1 sec before the pull as well, so the pre-pull cast lands inside them, and
-		// Elune's later uses held for the synthetic trinket when holding loses no use.
+		// Elune's Light on cooldown after.
 		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Elune's Light (the Night Elf's racial) in the cdStack lines, 0/1. Other races leave it
 		// out; a Night Elf without the lines still uses it through the autocast line.
@@ -102,8 +102,7 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions and runes."))
 	items = append(items, readLeylineLines(k, nil)...)
 	if k["cdStack"] == 1 && k["elune"] == 1 {
-		items = append(items, cast(elunesLight, holdFor(elunesLight, itemID(druid.BalanceSyntheticSpellPowerTrinket)),
-			"Elune's Light with the trinket, unless waiting for it would lose a use."))
+		items = append(items, cast(elunesLight, nil, "Elune's Light on cooldown."))
 	}
 	// Forever's Faerie Fire and Curse of Recklessness share the minor armor slot (standards 20), and
 	// the sim won't put ours up while a Curse of Recklessness holds it.
@@ -172,9 +171,6 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(starfire, k["prepullTime"]))
 	case 2:
 		rot.PrepullActions = append(rot.PrepullActions, prepull(wrath, k["prepullTime"]))
-	}
-	if k["prepullTrinket"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(druid.BalanceSyntheticSpellPowerTrinket), 0.1))
 	}
 	if k["cdStack"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(majorSpellblastingPotion), 0.1))
