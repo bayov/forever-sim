@@ -88,18 +88,21 @@ func stormstrikesAfterWindfury(logs string) (early, all int) {
 }
 
 // stormstrikeWfHold keeps Stormstrike for Windfury Weapon's 1.5 sec cooldown: with the full hold
-// no Stormstrike goes while the cooldown runs, and without it some do.
+// no Stormstrike goes while the cooldown runs, and without it some do. A 1200 sec fight, like the
+// totem gate's: Stormstrike goes about every 8 sec and only some 1 in 15 lands in the cooldown, so
+// a 180 sec fight (22 Stormstrikes) could have none to show and fail on the seed alone, as it did
+// once the November sim batches changed the random stream.
 func TestShamanEnhStormstrikeWindfuryHold(t *testing.T) {
 	sim.RegisterAll()
-	early, all := stormstrikesAfterWindfury(enhDebugLog(t, nil, 180))
+	early, all := stormstrikesAfterWindfury(enhDebugLog(t, nil, 1200))
 	t.Logf("no hold: %d of %d Stormstrikes during the cooldown", early, all)
-	if early == 0 || all < 15 {
+	if early == 0 || all < 100 {
 		t.Fatalf("without the hold, %d of %d Stormstrikes went during the cooldown, want some", early, all)
 	}
 	for _, idle := range []float64{0, 1} {
-		early, all := stormstrikesAfterWindfury(enhDebugLog(t, map[string]float64{"stormstrikeWfHold": 1.5, "stormstrikeWfIdle": idle}, 180))
+		early, all := stormstrikesAfterWindfury(enhDebugLog(t, map[string]float64{"stormstrikeWfHold": 1.5, "stormstrikeWfIdle": idle}, 1200))
 		t.Logf("stormstrikeWfIdle=%v: %d of %d", idle, early, all)
-		if early != 0 || all < 15 {
+		if early != 0 || all < 100 {
 			t.Errorf("stormstrikeWfIdle=%v: %d of %d Stormstrikes went during Windfury Weapon's cooldown, want none", idle, early, all)
 		}
 	}
