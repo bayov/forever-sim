@@ -3018,11 +3018,11 @@
 					}
 				},
 				"paladin_holy": {
-					"commit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
-					"recordedAt": "2026-11-27T03:10:41.095Z",
+					"commit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
+					"recordedAt": "2026-11-27T03:40:41.364Z",
 					"iterations": 1000,
 					"by": "sim",
-					"simCommit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
+					"simCommit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
 					"format": 3,
 					"inputs": {
 						"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -3039,7 +3039,7 @@
 						"tools/dps_report/adaptive.py": "053512f624e4a672f1ae1bb7a27037a07beae31ea77e25180929c72434ca3c58",
 						"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 						"tools/dps_report/run_build.py": "7c330d6114e0057e0f50f39ad220b8d08c4cfb1cab704dd314f379cd44ea0211",
-						"tools/healbench/req/paladin_holy.json": "771308b8608b1befb13d1d421a7128f06ea0c2ce57f51e89c77641ec86d82e87",
+						"tools/healbench/req/paladin_holy.json": "75b0c2396bf4878ca1433f097384895fb8e854a88524710a7a5bc01648539b07",
 						"tools/tankbench/req/warrior_protection.json": "19fb53f38809d226448bef94c9c8c9b94556cb9194c7cd13b3accefb18acf28c",
 						"tools/dps_report/req/mage__frost.json": "41562bf80b8af00b3426ce002515fd9706714ebde7eac96453439bd3274a0388",
 						"sim/paladin": "5ce18971e0cd51dcf84c0f014ff65d8096e909a67227b25a2ae22fc81fa35b98",
@@ -3054,15 +3054,15 @@
 						"tools/encounters/ragnaros.json": "894681d6f4936269c19dc8bbd9bf7b5e7236090d027516cbe786f8b87c7c8b0c",
 						"tools/healbench (the bench, its requests left out)": "95d6d7dae714d5b8ee4edc2f898ef807e0d9495626acff8970324e147e183816",
 						"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-						"assets/database (the entries it wears)": "2950e7727b099a96383b0ab053114e858a1d82fd5bfa07e8a028930b865058a3"
+						"assets/database (the entries it wears)": "3fca8d6a144bba8b0186c8a63d0e555daa451f9fc2de4b208c0708cef080d2bc"
 					}
 				},
 				"paladin_holy_raid": {
-					"commit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
-					"recordedAt": "2026-11-27T03:10:41.115Z",
+					"commit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
+					"recordedAt": "2026-11-27T03:40:41.576Z",
 					"iterations": 1000,
 					"by": "sim",
-					"simCommit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
+					"simCommit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
 					"format": 3,
 					"inputs": {
 						"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -3079,7 +3079,7 @@
 						"tools/dps_report/adaptive.py": "053512f624e4a672f1ae1bb7a27037a07beae31ea77e25180929c72434ca3c58",
 						"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 						"tools/dps_report/run_build.py": "7c330d6114e0057e0f50f39ad220b8d08c4cfb1cab704dd314f379cd44ea0211",
-						"tools/healbench/req/paladin_holy_raid.json": "91156859b7de08a32c0ef2b61c1aa14fd991f169b3606a4d6c8327aa32ef1523",
+						"tools/healbench/req/paladin_holy_raid.json": "dbab2bbfaa23ca738007342b6eba6da5aecbd28a5b4baf1c2a6e19d9767177ba",
 						"tools/dps_report/req/mage__frost.json": "41562bf80b8af00b3426ce002515fd9706714ebde7eac96453439bd3274a0388",
 						"sim/paladin": "5ce18971e0cd51dcf84c0f014ff65d8096e909a67227b25a2ae22fc81fa35b98",
 						"sim/mage": "faa988c7572ddefe89ba3a81d3b52232bed21b57e0be726e149c4f0f13ade843",
@@ -3092,7 +3092,7 @@
 						"tools/encounters/ragnaros.json": "894681d6f4936269c19dc8bbd9bf7b5e7236090d027516cbe786f8b87c7c8b0c",
 						"tools/healbench (the bench, its requests left out)": "95d6d7dae714d5b8ee4edc2f898ef807e0d9495626acff8970324e147e183816",
 						"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
-						"assets/database (the entries it wears)": "06c8cc080ceef3cf0ed57417aaab092a3167df6063979e25aa5d67d94c6c0222"
+						"assets/database (the entries it wears)": "a4760e6e471d218fd1ee106d2b75acae9b605356806b47c976b610b982efb790"
 					}
 				},
 				"priest_discipline": {
@@ -3214,11 +3214,11 @@
 					}
 				},
 				"shaman_restoration": {
-					"commit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
-					"recordedAt": "2026-11-27T03:10:41.165Z",
+					"commit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
+					"recordedAt": "2026-11-27T03:40:41.586Z",
 					"iterations": 1000,
 					"by": "sim",
-					"simCommit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
+					"simCommit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
 					"format": 3,
 					"inputs": {
 						"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -3235,7 +3235,7 @@
 						"tools/dps_report/adaptive.py": "053512f624e4a672f1ae1bb7a27037a07beae31ea77e25180929c72434ca3c58",
 						"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 						"tools/dps_report/run_build.py": "7c330d6114e0057e0f50f39ad220b8d08c4cfb1cab704dd314f379cd44ea0211",
-						"tools/healbench/req/shaman_restoration.json": "0fa2ba5bb63ecc0ca365b95f8a846b766c8c1579a6e4082437a5d63d62f86468",
+						"tools/healbench/req/shaman_restoration.json": "b5f6239f07012290a33305d508b62418cee9af3873eb821bdade9dcef2d25661",
 						"tools/tankbench/req/warrior_protection.json": "19fb53f38809d226448bef94c9c8c9b94556cb9194c7cd13b3accefb18acf28c",
 						"tools/dps_report/req/mage__frost.json": "41562bf80b8af00b3426ce002515fd9706714ebde7eac96453439bd3274a0388",
 						"sim/shaman": "25a3af54a7f18eec3a4bbbe20566b8646d281bedaf520b2f3013e6809c5d04d2",
@@ -3251,15 +3251,15 @@
 						"tools/healbench (the bench, its requests left out)": "95d6d7dae714d5b8ee4edc2f898ef807e0d9495626acff8970324e147e183816",
 						"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 						"ui/restoration_shaman/gear_sets/level60_phase0_shaman_restoration_alliance.gear.json": "1288ceae27640c9ccf492f1c4d2166940c40b08b5b3af098ca2016fa2d6f3d0b",
-						"assets/database (the entries it wears)": "223043c5b0f89d5828d485530e656de93607f5f80bd91cff2d5e37ddc1e60099"
+						"assets/database (the entries it wears)": "431510fc778e32ee49a8f81538e2aa47e2bcaf4e8f4e1a71c06696e27a581b60"
 					}
 				},
 				"shaman_restoration_raid": {
-					"commit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
-					"recordedAt": "2026-11-27T03:10:41.184Z",
+					"commit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
+					"recordedAt": "2026-11-27T03:40:41.610Z",
 					"iterations": 1000,
 					"by": "sim",
-					"simCommit": "5a3c5dc978b8ba3e46b873a5f69400ba7daa2906",
+					"simCommit": "d74a532619ae4ea7deb91cb2965d832f2aad12a7",
 					"format": 3,
 					"inputs": {
 						"sim/core": "7dd32914af4c79ba9a8662d86390246db27f31a1effba5e78cc581d4f0d277ca",
@@ -3276,7 +3276,7 @@
 						"tools/dps_report/adaptive.py": "053512f624e4a672f1ae1bb7a27037a07beae31ea77e25180929c72434ca3c58",
 						"tools/dps_report/dashpaths.py": "d6a508623cfeaca1025e00b8d719472be791d63764c2d5c4cc285978f0a037cd",
 						"tools/dps_report/run_build.py": "7c330d6114e0057e0f50f39ad220b8d08c4cfb1cab704dd314f379cd44ea0211",
-						"tools/healbench/req/shaman_restoration_raid.json": "10fc5ff3194010460d31d2fd833c4863d185f7a83092266d43d934ecdd284c43",
+						"tools/healbench/req/shaman_restoration_raid.json": "34ff17e707a441f755e07fbcc49d9776950e6a4a2661594a4112618a46c01606",
 						"tools/dps_report/req/mage__frost.json": "41562bf80b8af00b3426ce002515fd9706714ebde7eac96453439bd3274a0388",
 						"sim/shaman": "25a3af54a7f18eec3a4bbbe20566b8646d281bedaf520b2f3013e6809c5d04d2",
 						"sim/mage": "faa988c7572ddefe89ba3a81d3b52232bed21b57e0be726e149c4f0f13ade843",
@@ -3290,7 +3290,7 @@
 						"tools/healbench (the bench, its requests left out)": "95d6d7dae714d5b8ee4edc2f898ef807e0d9495626acff8970324e147e183816",
 						"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
 						"ui/restoration_shaman/gear_sets/level60_phase0_shaman_restoration_alliance.gear.json": "1288ceae27640c9ccf492f1c4d2166940c40b08b5b3af098ca2016fa2d6f3d0b",
-						"assets/database (the entries it wears)": "bffcef3d5ee912a3df7c26082ce47a15d2ea5227d3f971af6b2a927beadc864e"
+						"assets/database (the entries it wears)": "792b671243cd1365a48182eb4e9c878a84344848c7d23a8ebcf0418e2cd4dd00"
 					}
 				}
 			}

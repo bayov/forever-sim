@@ -446,7 +446,7 @@
   "title": "Healing presets and carry",
   "description": "One row per healing preset: class, spec, role (tank healer or raid healer), race, talents, and the means over the 7 boss files (Onyxia, Broodlord, Chromaggus, Golemagg, Magmadar, Ragnaros, Vaelastrasz) of carry (damage carried, the score in docs/healing_sim.md), HPS, effective HPS, overheal, effective healing per mana, mana left, OOM time, and tank and other deaths, with the rank within its role. From tools/healbench, 1,000 iterations a file, each file at its own length, seed 101.",
   "updated": {
-   "at": "2026-11-26T17:12:28.756Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -455,7 +455,7 @@
   "title": "Healing by boss",
   "description": "Per healing preset and boss: carry, HPS, effective HPS, overheal, healing per mana, mana left, OOM time, tank and raid DTPS, deaths, first death, scares and death floor.",
   "updated": {
-   "at": "2026-11-26T17:12:28.756Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -473,7 +473,7 @@
   "title": "Healing by race",
   "description": "Per healing preset and every race the class can be: the seven-boss damage carried, HPS, useful HPS, overheal and mana left, the preset's own race flagged, and the paired error of each race's gap to every other race (pse). The races share their fights; the preset's race carries the main run's numbers and the others are moved by the same amount.",
   "updated": {
-   "at": "2026-11-27T03:10:40.105Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -482,7 +482,7 @@
   "title": "Healing by race: racial parts",
   "description": "Per healing preset and race: its base stats (every racial left out) and what each racial part adds to the damage carried, with the part's paired error. The parts add up to the race's damage carried.",
   "updated": {
-   "at": "2026-11-27T03:10:40.105Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -491,7 +491,7 @@
   "title": "Healing gear",
   "description": "Per healing preset, every equipped item with its enchant, in the DPS gear dataset's shape.",
   "updated": {
-   "at": "2026-11-26T15:43:58.020Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -518,7 +518,7 @@
   "title": "Healing tooltips",
   "description": "Item and spell tooltips the healing pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-26T19:27:57.000Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -554,7 +554,7 @@
   "title": "Healing icons",
   "description": "The icons the healing pages show that the common icons datasets lack, as data URLs (\":l\" keys are the large versions).",
   "updated": {
-   "at": "2026-11-26T15:43:58.020Z",
+   "at": "2026-11-27T03:40:41.170Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
