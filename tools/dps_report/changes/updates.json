@@ -7880,7 +7880,8 @@
       "bec27efed",
       "629c7b306",
       "518f23165",
-      "3594f31f2"
+      "3594f31f2",
+      "287da91da"
      ]
     },
     {
@@ -8012,9 +8013,11 @@
       "shaman__elemental-level60",
       "shaman__elemental-level60-mana-tide"
      ],
-     "note": "Elemental wears Talisman of Ascendance in place of Eye of the Beast, for 3.5 more DPS. Enhancement wears Blackhand's Breadth in place of Adaptive Combat Assistant and loses about 1.3 DPS. The Improved Ghost Wolf preset now has talents the game allows, with the same DPS.",
+     "note": "Elemental wears Talisman of Ascendance in place of Eye of the Beast, for 3.5 more DPS. Enhancement wears Blackhand's Breadth in place of Adaptive Combat Assistant and loses about 1.3 DPS. The Improved Ghost Wolf preset now has talents the game allows, with the same DPS. Chained Essence's cloud ticks now crit 2.7% of the time, as our logs show, and the Enhancement trinkets were ranked again after that.",
      "commits": [
-      "c3884acc6"
+      "c3884acc6",
+      "5591bd019",
+      "3698a73d7"
      ]
     },
     {
@@ -8251,7 +8254,14 @@
       "8cec2feea",
       "1352e5a34",
       "0afa82611",
-      "eac7ba8b5"
+      "eac7ba8b5",
+      "316e08b82",
+      "f10ca0aaf",
+      "264753874",
+      "486e85b4f",
+      "eef393de0",
+      "f46494f3d",
+      "3a0a00a03"
      ]
     },
     {
