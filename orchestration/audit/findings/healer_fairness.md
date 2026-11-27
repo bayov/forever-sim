@@ -2,42 +2,6 @@
 
 ## Open
 
-### healer_fairness-20261127-1: the Holy paladin and Restoration shaman healbench requests still wear the Armaments of Battle rewards their gear sets dropped
-- severity: medium (items not in Forever on two benched presets; the shipped sets measure tank paladin +0.006, tank shaman +0.005, raid paladin 0.000, raid shaman -0.002, no rank change)
-- affects: `tools/healbench/req/paladin_holy{,_raid}.json`, `tools/healbench/req/shaman_restoration{,_raid}.json`, and the healer ranking the DPS Report shows from them
-- found: 2026-11-27, master 34994816e
-- evidence: 6bd2d60a2 took the 9 Armaments of Battle rewards out of the Phase 0 lists (not in Forever, 287da91d) and changed
-  `ui/holy_paladin/gear_sets/level60_phase0_paladin_holy.gear.json` (head 22689 -> 14140 with enchant 1505 -> 1503, trinket
-  22678 -> 272438) and `ui/restoration_shaman/gear_sets/level60_phase0_shaman_restoration.gear.json` (finger Band of Piety
-  22681 -> 16058), but not the healbench requests: their `.raid.parties[0].players[0].equipment.items` still equal the
-  f9fa79917 gear sets item for item (22689, 22678, 22681). Bench with the requests' items replaced by the current gear
-  sets (seed 101, 1,000 it, `screen.sh`, `ref/healer_fairness/reqsync_3499481.tsv` against `bench_3499481.tsv`): tank paladin
-  1.100 -> 1.106, tank shaman 1.201 -> 1.206, raid paladin 1.343 -> 1.343, raid shaman 1.348 -> 1.346; largest cell +0.028
-  (paladin Golemagg tank). The same stale ids sit in 15 DPS report requests (Balance, Elemental, the warlocks), outside this pass.
-- proposed fix: copy each gear set's items into its two healbench requests (as 7371cc06e did) and re-bench; consider a
-  check that a healbench request's equipment equals its preset's gear set.
-- needs: worker fix
-
-### healer_fairness-20261126-1: the Restoration druid alone still wears its synthetic set, ranks first tank healer on it, and the page's changes entry says it wears Phase 0 gear
-- severity: high (a spec's place in the ranking: tank druid first by 0.027, raid druid first of a three-way tie)
-- affects: Restoration druid, both presets (`tools/healbench/req/druid_restoration{,_raid}.json`), and the healer ranking the DPS Report shows
-- found: 2026-11-26, master f9fa79917
-- evidence: the other 7 requests moved to their Phase 0 lists (equipment only; consumables, buffs, race, professions
-  byte-identical to 2af970d74 once `.equipment` is dropped); both druid requests keep 15 synthetic ids (990401-...).
-  Bench (seed 101, 1,000 it, `screen.sh`, `ref/healer_fairness/bench_f9fa799.tsv`) against pass 31: tank shaman 1.276 ->
-  1.201, Holy 1.267 -> 1.194, Disc 1.266 -> 1.228, paladin 1.151 -> 1.100, druid 1.255 -> 1.255 (unchanged), so the druid
-  goes from fourth to first; raid druid 1.351, shaman 1.348, paladin 1.343 (Holy 1.440). Every Phase 0 list cost its spec
-  0.038-0.075 tank carry, so the druid's lead is very likely the gear, not the class (estimate: the druid's own list isn't
-  built, so not measured). Standards 43 lets a spec keep its synthetic set until its list lands "and the page says so".
-  The page doesn't: `ui/dps_report/data/heal_builds.json` gives druid__restoration `rank: 1` with no note, and
-  `ui/dps_report/data/changes.json`'s entry "Healing presets now wear real Phase 0 gear instead of synthetic gear" lists
-  Restoration Druid among the specs that "now wear gear you can get at level 60" (the gear table does show "Restoration
-  Druid Synthetic" item names).
-- proposed fix: land the druid's Phase 0 list (row `druid_restoration` in `tools/rotopt/phase0_specs.json`) and re-bench;
-  until then drop the druid from that changes entry and mark its two rows on the page as synthetic gear, not comparable
-  (or unranked).
-- needs: worker fix (the list), orchestrator fix (the page note)
-
 ### healer_fairness-20261124-1: the raid role's filler is the DPS report's Frost mage, so its move to Phase 0 gear cut every raid healer's carry 1-3%, unevenly, and put the shaman last
 - severity: high (raid shaman 1.390 -> 1.344, second-to-last to last; raid druid 1.385 -> 1.372, last to third)
 - affects: every raid healer preset in healbench's raid role (`tools/healbench/req/*_raid.json`); the tank role has no fillers
@@ -86,6 +50,8 @@
   1.385, last, 0.005 behind the shaman's 1.390 (`ref/healer_fairness/bench_a667736.tsv`).
 - 2026-11-24, master eceb09019 (pass 28): still not re-tuned. With the Phase 0 filler (-20261124-1) the raid druid is
   1.372, third, ahead of the shaman's 1.344; with the old filler 1.390, last again behind the shaman's 1.395.
+- 2026-11-27, master 5ab589d85 (pass 35): still not re-tuned; on its Phase 0 list the raid druid is 1.340, last, inside noise of the paladin 1.343 and shaman 1.346.
+
 
 ### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
 - severity: low (blocks a check; moves no number)
@@ -100,6 +66,45 @@
 - needs: orchestrator fix
 
 ## Resolved
+
+### healer_fairness-20261127-1: the Holy paladin and Restoration shaman healbench requests still wear the Armaments of Battle rewards their gear sets dropped
+- severity: medium (items not in Forever on two benched presets; the shipped sets measure tank paladin +0.006, tank shaman +0.005, raid paladin 0.000, raid shaman -0.002, no rank change)
+- affects: `tools/healbench/req/paladin_holy{,_raid}.json`, `tools/healbench/req/shaman_restoration{,_raid}.json`, and the healer ranking the DPS Report shows from them
+- found: 2026-11-27, master 34994816e
+- evidence: 6bd2d60a2 took the 9 Armaments of Battle rewards out of the Phase 0 lists (not in Forever, 287da91d) and changed
+  `ui/holy_paladin/gear_sets/level60_phase0_paladin_holy.gear.json` (head 22689 -> 14140 with enchant 1505 -> 1503, trinket
+  22678 -> 272438) and `ui/restoration_shaman/gear_sets/level60_phase0_shaman_restoration.gear.json` (finger Band of Piety
+  22681 -> 16058), but not the healbench requests: their `.raid.parties[0].players[0].equipment.items` still equal the
+  f9fa79917 gear sets item for item (22689, 22678, 22681). Bench with the requests' items replaced by the current gear
+  sets (seed 101, 1,000 it, `screen.sh`, `ref/healer_fairness/reqsync_3499481.tsv` against `bench_3499481.tsv`): tank paladin
+  1.100 -> 1.106, tank shaman 1.201 -> 1.206, raid paladin 1.343 -> 1.343, raid shaman 1.348 -> 1.346; largest cell +0.028
+  (paladin Golemagg tank). The same stale ids sit in 15 DPS report requests (Balance, Elemental, the warlocks), outside this pass.
+- proposed fix: copy each gear set's items into its two healbench requests (as 7371cc06e did) and re-bench; consider a
+  check that a healbench request's equipment equals its preset's gear set.
+- needs: worker fix
+- resolved: 2026-11-27, d74a53261 (the four requests now equal their gear sets item for item; bench at 5ab589d85 matches `reqsync_3499481.tsv` in every cell: tank paladin 1.106, tank shaman 1.206, raid paladin 1.343, raid shaman 1.346; `ref/healer_fairness/bench_5ab589d.tsv`)
+
+
+### healer_fairness-20261126-1: the Restoration druid alone still wears its synthetic set, ranks first tank healer on it, and the page's changes entry says it wears Phase 0 gear
+- severity: high (a spec's place in the ranking: tank druid first by 0.027, raid druid first of a three-way tie)
+- affects: Restoration druid, both presets (`tools/healbench/req/druid_restoration{,_raid}.json`), and the healer ranking the DPS Report shows
+- found: 2026-11-26, master f9fa79917
+- evidence: the other 7 requests moved to their Phase 0 lists (equipment only; consumables, buffs, race, professions
+  byte-identical to 2af970d74 once `.equipment` is dropped); both druid requests keep 15 synthetic ids (990401-...).
+  Bench (seed 101, 1,000 it, `screen.sh`, `ref/healer_fairness/bench_f9fa799.tsv`) against pass 31: tank shaman 1.276 ->
+  1.201, Holy 1.267 -> 1.194, Disc 1.266 -> 1.228, paladin 1.151 -> 1.100, druid 1.255 -> 1.255 (unchanged), so the druid
+  goes from fourth to first; raid druid 1.351, shaman 1.348, paladin 1.343 (Holy 1.440). Every Phase 0 list cost its spec
+  0.038-0.075 tank carry, so the druid's lead is very likely the gear, not the class (estimate: the druid's own list isn't
+  built, so not measured). Standards 43 lets a spec keep its synthetic set until its list lands "and the page says so".
+  The page doesn't: `ui/dps_report/data/heal_builds.json` gives druid__restoration `rank: 1` with no note, and
+  `ui/dps_report/data/changes.json`'s entry "Healing presets now wear real Phase 0 gear instead of synthetic gear" lists
+  Restoration Druid among the specs that "now wear gear you can get at level 60" (the gear table does show "Restoration
+  Druid Synthetic" item names).
+- proposed fix: land the druid's Phase 0 list (row `druid_restoration` in `tools/rotopt/phase0_specs.json`) and re-bench;
+  until then drop the druid from that changes entry and mark its two rows on the page as synthetic gear, not comparable
+  (or unranked).
+- needs: worker fix (the list), orchestrator fix (the page note)
+- resolved: 2026-11-27, eef393de0 (druid_restoration Phase 0 gear set, worn by both healbench requests; equipment only, the rest byte-identical) and 12fba196b (page republished, no synthetic item names left in `heal_builds.json`). On its list the druid falls 1.255 -> 1.188, first to fourth tank healer; raid 1.351 -> 1.340, last of a three-way tie (`ref/healer_fairness/bench_5ab589d.tsv`). The estimate that its lead was the gear holds.
 
 ### healer_fairness-20261112-1: the Holy priest raid preset keeps Inspiration, dead in the raid role, instead of Twilight Focus; every other raid preset takes its pushback talent
 - severity: high (+0.021 mean raid carry, 1.5%; widens the Holy priest's raid lead from +0.026 to +0.047)

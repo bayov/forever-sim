@@ -11,6 +11,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: run_reqs.py at HEAD, 20k, seed 1, 180 s: every Talisman wearer is within 0.7 of builds.json (warlock__affliction-duty-curse 948.15 vs 948.1, demonology 874.56 vs 873.9, destruction-duty-curse 856.14 vs 856.8; the same 180 +/- 20 s spread as the unchanged rows), but meta.published.dps still holds the 2026-11-26 numbers (affliction-duty-curse 953.4, -duty-recklessness 948.24, demonology-duty-recklessness 863.52). bc5f5d61 republished the raw packs and builds.json and left tools/dps_report/req untouched.
 - proposed fix: refresh meta.published (dps and source) of the 13 warlock requests from the bc5f5d61 run, as 31d2f59e did for the round.
 - needs: orchestrator fix
+- update 2026-11-27, master 5ab589d858: builds.json (bc5f5d61c) matches the shared run on 68 of 68 (max 1.45). Metas unchanged: 13 warlock metas still off 1.2 to 5.6 (affliction-duty-recklessness 948.2 vs 942.7, -duty-curse 953.4 vs 948.1, demonology-duty-recklessness 863.5 vs 859.0); the 41 of 68 metas off by more than 0.5 are all within 5.6. Still waiting on the meta refresh.
 
 ### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
 - severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)

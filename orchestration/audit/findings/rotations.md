@@ -4,6 +4,32 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261127-1: Duty-curse warlocks: Talisman of Ascendance fires before the duty curse, which eats a charge
+- severity: medium (+4.6 at 180 s, 0.49%, on the Affliction duty builds; +2.2 to +2.6 Demonology; +1.4 Destruction Recklessness)
+- affects: warlock__affliction-duty-curse, -duty-recklessness, warlock__demonology-duty-curse, -duty-recklessness, warlock__destruction-duty-recklessness. Destruction CoE and both Destruction Fire duty builds gain under the bar (+0.3 to +0.6, optional).
+- found: 2026-11-27, master 5ab589d858
+- evidence: since 413f06cb0 every APL cast eats one of Talisman's 6 charges (sim/common/item_effects.go:4756-4790). The duty
+  APLs fire the Talisman from `autocastOtherCooldowns` (priority line 0) at t=0, so the first-GCD duty curse (CoE 1311680 /
+  CoR, `ui/warlock/apls/level60_affliction_duty_curse.apl.json:9`, demonology :11, destruction :9) takes a charge and every
+  later spell gets one stack less. B inserts `{"action":{"castSpell":{"spellId":{"itemId":22678}}}}` right after the duty-curse
+  line (the curse stays on the first GCD, so the settled CoE ruling holds). Paired `ab.py` (20k it, 8 blocks, CLI 5ab589d85898),
+  B-A at 120 / 180 / 300 s, pooled over S0 1e6 and 2e8 (SE 0.03-0.6 a set):
+  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
+  |---|---|---|---|---|
+  | affliction-duty-curse | +4.73 / +4.70 / +3.43 | +4.57 / +4.56 / +3.36 | **+4.65 / +4.63 / +3.40** | 948.0 |
+  | affliction-duty-recklessness | +4.37 / +4.59 / +3.56 | +4.24 / +4.44 / +3.42 | **+4.31 / +4.52 / +3.49** | 942.5 |
+  | demonology-duty-curse | +3.85 / +1.96 / +1.05 | +2.70 / +2.46 / +1.52 | **+3.28 / +2.21 / +1.29** | 864.7 |
+  | demonology-duty-recklessness | +3.59 / +2.69 / +1.79 | +2.81 / +2.51 / +1.34 | **+3.20 / +2.60 / +1.57** | 859.2 |
+  | destruction-duty-recklessness | +1.83 / +1.60 / -0.07 | +1.71 / +1.23 / +0.31 | **+1.77 / +1.42 / +0.12** | 851.1 |
+  | destruction-duty-curse | | | +1.76 / +0.56 / +0.37 (optional) | 856.9 |
+  | destruction_fire duty curse / reck | | | +0.15 / +0.38 / +0.49 and -0.18 / +0.41 / +0.37 (optional) | 816 / 811 |
+  Not for the non-duty builds: Talisman held for Shadow Bolt loses 3.4 on warlock__affliction, and on Balance (held for Starfire
+  -3.1, after Faerie Fire on duty-ff -1.25). Caveat: the warlock Phase 0 lists on master no longer wear 22678 (pass 85: the APL
+  holds moved to 13968 / 10455) but these reqs still do; if the next regeneration drops the Talisman, this finding is moot.
+- proposed fix: while the warlock duty reqs wear 22678, add the Talisman line right after the duty-curse line in the 5 builds above
+  (req rotation and APL file). Otherwise close it when the reqs drop the Talisman.
+- needs: orchestrator fix
+
 ### rotations-20261126-3: Might of Shahram stuns the stun-immune raid boss, and since 8f5b59325 a stunned target can't dodge, parry or block
 - severity: low (+0.8 to +1.6 DPS, 0.1-0.2%, on the 7 paladin builds that wear Blackblade of Shahram; no rank change)
 - affects: paladin__level_60, -duty-crusader, -duty-wisdom, paladin__level_60_sub_holy, -duty-crusader, -duty-wisdom, paladin__level_60_sub_holy_undead (all wear 12592)

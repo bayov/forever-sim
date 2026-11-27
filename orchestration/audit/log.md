@@ -696,3 +696,13 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-27 06:31 | results | branch pass | phase0-cleanup 782ad6089 | 1 new finding | 19 Talisman wearers match builds.json; warlock metas keep the pre-fix published DPS.
 2026-11-27 06:31 | healer_rotations | branch pass | phase0-cleanup 782ad6089 | quiet | Paced Flash Heal: priest rows flat to +0.034 (Holy Chromaggus); no length loses.
 2026-11-27 06:31 | healer_gear | branch pass | phase0-cleanup 782ad6089 | quiet | Priest lists re-scored, sets and requests unchanged and consistent.
+2026-11-27 07:04 | results | pass 112 | master 5ab589d858 | quiet | 68/68 match builds.json; 13 warlock metas still stale (update under results-20261127-1).
+2026-11-27 07:04 | rotations | pass 86 | master 5ab589d858 | 1 new finding | Talisman fires before the duty curse in duty-curse warlocks (+1.4 to +4.6 at 180 s if moved).
+2026-11-27 07:04 | gear | pass 85 | master 5ab589d858 | quiet | Partial pass (per-pick checks skipped); gear-20261127-1 still open.
+2026-11-27 07:04 | consumables | pass 116 | master 5ab589d858 | quiet | Nothing consumable-related moved.
+2026-11-27 07:04 | mechanics | pass 112 | master 5ab589d858 | quiet | Only the Talisman charge change; mechanics-20261127-1 awaits ruling.
+2026-11-27 07:04 | fairness | pass 66 | master 5ab589d858 | quiet | Talisman rule uniform across wearers; fairness-20261127-1 still open.
+2026-11-27 07:04 | healer_mechanics | pass 35 | master 5ab589d858 | quiet | Only healbench request gear changes.
+2026-11-27 07:04 | healer_rotations | pass 32 | master 5ab589d858 | quiet | 63 rows match ref; druid tank healer drop is Phase 0 gear.
+2026-11-27 07:04 | healer_gear | pass 20 | master 5ab589d858 | 1 new finding | Resto druid list still wears Medallion of the Dawn (22659), removed from Forever.
+2026-11-27 07:04 | healer_fairness | pass 35 | master 5ab589d858 | quiet | 63 cells match heal_builds.json; two findings resolved.

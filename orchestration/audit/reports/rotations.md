@@ -1,28 +1,37 @@
-# Rotations pass 85 (2026-11-27, master 34994816e)
+# Rotations pass 86 (2026-11-27, master 5ab589d858)
 
-Result: quiet. Range f9fa79917..34994816e: Phase 0 lists drop the Armaments of Battle rewards (6bd2d60a2),
-Chained Essence of Eranikus cloud ticks crit at a fixed 2.7% (5591bd019), Grayston's 2H Shockadin presets
-added and dropped again (27a8031dc..d70972fa3), Enhancement trinket rerank, logcheck replay windows.
+Result: findings (1 new). Range 34994816e..5ab589d858: Talisman of Ascendance charges on every APL cast (413f06cb0),
+priest tank healers pace Flash Heal (ff87e66b3), healer re-sims, Phase 0 rogue effects refresh, rotopt balance no trinket hold.
 
 ## Checked
 
 | Check | Result |
 |---|---|
-| `apl_logic_diff.py f9fa79917 34994816e7` | 10 warlock APLs, one line each: the Bane of Doom hold reads a new trinket id, 22678 (Talisman of Ascendance, now out) -> 13968 (Eye of the Beast) in the 6 Destruction / Destruction Fire files, -> 10455 (Chained Essence) in the 3 Demonology files and Affliction Shadow Bolt |
-| APL trinket ids vs Phase 0 gear sets | match: Destruction wears 13968 + 272438, Demonology 13968 + 10455 (APL reads 10455, per the commit the larger use value), Affliction 272438 + 10455 |
-| Req rotations changed | none; only `paladin__level_60_shock_ret.meta.json`. The warlock reqs still wear 22678 and embed the old 22678 hold, so they stay self-consistent until the report regenerates them from the new lists |
-| Non-test sim `.go` changed | `sim/common/item_effects.go` only: Chained Essence tick outcome (crit 2.7% fixed, x1.5). Trinket damage, no rotation or resource mechanic. 40 reqs wear 10455 |
-| Shared run vs published (`runs/vs_published.txt`) | 31 of 68 moved > 0.5 DPS, all within +-0.15%; the losses (-0.6 to -1.5) are 10455 wearers, as expected from the lower tick crit. No regress run (under its 1.0 bar for most, no rotation cause) |
-| Open findings landed? | 20261126-3 (Might of Shahram stun), 20261122-1 (Shock Ret order), 20261112-1 (rogue poisons) still open, untouched in range |
-| Baseline | not refreshed (moves ~1 DPS on 10455 wearers only): `baseline_ab3fff7_3000it_seed424242.tsv`. Refresh on the next pass that runs `baseline.py` |
+| `apl_logic_diff.py 34994816e 5ab589d858` | 2 files, both healer (discipline / holy tank_healer Flash Heal pacing). No Level 60 DPS APL logic changed |
+| Non-test sim `.go` changed | `sim/common/item_effects.go`: Talisman of Ascendance (22678) now eats a charge on every APL spell except white melee. Reaches 19 DPS reqs (warlock, Balance, Elemental) |
+| Shared run vs published | warlocks -1.2 to -5.6 (duty-curse builds lose most); Balance and Elemental within 0.4 |
+| Talisman placement (new mechanic) | see below; one finding |
+| Open findings landed? | 20261126-3 (Might of Shahram), 20261122-1 (Shock Ret), 20261112-1 (rogue poisons): still open, untouched |
+| Baseline | not refreshed (`baseline_ab3fff7_3000it_seed424242.tsv`); Talisman wearers moved 1-6 DPS. Refresh on the next pass that runs `baseline.py` |
 
-## Phase 0 trinkets open item (warlock part)
+## Talisman of Ascendance placement (paired ab.py, 20k it, both seed sets, pooled B-A at 120 / 180 / 300 s)
 
-Done for warlock: the trinket lines name items the builds wear. Note: the Bane of Doom hold (skip Doom while the
-trinket is 59-60 s from ready) was built for a 2 min trinket. Eye of the Beast is a 5 min cooldown and Chained
-Essence 10 min (sim/common/item_effects.go:4269, :3751), so in a fight of 300 s or less the clause never fires
-(Eye comes back at ~300 s, when under 60 s remain). Harmless; a cleanup, not a finding. Other classes still to do.
+| preset | variant | pooled |
+|---|---|---|
+| affliction-duty-curse | Talisman before Shadow Bolt | +0.71 / +1.07 / -1.07 (trade-off) |
+| affliction-duty-curse | Talisman right after duty curse | **+4.65 / +4.63 / +3.40** |
+| affliction-duty-recklessness | after duty curse | **+4.31 / +4.52 / +3.49** |
+| demonology-duty-curse / -reck | after duty curse | **+2.21 / +2.60 at 180** |
+| destruction-duty-recklessness | after duty curse | **+1.42 at 180**, +0.12 at 300 |
+| destruction-duty-curse | after duty curse | +0.56 at 180 (optional) |
+| destruction_fire duty curse / reck | after duty curse | +0.38 / +0.41 at 180 (optional) |
+| affliction | Talisman before Shadow Bolt | -5.9 / -3.4 / -3.1 (autocast holds) |
+| balance | Talisman before Starfire | -3.9 / -3.1 / -1.9 |
+| balance-duty-ff | before Starfire / after Faerie Fire | -1.7 / -1.25 at 180 |
+
+Filed as rotations-20261127-1. Caveat: the warlock Phase 0 lists on master no longer wear 22678 (pass 85) but the reqs
+still do; the finding applies only while they do. Elemental (moved <=0.1) not tested.
 
 ## Optional
 
-None new.
+- Destruction CoE and Destruction Fire duty builds: Talisman after the duty curse, +0.4 to +0.6 at 180 s.

@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-27T00:50:00Z",
- "pass": 84,
+ "last_pass_at": "2026-11-27T02:10:00Z",
+ "pass": 85,
  "result": "findings",
- "note": "Pass 84: lists re-run without Armaments of Battle rewards (6bd2d60a2); gear sets clean, 29 requests/race overrides stale (gear-20261127-1). Close calls unchanged: Spellblade 1.75, Blackrock Slicer 1.77, Maelstrom 1.87.",
+ "note": "Pass 85: changes were content/enchant tags, healer lists and rogue effects metadata refresh (dps 797.8->794.7 Subtlety, sim 2863aac2a74b); no new DPS picks out of rule. gear-20261127-1 still open (29 stale requests). Close calls unchanged.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

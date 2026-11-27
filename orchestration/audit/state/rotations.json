@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-27T00:51:16Z",
- "pass": 85,
- "result": "quiet",
- "note": "f9fa79917..34994816e: warlock Doom-hold trinket ids moved to Phase 0 trinkets (13968/10455, match gear sets), Chained Essence fixed 2.7% tick crit (trinket damage only). Baseline not refreshed.",
+ "last_pass_at": "2026-11-27T07:10:00Z",
+ "pass": 86,
+ "result": "findings",
+ "note": "34994816e..5ab589d85: Talisman of Ascendance charges on every APL cast; duty-curse warlocks gain +1.4 to +4.6 firing it after the duty curse (rotations-20261127-1). Healer APL changes only. Baseline not refreshed.",
  "client_build": "1.60.1.71091",
  "baseline": "baseline_ab3fff7_3000it_seed424242.tsv",
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-26T18:50:47Z",
- "pass": 34,
+ "last_pass_at": "2026-11-27T07:00:00Z",
+ "pass": 35,
  "result": "quiet",
- "note": "Master f9fa79917. Totem of Sustaining 4th Water Shield globe (7de8438a6) matches client 71139 spell 28856 (tier 1); no test, noted under -10. spell_result.go change is leveling-only. No new client build or Blizzard post.",
+ "note": "Master 5ab589d858. Only tools/healbench/req changed (gear/enchant swaps, priest Flash Heal pacing APL condition); no heal, talent or engine code. No new client build or Blizzard post.",
  "client_build": "1.60.1.71139",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-25T23:25:08Z"
  },
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

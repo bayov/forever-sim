@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-27T01:02:06Z",
- "pass": 31,
+ "last_pass_at": "2026-11-27T07:04:16Z",
+ "pass": 32,
  "result": "quiet",
- "note": "All 63 bench rows identical to the pass 30 baseline. Changes were Phase 0 bis/gear lists (Armaments of Battle rewards out; healbench requests embed their own gear, unchanged) and the Chained Essence fixed 2.7% tick crit (trinket on the Frost mage filler; raid rows still byte-identical).",
+ "note": "All 63 rows identical to the ref (refreshed by the phase0-cleanup branch pass at this code). Non-priest moves vs 849024cbb are Phase 0 gear (druid tank -0.05..-0.11, Chromaggus 0.904); intended, no finding.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

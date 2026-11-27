@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-27T01:04:44Z",
- "pass": 34,
- "result": "findings",
- "baseline": "34994816e",
- "note": "All 63 cells identical to bench_f9fa799 (bench_3499481.tsv). Paladin and shaman healbench reqs still wear the Armaments of Battle items 6bd2d60a2 dropped from their gear sets (-20261127-1); on the current sets tank paladin +0.006, tank shaman +0.005, raid within 0.002, no rank change.",
+ "last_pass_at": "2026-11-27T07:03:45Z",
+ "pass": 35,
+ "result": "quiet",
+ "baseline": "5ab589d85",
+ "note": "All 9 requests now equal their gear sets; druid on its Phase 0 list falls to 4th tank (1.188) and last raid (1.340, tie). -20261127-1 and -20261126-1 resolved. bench_5ab589d.tsv matches heal_builds.json.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

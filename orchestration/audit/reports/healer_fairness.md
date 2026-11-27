@@ -1,37 +1,43 @@
-# Healer fairness pass 34 (2026-11-27, master 34994816e)
+# Healer fairness pass 35 (2026-11-27, master 5ab589d85)
 
-Result: findings (1 new: healer_fairness-20261127-1, medium). Still open: -20261126-1 (druid on its synthetic set, ranked
-first tank healer without a note), -20261124-1 (raid filler tracks the DPS report; ruled), -20261115-1 (raid druid not
-re-tuned for the 0.066 Wild Growth), -20261104-4 (no healing by class in the boss files).
+Result: quiet (no new finding). Resolved: -20261127-1 (paladin and shaman requests synced to their gear sets, d74a53261)
+and -20261126-1 (the druid's Phase 0 list, eef393de0; page republished, 12fba196b). Still open: -20261124-1 (raid filler
+tracks the DPS report; ruled), -20261115-1 (raid druid not re-tuned for the 0.066 Wild Growth), -20261104-4 (no healing by
+class in the boss files).
 
-Due for 8 watched files in f9fa79917..34994816e, all from 6bd2d60a2 ("Phase 0 lists without the Armaments of Battle
-rewards"): the priest, paladin and shaman bis lists and the paladin and shaman (Horde and Alliance) gear sets. The only
-sim change in the range (`sim/common/item_effects.go`, Cloud of Chained Essence's tick crit) reaches no healer preset.
+Due for 14 watched files in 34994816e..5ab589d85: the druid's Phase 0 bis list and gear set and both druid requests
+(eef393de0, 3a0a00a03), the paladin and shaman requests (d74a53261), the priest tank APLs and bis lists (ff87e66b3).
+The one sim change in the range (`sim/common/item_effects.go`, Talisman of Ascendance's charges) reaches no healer
+request (item 237283 is in none).
 
-Same terms (step 1): no healbench request changed. The paladin and shaman requests' equipment still equals the
-f9fa79917 gear sets item for item, so they wear what the gear sets no longer do:
+Same terms (step 1): every request's equipment now equals its preset's gear set item for item (all 9 checked with jq).
+Once equipment is dropped, the druid, paladin and shaman requests are byte-identical to 34994816e; the two priest tank
+requests differ only in `rotation` (ff87e66b3's paced Flash Heal lines). Consumables, buffs, race, professions, level,
+heal assignment and reaction settings unchanged. No healer wears a synthetic set any more.
 
-| Request | Slot | Request wears (removed) | Gear set now |
-|---|---|---|---|
-| paladin_holy, paladin_holy_raid | head | 22689, enchant 1505 | 14140, enchant 1503 |
-| paladin_holy, paladin_holy_raid | trinket | 22678 | 272438 (the other trinket 11832 stays) |
-| shaman_restoration, shaman_restoration_raid | finger | 22681 (Band of Piety) | 16058 |
+Numbers (step 2): all 63 cells (healbench built `-tags with_db` at 5ab589d85, `tools/audit/healer_fairness/screen.sh`,
+seed 101, 1,000 it; `ref/healer_fairness/bench_5ab589d.tsv`) against pass 34's `bench_3499481.tsv`:
 
-The priest changes are in the bis lists only (their gear sets and requests unchanged). Hence -20261127-1. The same stale
-ids are in 15 DPS report requests (Balance, Elemental, Affliction, Demonology, Destruction); not this pass's scope.
-
-Numbers (step 2): all 63 cells re-benched (healbench `-tags with_db` in the build_cli.sh worktree of 34994816e,
-`tools/audit/healer_fairness/screen.sh`, seed 101, 1,000 it; `ref/healer_fairness/bench_3499481.tsv`): identical to
-pass 33's `bench_f9fa799.tsv` in all 63 cells. The four stale requests with their items swapped for the current gear
-sets (`ref/healer_fairness/reqsync_3499481.tsv`):
-
-| Request (role) | Mean as shipped | Mean on current gear set | Change | Largest cell |
+| Request (role) | Pass 34 | Pass 35 | Largest cell move | Why |
 |---|---|---|---|---|
-| paladin_holy (tank) | 1.100 | 1.106 | +0.006 | golemagg +0.028 |
-| shaman_restoration (tank) | 1.201 | 1.206 | +0.005 | golemagg +0.019 |
-| paladin_holy_raid (raid) | 1.343 | 1.343 | 0.000 | golemagg -0.007 / onyxia +0.008 |
-| shaman_restoration_raid (raid) | 1.348 | 1.346 | -0.002 | golemagg +0.013 |
+| priest_discipline (tank) | 1.228 | 1.234 | broodlord +0.015 | APL (paced Flash Heal) |
+| shaman_restoration (tank) | 1.201 | 1.206 | golemagg +0.019 | gear set sync |
+| priest_holy (tank) | 1.194 | 1.200 | chromaggus +0.034 | APL |
+| druid_restoration (tank) | 1.255 | 1.188 | golemagg -0.113 | synthetic -> Phase 0 list |
+| paladin_holy (tank) | 1.100 | 1.106 | golemagg +0.028 | gear set sync |
+| priest_holy_raid (raid) | 1.440 | 1.440 | none | unchanged |
+| shaman_restoration_raid (raid) | 1.348 | 1.346 | golemagg +0.013 | gear set sync |
+| paladin_holy_raid (raid) | 1.343 | 1.343 | onyxia +0.008 | gear set sync |
+| druid_restoration_raid (raid) | 1.351 | 1.340 | magmadar -0.090 | synthetic -> Phase 0 list |
 
-No rank changes: tank druid 1.255 (synthetic), Disc 1.228, shaman 1.206, Holy 1.194, paladin 1.106; raid Holy 1.440,
-druid 1.351 (synthetic), shaman 1.346, paladin 1.343 (the bottom three still a tie inside noise). Roles (step 3):
-unchanged from pass 33. The logs comparison (step 2) stands as in pass 33.
+The paladin and shaman cells equal pass 34's `reqsync_3499481.tsv` exactly, and all nine means equal
+`ui/dps_report/data/heal_builds.json` (12fba196b) to the third decimal.
+
+Ranking: tank Disc 1.234, shaman 1.206, Holy 1.200, druid 1.188, paladin 1.106; raid Holy 1.440, shaman 1.346,
+paladin 1.343, druid 1.340. The druid's synthetic-set lead is gone (first -> fourth tank), as pass 33 estimated. Spread:
+tank first to last 11.5% (the paladin, cast-time bound as before), the middle three within 0.018; raid Holy 7% ahead of a
+three-way tie inside 0.006 (noise). Nothing past the 15% mark, so no new explanation owed.
+
+Roles (step 3): unchanged; each request benched only in its own role. Logs (step 2): still blocked by -20261104-4; the
+kills' mix (5.1 priests, 3.0 shamans, 1.7 paladins, 1.2 druids per 11) agrees with priests on top and doesn't speak
+to the rest.

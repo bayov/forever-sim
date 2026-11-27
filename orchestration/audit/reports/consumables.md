@@ -1,12 +1,8 @@
-# Consumables pass 115 (master 34994816e)
+# Consumables pass report
 
-Result: quiet, no new findings. Open findings 20261125-1, 20261125-2 and 20261110-1 are unchanged.
+Pass 116, master 5ab589d85. Result: quiet (no new findings).
 
-## Checked
-- changes since f9fa79917: 18 files. 17 are Level 60 Phase 0 gear sets, with item swaps only (trinkets and gear ids).
-  The only enchant changes are in holy_paladin (out of scope: 1505 to 1503, kit 1255074 to Rugged Armor Kit 1843).
-  DPS spec enchants are unchanged.
-- sim/common/item_effects.go: Cloud of Chained Essence ticks now crit for 1.5x at a fixed 57/2151 chance, from the
-  2026-11-26 log audit. Not a consumable or buff value; nothing to check against the client.
-- scan.sh: banned hits are only the Phase 0 sets (gear pass owns legality). Counts as expected, minor-armor effects at 3 (known, finding 20261125-2).
-- wago latest: 1.60.1.71139, the build already audited.
+- Moved: sim/common/item_effects.go (Talisman of Ascendance now charges on every APL cast; comment cites classic 1.15.7.61186 data; no consumable, buff or enchant value) and the new ui/restoration_druid Phase 0 gear set (healer, out of scope).
+- Client: wago latest is still 1.60.1.71139; no build diff needed.
+- scan.sh: banned list shows only Phase 0 set enchants (2544, 1248805), which the gear pass owns; minor-armor exclusive count 3 is the known by-design change (consumables-20261125-2).
+- Open items: consumables-20261125-1, -2 and consumables-20261110-1 remain open.

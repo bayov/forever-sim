@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
  "last_pass_at": "2026-11-27T00:52:00Z",
  "pass": 36,
@@ -8,5 +8,5 @@
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
  "note": "Pass 36, master 34994816e. Only tank .bis.json lists changed (Armaments of Battle alternatives deleted, none worn); no request, encounter or class-code change. Chained Essence tick crit now fixed 2.7% (item_effects.go), not measured. No sims; pass-35 baseline stands.",
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

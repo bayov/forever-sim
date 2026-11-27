@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-27T00:50:00Z",
- "pass": 111,
+ "last_pass_at": "2026-11-27T02:30:00Z",
+ "pass": 112,
  "result": "quiet",
- "note": "pass 111: shared run within 1.5 of metas on all 68; Chained Essence crit change and Phase 0 list edits move no request; mksettings unchanged.",
+ "note": "pass 112: Talisman of Ascendance every-cast charge (413f06cb0) moves only the 13 warlock requests, re-simmed in bc5f5d61c; builds.json matches the shared run on 68 of 68 (max 1.45); healing priest APLs and resto druid gear move no request; mksettings unchanged.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T01:05:00Z",
+ "checked_at": "2026-11-27T07:04:49Z",
  "baseline": "0facd9428"
 }

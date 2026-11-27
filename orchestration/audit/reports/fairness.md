@@ -1,49 +1,43 @@
-# Fairness pass 65 (2026-11-27, master 34994816e)
+# Fairness pass 66 (2026-11-27, master 5ab589d85)
 
-Findings pass. Range f9fa79917..34994816e (105 watched files): the Armaments of Battle rewards out of Phase 0
-(287da91da, 6bd2d60a2: lists, nine DPS gear sets, warlock Bane of Doom hold), Chained Essence of Eranikus cloud
-ticks at a fixed 2.7% crit (5591bd019, sim/common/item_effects.go), the Enhancement trinket re-rank (3698a73d7),
-and the Shockadin presets added and dropped again (27a8031dc..d70972fa3). No full race sweep: no racial, raid
-or sim/core change, so the 2af970d74 sweep stays the baseline.
+Quiet pass (no new finding). Range 34994816e..5ab589d85 (15 watched files): Talisman of Ascendance loses a charge
+to every APL spell, not only damage and healing spells (413f06cb0, sim/common/item_effects.go, from the classic
+SpellAuraOptions proc mask); priest tank-healer APLs and lists, restoration druid list, rogue effects files
+refreshed, Phase 0 content and enchant rows for healer items. No sim/core, class, request, database or standards
+change, so no race sweep: the 2af970d74 sweep stays the baseline.
 
 ## Published against current
 
-The loop's 20k run (/tmp/audit-work/runs/vs_published.txt): every build within 1.5 of published (largest Feral and
-Lone Wolf -1.5, the Chained Essence crit fix on its wearers). The requests did not change, so this only says the
-published numbers match the requests, not the gear sets.
+The loop's 20k run (/tmp/audit-work/runs/vs_published.txt) against meta `published.dps`: the warlock Talisman
+wearers are 1.2 to 5.6 under (affliction-duty-recklessness -5.6, -duty-curse -5.2, demonology duties -4.5 / -4.2,
+destruction duties -4.4 / -4.0, demonology -2.4). That is the Talisman fix: bc5f5d61c re-simmed those builds into
+builds.json but left the metas. Already filed as results-20261127-1; confirmed independently here. Balance and
+Elemental (also Talisman wearers) move 0.7 or less. Every other build is within 1.5, as at pass 65.
 
-## Gear sets against requests (new: tools/audit/fairness/gearset.py)
+The fix is applied evenly: one rule (an APL spell that isn't a melee white hit) for every wearer. Warlocks pay
+most because curses and Life Tap now eat charges.
 
-phase0_check.py flags 37 requests whose equipment is no longer their gear set. Paired 10k, seeds 1 / 1000003,
-request with only its equipment set to the current gear set:
+## Gear sets against requests (tools/audit/fairness/gearset.py, now in the repo)
 
-| Build | Request | Gear set | Delta | Swap |
+Paired 10k, seeds 1 / 1000003, 5ab589d85 CLI, request with only its equipment set to the current gear set:
+
+| Build | Request | Gear set | Delta | Pass 65 |
 |---|---|---|---|---|
-| Affliction | 962.8 | 945.6 | -17.2 | Talisman of Ascendance -> Chained Essence |
-| Affliction duties / Shadow Bolt | | | -17.7 / -18.4 / -10.2 | same |
-| Demonology (duties) | 876.8 | 867.2 | -9.6 (-10.5 / -9.3) | same |
-| Destruction (duties) | 868.4 | 866.8 | -1.5 (-2.5 / -2.6) | Talisman -> 272438 |
-| Destruction Fire (duties) | 825.6 | 824.9 | -0.7 (-0.7 / -1.2) | same |
-| Balance / FF / Wrath / Wrath FF | 801.8 | 796.2 | -5.7 / -5.1 / -2.7 / -1.9 | Talisman -> Chained Essence |
-| Feral (FF duty) | 1057.5 | 1054.1 | -3.3 (-3.4) | Bracers of Subterfuge -> 10256 |
-| Fury 2H (duties) | 994.5 | 991.7 | -2.8 (-2.6 / -2.6) | same |
-| Elemental (mana-tide) | 856.2 | 857.9 | +1.6 (+0.8) | Talisman, Chained Essence -> 13968, 18471 |
-| Smite | 678.7 | 678.7 | -0.0 | Verimonde's -> 272083 |
-| Enhancement (imp-gw, mana-tide, water-shield) | 966.4 | 972.5 | +6.1 (+6.5 / +6.0 / +5.4) | Chained Essence -> Maelstrom |
+| Affliction | 962.8 | 945.6 | -17.2 | -17.2 |
+| Affliction duty-curse | 948.1 | 935.7 | -12.4 | -17.7 |
+| Affliction Shadow Bolt | 818.4 | 810.4 | -8.0 | -10.2 |
+| Demonology | 873.8 | 867.2 | -6.6 | -9.6 |
+| Destruction | 866.6 | 866.8 | +0.2 | -1.5 |
+| Balance | 801.8 | 796.2 | -5.6 | -5.7 |
+| Elemental | 856.2 | 857.9 | +1.7 | +1.6 |
+| Enhancement | 966.4 | 972.5 | +6.1 | +6.1 |
 
-Rank effect: Affliction falls from 15th to below Survival and Enhancement imp-gw; Demonology falls below
-Destruction and Enhancement mana-tide. Filed as fairness-20261127-1 (high, orchestrator fix).
+Added to fairness-20261127-1 (still open, high): Affliction still drops below Survival and Enhancement imp-gw;
+Demonology drops below Enhancement mana-tide and ties Destruction.
 
-## Chained Essence crit fix on other wearers
+## Open findings re-checked
 
-Rogues, Feral and Survival already wear Maelstrom beside Chained Essence. Ret and Shock Ret wear Chained Essence
-without Maelstrom: Shock Ret +2.9 with Maelstrom (paired 10k), added to fairness-20261126-4.
-
-## Open findings
-
-fairness-20261126-4 (Ret Maelstrom): new evidence above. The other six (Shahram stun, Arcane / Fury race,
-explosives, Demonology race, MM race, Fire race, Balance race) stand: no request changed in range.
-
-## Baseline
-
-Kept at 2af970d74 (sweep_baseline.log, table_baseline.md). Take a new one after fairness-20261127-1's re-sim.
+- fairness-20261126-4 (Ret Maelstrom): phase0_check still flags it (1.87 above the pick). Open.
+- fairness-20261125-2 (explosives): Fury, Mutilate, Ret still carry no fillerExplosive. Open.
+- Race picks (Demonology Orc, MM Orc, Arcane Gnome, Fire, Shadow): unchanged requests. Open.
+- fairness-20261126-3 (Shahram stun): item_effects.go unchanged there. Open.

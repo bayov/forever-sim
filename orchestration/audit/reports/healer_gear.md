@@ -1,13 +1,12 @@
-# healer_gear: branch pass, phase0-cleanup 782ad6089 (2026-11-27)
+# healer_gear pass 20, master 5ab589d85
+Checked (no sims): phase0_check.py healer rows; per-slot id/enchant/gems compare of each gear set with its requests; other-faction sets.
 
-Scoped by hand to the priest lists the branch re-scored (bis.json only; gear sets unchanged). State not advanced.
-
-| spec | list score | faction | bis picks vs gear set | requests |
+| spec | list score | faction | requests wear list | notes |
 |---|---|---|---|---|
-| priest_holy | 133.59 -> 132.29 | Human Alliance | identical (17 slots) | priest_holy, priest_holy_raid wear it |
-| priest_discipline | 122.23 -> 123.67 | Human Alliance | identical (2H staff 812, no offhand) | priest_discipline wears it |
+| druid_restoration | 126.55 | Horde | yes (tank, raid) | new list; neck 22659 out (-20271127-2); no _alliance set |
+| paladin_holy | 122.89 | Alliance | yes | Armaments rewards removed, requests fixed in d74a53261 |
+| shaman_restoration | 127.82 | Horde | yes | _alliance set differs in slots 3, 6 only (not examined further) |
+| priest_holy | 132.29 | Alliance | yes | re-scored 11-27 |
+| priest_discipline | 123.67 | Alliance | yes | re-scored 11-27 |
 
-- `phase0_check.py`: no flags on either priest healer row.
-- The score moves come from the paced Flash Heal APLs. No pick in the sets changed.
-- No new findings. healer_gear-20271127-1 (paladin and shaman requests) looks fixed on master by d74a5326; the master pass
-  will move it.
+No request holds synthetic ids (99xxxx). -20271127-1 resolved. -20261126-1 (Holy lists score ~1.4% above bench) not re-measured (no sims); priest lists were re-scored since, so recheck next sim pass.

@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
+  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
  },
- "last_pass_at": "2026-11-27T00:00:00Z",
- "pass": 115,
+ "last_pass_at": "2026-11-27T06:50:09Z",
+ "pass": 116,
  "result": "quiet",
- "note": "18 watched files moved: DPS Phase 0 sets swapped trinkets/items only (no enchant changes in scope; holy paladin kit enchants out of scope); item_effects.go Cloud of Chained Essence ticks now crit at fixed 2.7% (log audit). Client still 1.60.1.71139.",
+ "note": "2 watched files moved: item_effects.go Talisman of Ascendance every-cast charge fix (trinket effect, no consumable/enchant value); new restoration druid Phase 0 set (out of scope, healer). Client still 1.60.1.71139. scan.sh unchanged (Phase 0 sets carry 2544/1248805, gear pass owns).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T01:05:00Z"
+ "checked_at": "2026-11-27T07:04:49Z"
 }

@@ -2,12 +2,12 @@
 
 ## Open
 
-### healer_gear-20271127-1: The Holy paladin and Restoration shaman requests still wear Armaments of Battle rewards that 6bd2d60a2 took out of the lists
-- severity: medium (the requests the healbench and the race sims run are not the lists the report names; paladin_holy list score fell 123.91 to 122.89 in the re-rank)
-- affects: paladin_holy (tools/healbench/req/paladin_holy.json and _raid.json), shaman_restoration (shaman_restoration.json and _raid.json)
-- found: 2026-11-27, master 34994816e7
-- evidence: python3 tools/audit/gear/phase0_check.py says both requests do not wear their gear sets. Commit 6bd2d60a2 (Armaments of Battle quests not in Forever) changed the sets: Holy paladin slot items 22689 (enchant 1505) -> 14140 (1503), 22678 -> 11832, 11832 -> 272438; Resto shaman 22681 -> 16058 (Alliance copy also 20717 -> 18527). The four requests still carry 22689, 22678, 22681 (ids from the removed quests' rewards, e.g. 22681 Feralheart Wrists is the 2269xx/226815 family in the db). Compared per slot with /tmp/audit-work/hg_cmp.py.
-- proposed fix: copy each gear set into its two requests (the step the worker did in 7371cc06e / f9808629a), then rerun the healer bench and refresh the lists' reported carry.
+### healer_gear-20271127-2: The Restoration druid list wears Medallion of the Dawn (22659), an Armaments of Battle reward ruled out of Forever
+- severity: medium (neck slot of the only landed druid list and both druid requests; carry effect unmeasured)
+- affects: druid_restoration (ui/restoration_druid/gear_sets/level60_phase0_druid_restoration.gear.json, tools/healbench/req/druid_restoration.json and _raid.json, bis json)
+- found: 2026-11-27, master 5ab589d85
+- evidence: python3 tools/audit/gear/phase0_check.py: "druid_restoration neck: Medallion of the Dawn (22659) is out: Quest: Epic Armaments of Battle - Friend of the Dawn, not in Forever (user, Nov 26)". The list (126.55, made 2026-11-26 on 11d2cc9c9b1b) was ranked before 6bd2d60a2 removed these rewards from the Holy paladin and Resto shaman sets; the druid set was not redone.
+- proposed fix: re-rank the neck without 22659 (as done for paladin and shaman), copy the set into the two requests, refresh the score.
 - needs: worker fix
 
 ### healer_gear-20261126-1: The Holy priest and Holy paladin lists score about 1.4% above what their requests sim on the bench
@@ -20,6 +20,15 @@
 
 
 ## Resolved
+
+### healer_gear-20271127-1: The Holy paladin and Restoration shaman requests still wear Armaments of Battle rewards that 6bd2d60a2 took out of the lists
+- severity: medium (the requests the healbench and the race sims run are not the lists the report names; paladin_holy list score fell 123.91 to 122.89 in the re-rank)
+- affects: paladin_holy (tools/healbench/req/paladin_holy.json and _raid.json), shaman_restoration (shaman_restoration.json and _raid.json)
+- found: 2026-11-27, master 34994816e7
+- evidence: python3 tools/audit/gear/phase0_check.py says both requests do not wear their gear sets. Commit 6bd2d60a2 (Armaments of Battle quests not in Forever) changed the sets: Holy paladin slot items 22689 (enchant 1505) -> 14140 (1503), 22678 -> 11832, 11832 -> 272438; Resto shaman 22681 -> 16058 (Alliance copy also 20717 -> 18527). The four requests still carry 22689, 22678, 22681 (ids from the removed quests' rewards, e.g. 22681 Feralheart Wrists is the 2269xx/226815 family in the db). Compared per slot with /tmp/audit-work/hg_cmp.py.
+- proposed fix: copy each gear set into its two requests (the step the worker did in 7371cc06e / f9808629a), then rerun the healer bench and refresh the lists' reported carry.
+- needs: worker fix
+- resolved: 2026-11-27, d74a53261 (requests wear the lists; verified master 5ab589d85: all 9 requests equal their gear sets, none synthetic)
 
 ### healer_gear-20261112-1: all five healer presets waste the spell-damage elixir and food; Greater Cleric's Elixir and Sage's Tea heal
 - severity: high (+1.0 to +2.0% damage carried on 8 of the 15 priest, paladin, shaman and druid cells measured, 0 on the rest)
