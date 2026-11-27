@@ -4753,7 +4753,20 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=237283/talisman-of-ascendance
 	// Use: Your next 5 damage or healing spells cast within 20 seconds will grant a bonus of up to 40 damage and up to 75 healing, stacking up to 5 times.
-	// Expires after 6 damage or healing spells or 20 seconds, whichever occurs first. (50 Sec Cooldown)
+	// Expires after 6 damage or healing spells or 20 seconds, whichever occurs first. (1 Min Cooldown)
+	//
+	// The use (28200, 20 sec) is aura 42, a proc trigger with 6 charges and ProcTypeMask 87376
+	// (0x15550): melee and ranged class spells, ranged auto attacks, and every helpful and harmful
+	// spell, of no damage class or magic, but not melee auto attacks (classic 1.15.7.61186
+	// SpellAuraOptions and SpellEffect). Each proc gives a stack of 28204, 40 spell damage and 75
+	// healing (aura 13 and 135, base points 39 plus a 1 sided die), up to 5 (CumulativeAura 5).
+	// 28204 has no duration of its own and goes with the use, at its 6th proc or its 20 sec.
+	//
+	// So any spell we cast eats a charge, a seal, a Judgement, Holy Strike or a curse as well as a
+	// damage or healing spell, not only the spells with a damage or healing proc mask. Those are our
+	// APL spells. Procs and other spells that go off from another (a seal's hits, Judgement's
+	// damage) aren't casts of ours and the proc doesn't see them. A proc comes after the hit, so the
+	// first spell gains nothing and the 6th the full 200: OnCastComplete runs after the effects.
 	core.NewItemEffect(TalismanOfAscendance, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -4774,7 +4787,7 @@ func init() {
 				character.AddStatsDynamic(sim, bonusStats)
 			},
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage | core.ProcMaskSpellHealing) {
+				if !spell.Flags.Matches(core.SpellFlagAPL) || spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 					return
 				}
 
