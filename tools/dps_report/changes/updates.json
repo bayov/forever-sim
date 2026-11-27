@@ -8316,6 +8316,25 @@
      "commits": [
       "7de8438"
      ]
+    },
+    {
+     "title": "Phase 0 gear lists no longer include Armaments of Battle rewards",
+     "kind": "gear",
+     "classes": [
+      "Druid",
+      "Hunter",
+      "Mage",
+      "Paladin",
+      "Priest",
+      "Rogue",
+      "Shaman",
+      "Warlock",
+      "Warrior"
+     ],
+     "note": "The lists are ranked again without them, so some slots pick other items.",
+     "commits": [
+      "6bd2d60a2"
+     ]
     }
    ],
    "internal": [
