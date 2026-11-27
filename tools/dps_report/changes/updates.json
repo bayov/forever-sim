@@ -7855,7 +7855,7 @@
    "title": "Phase 0 gear lists ranked again",
    "date": "2026-11-26",
    "baselineData": "94d6cd2e4ab463f77cf64ab1779c6020ba9d636f",
-   "endData": null,
+   "endData": "2863aac2a74be679540bc53cf8bd75c4fba74f73",
    "lines": [
     {
      "title": "Phase 0 gear lists ranked again, with newer gold prices",
@@ -8429,6 +8429,63 @@
     {
      "commit": "a589203",
      "why": "merge commit; the merged commits carry their own lines"
+    }
+   ]
+  },
+  {
+   "id": "2026-11-27-phase0-cleanup",
+   "type": "sim",
+   "title": "Phase 0 fixes: Talisman of Ascendance and priest tank healers",
+   "date": "2026-11-27",
+   "baselineData": "2863aac2a74be679540bc53cf8bd75c4fba74f73",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Talisman of Ascendance loses a charge on every spell cast",
+     "kind": "sim",
+     "classes": [
+      "Warlock",
+      "Druid",
+      "Shaman"
+     ],
+     "builds": [],
+     "note": "Every spell you cast uses one of the talisman's charges, as in the game, not only damage and healing spells. Curses, Life Tap and seals now spend them too, so warlocks that wear it lose 1.6 to 5.6 DPS. Balance and Elemental barely move.",
+     "commits": [
+      "413f06cb0",
+      "bc5f5d61c"
+     ]
+    },
+    {
+     "title": "Holy and Discipline priests pace their Flash Heals on the tank",
+     "kind": "sim",
+     "classes": [
+      "Priest"
+     ],
+     "builds": [],
+     "note": "Tank healing priests no longer spend their top mana on Flash Heal early in a long fight, so they last longer on Chromaggus. Both gain about half a percent. At Phase 0 gear every tank healer still runs out of mana on Chromaggus's long single-tank stretch.",
+     "commits": [
+      "ff87e66b3",
+      "471c520e8",
+      "12fba196"
+     ]
+    }
+   ],
+   "internal": [
+    {
+     "commit": "81f2eaf54",
+     "why": "Refreshes the rogue gear-effect measurements on unchanged gear; no report number reads them."
+    },
+    {
+     "commit": "67731d65c",
+     "why": "Test fixes only."
+    },
+    {
+     "commit": "834c644df",
+     "why": "Rotation generator fix; the shipped Balance rotations are unchanged."
+    },
+    {
+     "commit": "c85afea75",
+     "why": "Keeps an existing gold price; nothing on the page changes."
     }
    ]
   }
