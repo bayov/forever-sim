@@ -220,14 +220,6 @@
     ],
     "neck": [
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 133.9,
-        "loss": -0.31,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19426,
         "name": "Orb of the Darkmoon",
         "dps": 133.77,
@@ -375,14 +367,6 @@
         "dps": 133.48,
         "loss": 0.11,
         "note": "Random world drop"
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 133.48,
-        "loss": 0.11,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 18317,
@@ -913,14 +897,6 @@
         "bis": true,
         "enchant": 2566,
         "note": "Forever's Dungeon Set 2 copy (set 1675) · quest, Dungeon Set 1 pieces + gold, quest giver not in our data yet · bracer quest · or the vendor after"
-      },
-      {
-        "id": 22667,
-        "name": "Bracers of Hope",
-        "dps": 133.54,
-        "loss": 0.05,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 226953,
@@ -1709,14 +1685,6 @@
         "dps": 133.76,
         "loss": -0.17,
         "note": "1012g per point of score"
-      },
-      {
-        "id": 22681,
-        "name": "Band of Piety",
-        "dps": 133.72,
-        "loss": -0.13,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 11980,

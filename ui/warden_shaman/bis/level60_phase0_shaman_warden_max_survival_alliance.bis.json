@@ -186,14 +186,6 @@
         "dps": -1635.39,
         "loss": 188.61,
         "note": "Trash, likely Alcaz Prison like its set (zone 16620, no NPC known)"
-      },
-      {
-        "id": 22689,
-        "name": "Sanctified Leather Helm",
-        "dps": -1691.95,
-        "loss": 245.17,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       }
     ],
     "neck": [
@@ -332,27 +324,11 @@
         "note": "Random world drop"
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": -1537.66,
-        "loss": 90.88,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19426,
         "name": "Orb of the Darkmoon",
         "dps": -1539.29,
         "loss": 92.51,
         "note": "Quest: 1200 Tickets - Orb of the Darkmoon · Faire weeks Nov 9-16, Dec 7-14 (Mulgore), Jan 4-11"
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": -1541.12,
-        "loss": 94.34,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 1315,
@@ -960,14 +936,6 @@
         "loss": -7.56
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": -1442.54,
-        "loss": -4.24,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 16681,
         "name": "Beaststalker's Bindings",
         "dps": -1444.26,
@@ -1099,14 +1067,6 @@
         "dps": -1523.74,
         "loss": 76.96,
         "note": "Halycon · Lower Blackrock Spire · looted Nov 10"
-      },
-      {
-        "id": 22667,
-        "name": "Bracers of Hope",
-        "dps": -1524.78,
-        "loss": 78,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 14629,
@@ -1509,14 +1469,6 @@
         "dps": -1513.17,
         "loss": 66.39,
         "note": "The Beast · Upper Blackrock Spire"
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": -1522.47,
-        "loss": 75.69,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 18524,
@@ -2045,14 +1997,6 @@
         "loss": -10.61,
         "avail": "doubtful",
         "note": "Darkmoon Faire deck · Forever card drops unconfirmed"
-      },
-      {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": -1444.99,
-        "loss": -1.79,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 280071,

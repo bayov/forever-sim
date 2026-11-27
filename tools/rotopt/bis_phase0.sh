@@ -45,8 +45,8 @@
 # GEAR_ONLY=1 sims nothing either. It writes each spec's gear set (the table's gearOut, GEAR_OUT
 # to write it elsewhere) from the picks of its list (FROM, the list itself by default), with
 # their enchants, the way a full or RANK_ONLY run writes it after the list. A pick that is a
-# no-pick item now gives its place to the best entry that isn't (see picks below). SPEC is one
-# spec or a comma separated list, every spec in the table by default:
+# no-pick or "out" item now gives its place to the best entry that isn't (see picks below). SPEC
+# is one spec or a comma separated list, every spec in the table by default:
 #
 #   GEAR_ONLY=1 SPEC=affliction tools/rotopt/bis_phase0.sh
 #
@@ -220,8 +220,10 @@
 # The tanks start from real sets of their armor: Valor for the warrior, and the Phase 0 sets of
 # Retribution, Feral and Enhancement for the paladin, bear and Warden, with a one hander and
 # Draconian Deflector for the shield tanks (Vilerend Slicer, Annihilator for the Warden). With no
-# weapon a tank dies past what healing saves on some bosses, and the score is the reject value. The healers start from the Phase 0 sets of Smite
-# (priests), Elemental (paladin and shaman) and Balance (druid).
+# weapon a tank dies past what healing saves on some bosses, and the score is the reject value.
+# The bear wears Blackmist Armguards, its lists' pick, since Feral's Bracers of Subterfuge went
+# out (2026-11-26). The healers start from the Phase 0 sets of Smite (priests), Elemental (paladin
+# and shaman) and Balance (druid).
 #
 # Each round of the search screens a slot's items at 300 iterations and keeps the best 40 for the
 # full sims. It used to be 100 and 20, but on 2026-11-14 that kept Devilsaur Gauntlets (the
@@ -414,6 +416,10 @@ fi
 # takes a no-pick item off the starting set, so without this a RANK_ONLY run started with the
 # slot empty. On 2026-11-22 Treant's Bane went over the line and the run started at 563 DPS with
 # no weapon.
+#
+# A pick that is "out" now ($exclude) gives its place the same way, since rotopt takes an excluded
+# item off the starting set too. On 2026-11-26 the Armaments of Battle rewards went out (the
+# Argent Dawn quests aren't in Forever), and Talisman of Ascendance was a pick on six lists.
 picks='$list[0].slots as $s
 	| ($nopick | split(",") | map(select(. != "") | tonumber)) as $np
 	| def start($k): [$s[$k][]? | select(.bis)] as $p
@@ -437,7 +443,7 @@ if [ -n "$GEAR_ONLY" ]; then
 		fi
 		f="${FROM:-$(list_path "$s")}"
 		mkdir -p "$(dirname "$g")"
-		jq -n --slurpfile list "$f" --arg nopick "$nopick" "$picks"' | {items: .}' >"$g"
+		jq -n --slurpfile list "$f" --arg nopick "$nopick,$exclude" "$picks"' | {items: .}' >"$g"
 		echo "wrote $g from $f"
 	done
 	exit 0
@@ -464,7 +470,7 @@ if [ -n "$RANK_ONLY" ]; then
 		echo "Rebuild it in full, or set MIX_DURS=1 to rerun on it anyway." >&2
 		exit 1
 	fi
-	jq --slurpfile list "$from" --arg nopick "$nopick" "$picks"' as $items | .raid.parties[0].players[0].equipment.items = $items' \
+	jq --slurpfile list "$from" --arg nopick "$nopick,$exclude" "$picks"' as $items | .raid.parties[0].players[0].equipment.items = $items' \
 		"$tmp/enh.json" >"$tmp/picks.json"
 	mv "$tmp/picks.json" "$tmp/enh.json"
 	rank_only=-gear-rank-only
@@ -517,7 +523,20 @@ fi
 
 # The content check's status on every entry. An item over the gold line is infeasible, and
 # its note says what a DPS (a tank or healer: a score unit) costs on it.
+#
+# An "out" item never joins the pool, but a SLOTS run copies the other lists from FROM as they
+# were, so an item that went out since stays on them. We drop it there. A pick that went out
+# stays and we warn, since its slot needs a ranking of its own (name it in SLOTS).
 spec1="$(echo "$spec" | cut -d, -f1)"
+jq --slurpfile content "$content" '.slots |= map_values(map(select(.bis or $content[0][.id | tostring].avail != "out")))' \
+	"$out" >"$tmp/list.json"
+mv "$tmp/list.json" "$out"
+out_picks="$(jq -r --slurpfile content "$content" '.slots | to_entries[] | .key as $slot | .value[]
+	| select(.bis and $content[0][.id | tostring].avail == "out") | "\(.id) \(.name) (\($slot))"' "$out")"
+if [ -n "$out_picks" ]; then
+	echo "Picks that are out now, so rank their slots again (SLOTS):" >&2
+	echo "$out_picks" >&2
+fi
 list_max="$max_gpd"
 unit="DPS"
 if [ -n "$bench" ]; then
@@ -558,5 +577,5 @@ fi
 gear_out="${GEAR_OUT:-$(field "$spec" gearOut)}"
 gear_out="${gear_out:-none}"
 if [ -z "$OUT" ] && [ "$gear_out" != none ]; then
-	jq -n --slurpfile list "$out" --arg nopick "$nopick" "$picks"' | {items: .}' >"$gear_out"
+	jq -n --slurpfile list "$out" --arg nopick "$nopick,$exclude" "$picks"' | {items: .}' >"$gear_out"
 fi

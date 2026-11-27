@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T19:01:14Z",
- "pass": 33,
+ "last_pass_at": "2026-11-27T01:04:44Z",
+ "pass": 34,
  "result": "findings",
- "baseline": "f9fa79917",
- "note": "Re-benched 63 cells (bench_f9fa799.tsv) on the Phase 0 healer lists: tank shaman/Holy/Disc/paladin -0.038..-0.075; druid still synthetic, now first tank (1.255), not on the page (-20261126-1). Matches healer_rotations' summary.tsv within 0.015 on all 63.",
+ "baseline": "34994816e",
+ "note": "All 63 cells identical to bench_f9fa799 (bench_3499481.tsv). Paladin and shaman healbench reqs still wear the Armaments of Battle items 6bd2d60a2 dropped from their gear sets (-20261127-1); on the current sets tank paladin +0.006, tank shaman +0.005, raid within 0.002, no rank change.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-26T19:06:21Z"
+ "checked_at": "2026-11-27T01:05:00Z"
 }

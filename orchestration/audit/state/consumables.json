@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T18:50:00Z",
- "pass": 114,
+ "last_pass_at": "2026-11-27T00:00:00Z",
+ "pass": 115,
  "result": "quiet",
- "note": "25 watched files moved, all tank/healer Phase 0 sets, tank presets and standards.md; nothing in scope.",
+ "note": "18 watched files moved: DPS Phase 0 sets swapped trinkets/items only (no enchant changes in scope; holy paladin kit enchants out of scope); item_effects.go Cloud of Chained Essence ticks now crit at fixed 2.7% (log audit). Client still 1.60.1.71139.",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T19:06:21Z"
+ "checked_at": "2026-11-27T01:05:00Z"
 }

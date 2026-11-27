@@ -107,7 +107,6 @@
     "22207": {"name":"Sash of the Grand Hunt","dps":0},
     "22268": {"name":"Draconic Infused Emblem","dps":0.4,"conditional":[{"label":"vs Dragonkin","dps":0.7}]},
     "22321": {"name":"Heart of Wyrmthalak","dps":4.1,"conditional":[{"label":"vs Orcs and Ogres","dps":12.1}]},
-    "22678": {"name":"Talisman of Ascendance","dps":1.8,"cooldown":0,"conditional":[{"label":"vs 4 mobs","dps":7.4}]},
     "270225": {"name":"Jewel of the Guard Captain","dps":0,"conditional":[{"label":"in forest or grassland","dps":1.2}]},
     "270226": {"name":"Golden Banana","dps":2.9,"cooldown":0,"conditional":[{"label":"in forest or grassland","dps":11}]},
     "272437": {"name":"Adaptive Combat Assistant","dps":0.5,"cooldown":0,"conditional":[{"label":"vs 4 mobs","dps":2.1}]},

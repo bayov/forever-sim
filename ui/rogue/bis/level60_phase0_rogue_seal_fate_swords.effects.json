@@ -83,7 +83,6 @@
     "19812": {"name":"Rune of the Dawn","dps":0,"conditional":[{"label":"vs Undead","dps":2.5}]},
     "22268": {"name":"Draconic Infused Emblem","dps":0,"conditional":[{"label":"vs Dragonkin","dps":0}]},
     "22321": {"name":"Heart of Wyrmthalak","dps":18.8,"conditional":[{"label":"vs Orcs and Ogres","dps":56.4}]},
-    "22678": {"name":"Talisman of Ascendance","dps":0,"cooldown":0},
     "270225": {"name":"Jewel of the Guard Captain","dps":0,"conditional":[{"label":"in forest or grassland","dps":0.9}]},
     "270226": {"name":"Golden Banana","dps":2.4,"cooldown":0,"conditional":[{"label":"in forest or grassland","dps":10}]},
     "272437": {"name":"Adaptive Combat Assistant","dps":0.5,"cooldown":0,"conditional":[{"label":"vs 4 mobs","dps":1.9}]},

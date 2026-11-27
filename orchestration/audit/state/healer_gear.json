@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T18:49:54Z",
- "pass": 18,
- "result": "quiet",
+ "last_pass_at": "2026-11-27T00:50:08Z",
+ "pass": 19,
+ "result": "findings",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T19:06:21Z",
- "note": "Watched change was the enh row talents only. Healer lists changed only in price notes (266e5357f); requests wear the lists; Water Shield Totem of Sustaining now modelled, not in the shaman list. Open: -20261126-1 unchanged, druid_restoration list pending."
+ "checked_at": "2026-11-27T01:05:00Z",
+ "note": "6bd2d60a2 dropped Armaments of Battle rewards from the Holy paladin and Resto shaman sets; requests not updated (finding -20271127-1). Open: -20261126-1, druid_restoration list pending."
 }

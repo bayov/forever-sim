@@ -238,14 +238,6 @@
         "note": "84g per DPS"
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 846,
-        "loss": 1.17,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 1443,
         "name": "Jeweled Amulet of Cainwyn",
         "dps": 845.43,
@@ -1093,14 +1085,6 @@
         "dps": 830.73,
         "loss": 16.44,
         "note": "The Unforgiven (Stratholme)"
-      },
-      {
-        "id": 22667,
-        "name": "Bracers of Hope",
-        "dps": 830.28,
-        "loss": 16.89,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 14311,
@@ -2529,15 +2513,6 @@
         "loss": 4.1,
         "with": 22329,
         "note": "Vendor Bryanna Embreeze · The Barrens"
-      },
-      {
-        "id": 22688,
-        "name": "Verimonde's Last Resort",
-        "dps": 842.73,
-        "loss": 4.45,
-        "with": 22329,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 19102,

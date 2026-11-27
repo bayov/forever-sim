@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T18:55:00Z",
- "pass": 20,
+ "last_pass_at": "2026-11-27T12:00:00Z",
+ "pass": 21,
  "result": "quiet",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-26T19:06:21Z",
- "note": "Pass 20: warrior bench gap, Frozen Steel Vambraces and stale annotations resolved; -4 (check noise) still open. No new findings."
+ "checked_at": "2026-11-27T01:05:00Z",
+ "note": "Pass 21: bear start wrist swap only; no new findings."
 }

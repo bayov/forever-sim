@@ -279,14 +279,6 @@
         "note": "Lord Valthalak · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 980.3,
-        "loss": 67.58,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 284097,
         "name": "Everstaring Abomination Eye",
         "dps": 979.84,
@@ -369,14 +361,6 @@
         "dps": 940.93,
         "loss": 106.95,
         "note": "Drop: Pyroguard Emberseer, Upper Blackrock Spire"
-      },
-      {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 934.31,
-        "loss": 113.57,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       }
     ],
     "shoulder": [
@@ -986,14 +970,6 @@
         "name": "Cinderhide Armsplints of Fire Protection",
         "dps": 980.29,
         "loss": 67.59
-      },
-      {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 979.72,
-        "loss": 68.16,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 19113,

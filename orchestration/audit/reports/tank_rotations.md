@@ -1,51 +1,45 @@
-# tank_rotations pass 34
+# tank_rotations pass 35
 
-master f9fa79917b, 2026-11-26. Previous pass on ab3fff7007; baseline compared against `ref/tank_bench/summary.tsv`
-(phase0-tankheal 95962a7d3, merged in a589203b7). Result: quiet (no new findings; four open findings resolved).
+master 34994816e7, 2026-11-27. Previous pass on f9fa79917b; baseline compared against `ref/tank_bench/summary.tsv`
+(pass 34). Result: quiet (no new findings).
 
 ## What changed
 
-The phase0-tankheal merge: every tank request on Phase 0 gear and consumables, bear Balanced and Max threat without
-Demoralizing Roar (09709d889, Balanced re-searched b7b411a01), bear Max survival Lacerate under 10 s (a2f62f579),
-requests cast their worn on-use trinkets (0741191ab, ecf1cbb50, 2f20719e4, 6adc8f19c), Warden races Troll/Tauren
-(3ea8c0ecc), paladin consumables (3ae9da70a, 52572a1d7), Water Shield's 4th globe with Totem of Sustaining (7de8438a6).
-Warrior sim code changes in the range are leveling-only (passes 32 and 33).
+No tank APL, tankbench request, rotopt tank template, encounter file, tankbench or tankscore change. The watched
+changes are the tank `bis/*.bis.json` lists (doubtful Dawn quest items dropped as alternatives; no worn item changes)
+and one engine change in `sim/common/item_effects.go`: Chained Essence of Eranikus (10455) cloud ticks now crit at a
+fixed 2.7% (57 of 2151 log ticks, 2026-11-26 log audit) instead of at the wearer's spell crit.
 
 ## Baseline (1,000 iterations, default seed, scoring mean at the preset's weight)
 
-| request | score (scoring mean) | was | SafeDPS | was | healing needed | was |
+| request | score | was | SafeDPS | was | healing needed | was |
 |---|---|---|---|---|---|---|
-| druid_bear_balanced | 3771.5 | 3645.8 | 2955.2 | 2776.8 | 758.5 | 687.2 |
-| druid_bear_max_survival | 1048.0 | 1015.3 | 1914.3 | 1875.3 | 344.8 | 339.5 |
-| druid_bear_max_threat | 5606.7 | 5386.8 | 3229.7 | 3115.5 | 918.0 | 909.2 |
-| paladin_protection_balanced | 2965.3 | 2914.8 | 2097.7 | 2080.2 | 441.0 | 448.2 |
-| paladin_protection_max_survival | 906.5 | 800.2 | 1676.8 | 1825.8 | 292.5 | 344.0 |
-| paladin_protection_max_threat | 3936.3 | 3912.5 | 2205.3 | 2218.3 | 514.7 | 572.3 |
-| shaman_warden_balanced | 2022.7 | 2026.2 | 1977.8 | 1980.0 | 698.3 | 698.5 |
-| shaman_warden_max_survival | -1212.8 | -1337.0 | 1623.5 | 1675.3 | 548.7 | 572.8 |
-| shaman_warden_max_threat | 3428.0 | 3418.0 | 2124.7 | 2114.7 | 893.2 | 884.2 |
+| druid_bear_balanced | 3728.7 | 3771.5 | 2933.7 | 2955.2 | 758.5 | 758.5 |
+| druid_bear_max_survival | 1025.3 | 1048.0 | 1903.2 | 1914.3 | 344.8 | 344.8 |
+| druid_bear_max_threat | 5568.5 | 5606.7 | 3210.7 | 3229.7 | 918.0 | 918.0 |
+| paladin_protection_balanced | 2954.7 | 2965.3 | 2092.5 | 2097.7 | 441.0 | 441.0 |
+| paladin_protection_max_survival | 895.2 | 906.5 | 1671.5 | 1676.8 | 292.5 | 292.5 |
+| paladin_protection_max_threat | 3925.8 | 3936.3 | 2200.2 | 2205.3 | 514.7 | 514.7 |
+| shaman_warden_balanced | 2013.0 | 2022.7 | 1973.2 | 1977.8 | 698.3 | 698.3 |
+| shaman_warden_max_survival | -1212.8 | -1212.8 | 1623.5 | 1623.5 | 548.7 | 548.7 |
+| shaman_warden_max_threat | 3417.8 | 3428.0 | 2119.5 | 2124.7 | 893.2 | 893.2 |
 | warrior_protection | -399.2 | -399.2 | 854.5 | 854.5 | 755.5 | 755.5 |
-| warrior_protection_balanced | 3360.5 | 3063.7 | 2418.3 | 2300.5 | 500.0 | 518.3 |
-| warrior_protection_max_survival | 1218.8 | 1095.5 | 1763.0 | 1770.7 | 265.7 | 281.2 |
-| warrior_protection_max_threat | 4725.8 | 4467.5 | 2735.8 | 2622.8 | 743.5 | 776.7 |
+| warrior_protection_balanced | 3353.8 | 3360.5 | 2414.7 | 2418.3 | 500.0 | 500.0 |
+| warrior_protection_max_survival | 1218.8 | 1218.8 | 1763.0 | 1763.0 | 265.7 | 265.7 |
+| warrior_protection_max_threat | 4718.8 | 4725.8 | 2732.8 | 2735.8 | 743.5 | 743.5 |
 
-Attribution: the old requests (from a589203b7) re-run on f9fa79917b reproduce the old summary's SafeDPS exactly on 84 of 91
-rows; the 7 that differ are bear Max survival, whose request moved between 95962a7d3 and a589203b7 (Lacerate 10 s).
-So every move is a request change (gear, Roar, trinkets, races, consumables), none an engine change. New
-`ref/tank_bench/summary.tsv` written.
+Attribution: exactly the 10 requests that wear 10455 moved (all 7 bosses each); the 3 that don't (Warden Max
+survival, warrior Max survival, legacy warrior_protection) are bit-identical. Healing needed is unchanged everywhere,
+so the move is threat only. Bears move most (-1.1% at Balanced, SafeDPS -21) since their high crit fed the old roll;
+plate tanks -5 to -11. The change is log-backed (mechanics/log-audit), so it is not a finding here. Whether 10455 is
+still the bears' best trinket after the cut is tank_gear's question. New `ref/tank_bench/summary.tsv` written.
 
-## Changes tried (paired abtest, 3,000 iterations, B minus preset)
+## Rotation lines
 
-| change | preset | seed 1 | seed 2 | per boss |
-|---|---|---|---|---|
-| delete Thunder Clap (priority 14) | warrior Balanced, w = 1 | -3.3 ± 12.1 | -15.2 ± 10.6 | Chromaggus -258 / -273, Vaelastrasz +192 / +183, Ragnaros -15 / -74 |
-| Consecration at any mana (priority 7) | paladin Balanced, w = 1 | 0.0 ± 0.0 | 0.0 ± 0.0 | bit-identical: the 60% floor never binds on the Phase 0 set |
-
-Both old findings (20261125-2, 20261122-1) are resolved: neither change wins on master.
+No rotation line changed since pass 34, and none reads the cloud's crit; no new A/B tried this pass.
 
 ## Findings
 
-- Resolved: 20261125-1 (09709d889), 20261125-2 (no longer gains), 20261125-3 (a6085ef3e), 20261122-1 (moot).
 - Still open, user calls: 20261104-11 (warrior Max survival trinket hold), 20261104-3 (paladin Bulwark 13 s). Not re-tested.
 
 ## Open item not done

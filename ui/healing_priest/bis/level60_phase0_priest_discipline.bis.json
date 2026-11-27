@@ -261,14 +261,6 @@
         "note": "Sothos and Jarien · Dungeon Set 2 chain (patch 1.10), summon unconfirmed in Forever · the Forever class sets from the same chain are in (standards 42)"
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 121.66,
-        "loss": 0.57,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 13960,
         "name": "Heart of the Fiend",
         "dps": 121.66,
@@ -347,14 +339,6 @@
         "dps": 121.41,
         "loss": 0.82,
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 121.41,
-        "loss": 0.82,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 18317,
@@ -1006,14 +990,6 @@
         "loss": 1.3
       },
       {
-        "id": 22667,
-        "name": "Bracers of Hope",
-        "dps": 120.93,
-        "loss": 1.3,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 12626,
         "name": "Funeral Cuffs",
         "dps": 120.82,
@@ -1090,7 +1066,8 @@
         "id": 16703,
         "name": "Dreadmist Bracers",
         "dps": 120.46,
-        "loss": 1.77
+        "loss": 1.77,
+        "note": "Trash (Blackrock Spire)"
       },
       {
         "id": 11962,
@@ -1910,14 +1887,6 @@
         "note": "Watchers Exalted · no rep source found yet"
       },
       {
-        "id": 22681,
-        "name": "Band of Piety",
-        "dps": 122.56,
-        "loss": -0.33,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
-      },
-      {
         "id": 22326,
         "name": "Amalgam's Band",
         "dps": 122.5,
@@ -2077,14 +2046,6 @@
         "dps": 122.54,
         "loss": -0.31,
         "note": "Pix Xizzix · 125 Reals · unique with ACA"
-      },
-      {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 122.34,
-        "loss": -0.11,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 11819,

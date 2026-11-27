@@ -200,14 +200,6 @@
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 943.2,
-        "loss": 0.05,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19491,
         "name": "Amulet of the Darkmoon",
         "dps": 942.81,
@@ -222,14 +214,6 @@
         "unsourced": true,
         "avail": "doubtful",
         "note": "Classic world drop · Forever source unknown"
-      },
-      {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 941.87,
-        "loss": 1.38,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 12929,
@@ -1010,14 +994,6 @@
         "note": "Warsong Gulch Exalted"
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 926.54,
-        "loss": 16.71,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19596,
         "name": "Dryad's Wrist Bindings",
         "dps": 926.53,
@@ -1619,14 +1595,6 @@
         "name": "Legguards of the Chromatic Defier",
         "dps": 931.18,
         "loss": 12.07
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 931.14,
-        "loss": 12.11,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 22740,
@@ -2250,17 +2218,6 @@
         "dps": 935.81,
         "loss": 7.44,
         "note": "Drop: Gordok Tribute, Dire Maul"
-      },
-      {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 935.56,
-        "loss": 7.69,
-        "cooldown": {
-          "loss": 17.28
-        },
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 274760,

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f9fa79917bcaf3209e62e7689f001b2f5aa7d6ff"
+  "master": "34994816e74d1b51c4126eb522cd5dafca9adc0a"
  },
- "last_pass_at": "2026-11-26T19:30:00Z",
- "pass": 35,
- "result": "findings",
+ "last_pass_at": "2026-11-27T00:52:00Z",
+ "pass": 36,
+ "result": "quiet",
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Pass 35, master f9fa79917 (Phase 0 tank batch merged). Warrior casts its worn trinkets (+267/+297/+131); bear first at Max threat and Balanced (12% over warrior), warrior first at Max survival. Resolved -20261126-1 (paladin Titans) and -20261105-2 (Warden legal races). New -20261126-3: paladin Max threat build beats Balanced at w 1 (+31, 10k). Baseline refreshed (seed 1).",
- "checked_at": "2026-11-26T19:06:21Z"
+ "note": "Pass 36, master 34994816e. Only tank .bis.json lists changed (Armaments of Battle alternatives deleted, none worn); no request, encounter or class-code change. Chained Essence tick crit now fixed 2.7% (item_effects.go), not measured. No sims; pass-35 baseline stands.",
+ "checked_at": "2026-11-27T01:05:00Z"
 }

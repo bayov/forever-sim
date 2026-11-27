@@ -245,14 +245,6 @@
         "loss": 0.68
       },
       {
-        "id": 22657,
-        "name": "Amulet of the Dawn",
-        "dps": 876.98,
-        "loss": 1.35,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 18728,
         "name": "Anastari Heirloom",
         "dps": 876.91,
@@ -301,14 +293,6 @@
         "dps": 874.88,
         "loss": 3.45,
         "note": "Quest: Hidden Treasures, Eastern Plaguelands"
-      },
-      {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 874.75,
-        "loss": 3.58,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 287035,
@@ -2189,17 +2173,6 @@
         "note": "Quest reward, Blackrock Spire (Wowhead Forever source), quest not named in our data · the step 3 notes call it a Horde reward, but our data has no side for it, so both factions keep it"
       },
       {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 875.55,
-        "loss": 2.78,
-        "cooldown": {
-          "loss": 17.81
-        },
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 272438,
         "name": "Weakness Analyzer",
         "dps": 873.26,
@@ -2567,15 +2540,6 @@
         "with": 15989,
         "avail": "doubtful",
         "note": "No known source"
-      },
-      {
-        "id": 22688,
-        "name": "Verimonde's Last Resort",
-        "dps": 871.96,
-        "loss": 6.38,
-        "with": 15989,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 272083,

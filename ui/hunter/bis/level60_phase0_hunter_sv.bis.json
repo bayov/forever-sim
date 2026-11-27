@@ -209,14 +209,6 @@
         "note": "Quest: In Dreams (Tirion Fordring chain), Plaguelands"
       },
       {
-        "id": 22659,
-        "name": "Medallion of the Dawn",
-        "dps": 959.48,
-        "loss": 0.53,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19491,
         "name": "Amulet of the Darkmoon",
         "dps": 957.37,
@@ -997,14 +989,6 @@
         "note": "Quest · Beaststalker's Bindings (BoE) + 15 Silithus Venom Samples + 20g · Forever Beastmaster set (1669), vendor for gold after, price unknown"
       },
       {
-        "id": 22668,
-        "name": "Bracers of Subterfuge",
-        "dps": 959.57,
-        "loss": 0.44,
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
-      },
-      {
         "id": 19583,
         "name": "Windtalker's Wristguards",
         "dps": 959.23,
@@ -1541,14 +1525,6 @@
         "loss": 10.99,
         "avail": "infeasible",
         "note": "Warsong Gulch Exalted"
-      },
-      {
-        "id": 22690,
-        "name": "Leggings of the Plague Hunter",
-        "dps": 947.45,
-        "loss": 12.56,
-        "avail": "doubtful",
-        "note": "Quest: Superior Armaments of Battle - Friend of the Dawn · +3 more"
       },
       {
         "id": 276746,
@@ -2380,24 +2356,6 @@
         "dps": 943.97,
         "loss": 16.04,
         "note": "Drop: Immol'thar, Dire Maul"
-      },
-      {
-        "id": 22678,
-        "name": "Talisman of Ascendance",
-        "dps": 943.71,
-        "loss": 16.3,
-        "conditional": [
-          {
-            "label": "vs 4 mobs",
-            "rank": 9,
-            "loss": 10.83
-          }
-        ],
-        "cooldown": {
-          "loss": 18.68
-        },
-        "avail": "doubtful",
-        "note": "Quest: Epic Armaments of Battle - Friend of the Dawn · +3 more · Naxx-era Insignia quest, Wowhead's Forever data has it in Eastern Plaguelands · whether the quest and the Insignia are live is unsure, used by standards 42"
       },
       {
         "id": 19812,

@@ -102,7 +102,6 @@
     "22207": {"name":"Sash of the Grand Hunt","dps":0},
     "22268": {"name":"Draconic Infused Emblem","dps":0,"conditional":[{"label":"vs Dragonkin","dps":0}]},
     "22321": {"name":"Heart of Wyrmthalak","dps":2.7,"conditional":[{"label":"vs Orcs and Ogres","dps":8.1}]},
-    "22678": {"name":"Talisman of Ascendance","dps":7.7,"cooldown":0,"conditional":[{"label":"vs 4 mobs","dps":12.5}]},
     "23078": {"name":"Gauntlets of Undead Slaying","dps":0,"conditional":[{"label":"vs Undead","dps":5.8}]},
     "270225": {"name":"Jewel of the Guard Captain","dps":0,"conditional":[{"label":"in forest or grassland","dps":6.6}]},
     "270226": {"name":"Golden Banana","dps":3.1,"cooldown":0,"conditional":[{"label":"in forest or grassland","dps":12.7}]},

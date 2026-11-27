@@ -90,7 +90,6 @@
     "22321": {"name":"Heart of Wyrmthalak","dps":14.2,"conditional":[{"label":"vs Orcs and Ogres","dps":42.4}]},
     "22345": {"name":"Totem of Tides","dps":0},
     "22395": {"name":"Totem of Rage","dps":3.7},
-    "22678": {"name":"Talisman of Ascendance","dps":9.1,"cooldown":0,"conditional":[{"label":"vs 4 mobs","dps":18.6}]},
     "270225": {"name":"Jewel of the Guard Captain","dps":0,"conditional":[{"label":"in forest or grassland","dps":5}]},
     "270226": {"name":"Golden Banana","dps":2,"cooldown":0,"conditional":[{"label":"in forest or grassland","dps":13.3},{"label":"vs 4 mobs","dps":3}]},
     "272431": {"name":"Tidal Totem","dps":0},
