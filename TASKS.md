@@ -564,3 +564,8 @@ wording instead.
   - Sim: sim/common/enchant_effects.go rolls RevelationClassChance per landed direct spell hit. Check Chain Lightning bounces, Arcane Explosion, Consecration/Hurricane/Blizzard ticks and multi-target presets; single-target presets don't move. https://wago.tools/hotfixes?product=wowf&search=1323377
 - [ ] 2026-11-26 — Record in ledger SHA-HF-11 and EV-0180 that Chain Lightning now spends Clearcasting under Maelstrom Ready! (Blizzard Nov 25 hotfixes; PR forever-update/2026-11-26-71139), and confirm in a post-hotfix log that the five-stack Lightning Bolt still keeps it [source: blizzard]
   - The hotfix names only Chain Lightning. The sim still has a five-stack Lightning Bolt keep Clearcasting (`noteClearcastingKept` in sim/shaman/talents.go, from the 2026-11-19 log: 7 of 7). If Blizzard sees that as the same bug, a later log will show the bolt spending it too.
+- [ ] 2026-11-27 — Manual Crowd Pummeler swap for Ret presets (Grayston's Shockadin sim swaps to it; ours can't yet)
+  - The sim registers a weapon's use effect only if it starts equipped: `applyItemEffects` in `sim/core/character.go` skips the item swap set's items. There is also no APL value for which swap set is active.
+  - Fixing it touches `sim/core`, so every build goes stale (probe, then re-sim what moves).
+  - Then try an MCP swap on Ret Shock (`paladin__level_60_shock_ret`) and Ret twist.
+  - Source: Grayston's `shock_mcp_sor_2.siml`.

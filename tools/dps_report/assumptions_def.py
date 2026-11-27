@@ -21,9 +21,9 @@ import json, os
 
 ROGUE = ['combat-daggers', 'seal-fate-daggers', 'combat-swords', 'seal-fate-swords', 'mutilate', 'subtlety']
 R = lambda xs: [f'rogue__{x}' for x in xs]
-PAL_ALL = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_shock_ret', 'paladin__level_60_shockadin', 'paladin__level_60_sub_holy_undead']
+PAL_ALL = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy_undead']
 PAL_TWIST = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead']
-PAL_SOC = PAL_TWIST + ['paladin__level_60_shock_ret', 'paladin__level_60_shockadin']  # every preset that keeps Seal of Command up or twists to it
+PAL_SOC = PAL_TWIST + ['paladin__level_60_shock_ret']  # every preset that keeps Seal of Command up or twists to it
 LOCK = ['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__affliction_shadow_bolt', 'warlock__destruction_fire']
 ENH = ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw', 'shaman__enhancement-water-shield', 'shaman__enhancement-mana-tide']
 ELE = ['shaman__elemental-level60', 'shaman__elemental-level60-mana-tide']
@@ -91,7 +91,7 @@ A = [
       short="Haste shortens a spell's GCD, down to 1s. A log shows it for Warchief's Blessing.",
       desc="A combat log settled that haste shortens a spell's GCD and not a physical ability's: with Warchief's Blessing (15% haste) up, instants came 1.30s apart after a magic spell, and 1.5s apart after Stormstrike. The sim does the same for every haste: Spellstone, Berserking, Nature's Grace (which also cuts the GCD by 10% on its own). It keeps a 1s floor, as wowsims/forever does, which holds the totems at 1s. The log tested neither the floor nor other haste.",
       src="Combat log, Enhancement shaman on the Forever beta, 2026-11-18. wowsims/forever (the 1s floor).",
-      builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_shockadin', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__affliction_shadow_bolt', 'warlock__demonology', 'warlock__destruction'],
+      builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__affliction_shadow_bolt', 'warlock__demonology', 'warlock__destruction'],
       settings=[S('expected', 'Yes, for spells', "haste shortens a spell's GCD, down to 1s", "From a combat log with Warchief's Blessing.")],
       default='expected', expected='expected'),
  dict(key='raid_hits', cls='All', group='fight', label='How often does raid damage hit a DPS?',

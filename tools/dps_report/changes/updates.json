@@ -8275,18 +8275,16 @@
      ]
     },
     {
-     "title": "New Ret paladin preset: Grayston's 2H Shockadin",
+     "title": "Grayston's 2H Shockadin checked against Ret Shock",
      "kind": "sim",
      "classes": [
       "Paladin"
      ],
      "builds": [
-      "paladin__level_60_shockadin",
-      "paladin__level_60_shockadin-duty-crusader",
-      "paladin__level_60_shockadin-duty-wisdom"
+      "paladin__level_60_shock_ret"
      ],
      "moves": false,
-     "note": "Grayston's 21/0/30 Holy Shock build with Divine Favor, Infusion of Light and Oath of Light and his rotation, with Crusader and Wisdom duty versions. It wears the report's Ret Shock gear, so the gap to Ret Shock comes from talents and rotation. His Manual Crowd Pummeler swap isn't simmed yet.",
+     "note": "Grayston's 21/0/30 Holy Shock build sims 4.5 DPS below Ret Shock on the same gear (896.4 against 900.9 over 180 seconds). Infusion of Light and Oath of Light only add healing and Turn Evil adds no damage, while it gives up Consecrated Ground, Vindication and Reverence for 2 more points of Champion of the Light. So it isn't kept as its own preset; Ret Shock notes the difference. His Manual Crowd Pummeler swap isn't simmed yet.",
      "source": {
       "label": "Grayston's Shockadin guide (video)",
       "url": "https://www.youtube.com/watch?v=XuUccSoLa0I"
