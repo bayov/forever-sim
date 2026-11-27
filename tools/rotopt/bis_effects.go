@@ -272,7 +272,13 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 			fmt.Printf("effects: paired noise of the %s (1 standard error) median %.2f, max %.2f DPS\n", list.name, n[len(n)/2], n[len(n)-1])
 		}
 	}
-	if err := writeEffectsFile(path, s.durations[0], *useDur, base.dps, iterations, items); err != nil {
+	var set []int32
+	for _, item := range best {
+		if item != nil && item.Id != 0 {
+			set = append(set, item.Id)
+		}
+	}
+	if err := writeEffectsFile(path, s.durations[0], *useDur, base.dps, iterations, set, items); err != nil {
 		return err
 	}
 	fmt.Printf("effects: wrote %s, %d items in %s\n", path, len(items), time.Since(started).Round(time.Second))
@@ -280,11 +286,16 @@ func (s *searcher) writeEffects(path string, pool [][]gearOption, best []*proto.
 }
 
 // writeEffectsFile writes the effects file, one item a line in ID order, so a diff of two
-// runs reads item by item.
-func writeEffectsFile(path string, dur, useDur, dps float64, iterations int32, items map[int32]effectsItem) error {
+// runs reads item by item. set is the item IDs of the set the values were measured on, so
+// TestEffectsFilesMatchGearSets can tell when the set has moved on since (a stale file).
+func writeEffectsFile(path string, dur, useDur, dps float64, iterations int32, set []int32, items map[int32]effectsItem) error {
+	setJSON, err := json.Marshal(set)
+	if err != nil {
+		return err
+	}
 	var b strings.Builder
-	fmt.Fprintf(&b, "{\n  \"dur\": %g,\n  \"use_dur\": %g,\n  \"dps\": %g,\n  \"iters\": %d,\n  \"made\": %q,\n  \"sim\": %q,\n  \"items\": {",
-		dur, useDur, round2(dps), iterations, time.Now().Format("2006-01-02"), *gearRankSim)
+	fmt.Fprintf(&b, "{\n  \"dur\": %g,\n  \"use_dur\": %g,\n  \"dps\": %g,\n  \"iters\": %d,\n  \"made\": %q,\n  \"sim\": %q,\n  \"set\": %s,\n  \"items\": {",
+		dur, useDur, round2(dps), iterations, time.Now().Format("2006-01-02"), *gearRankSim, setJSON)
 	ids := make([]int32, 0, len(items))
 	for id := range items {
 		ids = append(ids, id)

@@ -337,7 +337,7 @@ func TestWriteEffectsFile(t *testing.T) {
 		10455: {Name: "Chained Essence of Eranikus", DPS: 29.5, Cooldown: &zero,
 			Conditional: []effectsConditional{{Label: "vs Trolls", DPS: 59.3}}},
 	}
-	if err := writeEffectsFile(path, 180, 90, 1120.184, 10000, items); err != nil {
+	if err := writeEffectsFile(path, 180, 90, 1120.184, 10000, []int32{11815, 10455}, items); err != nil {
 		t.Fatal(err)
 	}
 	data, err := os.ReadFile(path)
@@ -348,6 +348,7 @@ func TestWriteEffectsFile(t *testing.T) {
 		Dur    float64                    `json:"dur"`
 		UseDur float64                    `json:"use_dur"`
 		DPS    float64                    `json:"dps"`
+		Set    []int32                    `json:"set"`
 		Items  map[string]json.RawMessage `json:"items"`
 	}
 	if err := json.Unmarshal(data, &got); err != nil {
@@ -356,6 +357,9 @@ func TestWriteEffectsFile(t *testing.T) {
 	if got.Dur != 180 || got.UseDur != 90 || got.DPS != 1120.18 || len(got.Items) != 2 {
 		t.Errorf("dur %v, use_dur %v, dps %v, %d items, want 180, 90, 1120.18 and 2", got.Dur, got.UseDur, got.DPS, len(got.Items))
 	}
+	if !slices.Equal(got.Set, []int32{11815, 10455}) {
+		t.Errorf("set %v, want [11815 10455]", got.Set)
+	}
 	for id, want := range map[string]string{
 		"11815": `{"name":"Hand of Justice","dps":8.2}`,
 		"10455": `{"name":"Chained Essence of Eranikus","dps":29.5,"cooldown":0,"conditional":[{"label":"vs Trolls","dps":59.3}]}`,
@@ -363,6 +367,77 @@ func TestWriteEffectsFile(t *testing.T) {
 		if string(got.Items[id]) != want {
 			t.Errorf("item %s: %s, want %s", id, got.Items[id], want)
 		}
+	}
+}
+
+// An effects file values each item on the set it was measured on, so it goes stale when a
+// re-rank moves the spec's gear set and nobody reruns EFFECTS_ONLY (the rogue files after the
+// second Phase 0 re-rank, 2026-11-27). The file records that set's item IDs ("set"), and they
+// must be the gear set's. A file written before "set" existed isn't checked.
+func TestEffectsFilesMatchGearSets(t *testing.T) {
+	data, err := os.ReadFile("phase0_specs.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var table struct {
+		Specs map[string]struct{ Dir, GearOut, EffectsOut, Bench string }
+	}
+	if err := json.Unmarshal(data, &table); err != nil {
+		t.Fatal(err)
+	}
+	checked := 0
+	for name, s := range table.Specs {
+		if s.Bench != "" || s.GearOut == "" {
+			continue
+		}
+		path := s.EffectsOut
+		if path == "" {
+			path = "ui/" + s.Dir + "/bis/level60_phase0_" + name + ".effects.json"
+		}
+		data, err := os.ReadFile("../../" + path)
+		if os.IsNotExist(err) {
+			continue
+		} else if err != nil {
+			t.Fatal(err)
+		}
+		var effects struct {
+			Set []int32 `json:"set"`
+		}
+		if err := json.Unmarshal(data, &effects); err != nil {
+			t.Fatalf("%s: %v", path, err)
+		}
+		if effects.Set == nil {
+			continue
+		}
+		data, err = os.ReadFile("../../" + s.GearOut)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var gear struct {
+			Items []struct {
+				Id int32 `json:"id"`
+			} `json:"items"`
+		}
+		if err := json.Unmarshal(data, &gear); err != nil {
+			t.Fatalf("%s: %v", s.GearOut, err)
+		}
+		var ids []int32
+		for _, item := range gear.Items {
+			if item.Id != 0 {
+				ids = append(ids, item.Id)
+			}
+		}
+		set := slices.Clone(effects.Set)
+		slices.Sort(set)
+		slices.Sort(ids)
+		if !slices.Equal(set, ids) {
+			t.Errorf("%s was measured on %v, but %s is %v: rerun EFFECTS_ONLY=1 SPEC=%s tools/rotopt/bis_phase0.sh",
+				path, effects.Set, s.GearOut, ids, name)
+		}
+		checked++
+	}
+	if checked == 0 {
+		t.Error("no effects file records its set")
 	}
 }
 
