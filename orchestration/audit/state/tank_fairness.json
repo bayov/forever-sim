@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
+  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
  },
- "last_pass_at": "2026-11-27T00:52:00Z",
- "pass": 36,
+ "last_pass_at": "2026-11-27T12:49:13Z",
+ "pass": 37,
  "result": "quiet",
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Pass 36, master 34994816e. Only tank .bis.json lists changed (Armaments of Battle alternatives deleted, none worn); no request, encounter or class-code change. Chained Essence tick crit now fixed 2.7% (item_effects.go), not measured. No sims; pass-35 baseline stands.",
- "checked_at": "2026-11-27T07:04:49Z"
+ "note": "Pass 37, master f4c45c3f9. Only standards.md changed: rogue filler-points ruling and standards 40 Shield Slam 2 x block value ruling (already in code). No sims; pass-35 baseline stands.",
+ "checked_at": "2026-11-27T12:54:16Z"
 }

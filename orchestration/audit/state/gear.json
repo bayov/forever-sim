@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "313069ce"
+  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
  },
- "last_pass_at": "2026-11-27T09:19:09Z",
- "pass": 86,
+ "last_pass_at": "2026-11-27T12:00:00Z",
+ "pass": 87,
  "result": "quiet",
- "note": "Pass 86 (branch phase0-regear, scoped to 046d0e4b8..313069ce): 29 re-geared requests and race rows wear their Phase 0 sets; gear-20261127-1 resolved. Ret trinket re-rank: picks unchanged. Close calls unchanged (Spellblade 1.75, Blackrock Slicer 1.77, Maelstrom 1.85).",
+ "note": "Pass 87: master f4c45c3f9. Only change is rogue filler talents (standards ruling 2026-11-27, 447e6e8f1) in 5 rogue lists/requests; gear and picks unchanged. phase0_check: no new DPS findings (same close calls: Spellblade 1.75, Blackrock Slicer 1.77, Maelstrom 1.85). Rogue shared run 1-1.5% under list dps (known fight difference).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T07:04:49Z"
+ "checked_at": "2026-11-27T12:54:16Z"
 }

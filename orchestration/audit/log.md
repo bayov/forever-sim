@@ -706,3 +706,13 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-27 07:04 | healer_rotations | pass 32 | master 5ab589d858 | quiet | 63 rows match ref; druid tank healer drop is Phase 0 gear.
 2026-11-27 07:04 | healer_gear | pass 20 | master 5ab589d858 | 1 new finding | Resto druid list still wears Medallion of the Dawn (22659), removed from Forever.
 2026-11-27 07:04 | healer_fairness | pass 35 | master 5ab589d858 | quiet | 63 cells match heal_builds.json; two findings resolved.
+2026-11-27 12:54 | results | pass 114 | master f4c45c3f9f | quiet | Builds match shared run (max 1.32); five old findings resolved.
+2026-11-27 12:54 | rotations | pass 87 | master f4c45c3f9f | quiet | No APL change; Talisman finding moot.
+2026-11-27 12:54 | gear | pass 87 | master f4c45c3f9f | quiet | Only rogue filler-talent ruling changed; no new flags.
+2026-11-27 12:54 | consumables | pass 117 | master f4c45c3f9f | quiet | Moved files don't touch consumes.
+2026-11-27 12:54 | mechanics | pass 113 | master f4c45c3f9f | quiet | Comment-only Talisman change; high finding still awaits ruling.
+2026-11-27 12:54 | fairness | pass 68 | master f4c45c3f9f | quiet | All builds within 1.5 DPS; report race still best for rogues.
+2026-11-27 12:54 | healer_gear | pass 21 | master f4c45c3f9f | quiet | No healer change; two older findings open.
+2026-11-27 12:54 | healer_fairness | pass 36 | master f4c45c3f9f | quiet | Baseline of 63 cells still holds.
+2026-11-27 12:54 | tank_gear | pass 22 | master f4c45c3f9f | quiet | Only standards.md changed.
+2026-11-27 12:54 | tank_fairness | pass 37 | master f4c45c3f9f | quiet | Only standards.md changed; no tank number moves.

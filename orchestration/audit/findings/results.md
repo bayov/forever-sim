@@ -4,6 +4,18 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+
+## Resolved
+
+### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
+- severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)
+- affects: tools/dps_report/req/rogue__{seal-fate-daggers,seal-fate-swords,mutilate,combat-swords,combat-daggers}.meta.json; runreq.sh and verify.py flag them OFF
+- found: 2026-11-04, master 6b480b060
+- evidence: shared run vs meta: seal-fate-daggers 903.4 vs 920.7, seal-fate-swords 940.4 vs 957.0, mutilate 858.4 vs 866.1, combat-swords 958.6 vs 963.5, combat-daggers 949.9 vs 946.6. The moves come from 316a600ac (hotfix 113483: Mutilate 44/63/88, Shank, Venom, tree); rogue__subtlety's meta was set (881.7 vs 881.3), the other five were not.
+- proposed fix: set the five metas' published.dps and source from builds.json.
+- needs: orchestrator fix
+- resolved: 2026-11-27, f4c45c3f9 (rogue metas within 0.5 of builds.json and the 20k run; Subtlety 786.5 vs 787.3)
+
 ### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
 - severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)
 - affects: druid feral-cat (+2), paladin level_60 (+3), mage arcane, rogue (6), shaman (6), warlock destruction_fire (3), warrior arms/fury (builds.json only)
@@ -34,16 +46,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-15, master cfc7f9382: 2694dc2ed re-simmed 30 builds and builds.json matches the shared run on 68 of 68 within 1.5. Metas off by more than 0.5: 28 of 68 (was 41): Affliction +31.9 to +36.7, hunters -9 to -22 (lone-wolf, marksmanship, BM), rogue combat/seal-fate -10 to -20, mage fire -4.9. Drift: only the known feral sapper line.
 - update 2026-11-16, master f30078da1: builds.json matches the shared run on 68 of 68 within 1.5; metas off by more than 0.5: 28 of 68, same families. Only isDefault flipped on warrior fury / fury_2h metas (two-hand default ruling), no DPS change.
 - update 2026-11-17, master 5f20dfdf4: builds.json now lags the shared run on 20 of 68 (it was 68 of 68), all from sim commits, paired 20k seed 1: b075ae64d (hunter pet white swing takes none of the hunter's crit, wowsims/forever 7e0e0c2e46) BM 1181.7 -> 1114.8, MM 1234.0 -> 1201.0, Survival 1035.1 -> 997.7, then Predator's Edge / Raptor Strike / traps (4a8541e46, eada6763e, 29481dd0e) +15 back to 1012.7; Lone Wolf unchanged; warrior 2ebdc14d6 +3 and ad1d7f469 (hotfix 114097) +6 to +8 (Arms 1069.8 -> 1078.9, Fury 1092.5 -> 1102.3); rogue cf95c3e32 (Death Mark) Subtlety 866.4 -> 872.0. Needs the hunter and warrior re-sim. Drift: only the known feral sapper line.
-
-### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
-- severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)
-- affects: tools/dps_report/req/rogue__{seal-fate-daggers,seal-fate-swords,mutilate,combat-swords,combat-daggers}.meta.json; runreq.sh and verify.py flag them OFF
-- found: 2026-11-04, master 6b480b060
-- evidence: shared run vs meta: seal-fate-daggers 903.4 vs 920.7, seal-fate-swords 940.4 vs 957.0, mutilate 858.4 vs 866.1, combat-swords 958.6 vs 963.5, combat-daggers 949.9 vs 946.6. The moves come from 316a600ac (hotfix 113483: Mutilate 44/63/88, Shank, Venom, tree); rogue__subtlety's meta was set (881.7 vs 881.3), the other five were not.
-- proposed fix: set the five metas' published.dps and source from builds.json.
-- needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-27, f4c45c3f9 (metas and builds.json within 1.5 of the shared run on 68 of 68; 87364fe2a)
 
 ### results-20261127-3: the 29-build Changes line ("Presets no longer wear Armaments of Battle rewards") names no DPS moves
 - severity: low

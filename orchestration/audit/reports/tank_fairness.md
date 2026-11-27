@@ -1,14 +1,13 @@
-# tank_fairness pass 36
+# tank_fairness pass 37
 
-Master 34994816e (last: f9fa79917). Due: 15 watched files, all tank `.bis.json` lists. Quiet, no sims run.
-- The diffs only delete alternative rows (24 to 64 lines per list): the Armaments of Battle / Insignia rewards
-  22657 22659 22667 22668 22678 22681 22688 22689 22690 (287da91da, 6bd2d60a2; no quests at Light's Hope). Each was
-  an alternative with loss 0.33 or more, and none is in any `tools/tankbench/req/*.json`, so no worn item changed.
-- No change under `tools/tankbench`, `tools/encounters`, `sim/core` or the four class packages. The only sim change,
-  `sim/common/item_effects.go` (Chained Essence cloud ticks at a fixed 2.7% crit, 5591bd019), touches only
-  the tanks wearing 10455: its ticks crit at 2.7% instead of at the wearer's spell crit. Not measured; a few threat per
-  second at most, and a log-backed fix, so not a fairness finding. The next pass with sims picks it up.
-- So the pass-35 tables below and the baseline ref/tank_fairness/summary.tsv still hold. All open findings stay open.
+Master f4c45c3f9 (last: 5ab589d85). Due: 1 watched file, `orchestration/standards.md`. Quiet, no sims run.
+- Two additions (447e6e8f1): the rogue filler-points ruling under the threat-talent rule (no tank reads it), and in
+  standards 40 the user's ruling that Shield Slam keeps 625 to 685 plus 2 x block value (wowsims/forever's EV-0004
+  fit, already in `sim/warrior/shield_slam.go` since pass 33). It settles a value the warrior presets already use, so
+  no number moves; it is now a settled ruling, not an open question.
+- No change under `tools/tankbench`, `tools/tankscore`, `tools/encounters`, the four tank UIs, the four class
+  packages or the watched `sim/core` files (the rest of the range is rogue presets and the DPS Report).
+- So the pass-35 tables below and ref/tank_fairness/summary.tsv still hold. All open findings stay open.
 
 ## Pass 35 (master f9fa79917), still current
 

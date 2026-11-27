@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
+  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
  },
- "last_pass_at": "2026-11-27T07:00:00Z",
- "pass": 20,
+ "last_pass_at": "2026-11-27T09:00:00Z",
+ "pass": 21,
  "result": "findings",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T07:04:49Z",
- "note": "druid_restoration list landed (neck Medallion of the Dawn is out, -20271127-2); requests wear all five lists; -20271127-1 resolved. Open: -20261126-1."
+ "checked_at": "2026-11-27T12:54:16Z",
+ "note": "pass 21: no healer list or request changed since pass 20 (only standards.md rogue/tank text). Open: -20271127-2, -20261126-1."
 }

@@ -12,6 +12,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: settle from a combat log of the trinket (does Ascendance fade at the 6th cast or at 20 s?). If no log, keep the tooltip's 6 casts but correct the comment at :4758 (the 6 comes from the tooltip, the tables have no charges). Moot for the report while gear-20261127-1 / fairness-20261127-1 stand: the lists already took 22678 out (Armaments of Battle reward), but the 19 requests still wear it.
 - needs: user ruling
 - update 2026-11-27 (pass 112): the branch change landed on master as 413f06cb0 (master 5ab589d858) unchanged: the 6th-cast end at item_effects.go:4794 and the "6 charges" comment at :4758 are on master now, so this applies to master as written.
+- update 2026-11-27 (pass 113): 8d45b49e6 (master f4c45c3f9) corrected the comment (item_effects.go:4758 and the test header now say the 6 casts are the tooltip's and the tables hold no charges), the second half of the proposed fix. Behavior unchanged: the use still ends at the 6th cast. No combat log or ruling on the 6 casts yet, so this stays open for that question only.
 
 ### mechanics-20261126-5: Revelation still rolls once per target of an area spell and lets a channel keep its charge to the end; Blizzard's November 25 hotfixes changed both
 - severity: medium (Arcane mage -5.5 DPS, -0.66%; single-target presets that don't channel don't move)

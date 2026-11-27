@@ -1,15 +1,8 @@
-# tank_gear pass 21 (master 34994816e)
+# tank_gear pass report
 
-Changed watched file: tools/rotopt/phase0_specs.json (bear start wrist 22668 Bracers of Subterfuge -> 12966 Blackmist Armguards; 22668 is "out" in phase0_content.json since the Armaments of Battle rewards were dropped, commit 6bd2d60a2).
+Master f4c45c3f9. Watched changes since 5ab589d85: orchestration/standards.md only (rogue filler-talent ruling; Shield Slam 2x block value ruling).
+No change to phase0_specs.json, tankbench requests, tank gear sets or synthetic item files. Lists, requests and other-faction sets are as audited last pass.
 
-| check | result |
-|---|---|
-| phase0_check tank rows | bear flags only on noise (Max survival chest, trinket 51.07, ranged), same as finding -4 |
-| bear Balanced / Max threat wear 12966 | yes, list, gear set and request equal |
-| bear Max survival | list wears wrist 226796, its start is only a search start; set equals request |
-| synthetic items in requests | none (bear) |
-| bear Balanced _horde set | identical to the list (Alliance preset, Night Elf, so the horde row needs no rewards slots) |
-| Bear Max threat has no _horde set, Max survival none | not checked against bench_races needs |
+phase0_check.py tank rows: same flags as before (all covered by open finding tank_gear-20261126-4, noise too tight); all 12 rows have lists; no request wears synthetic items (no 99xxxx / Synthetic hits).
 
-Doubtful: Max threat (Alliance) wears Beads of Ogre Might 22150 (Falrin's Vendetta, Dire Maul, note says step of the Horde Mokvar chain); its faction was not verifiable here. Not flagged.
-No new findings; -4 still open.
+Result: quiet, no new findings.

@@ -1,4 +1,4 @@
-# healer_gear pass 20, master 5ab589d85
+# healer_gear pass 21, master f4c45c3f9 (re-check of pass 20: nothing healer-related changed; only standards.md rogue ruling and tank wording)
 Checked (no sims): phase0_check.py healer rows; per-slot id/enchant/gems compare of each gear set with its requests; other-faction sets.
 
 | spec | list score | faction | requests wear list | notes |
