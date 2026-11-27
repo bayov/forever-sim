@@ -413,8 +413,8 @@ export const EPPresets = [...EPLevelingGearPlanTwoHand, ...EPLevelingGearPlanDua
 // The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 1 to 60, with
 // Talented's first talent at 5 (docs/leveling_warrior.md, Leveling 1-60). Protection all the way,
 // with a two-hander until Shield Block at 16 and a shield from then on. Its talent order and its
-// rotations ("Searched 1" and so on) are the talent and rotation search's, with Defiance 3 required
-// by 20 because we tank dungeons while leveling.
+// rotations ("Searched 1" and so on) are the talent and rotation search's. Its talent order is the
+// one we chose to play (docs/leveling_warrior.md, The plan).
 // tools/levelingplan/configs/undead_warrior_leveling_prot.json makes the same plan for the
 // command line.
 export const DefaultLevelingPlan = LevelingPlanSettings.fromJson(LevelingPlanProtJSON as any);
@@ -463,7 +463,7 @@ const makeLevelingBuild = (name: string, tooltip: string, levelingPlan: Leveling
 // 2026-11-26 (docs/leveling_warrior.md, Leveling 1-60). They compare builds, not real time.
 export const PresetBuildLevelingProt = makeLevelingBuild(
 	'Leveling: Prot',
-	'Our 1 to 60 plan: Protection with Defiance by 20 for dungeons, a two-hander until 16, then a shield. Sim: 97.6h, 27 deaths.',
+	'Our 1 to 60 plan: Protection 5/15/31, a two-hander until 16, then a shield. Sim: 96.4h, 26 deaths.',
 	DefaultLevelingPlan,
 );
 

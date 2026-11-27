@@ -140,14 +140,12 @@ out.
 
 - Protection all the way. A two-hander until 15, and a one-hander and shield from Shield Block at
   16. With the shield from 1 it takes 0.5h longer, all of it before 20.
-- Talents, from the talent search with Defiance 3 required by 20: Shield Specialization 5,
-  Anticipation 2, Improved Revenge 3, Last Stand, Master of Defense 2, Defiance 3 (18 to 20),
-  Improved Thunder Clap 2, Anticipation 3, Improved Thunder Clap 3, Focused Rage 3, Improved
-  Bloodrage 1, Anticipation 4, Bastion 3, Improved Bloodrage 2, Concussion Blow, Shield Slam at 35,
-  Vanguard, Bastion 5. Then Cruelty 4, Improved Rend 1, Cruelty 5, Unbridled Wrath 5, Enrage 5,
-  Improved Rend 2.
-- Defiance only adds threat, which does nothing alone, but we tank dungeons while leveling. Solo it
-  costs 1h: without it the search's plan takes 96.6h on the seeds below.
+- Talents, 5/15/31, the order we chose to play: Shield Specialization 5, Anticipation 2, Improved
+  Revenge 3, Last Stand, Master of Defense 2, Improved Thunder Clap 2, Vanguard at 20, Anticipation
+  3, Improved Thunder Clap 3, Anticipation 5, Concussion Blow, Focused Rage 3, Improved Shield Wall
+  1, Bastion 5, Shield Slam at 35. Then Cruelty 5, Unbridled Wrath 5, Enrage 5 and Deflection 5.
+- No Defiance. It costs about 15% of our threat on dungeon packs (Tanking dungeons, below), but
+  1.2h solo.
 - Rotations from the `warrior_leveling` template, all the talent and rotation search's ("Searched
   1" and so on).
 - Enchant Weapon - Recovery on the main hand from 20 (`recoveryFromLevel`).
@@ -158,18 +156,18 @@ The weights are `ui/tank_warrior/leveling_weights_*.json` (two-hand, dual wield 
 ### Hours
 
 1 to 60 with Recovery from 20, 8 gear seeds and 400 sessions a level, on the seeds of the table
-below: 97.6h (27 deaths).
+below: 96.4h (26 deaths).
 
 | Levels | 1-9 | 10-19 | 20-29 | 30-39 | 40-49 | 50-59 |
 |---|---|---|---|---|---|---|
-| Hours, with Recovery | 2.0 | 8.0 | 11.3 | 16.3 | 26.0 | 32.9 |
+| Hours, with Recovery | 2.1 | 7.9 | 11.4 | 16.1 | 25.9 | 33.0 |
 
 Every build's preset, on the same 8 gear seeds (21 to 28) and 400 sessions a level, with Recovery
 from 20.
 
 | Preset | Build | Hours | Deaths |
 |---|---|---|---|
-| Leveling: Prot | Protection with Defiance, two-hander until 16, then a shield | 97.6 | 27 |
+| Leveling: Prot | Protection 5/15/31, two-hander until 16, then a shield | 96.4 | 26 |
 | Leveling: Arms then DW | Arms with a two-hander, Gore Drinker dual wield from 44 | 99.5 | 21 |
 | Leveling: Arms, Prot, DW | Arms, Protection with a shield at 30, dual wield at 40 | 101.2 | 20 |
 | Leveling: Dual Wield | Gore Drinker dual wield all the way | 102.5 | 10 |
@@ -178,11 +176,12 @@ from 20.
 
 How Prot got there, on gear seeds 41 to 48: Prot with hand-tuned rotations 102.4h, with the
 search's rotations 99.5h, with its talents too 97.1h, and with the two-hander until 16 96.6h.
-Arms then DW took 99.2h on those seeds. Requiring Defiance 3 by 20 then cost 1h.
+Arms then DW took 99.2h on those seeds. On seeds 21 to 28, the search's order with Defiance 3
+required by 20 took 97.6h, and the order we play 96.4h.
 
 ### Tanking dungeons
 
-We tank 5-player dungeons while leveling, so the plan takes Defiance. A plain multi-target sim at
+We tank 5-player dungeons while leveling. A plain multi-target sim at
 20, 30, 40, 50 and 60 (4 mobs at one and two levels above us, 40 s, no deaths, leveling gear with a
 shield) compared builds. Defiance 3 gives 14 to 18% more threat for 1 to 5% less damage. The level
 60 tank builds (Balanced and Max threat), spent in leveling order, came within 2% of our build
@@ -190,6 +189,13 @@ with Defiance. The most damage a shield build found with the talent search was P
 Slam and then Fury, only 0.4 to 8% more damage than ours and no more threat. Arms or Fury-heavy
 builds with a shield lost 11 to 21% damage and 22 to 55% threat from 30. Mobs never died in that
 sim, which flatters Rend, and the rotation didn't Sunder each mob in turn.
+
+A respec at 48 into Fury 0/31/20 (Bloodthirst, Death Wish, Flurry, Gore Drinker, with Shield
+Specialization and Improved Revenge) was slower solo: 45.0h from 48 to 60 with a shield, 45.9h with
+two weapons and 45.4h without Improved Whirlwind, against 39.8h for the plan, each with rotations
+searched for it. On packs at 48, 55 and 58 in Defensive Stance it had 15 to 17% less threat and 10
+to 12% less damage. Berserker Stance doubled its damage at 55 and up but cost 35% of the threat and
+took 60 to 95% more damage.
 
 Arms and Dual Wield with no respec die about half as often as the rest, but take 3h longer and
 more. Earlier runs without Recovery took 3 to 4h longer on every build.
