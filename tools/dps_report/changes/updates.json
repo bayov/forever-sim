@@ -8468,6 +8468,46 @@
       "471c520e8",
       "12fba196"
      ]
+    },
+    {
+     "title": "Presets no longer wear Armaments of Battle rewards",
+     "kind": "gear",
+     "note": "Talisman of Ascendance, Verimonde's Last Resort and Bracers of Subterfuge come from Armaments of Battle, which can't be had before the raids, so the Balance, Feral, Elemental, Smite, Affliction, Demonology, Destruction and Fury two-hand presets wear their next-best items instead, and Enhancement now wears Darkmoon Card: Maelstrom.",
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff",
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff",
+      "priest__smite",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__affliction_shadow_bolt",
+      "warlock__demonology",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "commits": [
+      "94d6cc79f",
+      "48cc3aed9"
+     ]
     }
    ],
    "internal": [
@@ -8486,6 +8526,14 @@
     {
      "commit": "c85afea75",
      "why": "Keeps an existing gold price; nothing on the page changes."
+    },
+    {
+     "commit": "8d45b49e6",
+     "why": "Code comment only; nothing the sim runs changes."
+    },
+    {
+     "commit": "ee28c0640",
+     "why": "Re-ranks the Retribution trinkets; the picks and every request stay the same."
     }
    ]
   }
