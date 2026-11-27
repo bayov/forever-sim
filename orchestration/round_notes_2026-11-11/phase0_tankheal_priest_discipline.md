@@ -92,3 +92,13 @@ None. The preset is Human. No pick or picked enchant is Alliance only (a Troll d
 ## Public list
 
 Not compared: Icy Veins returned 403 and the other guide 404. Wowhead was not tried.
+
+## Cleanup (2026-11-27): Chromaggus
+
+Going out of mana on Chromaggus is real at Phase 0 gear, and it is the fight, not the gear or the bench: the one
+115 s single-tank stint (the other tank files are 17 to 71 s), with the table's mana at the report's damage, which
+is above every tank healer's carry (all five end it under 1,100 mana there; at the carry the priest keeps about
+900). The synthetic set ends it dry too. One rotation waste: Flash Heal first spent the mana over 85% early. It now
+also needs mana % at least the fight's remaining %: mean 1.2276 -> 1.2339 (seed 202, 2000 iterations: 1.2261 ->
+1.2290), Chromaggus 0.866 -> 0.877 (docs/healing_priest.md, Mana on Chromaggus). The list was re-scored on today's
+bench with `RANK_ONLY=1 SLOTS=ranged` (picks unchanged): 122.23 -> 123.67.
