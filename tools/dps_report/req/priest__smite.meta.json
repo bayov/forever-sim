@@ -19,11 +19,11 @@
     "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
   },
   "verify": {
-    "dps": 679.14,
+    "dps": 678.61,
     "stderr": 0.12,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-27, after the request took level60_phase0_smite as it is now (without Verimonde's Last Resort); the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Holy priest casting Smite, on its own gear with 3% hit. It keeps Shadow Word: Pain up for Power in Light. Smite's high mana cost holds it back.",
   "keyTalents": [

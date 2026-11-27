@@ -19,11 +19,11 @@
     "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Spirit of Aquementas for Obsidian Bauble, over the 30g line)"
   },
   "verify": {
-    "dps": 801.74,
-    "stderr": 0.29,
+    "dps": 795.51,
+    "stderr": 0.28,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-27, after the request took level60_phase0_balance as it is now (without Talisman of Ascendance); the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Moonkin that keeps Insect Swarm and Moonfire up. It weaves Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [

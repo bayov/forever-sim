@@ -19,11 +19,11 @@
     "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
   },
   "verify": {
-    "dps": 959.53,
+    "dps": 945.13,
     "stderr": 0.18,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-27, after the request took level60_phase0_affliction as it is now (without Talisman of Ascendance); the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Deep Affliction with Wrack as the main spell, channelled back to back while Corruption, Siphon Life and Bane of Agony tick twice as fast under it, with Soul Siphon and Shadow Mastery, the Imp sacrificed for 15% Shadow damage and no demon out.",
   "keyTalents": [

@@ -1,19 +1,19 @@
 {
  "bonusStats": {
   "MeleeHit": -0.8,
-  "MeleeCrit": 0.144,
-  "Strength": 3.9,
-  "AttackPower": 1.773,
-  "RangedAttackPower": 1.773,
-  "Agility": 1.197
+  "MeleeCrit": 0.155,
+  "Strength": 3.952,
+  "AttackPower": 1.905,
+  "RangedAttackPower": 1.905,
+  "Agility": 0.929
  },
- "note": "0.8% hit over the cap re-spent as 3.9 Strength, 0.14% crit, 1.8 attack power and 1.2 Agility",
+ "note": "0.8% hit over the cap re-spent as 4.0 Strength, 0.15% crit, 1.9 attack power and 0.9 Agility",
  "gain": {
-  "dps": 4.52,
+  "dps": 4.74,
   "se": 0.09,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf hit 8.8% against the 8% yellow cap, the set's own hit 7.8%: 0.8% (8 budget points) re-spent over the set's shares at the 1b prices (Strength 48.8%, CritRating 25.2%, Agility 15.0%, AttackPowerBoth 11.1%). Hit and crit are one pool for the gear, so each is written once. Dwarf 979.2 with the preset's gear, 983.7 with the swap; gain.se is the paired error (the same seeded fights), 0.66 unpaired."
+ "how": "race_gear.py: Dwarf hit 8.8% against the 8% yellow cap, the set's own hit 7.8%: 0.8% (8 budget points) re-spent over the set's shares at the 1b prices (Strength 49.4%, CritRating 27.1%, AttackPowerBoth 11.9%, Agility 11.6%). Hit and crit are one pool for the gear, so each is written once. Dwarf 976.3 with the preset's gear, 981.0 with the swap; gain.se is the paired error (the same seeded fights), 0.66 unpaired."
 }

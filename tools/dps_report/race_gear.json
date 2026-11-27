@@ -1876,11 +1876,11 @@
    "AttackPowerBoth": 3.2,
    "MP5": 1.2
   },
-  "dpsPreset": 975.99,
-  "dpsSwap": 975.57,
-  "gain": -0.42,
+  "dpsPreset": 960.09,
+  "dpsSwap": 959.61,
+  "gain": -0.47,
   "se": 0.12,
-  "seUnpaired": 0.58,
+  "seUnpaired": 0.59,
   "keep": false,
   "note": "1% hit over the cap re-spent as 3.5 spell power, 2.9 Intellect, 0.17% crit and 1.3 Strength"
  },
@@ -1960,11 +1960,11 @@
    "AttackPowerBoth": 3.2,
    "MP5": 1.2
   },
-  "dpsPreset": 984.58,
-  "dpsSwap": 984.23,
-  "gain": -0.34,
+  "dpsPreset": 966.47,
+  "dpsSwap": 965.85,
+  "gain": -0.62,
   "se": 0.12,
-  "seUnpaired": 0.58,
+  "seUnpaired": 0.59,
   "keep": false,
   "note": "1% hit over the cap re-spent as 3.5 spell power, 2.9 Intellect, 0.17% crit and 1.3 Strength"
  },
@@ -2044,9 +2044,9 @@
    "AttackPowerBoth": 3.2,
    "MP5": 1.2
   },
-  "dpsPreset": 887.61,
-  "dpsSwap": 887.54,
-  "gain": -0.07,
+  "dpsPreset": 874.56,
+  "dpsSwap": 874.34,
+  "gain": -0.22,
   "se": 0.07,
   "seUnpaired": 0.56,
   "keep": false,
@@ -2128,9 +2128,9 @@
    "AttackPowerBoth": 3.2,
    "MP5": 1.2
   },
-  "dpsPreset": 930.99,
-  "dpsSwap": 930.87,
-  "gain": -0.13,
+  "dpsPreset": 917.61,
+  "dpsSwap": 917.26,
+  "gain": -0.35,
   "se": 0.09,
   "seUnpaired": 0.56,
   "keep": false,
@@ -2571,25 +2571,25 @@
   "excess": 0.8,
   "bonusStats": {
    "MeleeHit": -0.8,
-   "MeleeCrit": 0.144,
-   "Strength": 3.9,
-   "AttackPower": 1.773,
-   "RangedAttackPower": 1.773,
-   "Agility": 1.197
+   "MeleeCrit": 0.155,
+   "Strength": 3.952,
+   "AttackPower": 1.905,
+   "RangedAttackPower": 1.905,
+   "Agility": 0.929
   },
   "shares": {
-   "Strength": 48.8,
-   "CritRating": 25.2,
-   "Agility": 15.0,
-   "AttackPowerBoth": 11.1
+   "Strength": 49.4,
+   "CritRating": 27.1,
+   "AttackPowerBoth": 11.9,
+   "Agility": 11.6
   },
-  "dpsPreset": 979.17,
-  "dpsSwap": 983.69,
-  "gain": 4.52,
+  "dpsPreset": 976.31,
+  "dpsSwap": 981.04,
+  "gain": 4.74,
   "se": 0.09,
   "seUnpaired": 0.66,
   "keep": true,
-  "note": "0.8% hit over the cap re-spent as 3.9 Strength, 0.14% crit, 1.8 attack power and 1.2 Agility"
+  "note": "0.8% hit over the cap re-spent as 4.0 Strength, 0.15% crit, 1.9 attack power and 0.9 Agility"
  },
  "warrior__fury_2h.NightElf": {
   "build": "warrior__fury_2h",
@@ -3481,22 +3481,22 @@
   "bonusStats": {
    "SpellHit": -1.0,
    "SpellCrit": 0.047,
-   "Intellect": 3.078,
-   "SpellPower": 7.284
+   "Intellect": 3.139,
+   "SpellPower": 7.215
   },
   "shares": {
-   "SpellPower": 62.6,
-   "Intellect": 30.8,
+   "SpellPower": 62.1,
+   "Intellect": 31.4,
    "CritRating": 6.6
   },
-  "dpsPreset": 659.73,
-  "dpsSwap": 662.89,
-  "gain": 3.16,
+  "dpsPreset": 659.04,
+  "dpsSwap": 662.34,
+  "gain": 3.3,
   "se": 0.05,
   "seUnpaired": 0.17,
   "bonusKept": true,
   "keep": true,
-  "note": "Alliance: wears level60_phase0_smite_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 7.3 spell power and 3.1 Intellect"
+  "note": "Alliance: wears level60_phase0_smite_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 7.2 spell power and 3.1 Intellect"
  },
  "priest__smite.NightElf": {
   "build": "priest__smite",

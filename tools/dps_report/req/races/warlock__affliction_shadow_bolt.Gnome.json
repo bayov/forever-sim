@@ -109,7 +109,7 @@
                "lhs": {
                 "spellTimeToReady": {
                  "spellId": {
-                  "itemId": 22678
+                  "itemId": 10455
                  }
                 }
                },
@@ -126,7 +126,7 @@
                "lhs": {
                 "spellTimeToReady": {
                  "spellId": {
-                  "itemId": 22678
+                  "itemId": 10455
                  }
                 }
                },
@@ -530,10 +530,10 @@
     "id": 275973
    },
    {
-    "id": 22678
+    "id": 272438
    },
    {
-    "id": 272438
+    "id": 10455
    },
    {
     "id": 18372,

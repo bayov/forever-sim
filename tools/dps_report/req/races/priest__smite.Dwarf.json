@@ -361,7 +361,7 @@
     "id": 275977
    },
    {
-    "id": 12543
+    "id": 13001
    },
    {
     "id": 10455
@@ -370,7 +370,7 @@
     "id": 272438
    },
    {
-    "id": 22688,
+    "id": 271928,
     "enchant": 1248805
    },
    {
@@ -386,13 +386,13 @@
  "bonusStats": {
   "SpellHit": -1.0,
   "SpellCrit": 0.047,
-  "Intellect": 3.078,
-  "SpellPower": 7.284
+  "Intellect": 3.139,
+  "SpellPower": 7.215
  },
- "gearNote": "Alliance: wears level60_phase0_smite_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 7.3 spell power and 3.1 Intellect",
- "gearHow": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_smite. It wears level60_phase0_smite_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 22% (with Holy Precision 3/3) against the 16% spell cap, the set's own hit 3%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (SpellPower 62.6%, Intellect 30.8%, CritRating 6.6%). Hit and crit are one pool for the gear, so each is written once. Dwarf 659.7 with the set, 662.9 with the swap; gain.se is the paired error (the same seeded fights), 0.17 unpaired.",
+ "gearNote": "Alliance: wears level60_phase0_smite_alliance, the set without the Horde rewards; 1% hit over the cap re-spent as 7.2 spell power and 3.1 Intellect",
+ "gearHow": "race_gear.py: Dwarf is Alliance, so it can't wear the Horde rewards of the preset's level60_phase0_smite. It wears level60_phase0_smite_alliance, the same set with those slots re-ranked at a Alliance race (bis_phase0.sh RANK_ONLY SLOTS), kept by the rule, without a sim. On it, Dwarf hit 22% (with Holy Precision 3/3) against the 16% spell cap, the set's own hit 3%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (SpellPower 62.1%, Intellect 31.4%, CritRating 6.6%). Hit and crit are one pool for the gear, so each is written once. Dwarf 659.0 with the set, 662.3 with the swap; gain.se is the paired error (the same seeded fights), 0.17 unpaired.",
  "gearGain": {
-  "dps": 3.16,
+  "dps": 3.3,
   "se": 0.05,
   "iterations": 20000,
   "seed": 1,

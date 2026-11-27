@@ -19,11 +19,11 @@
     "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Darkmoon Card: Maelstrom back for Heart of Wyrmthalak, over the 30g line)"
   },
   "verify": {
-    "dps": 1058.89,
+    "dps": 1054.05,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-27, after the request took level60_phase0_feral as it is now (without Bracers of Subterfuge); the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "Cat with Shred, Rake and Rip, plus Shifting Power and Shadowmeld into Ravage. Predatory Discipline lets Ferocious Bite keep its extra Energy. In Forever, Cat Form swings every 1.0s with the weapon's DPS. Stones, potions, Thistle Tea and Windfury Totem all work in Cat Form.",
   "keyTalents": [
