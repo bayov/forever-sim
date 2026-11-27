@@ -8508,6 +8508,24 @@
       "94d6cc79f",
       "48cc3aed9"
      ]
+    },
+    {
+     "title": "Rogue spare talent points go to utility talents",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-swords",
+      "rogue__seal-fate-swords",
+      "rogue__seal-fate-daggers",
+      "rogue__combat-daggers",
+      "rogue__subtlety"
+     ],
+     "note": "Combat Swords and Seal Fate Swords move Deflection 3/3 and Riposte 1/1 into Endurance 2/2, Improved Sprint 2/2 and Lightning Reflexes 1/5. Combat Daggers moves Deflection 2/3 into Endurance 2/2, Seal Fate Daggers moves Lightning Reflexes 1/5 into Endurance 2/2, and Subtlety moves Setup 1/3 into Camouflage 1/3. A DPS rogue is never attacked, so those talents did nothing, and DPS is unchanged.",
+     "commits": [
+      "04631ff4"
+     ]
     }
    ],
    "internal": [
@@ -8534,6 +8552,10 @@
     {
      "commit": "ee28c0640",
      "why": "Re-ranks the Retribution trinkets; the picks and every request stay the same."
+    },
+    {
+     "commit": "447e6e8f",
+     "why": "Talent search tie-break and its standard; no request changes."
     }
    ]
   }

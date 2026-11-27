@@ -297,7 +297,7 @@
   "title": "Event view names",
   "description": "The name, icon and rank of every spell and item in the sample fights and of each preset's weapons, as the sim UI's database and wowhead name them. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-27T09:15:05.130Z",
+   "at": "2026-11-27T11:19:25.437Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -313,7 +313,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-11-27T09:23:23.163Z",
+   "at": "2026-11-27T11:20:02.362Z",
    "by": "Claude (forever-sim)"
   }
  },

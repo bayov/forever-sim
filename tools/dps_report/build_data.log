@@ -1,9 +1,9 @@
 builds: 68 rows, 101 KB
 races: 247 rows, 79 KB
 lengths: 340 rows, 28 KB
-abilities: 780 rows, 217 KB
-auras: 1287 rows, 184 KB
-hist: 2537 rows, 134 KB
+abilities: 777 rows, 216 KB
+auras: 1281 rows, 183 KB
+hist: 2533 rows, 134 KB
 stats: 703 rows, 58 KB
 gear: 644 rows, 111 KB
 setup: 1841 rows, 459 KB
@@ -26,12 +26,12 @@ WARNING rotation: 17 rotation_text.json notes entries no line uses, e.g. Ambush 
 WARNING rotation: 19 rotation_text.json entries no line uses, e.g. (Fire Vulnerability under 5 stacks or Fire Vulnerability has under 7s left) and (Fingers of Frost is not up or Scorch takes 1.49s or more to cast or Fire Vulnerability under 5 stacks or Fire Vulnerability has under 4s left)
 WARNING rotation: 10 rotation_text.json why entries no line uses, e.g. {'builds': ['paladin__level_60'], 'key': 's20293', 'when': 'or 3 when the mana', 'why': "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo. When short on mana, waiting for 3 is worth it."}
 rotation conditions shown in compact form: []
-tooltips: 998 rows, 385 KB
-tooltips without text: ['i10455 Chained Essence of Eranikus', "i13965 Blackhand's Breadth", 'i13968 Eye of the Beast', 'i18641 Dense Dynamite', 'i19289 Darkmoon Card: Maelstrom', 'i19812 Rune of the Dawn', 'i22678 Talisman of Ascendance', 'i272438 Weakness Analyzer', 'o11 Raid damage hit', 's13897 Fiery Weapon', 's408501 Maelstrom Ready!', 'enchant Enchant Weapon - Fiery Weapon', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
+tooltips: 997 rows, 384 KB
+tooltips without text: ['i10455 Chained Essence of Eranikus', "i13965 Blackhand's Breadth", 'i13968 Eye of the Beast', "i18471 Royal Seal of Eldre'Thalas", 'i18641 Dense Dynamite', 'i19289 Darkmoon Card: Maelstrom', 'i19812 Rune of the Dawn', 'i272438 Weakness Analyzer', 'o11 Raid damage hit', 's13897 Fiery Weapon', 's408501 Maelstrom Ready!', 'enchant Enchant Weapon - Fiery Weapon', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
 talenttrees: 467 rows, 180 KB
-wowhead coverage: {'item:forever': 66, 'spell:none': 4, 'spell:sim': 8, 'spell:forever': 266, 'spell:wiki': 12, 'spell:client': 14, 'item:db': 150, 'enchant:db': 135, 'enchant:forever': 222, 'enchant:none': 1, 'setup:sim': 5, 'setup:forever': 34, 'item:classic': 1, 'setup:none': 3} {'forever': 315, 'none': 3, 'other': 172} {'forever': 1345, 'none': 26}
+wowhead coverage: {'item:forever': 66, 'spell:none': 4, 'spell:sim': 8, 'spell:forever': 266, 'spell:wiki': 12, 'spell:client': 14, 'item:db': 149, 'enchant:db': 135, 'enchant:forever': 222, 'enchant:none': 1, 'setup:sim': 5, 'setup:forever': 34, 'item:classic': 1, 'setup:none': 3} {'forever': 315, 'none': 3, 'other': 171} {'forever': 1345, 'none': 26}
 icons: 81 rows, 163 KB
-icons_more: 624 rows, 948 KB
+icons_more: 622 rows, 945 KB
 names: 321 rows, 31 KB
 names without an icon: ['Analyzing Weaknesses', 'Bloodthrill', 'Caustic Smog Potion', 'Cloud of Chained Essence', 'Consecration Mark', "Crusader's Wrath (Melee)", 'Curse of Elements', 'Dark Inspiration', 'Darkmantle Armor - 4pc', 'Death Mark', 'Death Mark', 'Death Mark', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Fiery Weapon', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Lacerating Strikes', 'Maelstrom Ready!', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Reckless Swings', 'Revelation', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Spell 1298499', 'Tenets of the Silver Hand', 'The Furious Storm (Melee)', 'Unsealed Wrath']
 treeart: 27 rows, 1063 KB
@@ -40,8 +40,8 @@ timeline_warrior: 12 rows, 50 KB
 timeline_rogue: 18 rows, 50 KB
 timeline_hunter: 12 rows, 35 KB
 timeline_paladin: 12 rows, 43 KB
-timeline_shaman: 18 rows, 66 KB
-timeline_druid: 9 rows, 26 KB
+timeline_shaman: 18 rows, 63 KB
+timeline_druid: 9 rows, 25 KB
 timeline_mage: 12 rows, 40 KB
 timeline_warlock: 15 rows, 29 KB
-timeline_priest: 9 rows, 25 KB
+timeline_priest: 9 rows, 26 KB
