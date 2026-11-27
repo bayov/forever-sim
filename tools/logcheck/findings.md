@@ -89,6 +89,14 @@ sections 2 and 6 have the format).
 - **Next step**: when a log has us with Fengus or Sayge's Damage, read which spell ID lands and whether spell hits rise (Fengus) or damage rises 10% (Sayge), then update the sim. Not in the Nov 26 log.
 - **Status**: open, first seen 2026-11-26.
 
+### Stormstrike is cast again before its 8 sec cooldown in 7.5% of casts
+
+- **Found by**: search (timing).
+- **Windows**: `112626_185144` and `112726_110830` together (Nov 26 19:24 to Nov 27 19:35): 1369 Stormstrike casts by us, 103 came before 7.9 sec after the previous one (gaps 1.5 to 7.6, most 3 to 6). Examples: `11/26 19:25:13.568` then `19:25:15.071` (1.5 sec), `20:43:00.409` then `20:43:04.113` (3.7), `19:26:02.072` then `19:26:05.623` (3.55). The other 1266 gaps are 8.0 or more (524 of them 8 to 9). Every cast has the 8 sec cooldown as its floor otherwise, and the sim has it as a hard 8 sec (`sim/shaman/stormstrike.go`).
+- **What we think**: something resets or shortens the cooldown on the server. It is not the previous hit's result (hit 8.8% early, dodge 8.6%, parry 5.6%), not a Lightning Bolt, Earth Shock or Maelstrom Weapon proc in the gap (they show as often in long gaps), and not Improved Stormstrike. A target kill or a mob switch in the gap may be it (the 1.5 sec case ends in a kill), unchecked. Other timings match the sim: Earth Shock 5.96 sec, Fire Nova 9.98, Blood Fury 119.99, Rage of the Farseer 179.99, Totemic Call 30.0, Blood Fury 15.0 sec and Rage of the Farseer 25.0 sec aura.
+- **Next step**: for each early cast, list what the previous Stormstrike's target did and whether we switched target. If it is a reset, count how often it saves a Stormstrike and propose it as a sim mechanic (needs the user's go).
+- **Status**: open, first seen 2026-11-27.
+
 ## logcheck issues
 
 ### Sheet Attack power far from the sim's on some exports
@@ -181,6 +189,14 @@ sections 2 and 6 have the format).
 - **What we think**: noise. Both are small samples (7 and 9). The miss may be a below-skill swing, and Frost Shock fits the fixed-damage drift above.
 - **Next step**: none unless it shows again.
 - **Status**: open, first seen 2026-11-25, last updated 2026-11-25.
+
+### Magma Totem crit 0 of 38 at level 57
+
+- **Flag**: `Magma Totem (10581): crit` (NEW), mob level 57.
+- **Windows**: `112726_110830` 15:56:09 to 15:57:52: crit 0 of 38 vs the sim's 20.6%, but all 38 were immune (known: Nature or Fire immune mobs), so there was nothing to crit.
+- **What we think**: noise from logcheck counting immune ticks as attempts. If it flags again in a window with immunes, logcheck should take immune ticks out of the crit count.
+- **Next step**: none unless it shows again.
+- **Status**: watching, first seen 2026-11-27.
 
 ## Done
 
