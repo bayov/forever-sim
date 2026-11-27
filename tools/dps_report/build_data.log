@@ -3,11 +3,11 @@ races: 250 rows, 80 KB
 lengths: 355 rows, 29 KB
 abilities: 799 rows, 222 KB
 auras: 1322 rows, 189 KB
-hist: 2609 rows, 139 KB
+hist: 2602 rows, 138 KB
 stats: 724 rows, 60 KB
 gear: 660 rows, 113 KB
 setup: 1895 rows, 473 KB
-notes: 1595 rows, 197 KB
+notes: 1594 rows, 197 KB
 WARNING notes: 1 texts name the project's process, e.g. "Round 70753: the November 2 notes' rogue rework isn't in client 70753, so Shank, the new talents and the re-ranked ones take the notes' values. Shank'"
 race_variants: 966 rows, 341 KB
 race_breakdown: 1194 rows, 179 KB
@@ -29,7 +29,7 @@ rotation conditions shown in compact form: []
 tooltips: 1008 rows, 388 KB
 tooltips without text: ['i10455 Chained Essence of Eranikus', "i13965 Blackhand's Breadth", 'i13968 Eye of the Beast', 'i18641 Dense Dynamite', 'i19289 Darkmoon Card: Maelstrom', 'i19812 Rune of the Dawn', 'i22678 Talisman of Ascendance', 'i272438 Weakness Analyzer', 'o11 Raid damage hit', 's13897 Fiery Weapon', 's408501 Maelstrom Ready!', 'enchant Enchant Weapon - Fiery Weapon', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
 talenttrees: 467 rows, 180 KB
-wowhead coverage: {'item:forever': 66, 'spell:none': 4, 'spell:sim': 8, 'spell:forever': 266, 'spell:wiki': 12, 'spell:client': 15, 'item:db': 150, 'enchant:db': 137, 'enchant:forever': 229, 'enchant:none': 1, 'setup:sim': 5, 'setup:forever': 34, 'item:classic': 1, 'setup:none': 3} {'forever': 315, 'none': 3, 'other': 173} {'forever': 1344, 'none': 27}
+wowhead coverage: {'item:forever': 66, 'spell:none': 4, 'spell:sim': 8, 'spell:forever': 267, 'spell:wiki': 12, 'spell:client': 14, 'item:db': 150, 'enchant:db': 137, 'enchant:forever': 229, 'enchant:none': 1, 'setup:sim': 5, 'setup:forever': 34, 'item:classic': 1, 'setup:none': 3} {'forever': 316, 'none': 3, 'other': 172} {'forever': 1345, 'none': 26}
 icons: 81 rows, 163 KB
 icons_more: 624 rows, 948 KB
 names: 322 rows, 31 KB
@@ -40,8 +40,8 @@ timeline_warrior: 12 rows, 50 KB
 timeline_rogue: 18 rows, 50 KB
 timeline_hunter: 12 rows, 35 KB
 timeline_paladin: 15 rows, 51 KB
-timeline_shaman: 18 rows, 65 KB
+timeline_shaman: 18 rows, 66 KB
 timeline_druid: 9 rows, 26 KB
-timeline_mage: 12 rows, 41 KB
+timeline_mage: 12 rows, 40 KB
 timeline_warlock: 15 rows, 29 KB
-timeline_priest: 9 rows, 24 KB
+timeline_priest: 9 rows, 25 KB
