@@ -271,6 +271,11 @@ score.
 - `conditional` is `dps` with each of the item's conditions met. For `vs 4 mobs` (see Uses against
   several mobs) that is the part at `dur` as in `dps`, plus the use value against the 4 mobs.
 
+The file's `set` holds the item IDs of the set the values were measured on. A re-rank that moves
+the gear set makes the file stale, and `TestEffectsFilesMatchGearSets` (`tools/rotopt/bis_test.go`)
+then fails until `EFFECTS_ONLY=1 SPEC=<spec> tools/rotopt/bis_phase0.sh` runs again. A file
+written before `set` existed (2026-11-27) isn't checked.
+
 The items are every item of the gear pool (the search's own filters: phase, no raids, faction,
 class, minimum item level, the includes and excludes) that has an item effect in the sim, and the
 set's picks. A one hander goes in the main hand with the off hand empty. An off hand only item
