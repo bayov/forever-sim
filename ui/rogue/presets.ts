@@ -278,12 +278,12 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 // (+0.6 to +1.0 with its 4 point Eviscerates, on both boss types).
 export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 	'Combat Swords',
-	SavedTalents.create({ talentsString: '00530320201-3200330112012321551' }),
+	SavedTalents.create({ talentsString: '00530320201-3210032202012321551' }),
 	{ tooltip: 'Deep Combat for Sinister Strike: Adrenaline Rush, Flash of Steel, Blade Flurry, Hack and Slash, Aggression, Cold Blood.', group: 'Synthetic' },
 );
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Seal Fate Swords',
-	SavedTalents.create({ talentsString: '0053032024105103-320033011201132' }),
+	SavedTalents.create({ talentsString: '0053032024105103-321003220201132' }),
 	{
 		tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Aggression and Dual Wield Specialization, for Sinister Strike.',
 		group: 'Synthetic',
@@ -291,12 +291,12 @@ export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 );
 export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 	'Combat Daggers',
-	SavedTalents.create({ talentsString: '005203002-3203230002012221551-005' }),
+	SavedTalents.create({ talentsString: '005203002-3203030202012221551-005' }),
 	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Flash of Steel, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Synthetic' },
 );
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
 	'Seal Fate Daggers',
-	SavedTalents.create({ talentsString: '0053032024105103-321303010201132' }),
+	SavedTalents.create({ talentsString: '0053032024105103-320303020201132' }),
 	{
 		tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Puncturing Wounds and Dual Wield Specialization, for Backstab.',
 		group: 'Synthetic',
@@ -306,7 +306,7 @@ export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents('Mutilate', 
 	tooltip: 'Assassination for Mutilate: Seal Fate, Relentless Strikes, Venom, Cold Blood, Vile Poisons, with Puncturing Wounds and Opportunity.',
 	group: 'Synthetic',
 });
-export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', SavedTalents.create({ talentsString: '00530301-320003-115003231320021151' }), {
+export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', SavedTalents.create({ talentsString: '00530301-320003-015013231320021151' }), {
 	tooltip: 'Subtlety for Death Mark, Boot Knife, Hemorrhage, Premeditation and Preparation, with Blood Splatter in Assassination.',
 	group: 'Synthetic',
 });
