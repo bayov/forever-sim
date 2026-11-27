@@ -5,6 +5,7 @@ import io
 import json
 import os
 import sys
+import tarfile
 import tempfile
 import unittest
 
@@ -86,6 +87,75 @@ class Run(unittest.TestCase):
 
     def test_missing_bench_list(self):
         self.assertEqual(self.run_check(50, 20, tank_list=False), ['! tank_a: no list at ui/tank/bis/level60_phase0_tank_a.bis.json'])
+
+
+HEADER = '| Healer | HPS | Carry | Death floor |\n|---|---|---|---|\n'
+
+
+def pack(path, tables):
+    """A Healing pack of healbench tables {file name: {stem: carry}}."""
+    with tempfile.TemporaryDirectory() as d:
+        for name, rows in tables.items():
+            with open(f'{d}/{name}', 'w') as f:
+                f.write('Boss, role ...\n\n' + HEADER + ''.join(f'| {s} | 700 | {c:.3f} | 0.0% tank, 0.0% other |\n' for s, c in rows.items()))
+        with tarfile.open(path, 'w:gz') as tf:
+            for name in tables:
+                tf.add(f'{d}/{name}', arcname=name)
+
+
+class HealBench(unittest.TestCase):
+    """A healer list's score against the Healing pack's carries (the Holy priest list sat 1.4% over, 2026-11-27)."""
+
+    ROW = {'dir': 'heal', 'bench': 'heal', 'scoreRef': 130, 'healRoles': 'tank,raid',
+           'reqFile': 'tools/healbench/req/holy.json', 'raidReqFile': 'tools/healbench/req/holy_raid.json'}
+    TABLES = {'tank_onyxia.txt': {'holy': 1.2, 'other': 2.0}, 'tank_ragnaros.txt': {'holy': 0.6},
+              'raid_onyxia.txt': {'holy_raid': 1.0}, 'raid_ragnaros.txt': {'holy_raid': 1.4}}
+
+    def test_score(self):
+        with tempfile.TemporaryDirectory() as d:
+            pack(f'{d}/heal.tgz', self.TABLES)
+            tables = phase0_check.heal_tables(f'{d}/heal.tgz')
+        self.assertEqual(tables[('tank', 'onyxia')], {'holy': 1.2, 'other': 2.0})
+        # tank mean 0.9, raid mean 1.2: 105
+        self.assertAlmostEqual(phase0_check.heal_bench_score(self.ROW, tables), 105.0)
+        self.assertIsNone(phase0_check.heal_bench_score(dict(self.ROW, reqFile='x/none.json'), tables))
+
+    def run_check(self, list_score):
+        with tempfile.TemporaryDirectory() as d:
+            write(f'{d}/tools/rotopt/phase0_specs.json', {'specs': {'holy': self.ROW}})
+            write(f'{d}/tools/rotopt/phase0_content.json', {'1': {'name': 'Pick'}})
+            write(f'{d}/tools/rotopt/phase0_enchants.json', {})
+            write(f'{d}/ui/heal/bis/level60_phase0_holy.bis.json',
+                  {'dps': list_score, 'slots': {'head': [{'id': 1, 'name': 'x', 'loss': 0, 'bis': True}]}})
+            write(f'{d}/ui/heal/gear_sets/level60_phase0_holy.gear.json', {'items': [{'id': 1}]})
+            os.makedirs(f'{d}/tools/dps_report/raw/bench')
+            pack(f'{d}/tools/dps_report/raw/bench/heal.tgz', self.TABLES)
+            cwd = os.getcwd()
+            out = io.StringIO()
+            try:
+                os.chdir(d)
+                with contextlib.redirect_stdout(out):
+                    self._main()
+            finally:
+                os.chdir(cwd)
+            return [l for l in out.getvalue().splitlines() if l.startswith('!')]
+
+    def _main(self):
+        argv = sys.argv
+        try:
+            sys.argv = ['phase0_check.py']
+            phase0_check.main()
+        finally:
+            sys.argv = argv
+
+    def test_within(self):
+        # 0.9% over the bench's 105
+        self.assertEqual(self.run_check(105.95), [])
+
+    def test_over(self):
+        found = self.run_check(106.5)
+        self.assertEqual(len(found), 1)
+        self.assertIn("holy: list score 106.5 is +1.4% off the Healing bench's 105.00", found[0])
 
 
 if __name__ == '__main__':

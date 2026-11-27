@@ -232,7 +232,7 @@ Infusion on the priest when a big heal is due. The Holy build has no Power Infus
 (healer_rotations-20261104-1, healer_fairness-20261104-3; Power Infusion builds under "Talents").
 
 - **Holy tank**: Prayer of Mending and Renew on the tank whenever they're off, Flash Heal 7 and 4 first while
-  mana is over 70%, then Inner Focus, Greater Heal 5, 4, 2 and Flash Heal 7, 4, each once the tank misses 80%
+  mana is over 70% and keeps pace with the fight (Mana on Chromaggus, below), then Inner Focus, Greater Heal 5, 4, 2 and Flash Heal 7, 4, each once the tank misses 80%
   of its Expected Healing.
 - **Holy raid**: Prayer of Mending at the most hurt whenever it's ready, a shield on whoever drops under 60%,
   then Flash Heal 7, 4 at the most hurt once it misses half a heal's Expected Healing. That's all it casts: until 2026-11-04 the rotation went on with
@@ -242,9 +242,36 @@ Infusion on the priest when a big heal is due. The Holy build has no Power Infus
   first -0.003; healer_rotations-20261104-1). They're dropped; `rots.py`'s `order=` knob still writes them.
 - **Discipline tank**: Power Word: Shield whenever Weakened Soul is off the tank (under 70% mana only once
   what's missing covers a Greater Heal 5), Penance once what's missing covers its 3 bolts, Renew, Flash Heal 7
-  first while mana is over 85%, then Inner Focus, Greater Heal 5, 4, 2 and Flash Heal 7, each once the tank
-  misses half its Expected Healing. The mana knobs (shield under 70%, Flash Heal first over 85%, no Flash
-  Heal 4) are what keeps it from running out of mana on Chromaggus (healer_rotations-20261104-2; Tuning, below).
+  first while mana is over 85% and keeps pace with the fight, then Inner Focus, Greater Heal 5, 4, 2 and Flash
+  Heal 7, each once the tank misses half its Expected Healing. The mana knobs (shield under 70%, Flash Heal
+  first over 85%, no Flash Heal 4) are what keeps it from running out of mana on Chromaggus
+  (healer_rotations-20261104-2; Tuning, below).
+
+### Mana on Chromaggus (2026-11-27)
+
+Both tank presets end Chromaggus near empty (Holy 412, Discipline 358 mana left in the Phase 0 report). That's
+the fight, not the gear or the bench:
+
+- **Bench.** The table's mana is at the report's damage (scale 1), above every tank healer's carry (0.83 to 0.93),
+  where 24 to 56% of fights already lose the tank. At the carry the priests end with about 900 to 1,100 mana and
+  the deaths come late (108 to 114 s). Chromaggus is the one long single-tank stint, 115 s on one tank where the
+  other tank fights are 17 to 71 s, and its tank damage (536 to 661 a second) is
+  under the logs' 718. Every tank healer is dry there (shaman 758, druid 827, paladin 1,035 mana left), and the
+  carry falls with the length alone (Holy 1.144 at 60 s, 1.016 at 90 s, 0.878 at 115 s). Nothing is wrong with it.
+- **Gear.** The synthetic sets end it dry too (Discipline 327 against 374 on Phase 0).
+- **Rotation.** The one waste was the Flash Heal first lines, which spent the mana over 70% (85%) in the first
+  third of a long fight. They now also need the mana to keep pace with the fight: mana % at least its remaining
+  % (`currentManaPercent >= remainingTimePercent`). Mean tank carry of the 7 files, seed 101 at 1,000 iterations
+  / seed 202 at 2,000: Holy 1.1936 → 1.1996 / 1.1951 → 1.1990, Discipline 1.2276 → 1.2339 / 1.2261 → 1.2290;
+  Chromaggus Holy 0.878 → 0.912, Discipline 0.866 → 0.877; no file loses more than 0.008. At 300 s it's even
+  (Golemagg Holy +0.013, Discipline -0.011; Chromaggus and Ragnaros within 0.001). Dropping the lines instead
+  wins Chromaggus (Holy 0.938) but loses Broodlord and Vaelastrasz (mean Holy 1.1933, Discipline 1.2191), the
+  pace alone in place of the 70% / 85% gate loses Chromaggus (0.876 / 0.829), and pacing the under-50%
+  emergency Flash Heal or Discipline's shield gate adds nothing. `TestPriestTankHealersPaceFlashHeal`
+  (tools/healbench) checks the paced presets heal more a mana on Chromaggus than without the pace.
+
+So going dry on Chromaggus is real at Phase 0 gear: one priest can't keep its main tank up for 115 s at the
+logs' damage, and it runs out near the end of the fights it loses.
 
 ### Tuning of 2026-11-04 (healbench, damage carried, 1,000 iterations, the 7 boss files)
 

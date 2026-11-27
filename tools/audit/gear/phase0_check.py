@@ -20,13 +20,20 @@ A tank or healer row (bench in phase0_specs.json, 2026-11-25) is scored in its r
 is bis_phase0.sh's: --max-gold-per-pct (3000g) per 1% of the row's scoreRef, 3000 * 100 / scoreRef gold per point of
 score, against its own goldPerDps. Its request (the row's reqFile) must wear its gear set, like a DPS request.
 
-It doesn't check sources against the game, set bonuses, hit or the list's dps: the pass does those by hand.
+A healer row's list score must also match the Healing report's bench (the main carries in
+tools/dps_report/raw/bench/heal.tgz: the mean over its roles of the mean over the bosses) within LIST_BENCH_PCT['heal']
+(1%) of the bench score. The list scores at 5000 iterations on the bench's seeds and the report at 1000, so the two
+agree to 0.1 to 0.4% when they sim the same thing. A wider gap means one of them is stale: the Holy priest list sat
+1.4% over the bench (2026-11-27) because it was ranked before the bench's Frost mage fillers changed gear.
+
+It doesn't check sources against the game, set bonuses, hit or a DPS list's dps: the pass does those by hand.
 """
 import argparse
 import glob
 import json
 import os
 import re
+import tarfile
 
 ALLIANCE = {'Human', 'Dwarf', 'Gnome', 'NightElf', 'SkyborneHighOrder'}
 HORDE = {'Orc', 'Troll', 'Tauren', 'Undead', 'SkyborneWindshaper'}
@@ -41,6 +48,41 @@ def faction_of(race):
 # 0.5% of scoreRef on tankbench (warrior 17, paladin 14 points) and 1.5% on healbench (about 2 points at 130),
 # as measured in the 2026-11-25 Phase 0 tank and healer round.
 BENCH_NOISE_PCT = {'tank': 0.5, 'heal': 1.5}
+
+
+# How far a healer list's score may sit from the Healing report's bench, in percent of the bench score (see above).
+LIST_BENCH_PCT = {'heal': 1.0}
+HEAL_PACK = 'tools/dps_report/raw/bench/heal.tgz'
+
+
+def heal_tables(pack):
+    """The carries in a Healing pack's healbench tables: {(role, boss): {request stem: carry}}."""
+    out = {}
+    with tarfile.open(pack) as tf:
+        for m in tf.getmembers():
+            name = os.path.basename(m.name)
+            if not re.fullmatch(r'(tank|raid)_\w+\.txt', name):
+                continue
+            role, boss = name[:-len('.txt')].split('_', 1)
+            for line in tf.extractfile(m).read().decode().splitlines():
+                cells = [c.strip() for c in line.strip().strip('|').split('|')]
+                if line.startswith('| ') and cells[0] != 'Healer' and len(cells) > 2:
+                    out.setdefault((role, boss), {})[cells[0]] = float(cells[-2])
+    return out
+
+
+def heal_bench_score(row, tables):
+    """A healer row's score on the bench: 100 x the mean over its roles (healRoles) of its request's mean carry over
+    the bosses, the tank role on reqFile and the raid role on raidReqFile. None when a role has no carries."""
+    means = []
+    for role in row.get('healRoles', 'tank').split(','):
+        req = row.get('raidReqFile') if role == 'raid' else row.get('reqFile')
+        stem = os.path.basename(req or '')[:-len('.json')]
+        carries = [v[stem] for (r, _), v in tables.items() if r == role and stem in v]
+        if not carries:
+            return None
+        means.append(sum(carries) / len(carries))
+    return 100 * sum(means) / len(means)
 
 
 def noise_of(row, noise):
@@ -115,6 +157,7 @@ def main():
         if faction and t.get('faction') and t['faction'] != faction:
             flag(f"{where}: enchant {e.get('name')} is {t['faction']} only, the build is {faction}")
 
+    tables = heal_tables(HEAL_PACK) if os.path.exists(HEAL_PACK) else {}
     sets = {}  # gear set name -> its items
     for p in glob.glob('ui/*/gear_sets/level60_phase0*.gear.json'):
         sets[os.path.basename(p)[:-len('.gear.json')]] = load(p)['items']
@@ -169,6 +212,11 @@ def main():
             eq = load(rq)['raid']['parties'][0]['players'][0].get('equipment', {}).get('items') or []
             if [(i or {}).get('id') for i in eq] != [(i or {}).get('id') for i in items]:
                 flag(f'{spec}: its request {rq} does not wear {gp}')
+        if row.get('bench') == 'heal' and tables and lst.get('dps') is not None:
+            bench = heal_bench_score(row, tables)
+            if bench is not None and abs(lst['dps'] - bench) > LIST_BENCH_PCT['heal'] * bench / 100:
+                flag(f"{spec}: list score {lst['dps']} is {100 * (lst['dps'] - bench) / bench:+.1f}% off the Healing "
+                     f"bench's {bench:.2f} ({HEAL_PACK}): re-rank the list or re-sim the preset")
         if row.get('bench'):
             print(f"{spec}: {lst.get('race')} {fac}, list score {lst.get('dps')}, line {line(spec):.1f}g per point of score, "
                   f"made {lst.get('made')} on sim {lst.get('sim')}")
