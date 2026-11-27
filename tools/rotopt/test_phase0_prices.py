@@ -202,6 +202,29 @@ class ApplyPrices(unittest.TestCase):
         phase0_prices.apply_prices(content, {'enh': {}}, {'enh': {'944'}, 'mage_fire': {'944'}, 'mage_frost': {'944'}})
         self.assertEqual(content['944'], {'name': 'Elemental Mage Staff'})
 
+    def test_write_keeps_blackblade_of_shahram_price(self):
+        # The ret list gives Blackblade no number (Destiny is better and cheaper), so a --write pass drops it;
+        # the hand price in HAND_PRICES puts it back, and the committed content already has it.
+        import json
+        with open(phase0_prices.CONTENT) as f:
+            content = json.load(f)
+        self.assertEqual(phase0_prices.apply_prices(content, {'ret': {}}, {'ret': {'12592'}}), 1)
+        self.assertNotIn('goldPerDps', content['12592'])
+        self.assertEqual(phase0_prices.apply_hand_prices(content), 1)
+        self.assertEqual(content['12592']['gold'], 2500.0)
+        self.assertEqual(phase0_prices.spec_gpd(content['12592'], 'ret'), 424.4)
+        # idempotent, and other specs' numbers on the item stay
+        self.assertEqual(phase0_prices.apply_hand_prices(content), 0)
+        content['12592']['goldPerDps']['enh'] = 9.0
+        phase0_prices.apply_hand_prices(content)
+        self.assertEqual(content['12592']['goldPerDps'], {'enh': 9.0, 'ret': 424.4})
+
+    def test_committed_content_matches_hand_prices(self):
+        import json
+        with open(phase0_prices.CONTENT) as f:
+            content = json.load(f)
+        self.assertEqual(phase0_prices.apply_hand_prices(content), 0)
+
     def test_every_spec_has_a_list(self):
         import json
         with open(phase0_prices.SPECS) as f:

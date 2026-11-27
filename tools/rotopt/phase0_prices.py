@@ -124,6 +124,18 @@ RUN_MINUTES = {
 # A dungeon RUN_MINUTES doesn't have.
 DEFAULT_RUN_MINUTES = 60
 
+# Prices set by hand, {item ID: {name, gold, gpd: {spec: gold per DPS}, reason}}. apply_prices (--write) puts
+# them in phase0_content.json after the computed numbers, so they win and survive a run. For an item the
+# script's rule can't price: it has no known drop chance or AH price, and on a list where a cheaper item is
+# better (Destiny, 195g, loses 0 to Blackblade's 2.75) it never gets a goldPerDps at all. Say why in reason,
+# and remove the row when the script can price the item itself.
+HAND_PRICES = {
+    12592: {'name': 'Blackblade of Shahram', 'gold': 2500.0, 'gpd': {'ret': 424.4},
+            'reason': 'General Drakkisath (UBRS) has no known drop chance, so about 2500g by hand; on the ret list '
+                      'Destiny (195g) is better and cheaper, so the rule gives no number; 2500 / 5.89 over Warblade '
+                      'of Caer Darrow (2026-11-26)'},
+}
+
 
 # How much newer another account's prices have to be before we say so.
 MUCH_NEWER = 6 * 3600
@@ -418,6 +430,22 @@ def apply_prices(content, priced, on_list):
     return changed
 
 
+def apply_hand_prices(content, hand=None):
+    """Put HAND_PRICES in content after apply_prices, over whatever the script computed, and return
+    how many entries changed. Another spec's number on the item stays."""
+    changed = 0
+    for iid, h in (HAND_PRICES if hand is None else hand).items():
+        c = content.setdefault(str(iid), {'name': h['name']})
+        g = c.get('goldPerDps')
+        gpd = dict(g) if isinstance(g, dict) else ({'enh': g} if g is not None else {})
+        gpd.update(h['gpd'])
+        new = {'gold': h['gold'], 'goldPerDps': dict(sorted(gpd.items()))}
+        if {k: c.get(k) for k in new} != new:
+            changed += 1
+            c.update(new)
+    return changed
+
+
 def content_text(content):
     """phase0_content.json's text: one entry per line, by item ID."""
     keys = sorted(content, key=int)
@@ -598,7 +626,7 @@ def main():
     for label, bis in lists.items():
         on_list.setdefault(owner[label], set()).update(
             str(e['id']) for entries in bis['slots'].values() for e in entries)
-    changed = apply_prices(content, priced, on_list)
+    changed = apply_prices(content, priced, on_list) + apply_hand_prices(content)
     with open(CONTENT, 'w') as f:
         f.write(content_text(content))
     print(f'wrote {CONTENT}, {changed} entries changed')
