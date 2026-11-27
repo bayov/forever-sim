@@ -6,10 +6,10 @@
 #
 #   tools/rotopt/druid_presets.sh balance.json feral.json
 # Balance is Night Elf since the race-tuning round (2026-10-27, standards 29 and 16), with Elune's
-# Light held for the spell power trinket (elune=1): 1.1 ahead at 180 sec of leaving it to the autocast
-# line (+1.0 on seed 1000003), 0.0 for a Tauren. The Wrath build is Night Elf too since 2026-11-02 (its race
-# re-pick at 36 yd) and holds it the same way (+0.9 / +0.6 / +1.1 at 120 / 180 / 300 sec; the same for
-# the other races, which have no Elune's Light). The Feral presets are Night Elf and keep it in.
+# Light on its own line (elune=1). The Wrath build is Night Elf too since 2026-11-02 (its race re-pick
+# at 36 yd). Until 2026-11-26 both held Elune's Light for the synthetic spell power trinket and used
+# that trinket before the pull; the Phase 0 sets wear no such trinket, so the template no longer
+# writes either (TestDruidBalanceNoTrinketHold). The Feral presets are Night Elf and keep it in.
 set -e
 balance=$1
 feral=$2
@@ -29,12 +29,10 @@ gen() {
 # Clearcasting, Wrath once Eclipse is down to 2 charges or fewer with no Wrath flying, Starfire
 # otherwise. Innervate is left to its own trigger. The search kept that at 120, 180 and 300 sec,
 # and again on the hotfix trees (2026-11-01, both Balance builds).
-# cdStack (rotation auditor): the potion and Elune's Light 0.1 sec before the pull too, Elune's
-# later uses held for the trinket (Balance 2.2 / 1.5 / 1.6 ahead, Wrath 1.2 / 0.8 / 1.0); for the
+# cdStack (rotation auditor): the potion and Elune's Light 0.1 sec before the pull too (Balance
+# 2.2 / 1.5 / 1.6 ahead, Wrath 1.2 / 0.8 / 1.0, measured with the trinket hold since dropped); for the
 # cat, Elune's Light held for the Strength trinket (until the 2026-10-30 hotfix took Berserk out of
 # the tree, Berserk held for the trinket and Elune's Light out of Berserk, 2.5 / 0.9 / 2.7).
-# Both Balance rotations use the synthetic spell power trinket 0.1 sec before the pull (1.8 / 1.1 /
-# 0.7 ahead of using it at 0 at 120 / 180 / 300 sec; 1.0 / 0.7 / 0.4 for the Wrath build).
 # wrathFallback (2026-11-03 exploration): Wrath after the Starfire lines, so the druid casts Wrath
 # when Starfire's mana is not there instead of waiting for it; the Clearcasting Starfire line goes
 # (the Starfire line below takes the free cast anyway). +0.9 / +0.7 / +2.0 at 120 / 180 / 300 sec
@@ -43,16 +41,16 @@ gen() {
 # 4.4 / 2.9 / 1.4 ahead for Balance (when a Starfire would not land), 5.9 / 3.8 / 2.2 for the
 # Wrath build (when a Wrath plus 1.8 sec would not, its flight from 36 yd; 1.5 from 30 yd before
 # 2026-11-02, +0.5 / +0.4 / +0.2 at 120 / 180 / 300 sec at 36 yd).
-gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=1,wrathFallback=1,clearcastStarfire=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,cdStack=1,endMoonfire=1,elune=1,wrathFallback=1,clearcastStarfire=0"
 # The Faerie Fire duty (standards 23): the same rotation keeping Faerie Fire on the target, cast
 # first after the pull and again once it has under 1.5 sec left. The knob search kept the rest.
-gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1,elune=1,wrathFallback=1,clearcastStarfire=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,cdStack=1,endMoonfire=1,faerieFire=1,elune=1,wrathFallback=1,clearcastStarfire=0"
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351--505003) and gear (Natural Power
 # gloves).
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,elune=1"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,elune=1"
 # The Wrath build's Faerie Fire duty, the same way.
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,faerieFire=1,elune=1"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,faerieFire=1,elune=1"
 # Feral cat on the Level 60 talents of the launch realms' 2026-10-30 hotfix trees
 # (05002-53200032023012125001-05502, Feral Swiftness 2 a must-take), Night Elf: Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 with 45 Energy or more while Rip has 4 sec left (Predatory
