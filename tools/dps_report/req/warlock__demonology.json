@@ -56,10 +56,10 @@
                   "id":  272406
                 },
                 {
-                  "id":  22678
+                  "id":  13968
                 },
                 {
-                  "id":  13968
+                  "id":  10455
                 },
                 {
                   "id":  18372,
@@ -232,7 +232,7 @@
                                         "lhs":  {
                                           "spellTimeToReady":  {
                                             "spellId":  {
-                                              "itemId":  22678
+                                              "itemId":  10455
                                             }
                                           }
                                         },
@@ -249,7 +249,7 @@
                                         "lhs":  {
                                           "spellTimeToReady":  {
                                             "spellId":  {
-                                              "itemId":  22678
+                                              "itemId":  10455
                                             }
                                           }
                                         },
