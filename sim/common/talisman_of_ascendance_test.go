@@ -13,8 +13,8 @@ import (
 )
 
 // Talisman of Ascendance: every spell we cast while the use is up, a damage spell or not, adds a
-// stack of 40 spell damage after it lands, up to 5, and the 6th cast ends it (28200's 6 charges and
-// ProcTypeMask 87376, item_effects.go).
+// stack of 40 spell damage after it lands, up to 5, and the 6th cast ends it (28200's ProcTypeMask
+// 87376; the 6 casts are the tooltip's, the client tables hold no charges, item_effects.go).
 func TestTalismanOfAscendanceCountsEveryCast(t *testing.T) {
 	s, m := newForeverMageWearing(t, proto.ItemSlot_ItemSlotTrinket1, common.TalismanOfAscendance)
 	use := m.GetSpell(core.ActionID{ItemID: common.TalismanOfAscendance})

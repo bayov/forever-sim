@@ -213,7 +213,7 @@ Undead's lead comes from Touch of the Grave (sim/core/racials_forever.go, regist
 
 ## Open
 
-- Shield Slam's 2x block value may be reversed by the user. Every score here has it.
+- ~~Shield Slam's 2x block value may be reversed by the user.~~ Settled 2026-11-27: it stays at 2x (user ruling, standards 40). Every score here has it.
 - Touch of the Grave's real heal size ("up to 5%").
 - The doubtful picks above, chiefly the Watchers rep, the Evergreen Shield plans and the Lionheart Helm plans.
 

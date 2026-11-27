@@ -4755,12 +4755,15 @@ func init() {
 	// Use: Your next 5 damage or healing spells cast within 20 seconds will grant a bonus of up to 40 damage and up to 75 healing, stacking up to 5 times.
 	// Expires after 6 damage or healing spells or 20 seconds, whichever occurs first. (1 Min Cooldown)
 	//
-	// The use (28200, 20 sec) is aura 42, a proc trigger with 6 charges and ProcTypeMask 87376
-	// (0x15550): melee and ranged class spells, ranged auto attacks, and every helpful and harmful
-	// spell, of no damage class or magic, but not melee auto attacks (classic 1.15.7.61186
-	// SpellAuraOptions and SpellEffect). Each proc gives a stack of 28204, 40 spell damage and 75
-	// healing (aura 13 and 135, base points 39 plus a 1 sided die), up to 5 (CumulativeAura 5).
-	// 28204 has no duration of its own and goes with the use, at its 6th proc or its 20 sec.
+	// The use (28200, 20 sec) is aura 42, a proc trigger with ProcTypeMask 87376 (0x15550): melee
+	// and ranged class spells, ranged auto attacks, and every helpful and harmful spell, of no
+	// damage class or magic, but not melee auto attacks (classic 1.15.7.61186 and Forever
+	// 1.60.1.71139 SpellAuraOptions and SpellEffect). Each proc gives a stack of 28204, 40 spell
+	// damage and 75 healing (aura 13 and 135, base points 39 plus a 1 sided die), up to 5
+	// (CumulativeAura 5). 28204 has no duration of its own and goes with the use, at its 6th proc or
+	// its 20 sec. The 6 casts come from the tooltip alone: the client tables hold no charges
+	// (SpellAuraOptions ProcCharges 0 on 28200, ItemEffect Charges 0 on 22678), so a combat log of
+	// the trinket would settle whether the use really ends at the 6th cast.
 	//
 	// So any spell we cast eats a charge, a seal, a Judgement, Holy Strike or a curse as well as a
 	// damage or healing spell, not only the spells with a damage or healing proc mask. Those are our
