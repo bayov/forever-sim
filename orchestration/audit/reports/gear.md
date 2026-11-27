@@ -1,7 +1,8 @@
-# Gear pass 84 (master 34994816e7)
+# Gear pass 86 (branch phase0-regear, 313069ce, since 046d0e4b8)
 
-- New since pass 83: 6bd2d60a2 re-ran DPS lists without the Armaments of Battle rewards (content check marks them out). New gear sets for balance, ele, enh, feral, smite, warlock (4), fury, plus Alliance/Horde variants.
-- phase0_check.py: no DPS pick, enchant, faction or gold-line break in the lists or gear sets. Close calls (doubtful, unchanged): Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77, Ret Darkmoon Maelstrom 1.87.
-- Finding gear-20261127-1: 29 requests and race overrides still wear the old gear (22678, 22688, 22668 out).
-- Shared run vs list dps: run is 0.5-2% under the list for all 26 DPS specs (also for specs whose gear did not change), so a fight difference, not stale lists. Warlock affliction is +0.6%.
-- Tank/healer flags are for their passes. Not checked by hand: set bonuses and hit re-checks for the new sets (lists only swapped trinket/wrist/head/ring picks).
+- Rulings: only 8d45b49e (a comment on Talisman of Ascendance); no gear ruling.
+- Changed: 45 requests, 23 race rows, Ret list (re-rank only).
+- phase0_check.py: no DPS pick, enchant, faction or gold-line break; no request or race row off its Phase 0 set; no `_hit` steps. Remaining `!` lines are tank/healer builds (other passes) and DPS close calls: Destruction Spellblade 1.75, Enhancement Blackrock Slicer 1.77, Ret Darkmoon Maelstrom 1.85 (doubtful, unchanged, below 2 DPS).
+- Ret trinkets: picks still Chained Essence of Eranikus and Blackhand's Breadth; list dps 941.51, sim 8d45b49e6369+.
+- Spot sims (5000 it, 180s): Smite 678.9 (list 687.3), Destruction 866.4 (list 874.8); both ~1% low, the known fight difference.
+- gear-20261127-1 resolved.

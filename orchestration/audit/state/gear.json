@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "5ab589d85898ade77ac9171934359e0ae3c3f7e8"
+  "master": "313069ce"
  },
- "last_pass_at": "2026-11-27T02:10:00Z",
- "pass": 85,
- "result": "findings",
- "note": "Pass 85: changes were content/enchant tags, healer lists and rogue effects metadata refresh (dps 797.8->794.7 Subtlety, sim 2863aac2a74b); no new DPS picks out of rule. gear-20261127-1 still open (29 stale requests). Close calls unchanged.",
+ "last_pass_at": "2026-11-27T09:19:09Z",
+ "pass": 86,
+ "result": "quiet",
+ "note": "Pass 86 (branch phase0-regear, scoped to 046d0e4b8..313069ce): 29 re-geared requests and race rows wear their Phase 0 sets; gear-20261127-1 resolved. Ret trinket re-rank: picks unchanged. Close calls unchanged (Spellblade 1.75, Blackrock Slicer 1.77, Maelstrom 1.85).",
  "client_build": "1.60.1.71139",
  "checked_at": "2026-11-27T07:04:49Z"
 }

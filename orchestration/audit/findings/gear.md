@@ -4,6 +4,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
 ### gear-20261127-1: 29 DPS requests still wear pre-6bd2d60a2 gear, with Armaments of Battle items now marked out
 - severity: medium (the report sims gear the lists no longer pick; size not measured, items are trinkets, wrists, rings and heads)
 - affects: Balance (4 builds), Feral cat (2), Elemental (2), Enhancement (4), Smite, Affliction/Demonology/Destruction warlock (12), Fury 2H (3)
@@ -12,6 +14,4 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: `python3 tools/audit/gear/phase0_check.py` prints 29 "its equipment is not level60_phase0_<spec>" lines. Commit 6bd2d60a2 (Nov 26) re-ran the lists without the Armaments of Battle rewards (Talisman of Ascendance 22678, Verimonde's Last Resort 22688, Bracers of Subterfuge 22668) and rewrote the gear sets (`grep -c 22678 ui/warlock/gear_sets/level60_phase0_affliction*.json` is 0), but tools/dps_report/req/*.json were not regenerated; the race overrides (Gnome, Human, Tauren, Dwarf, Skyborne) flag the same items as out. Shared run builds sim the old gear. List dps vs shared run is ~1% lower for every spec incl. unchanged ones (fight difference, not flagged).
 - proposed fix: regenerate the report requests and race overrides from the new gear sets (regenerate-dps-report).
 - needs: orchestrator fix
-
-
-## Resolved
+- resolved: 2026-11-27, 313069ce (branch phase0-regear; requests and race rows regenerated in 48cc3aed and 313069ce). Evidence: `python3 tools/audit/gear/phase0_check.py` now prints no 'equipment is not level60_phase0_*' line and no `_hit` or non-Phase 0 gearSet line for any DPS request or race row (31 findings, all tank/healer builds or the three known DPS close calls). Re-sim at 5000 iterations: Smite 678.9 vs list 687.3, Destruction 866.4 vs list 874.8 (both about 1% low, the known fight difference).
