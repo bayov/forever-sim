@@ -72,3 +72,27 @@ func TestTalentTreeRules(t *testing.T) {
 	check("no Spirit Weapons when it's required", "-0550301100510022", false)
 	check("the preset when Spirit Weapons is required", preset, true)
 }
+
+// TestRogueFillerUtility checks the utility tie-break's order for a rogue's spare points
+// (standards 26, user ruling 2026-11-27): Endurance and Improved Sprint beat Lightning
+// Reflexes, which beats an empty point, and Deflection and Riposte score below zero.
+func TestRogueFillerUtility(t *testing.T) {
+	wd, _ := os.Getwd()
+	if err := os.Chdir("../.."); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chdir(wd)
+	trees, err := loadTalentTrees("rogue")
+	if err != nil {
+		t.Fatal(err)
+	}
+	u := func(s string) int { return parseBuild(trees, s).utility(trees) }
+	old := u("00530320201-3200330112012321551") // Combat Swords with Deflection 3 and Riposte 1
+	util := u("00530320201-3210032202012321551") // the same points in Endurance, Improved Sprint, Lightning Reflexes
+	if !(util > 0 && old < 0) {
+		t.Errorf("utility build %d, Deflection and Riposte build %d", util, old)
+	}
+	if u("-001") <= 0 || u("-00000002") <= u("-002") {
+		t.Errorf("Lightning Reflexes %d, Endurance 2 %d, Lightning Reflexes 2 %d", u("-001"), u("-00000002"), u("-002"))
+	}
+}

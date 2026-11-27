@@ -27,6 +27,12 @@ import (
 // instead of a talent that does nothing. Measuring against the best build seen so far
 // (and not the current one) stops a run of tie-breaks from giving up damage bit by bit.
 //
+// When mana doesn't break the tie either, utility does (standards 26, the rogue ruling of
+// 2026-11-27): points that add no DPS go to the class's utility talents in fillerUtility's
+// order, and never to the talents it lists as worthless (a rogue's Deflection and Riposte,
+// which only arm when the boss swings at the rogue). A move is kept when its DPS is within
+// the noise of the peak, its mana no worse than the noise, and its utility higher.
+//
 // The tree layout (rows, ranks, prerequisites, which talents the sim ignores) comes from
 // the UI's tree data under ui/core/talents/trees, the same file the talent picker draws.
 
@@ -40,6 +46,34 @@ type talent struct {
 	// The search keeps this talent at max rank. For talents the sim gives nothing for but
 	// a player takes anyway, like the threat cut of the shaman's Spirit Weapons.
 	required bool
+	// Its worth per point to the utility tie-break: positive for a utility talent, negative
+	// for one a spare point must never go to. Set from fillerUtility.
+	utility int
+}
+
+// fillerUtility is each class's utility talents for the points that add no DPS, by worth
+// per point (higher first), and the talents those points must never go to (negative).
+// Rogue (user ruling 2026-11-27): Endurance and Improved Sprint first, then Lightning
+// Reflexes and the like, never Deflection, Riposte or Setup (the boss never swings at a DPS rogue).
+var fillerUtility = map[string]map[string]int{
+	"rogue": {
+		"endurance": 3, "improvedSprint": 3,
+		"lightningReflexes": 2, "elusiveness": 2,
+		"camouflage": 1, "masterOfDeception": 1, "heightenedSenses": 1, "dirtyTricks": 1, "quickGetaway": 1,
+		// Riposte and Setup only arm when the rogue parries or dodges, and Deflection only adds parry.
+		"deflection": -100, "riposte": -100, "setup": -100,
+	},
+}
+
+// utility is the build's score for the utility tie-break.
+func (b build) utility(trees []talentTree) int {
+	u := 0
+	for ti, tree := range trees {
+		for i, t := range tree.talents {
+			u += b[ti][i] * t.utility
+		}
+	}
+	return u
 }
 
 type talentTree struct {
@@ -97,6 +131,7 @@ func loadTalentTrees(class string) ([]talentTree, error) {
 			tree.talents = append(tree.talents, talent{
 				tree: ti, index: i, name: x.FieldName, maxPoints: x.MaxPoints,
 				row: x.Location.Row, prereq: -1, notSimulated: x.NotSimulated,
+				utility: fillerUtility[class][x.FieldName],
 			})
 		}
 		for i, x := range t.Talents {
@@ -326,8 +361,11 @@ func (s *searcher) scoreBuilds(builds []build, current result, knobs Knobs) []ta
 // pickTalentMove is the candidate to move to, or nil. A DPS gain beyond the noise wins
 // first. Otherwise, when tieBreak is set, the most end mana among the candidates whose
 // DPS is within the noise of peak and whose mana beats the current build's by more than
-// the noise. A build the search has been at before is never picked again.
-func (s *searcher) pickTalentMove(cands []talentCandidate, current, peak result, tieBreak bool, visited map[string]bool) (*talentCandidate, bool) {
+// the noise; failing that, the most utility (fillerUtility) among the candidates whose DPS
+// is within the noise of peak, whose mana is within the noise of the current build's, and
+// whose utility beats the current build's. A build the search has been at before is never
+// picked again.
+func (s *searcher) pickTalentMove(trees []talentTree, cands []talentCandidate, current build, currentScore, peak result, tieBreak bool, visited map[string]bool) (*talentCandidate, bool) {
 	var fresh []talentCandidate
 	for _, c := range cands {
 		if !visited[c.b.String()] {
@@ -344,12 +382,27 @@ func (s *searcher) pickTalentMove(cands []talentCandidate, current, peak result,
 	var tie *talentCandidate
 	for i, c := range cands {
 		dpsNoise := gainNoise(peak, c.score)
-		manaGain := c.score.mana - current.mana
-		manaNoise := math.Hypot(c.score.manaStderr, current.manaStderr)
+		manaGain := c.score.mana - currentScore.mana
+		manaNoise := math.Hypot(c.score.manaStderr, currentScore.manaStderr)
 		if c.score.dps < peak.dps-s.confidence*dpsNoise || manaGain <= s.confidence*manaNoise {
 			continue
 		}
 		if tie == nil || c.score.mana > tie.score.mana {
+			tie = &cands[i]
+		}
+	}
+	if tie != nil {
+		return tie, true
+	}
+	cu := current.utility(trees)
+	for i, c := range cands {
+		dpsNoise := gainNoise(peak, c.score)
+		manaNoise := math.Hypot(c.score.manaStderr, currentScore.manaStderr)
+		u := c.b.utility(trees)
+		if c.score.dps < peak.dps-s.confidence*dpsNoise || c.score.mana < currentScore.mana-s.confidence*manaNoise || u <= cu {
+			continue
+		}
+		if tie == nil || u > tie.b.utility(trees) || (u == tie.b.utility(trees) && c.score.dps > tie.score.dps) {
 			tie = &cands[i]
 		}
 	}
@@ -378,7 +431,7 @@ func (s *searcher) searchTalents(trees []talentTree, start string, knobs Knobs) 
 		for _, c := range cands[:min(8, len(cands))] {
 			fmt.Printf("  %s: %s (%+.1f, noise %.1f)\n", best.diff(trees, c.b), c.score, c.gain, c.noise)
 		}
-		next, tieBreak := s.pickTalentMove(cands, bestScore, peak, !canRefine, visited)
+		next, tieBreak := s.pickTalentMove(trees, cands, best, bestScore, peak, !canRefine, visited)
 
 		// Nothing stands out of the noise at search iterations. Before we stop, the
 		// current build, the peak and the best few moves by DPS and by mana are scored
@@ -392,6 +445,15 @@ func (s *searcher) searchTalents(trees []talentTree, start string, knobs Knobs) 
 			sort.Slice(byMana, func(i, j int) bool { return byMana[i].score.mana > byMana[j].score.mana })
 			for _, c := range byMana[:min(8, len(byMana))] {
 				short[c.b.String()] = c.b
+			}
+			byUtility := append([]talentCandidate(nil), cands...)
+			sort.SliceStable(byUtility, func(i, j int) bool {
+				return byUtility[i].b.utility(trees) > byUtility[j].b.utility(trees)
+			})
+			for _, c := range byUtility[:min(8, len(byUtility))] {
+				if c.b.utility(trees) > best.utility(trees) {
+					short[c.b.String()] = c.b
+				}
 			}
 			var builds []build
 			for _, b := range short {
@@ -411,7 +473,7 @@ func (s *searcher) searchTalents(trees []talentTree, start string, knobs Knobs) 
 			for _, c := range cands {
 				fmt.Printf("  %s: %s (%+.1f, noise %.1f)\n", best.diff(trees, c.b), c.score, c.gain, c.noise)
 			}
-			next, tieBreak = s.pickTalentMove(cands, bestScore, peak, true, visited)
+			next, tieBreak = s.pickTalentMove(trees, cands, best, bestScore, peak, true, visited)
 		}
 
 		if next == nil {
@@ -420,7 +482,7 @@ func (s *searcher) searchTalents(trees []talentTree, start string, knobs Knobs) 
 		}
 		how := ""
 		if tieBreak {
-			how = " (mana tie-break)"
+			how = " (mana or utility tie-break)"
 		}
 		fmt.Printf("round %d%s: %s, now %s %s\n", round, how, best.diff(trees, next.b), next.b, next.score)
 		best, bestScore = next.b, next.score

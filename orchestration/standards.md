@@ -195,6 +195,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Warlock Demonology: Suppression 5 (the other warlock builds already take it).
    - Mage: the school threat talents its builds already take (Arcane Subtlety, Burning Soul, Frost Channeling).
    Not required (considered the same day): Elemental Natural Grace, Smite Silent Resolve, Ret Shock Instrument of Law, rogue Improved Sprint / Endurance / Elusiveness, mage Ice Block, Enhancement Improved Ghost Wolf.
+   - Rogue filler points (user ruling 2026-11-27): points that add no DPS go to utility, Endurance (Sprint and Evasion cooldown) and Improved Sprint first, then Lightning Reflexes (dodge) and the like (Elusiveness, Camouflage, Heightened Senses), never Deflection or Riposte, nor Setup. A DPS rogue is never swung at (the raid damage hits are Fire spells), so Riposte and Setup never arm and Deflection only adds parry. A spare point takes a DPS talent only when the swap sims above the noise. The talent search keeps to it: when a move gains no DPS beyond the noise (nor mana), it moves points to the higher utility in `fillerUtility` (`tools/rotopt/talents.go`), which scores Deflection, Riposte and Setup below zero, so a later search won't put them back.
 
 ## Mechanics where wowsims/forever differs
 
