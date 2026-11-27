@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
+  "master": "4a6dad5c2f1ede0eddeba5b0ce6b45aa4716f689"
  },
  "last_pass_at": "2026-11-27T07:04:16Z",
  "pass": 32,
@@ -8,5 +8,5 @@
  "note": "All 63 rows identical to the ref (refreshed by the phase0-cleanup branch pass at this code). Non-priest moves vs 849024cbb are Phase 0 gear (druid tank -0.05..-0.11, Chromaggus 0.904); intended, no finding.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T12:54:16Z"
+ "checked_at": "2026-11-27T18:49:22Z"
 }

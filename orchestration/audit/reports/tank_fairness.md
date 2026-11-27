@@ -1,12 +1,11 @@
-# tank_fairness pass 37
+# tank_fairness pass 38
 
-Master f4c45c3f9 (last: 5ab589d85). Due: 1 watched file, `orchestration/standards.md`. Quiet, no sims run.
-- Two additions (447e6e8f1): the rogue filler-points ruling under the threat-talent rule (no tank reads it), and in
-  standards 40 the user's ruling that Shield Slam keeps 625 to 685 plus 2 x block value (wowsims/forever's EV-0004
-  fit, already in `sim/warrior/shield_slam.go` since pass 33). It settles a value the warrior presets already use, so
-  no number moves; it is now a settled ruling, not an open question.
-- No change under `tools/tankbench`, `tools/tankscore`, `tools/encounters`, the four tank UIs, the four class
-  packages or the watched `sim/core` files (the rest of the range is rogue presets and the DPS Report).
+Master 4a6dad5c2 (last: f4c45c3f9). Due: 2 watched files, `ui/tank_warrior/presets.ts` and
+`ui/tank_warrior/apls/leveling_plan_prot.json`. Quiet, no sims run.
+- dc7eb8c8f: the warrior Leveling mode's Prot plan now plays a 5/15/31 talent order without Defiance by 20; the
+  presets.ts change is that plan's comment and the Leveling: Prot build tooltip (96.4h, 26 deaths). Leveling only: no
+  level-60 tank preset, gear set, talent string, APL or `tools/tankbench/req/*.json` request changes.
+- No change under `tools/tankbench`, `tools/tankscore`, `tools/encounters`, `sim/` or the other tank UIs in the range.
 - So the pass-35 tables below and ref/tank_fairness/summary.tsv still hold. All open findings stay open.
 
 ## Pass 35 (master f9fa79917), still current

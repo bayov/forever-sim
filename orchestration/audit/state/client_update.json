@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
+  "master": "4a6dad5c2f1ede0eddeba5b0ce6b45aa4716f689"
  },
  "last_pass_at": "2026-11-26T00:53:46Z",
  "client_build": "1.60.1.71139",
  "result": "findings",
  "note": "71139: Nov 23/24 fixes in client; Nov 25 hotfixes (Balance, pet and hawk crit) server side. New 20261126-1/-2 (medium); 20261124-1 resolved.",
  "pass": 18,
- "checked_at": "2026-11-27T12:54:16Z"
+ "checked_at": "2026-11-27T18:49:22Z"
 }

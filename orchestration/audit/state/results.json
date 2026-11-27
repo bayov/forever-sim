@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
+  "master": "4a6dad5c2f1ede0eddeba5b0ce6b45aa4716f689"
  },
- "last_pass_at": "2026-11-27T12:00:00Z",
- "pass": 114,
+ "last_pass_at": "2026-11-27T13:00:00Z",
+ "pass": 115,
  "result": "quiet",
- "note": "pass 114: builds.json and metas match the shared 20k seed-1 run on 68 of 68 (max 1.5); drift equals reference, unread none; five open metas findings resolved.",
+ "note": "pass 115: only ui/tank_warrior/presets.ts changed (leveling plan comment and tooltip text); no sim, request, mksettings or database change; shared run unchanged (max 1.5 vs published).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T12:54:16Z",
+ "checked_at": "2026-11-27T18:49:22Z",
  "baseline": "0facd9428"
 }

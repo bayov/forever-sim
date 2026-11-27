@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
+  "master": "4a6dad5c2f1ede0eddeba5b0ce6b45aa4716f689"
  },
- "last_pass_at": "2026-11-27T12:49:13Z",
- "pass": 37,
+ "last_pass_at": "2026-11-27T18:49:09Z",
+ "pass": 38,
  "result": "quiet",
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
- "note": "Pass 37, master f4c45c3f9. Only standards.md changed: rogue filler-points ruling and standards 40 Shield Slam 2 x block value ruling (already in code). No sims; pass-35 baseline stands.",
- "checked_at": "2026-11-27T12:54:16Z"
+ "note": "Pass 38, master 4a6dad5c2. Only the warrior leveling Prot plan (talent order without Defiance) and its presets.ts comment/tooltip changed; leveling only. No sims; pass-35 baseline stands.",
+ "checked_at": "2026-11-27T18:49:22Z"
 }

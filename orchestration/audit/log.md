@@ -716,3 +716,7 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-27 12:54 | healer_fairness | pass 36 | master f4c45c3f9f | quiet | Baseline of 63 cells still holds.
 2026-11-27 12:54 | tank_gear | pass 22 | master f4c45c3f9f | quiet | Only standards.md changed.
 2026-11-27 12:54 | tank_fairness | pass 37 | master f4c45c3f9f | quiet | Only standards.md changed; no tank number moves.
+2026-11-27 18:49 | results | pass 115 | master 4a6dad5c2f | quiet | only a Prot leveling comment/tooltip changed; shared sims unchanged
+2026-11-27 18:49 | consumables | pass 118 | master 4a6dad5c2f | quiet | no consumable/buff changes
+2026-11-27 18:49 | tank_rotations | pass 36 | master 4a6dad5c2f | quiet | leveling-only change, no tankbench impact
+2026-11-27 18:49 | tank_fairness | pass 38 | master 4a6dad5c2f | quiet | leveling-only change, tables hold

@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "f4c45c3f9f4c92e8355cfdacf767ac905a077ffe"
+  "master": "4a6dad5c2f1ede0eddeba5b0ce6b45aa4716f689"
  },
  "last_pass_at": "2026-11-27T12:50:00Z",
  "pass": 113,
  "result": "quiet",
  "note": "Quiet. Only shared-code change 8d45b49e6, a comment fix on Talisman of Ascendance (6 casts are the tooltip's; no behavior change), noted under open mechanics-20261127-1. Client 71139 still newest (gate). No Blizzard posts past Nov 25 23:25 (Kaivax, Aggrend, Gnedi, Linxy, Brenoch searched and threads 2403040 / 2360696 checked 2026-11-27 12:50).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-27T12:54:16Z",
+ "checked_at": "2026-11-27T18:49:22Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
