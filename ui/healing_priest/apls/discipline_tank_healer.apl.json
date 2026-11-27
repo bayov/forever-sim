@@ -218,6 +218,17 @@
                 "cmp": {
                   "op": "OpGe",
                   "lhs": {
+                    "currentManaPercent": {}
+                  },
+                  "rhs": {
+                    "remainingTimePercent": {}
+                  }
+                }
+              },
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
                     "healthMissing": {
                       "sourceUnit": {
                         "type": "Tank"
@@ -250,7 +261,7 @@
           }
         }
       },
-      "notes": "Flash Heal first while mana is over 85%: more healing a second, if less a mana."
+      "notes": "Flash Heal first while mana is over 85% and keeps pace with the fight (mana % at least the fight's remaining %): more healing a second, if less a mana."
     },
     {
       "action": {

@@ -96,3 +96,20 @@ Score 131.7 vs synthetic 135.2: -3.5 points (-2.6%). The whole gap is in the tan
 
 - Virtuous Crown availability is doubtful. The open fallbacks cost about 0.2.
 - The doubtful Mooncloth Shoulders, Royal Seal of Alexis and Faintly Glowing Orb are top-5 only.
+
+## Cleanup (2026-11-27): list vs bench, and Chromaggus
+
+**The list sat 1.4% over the bench** (133.59 against 131.70). Not the scoring: on the same set rotopt's reference
+carries are the bench's to the third decimal on all 14 slots. The list was ranked at 652488b, before the merge that
+gave the bench's Frost mage fillers (tools/dps_report/req/mage__frost.json) a new ring and wand (68fe2ee9, the DPS
+re-rank). The raid role fails when anyone dies, fillers too, so every raid carry fell: the Holy raid mean 1.479 at
+652488b, 1.4943 against 1.440 on three bosses with the old filler on today's code, and 1.440 today. The tank role was
+the same to the third decimal. The other healer lists were ranked after that merge and sit 0.1 to 0.4% from the
+bench. Fix: `RANK_ONLY=1 SLOTS=ranged` re-scored the list on today's bench (picks unchanged, Lunar Wand of the
+Channeler still within noise of the top): 133.59 -> 132.29 with the paced rotation below. phase0_check.py now
+flags a healer list more than 1% off the Healing pack.
+
+**Chromaggus** (the tank preset ends with 412 mana): the fight, not the gear or the bench. See docs/healing_priest.md,
+Mana on Chromaggus. The Flash Heal first lines now also need mana % at least the fight's remaining %: tank mean
+1.1936 -> 1.1996 (seed 202, 2000 iterations: 1.1951 -> 1.1990), Chromaggus 0.878 -> 0.912. Going dry there is real
+at Phase 0 gear: one priest can't keep the main tank up for 115 s at the logs' damage.
