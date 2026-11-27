@@ -11,6 +11,7 @@
 - update 2026-11-25, master 85691655a: unchanged within noise (Chromaggus 0.914, 504 mana, OOM 114 s, other deaths 11.6%). Tried paired, 1,000 it, all 7 files plus Golemagg/Ragnaros at 300 s: Greater Heal 5 (line 7) only at 30% mana or more: Chromaggus 0.912, OOM 114 s, Golemagg 300 0.932 (same); at 50%: Chromaggus 0.920 (+0.006), OOM 114 s, others same; Renew (line 3) only at 30% mana: Chromaggus 0.905, no OOM (116 s), Golemagg 300 0.911 (-0.021); Renew at 50%: Chromaggus 0.902, Golemagg 300 0.895. None stops the OOM without losing carry; the cheaper pattern needs more than a one-line gate.
 - needs: worker fix
 - pass 29 (2026-11-26, phase0-tankheal 3e9748641): worse on the Phase 0 set: out of mana at 106 s of 115 (was 114), carry 0.878 (was 0.914), 412 mana left; same at -dur 180 and 300 (105 / 107 s). The Phase 0 set ends about 1500 mana lower on every boss (paladin_holy notes say the same of the paladin).
+- branch pass (2026-11-27, phase0-cleanup 782ad6089): ff87e66b's paced Flash Heal (mana % at least the fight's remaining %) helps but doesn't fix it: Chromaggus 0.878 -> 0.912, out of mana at 110 s of 115 (was 106), tank deaths 31.6% -> 21.0%, other deaths 14.3%. Still open.
 
 ### healer_rotations-20261124-1: Raid-role healer bench moved with the DPS report's Frost mage preset (28 raid rows, 16 by more than 0.02 carry, Holy paladin raid Golemagg +0.096), because healbench's filler is `tools/dps_report/req/mage__frost.json`
 - severity: medium (carry only; signs mixed, mean about +0.02; no healer rotation changed)

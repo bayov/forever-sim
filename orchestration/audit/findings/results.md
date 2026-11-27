@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### results-20261127-1: The 13 warlock metas keep their pre-fix published DPS after the Talisman of Ascendance re-sim (builds.json is current)
+- severity: low (the dashboard is right; the next shared run's compare_runs.py --published will flag all 13 by 1.4 to 5.6)
+- affects: tools/dps_report/req/warlock__*.meta.json (13)
+- found: 2026-11-27, phase0-cleanup 782ad6089 (branch pass, not master)
+- evidence: run_reqs.py at HEAD, 20k, seed 1, 180 s: every Talisman wearer is within 0.7 of builds.json (warlock__affliction-duty-curse 948.15 vs 948.1, demonology 874.56 vs 873.9, destruction-duty-curse 856.14 vs 856.8; the same 180 +/- 20 s spread as the unchanged rows), but meta.published.dps still holds the 2026-11-26 numbers (affliction-duty-curse 953.4, -duty-recklessness 948.24, demonology-duty-recklessness 863.52). bc5f5d61 republished the raw packs and builds.json and left tools/dps_report/req untouched.
+- proposed fix: refresh meta.published (dps and source) of the 13 warlock requests from the bc5f5d61 run, as 31d2f59e did for the round.
+- needs: orchestrator fix
+
 ### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
 - severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)
 - affects: druid feral-cat (+2), paladin level_60 (+3), mage arcane, rogue (6), shaman (6), warlock destruction_fire (3), warrior arms/fury (builds.json only)

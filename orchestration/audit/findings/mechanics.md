@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261127-1: Talisman of Ascendance's use has no charges in the client (ProcCharges 0 on 28200, Forever 71139 and Classic 1.15.7.61186); the sim ends it at the 6th cast on the tooltip alone, and its comment cites a 6-charge count the tables don't hold
+- severity: high (+13 to +22 DPS, 1.4 to 2.7%, on all 19 wearers if the use runs its 20 s; size of the question, not yet a known error)
+- affects: Affliction, Demonology, Destruction, Destruction Fire warlock (13 builds), Balance (4), Elemental (2): every request wearing 22678
+- found: 2026-11-27, phase0-cleanup 782ad6089 (branch pass, not master)
+- evidence: SpellAuraOptions row 136544 (SpellID 28200): ProcChance 100, ProcCharges 0, ProcTypeMask_0 87376, in 1.60.1.71139 and in 1.15.7.61186 (tier 1 / tier 3); Clearcasting 16246 and 12536 on the same mask carry ProcCharges 1, so the column reads right. ItemEffect 104401 (item 22678): Charges 0, 60 s cooldown, 20 s category cooldown (the sim's 1 min / 20 s shared match). 28204 has duration -1. Only the tooltip (Spell 28200 Description) says "Expires after 6 damage or healing spells". The sim: sim/common/item_effects.go:4794 deactivates at the 6th counted cast; the comment at :4758 says "a proc trigger with 6 charges" from the 1.15.7 tables, which they don't show. The branch's every-cast rule (:4790, SpellFlagAPL and not white melee) matches mask 87376 and its test passes. Paired, 20k, seed 1, HEAD 782ad6089 vs the same with the 6th-cast end removed ($AUDIT_WORK/mechanics/talisman_no_charges.patch): affliction 962.8 -> 976.2, affliction-duty-curse 948.2 -> 965.6, demonology 874.6 -> 890.6, destruction 866.6 -> 886.6, destruction_fire-duty-recklessness 810.8 -> 833.2, druid__balance 801.8 -> 820.8, shaman__elemental-level60 856.0 -> 876.1.
+- proposed fix: settle from a combat log of the trinket (does Ascendance fade at the 6th cast or at 20 s?). If no log, keep the tooltip's 6 casts but correct the comment at :4758 (the 6 comes from the tooltip, the tables have no charges). Moot for the report while gear-20261127-1 / fairness-20261127-1 stand: the lists already took 22678 out (Armaments of Battle reward), but the 19 requests still wear it.
+- needs: user ruling
+
 ### mechanics-20261126-5: Revelation still rolls once per target of an area spell and lets a channel keep its charge to the end; Blizzard's November 25 hotfixes changed both
 - severity: medium (Arcane mage -5.5 DPS, -0.66%; single-target presets that don't channel don't move)
 - affects: shared enchant (Weapon - Revelation 1248805): Arcane mage (Arcane Missiles), any multi-target preset with an area spell; Shadow priest and Balance presets unchanged in the probe

@@ -1,29 +1,21 @@
-# Mechanics pass 110 (2026-11-26)
+# mechanics: branch pass, phase0-cleanup 782ad6089 (2026-11-27)
 
-- Master: f9fa79917 (last audited 2af970d74). Client 1.60.1.71139 (unchanged; probe of 300 builds found none newer).
-- Result: findings (1 medium).
+Scoped by hand to the branch's one mechanic change (README "Running a pass by hand"); state/mechanics.json not advanced
+(it tracks master). Full pass still due on master.
 
-## Get current
+## Checked
+- 413f06cb, Talisman of Ascendance (22678, use 28200): every non-auto cast of ours spends a charge
+  (`sim/common/item_effects.go:4790`, SpellFlagAPL and not white melee). Matches ProcTypeMask 87376 (melee and ranged
+  class spells, ranged autos, helpful and harmful none/magic spells, no melee autos) in client 1.60.1.71139 and
+  1.15.7.61186. The use's own spell has SpellFlagNoOnCastComplete, so it doesn't eat a charge. Cooldown 60 s and the
+  20 s shared trinket category match ItemEffect 104401. `TestTalismanOfAscendanceCountsEveryCast` passes.
+- Left as is: potions, runes and racials carry SpellFlagNoOnCastComplete and so spend no charge. The mask's "helpful
+  spell, no damage class" would count item spells in game. Rarely inside the 20 s, unmeasured, not filed.
 
-- Blizzard: blue tracker and the hotfix thread (2403040, last post 16, 2026-11-25 23:25, not edited since) have nothing newer than the last pass read. Development notes thread 2360696 unchanged (8 posts, 2026-11-04).
-- Daily update f9fa79917 (TASKS.md): build 71139, Revelation per wave, Chain Lightning Clearcasting, Blackhand's Breadth and Sayge notes. Blackhand's Breadth (mechanics-20261125-2) and Sayge (mechanics-20261124-1) are already open here; Chain Lightning Clearcasting is a shaman class item. Revelation was not filed anywhere: re-checked against the sim, now mechanics-20261126-5.
+## New finding
+- mechanics-20261127-1 (high, needs user ruling): 28200 has ProcCharges 0 in both clients. The 6-cast end rests on the
+  tooltip, and the code comment (:4758) misquotes the tables. Running the full 20 s at 5 stacks is +13 to +22 DPS on the
+  19 wearers (paired 20k).
 
-## Repo since 2af970d74
-
-| Commit | Change | Check | Verdict |
-|---|---|---|---|
-| 7de8438a6 | Water Shield 4 globes with Totem of Sustaining (23200) | 71139 spell 28856: effect 6, aura 107 (flat modifier) misc 4 (charges) bp 1, mask word 1 0x20 (Water Shield); tier 1 | Verified |
-| a589203b7 | Lacerate hit 10% weapon x min(stacks after cast, 5), was x stacks before | wowsims/forever EV-0040 in-game test (15 hits, within 0.5% of the 1:2:3:4:5 model); tooltip says "per existing application" | Log-sourced, accepted; bear only, no DPS preset |
-| a589203b7 | Rest of the Phase 0 tags merge | gate lists only bear_attacks.go and the two shaman files as changed sim code | No change |
-
-## Revelation (mechanics-20261126-5)
-
-Probe: the next hit of the channel holding the charge spends it ($AUDIT_WORK/mechanics/revelation_channel.patch). 20,000 iterations, seed 1, paired, tools/dps_report/req requests.
-
-| Build | Master | Probe | Delta |
-|---|---|---|---|
-| mage__arcane | 833.89 | 828.42 | -5.47 (-0.66%) |
-| priest__shadow | 861.81 | 861.81 | 0 |
-| druid__balance | 801.90 | 801.90 | 0 |
-
-The per-wave half (area spells roll once a wave) moves no single-target preset; not measured.
+## Context
+- The wearers' requests still carry 22678 although the Phase 0 lists took it out (gear-20261127-1, fairness-20261127-1, open).

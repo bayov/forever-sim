@@ -1,13 +1,13 @@
-# healer_gear pass 19, master 34994816e7 (2026-11-27)
+# healer_gear: branch pass, phase0-cleanup 782ad6089 (2026-11-27)
 
-Changed since f9fa79917b: phase0_specs.json (bear start only, tank), Holy paladin set, Resto shaman Horde and Alliance sets, all from 6bd2d60a2 (Armaments of Battle rewards out, they are not in Forever).
+Scoped by hand to the priest lists the branch re-scored (bis.json only; gear sets unchanged). State not advanced.
 
-| spec | list | change | request wears list |
-|---|---|---|---|
-| paladin_holy | Human Alliance, score 122.89 (was 123.91) | 3 slots (22689->14140 with enchant 1503, 22678->11832, 11832->272438) | no, both requests on old items |
-| shaman_restoration | SkyborneWindshaper Horde, 127.82 | 22681 -> 16058 | no, both requests on old item |
-| shaman_restoration_alliance | derived | same plus 20717 -> 18527 | n/a; differs from Horde set only in slots 3 and 6 (faction rewards) |
-| priest_holy, priest_discipline | unchanged | none | yes |
-| druid_restoration | no list yet | expected | n/a |
+| spec | list score | faction | bis picks vs gear set | requests |
+|---|---|---|---|---|
+| priest_holy | 133.59 -> 132.29 | Human Alliance | identical (17 slots) | priest_holy, priest_holy_raid wear it |
+| priest_discipline | 122.23 -> 123.67 | Human Alliance | identical (2H staff 812, no offhand) | priest_discipline wears it |
 
-Finding healer_gear-20271127-1 opened (requests stale). -20261126-1 unchanged (not re-measured; no sims this pass). Item names of the new picks not looked up; not checked for effects.
+- `phase0_check.py`: no flags on either priest healer row.
+- The score moves come from the paced Flash Heal APLs. No pick in the sets changed.
+- No new findings. healer_gear-20271127-1 (paladin and shaman requests) looks fixed on master by d74a5326; the master pass
+  will move it.

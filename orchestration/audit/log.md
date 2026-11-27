@@ -692,3 +692,7 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-27 01:05 | tank_rotations | pass 35 | master 34994816e | quiet | Only 10455 wearers moved (bears -1.1% threat).
 2026-11-27 01:05 | tank_gear | pass 21 | master 34994816e | quiet | Bear wrist swap fine; noise flags stay open.
 2026-11-27 01:05 | tank_fairness | pass 36 | master 34994816e | quiet | Only alternative rows removed from BiS lists.
+2026-11-27 06:31 | mechanics | branch pass | phase0-cleanup 782ad6089 | 1 new finding | Every-cast Talisman rule matches mask 87376; but 28200 has no charges in the client, so the 6-cast end is tooltip-only (+13 to +22 DPS).
+2026-11-27 06:31 | results | branch pass | phase0-cleanup 782ad6089 | 1 new finding | 19 Talisman wearers match builds.json; warlock metas keep the pre-fix published DPS.
+2026-11-27 06:31 | healer_rotations | branch pass | phase0-cleanup 782ad6089 | quiet | Paced Flash Heal: priest rows flat to +0.034 (Holy Chromaggus); no length loses.
+2026-11-27 06:31 | healer_gear | branch pass | phase0-cleanup 782ad6089 | quiet | Priest lists re-scored, sets and requests unchanged and consistent.
