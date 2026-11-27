@@ -8472,7 +8472,7 @@
     {
      "title": "Presets no longer wear Armaments of Battle rewards",
      "kind": "gear",
-     "note": "Talisman of Ascendance, Verimonde's Last Resort and Bracers of Subterfuge come from Armaments of Battle, which can't be had before the raids, so the Balance, Feral, Elemental, Smite, Affliction, Demonology, Destruction and Fury two-hand presets wear their next-best items instead, and Enhancement now wears Darkmoon Card: Maelstrom.",
+     "note": "Talisman of Ascendance, Verimonde's Last Resort and Bracers of Subterfuge come from Armaments of Battle, which can't be had before the raids, so the Balance, Feral, Elemental, Smite, Affliction, Demonology, Destruction and Fury two-hand presets wear their next-best items instead, and Enhancement now wears Darkmoon Card: Maelstrom. Affliction loses about 17 DPS (962 to 945), Demonology 7 (874 to 867), Balance 6 (802 to 796), Feral and Fury two-hand 3; Enhancement gains about 6 (966 to 972) and Elemental 2 (856 to 858); Destruction and Smite barely move.",
      "builds": [
       "druid__balance",
       "druid__balance-duty-ff",

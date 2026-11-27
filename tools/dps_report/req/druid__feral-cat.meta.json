@@ -15,8 +15,8 @@
   "gearSet": "level60_phase0_feral",
   "apl": "level60",
   "published": {
-    "dps": 1058.89,
-    "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Darkmoon Card: Maelstrom back for Heart of Wyrmthalak, over the 30g line)"
+    "dps": 1054.0,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-27), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-gear (no Armaments of Battle rewards)"
   },
   "verify": {
     "dps": 1054.05,

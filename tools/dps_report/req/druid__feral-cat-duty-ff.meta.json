@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_feral",
   "apl": "level60_ff",
   "published": {
-    "dps": 1053.69,
-    "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Darkmoon Card: Maelstrom back for Heart of Wyrmthalak, over the 30g line)"
+    "dps": 1048.9,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-27), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-gear (no Armaments of Battle rewards)"
   },
   "verify": {
-    "dps": 1053.69,
+    "dps": 1048.89,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-27, after the Phase 0 re-gear; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "The cat build, keeping Faerie Fire on the boss for the raid. Forever has no Faerie Fire (Feral): the cat casts the caster Faerie Fire, free in Cat Form. Its own attacks gain from the armor cut, so it costs only a few GCDs.",
   "keyTalents": [

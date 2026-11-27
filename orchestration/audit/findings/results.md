@@ -4,15 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261127-1: The 13 warlock metas keep their pre-fix published DPS after the Talisman of Ascendance re-sim (builds.json is current)
-- severity: low (the dashboard is right; the next shared run's compare_runs.py --published will flag all 13 by 1.4 to 5.6)
-- affects: tools/dps_report/req/warlock__*.meta.json (13)
-- found: 2026-11-27, phase0-cleanup 782ad6089 (branch pass, not master)
-- evidence: run_reqs.py at HEAD, 20k, seed 1, 180 s: every Talisman wearer is within 0.7 of builds.json (warlock__affliction-duty-curse 948.15 vs 948.1, demonology 874.56 vs 873.9, destruction-duty-curse 856.14 vs 856.8; the same 180 +/- 20 s spread as the unchanged rows), but meta.published.dps still holds the 2026-11-26 numbers (affliction-duty-curse 953.4, -duty-recklessness 948.24, demonology-duty-recklessness 863.52). bc5f5d61 republished the raw packs and builds.json and left tools/dps_report/req untouched.
-- proposed fix: refresh meta.published (dps and source) of the 13 warlock requests from the bc5f5d61 run, as 31d2f59e did for the round.
-- needs: orchestrator fix
-- update 2026-11-27, master 5ab589d858: builds.json (bc5f5d61c) matches the shared run on 68 of 68 (max 1.45). Metas unchanged: 13 warlock metas still off 1.2 to 5.6 (affliction-duty-recklessness 948.2 vs 942.7, -duty-curse 953.4 vs 948.1, demonology-duty-recklessness 863.5 vs 859.0); the 41 of 68 metas off by more than 0.5 are all within 5.6. Still waiting on the meta refresh.
-
 ### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
 - severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)
 - affects: druid feral-cat (+2), paladin level_60 (+3), mage arcane, rogue (6), shaman (6), warlock destruction_fire (3), warrior arms/fury (builds.json only)
@@ -53,6 +44,36 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 
 ## Resolved
+
+### results-20261127-3: the 29-build Changes line ("Presets no longer wear Armaments of Battle rewards") names no DPS moves
+- severity: low
+- affects: ui/dps_report/data/changes.json (entry 2026-11-27-phase0-cleanup, third line)
+- found: 2026-11-27, branch phase0-regear 313069ce
+- evidence: the line lists all 29 builds and the three items but no numbers, while the 2026-11-26 lines give DPS per change. Measured builds.json 046d0e4b8 -> 313069ce (20k, 180 s; the run reproduces it within 1.3): Affliction 962.5 -> 945.1 (-17.4, -1.8%), Demonology -6.8, Balance -6.2, Balance Wrath -2.5, Feral -3.5, Fury 2H -2.9, Affliction Shadow Bolt -7.2, Destruction -0.2, Destruction (Fire) +0.5, Smite -0.1, Elemental +1.9, Enhancement +5.9 to +6.3 (Darkmoon Card: Maelstrom). The first line's "1.6 to 5.6" is the charge rule alone, so a reader sees Affliction lose 17 with no explanation. Also the line's list of builds includes Destruction and Destruction (Fire), which did not move.
+- proposed fix: add the per-spec moves to the line's note (the list above).
+- needs: orchestrator fix
+- fixed: 2026-11-27, branch phase0-regear: the Changes line now names the moves (Affliction 962 to 945, Demonology 874 to 867, Balance 802 to 796, Feral and Fury 2H -3, Enhancement 966 to 972, Elemental 856 to 858).
+
+### results-20261127-2: 13 duty metas carry the pre-regear verify block (2026-11-25), up to 15.8 DPS off the request
+- severity: low (builds.json is right; verify.py/runreq would flag them)
+- affects: tools/dps_report/req/*-duty-*.meta.json of the 29 (druid balance, balance-wrath, feral-cat duty-ff; warlock affliction/demonology/destruction/destruction_fire duty-curse and -recklessness; fury_2h duty-battle-shout and -sunder)
+- found: 2026-11-27, branch phase0-regear 313069ce
+- evidence: run_reqs at 313069ce, 20k, seed 1 vs meta.verify.dps: affliction-duty-curse 935.6 vs 950.97, -duty-recklessness 929.8 vs 945.57, demonology duty -9.3/-9.5, destruction_fire duty -4.8/-4.6, balance-duty-ff -4.9, feral duty-ff -4.8, fury_2h duty -2.4/-2.9 (verify notes dated 2026-11-25). The 16 non-duty requests were re-verified on 2026-11-27 and match within 1.0 (Balance 0.9, Destruction (Fire) 0.7, Affliction Shadow Bolt 0.7).
+- proposed fix: re-run verify.py on the 13 duty requests and write verify and published.
+- needs: orchestrator fix
+- fixed: 2026-11-27, branch phase0-regear: verify.py re-run on the 13 duty requests (20k, seed 1); each verify now within 0.1 of builds.json, written with published.
+
+### results-20261127-1: The 13 warlock metas keep their pre-fix published DPS after the Talisman of Ascendance re-sim (builds.json is current)
+- severity: low (the dashboard is right; the next shared run's compare_runs.py --published will flag all 13 by 1.4 to 5.6)
+- affects: tools/dps_report/req/warlock__*.meta.json (13)
+- found: 2026-11-27, phase0-cleanup 782ad6089 (branch pass, not master)
+- evidence: run_reqs.py at HEAD, 20k, seed 1, 180 s: every Talisman wearer is within 0.7 of builds.json (warlock__affliction-duty-curse 948.15 vs 948.1, demonology 874.56 vs 873.9, destruction-duty-curse 856.14 vs 856.8; the same 180 +/- 20 s spread as the unchanged rows), but meta.published.dps still holds the 2026-11-26 numbers (affliction-duty-curse 953.4, -duty-recklessness 948.24, demonology-duty-recklessness 863.52). bc5f5d61 republished the raw packs and builds.json and left tools/dps_report/req untouched.
+- proposed fix: refresh meta.published (dps and source) of the 13 warlock requests from the bc5f5d61 run, as 31d2f59e did for the round.
+- needs: orchestrator fix
+- update 2026-11-27, master 5ab589d858: builds.json (bc5f5d61c) matches the shared run on 68 of 68 (max 1.45). Metas unchanged: 13 warlock metas still off 1.2 to 5.6 (affliction-duty-recklessness 948.2 vs 942.7, -duty-curse 953.4 vs 948.1, demonology-duty-recklessness 863.5 vs 859.0); the 41 of 68 metas off by more than 0.5 are all within 5.6. Still waiting on the meta refresh.
+- update 2026-11-27, phase0-regear 313069ce: scope is now 29 builds, not 13. builds.json (re-simmed in 313069ce, provenance ee28c064, by sim, 20k) matches my 20k seed-1 run on 29 of 29 (max 1.3, Fury 2H duty-sunder 957.0 vs 958.3); the metas' published.dps still hold the 2026-11-26 numbers: 27 of 29 off by more than 0.5 (max 18.4: Affliction 962.5 vs 945.5, -duty-recklessness 948.2 vs 929.8, Demonology -10.0, Balance +5.3, Enhancement x4 -4.8 to -6.0, Fury 2H -2.4). Affliction, Demonology and Destruction (Fire) 'published.source' still names 2026-11-26. Needs meta refresh for all 29.
+- fixed: 2026-11-27, branch phase0-regear: meta.published of all 29 re-simmed builds (warlocks included) set from builds.json (the 2026-11-27 main run).
+
 
 ### results-20261126-1: Survival and the four Enhancement requests carry Goblin Land Mine that mksettings does not write (drift, -5 DPS)
 - severity: low (no published number is wrong; regenerating by the README loses about 0.5%)

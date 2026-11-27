@@ -15,8 +15,8 @@
   "gearSet": "level60_phase0_fury",
   "apl": "level60_fury_2h",
   "published": {
-    "dps": 994.16,
-    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
+    "dps": 991.3,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-27), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-gear (no Armaments of Battle rewards)"
   },
   "verify": {
     "dps": 991.26,

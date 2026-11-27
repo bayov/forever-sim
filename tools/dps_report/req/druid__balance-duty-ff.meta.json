@@ -15,15 +15,15 @@
   "gearSet": "level60_phase0_balance",
   "apl": "level60_ff",
   "published": {
-    "dps": 766.31,
-    "source": "verify.py on this request (2026-11-26), 20,000 iterations, seed 1, after prices round 2 (Spirit of Aquementas for Obsidian Bauble, over the 30g line)"
+    "dps": 761.2,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-27), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-gear (no Armaments of Battle rewards)"
   },
   "verify": {
-    "dps": 766.31,
-    "stderr": 0.29,
+    "dps": 761.2,
+    "stderr": 0.28,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-25; the DPS report's main run splits the seeds and lands within 1 DPS"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1, 2026-11-27, after the Phase 0 re-gear; the DPS report's main run splits the seeds and lands within 1 DPS"
   },
   "summary": "The Balance build, keeping Faerie Fire on the boss for the raid. The armor cut doesn't help its spells, so it only costs GCDs.",
   "keyTalents": [

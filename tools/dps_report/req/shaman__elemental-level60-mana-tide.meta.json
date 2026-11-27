@@ -15,8 +15,8 @@
   "gearSet": "level60_phase0_ele",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 844.78,
-    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-26), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-rank round"
+    "dps": 845.8,
+    "source": "the DPS Report's main run on this request (pipeline.sh, 2026-11-27), 20,000 iterations, 180 ± 20 s, after the Phase 0 re-gear (no Armaments of Battle rewards)"
   },
   "verify": {
     "dps": 845.78,
