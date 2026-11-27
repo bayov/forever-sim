@@ -1,43 +1,71 @@
-# Fairness pass 66 (2026-11-27, master 5ab589d85)
+# Fairness pass 67 (2026-11-27, branch phase0-regear 313069ce)
 
-Quiet pass (no new finding). Range 34994816e..5ab589d85 (15 watched files): Talisman of Ascendance loses a charge
-to every APL spell, not only damage and healing spells (413f06cb0, sim/common/item_effects.go, from the classic
-SpellAuraOptions proc mask); priest tank-healer APLs and lists, restoration druid list, rogue effects files
-refreshed, Phase 0 content and enchant rows for healer items. No sim/core, class, request, database or standards
-change, so no race sweep: the 2af970d74 sweep stays the baseline.
+Scoped pass on the branch head, not master (master was 046d0e4b8). Range 046d0e4b8..313069ce: the 29 report
+requests re-geared to their current Phase 0 gear sets (94d6cc79, race rows and verify 48cc3aed) and re-published
+(313069ce); the Ret trinket re-rank (ee28c064, RANK_ONLY SLOTS=trinket, picks kept); a comment-only change to
+Talisman of Ascendance (8d45b49e). No race sweep: no sim, class or database change; the 2af970d74 sweep stays the
+baseline. Two findings resolved, none new.
 
-## Published against current
+## The 29 re-geared requests (fairness-20261127-1, resolved)
 
-The loop's 20k run (/tmp/audit-work/runs/vs_published.txt) against meta `published.dps`: the warlock Talisman
-wearers are 1.2 to 5.6 under (affliction-duty-recklessness -5.6, -duty-curse -5.2, demonology duties -4.5 / -4.2,
-destruction duties -4.4 / -4.0, demonology -2.4). That is the Talisman fix: bc5f5d61c re-simmed those builds into
-builds.json but left the metas. Already filed as results-20261127-1; confirmed independently here. Balance and
-Elemental (also Talisman wearers) move 0.7 or less. Every other build is within 1.5, as at pass 65.
+phase0_check.py at 313069ce flags no DPS request ("equipment is not <set>" and the out items are gone). Published
+moves (builds.json 046d0e4b8 -> 313069ce) against pass 66's paired gear-set measurement:
 
-The fix is applied evenly: one rule (an APL spell that isn't a melee white hit) for every wearer. Warlocks pay
-most because curses and Life Tap now eat charges.
-
-## Gear sets against requests (tools/audit/fairness/gearset.py, now in the repo)
-
-Paired 10k, seeds 1 / 1000003, 5ab589d85 CLI, request with only its equipment set to the current gear set:
-
-| Build | Request | Gear set | Delta | Pass 65 |
+| Build | Before | After | Move | Measured |
 |---|---|---|---|---|
-| Affliction | 962.8 | 945.6 | -17.2 | -17.2 |
-| Affliction duty-curse | 948.1 | 935.7 | -12.4 | -17.7 |
-| Affliction Shadow Bolt | 818.4 | 810.4 | -8.0 | -10.2 |
-| Demonology | 873.8 | 867.2 | -6.6 | -9.6 |
-| Destruction | 866.6 | 866.8 | +0.2 | -1.5 |
-| Balance | 801.8 | 796.2 | -5.6 | -5.7 |
-| Elemental | 856.2 | 857.9 | +1.7 | +1.6 |
-| Enhancement | 966.4 | 972.5 | +6.1 | +6.1 |
+| Affliction | 962.5 | 945.1 | -17.4 | -17.2 |
+| Affliction duty-curse | 948.1 | 935.3 | -12.8 | -12.4 |
+| Affliction Shadow Bolt | 818.4 | 811.2 | -7.2 | -8.0 |
+| Demonology | 873.9 | 867.1 | -6.8 | -6.6 |
+| Destruction | 866.3 | 866.1 | -0.2 | +0.2 |
+| Balance | 801.7 | 795.5 | -6.2 | -5.6 |
+| Feral | 1057.5 | 1054.0 | -3.5 | -3.3 |
+| Fury 2H | 994.2 | 991.3 | -2.9 | -2.8 |
+| Elemental | 855.7 | 857.6 | +1.9 | +1.7 |
+| Enhancement | 966.0 | 972.3 | +6.3 | +6.1 |
+| Smite | 678.7 | 678.6 | -0.1 | -0.0 |
 
-Added to fairness-20261127-1 (still open, high): Affliction still drops below Survival and Enhancement imp-gw;
-Demonology drops below Enhancement mana-tide and ties Destruction.
+Duties and variants move with their base (Demonology duties -5.4 / -5.1, Destruction duties +0.8 / +0.9, Destruction
+Fire +0.5 to +1.4, Balance FF -5.1, Wrath -2.5 / -1.4, Feral FF -3.4, Fury 2H duties -2.7, Enhancement imp-gw +6.3,
+mana-tide +5.9, water-shield +6.2). Exactly the 29 builds moved. All 29 requests simmed at 313069ce (10k, seed 1) are
+within 0.9 of builds.json, and every meta.published.dps equals builds.json. Ranking: Affliction 9th -> 11th,
+Enhancement imp-gw 10th -> 9th; Demonology duties drop one or two places, Destruction Fire duties rise one.
 
-## Open findings re-checked
+## Ret trinkets and Maelstrom (fairness-20261126-4, resolved)
 
-- fairness-20261126-4 (Ret Maelstrom): phase0_check still flags it (1.87 above the pick). Open.
-- fairness-20261125-2 (explosives): Fury, Mutilate, Ret still carry no fillerExplosive. Open.
-- Race picks (Demonology Orc, MM Orc, Arcane Gnome, Fire, Shadow): unchanged requests. Open.
-- fairness-20261126-3 (Shahram stun): item_effects.go unchanged there. Open.
+Paired 10k, seeds 1 / 1000003, paladin__level_60 (the Ret list's build), 313069ce CLI:
+
+| Run | Set (Chained Essence + Breadth) | Maelstrom for Breadth | Maelstrom for Chained Essence |
+|---|---|---|---|
+| Report fight, 180 +/- 20 s | 931.75 / 932.16 | 934.23 / 934.74 (+2.5) | 935.81 / 936.37 (+4.1) |
+| Two-part score (standards 43) | 943.55 / 943.66 | 942.25 / 942.77 (-1.1) | 938.87 / 939.61 (-4.4) |
+
+Use values: Chained Essence 16.2 on 90 s vs 8.0 on 180 s; Blackhand's Breadth 6.6 vs 3.2. The two-part score for
+Maelstrom-for-Breadth reproduces rotopt's 20k confirm (-0.9). So the list follows the rule, and the report fight's
+preference for Maelstrom is the rule's 90 s use scoring, not a Ret defect. (The Shock Ret +2.4 is the same effect.)
+
+### The 90 s use scoring across the DPS lists (rough, not simmed)
+
+All 26 DPS lists score at 180 s with use_dur 90, so every spec gets the same rule. From each list's own numbers
+(pick's `cooldown.loss - loss` is its 90 s use value; a passive non-pick wins the 180 s fight roughly when its
+loss is under half that), these picks would likely lose to a passive trinket in the report fight:
+Ret (Maelstrom, ~-10 / -5), Feral (Behemoth Bones, ~-9), Affliction (Bolt's Charged Eyeball, ~-8), Lone Wolf
+(Heart of Wyrmthalak, ~-7), Smite, Destruction, MM, Demonology, Elemental, rogues, mages, Balance, Fury DW
+(~-1 to -5 each); Arcane's Royal Seal estimate (-12) looks too large to trust without a sim. The effect is broad and
+by ruling (the user's 2026-11-20 short-fight call, standards 43), so it is not filed. If the user ever wants the
+report to show each spec's 180 s-best trinkets, this is the list to start from:
+/tmp/claude-0/aud-fair/usegap.txt (scratch; script /tmp/claude-0/aud-fair/bin/usegap.py).
+
+phase0_check.py still prints "ret trinket: open Darkmoon Card: Maelstrom sits 1.85 above the pick": that is the
+rank pass's number, which the 20k confirm overrides.
+
+## Other checks
+
+- phase0_check.py: no DPS-request flag; remaining "open above pick" lines are tank lists, Destruction's main hand
+  (1.75) and Enhancement's main hand (1.77), both within the rank's noise and unchanged by this range.
+- List dps against the report: Ret's list 941.51 vs 931.5 published; the 10 DPS gap is the 90 s use credit above.
+
+## Open items
+
+- None new. The open race findings (20261118-1, 20261124-2, 20261125-1, 20261125-3, 20261126-2) and the
+  Blackblade stun (20261126-3) were not re-measured: this range doesn't touch them.
