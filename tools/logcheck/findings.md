@@ -22,7 +22,8 @@ sections 2 and 6 have the format).
 - **Nov 26 update**: `112526_195841` `22:00:52` (Alterac Valley NPCs): Flame Shock ticks 96.7 vs 93.5 at level 58 (6 hits, 1.034) and 98.3 vs 93.1 at 61 (6 hits, 1.056), Magma Totem 91 vs 90.5 at 58 and 60 (22 hits, 1.010). Same curve as before. No level 62 spell hits.
 - **Nov 26 update, level 63**: `112626_185144` `19:27:04` (Vanndar Stormpike, level 63, 49s). Vanndar had Curse of the Elements, Curse of Recklessness, Faerie Fire, Sunder and Expose Armor from other players, but they change the hit's amount, not the raw field logcheck compares (spell amount/raw is 1.10 on him and 1.00 to 1.03 on the level 59 lieutenants, and raw is the same with or without each debuff). Raw vs the sim: Fiery Weapon 43 on all 8 hits (1.075, after 41 at 61 and 42 at 62), Magma Totem 98 vs 90 (6 hits, 1.09), Flame Shock ticks 100.1 vs 91.0 (14 hits, 1.10), Earth Shock 653 vs 590 (4 hits, 1.11), Fire Nova 341.5 vs about 308 (4 hits, 1.11). Physical runs higher: Melee 410 vs 337 (12 hits, 1.22), Stormstrike 438 vs 371 (1.18), Windfury Weapon 488 vs 417 (1.17), against 345 and 372 on the level 59 to 60 lieutenants in the same battleground. Level 61 Commanders Mortimer and Duffy: Magma Totem 91 to 92 (3 hits). So spells step about 2.5 to 3.5% a level from 60 to 63, and physical more. **Found by**: the audit and search (mob side).
 - **Decision (2026-11-26)**: the user wants more data on mobs above level 60 before the sim gets a damage factor by mob level. Collect hits on level 61 to 63 mobs (melee and fixed-damage spells), then fit the factor and ask again.
-- **Status**: open, first seen 2026-11-16, last updated 2026-11-26 (level 63 data).
+- **Nov 28 update**: `112726_110830` Nov 27 18:50 to 22:11 (79 windows run, levels 56 to 62), summed hits log vs sim by mob level, flagged hits only. Magma Totem 1.010 at 58 to 59 (1446 hits), 1.005 at 60 (762), 1.023 at 61 (469), 1.046 at 62 (165). Flame Shock ticks 1.025 at 59 (197), 1.021 at 60 (225), 1.046 at 61 (243), 1.076 at 62 (84). Earth Shock 1.014 at 60 (12), 1.048 at 61 (24), 1.076 at 62 (14). Fire Nova 1.042 at 61 (79), 1.049 at 62 (43). Cloud of Chained Essence 1.024 at 61 (26), 1.05 at 62 (9). Same curve as Nov 18 to 26, so more data above 60, still no factor. The level 56 and 57 Magma Totem and Fire Nova rows at 0.6 (`20:34:38`, Mindless Undead) are the known Fire trait.
+- **Status**: open, first seen 2026-11-16, last updated 2026-11-28 (level 61 and 62 data).
 
 ### Fiery Weapon rounding
 
@@ -95,7 +96,8 @@ sections 2 and 6 have the format).
 - **Windows**: `112626_185144` and `112726_110830` together (Nov 26 19:24 to Nov 27 19:35): 1369 Stormstrike casts by us, 103 came before 7.9 sec after the previous one (gaps 1.5 to 7.6, most 3 to 6). Examples: `11/26 19:25:13.568` then `19:25:15.071` (1.5 sec), `20:43:00.409` then `20:43:04.113` (3.7), `19:26:02.072` then `19:26:05.623` (3.55). The other 1266 gaps are 8.0 or more (524 of them 8 to 9). Every cast has the 8 sec cooldown as its floor otherwise, and the sim has it as a hard 8 sec (`sim/shaman/stormstrike.go`).
 - **What we think**: something resets or shortens the cooldown on the server. It is not the previous hit's result (hit 8.8% early, dodge 8.6%, parry 5.6%), not a Lightning Bolt, Earth Shock or Maelstrom Weapon proc in the gap (they show as often in long gaps), and not Improved Stormstrike. A target kill or a mob switch in the gap may be it (the 1.5 sec case ends in a kill), unchecked. Other timings match the sim: Earth Shock 5.96 sec, Fire Nova 9.98, Blood Fury 119.99, Rage of the Farseer 179.99, Totemic Call 30.0, Blood Fury 15.0 sec and Rage of the Farseer 25.0 sec aura.
 - **Next step**: for each early cast, list what the previous Stormstrike's target did and whether we switched target. If it is a reset, count how often it saves a Stormstrike and propose it as a sim mechanic (needs the user's go).
-- **Status**: open, first seen 2026-11-27.
+- **Nov 28 update**: `112726_110830` after 19:35 (the new windows, 444 casts): 50 came before 7.9 sec after the previous one (11%, gaps 1.6 to 5.6 at the low end), so it is not rarer than the 7.5% before. Same cause open.
+- **Status**: open, first seen 2026-11-27, last updated 2026-11-28.
 
 ## logcheck issues
 
@@ -112,7 +114,8 @@ sections 2 and 6 have the format).
 - **Nov 22 update**: `112226_113558` (37 windows run, 9 skipped) and `112126_201216` (8 windows): every window has the sheet flag, the Nature power gap is -16.5 as before (`11:53:19`), and sheet AP is within 7 of the sim's in the morning, -53 to -59 in the afternoon (`13:08` to `13:42`, -165 at `13:28`), +113 at `112126 20:42`. `Melee: raw` is 1.05x at levels 60 and below on Nov 21 (40 hits), 1.25x in the Nov 22 morning (164 hits, 355.3 vs 283.8) and 1.11x in the afternoon (180 hits, 398.0 vs 360.0), 1.17x at 61 and 62 (53 hits). The morning sim average is low because its Melee range starts at 41 (`11:53:19`, `12:04:35`, `12:08`: sim avg 125 to 217 vs the log's 336 to 371), a weak weapon the sim swings far more than the log did, in windows the trinket and weapon swap `change` flags cover. Stormstrike fits there (0.99x, 30 hits), so it isn't the AP. Not pinned, only the weapon mix is a guess.
 - **Nov 25 update**: all 34 windows run have the sheet flag. Nature power is within +1.2 to +2.3 of the sim's in 26 windows and -13.6 to -16.6 in 5, Attack power is within 3 in most (-80 in 2, -16 in 1). `Melee: raw` is 1.04 to 1.06x at 57 and 58 (124 hits), 0.98x at 59 (20 hits), 1.08x at 61 (30 hits), 1.07x at 63 (12 hits). The Nov 22 morning 1.25x does not come back.
 - **Nov 26 update**: `112626_185144` `19:27:04` (Vanndar, sheet read with the fishing pole and other trinkets, which the check now uses): every stat matches except Nature power, 143 on the sheet vs 143.6 in the sim. That's the same small sim-over gap as the +1.2 to +2.3 of Nov 25, likely a fractional spell power source the game floors.
-- **Status**: open, first seen 2026-11-12, updated 2026-11-26.
+- **Nov 28 update**: `112726_110830` Nov 27 18:50 to 22:11 (79 windows run, 34 skipped under 50 attacks): every window has the sheet flag with Nature power 22 to 23 over the sim's. `Melee: raw` is 1.09 to 1.23 over at levels 58 to 61 (86 to 93 hits per level) and 1.30 at 62, Stormstrike 1.13 to 1.19 and Windfury Weapon 1.10 to 1.12. The same sheet and Attack power gap as before, no new cause.
+- **Status**: open, first seen 2026-11-12, updated 2026-11-28.
 
 ### Trinket swaps and skill ups flag as a character change
 
@@ -135,6 +138,14 @@ sections 2 and 6 have the format).
 - **What we think**: `isArray` in BayovCore's `Modules/Export.lua` writes the gear table as a list cut at the first gap. `historyGear` in `tools/logcheck/history.go` now keeps the slots a login's list dropped.
 - **Next step**: fix `isArray` in the addon so it always writes an object.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### Mob debuffs on us and other players' items read as sim gaps
+
+- **Flag**: `Melee: miss` and `Stormstrike (17364): miss` (level 59, the sim gives 0.0%), `Stratholme Holy Water (17291): never`.
+- **Windows**: `112726_110830` `20:54:10` (Melee miss 6 of 16, Stormstrike 2 of 6) and `21:51:17` (Melee 7 of 23), both Baroness Anastari. Banshee Curse (16867) is on us in both. Over both kills, our swings at her miss 16 of 39 (41%) with the curse on us and 0 of 35 without. `20:25:17`: Holy Water (5 hits) is thrown by a party member (Grim-Pathofblood), not by us.
+- **What we think**: logcheck built the fight wrong. The replay leaves out debuffs mobs put on us (Banshee Curse lowers our hit chance) and other players' consumables on our targets (Holy Water, one is not our cast). Not a sim error.
+- **Next step**: have logcheck skip Holy Water when we aren't the caster, and say in the report when a mob debuff on us changes hit chance. One-off flags in `known.json` only if they keep coming (Stratholme runs).
+- **Status**: open, first seen 2026-11-28.
 
 ## Watching
 
