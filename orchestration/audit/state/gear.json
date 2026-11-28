@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "3e7d97eed768a4840bd98367bf314004b63ffc72"
+  "master": "07dc074b02bf601cbcaef4419b85ab6981500f32"
  },
  "last_pass_at": "2026-11-27T12:00:00Z",
  "pass": 87,
  "result": "quiet",
  "note": "Pass 87: master f4c45c3f9. Only change is rogue filler talents (standards ruling 2026-11-27, 447e6e8f1) in 5 rogue lists/requests; gear and picks unchanged. phase0_check: no new DPS findings (same close calls: Spellblade 1.75, Blackrock Slicer 1.77, Maelstrom 1.85). Rogue shared run 1-1.5% under list dps (known fight difference).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-28T00:44:54Z"
+ "checked_at": "2026-11-28T06:44:54Z"
 }

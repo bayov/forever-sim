@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "3e7d97eed768a4840bd98367bf314004b63ffc72"
+  "master": "07dc074b02bf601cbcaef4419b85ab6981500f32"
  },
  "last_pass_at": "2026-11-27T18:49:09Z",
  "pass": 38,
@@ -8,5 +8,5 @@
  "client_build": "1.60.1.71139",
  "baseline": "ref/tank_fairness/summary.tsv",
  "note": "Pass 38, master 4a6dad5c2. Only the warrior leveling Prot plan (talent order without Defiance) and its presets.ts comment/tooltip changed; leveling only. No sims; pass-35 baseline stands.",
- "checked_at": "2026-11-28T00:44:54Z"
+ "checked_at": "2026-11-28T06:44:54Z"
 }

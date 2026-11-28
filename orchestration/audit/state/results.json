@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "3e7d97eed768a4840bd98367bf314004b63ffc72"
+  "master": "07dc074b02bf601cbcaef4419b85ab6981500f32"
  },
  "last_pass_at": "2026-11-27T13:00:00Z",
  "pass": 115,
  "result": "quiet",
  "note": "pass 115: only ui/tank_warrior/presets.ts changed (leveling plan comment and tooltip text); no sim, request, mksettings or database change; shared run unchanged (max 1.5 vs published).",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-28T00:44:54Z",
+ "checked_at": "2026-11-28T06:44:54Z",
  "baseline": "0facd9428"
 }

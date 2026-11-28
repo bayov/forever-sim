@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "3e7d97eed768a4840bd98367bf314004b63ffc72"
+  "master": "07dc074b02bf601cbcaef4419b85ab6981500f32"
  },
  "last_pass_at": "2026-11-27T09:00:00Z",
  "pass": 21,
  "result": "findings",
  "client_build": "1.60.1.71139",
- "checked_at": "2026-11-28T00:44:54Z",
+ "checked_at": "2026-11-28T06:44:54Z",
  "note": "pass 21: no healer list or request changed since pass 20 (only standards.md rogue/tank text). Open: -20271127-2, -20261126-1."
 }
