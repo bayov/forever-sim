@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "07dc074b02bf601cbcaef4419b85ab6981500f32"
+  "master": "f7635df2a7f7fbfe51c04e7e898101b917827949"
  },
  "last_pass_at": "2026-11-27T12:49:19Z",
  "pass": 36,
@@ -8,5 +8,5 @@
  "baseline": "5ab589d85",
  "note": "5ab589d85..f4c45c3f9: standards (rogue filler talents, Shield Slam ruling) and a comment-only Talisman of Ascendance change; no healer request, filler or healer code changed. bench_5ab589d.tsv stands.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-28T06:44:54Z"
+ "checked_at": "2026-11-28T12:44:13Z"
 }

@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "07dc074b02bf601cbcaef4419b85ab6981500f32"
+  "master": "f7635df2a7f7fbfe51c04e7e898101b917827949"
  },
  "last_pass_at": "2026-11-27T12:50:55Z",
  "pass": 87,
@@ -8,5 +8,5 @@
  "note": "5ab589d85..f4c45c3f9: sim change comment-only (Talisman of Ascendance); no APL file touched; warlock req rotations swap 22678 for the worn 13968/10455, matching the APL files; rogue filler talents to utility. rotations-20261127-1 resolved as moot. Baseline not refreshed.",
  "client_build": "1.60.1.71139",
  "baseline": "baseline_ab3fff7_3000it_seed424242.tsv",
- "checked_at": "2026-11-28T06:44:54Z"
+ "checked_at": "2026-11-28T12:44:13Z"
 }
